@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Plus, Star, Calendar } from "lucide-react";
+import { Plus, Star, Calendar, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
-import { candidates, type Candidate } from "@/lib/mock-data";
+import { useQuickAction } from "@/components/app/QuickActions";
+import { candidates as initialCandidates, type Candidate } from "@/lib/mock-data";
 import { SidePanel } from "@/components/app/SidePanel";
 
 export const Route = createFileRoute("/recruiting")({
