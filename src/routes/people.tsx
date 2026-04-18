@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   Search, Filter, Download, Plus, MoreHorizontal, Mail, Phone, MapPin,
   Calendar, Briefcase, DollarSign, FileText, Building2, Trash2, Send,
-  UserX, Users as UsersIcon,
+  UserX, Users as UsersIcon, Sparkles, Flame, Trophy, Target, ArrowUpRight, Zap,
 } from "lucide-react";
+import { growthSummaryFor, strengthRadarFor, type StrengthTag } from "@/lib/growth";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -351,6 +352,8 @@ function EmployeePanel({
             </Button>
           </div>
 
+          <GrowthSummaryCard employeeId={employee.id} />
+
           <Tabs defaultValue="profile">
             <TabsList className="w-full grid grid-cols-4">
               <TabsTrigger value="profile">Profile</TabsTrigger>
@@ -413,6 +416,104 @@ function Field({ icon, label, value }: { icon: React.ReactNode; label: string; v
     <div className="flex items-start justify-between gap-4 py-2 border-b last:border-0">
       <div className="flex items-center gap-2 text-xs text-muted-foreground">{icon}{label}</div>
       <div className="text-sm font-medium text-right">{value}</div>
+    </div>
+  );
+}
+
+const RADAR_TAG_COLOR: Record<StrengthTag, string> = {
+  impact:   "oklch(0.7 0.15 30)",
+  craft:    "oklch(0.65 0.18 340)",
+  teamwork: "oklch(0.6 0.16 220)",
+  courage:  "oklch(0.75 0.15 75)",
+  kindness: "oklch(0.65 0.15 155)",
+};
+
+function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
+  const summary = useMemo(() => growthSummaryFor(employeeId), [employeeId]);
+  const radar = useMemo(() => strengthRadarFor(employeeId), [employeeId]);
+  if (!summary) return null;
+  const { level, next, progressPct, xp, streak, kudosReceived, goalsActive, challengesOpen, badgesEarned } = summary;
+  const topStrength = [...radar].sort((a, b) => b.value - a.value)[0];
+
+  return (
+    <Card className="p-4 mb-5 relative overflow-hidden iridescent-border">
+      <div
+        className="absolute -top-10 -right-10 h-28 w-28 rounded-full blur-2xl pointer-events-none"
+        style={{ backgroundColor: level.color, opacity: 0.18 }}
+        aria-hidden
+      />
+      <div className="relative">
+        <div className="flex items-center gap-2 mb-2.5">
+          <Sparkles className="h-3.5 w-3.5 text-primary" />
+          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Growth</div>
+          <span
+            className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded"
+            style={{ background: `${level.color.replace(")", " / 0.15)").replace("oklch(", "oklch(")}`, color: level.color }}
+          >
+            L{level.tier} · {level.name}
+          </span>
+          {streak > 0 && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-warning ml-auto">
+              <Flame className="h-3 w-3" /> {streak}w
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between text-[11px] mb-1">
+          <span className="text-muted-foreground">XP</span>
+          <span className="font-mono tabular-nums">{xp.total.toLocaleString()} · {progressPct}%</span>
+        </div>
+        <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+          <div
+            className="h-full rounded-full transition-[width] duration-700"
+            style={{ width: `${progressPct}%`, backgroundColor: level.color }}
+          />
+        </div>
+        {next && (
+          <div className="text-[10px] text-muted-foreground mt-1 tabular-nums">
+            next · {next.name} at {next.xpMin.toLocaleString()}
+          </div>
+        )}
+
+        <div className="grid grid-cols-4 gap-2 mt-3 pt-3 border-t">
+          <MiniStat icon={<Zap className="h-3 w-3" />} value={kudosReceived} label="kudos" />
+          <MiniStat icon={<Target className="h-3 w-3" />} value={goalsActive} label="goals" />
+          <MiniStat icon={<Trophy className="h-3 w-3" />} value={challengesOpen} label="open" />
+          <MiniStat icon={<Sparkles className="h-3 w-3" />} value={badgesEarned} label="badges" />
+        </div>
+
+        {topStrength && topStrength.value > 0 && (
+          <div className="mt-3 pt-3 border-t flex items-center gap-2">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Top strength</div>
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ backgroundColor: RADAR_TAG_COLOR[topStrength.tag] }}
+            />
+            <span className="text-xs font-medium capitalize">{topStrength.tag}</span>
+            <span className="font-mono text-[11px] tabular-nums text-muted-foreground ml-auto">{topStrength.value}/100</span>
+          </div>
+        )}
+
+        <Link
+          to="/growth"
+          search={{ employee: employeeId }}
+          className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline press-scale"
+        >
+          See full growth profile
+          <ArrowUpRight className="h-3 w-3" />
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
+function MiniStat({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
+  return (
+    <div className="text-center">
+      <div className="text-sm font-semibold tabular-nums flex items-center justify-center gap-1">
+        <span className="text-muted-foreground">{icon}</span>{value}
+      </div>
+      <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</div>
     </div>
   );
 }

@@ -1,13 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 import {
   TrendingUp, User, Users, Flame, Trophy, Target, Zap, Award, Sparkles,
-  MessageCircle, StickyNote, CheckCircle2, XCircle, Circle, Clock, ChevronRight,
-  Gift,
+  MessageCircle, StickyNote, CheckCircle2, XCircle, Circle, Clock,
+  Gift, Crown, Medal, CalendarDays, CalendarRange, Calendar as CalendarIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
@@ -17,24 +15,41 @@ import { NewBadge } from "@/components/app/NewBadge";
 import {
   allGrowthSummaries, growthSummaryFor, badgesFor, strengthRadarFor,
   goalsFor, challengesFor, oneOnOnesFor, notesFor,
-  type GrowthSummary, type StrengthTag,
+  leaderboard, seasonalChallengesFor,
+  type GrowthSummary, type StrengthTag, type LeaderboardEntry,
 } from "@/lib/growth";
 import {
   employeeById, kudosSeed, type Goal, type Challenge, type OneOnOne, type GrowthNote,
-  type Kudo,
+  type Kudo, type SeasonalPeriod, type SeasonalChallenge,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 const ME = "e1";
 
+interface GrowthSearch {
+  employee?: string;
+  view?: "team" | "me";
+}
+
 export const Route = createFileRoute("/growth")({
   head: () => ({ meta: [{ title: "Growth — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>): GrowthSearch => ({
+    employee: typeof s.employee === "string" ? s.employee : undefined,
+    view: s.view === "me" || s.view === "team" ? s.view : undefined,
+  }),
   component: Growth,
 });
 
 function Growth() {
-  const [view, setView] = useState<"team" | "me">("team");
-  const [focusEmployee, setFocusEmployee] = useState<string | null>(null);
+  const nav = useNavigate({ from: "/growth" });
+  const search = useSearch({ from: "/growth" });
+  const view: "team" | "me" = search.view ?? "team";
+  const focusEmployee = search.employee ?? null;
+
+  const setView = (v: "team" | "me") =>
+    nav({ search: { view: v === "team" ? undefined : v, employee: undefined } });
+  const setFocusEmployee = (id: string | null) =>
+    nav({ search: (prev) => ({ ...prev, employee: id ?? undefined }) });
 
   // Effective subject: Me view shows ME; Team view opens a drill-down.
   const subjectId = view === "me" ? ME : focusEmployee;
@@ -107,10 +122,176 @@ function TeamGrid({ summaries, onPick }: { summaries: GrowthSummary[]; onPick: (
         <StatTile icon={<Gift className="h-4 w-4" />} label="Kudos received" value={`${totals.kudos}`} />
       </div>
 
+      <Leaderboard />
+
+      <div className="flex items-center gap-2 mt-6 mb-3">
+        <Users className="h-4 w-4 text-muted-foreground" />
+        <div className="text-sm font-semibold">Team</div>
+        <span className="text-[11px] text-muted-foreground">· click a card for full profile</span>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 stagger-in">
         {summaries.map(s => <TeamCard key={s.employee.id} summary={s} onPick={onPick} />)}
       </div>
     </>
+  );
+}
+
+// ─── Leaderboard ───────────────────────────────────────────────────────
+function Leaderboard() {
+  const [period, setPeriod] = useState<SeasonalPeriod>("weekly");
+  const entries = useMemo(() => leaderboard(period), [period]);
+  const challenges = useMemo(() => seasonalChallengesFor(period), [period]);
+  const top = entries.filter(e => e.xp > 0).slice(0, 8);
+
+  const label = period === "weekly" ? "this week" : period === "monthly" ? "this month" : "this year";
+
+  return (
+    <Card className="p-5 overflow-hidden relative">
+      <div
+        className="absolute -top-16 -left-10 h-40 w-40 rounded-full blur-3xl pointer-events-none"
+        style={{ background: "oklch(0.75 0.2 45 / 0.2)" }}
+        aria-hidden
+      />
+      <div className="relative flex items-center gap-2 mb-4">
+        <Trophy className="h-4 w-4 text-warning" />
+        <div className="font-semibold text-sm">Leaderboard</div>
+        <span className="text-[11px] text-muted-foreground">compete on XP earned {label}</span>
+        <div className="ml-auto inline-flex rounded-md border p-0.5 bg-background">
+          {([
+            ["weekly",  "Week",   CalendarDays],
+            ["monthly", "Month",  CalendarRange],
+            ["yearly",  "Year",   CalendarIcon],
+          ] as const).map(([p, lbl, Icon]) => (
+            <button
+              key={p}
+              onClick={() => setPeriod(p)}
+              className={cn(
+                "px-2.5 h-7 text-[11px] rounded-sm inline-flex items-center gap-1 press-scale",
+                period === p
+                  ? "bg-primary text-primary-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Icon className="h-3 w-3" /> {lbl}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-5">
+        <div>
+          {top.length === 0 ? (
+            <div className="text-sm text-muted-foreground py-8 text-center">
+              No XP earned yet {label}. Kick it off with some kudos or focus work.
+            </div>
+          ) : (
+            <ol className="space-y-1.5 stagger-in">
+              {top.map(row => (
+                <LeaderboardRow key={row.employee.id} row={row} maxXp={top[0].xp} />
+              ))}
+            </ol>
+          )}
+        </div>
+
+        <div>
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2 flex items-center gap-1.5">
+            <Sparkles className="h-3 w-3" /> Active {period} challenges
+          </div>
+          <div className="space-y-2">
+            {challenges.length === 0 ? (
+              <div className="text-xs text-muted-foreground p-4 text-center border rounded-md">
+                No {period} challenges live.
+              </div>
+            ) : challenges.map(c => <SeasonalChallengeCard key={c.id} challenge={c} />)}
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function LeaderboardRow({ row, maxXp }: { row: LeaderboardEntry; maxXp: number }) {
+  const pct = Math.max(2, Math.round((row.xp / Math.max(1, maxXp)) * 100));
+  const isPodium = row.rank <= 3;
+  const podiumColor = row.rank === 1
+    ? "oklch(0.78 0.18 85)"
+    : row.rank === 2
+      ? "oklch(0.75 0.03 250)"
+      : "oklch(0.65 0.14 50)";
+  return (
+    <li className={cn(
+      "relative group rounded-md border px-2.5 py-2 flex items-center gap-3 transition-colors hover:bg-muted/40",
+      isPodium && "border-primary/20 bg-primary/[0.02]",
+    )}>
+      <div
+        className={cn(
+          "w-7 h-7 rounded-md grid place-items-center text-xs font-bold tabular-nums shrink-0",
+          isPodium ? "text-white" : "bg-muted text-muted-foreground",
+        )}
+        style={isPodium ? { backgroundColor: podiumColor } : undefined}
+      >
+        {row.rank === 1 ? <Crown className="h-3.5 w-3.5" /> : row.rank <= 3 ? <Medal className="h-3.5 w-3.5" /> : row.rank}
+      </div>
+      <Avatar initials={row.employee.initials} color={row.employee.avatarColor} size={28} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <div className="text-sm font-medium truncate">{row.employee.name}</div>
+          <div className="ml-auto font-mono text-xs tabular-nums text-primary">+{row.xp.toLocaleString()} XP</div>
+        </div>
+        <div className="mt-1 h-1.5 rounded-full bg-muted overflow-hidden">
+          <div
+            className="h-full rounded-full transition-[width] duration-700"
+            style={{ width: `${pct}%`, backgroundColor: isPodium ? podiumColor : "var(--color-primary)" }}
+          />
+        </div>
+        <div className="flex items-center gap-3 mt-1 text-[10px] text-muted-foreground tabular-nums">
+          <span className="inline-flex items-center gap-1"><Gift className="h-3 w-3" />{row.kudos} kudos</span>
+          <span className="inline-flex items-center gap-1"><Zap className="h-3 w-3" />{row.focusSessions} focus</span>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+function SeasonalChallengeCard({ challenge }: { challenge: SeasonalChallenge }) {
+  const top3 = [...challenge.participants].sort((a, b) => b.progress - a.progress).slice(0, 3);
+  const maxProgress = top3[0]?.progress ?? 1;
+  return (
+    <div className="rounded-md border p-3 bg-card/60">
+      <div className="flex items-start gap-2 mb-2">
+        <div className="text-xl leading-none mt-0.5">{challenge.emoji}</div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <div className="text-sm font-medium truncate">{challenge.title}</div>
+            <span className="font-mono text-[10px] tabular-nums text-primary ml-auto shrink-0">+{challenge.xpReward} XP</span>
+          </div>
+          <div className="text-[11px] text-muted-foreground leading-snug mt-0.5">{challenge.description}</div>
+        </div>
+      </div>
+      <div className="space-y-1 mt-2">
+        {top3.map((p, i) => {
+          const emp = employeeById(p.employeeId);
+          if (!emp) return null;
+          const pct = Math.max(4, Math.round((p.progress / Math.max(1, maxProgress)) * 100));
+          return (
+            <div key={p.employeeId} className="flex items-center gap-2 text-[11px]">
+              <span className="w-3 text-muted-foreground tabular-nums">{i + 1}</span>
+              <Avatar initials={emp.initials} color={emp.avatarColor} size={18} />
+              <span className="flex-1 truncate">{emp.name}</span>
+              <div className="w-16 h-1 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              <span className="font-mono tabular-nums text-muted-foreground w-8 text-right">
+                {p.progress}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 

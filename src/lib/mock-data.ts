@@ -202,14 +202,67 @@ export interface Kudo {
   date: string;
 }
 export const kudosSeed: Kudo[] = [
-  { id: "kd1", fromId: "e3", toId: "e2", amount: 25, tag: "craft",    date: "2025-04-15", message: "The new onboarding flow is chef's kiss. Polished every single state." },
-  { id: "kd2", fromId: "e1", toId: "e9", amount: 50, tag: "impact",   date: "2025-04-14", message: "Shipped the migration 2 days ahead of schedule. Huge." },
-  { id: "kd3", fromId: "e7", toId: "e4", amount: 10, tag: "kindness", date: "2025-04-13", message: "Jumped in on my on-call even though it wasn't your rotation." },
-  { id: "kd4", fromId: "e6", toId: "e10", amount: 30, tag: "teamwork", date: "2025-04-12", message: "Your Looker dashboards unlocked the whole pipeline conversation." },
-  { id: "kd5", fromId: "e2", toId: "e3", amount: 15, tag: "kindness", date: "2025-04-11", message: "Took time to walk me through the leave policy. Appreciated." },
-  { id: "kd6", fromId: "e1", toId: "e7", amount: 20, tag: "courage",  date: "2025-04-09", message: "Saying 'no, we shouldn't ship that yet' took guts. Right call." },
-  { id: "kd7", fromId: "e9", toId: "e2", amount: 10, tag: "craft",    date: "2025-04-08", message: "The microcopy rewrite made the whole flow feel 10× better." },
-  { id: "kd8", fromId: "e10", toId: "e1", amount: 40, tag: "impact",  date: "2025-04-07", message: "Your pairing session unblocked me for the rest of the sprint." },
+  // ── recent (this week · 2026-04-12..18) ─────────────────────────────
+  { id: "kd1",  fromId: "e3",  toId: "e2",  amount: 25, tag: "craft",    date: "2026-04-17", message: "The new onboarding flow is chef's kiss. Polished every single state." },
+  { id: "kd2",  fromId: "e1",  toId: "e9",  amount: 50, tag: "impact",   date: "2026-04-17", message: "Shipped the migration 2 days ahead of schedule. Huge." },
+  { id: "kd3",  fromId: "e7",  toId: "e4",  amount: 10, tag: "kindness", date: "2026-04-16", message: "Jumped in on my on-call even though it wasn't your rotation." },
+  { id: "kd4",  fromId: "e6",  toId: "e10", amount: 30, tag: "teamwork", date: "2026-04-16", message: "Your Looker dashboards unlocked the whole pipeline conversation." },
+  { id: "kd5",  fromId: "e2",  toId: "e3",  amount: 15, tag: "kindness", date: "2026-04-15", message: "Took time to walk me through the leave policy. Appreciated." },
+  { id: "kd6",  fromId: "e1",  toId: "e7",  amount: 20, tag: "courage",  date: "2026-04-15", message: "Saying 'no, we shouldn't ship that yet' took guts. Right call." },
+  { id: "kd7",  fromId: "e9",  toId: "e2",  amount: 10, tag: "craft",    date: "2026-04-14", message: "The microcopy rewrite made the whole flow feel 10× better." },
+  { id: "kd8",  fromId: "e10", toId: "e1",  amount: 40, tag: "impact",   date: "2026-04-14", message: "Your pairing session unblocked me for the rest of the sprint." },
+  { id: "kd9",  fromId: "e3",  toId: "e1",  amount: 30, tag: "teamwork", date: "2026-04-13", message: "Facilitated the cross-team roadmap session like a pro." },
+  { id: "kd10", fromId: "e4",  toId: "e9",  amount: 25, tag: "craft",    date: "2026-04-13", message: "Code review on the auth refactor was surgical." },
+  { id: "kd11", fromId: "e7",  toId: "e2",  amount: 20, tag: "impact",   date: "2026-04-12", message: "Mobile-first redesign lifted activation by 14% in the beta." },
+  { id: "kd12", fromId: "e5",  toId: "e3",  amount: 15, tag: "kindness", date: "2026-04-12", message: "Thanks for catching the payroll discrepancy before it shipped." },
+
+  // ── this month (March 18 – April 11) ────────────────────────────────
+  { id: "kd13", fromId: "e3",  toId: "e1",  amount: 35, tag: "craft",    date: "2026-04-10", message: "The migration architecture doc is the clearest thing I've read all quarter." },
+  { id: "kd14", fromId: "e1",  toId: "e4",  amount: 20, tag: "teamwork", date: "2026-04-09", message: "Volunteered for the on-call swap without being asked." },
+  { id: "kd15", fromId: "e9",  toId: "e1",  amount: 30, tag: "kindness", date: "2026-04-08", message: "Your post-mortem coaching made the retro feel safe." },
+  { id: "kd16", fromId: "e2",  toId: "e7",  amount: 20, tag: "craft",    date: "2026-04-07", message: "PRD structure change saved us a week of scope confusion." },
+  { id: "kd17", fromId: "e10", toId: "e7",  amount: 15, tag: "courage",  date: "2026-04-07", message: "Pushed back on exec on timeline — and got the realistic one." },
+  { id: "kd18", fromId: "e6",  toId: "e7",  amount: 25, tag: "impact",   date: "2026-04-05", message: "Roadmap clarity moved the sales conversation forward." },
+  { id: "kd19", fromId: "e1",  toId: "e2",  amount: 30, tag: "craft",    date: "2026-04-04", message: "Design tokens rollout felt effortless — that's all you." },
+  { id: "kd20", fromId: "e12", toId: "e2",  amount: 20, tag: "teamwork", date: "2026-04-03", message: "Partnered beautifully with marketing on the launch page." },
+  { id: "kd21", fromId: "e7",  toId: "e10", amount: 20, tag: "craft",    date: "2026-04-02", message: "Data-quality framework you built is being copied by two other teams." },
+  { id: "kd22", fromId: "e2",  toId: "e10", amount: 15, tag: "kindness", date: "2026-04-01", message: "Walked me through the cohort logic with patience." },
+  { id: "kd23", fromId: "e1",  toId: "e4",  amount: 25, tag: "impact",   date: "2026-03-30", message: "Cache layer rewrite cut p95 by 38%." },
+  { id: "kd24", fromId: "e3",  toId: "e8",  amount: 20, tag: "teamwork", date: "2026-03-29", message: "Candidate-experience rework is already showing in survey scores." },
+  { id: "kd25", fromId: "e1",  toId: "e8",  amount: 15, tag: "craft",    date: "2026-03-28", message: "Scorecard rewrite is tight — clear wins." },
+  { id: "kd26", fromId: "e8",  toId: "e3",  amount: 20, tag: "kindness", date: "2026-03-27", message: "Your feedback on the rubric session was exactly what I needed." },
+  { id: "kd27", fromId: "e6",  toId: "e12", amount: 30, tag: "impact",   date: "2026-03-26", message: "Campaign drove 2× pipeline vs. target — huge quarter for sales." },
+  { id: "kd28", fromId: "e12", toId: "e6",  amount: 15, tag: "courage",  date: "2026-03-25", message: "Cold-calling the enterprise list took guts. Paid off." },
+  { id: "kd29", fromId: "e3",  toId: "e5",  amount: 20, tag: "craft",    date: "2026-03-24", message: "Payroll close documentation is gorgeous." },
+  { id: "kd30", fromId: "e1",  toId: "e11", amount: 10, tag: "teamwork", date: "2026-03-22", message: "Smooth handover of the deploy pipeline — thanks for the walkthroughs." },
+  { id: "kd31", fromId: "e9",  toId: "e4",  amount: 20, tag: "craft",    date: "2026-03-20", message: "The query-planner deep-dive was unreal." },
+
+  // ── earlier this year (Jan – Mar 17) ────────────────────────────────
+  { id: "kd32", fromId: "e3",  toId: "e1",  amount: 50, tag: "courage",  date: "2026-03-10", message: "Called the incident early and ate the downtime. Right call, hard call." },
+  { id: "kd33", fromId: "e2",  toId: "e1",  amount: 20, tag: "kindness", date: "2026-03-02", message: "Your 1:1 slots are the most helpful hour of my week." },
+  { id: "kd34", fromId: "e7",  toId: "e1",  amount: 30, tag: "impact",   date: "2026-02-24", message: "Platform rebuild scoping saved the company from a 6-month detour." },
+  { id: "kd35", fromId: "e9",  toId: "e1",  amount: 15, tag: "teamwork", date: "2026-02-12", message: "Team sync format you piloted is now org-wide." },
+  { id: "kd36", fromId: "e3",  toId: "e2",  amount: 25, tag: "impact",   date: "2026-02-26", message: "Recruiting page redesign — hiring funnel is up and to the right." },
+  { id: "kd37", fromId: "e9",  toId: "e2",  amount: 20, tag: "courage",  date: "2026-02-14", message: "Pitching the bold direction in exec review took courage." },
+  { id: "kd38", fromId: "e1",  toId: "e7",  amount: 35, tag: "craft",    date: "2026-03-04", message: "Specs for Growth module were flawless." },
+  { id: "kd39", fromId: "e3",  toId: "e7",  amount: 20, tag: "teamwork", date: "2026-02-08", message: "Cross-functional alignment around the new goals framework." },
+  { id: "kd40", fromId: "e10", toId: "e9",  amount: 20, tag: "kindness", date: "2026-03-05", message: "Rubber-ducked my SQL nightmare for an hour. Legend." },
+  { id: "kd41", fromId: "e2",  toId: "e9",  amount: 15, tag: "impact",   date: "2026-02-18", message: "Front-end perf work shaved 400ms off the shell." },
+  { id: "kd42", fromId: "e7",  toId: "e9",  amount: 25, tag: "craft",    date: "2026-01-30", message: "Component architecture decisions are paying dividends." },
+  { id: "kd43", fromId: "e1",  toId: "e3",  amount: 30, tag: "impact",   date: "2026-03-08", message: "Org-design work delivered a calmer Q1 for everyone." },
+  { id: "kd44", fromId: "e8",  toId: "e3",  amount: 15, tag: "craft",    date: "2026-02-20", message: "Offer-letter template is a masterclass." },
+  { id: "kd45", fromId: "e12", toId: "e3",  amount: 10, tag: "courage",  date: "2026-01-28", message: "Standing up for the contractor pay-parity case — respect." },
+  { id: "kd46", fromId: "e7",  toId: "e10", amount: 30, tag: "impact",   date: "2026-02-22", message: "North-star metric work set the product bar for the year." },
+  { id: "kd47", fromId: "e1",  toId: "e10", amount: 10, tag: "teamwork", date: "2026-01-18", message: "Paired with eng on the event schema — saved us weeks." },
+  { id: "kd48", fromId: "e2",  toId: "e12", amount: 25, tag: "craft",    date: "2026-02-02", message: "Brand refresh system is tight, consistent, and fun." },
+  { id: "kd49", fromId: "e3",  toId: "e12", amount: 10, tag: "kindness", date: "2026-01-22", message: "Welcoming the new marketing hire made her first week." },
+  { id: "kd50", fromId: "e1",  toId: "e4",  amount: 15, tag: "impact",   date: "2026-01-10", message: "Index tuning on the hot table dropped read latency significantly." },
+  { id: "kd51", fromId: "e4",  toId: "e11", amount: 20, tag: "craft",    date: "2026-02-15", message: "Terraform module overhaul is elegant." },
+  { id: "kd52", fromId: "e1",  toId: "e11", amount: 25, tag: "teamwork", date: "2026-03-12", message: "Coordinated platform migration across four teams without drama." },
+  { id: "kd53", fromId: "e7",  toId: "e6",  amount: 10, tag: "kindness", date: "2026-02-06", message: "Took the time to debug a prospect's integration after hours." },
+  { id: "kd54", fromId: "e1",  toId: "e5",  amount: 15, tag: "craft",    date: "2026-01-24", message: "Payroll audit tooling is sharper than what I've seen at bigger cos." },
+  { id: "kd55", fromId: "e3",  toId: "e8",  amount: 20, tag: "impact",   date: "2026-02-28", message: "Hiring quality bar lifted — the last two hires are killing it." },
+  { id: "kd56", fromId: "e5",  toId: "e1",  amount: 10, tag: "teamwork", date: "2026-03-16", message: "Partnered with finance on the headcount model — very appreciated." },
 ];
 
 export interface FocusSession {
@@ -223,11 +276,38 @@ export interface FocusSession {
   meetingsDeclined: number;
 }
 export const focusSessionsSeed: FocusSession[] = [
-  { id: "fs1", employeeId: "e1", date: "2025-04-17", startedAt: "09:00", durationMin: 90, commessaId: "cm1", meetingsDeclined: 2, note: "Migration script v3" },
-  { id: "fs2", employeeId: "e1", date: "2025-04-17", startedAt: "14:00", durationMin: 60, commessaId: "cm1", meetingsDeclined: 1 },
-  { id: "fs3", employeeId: "e1", date: "2025-04-16", startedAt: "10:00", durationMin: 90, commessaId: "cm3", meetingsDeclined: 3, note: "Design token audit" },
-  { id: "fs4", employeeId: "e1", date: "2025-04-15", startedAt: "09:30", durationMin: 120, commessaId: "cm1", meetingsDeclined: 2 },
-  { id: "fs5", employeeId: "e1", date: "2025-04-14", startedAt: "13:00", durationMin: 60, commessaId: "cm2", meetingsDeclined: 0 },
+  // e1 — Sarah
+  { id: "fs1",  employeeId: "e1",  date: "2026-04-17", startedAt: "09:00", durationMin: 90,  commessaId: "cm1", meetingsDeclined: 2, note: "Migration script v3" },
+  { id: "fs2",  employeeId: "e1",  date: "2026-04-17", startedAt: "14:00", durationMin: 60,  commessaId: "cm1", meetingsDeclined: 1 },
+  { id: "fs3",  employeeId: "e1",  date: "2026-04-16", startedAt: "10:00", durationMin: 90,  commessaId: "cm3", meetingsDeclined: 3, note: "Design token audit" },
+  { id: "fs4",  employeeId: "e1",  date: "2026-04-15", startedAt: "09:30", durationMin: 120, commessaId: "cm1", meetingsDeclined: 2 },
+  { id: "fs5",  employeeId: "e1",  date: "2026-04-14", startedAt: "13:00", durationMin: 60,  commessaId: "cm2", meetingsDeclined: 0 },
+  { id: "fs6",  employeeId: "e1",  date: "2026-04-10", startedAt: "09:00", durationMin: 90,  commessaId: "cm1", meetingsDeclined: 2 },
+  { id: "fs7",  employeeId: "e1",  date: "2026-04-03", startedAt: "09:00", durationMin: 90,  commessaId: "cm1", meetingsDeclined: 1 },
+  // e2 — Marcus
+  { id: "fs8",  employeeId: "e2",  date: "2026-04-17", startedAt: "10:30", durationMin: 120, commessaId: "cm3", meetingsDeclined: 3, note: "Onboarding polish" },
+  { id: "fs9",  employeeId: "e2",  date: "2026-04-15", startedAt: "14:00", durationMin: 90,  commessaId: "cm3", meetingsDeclined: 2 },
+  { id: "fs10", employeeId: "e2",  date: "2026-04-09", startedAt: "10:00", durationMin: 90,  commessaId: "cm3", meetingsDeclined: 2 },
+  { id: "fs11", employeeId: "e2",  date: "2026-04-02", startedAt: "10:00", durationMin: 120, commessaId: "cm3", meetingsDeclined: 3 },
+  // e4 — Tom
+  { id: "fs12", employeeId: "e4",  date: "2026-04-15", startedAt: "09:00", durationMin: 90,  commessaId: "cm2", meetingsDeclined: 1, note: "Cache layer" },
+  { id: "fs13", employeeId: "e4",  date: "2026-04-10", startedAt: "09:00", durationMin: 120, commessaId: "cm2", meetingsDeclined: 2 },
+  // e7 — Yuki
+  { id: "fs14", employeeId: "e7",  date: "2026-04-16", startedAt: "09:00", durationMin: 60,  commessaId: "cm2", meetingsDeclined: 1, note: "Roadmap review" },
+  { id: "fs15", employeeId: "e7",  date: "2026-04-14", startedAt: "14:00", durationMin: 90,  commessaId: "cm2", meetingsDeclined: 2 },
+  { id: "fs16", employeeId: "e7",  date: "2026-04-07", startedAt: "09:00", durationMin: 90,  commessaId: "cm2", meetingsDeclined: 2 },
+  // e9 — Noah
+  { id: "fs17", employeeId: "e9",  date: "2026-04-17", startedAt: "10:00", durationMin: 120, commessaId: "cm1", meetingsDeclined: 3, note: "Perf pass" },
+  { id: "fs18", employeeId: "e9",  date: "2026-04-15", startedAt: "09:30", durationMin: 90,  commessaId: "cm1", meetingsDeclined: 2 },
+  { id: "fs19", employeeId: "e9",  date: "2026-04-14", startedAt: "14:00", durationMin: 60,  commessaId: "cm1", meetingsDeclined: 1 },
+  { id: "fs20", employeeId: "e9",  date: "2026-04-08", startedAt: "09:00", durationMin: 120, commessaId: "cm1", meetingsDeclined: 3 },
+  { id: "fs21", employeeId: "e9",  date: "2026-04-01", startedAt: "09:00", durationMin: 90,  commessaId: "cm1", meetingsDeclined: 2 },
+  // e10 — Fatima
+  { id: "fs22", employeeId: "e10", date: "2026-04-16", startedAt: "11:00", durationMin: 60,  commessaId: "cm2", meetingsDeclined: 1, note: "Cohort analysis" },
+  { id: "fs23", employeeId: "e10", date: "2026-04-09", startedAt: "10:00", durationMin: 90,  commessaId: "cm2", meetingsDeclined: 2 },
+  // e3 — Aisha
+  { id: "fs24", employeeId: "e3",  date: "2026-04-15", startedAt: "09:00", durationMin: 60,  commessaId: "cm4", meetingsDeclined: 1 },
+  { id: "fs25", employeeId: "e3",  date: "2026-04-08", startedAt: "09:00", durationMin: 60,  commessaId: "cm4", meetingsDeclined: 1 },
 ];
 
 export interface CopilotSuggestion {
@@ -661,6 +741,124 @@ export const oneOnOnesSeed: OneOnOne[] = [
     agenda: ["Deep-work balance", "Cutover ownership"],
     notes: "Focus sessions are landing. Stretch goal: take the lead on the next cutover.",
     actionItems: [{ text: "Assign cutover run book", done: true }],
+  },
+];
+
+// ── Seasonal (weekly / monthly / yearly) team challenges ──────────────
+export type SeasonalPeriod = "weekly" | "monthly" | "yearly";
+export interface SeasonalChallenge {
+  id: string;
+  period: SeasonalPeriod;
+  title: string;
+  description: string;
+  emoji: string;
+  xpReward: number;
+  startDate: string;
+  endDate: string;
+  /** Participants who've contributed progress toward this challenge. */
+  participants: { employeeId: string; progress: number }[];
+}
+
+export const seasonalChallengesSeed: SeasonalChallenge[] = [
+  {
+    id: "sc-week-1",
+    period: "weekly",
+    title: "Shipping Sprint",
+    description: "Most XP earned this week wins the badge. Resets Monday.",
+    emoji: "🚀",
+    xpReward: 200,
+    startDate: "2026-04-13",
+    endDate: "2026-04-19",
+    participants: [
+      { employeeId: "e1",  progress: 145 },
+      { employeeId: "e9",  progress: 130 },
+      { employeeId: "e2",  progress: 95 },
+      { employeeId: "e7",  progress: 80 },
+      { employeeId: "e10", progress: 55 },
+    ],
+  },
+  {
+    id: "sc-week-2",
+    period: "weekly",
+    title: "Kudos Cascade",
+    description: "Give 3+ kudos this week to unlock a team booster.",
+    emoji: "💐",
+    xpReward: 80,
+    startDate: "2026-04-13",
+    endDate: "2026-04-19",
+    participants: [
+      { employeeId: "e3", progress: 4 },
+      { employeeId: "e1", progress: 3 },
+      { employeeId: "e7", progress: 2 },
+    ],
+  },
+  {
+    id: "sc-month-1",
+    period: "monthly",
+    title: "April Momentum",
+    description: "Accumulate 500 XP in the month to unlock the Momentum badge.",
+    emoji: "🔥",
+    xpReward: 400,
+    startDate: "2026-04-01",
+    endDate: "2026-04-30",
+    participants: [
+      { employeeId: "e1",  progress: 430 },
+      { employeeId: "e9",  progress: 380 },
+      { employeeId: "e2",  progress: 280 },
+      { employeeId: "e7",  progress: 240 },
+      { employeeId: "e10", progress: 190 },
+      { employeeId: "e3",  progress: 160 },
+      { employeeId: "e4",  progress: 130 },
+    ],
+  },
+  {
+    id: "sc-month-2",
+    period: "monthly",
+    title: "Focus Forty",
+    description: "Log 40 hours of deep-work focus sessions this month.",
+    emoji: "🎯",
+    xpReward: 300,
+    startDate: "2026-04-01",
+    endDate: "2026-04-30",
+    participants: [
+      { employeeId: "e9", progress: 28 },
+      { employeeId: "e1", progress: 24 },
+      { employeeId: "e2", progress: 18 },
+      { employeeId: "e7", progress: 12 },
+    ],
+  },
+  {
+    id: "sc-year-1",
+    period: "yearly",
+    title: "Year of Craft",
+    description: "Ship 10 craft-tagged kudos recipients + 3 hit goals. Annual trophy at EOY.",
+    emoji: "🏆",
+    xpReward: 2000,
+    startDate: "2026-01-01",
+    endDate: "2026-12-31",
+    participants: [
+      { employeeId: "e2",  progress: 68 },
+      { employeeId: "e1",  progress: 61 },
+      { employeeId: "e9",  progress: 54 },
+      { employeeId: "e7",  progress: 48 },
+      { employeeId: "e10", progress: 36 },
+      { employeeId: "e3",  progress: 28 },
+    ],
+  },
+  {
+    id: "sc-year-2",
+    period: "yearly",
+    title: "Mentor of the Year",
+    description: "Give 50+ kudos and log 10+ 1:1s in 2026.",
+    emoji: "🧭",
+    xpReward: 1500,
+    startDate: "2026-01-01",
+    endDate: "2026-12-31",
+    participants: [
+      { employeeId: "e3", progress: 42 },
+      { employeeId: "e1", progress: 38 },
+      { employeeId: "e7", progress: 24 },
+    ],
   },
 ];
 

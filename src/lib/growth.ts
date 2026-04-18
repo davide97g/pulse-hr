@@ -1,8 +1,8 @@
 import {
   goalsSeed, challengesSeed, oneOnOnesSeed, growthNotesSeed, kudosSeed,
-  focusSessionsSeed, employees,
+  focusSessionsSeed, seasonalChallengesSeed, employees,
   type Employee, type Goal, type Challenge, type OneOnOne, type GrowthNote,
-  type Kudo,
+  type Kudo, type SeasonalChallenge, type SeasonalPeriod,
 } from "./mock-data";
 
 // ── Level ladder ───────────────────────────────────────────────────────
@@ -212,6 +212,71 @@ export function allGrowthSummaries(): GrowthSummary[] {
     .map(e => growthSummaryFor(e.id))
     .filter((s): s is GrowthSummary => s !== null)
     .sort((a, b) => b.xp.total - a.xp.total);
+}
+
+// ── Leaderboard (XP earned inside a date window) ───────────────────────
+function inRange(d: string, from: Date, to: Date) {
+  const t = new Date(d).getTime();
+  return t >= from.getTime() && t <= to.getTime();
+}
+
+export function xpInRange(employeeId: string, from: Date, to: Date): number {
+  const kudos = kudosSeed
+    .filter(k => k.toId === employeeId && inRange(k.date, from, to))
+    .reduce((a, k) => a + k.amount, 0);
+  const focus = focusSessionsSeed
+    .filter(f => f.employeeId === employeeId && inRange(f.date, from, to))
+    .length * 5;
+  const challenges = challengesSeed
+    .filter(c => c.employeeId === employeeId && c.status === "succeeded" && inRange(c.dueAt, from, to))
+    .reduce((a, c) => a + c.xpReward, 0);
+  const goals = goalsSeed
+    .filter(g => g.employeeId === employeeId && g.status === "hit" && inRange(g.dueAt, from, to))
+    .length * 100;
+  const oneOnOnes = oneOnOnesSeed
+    .filter(o => o.employeeId === employeeId && inRange(o.date, from, to))
+    .length * 10;
+  return kudos + focus + challenges + goals + oneOnOnes;
+}
+
+export interface LeaderboardEntry {
+  employee: Employee;
+  xp: number;
+  rank: number;
+  kudos: number;
+  focusSessions: number;
+}
+
+/** `now` is overridable for testing; defaults to today. */
+export function leaderboard(period: SeasonalPeriod, now: Date = new Date()): LeaderboardEntry[] {
+  const to = new Date(now);
+  const from = new Date(now);
+  if (period === "weekly") {
+    // ISO week starting Monday
+    const dow = (from.getDay() + 6) % 7;
+    from.setDate(from.getDate() - dow);
+    from.setHours(0, 0, 0, 0);
+  } else if (period === "monthly") {
+    from.setDate(1);
+    from.setHours(0, 0, 0, 0);
+  } else {
+    from.setMonth(0, 1);
+    from.setHours(0, 0, 0, 0);
+  }
+
+  return employees
+    .map(e => ({
+      employee: e,
+      xp: xpInRange(e.id, from, to),
+      kudos: kudosSeed.filter(k => k.toId === e.id && inRange(k.date, from, to)).length,
+      focusSessions: focusSessionsSeed.filter(f => f.employeeId === e.id && inRange(f.date, from, to)).length,
+    }))
+    .sort((a, b) => b.xp - a.xp)
+    .map((row, i) => ({ ...row, rank: i + 1 }));
+}
+
+export function seasonalChallengesFor(period: SeasonalPeriod): SeasonalChallenge[] {
+  return seasonalChallengesSeed.filter(c => c.period === period);
 }
 
 // ── Selectors per employee for profile view ────────────────────────────
