@@ -18,6 +18,8 @@ import {
   employees, employeeById, kudosSeed, type Kudo,
 } from "@/lib/mock-data";
 import { isBirthday } from "@/lib/birthday";
+import { voiceBus } from "@/lib/voice-bus";
+import { Mic } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/kudos")({
@@ -58,6 +60,49 @@ function Kudos() {
   }, []);
   const [confetti, setConfetti] = useState<{ id: number; dx: number; color: string }[]>([]);
   const [myBalance, setMyBalance] = useState(200);
+  const [recent, setRecent] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const raw = window.localStorage.getItem("pulse.kudos.recent");
+      return raw ? (JSON.parse(raw) as string[]) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [voiceListening, setVoiceListening] = useState(false);
+
+  useEffect(() => {
+    return voiceBus.on((ev) => {
+      if (ev.kind === "draftPrompt" && ev.text && ev.source === "kudos") {
+        const raw = ev.text.trim();
+        // Name match (longest-first to prefer "Marcus Rivera" before "Marcus")
+        const sorted = [...employees].sort((a, b) => b.name.length - a.name.length);
+        const nameHit = sorted.find(
+          e => e.id !== ME && raw.toLowerCase().includes(e.name.toLowerCase().split(" ")[0]),
+        );
+        if (nameHit) setToId(nameHit.id);
+        // Tag match
+        const tagHit = TAGS.find(t => raw.toLowerCase().includes(t.v));
+        if (tagHit) setTag(tagHit.v);
+        // Amount match (e.g. "25 coins")
+        const amt = raw.match(/\b(5|10|25|50)\b/);
+        if (amt) setAmount(Number(amt[1]));
+        // Strip name/tag/amount from message
+        let rest = raw;
+        if (nameHit) {
+          rest = rest.replace(new RegExp(nameHit.name, "ig"), "");
+          rest = rest.replace(new RegExp(nameHit.name.split(" ")[0], "ig"), "");
+        }
+        if (tagHit) rest = rest.replace(new RegExp(tagHit.v, "ig"), "");
+        rest = rest.replace(/\b(5|10|25|50)\b\s*(coins?)?/gi, "");
+        rest = rest.replace(/\b(kudos|to|for|tag|with|amount)\b/gi, "");
+        rest = rest.replace(/\s+/g, " ").trim();
+        if (rest) setMessage((m) => (m ? `${m} ${rest}` : rest));
+      } else if (ev.kind === "state") {
+        setVoiceListening(ev.listening);
+      }
+    });
+  }, []);
 
   const AMOUNTS = [5, 10, 25, 50];
 
@@ -92,6 +137,14 @@ function Kudos() {
     setFeed(f => [k, ...f]);
     setMyBalance(b => b - amount);
     setMessage("");
+    // Remember recent recipient (most recent first, dedupe, cap 5)
+    setRecent((prev) => {
+      const next = [toId, ...prev.filter((id) => id !== toId)].slice(0, 5);
+      try {
+        window.localStorage.setItem("pulse.kudos.recent", JSON.stringify(next));
+      } catch { /* noop */ }
+      return next;
+    });
     // confetti burst
     const palette = ["#b4ff39", "#39e1ff", "#c06bff", "#ff6b9a", "#ffd939"];
     const bursts = Array.from({ length: 18 }).map((_, i) => ({
@@ -137,6 +190,36 @@ function Kudos() {
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <Label>To</Label>
+                {recent.length > 0 && (
+                  <div className="flex gap-1.5 overflow-x-auto scrollbar-thin -mb-0.5">
+                    {recent
+                      .map((id) => employeeById(id))
+                      .filter((e): e is NonNullable<typeof e> => !!e && e.id !== ME)
+                      .map((e) => (
+                        <button
+                          key={e.id}
+                          type="button"
+                          onClick={() => setToId(e.id)}
+                          className={cn(
+                            "shrink-0 inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border press-scale transition-colors",
+                            toId === e.id
+                              ? "border-primary bg-primary/5 text-primary font-medium"
+                              : "hover:bg-muted",
+                          )}
+                          title={`Recent: ${e.name}`}
+                        >
+                          <span
+                            className="h-4 w-4 rounded-full grid place-items-center text-[8px] font-medium text-white shrink-0"
+                            style={{ backgroundColor: e.avatarColor }}
+                          >
+                            {e.initials}
+                          </span>
+                          <span className="truncate max-w-[80px]">{e.name.split(" ")[0]}</span>
+                          {isBirthday(e) && <span>🎂</span>}
+                        </button>
+                      ))}
+                  </div>
+                )}
                 <Select value={toId} onValueChange={setToId}>
                   <SelectTrigger className="h-10"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -217,11 +300,30 @@ function Kudos() {
               </div>
 
               <div className="space-y-1.5">
-                <Label>Message</Label>
+                <div className="flex items-center justify-between">
+                  <Label>Message</Label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      voiceBus.requestSource("kudos");
+                      voiceBus.emit({ kind: "toggle" });
+                    }}
+                    className={cn(
+                      "inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border press-scale transition-colors",
+                      voiceListening
+                        ? "bg-destructive/10 border-destructive/40 text-destructive"
+                        : "hover:border-primary/40 hover:text-primary",
+                    )}
+                    title="Dictate (⌘⇧.)"
+                  >
+                    <Mic className="h-3 w-3" />
+                    {voiceListening ? "Listening…" : "Dictate"}
+                  </button>
+                </div>
                 <Textarea
                   value={message}
                   onChange={e => setMessage(e.target.value)}
-                  placeholder={`Tell ${employeeById(toId)?.name.split(" ")[0] ?? "them"} why you're grateful…`}
+                  placeholder={`Tell ${employeeById(toId)?.name.split(" ")[0] ?? "them"} why you're grateful — or dictate "kudos to Marcus craft tokens work".`}
                   rows={3}
                   maxLength={200}
                 />

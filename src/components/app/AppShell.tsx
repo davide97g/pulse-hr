@@ -170,7 +170,7 @@ function AppShellInner() {
 
   useEffect(() => {
     return voiceBus.on((ev) => {
-      if (ev.kind === "draftPrompt") setCopilotOpen(true);
+      if (ev.kind === "draftPrompt" && ev.source === "copilot") setCopilotOpen(true);
     });
   }, []);
 

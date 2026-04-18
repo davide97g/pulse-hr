@@ -152,8 +152,14 @@ export function VoiceDock() {
         target instanceof HTMLTextAreaElement ||
         (target?.isContentEditable ?? false);
 
+      const requestedSource = voiceBus.consumeSource();
+      if (requestedSource !== "default") {
+        voiceBus.emit({ kind: "draftPrompt", text: transcript, source: requestedSource });
+        setStatus("idle");
+        return;
+      }
       if (inCopilot || !isEditable || !target) {
-        voiceBus.emit({ kind: "draftPrompt", text: transcript });
+        voiceBus.emit({ kind: "draftPrompt", text: transcript, source: "copilot" });
         setStatus("idle");
         return;
       }

@@ -127,7 +127,7 @@ export function CopilotOverlay({
 
   useEffect(() => {
     return voiceBus.on((ev) => {
-      if (ev.kind === "draftPrompt" && ev.text) {
+      if (ev.kind === "draftPrompt" && ev.text && ev.source === "copilot") {
         setInput((prev) => (prev ? `${prev.trimEnd()} ${ev.text}` : ev.text));
         setVoiceDraft(true);
         setTimeout(() => {
