@@ -73,7 +73,7 @@ function Announcements() {
   const sorted = [...posts].sort((a, b) => Number(b.pinned) - Number(a.pinned));
 
   return (
-    <div className="p-6 max-w-[900px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[900px] mx-auto fade-in">
       <PageHeader
         title="Announcements"
         description="Company-wide updates from leadership and HR"

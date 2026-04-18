@@ -174,7 +174,7 @@ function Time() {
   const activeC = commessaById(activeCommessa);
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Time & attendance"
         description="Track presence, log hours against commesse, and submit your timesheet."
@@ -373,7 +373,7 @@ function Time() {
             </Select>
           </Card>
 
-          <Card className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             {loading ? (
               <SkeletonRows rows={5} />
             ) : filteredEntries.length === 0 ? (
@@ -532,7 +532,7 @@ function Time() {
         </TabsContent>
 
         <TabsContent value="team" className="mt-4">
-          <Card className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             <div className="px-5 py-4 border-b">
               <div className="font-semibold text-sm">Live attendance</div>
               <div className="text-xs text-muted-foreground">Real-time presence across the company</div>

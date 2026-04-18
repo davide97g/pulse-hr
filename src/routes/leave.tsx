@@ -53,7 +53,7 @@ function Leave() {
   const filtered = (status: string) => list.filter(l => getStatus(l) === status);
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Leave"
         description="Manage leave requests, balances and the team calendar"
@@ -84,7 +84,7 @@ function Leave() {
 
         {(["pending","approved","rejected"] as const).map(tab => (
           <TabsContent key={tab} value={tab} className="mt-4">
-            <Card className="p-0 overflow-hidden">
+            <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
               {loading ? (
                 <SkeletonRows rows={4} />
               ) : filtered(tab).length === 0 ? (

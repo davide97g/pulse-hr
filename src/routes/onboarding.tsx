@@ -105,7 +105,7 @@ function Onboarding() {
   };
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1200px] mx-auto fade-in">
       <PageHeader
         title="Onboarding & offboarding"
         description="Active people workflows — track every step for new hires and leavers"
@@ -232,7 +232,7 @@ function WorkflowsView({
         })}
       </div>
       {active ? (
-        <Card className="p-0 overflow-hidden">
+        <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
           <div className="p-5 border-b flex items-center gap-4">
             <Avatar initials={active.initials} color={active.color} size={48} />
             <div className="flex-1">

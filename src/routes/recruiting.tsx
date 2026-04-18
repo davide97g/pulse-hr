@@ -105,7 +105,7 @@ function Recruiting() {
   const openRoles = jobs.filter(j => j.status === "open").length;
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Recruiting"
         description={`${openRoles} open role${openRoles === 1 ? "" : "s"} · ${candidates.length} candidates in pipeline`}
@@ -129,7 +129,7 @@ function Recruiting() {
 
         <TabsContent value="pipeline" className="mt-4">
           {loading ? (
-            <div className="grid grid-cols-5 gap-3">
+            <div className="md:overflow-x-visible overflow-x-auto scrollbar-thin -mx-6 px-6 md:-mx-0 md:px-0"><div className="grid grid-cols-5 gap-3 md:min-w-0 min-w-[780px]">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="bg-muted/40 rounded-lg p-2.5 min-h-[400px] space-y-2">
                   <div className="h-3 w-[50%] shimmer rounded" />
@@ -141,7 +141,7 @@ function Recruiting() {
                   ))}
                 </div>
               ))}
-            </div>
+            </div></div>
           ) : candidates.length === 0 ? (
             <EmptyState
               icon={<Users className="h-6 w-6" />}
@@ -150,7 +150,7 @@ function Recruiting() {
               action={<Button size="sm" onClick={() => setSelectedJob("new")}><Briefcase className="h-4 w-4 mr-1.5" />Create job</Button>}
             />
           ) : (
-            <div className="grid grid-cols-5 gap-3">
+            <div className="md:overflow-x-visible overflow-x-auto scrollbar-thin -mx-6 px-6 md:-mx-0 md:px-0"><div className="grid grid-cols-5 gap-3 md:min-w-0 min-w-[780px]">
               {stages.map(stage => {
                 const items = candidates.filter(c => c.stage === stage);
                 return (
@@ -198,7 +198,7 @@ function Recruiting() {
                   </div>
                 );
               })}
-            </div>
+            </div></div>
           )}
         </TabsContent>
 

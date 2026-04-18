@@ -1,5 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Menu } from "lucide-react";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
 import { CommandPalette } from "./CommandPalette";
 import { CopilotLauncher, CopilotOverlay } from "./Copilot";
@@ -97,6 +99,9 @@ function AppShellInner() {
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [copilotOpen, setCopilotOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  useEffect(() => { setMobileNavOpen(false); }, [location.pathname]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -116,10 +121,10 @@ function AppShellInner() {
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
-      {/* Sidebar */}
+      {/* Sidebar — desktop only */}
       <aside
         className={cn(
-          "flex flex-col border-r bg-sidebar transition-[width] duration-200 shrink-0",
+          "hidden lg:flex flex-col border-r bg-sidebar transition-[width] duration-200 shrink-0",
           collapsed ? "w-[60px]" : "w-[240px]"
         )}
       >
@@ -197,7 +202,11 @@ function AppShellInner() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-        <Topbar onOpenPalette={() => setPaletteOpen(true)} onOpenCopilot={() => setCopilotOpen(true)} />
+        <Topbar
+          onOpenPalette={() => setPaletteOpen(true)}
+          onOpenCopilot={() => setCopilotOpen(true)}
+          onOpenMobileNav={() => setMobileNavOpen(true)}
+        />
         <main className="flex-1 overflow-y-auto scrollbar-thin">
           <Outlet />
         </main>
@@ -205,36 +214,103 @@ function AppShellInner() {
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
       <CopilotOverlay open={copilotOpen} onOpenChange={setCopilotOpen} />
+
+      {/* Mobile nav drawer */}
+      <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+        <SheetContent side="left" className="p-0 w-[84%] max-w-[300px] bg-sidebar">
+          <div className="h-14 flex items-center gap-2 px-3 border-b">
+            <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center text-primary-foreground">
+              <Sparkles className="h-4 w-4" />
+            </div>
+            <span className="text-sm font-semibold">Acme Inc.</span>
+          </div>
+          <nav className="overflow-y-auto scrollbar-thin py-3 px-2 h-[calc(100%-3.5rem)]">
+            {groups.map((group) => (
+              <div key={group.label} className="mb-4">
+                <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground flex items-center gap-1.5">
+                  {group.label}
+                  {group.accent && <span className="inline-block h-1 w-1 rounded-full bg-primary pulse-dot" />}
+                </div>
+                <div className="space-y-0.5">
+                  {group.items.map((item) => {
+                    const active = item.to === "/" ? location.pathname === "/" : location.pathname.startsWith(item.to);
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        className={cn(
+                          "flex items-center gap-2.5 px-2 py-2 rounded-md text-sm transition-colors",
+                          active
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent/60"
+                        )}
+                      >
+                        <Icon className="h-4 w-4 shrink-0" />
+                        <span className="truncate flex-1">{item.label}</span>
+                        {item.isNew && <NewBadge />}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </nav>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
 
 
-function Topbar({ onOpenPalette, onOpenCopilot }: { onOpenPalette: () => void; onOpenCopilot: () => void }) {
+function Topbar({
+  onOpenPalette, onOpenCopilot, onOpenMobileNav,
+}: { onOpenPalette: () => void; onOpenCopilot: () => void; onOpenMobileNav: () => void }) {
   const unread = notifications.filter(n => n.unread).length;
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
   return (
-    <header className="h-14 border-b bg-background/80 backdrop-blur flex items-center px-4 gap-3 shrink-0">
+    <header className="h-14 border-b bg-background/80 backdrop-blur flex items-center px-3 md:px-4 gap-2 md:gap-3 shrink-0">
+      <button
+        onClick={onOpenMobileNav}
+        className="lg:hidden h-9 w-9 rounded-md hover:bg-muted flex items-center justify-center shrink-0"
+        aria-label="Open menu"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+
       <button
         onClick={onOpenPalette}
-        className="relative flex-1 max-w-xl text-left flex items-center h-9 px-3 rounded-md bg-muted/50 hover:bg-muted text-sm text-muted-foreground"
+        className="relative flex-1 max-w-xl text-left flex items-center h-9 px-3 rounded-md bg-muted/50 hover:bg-muted text-sm text-muted-foreground min-w-0"
       >
-        <Search className="h-4 w-4 mr-2" />
-        <span>Search employees, documents, requests…</span>
+        <Search className="h-4 w-4 mr-2 shrink-0" />
+        <span className="truncate">
+          <span className="hidden sm:inline">Search employees, documents, requests…</span>
+          <span className="sm:hidden">Search…</span>
+        </span>
         <kbd className="hidden md:inline-flex ml-auto h-5 px-1.5 items-center rounded border bg-background text-[10px] font-mono">
           ⌘K
         </kbd>
       </button>
 
-      <div className="flex-1" />
+      <div className="hidden md:block flex-1" />
 
-      <CopilotLauncher onClick={onOpenCopilot} />
+      <div className="hidden md:inline-flex">
+        <CopilotLauncher onClick={onOpenCopilot} />
+      </div>
+      <button
+        onClick={onOpenCopilot}
+        className="md:hidden h-9 w-9 rounded-md border bg-background/80 hover:bg-muted flex items-center justify-center iridescent-border"
+        aria-label="Ask Pulse"
+      >
+        <Sparkles className="h-4 w-4 text-primary" />
+      </button>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button size="sm" className="h-9 gap-1.5">
-            <Plus className="h-4 w-4" /> New
+          <Button size="sm" className="h-9 gap-1.5 px-2.5 md:px-3">
+            <Plus className="h-4 w-4" />
+            <span className="hidden md:inline">New</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">

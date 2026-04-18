@@ -59,7 +59,7 @@ function Forecast() {
   }, 0);
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title={<><span>Commessa Forecast</span><NewBadge /></>}
         description="Project-level burn projections with scenario modelling. See overruns before they happen."

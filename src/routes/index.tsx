@@ -22,7 +22,7 @@ function Dashboard() {
   const [decided, setDecided] = useState<Record<string, "approved" | "rejected">>({});
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Good morning, Alex"
         description="Here's what needs your attention today."

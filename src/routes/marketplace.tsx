@@ -42,7 +42,7 @@ function Marketplace() {
   );
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader title="Marketplace" description="Extend Pulse HR with apps, integrations and workflows" />
 
       <div className="flex items-center gap-2 flex-wrap mb-5">

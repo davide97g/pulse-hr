@@ -12,7 +12,7 @@ function Org() {
   const ceo = employees.find(e => e.role === "Head of Engineering")!;
   const directs = employees.filter(e => e.manager === ceo.name);
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader title="Org chart" description="How your company is structured" />
 
       <Card className="p-8 mb-6">

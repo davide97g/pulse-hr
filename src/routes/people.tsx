@@ -71,7 +71,7 @@ function People() {
   const clearFilters = () => { setQ(""); setDept(null); };
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="People"
         description={`${list.length} employees across ${departments.length} departments`}
@@ -130,7 +130,7 @@ function People() {
         </TabsList>
 
         <TabsContent value="list" className="mt-4">
-          <Card className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             {loading ? (
               <SkeletonRows rows={8} />
             ) : filtered.length === 0 ? (

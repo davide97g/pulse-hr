@@ -28,10 +28,10 @@ export function SidePanel({
       />
       <aside
         className={cn(
-          "fixed top-0 right-0 h-full bg-card border-l z-50 flex flex-col transition-transform duration-250 ease-out",
+          "fixed top-0 right-0 h-full max-w-[100vw] bg-card border-l z-50 flex flex-col transition-transform duration-250 ease-out",
           open ? "translate-x-0" : "translate-x-full"
         )}
-        style={{ width, boxShadow: "var(--shadow-panel)" }}
+        style={{ width: `min(${width}px, 100vw)`, boxShadow: "var(--shadow-panel)" }}
       >
         {open && (
           <>

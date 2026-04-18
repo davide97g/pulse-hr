@@ -91,7 +91,7 @@ function Kudos() {
   };
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title={<><span>Kudos</span><NewBadge /></>}
         description="Peer recognition that actually lands. Send coins, say why, celebrate out loud."
@@ -273,7 +273,7 @@ function Kudos() {
       </div>
 
       {/* Feed */}
-      <Card className="p-0 overflow-hidden">
+      <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
         <div className="px-5 py-4 border-b flex items-center justify-between">
           <div className="font-semibold text-sm">Kudos feed</div>
           <div className="text-xs text-muted-foreground">Visible to everyone in Acme Inc.</div>

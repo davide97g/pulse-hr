@@ -57,7 +57,7 @@ function Payroll() {
   };
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Payroll"
         description="Run payroll, manage salaries and tax filings (incl. Italy F24)"
@@ -126,7 +126,7 @@ function Payroll() {
         </TabsList>
 
         <TabsContent value="runs" className="mt-4">
-          <Card className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             <div className="px-5 py-4 border-b font-semibold text-sm flex items-center justify-between">
               <span>Recent payroll runs</span>
               <span className="text-xs text-muted-foreground">{runs.length} runs</span>
@@ -217,7 +217,7 @@ function Payroll() {
         </TabsContent>
 
         <TabsContent value="tax" className="mt-4">
-          <Card className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             <div className="divide-y stagger-in">
               {[
                 { id: "tx1", l: "F24 (Italy)",   due: "2025-04-30", s: "pending"  },

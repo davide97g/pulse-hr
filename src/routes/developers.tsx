@@ -47,7 +47,7 @@ function Developers() {
   useEffect(() => { const t = setTimeout(() => setLoading(false), 420); return () => clearTimeout(t); }, []);
 
   return (
-    <div className="p-6 max-w-[1100px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1100px] mx-auto fade-in">
       <PageHeader
         title="Developers"
         description="API keys, webhooks and custom workflows"
@@ -63,7 +63,7 @@ function Developers() {
         </TabsList>
 
         <TabsContent value="keys" className="mt-4">
-          <Card className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             <div className="px-5 py-4 border-b flex items-center justify-between">
               <div className="font-semibold text-sm">Active keys</div>
               <Button size="sm" className="press-scale" onClick={() => setNewKeyOpen(true)}>
@@ -116,7 +116,7 @@ function Developers() {
         </TabsContent>
 
         <TabsContent value="webhooks" className="mt-4">
-          <Card className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             <div className="px-5 py-4 border-b flex items-center justify-between">
               <div className="font-semibold text-sm">Webhook endpoints</div>
               <Button size="sm" className="press-scale" onClick={() => setNewHookOpen(true)}>

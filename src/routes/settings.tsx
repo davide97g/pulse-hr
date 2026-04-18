@@ -64,7 +64,7 @@ function Settings() {
   };
 
   return (
-    <div className="p-6 max-w-[1100px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1100px] mx-auto fade-in">
       <PageHeader title="Settings" description="Company configuration, roles and integrations" />
 
       <Tabs defaultValue="company" orientation="horizontal">
@@ -96,7 +96,7 @@ function Settings() {
         </TabsContent>
 
         <TabsContent value="roles" className="mt-4">
-          <Card className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             <div className="px-5 py-4 border-b flex items-center justify-between">
               <div className="font-semibold text-sm">Roles & permissions</div>
               <Button size="sm" className="press-scale" onClick={() => setEditRole("new")}><Plus className="h-4 w-4 mr-1.5" />New role</Button>
@@ -145,7 +145,7 @@ function Settings() {
         </TabsContent>
 
         <TabsContent value="audit" className="mt-4">
-          <Card className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             <div className="px-5 py-4 border-b flex items-center justify-between gap-3">
               <div className="font-semibold text-sm">Activity log</div>
               <div className="flex items-center gap-2">

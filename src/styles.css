@@ -124,6 +124,10 @@
   .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
 
+  /* Wrap wide content (tables, kanbans) for horizontal scroll on small screens */
+  .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .scroll-x > table { min-width: 640px; }
+
   .panel-enter {
     animation: panelSlide 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }

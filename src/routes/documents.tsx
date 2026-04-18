@@ -61,7 +61,7 @@ function Documents() {
   };
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Documents"
         description="Contracts, policies, templates and e-signatures"
@@ -99,7 +99,7 @@ function Documents() {
         ))}
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
         <div className="p-3 border-b flex items-center gap-2">
           <div className="relative max-w-sm flex-1">
             <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />

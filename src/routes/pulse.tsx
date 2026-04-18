@@ -68,7 +68,7 @@ function Pulse() {
   const notes = entries.filter(e => e.note).slice(-8).reverse();
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1200px] mx-auto fade-in">
       <PageHeader
         title={<><span>Team Pulse</span><NewBadge /></>}
         description="Anonymous daily vibe check. Detect burnout and celebrate good weeks — without surveillance."

@@ -53,7 +53,7 @@ function Expenses() {
   };
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Expenses"
         description="Submit, approve and reimburse expenses"
@@ -75,7 +75,7 @@ function Expenses() {
         ))}
       </div>
 
-      <Card className="p-0 overflow-hidden">
+      <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
         <div className="px-5 py-4 border-b flex items-center justify-between">
           <div className="font-semibold text-sm">All expenses</div>
           <Button size="sm" variant="outline" onClick={() => toast.success("Receipt uploader opened", { description: "Drag PDFs or JPGs to upload" })}><Upload className="h-3.5 w-3.5 mr-1.5" />Upload receipts</Button>

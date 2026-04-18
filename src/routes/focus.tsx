@@ -116,7 +116,7 @@ function FocusPage() {
   const activeCommessa = commessaById(commessaId);
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto fade-in">
+    <div className="p-4 md:p-6 max-w-[1200px] mx-auto fade-in">
       <PageHeader
         title={<><span>Focus Mode</span><NewBadge /></>}
         description="Block the world out, ship what matters, log it to a commessa. Auto-decline meetings and mute Slack while you're in flow."
