@@ -152,9 +152,9 @@ function EmployeePanel({ employee, onClose }: { employee: Employee | null; onClo
             </div>
           </div>
           <div className="flex gap-2 mb-5">
-            <Button size="sm" variant="outline" className="flex-1"><Mail className="h-3.5 w-3.5 mr-1.5" />Email</Button>
-            <Button size="sm" variant="outline" className="flex-1"><Calendar className="h-3.5 w-3.5 mr-1.5" />Schedule</Button>
-            <Button size="sm" variant="outline" className="flex-1">Edit</Button>
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => toast.success(`Email drafted to ${employee.name}`)}><Mail className="h-3.5 w-3.5 mr-1.5" />Email</Button>
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => toast.success("Calendar opened", { description: `Schedule a meeting with ${employee.name}` })}><Calendar className="h-3.5 w-3.5 mr-1.5" />Schedule</Button>
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => toast("Edit mode", { description: "Tap any field to edit inline" })}>Edit</Button>
           </div>
 
           <Tabs defaultValue="profile">
@@ -180,11 +180,11 @@ function EmployeePanel({ employee, onClose }: { employee: Employee | null; onClo
             <TabsContent value="docs" className="mt-4">
               <div className="space-y-2">
                 {["Employment contract", "NDA", "Tax form W-9", "Equipment policy"].map(d => (
-                  <div key={d} className="flex items-center gap-3 p-2.5 rounded-md border hover:bg-muted/40 cursor-pointer">
+                  <button key={d} onClick={() => toast.success(`Opening ${d}`, { description: "Document preview" })} className="w-full flex items-center gap-3 p-2.5 rounded-md border hover:bg-muted/40 text-left">
                     <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center"><FileText className="h-4 w-4 text-muted-foreground" /></div>
                     <div className="flex-1 text-sm">{d}</div>
                     <span className="text-xs text-muted-foreground">PDF</span>
-                  </div>
+                  </button>
                 ))}
               </div>
             </TabsContent>
