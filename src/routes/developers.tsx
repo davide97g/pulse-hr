@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Copy, Plus, Webhook, Key, Code2 } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader, StatusBadge } from "@/components/app/AppShell";
