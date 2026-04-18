@@ -176,29 +176,34 @@ function AppShellInner() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-        <Topbar />
+        <Topbar onOpenPalette={() => setPaletteOpen(true)} />
         <main className="flex-1 overflow-y-auto scrollbar-thin">
           <Outlet />
         </main>
       </div>
+
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </div>
   );
 }
 
-function Topbar() {
+
+function Topbar({ onOpenPalette }: { onOpenPalette: () => void }) {
   const unread = notifications.filter(n => n.unread).length;
+  const navigate = useNavigate();
+  const { open: openAction } = useQuickAction();
   return (
     <header className="h-14 border-b bg-background/80 backdrop-blur flex items-center px-4 gap-3 shrink-0">
-      <div className="relative flex-1 max-w-xl">
-        <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Search employees, documents, requests…"
-          className="pl-9 h-9 bg-muted/50 border-transparent focus-visible:bg-background"
-        />
-        <kbd className="hidden md:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 px-1.5 items-center rounded border bg-muted text-[10px] font-mono text-muted-foreground">
+      <button
+        onClick={onOpenPalette}
+        className="relative flex-1 max-w-xl text-left flex items-center h-9 px-3 rounded-md bg-muted/50 hover:bg-muted text-sm text-muted-foreground"
+      >
+        <Search className="h-4 w-4 mr-2" />
+        <span>Search employees, documents, requests…</span>
+        <kbd className="hidden md:inline-flex ml-auto h-5 px-1.5 items-center rounded border bg-background text-[10px] font-mono">
           ⌘K
         </kbd>
-      </div>
+      </button>
 
       <div className="flex-1" />
 
@@ -210,14 +215,15 @@ function Topbar() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>Quick actions</DropdownMenuLabel>
-          <DropdownMenuItem><Users className="h-4 w-4 mr-2" />Add employee</DropdownMenuItem>
-          <DropdownMenuItem><Calendar className="h-4 w-4 mr-2" />Request leave</DropdownMenuItem>
-          <DropdownMenuItem><Receipt className="h-4 w-4 mr-2" />Submit expense</DropdownMenuItem>
-          <DropdownMenuItem><Briefcase className="h-4 w-4 mr-2" />Post a job</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("add-employee")}><Users className="h-4 w-4 mr-2" />Add employee</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("request-leave")}><Calendar className="h-4 w-4 mr-2" />Request leave</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("submit-expense")}><Receipt className="h-4 w-4 mr-2" />Submit expense</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("post-job")}><Briefcase className="h-4 w-4 mr-2" />Post a job</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem><Zap className="h-4 w-4 mr-2" />Run automation</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => toast.success("Automation triggered", { description: "Running 'Sync new hires to Slack'" })}><Zap className="h-4 w-4 mr-2" />Run automation</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
 
       <Popover>
         <PopoverTrigger asChild>
