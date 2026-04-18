@@ -414,4 +414,37 @@ html[data-theme="finance"] ::selection {
     0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
     40%           { transform: translateY(-4px); opacity: 1; }
   }
+
+  .voice-pill {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: color-mix(in oklch, var(--card) 78%, transparent);
+    border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+    box-shadow:
+      0 12px 40px -10px rgb(0 0 0 / 0.35),
+      0 0 0 1px rgb(255 255 255 / 0.02);
+    animation: voicePillIn 220ms cubic-bezier(0.22, 1.2, 0.36, 1) both;
+  }
+  @keyframes voicePillIn {
+    0%   { transform: translateY(8px) scale(0.96); opacity: 0; }
+    100% { transform: translateY(0)    scale(1);    opacity: 1; }
+  }
+  .voice-pill-listening {
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--primary) 55%, transparent),
+      0 0 40px -4px color-mix(in oklch, var(--primary) 45%, transparent),
+      0 12px 40px -10px rgb(0 0 0 / 0.35);
+  }
+  .voice-pill-error {
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--destructive) 60%, transparent),
+      0 0 30px -4px color-mix(in oklch, var(--destructive) 50%, transparent);
+  }
+  .voice-wave-bar {
+    display: inline-block;
+    width: 2px;
+    background: var(--primary);
+    border-radius: 2px;
+    transition: height 70ms linear;
+  }
 }

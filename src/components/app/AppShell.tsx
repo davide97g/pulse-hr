@@ -9,26 +9,64 @@ import { NewBadge } from "./NewBadge";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { ActiveCommessaPin } from "./ActiveCommessaPin";
 import { ShortcutSheet } from "./ShortcutSheet";
+import { VoiceDock } from "./VoiceDock";
+import { voiceBus } from "@/lib/voice-bus";
 import { toast } from "sonner";
 import {
-  LayoutDashboard, Users, Briefcase, Wallet, BarChart3, Settings,
-  Search, Bell, Plus, ChevronDown, Building2, Sparkles, LifeBuoy,
-  Clock, Calendar, FileText, Receipt, CreditCard, Network, GraduationCap,
-  Megaphone, Puzzle, Code2, ShieldCheck, Languages, BookOpen, Zap,
-  Heart, TrendingUp, Gift, Focus, Trophy,
+  LayoutDashboard,
+  Users,
+  Briefcase,
+  Wallet,
+  BarChart3,
+  Settings,
+  Search,
+  Bell,
+  Plus,
+  ChevronDown,
+  Building2,
+  Sparkles,
+  LifeBuoy,
+  Clock,
+  Calendar,
+  FileText,
+  Receipt,
+  CreditCard,
+  Network,
+  GraduationCap,
+  Megaphone,
+  Puzzle,
+  Code2,
+  ShieldCheck,
+  Languages,
+  BookOpen,
+  Zap,
+  Heart,
+  TrendingUp,
+  Gift,
+  Focus,
+  Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { notifications } from "@/lib/mock-data";
 
-type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }>; isNew?: boolean };
+type NavItem = {
+  to: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  isNew?: boolean;
+};
 type NavGroup = { label: string; items: NavItem[]; accent?: boolean };
 
 const groups: NavGroup[] = [
@@ -65,25 +103,21 @@ const groups: NavGroup[] = [
   },
   {
     label: "Insights",
-    items: [
-      { to: "/reports", label: "Reports", icon: BarChart3 },
-    ],
+    items: [{ to: "/reports", label: "Reports", icon: BarChart3 }],
   },
   {
     label: "Growth",
     accent: true,
-    items: [
-      { to: "/growth", label: "Growth", icon: Trophy, isNew: true },
-    ],
+    items: [{ to: "/growth", label: "Growth", icon: Trophy, isNew: true }],
   },
   {
     label: "Labs",
     accent: true,
     items: [
-      { to: "/pulse",    label: "Team Pulse",       icon: Heart,      isNew: true },
+      { to: "/pulse", label: "Team Pulse", icon: Heart, isNew: true },
       { to: "/forecast", label: "Commessa Forecast", icon: TrendingUp, isNew: true },
-      { to: "/kudos",    label: "Kudos",            icon: Gift,       isNew: true },
-      { to: "/focus",    label: "Focus Mode",       icon: Focus,      isNew: true },
+      { to: "/kudos", label: "Kudos", icon: Gift, isNew: true },
+      { to: "/focus", label: "Focus Mode", icon: Focus, isNew: true },
     ],
   },
   {
@@ -111,23 +145,34 @@ function AppShellInner() {
   const [copilotOpen, setCopilotOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  useEffect(() => { setMobileNavOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === "k") {
         e.preventDefault();
         setPaletteOpen(true);
       }
-      if ((e.metaKey || e.ctrlKey) && e.key === "j") {
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === "j") {
         e.preventDefault();
         setCopilotOpen(true);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === "." || e.code === "Period")) {
+        e.preventDefault();
+        voiceBus.emit({ kind: "toggle" });
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  useEffect(() => {
+    return voiceBus.on((ev) => {
+      if (ev.kind === "draftPrompt") setCopilotOpen(true);
+    });
+  }, []);
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
@@ -135,7 +180,7 @@ function AppShellInner() {
       <aside
         className={cn(
           "hidden lg:flex flex-col border-r bg-sidebar transition-[width] duration-200 shrink-0",
-          collapsed ? "w-[60px]" : "w-[240px]"
+          collapsed ? "w-[60px]" : "w-[240px]",
         )}
       >
         <div className="h-14 flex items-center gap-2 px-3 border-b">
@@ -152,10 +197,19 @@ function AppShellInner() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56">
                 <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
-                <DropdownMenuItem><Building2 className="h-4 w-4 mr-2" />Acme Inc.</DropdownMenuItem>
-                <DropdownMenuItem><Building2 className="h-4 w-4 mr-2" />Acme EU</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Building2 className="h-4 w-4 mr-2" />
+                  Acme Inc.
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Building2 className="h-4 w-4 mr-2" />
+                  Acme EU
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem><Plus className="h-4 w-4 mr-2" />New workspace</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Plus className="h-4 w-4 mr-2" />
+                  New workspace
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
@@ -167,12 +221,17 @@ function AppShellInner() {
               {!collapsed && (
                 <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground flex items-center gap-1.5">
                   {group.label}
-                  {group.accent && <span className="inline-block h-1 w-1 rounded-full bg-primary pulse-dot" />}
+                  {group.accent && (
+                    <span className="inline-block h-1 w-1 rounded-full bg-primary pulse-dot" />
+                  )}
                 </div>
               )}
               <div className="space-y-0.5">
                 {group.items.map((item) => {
-                  const active = item.to === "/" ? location.pathname === "/" : location.pathname.startsWith(item.to);
+                  const active =
+                    item.to === "/"
+                      ? location.pathname === "/"
+                      : location.pathname.startsWith(item.to);
                   const Icon = item.icon;
                   return (
                     <Link
@@ -183,14 +242,16 @@ function AppShellInner() {
                         active
                           ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                           : "text-sidebar-foreground hover:bg-sidebar-accent/60",
-                        collapsed && "justify-center"
+                        collapsed && "justify-center",
                       )}
                       title={collapsed ? item.label : undefined}
                     >
                       <Icon className="h-4 w-4 shrink-0" />
                       {!collapsed && <span className="truncate flex-1">{item.label}</span>}
                       {!collapsed && item.isNew && <NewBadge />}
-                      {collapsed && item.isNew && <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />}
+                      {collapsed && item.isNew && (
+                        <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
+                      )}
                     </Link>
                   );
                 })}
@@ -225,6 +286,7 @@ function AppShellInner() {
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
       <CopilotOverlay open={copilotOpen} onOpenChange={setCopilotOpen} />
       <ShortcutSheet />
+      <VoiceDock />
 
       {/* Mobile nav drawer */}
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
@@ -243,11 +305,16 @@ function AppShellInner() {
               <div key={group.label} className="mb-4">
                 <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground flex items-center gap-1.5">
                   {group.label}
-                  {group.accent && <span className="inline-block h-1 w-1 rounded-full bg-primary pulse-dot" />}
+                  {group.accent && (
+                    <span className="inline-block h-1 w-1 rounded-full bg-primary pulse-dot" />
+                  )}
                 </div>
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
-                    const active = item.to === "/" ? location.pathname === "/" : location.pathname.startsWith(item.to);
+                    const active =
+                      item.to === "/"
+                        ? location.pathname === "/"
+                        : location.pathname.startsWith(item.to);
                     const Icon = item.icon;
                     return (
                       <Link
@@ -257,7 +324,7 @@ function AppShellInner() {
                           "flex items-center gap-2.5 px-2 py-2 rounded-md text-sm transition-colors",
                           active
                             ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                            : "text-sidebar-foreground hover:bg-sidebar-accent/60"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent/60",
                         )}
                       >
                         <Icon className="h-4 w-4 shrink-0" />
@@ -276,11 +343,16 @@ function AppShellInner() {
   );
 }
 
-
 function Topbar({
-  onOpenPalette, onOpenCopilot, onOpenMobileNav,
-}: { onOpenPalette: () => void; onOpenCopilot: () => void; onOpenMobileNav: () => void }) {
-  const unread = notifications.filter(n => n.unread).length;
+  onOpenPalette,
+  onOpenCopilot,
+  onOpenMobileNav,
+}: {
+  onOpenPalette: () => void;
+  onOpenCopilot: () => void;
+  onOpenMobileNav: () => void;
+}) {
+  const unread = notifications.filter((n) => n.unread).length;
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
   return (
@@ -332,15 +404,35 @@ function Topbar({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>Quick actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => openAction("add-employee")}><Users className="h-4 w-4 mr-2" />Add employee</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openAction("request-leave")}><Calendar className="h-4 w-4 mr-2" />Request leave</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openAction("submit-expense")}><Receipt className="h-4 w-4 mr-2" />Submit expense</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openAction("post-job")}><Briefcase className="h-4 w-4 mr-2" />Post a job</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("add-employee")}>
+            <Users className="h-4 w-4 mr-2" />
+            Add employee
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("request-leave")}>
+            <Calendar className="h-4 w-4 mr-2" />
+            Request leave
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("submit-expense")}>
+            <Receipt className="h-4 w-4 mr-2" />
+            Submit expense
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("post-job")}>
+            <Briefcase className="h-4 w-4 mr-2" />
+            Post a job
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => toast.success("Automation triggered", { description: "Running 'Sync new hires to Slack'" })}><Zap className="h-4 w-4 mr-2" />Run automation</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() =>
+              toast.success("Automation triggered", {
+                description: "Running 'Sync new hires to Slack'",
+              })
+            }
+          >
+            <Zap className="h-4 w-4 mr-2" />
+            Run automation
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
 
       <div className="hidden md:block">
         <ThemeSwitcher compact />
@@ -358,20 +450,35 @@ function Topbar({
         <PopoverContent align="end" className="w-96 p-0">
           <div className="px-4 py-3 border-b flex items-center justify-between">
             <div className="font-semibold text-sm">Notifications</div>
-            <button onClick={() => toast.success("All notifications marked as read")} className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>
+            <button
+              onClick={() => toast.success("All notifications marked as read")}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              Mark all read
+            </button>
           </div>
           <div className="max-h-96 overflow-y-auto">
             {notifications.map((n) => {
-              const target = n.type === "approval" ? "/leave" : n.type === "alert" ? "/expenses" : "/payroll";
+              const target =
+                n.type === "approval" ? "/leave" : n.type === "alert" ? "/expenses" : "/payroll";
               return (
-                <button key={n.id} onClick={() => navigate({ to: target })} className={cn("w-full text-left px-4 py-3 border-b last:border-0 hover:bg-muted/50", n.unread && "bg-info/5")}>
+                <button
+                  key={n.id}
+                  onClick={() => navigate({ to: target })}
+                  className={cn(
+                    "w-full text-left px-4 py-3 border-b last:border-0 hover:bg-muted/50",
+                    n.unread && "bg-info/5",
+                  )}
+                >
                   <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "h-2 w-2 mt-1.5 rounded-full shrink-0",
-                      n.type === "approval" && "bg-info",
-                      n.type === "alert" && "bg-destructive",
-                      n.type === "info" && "bg-muted-foreground/40",
-                    )} />
+                    <div
+                      className={cn(
+                        "h-2 w-2 mt-1.5 rounded-full shrink-0",
+                        n.type === "approval" && "bg-info",
+                        n.type === "alert" && "bg-destructive",
+                        n.type === "info" && "bg-muted-foreground/40",
+                      )}
+                    />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium">{n.title}</div>
                       <div className="text-xs text-muted-foreground mt-0.5">{n.desc}</div>
@@ -382,7 +489,6 @@ function Topbar({
               );
             })}
           </div>
-
         </PopoverContent>
       </Popover>
 
@@ -406,8 +512,12 @@ function Topbar({
           <DropdownMenuItem>Profile</DropdownMenuItem>
           <DropdownMenuItem>Switch role</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild><Link to="/landing">Marketing site</Link></DropdownMenuItem>
-          <DropdownMenuItem asChild><Link to="/login">Sign out</Link></DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/landing">Marketing site</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/login">Sign out</Link>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
@@ -415,8 +525,14 @@ function Topbar({
 }
 
 export function PageHeader({
-  title, description, actions,
-}: { title: React.ReactNode; description?: React.ReactNode; actions?: React.ReactNode }) {
+  title,
+  description,
+  actions,
+}: {
+  title: React.ReactNode;
+  description?: React.ReactNode;
+  actions?: React.ReactNode;
+}) {
   return (
     <div className="flex items-start justify-between gap-4 mb-6">
       <div>
@@ -430,30 +546,42 @@ export function PageHeader({
 
 export function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
-    active:      { label: "Active",      cls: "bg-success/10 text-success border-success/20" },
-    on_leave:    { label: "On leave",    cls: "bg-warning/10 text-warning border-warning/30" },
-    remote:      { label: "Remote",      cls: "bg-info/10 text-info border-info/20" },
+    active: { label: "Active", cls: "bg-success/10 text-success border-success/20" },
+    on_leave: { label: "On leave", cls: "bg-warning/10 text-warning border-warning/30" },
+    remote: { label: "Remote", cls: "bg-info/10 text-info border-info/20" },
     offboarding: { label: "Offboarding", cls: "bg-muted text-muted-foreground border-border" },
-    pending:     { label: "Pending",     cls: "bg-warning/10 text-warning border-warning/30" },
-    approved:    { label: "Approved",    cls: "bg-success/10 text-success border-success/20" },
-    rejected:    { label: "Rejected",    cls: "bg-destructive/10 text-destructive border-destructive/20" },
-    reimbursed:  { label: "Reimbursed",  cls: "bg-success/10 text-success border-success/20" },
-    completed:   { label: "Completed",   cls: "bg-success/10 text-success border-success/20" },
-    processing:  { label: "Processing",  cls: "bg-info/10 text-info border-info/20" },
-    scheduled:   { label: "Scheduled",   cls: "bg-info/10 text-info border-info/20" },
-    draft:       { label: "Draft",       cls: "bg-muted text-muted-foreground border-border" },
+    pending: { label: "Pending", cls: "bg-warning/10 text-warning border-warning/30" },
+    approved: { label: "Approved", cls: "bg-success/10 text-success border-success/20" },
+    rejected: {
+      label: "Rejected",
+      cls: "bg-destructive/10 text-destructive border-destructive/20",
+    },
+    reimbursed: { label: "Reimbursed", cls: "bg-success/10 text-success border-success/20" },
+    completed: { label: "Completed", cls: "bg-success/10 text-success border-success/20" },
+    processing: { label: "Processing", cls: "bg-info/10 text-info border-info/20" },
+    scheduled: { label: "Scheduled", cls: "bg-info/10 text-info border-info/20" },
+    draft: { label: "Draft", cls: "bg-muted text-muted-foreground border-border" },
     // Day statuses (calendar)
-    filled:      { label: "Filled",      cls: "bg-success/10 text-success border-success/20" },
-    partial:     { label: "Partial",     cls: "bg-warning/10 text-warning border-warning/30" },
-    missing:     { label: "Missing",     cls: "bg-destructive/10 text-destructive border-destructive/20" },
-    sick:        { label: "Sick",        cls: "bg-cal-sick/15 text-cal-sick border-cal-sick/30" },
-    vacation:    { label: "Vacation",    cls: "bg-cal-vacation/15 text-cal-vacation border-cal-vacation/30" },
-    personal:    { label: "Personal",    cls: "bg-cal-personal/15 text-cal-personal border-cal-personal/30" },
-    parental:    { label: "Parental",    cls: "bg-cal-parental/15 text-cal-parental border-cal-parental/30" },
-    holiday:     { label: "Holiday",     cls: "bg-cal-holiday/15 text-cal-holiday border-cal-holiday/30" },
-    weekend:     { label: "Weekend",     cls: "bg-muted/50 text-muted-foreground border-border" },
-    future:      { label: "Upcoming",    cls: "bg-muted/30 text-muted-foreground border-border" },
-    day_off:     { label: "Day off",     cls: "bg-muted/50 text-muted-foreground border-border" },
+    filled: { label: "Filled", cls: "bg-success/10 text-success border-success/20" },
+    partial: { label: "Partial", cls: "bg-warning/10 text-warning border-warning/30" },
+    missing: { label: "Missing", cls: "bg-destructive/10 text-destructive border-destructive/20" },
+    sick: { label: "Sick", cls: "bg-cal-sick/15 text-cal-sick border-cal-sick/30" },
+    vacation: {
+      label: "Vacation",
+      cls: "bg-cal-vacation/15 text-cal-vacation border-cal-vacation/30",
+    },
+    personal: {
+      label: "Personal",
+      cls: "bg-cal-personal/15 text-cal-personal border-cal-personal/30",
+    },
+    parental: {
+      label: "Parental",
+      cls: "bg-cal-parental/15 text-cal-parental border-cal-parental/30",
+    },
+    holiday: { label: "Holiday", cls: "bg-cal-holiday/15 text-cal-holiday border-cal-holiday/30" },
+    weekend: { label: "Weekend", cls: "bg-muted/50 text-muted-foreground border-border" },
+    future: { label: "Upcoming", cls: "bg-muted/30 text-muted-foreground border-border" },
+    day_off: { label: "Day off", cls: "bg-muted/50 text-muted-foreground border-border" },
   };
   const m = map[status] ?? { label: status, cls: "bg-muted text-muted-foreground border-border" };
   return (
@@ -464,8 +592,14 @@ export function StatusBadge({ status }: { status: string }) {
 }
 
 export function Avatar({
-  initials, color, size = 32,
-}: { initials: string; color: string; size?: number }) {
+  initials,
+  color,
+  size = 32,
+}: {
+  initials: string;
+  color: string;
+  size?: number;
+}) {
   return (
     <div
       className="rounded-full flex items-center justify-center text-white font-medium shrink-0"

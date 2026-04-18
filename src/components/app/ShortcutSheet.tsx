@@ -2,20 +2,31 @@ import { useEffect, useState } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { Keyboard } from "lucide-react";
 import {
-  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 
-interface Shortcut { keys: string[]; label: string }
-interface Group { name: string; shortcuts: Shortcut[] }
+interface Shortcut {
+  keys: string[];
+  label: string;
+}
+interface Group {
+  name: string;
+  shortcuts: Shortcut[];
+}
 
 const GLOBAL: Group = {
   name: "Global",
   shortcuts: [
     { keys: ["⌘", "K"], label: "Command palette · natural language" },
     { keys: ["⌘", "J"], label: "Ask Pulse Copilot" },
+    { keys: ["⌘", "⇧", "."], label: "Voice dictate — insert or ask Pulse" },
     { keys: ["⌥", "C"], label: "Switch active commessa" },
-    { keys: ["?"],      label: "Show keyboard shortcuts" },
-    { keys: ["Esc"],    label: "Close overlay / deselect" },
+    { keys: ["?"], label: "Show keyboard shortcuts" },
+    { keys: ["Esc"], label: "Close overlay / deselect" },
   ],
 };
 
@@ -24,33 +35,31 @@ const GROUPS_BY_PATH: Record<string, Group[]> = {
     {
       name: "Time · calendar",
       shortcuts: [
-        { keys: ["Click"],         label: "Open day peek" },
+        { keys: ["Click"], label: "Open day peek" },
         { keys: ["Shift", "Click"], label: "Pick a range → bulk apply template" },
-        { keys: ["1-9"],            label: "Apply timesheet template N (in day peek)" },
-        { keys: ["Enter"],          label: "Add quick entry" },
+        { keys: ["1-9"], label: "Apply timesheet template N (in day peek)" },
+        { keys: ["Enter"], label: "Add quick entry" },
       ],
     },
   ],
   "/focus": [
     {
       name: "Focus mode",
-      shortcuts: [
-        { keys: ["Space"], label: "Start / pause session" },
-      ],
+      shortcuts: [{ keys: ["Space"], label: "Start / pause session" }],
     },
   ],
   "/kudos": [
     {
       name: "Kudos",
-      shortcuts: [
-        { keys: ["Tab"], label: "Jump between fields" },
-      ],
+      shortcuts: [{ keys: ["Tab"], label: "Jump between fields" }],
     },
   ],
 };
 
 function matchGroupsForPath(path: string): Group[] {
-  const match = Object.entries(GROUPS_BY_PATH).find(([p]) => path === p || path.startsWith(p + "/"));
+  const match = Object.entries(GROUPS_BY_PATH).find(
+    ([p]) => path === p || path.startsWith(p + "/"),
+  );
   return match ? match[1] : [];
 }
 
@@ -65,7 +74,7 @@ export function ShortcutSheet() {
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       if ((e.target as HTMLElement | null)?.isContentEditable) return;
       e.preventDefault();
-      setOpen(o => !o);
+      setOpen((o) => !o);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -89,7 +98,7 @@ export function ShortcutSheet() {
         </DialogHeader>
 
         <div className="space-y-5 max-h-[60vh] overflow-y-auto scrollbar-thin pr-1">
-          {groups.map(g => (
+          {groups.map((g) => (
             <div key={g.name}>
               <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-medium mb-2">
                 {g.name}
@@ -99,7 +108,9 @@ export function ShortcutSheet() {
                   <li key={i} className="flex items-center justify-between gap-3 py-1">
                     <span className="text-sm">{s.label}</span>
                     <span className="flex items-center gap-1">
-                      {s.keys.map((k, ki) => <Kbd key={ki}>{k}</Kbd>)}
+                      {s.keys.map((k, ki) => (
+                        <Kbd key={ki}>{k}</Kbd>
+                      ))}
                     </span>
                   </li>
                 ))}
