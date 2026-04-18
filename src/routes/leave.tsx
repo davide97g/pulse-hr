@@ -21,7 +21,7 @@ function Leave() {
     setDecisions(d => ({ ...d, [id]: status }));
   };
 
-  const getStatus = (l: LeaveRequest) => decisions[l.id] ?? l.status;
+  const getStatus = (l: LeaveRequest): "pending" | "approved" | "rejected" => decisions[l.id] ?? l.status;
   const filtered = (status: string) => leaveRequests.filter(l => getStatus(l) === status);
 
   return (
