@@ -58,6 +58,9 @@ function Time() {
   const [templates, setTemplates] = useState<TimesheetTemplate[]>(timesheetTemplatesSeed);
   const [editEntry, setEditEntry] = useState<TimesheetEntry | "new" | null>(null);
   const [toDelete, setToDelete] = useState<TimesheetEntry | null>(null);
+  const [inlineEdit, setInlineEdit] = useState<
+    { id: string; field: "hours" | "description"; draft: string } | null
+  >(null);
   const timeViews = useSavedViews<{ q: string; filterCommessa: string; filterStatus: string }>("time-timesheet", {
     defaults: { q: "", filterCommessa: "all", filterStatus: "all" },
     schema: { q: "string", filterCommessa: "string", filterStatus: "string" },
@@ -525,6 +528,26 @@ function Time() {
                   {filteredEntries.map(e => {
                     const c = commessaById(e.commessaId)!;
                     const selected = bulk.isSelected(e.id);
+                    const isEditingHours = inlineEdit?.id === e.id && inlineEdit.field === "hours";
+                    const isEditingDesc = inlineEdit?.id === e.id && inlineEdit.field === "description";
+                    const commitEdit = () => {
+                      if (!inlineEdit || inlineEdit.id !== e.id) return;
+                      if (inlineEdit.field === "hours") {
+                        const next = Number(inlineEdit.draft);
+                        if (Number.isFinite(next) && next >= 0.25 && next <= 24 && next !== e.hours) {
+                          setEntries(es => es.map(x => (x.id === e.id ? { ...x, hours: next } : x)));
+                          toast.success("Hours updated", { description: `${next.toFixed(1)}h on ${c.code}` });
+                        }
+                      } else if (inlineEdit.field === "description") {
+                        const next = inlineEdit.draft.trim();
+                        if (next && next !== e.description) {
+                          setEntries(es => es.map(x => (x.id === e.id ? { ...x, description: next } : x)));
+                          toast.success("Description updated");
+                        }
+                      }
+                      setInlineEdit(null);
+                    };
+                    const cancelEdit = () => setInlineEdit(null);
                     return (
                       <li
                         key={e.id}
@@ -541,7 +564,30 @@ function Time() {
                             <span className="text-[11px] font-mono tracking-wide px-1.5 py-0.5 rounded border bg-muted/60">
                               {c.code}
                             </span>
-                            <div className="text-sm font-medium truncate">{e.description}</div>
+                            {isEditingDesc ? (
+                              <input
+                                autoFocus
+                                type="text"
+                                value={inlineEdit.draft}
+                                onChange={(ev) => setInlineEdit({ ...inlineEdit, draft: ev.target.value })}
+                                onBlur={commitEdit}
+                                onKeyDown={(ev) => {
+                                  if (ev.key === "Enter") { ev.preventDefault(); commitEdit(); }
+                                  else if (ev.key === "Escape") { ev.preventDefault(); cancelEdit(); }
+                                }}
+                                className="flex-1 min-w-0 text-sm font-medium bg-background border rounded px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                              />
+                            ) : (
+                              <div
+                                className="text-sm font-medium truncate cursor-text rounded px-0.5 hover:bg-muted/60"
+                                title="Double-click to edit"
+                                onDoubleClick={() =>
+                                  setInlineEdit({ id: e.id, field: "description", draft: e.description })
+                                }
+                              >
+                                {e.description}
+                              </div>
+                            )}
                             {!e.billable && (
                               <span className="text-[10px] uppercase tracking-wider text-muted-foreground border rounded px-1 py-px">
                                 internal
@@ -553,7 +599,34 @@ function Time() {
                           </div>
                         </div>
                         <div className="text-right hidden sm:block">
-                          <div className="text-sm font-semibold tabular-nums">{e.hours.toFixed(1)}h</div>
+                          {isEditingHours ? (
+                            <input
+                              autoFocus
+                              type="number"
+                              step="0.25"
+                              min="0.25"
+                              max="24"
+                              value={inlineEdit.draft}
+                              onChange={(ev) => setInlineEdit({ ...inlineEdit, draft: ev.target.value })}
+                              onBlur={commitEdit}
+                              onKeyDown={(ev) => {
+                                if (ev.key === "Enter") { ev.preventDefault(); commitEdit(); }
+                                else if (ev.key === "Escape") { ev.preventDefault(); cancelEdit(); }
+                              }}
+                              className="w-16 text-right text-sm font-semibold tabular-nums bg-background border rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                            />
+                          ) : (
+                            <button
+                              type="button"
+                              onDoubleClick={() =>
+                                setInlineEdit({ id: e.id, field: "hours", draft: e.hours.toFixed(2) })
+                              }
+                              title="Double-click to edit hours"
+                              className="text-sm font-semibold tabular-nums rounded px-1 hover:bg-muted/60 cursor-text"
+                            >
+                              {e.hours.toFixed(1)}h
+                            </button>
+                          )}
                           <div className="mt-0.5"><StatusBadge status={e.status} /></div>
                         </div>
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
