@@ -1,5 +1,8 @@
-import { Link, Outlet, useLocation } from "@tanstack/react-router";
-import { useState } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { QuickActionProvider, useQuickAction } from "./QuickActions";
+import { CommandPalette } from "./CommandPalette";
+import { toast } from "sonner";
 import {
   LayoutDashboard, Users, Briefcase, Wallet, BarChart3, Settings,
   Search, Bell, Plus, ChevronDown, Building2, Sparkles, LifeBuoy,
