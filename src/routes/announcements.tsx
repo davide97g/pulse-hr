@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Pin, Plus, MessageSquare } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
@@ -16,7 +17,7 @@ function Announcements() {
       <PageHeader
         title="Announcements"
         description="Company-wide updates from leadership and HR"
-        actions={<Button size="sm"><Plus className="h-4 w-4 mr-1.5" />New post</Button>}
+        actions={<Button size="sm" onClick={() => toast.success("Announcement composer opened")}><Plus className="h-4 w-4 mr-1.5" />New post</Button>}
       />
 
       <div className="space-y-3">

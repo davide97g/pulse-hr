@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Download, Filter } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/app/AppShell";
@@ -17,9 +18,9 @@ function Reports() {
         description="Configurable dashboards across HR, time and money"
         actions={
           <>
-            <Button size="sm" variant="outline"><Filter className="h-4 w-4 mr-1.5" />Filter</Button>
-            <Button size="sm" variant="outline"><Download className="h-4 w-4 mr-1.5" />Export CSV</Button>
-            <Button size="sm"><Download className="h-4 w-4 mr-1.5" />PDF</Button>
+            <Button size="sm" variant="outline" onClick={() => toast("Filter panel opened")}><Filter className="h-4 w-4 mr-1.5" />Filter</Button>
+            <Button size="sm" variant="outline" onClick={() => toast.success("CSV export started")}><Download className="h-4 w-4 mr-1.5" />Export CSV</Button>
+            <Button size="sm" onClick={() => toast.success("PDF export started")}><Download className="h-4 w-4 mr-1.5" />PDF</Button>
           </>
         }
       />
