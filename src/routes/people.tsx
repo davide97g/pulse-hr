@@ -2,14 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   Search, Filter, Download, Plus, MoreHorizontal, Mail, Phone, MapPin,
-  Calendar, Briefcase, DollarSign, FileText, Building2,
+  Calendar, Briefcase, DollarSign, FileText, Building2, Trash2, Send,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
+import { useQuickAction } from "@/components/app/QuickActions";
 import { employees, type Employee, departments } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
