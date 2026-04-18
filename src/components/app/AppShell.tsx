@@ -95,6 +95,7 @@ const groups: NavGroup[] = [
       { to: "/leave", label: "Leave", icon: Calendar },
       { to: "/documents", label: "Documents", icon: FileText },
       { to: "/offices", label: "Offices", icon: Building2, isNew: true },
+      { to: "/reservations", label: "Reservations", icon: Calendar, isNew: true },
     ],
   },
   {

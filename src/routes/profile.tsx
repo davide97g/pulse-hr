@@ -199,6 +199,13 @@ function Profile() {
           accent="oklch(0.65 0.18 340)"
         />
         <EntryTile
+          to="/reservations"
+          icon={<DoorOpen className="h-5 w-5" />}
+          title="My reservations"
+          hint="Upcoming + past bookings"
+          accent="oklch(0.6 0.16 220)"
+        />
+        <EntryTile
           to="/moments"
           icon={<Sparkles className="h-5 w-5" />}
           title="This week's moments"

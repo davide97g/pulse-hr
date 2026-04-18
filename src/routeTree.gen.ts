@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TimeRouteImport } from './routes/time'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ReservationsRouteImport } from './routes/reservations'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RecruitingRouteImport } from './routes/recruiting'
 import { Route as PulseRouteImport } from './routes/pulse'
@@ -51,6 +52,11 @@ const SignupRoute = SignupRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReservationsRoute = ReservationsRouteImport.update({
+  id: '/reservations',
+  path: '/reservations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportsRoute = ReportsRouteImport.update({
@@ -203,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/pulse': typeof PulseRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
+  '/reservations': typeof ReservationsRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
@@ -233,6 +240,7 @@ export interface FileRoutesByTo {
   '/pulse': typeof PulseRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
+  '/reservations': typeof ReservationsRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
@@ -264,6 +272,7 @@ export interface FileRoutesById {
   '/pulse': typeof PulseRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
+  '/reservations': typeof ReservationsRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
@@ -296,6 +305,7 @@ export interface FileRouteTypes {
     | '/pulse'
     | '/recruiting'
     | '/reports'
+    | '/reservations'
     | '/settings'
     | '/signup'
     | '/time'
@@ -326,6 +336,7 @@ export interface FileRouteTypes {
     | '/pulse'
     | '/recruiting'
     | '/reports'
+    | '/reservations'
     | '/settings'
     | '/signup'
     | '/time'
@@ -356,6 +367,7 @@ export interface FileRouteTypes {
     | '/pulse'
     | '/recruiting'
     | '/reports'
+    | '/reservations'
     | '/settings'
     | '/signup'
     | '/time'
@@ -387,6 +399,7 @@ export interface RootRouteChildren {
   PulseRoute: typeof PulseRoute
   RecruitingRoute: typeof RecruitingRoute
   ReportsRoute: typeof ReportsRoute
+  ReservationsRoute: typeof ReservationsRoute
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   TimeRoute: typeof TimeRoute
@@ -413,6 +426,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reservations': {
+      id: '/reservations'
+      path: '/reservations'
+      fullPath: '/reservations'
+      preLoaderRoute: typeof ReservationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reports': {
@@ -640,6 +660,7 @@ const rootRouteChildren: RootRouteChildren = {
   PulseRoute: PulseRoute,
   RecruitingRoute: RecruitingRoute,
   ReportsRoute: ReportsRoute,
+  ReservationsRoute: ReservationsRoute,
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   TimeRoute: TimeRoute,

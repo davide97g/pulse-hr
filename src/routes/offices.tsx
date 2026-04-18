@@ -114,9 +114,17 @@ function OfficesOverview() {
         title={<><span>Offices</span><NewBadge /></>}
         description="Real-time overview of your workspace. Heatmap, closures, and one-click bookings."
         actions={
-          <Button size="sm" onClick={() => setBookingOpen(true)}>
-            <Plus className="h-4 w-4 mr-1.5" /> Book a space
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/reservations"
+              className="h-9 px-3 rounded-md border inline-flex items-center gap-1.5 text-sm hover:bg-muted press-scale"
+            >
+              <Clock className="h-4 w-4" /> My reservations
+            </Link>
+            <Button size="sm" onClick={() => setBookingOpen(true)}>
+              <Plus className="h-4 w-4 mr-1.5" /> Book a space
+            </Button>
+          </div>
         }
       />
 
