@@ -243,21 +243,24 @@ export function TimesheetCalendar({ entries, onAdd, onAddMany, onEdit, onDelete 
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-7 gap-1 stagger-in">
-              {dayInfos.map((info, i) => (
-                <div key={info.iso} data-day={info.iso}>
-                  <DayCell
-                    info={info}
-                    today={today}
-                    selected={selectedDay === info.iso}
-                    inRange={selectedRange.some(d => isSameDay(d, info.date))}
-                    tabIndex={i === 0 ? 0 : -1}
-                    commessaFilter={commessaFilter}
-                    onClick={e => handleCellClick(info, e, e.currentTarget as HTMLElement)}
-                  />
-                </div>
-              ))}
-            </div>
+            <TooltipProvider delayDuration={350} disableHoverableContent>
+              <div className="grid grid-cols-7 gap-1 stagger-in">
+                {dayInfos.map((info, i) => (
+                  <div key={info.iso} data-day={info.iso}>
+                    <DayCell
+                      info={info}
+                      month={month}
+                      today={today}
+                      selected={selectedDay === info.iso}
+                      inRange={selectedRange.some(d => isSameDay(d, info.date))}
+                      tabIndex={i === 0 ? 0 : -1}
+                      commessaFilter={commessaFilter}
+                      onClick={e => handleCellClick(info, e, e.currentTarget as HTMLElement)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </TooltipProvider>
           </Card>
 
           {/* ── Missing-days helper row ───────────────────────── */}

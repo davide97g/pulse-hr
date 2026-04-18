@@ -1,6 +1,9 @@
 import { forwardRef } from "react";
 import { isSameDay, format } from "date-fns";
 import { Umbrella, Thermometer, PartyPopper, Sprout, UserRound, AlertCircle } from "lucide-react";
+import {
+  Tooltip, TooltipContent, TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { DayInfo, DayStatus } from "@/lib/timesheet";
 import { commessaById } from "@/lib/mock-data";
@@ -19,12 +22,12 @@ const STATUS_BG: Record<DayStatus, string> = {
 };
 
 const STATUS_ICON: Partial<Record<DayStatus, React.ReactNode>> = {
-  vacation: <Umbrella className="h-3 w-3" />,
-  sick:     <Thermometer className="h-3 w-3" />,
-  holiday:  <PartyPopper className="h-3 w-3" />,
-  parental: <Sprout className="h-3 w-3" />,
-  personal: <UserRound className="h-3 w-3" />,
-  missing:  <AlertCircle className="h-3 w-3" />,
+  vacation: <Umbrella className="h-[18px] w-[18px]" strokeWidth={1.75} />,
+  sick:     <Thermometer className="h-[18px] w-[18px]" strokeWidth={1.75} />,
+  holiday:  <PartyPopper className="h-[18px] w-[18px]" strokeWidth={1.75} />,
+  parental: <Sprout className="h-[18px] w-[18px]" strokeWidth={1.75} />,
+  personal: <UserRound className="h-[18px] w-[18px]" strokeWidth={1.75} />,
+  missing:  <AlertCircle className="h-[18px] w-[18px]" strokeWidth={1.75} />,
 };
 
 interface Props {
@@ -58,7 +61,14 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
     .filter((x): x is NonNullable<typeof x> => !!x)
     .slice(0, 4);
 
-  return (
+  // Hover summary worth rendering?
+  const hasTooltip =
+    info.entries.length > 0 ||
+    !!info.leave ||
+    !!info.holiday ||
+    info.status === "missing";
+
+  const cell = (
     <button
       ref={ref}
       onClick={onClick}
@@ -69,7 +79,7 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
       aria-current={isToday ? "date" : undefined}
       aria-label={`${format(info.date, "EEEE, MMMM d")} · ${info.status}${info.hours ? ` · ${info.hours}h` : ""}`}
       className={cn(
-        "group relative aspect-square sm:aspect-[4/3] w-full p-1.5 sm:p-2 rounded-md border text-left transition-all",
+        "group relative aspect-square sm:aspect-[4/3] w-full p-2 rounded-md border text-left transition-all",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10",
         STATUS_BG[info.status],
         muted && "opacity-40",
@@ -78,12 +88,12 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
         inRange && !selected && "ring-1 ring-primary/40",
       )}
     >
-      {/* Day number + icon */}
+      {/* Top row: day number + status icon */}
       <div className="flex items-start justify-between gap-1">
         <span
           className={cn(
-            "font-mono text-sm tabular-nums leading-none",
-            isToday ? "text-primary font-semibold" : "text-foreground/80",
+            "font-mono text-base tabular-nums leading-none",
+            isToday ? "text-primary font-semibold" : "text-foreground/85",
             info.status === "missing" && "text-destructive/80",
           )}
         >
@@ -92,12 +102,13 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
         {icon && (
           <span
             className={cn(
-              "text-muted-foreground shrink-0",
+              "text-muted-foreground shrink-0 opacity-80",
               info.status === "sick" && "text-info",
               info.status === "vacation" && "text-primary",
               info.status === "personal" && "text-primary",
               info.status === "parental" && "text-primary",
-              info.status === "missing" && "text-destructive/70",
+              info.status === "holiday" && "text-warning",
+              info.status === "missing" && "text-destructive/80",
             )}
           >
             {icon}
@@ -105,34 +116,111 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
         )}
       </div>
 
-      {/* Hours */}
-      {info.hours > 0 && (
-        <div className="absolute bottom-1.5 left-1.5 text-[11px] sm:text-xs font-mono tabular-nums font-medium">
-          {info.hours.toFixed(1)}
-          <span className="text-muted-foreground">h</span>
+      {/* Holiday / leave caption (only when no hours logged, top row) */}
+      {info.inMonth && info.hours === 0 && (info.holiday || info.leave) && (
+        <div className="mt-1 text-[10px] text-muted-foreground truncate">
+          {info.holiday?.name ?? info.leave?.type}
         </div>
       )}
 
-      {/* Commessa dots */}
-      {commesse.length > 0 && (
-        <div className="absolute bottom-1.5 right-1.5 flex gap-0.5">
-          {commesse.map(c => (
-            <span
-              key={c.id}
-              className="h-1.5 w-1.5 rounded-full"
-              style={{ backgroundColor: c.color }}
-              title={c.code}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Holiday name ribbon */}
-      {info.holiday && info.inMonth && (
-        <div className="absolute bottom-1.5 left-1.5 right-1.5 text-[9px] text-muted-foreground truncate">
-          {info.holiday.name}
+      {/* Bottom row: hours + commessa dots */}
+      {(info.hours > 0 || commesse.length > 0) && (
+        <div className="absolute bottom-1.5 left-2 right-2 flex items-end justify-between gap-1">
+          {info.hours > 0 ? (
+            <span className="font-mono text-sm tabular-nums font-medium leading-none">
+              {info.hours.toFixed(1)}
+              <span className="text-muted-foreground">h</span>
+            </span>
+          ) : <span />}
+          {commesse.length > 0 && (
+            <span className="flex gap-0.5">
+              {commesse.map(c => (
+                <span
+                  key={c.id}
+                  className="h-2 w-2 rounded-full"
+                  style={{ backgroundColor: c.color, boxShadow: `0 0 4px ${c.color}40` }}
+                  title={c.code}
+                />
+              ))}
+            </span>
+          )}
         </div>
       )}
     </button>
   );
+
+  if (!hasTooltip) return cell;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{cell}</TooltipTrigger>
+      <TooltipContent side="top" className="max-w-[280px] p-0 overflow-hidden">
+        <HoverSummary info={info} />
+      </TooltipContent>
+    </Tooltip>
+  );
 });
+
+function HoverSummary({ info }: { info: DayInfo }) {
+  return (
+    <div className="text-xs">
+      <div className="px-3 py-2 border-b bg-muted/40 flex items-center justify-between gap-2">
+        <div className="font-semibold">{format(info.date, "EEE, MMM d")}</div>
+        {info.hours > 0 && (
+          <div className="font-mono tabular-nums text-[11px]">{info.hours.toFixed(1)}h</div>
+        )}
+      </div>
+
+      {info.holiday && (
+        <div className="px-3 py-2 border-b bg-accent text-[11px]">
+          <span className="font-medium">🎉 {info.holiday.name}</span>
+          <span className="text-muted-foreground"> · {info.holiday.country}</span>
+        </div>
+      )}
+
+      {info.leave && (
+        <div className="px-3 py-2 border-b bg-info/10 text-[11px]">
+          <span className="font-medium">{info.leave.type}</span>
+          {info.leave.reason && <span className="text-muted-foreground"> · {info.leave.reason}</span>}
+        </div>
+      )}
+
+      {info.status === "missing" && !info.holiday && !info.leave && (
+        <div className="px-3 py-2 border-b bg-destructive/10 text-[11px] text-destructive">
+          Missing hours — click to log.
+        </div>
+      )}
+
+      {info.entries.length > 0 && (
+        <ul className="max-h-[220px] overflow-y-auto scrollbar-thin divide-y">
+          {info.entries.map(e => {
+            const c = commessaById(e.commessaId);
+            return (
+              <li key={e.id} className="px-3 py-2 flex items-start gap-2">
+                <span
+                  className="h-full w-0.5 self-stretch rounded-full shrink-0 mt-0.5"
+                  style={{ backgroundColor: c?.color }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-mono text-[10px] text-muted-foreground">{c?.code}</span>
+                    <span className="font-mono text-[10px] tabular-nums font-medium ml-auto">
+                      {e.hours}h{!e.billable && " · internal"}
+                    </span>
+                  </div>
+                  <div className="text-[11px] leading-snug mt-0.5">{e.description}</div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {info.entries.length === 0 && info.hours === 0 && info.status !== "missing" && (
+        <div className="px-3 py-2 text-[11px] text-muted-foreground">
+          No entries.
+        </div>
+      )}
+    </div>
+  );
+}
