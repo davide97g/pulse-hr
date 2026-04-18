@@ -46,7 +46,7 @@ function Developers() {
                     <div className="text-[11px] text-muted-foreground mt-0.5">{k.date}</div>
                   </div>
                   <StatusBadge status="active" />
-                  <Button variant="ghost" size="sm"><Copy className="h-3.5 w-3.5" /></Button>
+                  <Button variant="ghost" size="sm" onClick={() => toast.success("API key copied to clipboard")}><Copy className="h-3.5 w-3.5" /></Button>
                 </div>
               ))}
             </div>
