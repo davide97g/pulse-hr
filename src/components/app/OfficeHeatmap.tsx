@@ -149,8 +149,11 @@ function HeatCell({
         : "";
   const today = cell.date === new Date().toISOString().slice(0, 10);
   const isClosed = cell.bucket === "closed";
+  const clickable = !!onCellClick && !isClosed;
   const className = cn(
-    "relative h-11 rounded-md border transition-all press-scale grid place-items-center text-[10px] font-mono tabular-nums hover:z-10 hover:scale-[1.04]",
+    "relative h-11 rounded-md border transition-colors grid place-items-center text-[10px] font-mono tabular-nums",
+    clickable && "cursor-pointer hover:ring-2 hover:ring-primary/40 hover:border-primary/40",
+    !onCellClick && !isClosed && "hover:border-primary/40",
     today && "ring-1 ring-primary/60",
     isClosed && "cursor-not-allowed opacity-70",
   );
