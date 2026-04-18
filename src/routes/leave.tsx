@@ -171,16 +171,22 @@ function Leave() {
               ) : (
                 <>
                   {tab === "pending" && (
-                    <div className="px-5 py-2.5 border-b bg-muted/20 flex items-center gap-3 text-xs text-muted-foreground">
+                    <div className="px-3 sm:px-5 py-2.5 border-b bg-muted/20 flex items-center gap-3 text-xs text-muted-foreground">
                       <HeaderCheckbox
                         allSelected={bulk.allSelected}
                         someSelected={bulk.someSelected}
                         onToggle={() => bulk.toggleAll()}
                       />
-                      <span>
+                      <span className="truncate">
                         {bulk.count > 0
                           ? <>{bulk.count} of {pendingRows.length} selected</>
-                          : <>Select rows to approve or reject in bulk</>}
+                          : (
+                            <>
+                              <span className="hidden sm:inline">Select rows to approve or reject in bulk</span>
+                              <span className="sm:hidden">Select rows for bulk actions</span>
+                            </>
+                          )
+                        }
                       </span>
                     </div>
                   )}
@@ -191,7 +197,7 @@ function Leave() {
                       return (
                         <div
                           key={l.id}
-                          className={`group px-5 py-3.5 flex items-center gap-3 hover:bg-muted/40 cursor-pointer transition-colors ${selected ? "bg-primary/[0.04]" : ""}`}
+                          className={`group px-3 sm:px-5 py-3 flex items-center gap-2 sm:gap-3 hover:bg-muted/40 cursor-pointer transition-colors ${selected ? "bg-primary/[0.04]" : ""}`}
                           onClick={() => setSelected(l)}
                         >
                           {tab === "pending" && (
@@ -201,32 +207,46 @@ function Leave() {
                               visibleWhen={bulk.count > 0 ? "always" : "hover-or-selected"}
                             />
                           )}
-                          <Avatar initials={e.initials} color={e.avatarColor} size={36} />
+                          <Avatar initials={e.initials} color={e.avatarColor} size={32} />
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-sm flex items-center gap-1.5">
-                              {e.name}
+                            <div className="font-medium text-sm flex items-center gap-1.5 min-w-0">
+                              <span className="truncate">{e.name}</span>
                               {l.granularity === "half" && (
-                                <span className="inline-flex items-center gap-0.5 text-[9px] uppercase tracking-wider font-mono px-1.5 py-0.5 rounded border bg-muted/60 text-muted-foreground">
+                                <span className="hidden sm:inline-flex items-center gap-0.5 text-[9px] uppercase tracking-wider font-mono px-1.5 py-0.5 rounded border bg-muted/60 text-muted-foreground shrink-0">
                                   Half · {l.halfPeriod}
                                 </span>
                               )}
                             </div>
-                            <div className="text-xs text-muted-foreground">
-                              {l.type} • {l.days} day{l.days === 1 ? "" : "s"} • {l.from}{l.granularity === "half" ? "" : ` → ${l.to}`}
+                            <div className="text-xs text-muted-foreground truncate">
+                              {l.type} · {l.days}d{l.granularity === "half" ? ` ${l.halfPeriod}` : ""} · {l.from}{l.granularity === "half" ? "" : ` → ${l.to}`}
                             </div>
                           </div>
-                          <StatusBadge status={getStatus(l)} />
+                          <span className="hidden sm:inline-flex shrink-0">
+                            <StatusBadge status={getStatus(l)} />
+                          </span>
                           {tab === "pending" ? (
-                            <div className="flex gap-1.5" onClick={(ev) => ev.stopPropagation()}>
-                              <Button size="sm" variant="ghost" className="h-8 px-2 text-destructive hover:bg-destructive/10 press-scale" onClick={() => decide(l.id, "rejected")}>
+                            <div className="flex gap-1 shrink-0" onClick={(ev) => ev.stopPropagation()}>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-destructive hover:bg-destructive/10 press-scale"
+                                onClick={() => decide(l.id, "rejected")}
+                                aria-label="Reject"
+                              >
                                 <X className="h-4 w-4" />
                               </Button>
-                              <Button size="sm" className="h-8 px-3 bg-success text-success-foreground hover:bg-success/90 press-scale" onClick={() => decide(l.id, "approved")}>
-                                <Check className="h-4 w-4 mr-1" /> Approve
+                              <Button
+                                size="sm"
+                                className="h-8 px-2 sm:px-3 bg-success text-success-foreground hover:bg-success/90 press-scale"
+                                onClick={() => decide(l.id, "approved")}
+                                aria-label="Approve"
+                              >
+                                <Check className="h-4 w-4 sm:mr-1" />
+                                <span className="hidden sm:inline">Approve</span>
                               </Button>
                             </div>
                           ) : (
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={ev => ev.stopPropagation()}>
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0" onClick={ev => ev.stopPropagation()}>
                               <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => setToDelete(l)}>
                                 <Trash2 className="h-3.5 w-3.5" />
                               </Button>
