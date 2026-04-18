@@ -13,6 +13,8 @@ export interface OfficeHeatmapProps {
   from: string;
   days: number;
   mode: HeatmapMode;
+  /** Restrict to a subset of offices; defaults to all. */
+  officeIds?: string[];
 }
 
 interface Cell {
@@ -23,8 +25,12 @@ interface Cell {
   striped?: boolean;
 }
 
-export function OfficeHeatmap({ from, days, mode }: OfficeHeatmapProps) {
+export function OfficeHeatmap({ from, days, mode, officeIds }: OfficeHeatmapProps) {
   const cols = useMemo(() => dateRange(from, days), [from, days]);
+  const rows = useMemo(
+    () => (officeIds ? offices.filter(o => officeIds.includes(o.id)) : offices),
+    [officeIds],
+  );
 
   return (
     <div className="overflow-x-auto scrollbar-thin">
@@ -56,7 +62,7 @@ export function OfficeHeatmap({ from, days, mode }: OfficeHeatmapProps) {
         })}
 
         {/* data rows */}
-        {offices.map((office) => {
+        {rows.map((office) => {
           const cells: Cell[] = cols.map((date) => {
             const closure = closureFor("office", office.id, date);
             if (closure) {

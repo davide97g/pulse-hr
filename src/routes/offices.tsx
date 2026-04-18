@@ -14,13 +14,15 @@ import { BookingDialog } from "@/components/app/BookingDialog";
 import { useBookings } from "@/components/app/BookingsContext";
 import {
   offices, closures, officeUtilization, roomsByOffice, seatsByOffice,
-  officeLocalDate, officeLocalNow, officeById,
+  officeLocalDate, officeLocalNow, officeById, homeOfficeFor,
 } from "@/lib/offices";
 import { cn } from "@/lib/utils";
 
 interface OfficesSearch {
   date?: string;
   mode?: HeatmapMode;
+  office?: string;
+  all?: boolean;
 }
 
 export const Route = createFileRoute("/offices")({
@@ -31,19 +33,42 @@ export const Route = createFileRoute("/offices")({
       s.mode === "rooms" || s.mode === "seats" || s.mode === "combined"
         ? s.mode
         : undefined,
+    office: typeof s.office === "string" ? s.office : undefined,
+    all: s.all === true || s.all === "1" || s.all === "true" ? true : undefined,
   }),
   component: OfficesOverview,
 });
 
 const TODAY = "2026-04-18";
+const ME = "e1";
 
 function OfficesOverview() {
   const nav = useNavigate({ from: "/offices" });
   const search = useSearch({ from: "/offices" });
   const from = search.date ?? TODAY;
   const mode: HeatmapMode = search.mode ?? "combined";
+  const showAll = !!search.all;
+  const myOffice = useMemo(() => homeOfficeFor(ME), []);
+  const selectedOfficeId = showAll
+    ? null
+    : (search.office ?? myOffice?.id ?? offices[0].id);
+  const visibleOffices = useMemo(
+    () => (selectedOfficeId ? offices.filter(o => o.id === selectedOfficeId) : offices),
+    [selectedOfficeId],
+  );
+
   const setMode = (m: HeatmapMode) =>
     nav({ search: (prev) => ({ ...prev, mode: m === "combined" ? undefined : m }) });
+  const pickOffice = (id: string) =>
+    nav({ search: (prev) => ({ ...prev, office: id, all: undefined }) });
+  const toggleAll = () =>
+    nav({
+      search: (prev) => ({
+        ...prev,
+        all: prev.all ? undefined : true,
+        office: prev.all ? (myOffice?.id ?? offices[0].id) : undefined,
+      }),
+    });
   const shiftDate = (days: number) => {
     const d = new Date(from);
     d.setDate(d.getDate() + days);
@@ -53,20 +78,27 @@ function OfficesOverview() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const { bookings } = useBookings();
 
-  // KPIs for today (office-local "today" uses browser Date).
+  // KPIs for today. Scoped to the filter (single office or all).
   const kpis = useMemo(() => {
     const today = new Date().toISOString().slice(0, 10);
-    const totalSeats = offices.reduce((a, o) => a + o.seatCapacity, 0);
+    const scope = visibleOffices;
+    const scopeIds = new Set(scope.map(o => o.id));
+    const totalSeats = scope.reduce((a, o) => a + o.seatCapacity, 0);
     const bookedSeats = bookings.filter(
-      (b) => b.resourceKind === "seat" && b.date === today && b.status !== "cancelled",
+      (b) => b.resourceKind === "seat" && b.date === today && b.status !== "cancelled" && scopeIds.has(b.officeId),
     ).length;
     const bookedRooms = bookings.filter(
-      (b) => b.resourceKind === "room" && b.date === today && b.status !== "cancelled",
+      (b) => b.resourceKind === "room" && b.date === today && b.status !== "cancelled" && scopeIds.has(b.officeId),
     ).length;
-    const maint = closures.filter((c) => today >= c.from && today <= c.to).length;
+    const maint = closures.filter((c) => {
+      if (today < c.from || today > c.to) return false;
+      if (c.scopeKind === "office") return scopeIds.has(c.scopeId);
+      // Room closure: include if its office is in scope.
+      return true;
+    }).length;
     const blended =
-      offices.reduce((a, o) => a + (officeUtilization(o.id, today) ?? 0), 0) /
-      Math.max(1, offices.length);
+      scope.reduce((a, o) => a + (officeUtilization(o.id, today) ?? 0), 0) /
+      Math.max(1, scope.length);
     return {
       totalSeats,
       bookedSeats,
@@ -74,19 +106,67 @@ function OfficesOverview() {
       maint,
       pctBlended: Math.round(blended * 100),
     };
-  }, [bookings]);
+  }, [bookings, visibleOffices]);
 
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title={<><span>Offices</span><NewBadge /></>}
-        description="Real-time overview across every workspace. Heatmap, closures, and one-click bookings."
+        description="Real-time overview of your workspace. Heatmap, closures, and one-click bookings."
         actions={
           <Button size="sm" onClick={() => setBookingOpen(true)}>
             <Plus className="h-4 w-4 mr-1.5" /> Book a space
           </Button>
         }
       />
+
+      <Card className="p-3 mb-4 flex flex-wrap items-center gap-2">
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mr-1">
+          Viewing
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {offices.map((o) => {
+            const active = !showAll && selectedOfficeId === o.id;
+            const isMine = myOffice?.id === o.id;
+            return (
+              <button
+                key={o.id}
+                onClick={() => pickOffice(o.id)}
+                className={cn(
+                  "inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-full border press-scale transition-colors",
+                  active
+                    ? "border-primary bg-primary/10 text-primary font-medium"
+                    : "hover:border-primary/40 hover:bg-primary/[0.03]",
+                )}
+                title={isMine ? `${o.name} · your home office` : o.name}
+              >
+                <span className="text-sm leading-none">{o.emoji}</span>
+                <span>{o.name}</span>
+                {isMine && (
+                  <span className="text-[9px] uppercase tracking-wider font-semibold text-primary/80 bg-primary/15 px-1 py-0.5 rounded">
+                    You
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        <div className="ml-auto">
+          <button
+            onClick={toggleAll}
+            className={cn(
+              "inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-full border press-scale transition-colors",
+              showAll
+                ? "border-primary bg-primary/10 text-primary font-medium"
+                : "hover:border-primary/40 hover:bg-primary/[0.03]",
+            )}
+            title="Show utilization across every office"
+          >
+            <TrendingUp className="h-3 w-3" />
+            Show all spaces
+          </button>
+        </div>
+      </Card>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         <StatTile
@@ -136,13 +216,13 @@ function OfficesOverview() {
             <TabsTrigger value="seats"><Armchair className="h-3 w-3 mr-1.5" />Seats</TabsTrigger>
           </TabsList>
           <TabsContent value="combined" className="mt-4">
-            <OfficeHeatmap from={from} days={14} mode="combined" />
+            <OfficeHeatmap from={from} days={14} mode="combined" officeIds={selectedOfficeId ? [selectedOfficeId] : undefined} />
           </TabsContent>
           <TabsContent value="rooms" className="mt-4">
-            <OfficeHeatmap from={from} days={14} mode="rooms" />
+            <OfficeHeatmap from={from} days={14} mode="rooms" officeIds={selectedOfficeId ? [selectedOfficeId] : undefined} />
           </TabsContent>
           <TabsContent value="seats" className="mt-4">
-            <OfficeHeatmap from={from} days={14} mode="seats" />
+            <OfficeHeatmap from={from} days={14} mode="seats" officeIds={selectedOfficeId ? [selectedOfficeId] : undefined} />
           </TabsContent>
         </Tabs>
       </Card>
@@ -154,7 +234,7 @@ function OfficesOverview() {
             <div className="font-semibold text-sm">Office snapshot · now</div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {offices.map((o) => {
+            {visibleOffices.map((o) => {
               const today = new Date().toISOString().slice(0, 10);
               const u = officeUtilization(o.id, today);
               const pct = u === null ? null : Math.round(u * 100);
@@ -211,10 +291,33 @@ function OfficesOverview() {
             <div className="font-semibold text-sm">Upcoming closures</div>
           </div>
           <ul className="space-y-2 stagger-in">
-            {closures.length === 0 && (
-              <li className="text-sm text-muted-foreground">All spaces open.</li>
-            )}
-            {closures.map((c) => {
+            {(() => {
+              const scopedIds = new Set(visibleOffices.map(o => o.id));
+              const scoped = closures.filter(c =>
+                c.scopeKind === "office"
+                  ? scopedIds.has(c.scopeId)
+                  : scopedIds.has(
+                      roomsByOffice(
+                        offices.find(o => roomsByOffice(o.id).some(r => r.id === c.scopeId))?.id ?? "",
+                      )[0]?.officeId ?? "",
+                    ),
+              );
+              if (scoped.length === 0) {
+                return <li className="text-sm text-muted-foreground">All spaces open.</li>;
+              }
+              return null;
+            })()}
+            {closures
+              .filter((c) => {
+                const scopedIds = new Set(visibleOffices.map((o) => o.id));
+                if (c.scopeKind === "office") return scopedIds.has(c.scopeId);
+                // Room closure: look up the room to get its office.
+                for (const o of visibleOffices) {
+                  if (roomsByOffice(o.id).some((r) => r.id === c.scopeId)) return true;
+                }
+                return false;
+              })
+              .map((c) => {
               const target =
                 c.scopeKind === "office"
                   ? officeById(c.scopeId)

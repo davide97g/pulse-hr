@@ -6,6 +6,7 @@ import {
   roomsByOffice, officeById, closureFor, type Booking,
 } from "@/lib/offices";
 import { useBookings } from "@/components/app/BookingsContext";
+import { RoomAmenities } from "@/components/app/AmenityIcons";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -79,7 +80,8 @@ export function RoomGantt({ officeId, date, onBook }: Props) {
               >
                 <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: room.color }} />
                 <span className="text-sm font-medium truncate">{room.name}</span>
-                <span className="text-[10px] text-muted-foreground">· cap {room.capacity}</span>
+                <span className="text-[10px] text-muted-foreground shrink-0">· {room.capacity}</span>
+                <RoomAmenities room={room} size="xs" className="ml-1 shrink-0" />
               </Link>
 
               {/* Track */}

@@ -1,9 +1,9 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
-  ArrowLeft, Clock, DoorOpen, Plus, Tv, Users, Presentation, Phone,
-  Repeat, Wrench, Wand2, Monitor, Projector, PhoneCall, Fan,
+  ArrowLeft, Clock, DoorOpen, Plus, Phone, Repeat, Wand2,
 } from "lucide-react";
+import { AMENITY_META } from "@/components/app/AmenityIcons";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
@@ -12,7 +12,7 @@ import { BookingDialog, type BookingDialogPrefill } from "@/components/app/Booki
 import { useBookings } from "@/components/app/BookingsContext";
 import {
   roomById, officeById, closureFor, dateRange, bookingsFor,
-  utilizationBucket, BUCKET_COLOR, minutesBetween, type Amenity, type Room,
+  utilizationBucket, BUCKET_COLOR, minutesBetween, type Room,
 } from "@/lib/offices";
 import { employeeById } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -30,17 +30,6 @@ export const Route = createFileRoute("/offices/$officeId/$roomId")({
 });
 
 const TODAY = "2026-04-18";
-
-const AMENITY_ICON: Record<Amenity, React.ComponentType<{ className?: string }>> = {
-  tv: Tv,
-  whiteboard: Presentation,
-  speakerphone: PhoneCall,
-  monitor: Monitor,
-  ac: Fan,
-  "standing-desk": Users,
-  videoconf: DoorOpen,
-  projector: Projector,
-};
 
 function RoomDrilldown() {
   const { officeId, roomId } = Route.useParams();
@@ -337,14 +326,17 @@ function AmenityBar({ room }: { room: Room }) {
   return (
     <div className="flex flex-wrap gap-2">
       {room.amenities.map((a) => {
-        const Icon = AMENITY_ICON[a] ?? Tv;
+        const meta = AMENITY_META[a];
+        if (!meta) return null;
+        const Icon = meta.icon;
         return (
           <span
             key={a}
+            title={meta.label}
             className="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full border bg-muted/30"
           >
             <Icon className="h-3.5 w-3.5" />
-            <span className="capitalize">{a.replace("-", " ")}</span>
+            <span>{meta.label}</span>
           </span>
         );
       })}

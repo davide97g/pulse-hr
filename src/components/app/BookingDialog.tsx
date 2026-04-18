@@ -14,6 +14,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useBookings } from "@/components/app/BookingsContext";
+import { RoomAmenities, SeatFeatures } from "@/components/app/AmenityIcons";
 import {
   offices, officeById, roomsByOffice, roomById, seatsByOffice, seatById,
   closureFor, officeLocalDate, minutesBetween, type Booking,
@@ -146,8 +147,8 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-[560px] p-0 overflow-hidden iridescent-border rounded-xl">
-        <div className="p-5">
+      <DialogContent className="max-w-[560px] rounded-xl">
+        <div>
           <DialogHeader className="mb-4">
             <DialogTitle className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-md bg-primary/10 text-primary grid place-items-center">
@@ -216,19 +217,20 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
                   {kind === "room"
                     ? roomsByOffice(officeId).map((r) => (
                         <SelectItem key={r.id} value={r.id}>
-                          <span className="inline-flex items-center gap-2">
-                            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: r.color }} />
-                            {r.name}
-                            <span className="text-[10px] text-muted-foreground">· cap {r.capacity}</span>
+                          <span className="inline-flex items-center gap-2 min-w-0">
+                            <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: r.color }} />
+                            <span className="truncate">{r.name}</span>
+                            <span className="text-[10px] text-muted-foreground shrink-0">· cap {r.capacity}</span>
+                            <RoomAmenities room={r} size="xs" className="ml-1" />
                           </span>
                         </SelectItem>
                       ))
                     : seatsByOffice(officeId).map((s) => (
                         <SelectItem key={s.id} value={s.id}>
-                          <span className="inline-flex items-center gap-2">
-                            <span className="font-mono text-[11px]">{s.label}</span>
-                            <span className="text-[10px] text-muted-foreground">· zone {s.zone}</span>
-                            {s.monitor && <span className="text-[10px] text-muted-foreground">· monitor</span>}
+                          <span className="inline-flex items-center gap-2 min-w-0">
+                            <span className="font-mono text-[11px] shrink-0">{s.label}</span>
+                            <span className="text-[10px] text-muted-foreground shrink-0">· zone {s.zone}</span>
+                            <SeatFeatures seat={s} size="xs" className="ml-1" />
                           </span>
                         </SelectItem>
                       ))}

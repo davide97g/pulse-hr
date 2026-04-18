@@ -185,6 +185,26 @@ export const seats: Seat[] = makeSeats();
 export const seatById = (id: string) => seats.find(s => s.id === id);
 export const seatsByOffice = (officeId: string) => seats.filter(s => s.officeId === officeId);
 
+// ── Home-office assignment per employee (mock) ────────────────────────
+export const HOME_OFFICE: Record<string, string> = {
+  e1: "of-mil",
+  e2: "of-mil",
+  e3: "of-ber",
+  e4: "of-ber",
+  e5: "of-rem",
+  e6: "of-sf",
+  e7: "of-mil",
+  e8: "of-ber",
+  e9: "of-mil",
+  e10: "of-sf",
+  e11: "of-ber",
+  e12: "of-rem",
+};
+export function homeOfficeFor(userId: string): Office | null {
+  const id = HOME_OFFICE[userId];
+  return id ? (officeById(id) ?? null) : null;
+}
+
 // ── Bookings (next 14 days from 2026-04-18) ──────────────────────────
 function addDays(base: string, days: number): string {
   const d = new Date(base);
