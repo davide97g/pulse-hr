@@ -7,6 +7,7 @@ import { CommandPalette } from "./CommandPalette";
 import { CopilotLauncher, CopilotOverlay } from "./Copilot";
 import { NewBadge } from "./NewBadge";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { ActiveCommessaPin } from "./ActiveCommessaPin";
 import { toast } from "sonner";
 import {
   LayoutDashboard, Users, Briefcase, Wallet, BarChart3, Settings,
@@ -299,6 +300,9 @@ function Topbar({
 
       <div className="hidden md:block flex-1" />
 
+      <div className="hidden lg:inline-flex">
+        <ActiveCommessaPin />
+      </div>
       <div className="hidden md:inline-flex">
         <CopilotLauncher onClick={onOpenCopilot} />
       </div>

@@ -27,9 +27,11 @@ import { SidePanel } from "@/components/app/SidePanel";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { TimesheetCalendar } from "@/components/app/TimesheetCalendar";
+import { useWorkspace } from "@/components/app/WorkspaceContext";
 import {
   employees, commesse, commessaById,
   timesheetEntries as seedEntries, type TimesheetEntry,
+  timesheetTemplatesSeed, type TimesheetTemplate,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
@@ -43,10 +45,13 @@ const ME = "e1";
 function Time() {
   const [clockedIn, setClockedIn] = useState(false);
   const [seconds, setSeconds] = useState(0);
-  const [activeCommessa, setActiveCommessa] = useState<string>("cm1");
+  const workspace = useWorkspace();
+  const activeCommessa = workspace.activeCommessaId;
+  const setActiveCommessa = workspace.setActiveCommessaId;
   const [loading, setLoading] = useState(true);
 
   const [entries, setEntries] = useState<TimesheetEntry[]>(seedEntries);
+  const [templates, setTemplates] = useState<TimesheetTemplate[]>(timesheetTemplatesSeed);
   const [editEntry, setEditEntry] = useState<TimesheetEntry | "new" | null>(null);
   const [toDelete, setToDelete] = useState<TimesheetEntry | null>(null);
   const [filterCommessa, setFilterCommessa] = useState<string>("all");
@@ -337,6 +342,15 @@ function Time() {
         <TabsContent value="calendar" className="mt-4">
           <TimesheetCalendar
             entries={entries}
+            templates={templates}
+            onSaveTemplate={t => {
+              setTemplates(ts => [...ts, { ...t, id: `tt-${Date.now()}` }]);
+              toast.success(`Template "${t.name}" saved`);
+            }}
+            onDeleteTemplate={id => {
+              setTemplates(ts => ts.filter(t => t.id !== id));
+              toast("Template removed");
+            }}
             onAdd={data => saveEntry(data)}
             onAddMany={rows => {
               setEntries(es => [

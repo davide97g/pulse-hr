@@ -8,11 +8,12 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { NewBadge } from "./NewBadge";
 import { copilotSuggestions } from "@/lib/mock-data";
+import { answerFor, type ActionCtx, type ActionRunnable } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 
 type Msg =
   | { role: "user"; id: string; text: string }
-  | { role: "assistant"; id: string; text: string; streaming?: boolean; actions?: { label: string; run: () => void }[] };
+  | { role: "assistant"; id: string; text: string; streaming?: boolean; actions?: ActionRunnable[] };
 
 export function CopilotLauncher({ onClick }: { onClick: () => void }) {
   return (
@@ -43,67 +44,10 @@ export function CopilotOverlay({ open, onOpenChange }: { open: boolean; onOpenCh
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, thinking]);
 
-  const go = (to: string) => { nav({ to }); onOpenChange(false); };
-
-  const answerFor = (prompt: string): { text: string; actions?: { label: string; run: () => void }[] } => {
-    const q = prompt.toLowerCase();
-    if (q.includes("expense")) {
-      return {
-        text: "I found 2 pending expenses under $200: Client dinner ($184.50) and Figma license ($180). Bulk-approving them will notify the owners and move both to reimbursement.",
-        actions: [
-          { label: "Approve both", run: () => toast.success("2 expenses approved · $364.50 queued for reimbursement") },
-          { label: "Open expenses",  run: () => go("/expenses") },
-        ],
-      };
-    }
-    if (q.includes("overlapping") || q.includes("leave")) {
-      return {
-        text: "Sales team has overlap May 10–17 (David Park + Leo Martin). Engineering is clear. I can flag this as a staffing risk on the dashboard.",
-        actions: [
-          { label: "Open leave calendar", run: () => go("/leave") },
-          { label: "Flag as risk", run: () => toast.success("Risk flagged · visible on dashboard") },
-        ],
-      };
-    }
-    if (q.includes("anomal")) {
-      return {
-        text: "April payroll has 1 anomaly: Engineering overtime up 18% week-over-week, concentrated in the migration commessa (ACM-2025-01). No over-threshold expenses detected.",
-        actions: [
-          { label: "Open time page", run: () => go("/time") },
-          { label: "Notify Sarah Chen", run: () => toast.success("DM drafted to Sarah Chen") },
-        ],
-      };
-    }
-    if (q.includes("welcome") || q.includes("draft")) {
-      return {
-        text: "Drafted:\n\n“Hi Emma, welcome to Acme! Your first-day checklist is in Pulse HR at /onboarding. Sarah will reach out to schedule your welcome call on May 6. Can't wait to meet you.”",
-        actions: [
-          { label: "Open in composer", run: () => toast.success("Email draft opened") },
-          { label: "Send now", run: () => toast.success("Email sent to emma@acme.co") },
-        ],
-      };
-    }
-    if (q.includes("budget") || q.includes("commessa")) {
-      return {
-        text: "Two commesse are over budget this month: LGO-2024-12 Legacy migration (101%) and BCO-2025-03 Design system v2 (83%, trending over). I can surface a forecast with scenarios.",
-        actions: [
-          { label: "Open Forecast", run: () => go("/forecast") },
-        ],
-      };
-    }
-    if (q.includes("headcount") || q.includes("report")) {
-      return {
-        text: "Generated Q2 headcount view: 12 → 14 planned (+Emma Wilson Eng, +James Liu Eng). Turnover projected 4.2%, cost/employee trending +3% vs Q1.",
-        actions: [
-          { label: "Open Reports", run: () => go("/reports") },
-          { label: "Export PDF",  run: () => toast.success("PDF export started") },
-        ],
-      };
-    }
-    return {
-      text: `I'd route "${prompt}" across Pulse. In the full agent, I'd query your data and chain actions. For now, try one of the suggestions below.`,
-    };
+  const ctx: ActionCtx = {
+    navigate: opts => { nav(opts); onOpenChange(false); },
   };
+  const runAction = (a: ActionRunnable) => { void a.run(ctx); };
 
   const send = (text: string) => {
     const trimmed = text.trim();
@@ -164,7 +108,7 @@ export function CopilotOverlay({ open, onOpenChange }: { open: boolean; onOpenCh
             ) : (
               <div className="px-4 py-4 space-y-4">
                 {messages.map(m => (
-                  <MessageBubble key={m.id} msg={m} />
+                  <MessageBubble key={m.id} msg={m} onRun={runAction} />
                 ))}
               </div>
             )}
@@ -231,7 +175,7 @@ function EmptyCopilot({ onPick }: { onPick: (q: string) => void }) {
   );
 }
 
-function MessageBubble({ msg }: { msg: Msg }) {
+function MessageBubble({ msg, onRun }: { msg: Msg; onRun: (a: ActionRunnable) => void }) {
   if (msg.role === "user") {
     return (
       <div className="flex justify-end">
@@ -260,7 +204,7 @@ function MessageBubble({ msg }: { msg: Msg }) {
             {msg.actions.map((a, i) => (
               <button
                 key={i}
-                onClick={a.run}
+                onClick={() => onRun(a)}
                 className={cn(
                   "inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md border press-scale transition-colors",
                   i === 0

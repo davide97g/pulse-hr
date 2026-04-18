@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   startOfMonth, addMonths, subMonths, format, isSameDay, addDays, subDays,
   endOfMonth, isWeekend, parseISO,
@@ -16,12 +16,14 @@ import { PageHeader, Avatar } from "./AppShell";
 import { DayCell } from "./DayCell";
 import { DayPeekPopover } from "./DayPeekPopover";
 import { BulkEntryDialog } from "./BulkEntryDialog";
+import { TimesheetAutofillDialog } from "./TimesheetAutofillDialog";
 import {
   getDayInfo, getMonthStats, getMonthMatrix, weekdayLabels, synthesizeTeamEntries,
   type DayInfo, type DayStatus,
 } from "@/lib/timesheet";
 import {
-  commesse, commessaById, employees, employeeById, type TimesheetEntry,
+  commesse, commessaById, employees, employeeById,
+  type TimesheetEntry, type TimesheetTemplate,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
@@ -31,13 +33,19 @@ type Mode = "copy-week" | "fill-missing" | "apply-range";
 
 interface Props {
   entries: TimesheetEntry[];
+  templates?: TimesheetTemplate[];
+  onSaveTemplate?: (t: Omit<TimesheetTemplate, "id">) => void;
+  onDeleteTemplate?: (id: string) => void;
   onAdd: (e: Omit<TimesheetEntry, "id" | "status" | "employeeId">) => void;
   onAddMany: (rows: Omit<TimesheetEntry, "id" | "status" | "employeeId">[]) => void;
   onEdit: (entry: TimesheetEntry) => void;
   onDelete: (id: string) => void;
 }
 
-export function TimesheetCalendar({ entries, onAdd, onAddMany, onEdit, onDelete }: Props) {
+export function TimesheetCalendar({
+  entries, templates = [], onSaveTemplate, onDeleteTemplate,
+  onAdd, onAddMany, onEdit, onDelete,
+}: Props) {
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
   const [view, setView] = useState<"mine" | "team">("mine");
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
@@ -46,6 +54,7 @@ export function TimesheetCalendar({ entries, onAdd, onAddMany, onEdit, onDelete 
   const [rangeEnd, setRangeEnd] = useState<Date | null>(null);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkMode, setBulkMode] = useState<Mode>("copy-week");
+  const [autofillOpen, setAutofillOpen] = useState(false);
   const [commessaFilter, setCommessaFilter] = useState<string | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
 
@@ -83,6 +92,22 @@ export function TimesheetCalendar({ entries, onAdd, onAddMany, onEdit, onDelete 
     }
     return [];
   }, [selectedInfo, entries]);
+
+  // External triggers (Command Palette, Copilot)
+  useEffect(() => {
+    const onAutofill = () => setAutofillOpen(true);
+    const onBulk = (e: Event) => {
+      const ce = e as CustomEvent<{ mode?: Mode }>;
+      setBulkMode(ce.detail?.mode ?? "copy-week");
+      setBulkOpen(true);
+    };
+    window.addEventListener("pulse:open-autofill", onAutofill);
+    window.addEventListener("pulse:open-bulk", onBulk);
+    return () => {
+      window.removeEventListener("pulse:open-autofill", onAutofill);
+      window.removeEventListener("pulse:open-bulk", onBulk);
+    };
+  }, []);
 
   const handleCellClick = (info: DayInfo, ev: React.MouseEvent, el: HTMLElement) => {
     if (ev.shiftKey && rangeAnchor) {
@@ -148,6 +173,12 @@ export function TimesheetCalendar({ entries, onAdd, onAddMany, onEdit, onDelete 
               <Users className="h-3.5 w-3.5" /> Team
             </button>
           </div>
+          <Button
+            variant="outline" size="sm" className="h-9 press-scale iridescent-border"
+            onClick={() => setAutofillOpen(true)}
+          >
+            <Sparkles className="h-4 w-4 mr-1.5 text-primary" /> Draft week
+          </Button>
           <Button
             variant="outline" size="sm" className="h-9 press-scale"
             onClick={() => { setBulkMode("copy-week"); setBulkOpen(true); }}
@@ -308,10 +339,12 @@ export function TimesheetCalendar({ entries, onAdd, onAddMany, onEdit, onDelete 
         anchor={anchorEl}
         info={selectedInfo}
         prevDayEntries={prevDayEntries}
+        templates={templates}
         onClose={() => { setSelectedDay(null); setAnchorEl(null); }}
         onAdd={data => onAdd(data)}
         onEdit={onEdit}
         onDelete={onDelete}
+        onSaveTemplate={onSaveTemplate}
         onCopyFromPrev={() => {
           if (!selectedInfo) return;
           prevDayEntries.forEach(r => onAdd({
@@ -334,7 +367,17 @@ export function TimesheetCalendar({ entries, onAdd, onAddMany, onEdit, onDelete 
         entries={entries}
         month={month}
         selectedRange={selectedRange}
+        templates={templates}
         onSubmitBatch={rows => onAddMany(rows)}
+      />
+
+      {/* ── AI auto-fill ─────────────────────────────────────── */}
+      <TimesheetAutofillDialog
+        open={autofillOpen}
+        onClose={() => setAutofillOpen(false)}
+        entries={entries}
+        employeeId={ME}
+        onAccept={rows => onAddMany(rows)}
       />
     </div>
   );

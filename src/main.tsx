@@ -5,6 +5,7 @@ import { registerSW } from "virtual:pwa-register";
 import { toast } from "sonner";
 import { getRouter } from "./router";
 import { ThemeProvider } from "./components/app/ThemeProvider";
+import { WorkspaceProvider } from "./components/app/WorkspaceContext";
 import "./styles.css";
 
 registerSW({
@@ -40,7 +41,9 @@ if (!el) throw new Error("#root not found");
 ReactDOM.createRoot(el).render(
   <React.StrictMode>
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <WorkspaceProvider>
+        <RouterProvider router={router} />
+      </WorkspaceProvider>
     </ThemeProvider>
   </React.StrictMode>,
 );

@@ -16,6 +16,7 @@ import { NewBadge } from "@/components/app/NewBadge";
 import {
   commesse, commessaById, focusSessionsSeed, type FocusSession,
 } from "@/lib/mock-data";
+import { useWorkspace } from "@/components/app/WorkspaceContext";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/focus")({
@@ -32,7 +33,9 @@ const PRESETS = [
 
 function FocusPage() {
   const [sessions, setSessions] = useState<FocusSession[]>(focusSessionsSeed);
-  const [commessaId, setCommessaId] = useState(commesse[0].id);
+  const workspace = useWorkspace();
+  const [commessaId, setCommessaId] = useState(workspace.activeCommessaId);
+  useEffect(() => { setCommessaId(workspace.activeCommessaId); }, [workspace.activeCommessaId]);
   const [duration, setDuration] = useState(50);
   const [running, setRunning] = useState(false);
   const [remaining, setRemaining] = useState(50 * 60);

@@ -440,6 +440,55 @@ export interface TimesheetEntry {
   status: TimesheetEntryStatus;
 }
 
+export interface CalendarEvent {
+  id: string;
+  date: string;
+  startedAt: string;
+  endedAt: string;
+  title: string;
+  attendees?: string[];
+  commessaHint?: string; // commessaId or fragment to match
+}
+/**
+ * Synthetic "Google Calendar" events spanning recent weeks.
+ * Used by the AI auto-fill flow to materialize draft timesheet entries.
+ */
+export const mockCalendarEvents: CalendarEvent[] = [
+  { id: "ev-100", date: "2026-04-13", startedAt: "09:00", endedAt: "10:00", title: "Migration standup",                    attendees: ["e1","e9","e4"], commessaHint: "cm1" },
+  { id: "ev-101", date: "2026-04-13", startedAt: "10:00", endedAt: "12:00", title: "Cutover rehearsal",                     attendees: ["e1","e9"],     commessaHint: "cm1" },
+  { id: "ev-102", date: "2026-04-13", startedAt: "14:00", endedAt: "15:00", title: "Mobile onboarding spec review",         attendees: ["e1","e7"],     commessaHint: "cm2" },
+  { id: "ev-103", date: "2026-04-13", startedAt: "15:00", endedAt: "17:00", title: "Deep work — API contract",              attendees: ["e1"],           commessaHint: "cm2" },
+  { id: "ev-110", date: "2026-04-14", startedAt: "09:00", endedAt: "09:30", title: "All-hands",                              attendees: ["e1","e3"],     commessaHint: "cm4" },
+  { id: "ev-111", date: "2026-04-14", startedAt: "09:30", endedAt: "12:00", title: "Design tokens sync",                     attendees: ["e1","e2"],     commessaHint: "cm3" },
+  { id: "ev-112", date: "2026-04-14", startedAt: "13:00", endedAt: "17:00", title: "Migration pairing — Noah",               attendees: ["e1","e9"],     commessaHint: "cm1" },
+  { id: "ev-120", date: "2026-04-15", startedAt: "09:00", endedAt: "10:00", title: "Incident post-mortem",                   attendees: ["e1","e9","e11"], commessaHint: "cm1" },
+  { id: "ev-121", date: "2026-04-15", startedAt: "10:00", endedAt: "12:00", title: "Interview — senior engineer",            attendees: ["e1","e3","e8"], commessaHint: "cm4" },
+  { id: "ev-122", date: "2026-04-15", startedAt: "14:00", endedAt: "16:00", title: "Analytics ingestion spike",              attendees: ["e1","e10"],    commessaHint: "cm6" },
+  { id: "ev-130", date: "2026-04-16", startedAt: "09:00", endedAt: "11:00", title: "Platform roadmap refinement",            attendees: ["e1","e7","e9"], commessaHint: "cm1" },
+  { id: "ev-131", date: "2026-04-16", startedAt: "11:00", endedAt: "12:30", title: "Design critique",                        attendees: ["e1","e2"],     commessaHint: "cm3" },
+  { id: "ev-132", date: "2026-04-16", startedAt: "14:00", endedAt: "17:00", title: "Mobile onboarding API implementation",   attendees: ["e1","e9"],     commessaHint: "cm2" },
+  { id: "ev-140", date: "2026-04-17", startedAt: "09:30", endedAt: "10:30", title: "Sprint review",                          attendees: ["e1","e3","e7"], commessaHint: "cm4" },
+  { id: "ev-141", date: "2026-04-17", startedAt: "10:30", endedAt: "12:30", title: "Retro + planning",                       attendees: ["e1","e3"],     commessaHint: "cm4" },
+  { id: "ev-142", date: "2026-04-17", startedAt: "14:00", endedAt: "17:00", title: "Migration cutover dry-run",              attendees: ["e1","e9","e4"], commessaHint: "cm1" },
+];
+
+export interface TimesheetTemplate {
+  id: string;
+  name: string;
+  commessaId: string;
+  hours: number;
+  description: string;
+  billable: boolean;
+  icon?: string;
+}
+export const timesheetTemplatesSeed: TimesheetTemplate[] = [
+  { id: "tt1", name: "Deep work — migration", commessaId: "cm1", hours: 8, description: "Migration workstream",                  billable: true,  icon: "🛠" },
+  { id: "tt2", name: "Mobile API pairing",    commessaId: "cm2", hours: 4, description: "Mobile onboarding API pairing",         billable: true,  icon: "📱" },
+  { id: "tt3", name: "Design system audit",   commessaId: "cm3", hours: 4, description: "Design tokens + component audit",       billable: true,  icon: "🎨" },
+  { id: "tt4", name: "Internal / HR sync",    commessaId: "cm4", hours: 1, description: "HR + internal coordination",             billable: false, icon: "💬" },
+  { id: "tt5", name: "Full day · analytics",  commessaId: "cm6", hours: 8, description: "Analytics dashboards",                    billable: true,  icon: "📊" },
+];
+
 export const timesheetEntries: TimesheetEntry[] = [
   // Historical seed
   { id: "t1",  employeeId: "e1", commessaId: "cm1", date: "2025-04-14", hours: 7.5, description: "API schema review + sprint planning", billable: true,  status: "approved" },

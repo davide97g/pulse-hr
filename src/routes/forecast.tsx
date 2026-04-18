@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { NewBadge } from "@/components/app/NewBadge";
 import { commesse, type Commessa } from "@/lib/mock-data";
+import { useWorkspace } from "@/components/app/WorkspaceContext";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/forecast")({
@@ -45,7 +46,8 @@ function forecastCommessa(c: Commessa, extraHeadcount: number, efficiencyPct: nu
 function Forecast() {
   const [headcount, setHeadcount] = useState(0);
   const [efficiency, setEfficiency] = useState(100);
-  const [activeId, setActiveId] = useState<string>(commesse[0].id);
+  const workspace = useWorkspace();
+  const [activeId, setActiveId] = useState<string>(workspace.activeCommessaId);
 
   const summaries = useMemo(
     () => commesse.map(c => ({ c, f: forecastCommessa(c, headcount, efficiency) })),

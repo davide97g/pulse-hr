@@ -15,7 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { commesse, commessaById, type TimesheetEntry } from "@/lib/mock-data";
+import { commesse, commessaById, type TimesheetEntry, type TimesheetTemplate } from "@/lib/mock-data";
 import {
   prevWeekEntries, missingWorkdaysInRange, datesBetween,
 } from "@/lib/timesheet";
@@ -39,11 +39,12 @@ interface Props {
   entries: TimesheetEntry[];
   month: Date;
   selectedRange: Date[];
+  templates?: TimesheetTemplate[];
   onSubmitBatch: (rows: Omit<TimesheetEntry, "id" | "status" | "employeeId">[]) => void;
 }
 
 export function BulkEntryDialog({
-  open, mode, onModeChange, onClose, employeeId, entries, month, selectedRange, onSubmitBatch,
+  open, mode, onModeChange, onClose, employeeId, entries, month, selectedRange, templates = [], onSubmitBatch,
 }: Props) {
   const [template, setTemplate] = useState<Template>({
     commessaId: commesse[0].id,
@@ -179,7 +180,7 @@ export function BulkEntryDialog({
                 <Input type="date" value={rangeTo} onChange={e => setRangeTo(e.target.value)} />
               </div>
             </div>
-            <TemplateForm template={template} onChange={setTemplate} />
+            <TemplateForm template={template} onChange={setTemplate} presets={templates} />
             <div className="rounded-md border p-3 bg-muted/30 flex items-center gap-2 text-xs">
               <AlertTriangle className="h-3.5 w-3.5 text-warning" />
               {missingDays.length === 0
@@ -198,7 +199,7 @@ export function BulkEntryDialog({
                 ? <span className="text-muted-foreground">Shift-click two days on the calendar to pick a range.</span>
                 : <>Applying to <span className="font-semibold">{applyDays.length}</span> day{applyDays.length === 1 ? "" : "s"}: <span className="font-mono">{format(applyDays[0], "MMM d")} → {format(applyDays[applyDays.length - 1], "MMM d")}</span></>}
             </div>
-            <TemplateForm template={template} onChange={setTemplate} />
+            <TemplateForm template={template} onChange={setTemplate} presets={templates} />
             {applyDays.length > 0 && (
               <DayChips dates={applyDays.slice(0, 20)} more={applyDays.length - 20} />
             )}
@@ -227,10 +228,47 @@ export function BulkEntryDialog({
   );
 }
 
-function TemplateForm({ template, onChange }: { template: Template; onChange: (t: Template) => void }) {
+function TemplateForm({
+  template, onChange, presets = [],
+}: {
+  template: Template;
+  onChange: (t: Template) => void;
+  presets?: TimesheetTemplate[];
+}) {
   return (
     <div className="rounded-md border p-3 space-y-2.5 bg-muted/20">
-      <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">Template applied to each day</div>
+      <div className="flex items-center justify-between">
+        <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">Template applied to each day</div>
+        {presets.length > 0 && (
+          <Select
+            onValueChange={id => {
+              const p = presets.find(x => x.id === id);
+              if (!p) return;
+              onChange({
+                commessaId: p.commessaId,
+                hours: p.hours,
+                description: p.description,
+                billable: p.billable,
+              });
+            }}
+          >
+            <SelectTrigger className="h-7 w-[170px] text-[11px]">
+              <SelectValue placeholder="Load preset…" />
+            </SelectTrigger>
+            <SelectContent>
+              {presets.map(p => (
+                <SelectItem key={p.id} value={p.id}>
+                  <span className="inline-flex items-center gap-1.5 text-xs">
+                    {p.icon && <span>{p.icon}</span>}
+                    <span className="truncate">{p.name}</span>
+                    <span className="text-muted-foreground">· {p.hours}h</span>
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </div>
       <div className="grid grid-cols-[1fr_90px] gap-2">
         <Select value={template.commessaId} onValueChange={v => onChange({ ...template, commessaId: v })}>
           <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
