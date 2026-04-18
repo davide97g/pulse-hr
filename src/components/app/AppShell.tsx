@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
+import { BookingsProvider } from "./BookingsContext";
 import { CommandPalette } from "./CommandPalette";
 import { CopilotLauncher, CopilotOverlay } from "./Copilot";
 import { NewBadge } from "./NewBadge";
@@ -132,9 +133,11 @@ const groups: NavGroup[] = [
 
 export function AppShell() {
   return (
-    <QuickActionProvider>
-      <AppShellInner />
-    </QuickActionProvider>
+    <BookingsProvider>
+      <QuickActionProvider>
+        <AppShellInner />
+      </QuickActionProvider>
+    </BookingsProvider>
   );
 }
 

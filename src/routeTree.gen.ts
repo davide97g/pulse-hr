@@ -20,6 +20,7 @@ import { Route as PeopleRouteImport } from './routes/people'
 import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as OrgRouteImport } from './routes/org'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as OfficesRouteImport } from './routes/offices'
 import { Route as MomentsRouteImport } from './routes/moments'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LoginRouteImport } from './routes/login'
@@ -34,6 +35,8 @@ import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OfficesOfficeIdRouteImport } from './routes/offices.$officeId'
+import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$officeId.$roomId'
 
 const TimeRoute = TimeRouteImport.update({
   id: '/time',
@@ -88,6 +91,11 @@ const OrgRoute = OrgRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfficesRoute = OfficesRouteImport.update({
+  id: '/offices',
+  path: '/offices',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MomentsRoute = MomentsRouteImport.update({
@@ -160,6 +168,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OfficesOfficeIdRoute = OfficesOfficeIdRouteImport.update({
+  id: '/$officeId',
+  path: '/$officeId',
+  getParentRoute: () => OfficesRoute,
+} as any)
+const OfficesOfficeIdRoomIdRoute = OfficesOfficeIdRoomIdRouteImport.update({
+  id: '/$roomId',
+  path: '/$roomId',
+  getParentRoute: () => OfficesOfficeIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -176,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
   '/moments': typeof MomentsRoute
+  '/offices': typeof OfficesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
@@ -187,6 +206,8 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
+  '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
+  '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -203,6 +224,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
   '/moments': typeof MomentsRoute
+  '/offices': typeof OfficesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
@@ -214,6 +236,8 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
+  '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
+  '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -231,6 +255,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
   '/moments': typeof MomentsRoute
+  '/offices': typeof OfficesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
@@ -242,6 +267,8 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
+  '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
+  '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -260,6 +287,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/marketplace'
     | '/moments'
+    | '/offices'
     | '/onboarding'
     | '/org'
     | '/payroll'
@@ -271,6 +299,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/time'
+    | '/offices/$officeId'
+    | '/offices/$officeId/$roomId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -287,6 +317,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/marketplace'
     | '/moments'
+    | '/offices'
     | '/onboarding'
     | '/org'
     | '/payroll'
@@ -298,6 +329,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/time'
+    | '/offices/$officeId'
+    | '/offices/$officeId/$roomId'
   id:
     | '__root__'
     | '/'
@@ -314,6 +347,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/marketplace'
     | '/moments'
+    | '/offices'
     | '/onboarding'
     | '/org'
     | '/payroll'
@@ -325,6 +359,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/time'
+    | '/offices/$officeId'
+    | '/offices/$officeId/$roomId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -342,6 +378,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MarketplaceRoute: typeof MarketplaceRoute
   MomentsRoute: typeof MomentsRoute
+  OfficesRoute: typeof OfficesRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
   OrgRoute: typeof OrgRoute
   PayrollRoute: typeof PayrollRoute
@@ -432,6 +469,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offices': {
+      id: '/offices'
+      path: '/offices'
+      fullPath: '/offices'
+      preLoaderRoute: typeof OfficesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/moments': {
@@ -532,8 +576,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/offices/$officeId': {
+      id: '/offices/$officeId'
+      path: '/$officeId'
+      fullPath: '/offices/$officeId'
+      preLoaderRoute: typeof OfficesOfficeIdRouteImport
+      parentRoute: typeof OfficesRoute
+    }
+    '/offices/$officeId/$roomId': {
+      id: '/offices/$officeId/$roomId'
+      path: '/$roomId'
+      fullPath: '/offices/$officeId/$roomId'
+      preLoaderRoute: typeof OfficesOfficeIdRoomIdRouteImport
+      parentRoute: typeof OfficesOfficeIdRoute
+    }
   }
 }
+
+interface OfficesOfficeIdRouteChildren {
+  OfficesOfficeIdRoomIdRoute: typeof OfficesOfficeIdRoomIdRoute
+}
+
+const OfficesOfficeIdRouteChildren: OfficesOfficeIdRouteChildren = {
+  OfficesOfficeIdRoomIdRoute: OfficesOfficeIdRoomIdRoute,
+}
+
+const OfficesOfficeIdRouteWithChildren = OfficesOfficeIdRoute._addFileChildren(
+  OfficesOfficeIdRouteChildren,
+)
+
+interface OfficesRouteChildren {
+  OfficesOfficeIdRoute: typeof OfficesOfficeIdRouteWithChildren
+}
+
+const OfficesRouteChildren: OfficesRouteChildren = {
+  OfficesOfficeIdRoute: OfficesOfficeIdRouteWithChildren,
+}
+
+const OfficesRouteWithChildren =
+  OfficesRoute._addFileChildren(OfficesRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -550,6 +631,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MarketplaceRoute: MarketplaceRoute,
   MomentsRoute: MomentsRoute,
+  OfficesRoute: OfficesRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
   OrgRoute: OrgRoute,
   PayrollRoute: PayrollRoute,
