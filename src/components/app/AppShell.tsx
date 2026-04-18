@@ -237,27 +237,31 @@ function Topbar({ onOpenPalette }: { onOpenPalette: () => void }) {
         <PopoverContent align="end" className="w-96 p-0">
           <div className="px-4 py-3 border-b flex items-center justify-between">
             <div className="font-semibold text-sm">Notifications</div>
-            <button className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>
+            <button onClick={() => toast.success("All notifications marked as read")} className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>
           </div>
           <div className="max-h-96 overflow-y-auto">
-            {notifications.map((n) => (
-              <div key={n.id} className={cn("px-4 py-3 border-b last:border-0 hover:bg-muted/50 cursor-pointer", n.unread && "bg-info/5")}>
-                <div className="flex items-start gap-3">
-                  <div className={cn(
-                    "h-2 w-2 mt-1.5 rounded-full shrink-0",
-                    n.type === "approval" && "bg-info",
-                    n.type === "alert" && "bg-destructive",
-                    n.type === "info" && "bg-muted-foreground/40",
-                  )} />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium">{n.title}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">{n.desc}</div>
-                    <div className="text-[11px] text-muted-foreground mt-1">{n.time}</div>
+            {notifications.map((n) => {
+              const target = n.type === "approval" ? "/leave" : n.type === "alert" ? "/expenses" : "/payroll";
+              return (
+                <button key={n.id} onClick={() => navigate({ to: target })} className={cn("w-full text-left px-4 py-3 border-b last:border-0 hover:bg-muted/50", n.unread && "bg-info/5")}>
+                  <div className="flex items-start gap-3">
+                    <div className={cn(
+                      "h-2 w-2 mt-1.5 rounded-full shrink-0",
+                      n.type === "approval" && "bg-info",
+                      n.type === "alert" && "bg-destructive",
+                      n.type === "info" && "bg-muted-foreground/40",
+                    )} />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium">{n.title}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{n.desc}</div>
+                      <div className="text-[11px] text-muted-foreground mt-1">{n.time}</div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                </button>
+              );
+            })}
           </div>
+
         </PopoverContent>
       </Popover>
 
