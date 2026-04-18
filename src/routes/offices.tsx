@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/app/AppShell";
 import { NewBadge } from "@/components/app/NewBadge";
 import { StatTile } from "@/components/app/StatTiles";
 import { OfficeHeatmap, type HeatmapMode } from "@/components/app/OfficeHeatmap";
-import { BookingDialog } from "@/components/app/BookingDialog";
+import { BookingDialog, type BookingDialogPrefill } from "@/components/app/BookingDialog";
 import { useBookings } from "@/components/app/BookingsContext";
 import {
   offices, closures, officeUtilization, roomsByOffice, seatsByOffice,
@@ -76,7 +76,21 @@ function OfficesOverview() {
   };
 
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [bookingPrefill, setBookingPrefill] = useState<BookingDialogPrefill | null>(null);
   const { bookings } = useBookings();
+
+  const openBookAt = (officeId: string, date: string) => {
+    setBookingPrefill({
+      officeId,
+      date,
+      resourceKind: mode === "seats" ? "seat" : "room",
+    });
+    setBookingOpen(true);
+  };
+  const openFreshBooking = () => {
+    setBookingPrefill(null);
+    setBookingOpen(true);
+  };
 
   // KPIs for today. Scoped to the filter (single office or all).
   const kpis = useMemo(() => {
@@ -121,7 +135,7 @@ function OfficesOverview() {
             >
               <Clock className="h-4 w-4" /> My reservations
             </Link>
-            <Button size="sm" onClick={() => setBookingOpen(true)}>
+            <Button size="sm" onClick={openFreshBooking}>
               <Plus className="h-4 w-4 mr-1.5" /> Book a space
             </Button>
           </div>
@@ -204,7 +218,7 @@ function OfficesOverview() {
         <div className="flex items-center gap-2 flex-wrap mb-3">
           <CalendarDays className="h-4 w-4 text-muted-foreground" />
           <div className="text-sm font-semibold">Availability · next 14 days</div>
-          <span className="text-[11px] text-muted-foreground">Click any cell to drill into that office.</span>
+          <span className="text-[11px] text-muted-foreground">Click any cell to book in that office for that day.</span>
           <div className="ml-auto inline-flex rounded-md border p-0.5 bg-background">
             <button onClick={() => shiftDate(-7)} className="h-7 px-2 text-xs rounded-sm hover:bg-muted press-scale">← Prev week</button>
             <button
@@ -224,13 +238,13 @@ function OfficesOverview() {
             <TabsTrigger value="seats"><Armchair className="h-3 w-3 mr-1.5" />Seats</TabsTrigger>
           </TabsList>
           <TabsContent value="combined" className="mt-4">
-            <OfficeHeatmap from={from} days={14} mode="combined" officeIds={selectedOfficeId ? [selectedOfficeId] : undefined} />
+            <OfficeHeatmap from={from} days={14} mode="combined" officeIds={selectedOfficeId ? [selectedOfficeId] : undefined} onCellClick={openBookAt} />
           </TabsContent>
           <TabsContent value="rooms" className="mt-4">
-            <OfficeHeatmap from={from} days={14} mode="rooms" officeIds={selectedOfficeId ? [selectedOfficeId] : undefined} />
+            <OfficeHeatmap from={from} days={14} mode="rooms" officeIds={selectedOfficeId ? [selectedOfficeId] : undefined} onCellClick={openBookAt} />
           </TabsContent>
           <TabsContent value="seats" className="mt-4">
-            <OfficeHeatmap from={from} days={14} mode="seats" officeIds={selectedOfficeId ? [selectedOfficeId] : undefined} />
+            <OfficeHeatmap from={from} days={14} mode="seats" officeIds={selectedOfficeId ? [selectedOfficeId] : undefined} onCellClick={openBookAt} />
           </TabsContent>
         </Tabs>
       </Card>
@@ -360,7 +374,14 @@ function OfficesOverview() {
         </Card>
       </div>
 
-      <BookingDialog open={bookingOpen} onClose={() => setBookingOpen(false)} />
+      <BookingDialog
+        open={bookingOpen}
+        onClose={() => {
+          setBookingOpen(false);
+          setBookingPrefill(null);
+        }}
+        prefill={bookingPrefill ?? undefined}
+      />
     </div>
   );
 }

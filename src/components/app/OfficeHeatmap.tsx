@@ -15,6 +15,8 @@ export interface OfficeHeatmapProps {
   mode: HeatmapMode;
   /** Restrict to a subset of offices; defaults to all. */
   officeIds?: string[];
+  /** If provided, clicking a cell invokes this instead of navigating. */
+  onCellClick?: (officeId: string, date: string) => void;
 }
 
 interface Cell {
@@ -25,7 +27,7 @@ interface Cell {
   striped?: boolean;
 }
 
-export function OfficeHeatmap({ from, days, mode, officeIds }: OfficeHeatmapProps) {
+export function OfficeHeatmap({ from, days, mode, officeIds, onCellClick }: OfficeHeatmapProps) {
   const cols = useMemo(() => dateRange(from, days), [from, days]);
   const rows = useMemo(
     () => (officeIds ? offices.filter(o => officeIds.includes(o.id)) : offices),
@@ -88,7 +90,12 @@ export function OfficeHeatmap({ from, days, mode, officeIds }: OfficeHeatmapProp
             return { date, u, bucket: utilizationBucket(u) };
           });
           return (
-            <RowFragment key={office.id} office={office} cells={cells} />
+            <RowFragment
+              key={office.id}
+              office={office}
+              cells={cells}
+              onCellClick={onCellClick}
+            />
           );
         })}
       </div>
@@ -98,7 +105,13 @@ export function OfficeHeatmap({ from, days, mode, officeIds }: OfficeHeatmapProp
   );
 }
 
-function RowFragment({ office, cells }: { office: (typeof offices)[number]; cells: Cell[] }) {
+function RowFragment({
+  office, cells, onCellClick,
+}: {
+  office: (typeof offices)[number];
+  cells: Cell[];
+  onCellClick?: (officeId: string, date: string) => void;
+}) {
   return (
     <>
       <div className="flex items-center gap-2 pl-1 pr-2 py-1.5">
@@ -109,13 +122,24 @@ function RowFragment({ office, cells }: { office: (typeof offices)[number]; cell
         </div>
       </div>
       {cells.map((cell) => (
-        <HeatCell key={cell.date} officeId={office.id} cell={cell} />
+        <HeatCell
+          key={cell.date}
+          officeId={office.id}
+          cell={cell}
+          onCellClick={onCellClick}
+        />
       ))}
     </>
   );
 }
 
-function HeatCell({ officeId, cell }: { officeId: string; cell: Cell }) {
+function HeatCell({
+  officeId, cell, onCellClick,
+}: {
+  officeId: string;
+  cell: Cell;
+  onCellClick?: (officeId: string, date: string) => void;
+}) {
   const pct = cell.u === null ? null : Math.round(cell.u * 100);
   const label =
     cell.note
@@ -124,30 +148,55 @@ function HeatCell({ officeId, cell }: { officeId: string; cell: Cell }) {
         ? `${pct}%`
         : "";
   const today = cell.date === new Date().toISOString().slice(0, 10);
+  const isClosed = cell.bucket === "closed";
+  const className = cn(
+    "relative h-11 rounded-md border transition-all press-scale grid place-items-center text-[10px] font-mono tabular-nums hover:z-10 hover:scale-[1.04]",
+    today && "ring-1 ring-primary/60",
+    isClosed && "cursor-not-allowed opacity-70",
+  );
+  const style = {
+    backgroundColor: BUCKET_COLOR[cell.bucket],
+    backgroundImage: cell.striped
+      ? "repeating-linear-gradient(45deg, transparent 0 4px, color-mix(in oklch, var(--destructive) 20%, transparent) 4px 8px)"
+      : undefined,
+    borderColor: "color-mix(in oklch, currentColor 8%, transparent)",
+  };
+  const content = (
+    <span
+      className={cn(
+        "pointer-events-none",
+        cell.bucket === "full" || cell.bucket === "high" ? "text-white" : "text-foreground/70",
+      )}
+    >
+      {cell.u === null ? "–" : pct}
+    </span>
+  );
+  const title = `${cell.date} · ${label}${onCellClick && !isClosed ? " · click to book" : ""}`;
+
+  if (onCellClick) {
+    return (
+      <button
+        type="button"
+        disabled={isClosed}
+        onClick={() => !isClosed && onCellClick(officeId, cell.date)}
+        className={className}
+        style={style}
+        title={title}
+      >
+        {content}
+      </button>
+    );
+  }
   return (
     <Link
       to="/offices/$officeId"
       params={{ officeId }}
       search={{ date: cell.date }}
-      className={cn(
-        "relative h-11 rounded-md border transition-all press-scale grid place-items-center text-[10px] font-mono tabular-nums hover:z-10 hover:scale-[1.04]",
-        today && "ring-1 ring-primary/60",
-      )}
-      style={{
-        backgroundColor: BUCKET_COLOR[cell.bucket],
-        backgroundImage: cell.striped
-          ? "repeating-linear-gradient(45deg, transparent 0 4px, color-mix(in oklch, var(--destructive) 20%, transparent) 4px 8px)"
-          : undefined,
-        borderColor: "color-mix(in oklch, currentColor 8%, transparent)",
-      }}
-      title={`${cell.date} · ${label}`}
+      className={className}
+      style={style}
+      title={title}
     >
-      <span className={cn(
-        "pointer-events-none",
-        cell.bucket === "full" || cell.bucket === "high" ? "text-white" : "text-foreground/70",
-      )}>
-        {cell.u === null ? "–" : pct}
-      </span>
+      {content}
     </Link>
   );
 }
