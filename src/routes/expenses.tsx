@@ -54,7 +54,7 @@ function Expenses() {
       <Card className="p-0 overflow-hidden">
         <div className="px-5 py-4 border-b flex items-center justify-between">
           <div className="font-semibold text-sm">All expenses</div>
-          <Button size="sm" variant="outline"><Upload className="h-3.5 w-3.5 mr-1.5" />Upload receipts</Button>
+          <Button size="sm" variant="outline" onClick={() => toast.success("Receipt uploader opened", { description: "Drag PDFs or JPGs to upload" })}><Upload className="h-3.5 w-3.5 mr-1.5" />Upload receipts</Button>
         </div>
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
@@ -118,8 +118,8 @@ function Expenses() {
               </div>
               {status === "pending" && (
                 <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1" onClick={() => setDecisions(d => ({ ...d, [selected.id]: "rejected" }))}><X className="h-4 w-4 mr-1.5" />Reject</Button>
-                  <Button className="flex-1 bg-success hover:bg-success/90 text-white" onClick={() => setDecisions(d => ({ ...d, [selected.id]: "approved" }))}><Check className="h-4 w-4 mr-1.5" />Approve</Button>
+                  <Button variant="outline" className="flex-1" onClick={() => decide(selected, "rejected")}><X className="h-4 w-4 mr-1.5" />Reject</Button>
+                  <Button className="flex-1 bg-success hover:bg-success/90 text-white" onClick={() => decide(selected, "approved")}><Check className="h-4 w-4 mr-1.5" />Approve</Button>
                 </div>
               )}
             </div>
