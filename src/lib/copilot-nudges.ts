@@ -3,6 +3,10 @@ import {
   leaveRequests, employeeById,
 } from "./mock-data";
 import { isBirthday } from "./birthday";
+import {
+  offices, roomsByOffice, bookings as bookingsSeed, officeLocalNow,
+  officeLocalDate, closureFor,
+} from "./offices";
 
 export interface Nudge {
   id: string;
@@ -124,6 +128,43 @@ export function buildNudges(now: Date = new Date()): Nudge[] {
       headline: `${pendingLeaves} leave request${pendingLeaves === 1 ? "" : "s"} awaiting you`,
       prompt: `List the pending leave requests and flag any coverage risks.`,
       score: 50 + pendingLeaves,
+    });
+  }
+
+  // 6) Rooms free right now at the office with most availability.
+  const nowToMin = (hhmm: string) => {
+    const [h, m] = hhmm.split(":").map(Number);
+    return h * 60 + m;
+  };
+  const availability = offices
+    .map((o) => {
+      const today = officeLocalDate(o, now);
+      if (closureFor("office", o.id, today)) return null;
+      const localNow = nowToMin(officeLocalNow(o, now));
+      const [oh, om] = o.openingHours.open.split(":").map(Number);
+      const [ch, cm] = o.openingHours.close.split(":").map(Number);
+      if (localNow < oh * 60 + om || localNow >= ch * 60 + cm) return null;
+      const rooms = roomsByOffice(o.id);
+      const free = rooms.filter((r) => {
+        if (closureFor("room", r.id, today)) return false;
+        const occupied = bookingsSeed.some((b) => {
+          if (b.resourceId !== r.id || b.date !== today || b.status === "cancelled") return false;
+          return localNow >= nowToMin(b.startTime) && localNow < nowToMin(b.endTime);
+        });
+        return !occupied;
+      }).length;
+      return { office: o, free, total: rooms.length };
+    })
+    .filter((x): x is NonNullable<typeof x> => !!x && x.total > 0)
+    .sort((a, b) => b.free / b.total - a.free / a.total);
+  const topAvail = availability[0];
+  if (topAvail && topAvail.free > 0) {
+    nudges.push({
+      id: "rooms-free-now",
+      emoji: "🚪",
+      headline: `${topAvail.free} room${topAvail.free === 1 ? "" : "s"} free at ${topAvail.office.name} now`,
+      prompt: `Which rooms are free right now at ${topAvail.office.name}? Suggest the best one for a 30-min call.`,
+      score: 45 + topAvail.free * 2,
     });
   }
 

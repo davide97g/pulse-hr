@@ -4,6 +4,7 @@ import { Menu } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
 import { BookingsProvider } from "./BookingsContext";
+import { BookingDialog } from "./BookingDialog";
 import { CommandPalette } from "./CommandPalette";
 import { CopilotLauncher, CopilotOverlay } from "./Copilot";
 import { NewBadge } from "./NewBadge";
@@ -93,6 +94,7 @@ const groups: NavGroup[] = [
       { to: "/time", label: "Time & attendance", icon: Clock },
       { to: "/leave", label: "Leave", icon: Calendar },
       { to: "/documents", label: "Documents", icon: FileText },
+      { to: "/offices", label: "Offices", icon: Building2, isNew: true },
     ],
   },
   {
@@ -147,6 +149,7 @@ function AppShellInner() {
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [copilotOpen, setCopilotOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
@@ -170,6 +173,10 @@ function AppShellInner() {
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "m") {
         e.preventDefault();
         appShellNav({ to: "/moments" });
+      }
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        setBookingOpen(true);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -295,6 +302,7 @@ function AppShellInner() {
       <CopilotOverlay open={copilotOpen} onOpenChange={setCopilotOpen} />
       <ShortcutSheet />
       <VoiceDock />
+      <BookingDialog open={bookingOpen} onClose={() => setBookingOpen(false)} />
 
       {/* Mobile nav drawer */}
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>

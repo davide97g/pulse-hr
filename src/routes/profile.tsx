@@ -4,7 +4,10 @@ import {
   Mail, Phone, MapPin, Calendar, Briefcase, Building2, Sparkles, Flame,
   Clock, FileText, Receipt, Trophy, Settings as SettingsIcon, Gift,
   TrendingUp, ArrowUpRight, Target, Award, Zap, MessageCircle,
+  DoorOpen,
 } from "lucide-react";
+import { useBookings } from "@/components/app/BookingsContext";
+import { officeById, roomById } from "@/lib/offices";
 import { Card } from "@/components/ui/card";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
 import {
@@ -40,6 +43,16 @@ function Profile() {
     const approvedDays = myLeave.filter(l => l.status === "approved").reduce((a, l) => a + l.days, 0);
     return { pending, approvedDays, remaining: Math.max(0, 25 - approvedDays) };
   }, []);
+  const { bookings } = useBookings();
+  const today = new Date().toISOString().slice(0, 10);
+  const todayBookings = useMemo(
+    () => bookings.filter(b => b.userId === ME && b.date === today && b.status !== "cancelled"),
+    [bookings, today],
+  );
+  const seatBooking = todayBookings.find(b => b.resourceKind === "seat");
+  const nextRoomBooking = todayBookings
+    .filter(b => b.resourceKind === "room")
+    .sort((a, b) => a.startTime.localeCompare(b.startTime))[0];
 
   if (!me || !summary) return null;
 
@@ -87,6 +100,32 @@ function Profile() {
               <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
                 <Calendar className="h-3 w-3" /> Joined {me.joinDate}
               </span>
+              {seatBooking && (() => {
+                const office = officeById(seatBooking.officeId);
+                return (
+                  <Link
+                    to="/offices/$officeId"
+                    params={{ officeId: seatBooking.officeId }}
+                    className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border bg-success/10 border-success/30 text-success hover:bg-success/15 press-scale"
+                  >
+                    <Building2 className="h-3 w-3" />
+                    Today · {office?.emoji} {office?.name ?? "office"} · seat {seatBooking.resourceId.split("-").pop()}
+                  </Link>
+                );
+              })()}
+              {nextRoomBooking && (() => {
+                const room = roomById(nextRoomBooking.resourceId);
+                return (
+                  <Link
+                    to="/offices/$officeId/$roomId"
+                    params={{ officeId: nextRoomBooking.officeId, roomId: nextRoomBooking.resourceId }}
+                    className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border bg-primary/10 border-primary/30 text-primary hover:bg-primary/15 press-scale"
+                  >
+                    <DoorOpen className="h-3 w-3" />
+                    Next meeting · {room?.name ?? "room"} {nextRoomBooking.startTime}
+                  </Link>
+                );
+              })()}
             </div>
           </div>
           <div className="w-full md:w-[280px]">
@@ -151,6 +190,13 @@ function Profile() {
           title="My documents"
           hint="Contracts · tax forms"
           accent="oklch(0.7 0.13 110)"
+        />
+        <EntryTile
+          to="/offices"
+          icon={<Building2 className="h-5 w-5" />}
+          title="Book a workspace"
+          hint="Rooms, seats, events · ⌘B"
+          accent="oklch(0.65 0.18 340)"
         />
         <EntryTile
           to="/moments"
