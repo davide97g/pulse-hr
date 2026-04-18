@@ -15,7 +15,7 @@ import {
   Search, Bell, Plus, ChevronDown, Building2, Sparkles, LifeBuoy,
   Clock, Calendar, FileText, Receipt, CreditCard, Network, GraduationCap,
   Megaphone, Puzzle, Code2, ShieldCheck, Languages, BookOpen, Zap,
-  Heart, TrendingUp, Gift, Focus,
+  Heart, TrendingUp, Gift, Focus, Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -67,6 +67,13 @@ const groups: NavGroup[] = [
     label: "Insights",
     items: [
       { to: "/reports", label: "Reports", icon: BarChart3 },
+    ],
+  },
+  {
+    label: "Growth",
+    accent: true,
+    items: [
+      { to: "/growth", label: "Growth", icon: Trophy, isNew: true },
     ],
   },
   {

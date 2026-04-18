@@ -24,6 +24,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LeaveRouteImport } from './routes/leave'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as KudosRouteImport } from './routes/kudos'
+import { Route as GrowthRouteImport } from './routes/growth'
 import { Route as ForecastRouteImport } from './routes/forecast'
 import { Route as FocusRouteImport } from './routes/focus'
 import { Route as ExpensesRouteImport } from './routes/expenses'
@@ -107,6 +108,11 @@ const KudosRoute = KudosRouteImport.update({
   path: '/kudos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GrowthRoute = GrowthRouteImport.update({
+  id: '/growth',
+  path: '/growth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForecastRoute = ForecastRouteImport.update({
   id: '/forecast',
   path: '/forecast',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/expenses': typeof ExpensesRoute
   '/focus': typeof FocusRoute
   '/forecast': typeof ForecastRoute
+  '/growth': typeof GrowthRoute
   '/kudos': typeof KudosRoute
   '/landing': typeof LandingRoute
   '/leave': typeof LeaveRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/expenses': typeof ExpensesRoute
   '/focus': typeof FocusRoute
   '/forecast': typeof ForecastRoute
+  '/growth': typeof GrowthRoute
   '/kudos': typeof KudosRoute
   '/landing': typeof LandingRoute
   '/leave': typeof LeaveRoute
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/expenses': typeof ExpensesRoute
   '/focus': typeof FocusRoute
   '/forecast': typeof ForecastRoute
+  '/growth': typeof GrowthRoute
   '/kudos': typeof KudosRoute
   '/landing': typeof LandingRoute
   '/leave': typeof LeaveRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/expenses'
     | '/focus'
     | '/forecast'
+    | '/growth'
     | '/kudos'
     | '/landing'
     | '/leave'
@@ -250,6 +260,7 @@ export interface FileRouteTypes {
     | '/expenses'
     | '/focus'
     | '/forecast'
+    | '/growth'
     | '/kudos'
     | '/landing'
     | '/leave'
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/expenses'
     | '/focus'
     | '/forecast'
+    | '/growth'
     | '/kudos'
     | '/landing'
     | '/leave'
@@ -299,6 +311,7 @@ export interface RootRouteChildren {
   ExpensesRoute: typeof ExpensesRoute
   FocusRoute: typeof FocusRoute
   ForecastRoute: typeof ForecastRoute
+  GrowthRoute: typeof GrowthRoute
   KudosRoute: typeof KudosRoute
   LandingRoute: typeof LandingRoute
   LeaveRoute: typeof LeaveRoute
@@ -423,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KudosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/growth': {
+      id: '/growth'
+      path: '/growth'
+      fullPath: '/growth'
+      preLoaderRoute: typeof GrowthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forecast': {
       id: '/forecast'
       path: '/forecast'
@@ -483,6 +503,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExpensesRoute: ExpensesRoute,
   FocusRoute: FocusRoute,
   ForecastRoute: ForecastRoute,
+  GrowthRoute: GrowthRoute,
   KudosRoute: KudosRoute,
   LandingRoute: LandingRoute,
   LeaveRoute: LeaveRoute,

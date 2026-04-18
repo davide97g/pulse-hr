@@ -558,6 +558,120 @@ export const holidaysSeed: Holiday[] = [
   { date: "2026-12-26", name: "St. Stephen's Day",      country: "IT" },
 ];
 
+// ── Growth module ──────────────────────────────────────────────────────
+
+export type GoalStatus = "active" | "hit" | "missed";
+export interface Goal {
+  id: string;
+  employeeId: string;
+  quarter: string;        // "Q2 2026"
+  title: string;
+  metric: string;         // "Reduce p95 API latency"
+  target: string;         // "< 200ms"
+  progress: number;       // 0..100
+  status: GoalStatus;
+  tag: "impact" | "craft" | "teamwork" | "courage" | "kindness";
+  createdAt: string;
+  dueAt: string;
+}
+
+export type ChallengeStatus = "open" | "succeeded" | "failed";
+export interface Challenge {
+  id: string;
+  employeeId: string;
+  assignedBy: string;     // employeeId
+  title: string;
+  description: string;
+  difficulty: 1 | 2 | 3;  // 1 = easy, 3 = hard
+  status: ChallengeStatus;
+  createdAt: string;
+  dueAt: string;
+  xpReward: number;
+}
+
+export interface ActionItem { text: string; done: boolean }
+export interface OneOnOne {
+  id: string;
+  employeeId: string;     // subject
+  managerId: string;
+  date: string;
+  agenda: string[];
+  notes: string;
+  actionItems: ActionItem[];
+}
+
+export type NoteTone = "praise" | "observation" | "concern";
+export interface GrowthNote {
+  id: string;
+  employeeId: string;
+  authorId: string;
+  body: string;
+  tone: NoteTone;
+  createdAt: string;
+  privateNote?: boolean;
+}
+
+export const goalsSeed: Goal[] = [
+  { id: "g1",  employeeId: "e1", quarter: "Q2 2026", title: "Ship migration GA",         metric: "Zero downtime cutover",          target: "0 incidents",       progress: 78, status: "active", tag: "impact",   createdAt: "2026-03-20", dueAt: "2026-06-30" },
+  { id: "g2",  employeeId: "e1", quarter: "Q2 2026", title: "Mentor 2 junior engineers", metric: "Weekly pairing sessions",        target: "≥ 12 sessions",      progress: 60, status: "active", tag: "kindness", createdAt: "2026-03-20", dueAt: "2026-06-30" },
+  { id: "g3",  employeeId: "e1", quarter: "Q1 2026", title: "Design system v2 adoption",  metric: "% components migrated",          target: "≥ 80%",             progress: 100, status: "hit", tag: "craft",    createdAt: "2026-01-08", dueAt: "2026-03-31" },
+  { id: "g4",  employeeId: "e2", quarter: "Q2 2026", title: "Mobile onboarding delivery", metric: "Time-to-first-value",            target: "< 3 min",           progress: 45, status: "active", tag: "craft",    createdAt: "2026-03-20", dueAt: "2026-06-30" },
+  { id: "g5",  employeeId: "e4", quarter: "Q1 2026", title: "Service reliability",        metric: "% uptime",                        target: "≥ 99.95%",          progress: 92, status: "missed", tag: "impact",  createdAt: "2026-01-08", dueAt: "2026-03-31" },
+  { id: "g6",  employeeId: "e9", quarter: "Q2 2026", title: "Become cutover lead",        metric: "Own 2 commesse rollouts",        target: "2 rollouts",        progress: 30, status: "active", tag: "courage",  createdAt: "2026-03-20", dueAt: "2026-06-30" },
+  { id: "g7",  employeeId: "e7", quarter: "Q2 2026", title: "Launch analytics dashboard", metric: "Dashboards live",                 target: "≥ 5",               progress: 40, status: "active", tag: "impact",   createdAt: "2026-03-20", dueAt: "2026-06-30" },
+  { id: "g8",  employeeId: "e3", quarter: "Q2 2026", title: "Cut onboarding to 3 days",   metric: "New-hire time-to-productive",    target: "≤ 3 days",          progress: 55, status: "active", tag: "teamwork", createdAt: "2026-03-20", dueAt: "2026-06-30" },
+];
+
+export const challengesSeed: Challenge[] = [
+  { id: "ch1", employeeId: "e1", assignedBy: "e3", title: "Ship blameless post-mortem template",    description: "Author + roll out across Engineering.",           difficulty: 2, status: "succeeded", xpReward: 100, createdAt: "2026-02-10", dueAt: "2026-03-15" },
+  { id: "ch2", employeeId: "e1", assignedBy: "e3", title: "Present cutover plan to exec team",     description: "30-min readout with Q&A.",                         difficulty: 3, status: "open",      xpReward: 150, createdAt: "2026-04-01", dueAt: "2026-05-08" },
+  { id: "ch3", employeeId: "e2", assignedBy: "e3", title: "Run design critique for recruiting",    description: "Host weekly critiques for 4 weeks.",               difficulty: 2, status: "succeeded", xpReward: 100, createdAt: "2026-02-15", dueAt: "2026-03-20" },
+  { id: "ch4", employeeId: "e9", assignedBy: "e1", title: "Own the migration cutover checklist",   description: "Author, review with ops, drive the run book.",     difficulty: 2, status: "open",      xpReward: 100, createdAt: "2026-04-05", dueAt: "2026-05-15" },
+  { id: "ch5", employeeId: "e4", assignedBy: "e1", title: "Reduce p95 API latency by 30%",          description: "Ship with a load-test dashboard.",                 difficulty: 3, status: "failed",    xpReward: 150, createdAt: "2026-01-20", dueAt: "2026-03-15" },
+  { id: "ch6", employeeId: "e7", assignedBy: "e3", title: "Draft Q3 product roadmap",               description: "Collect inputs, publish, drive review.",           difficulty: 2, status: "open",      xpReward: 100, createdAt: "2026-04-02", dueAt: "2026-05-20" },
+];
+
+export const oneOnOnesSeed: OneOnOne[] = [
+  {
+    id: "o1", employeeId: "e1", managerId: "e3", date: "2026-04-10",
+    agenda: ["Migration risk review", "Mentoring load", "Career goals check-in"],
+    notes: "Solid progress on the rebuild. Comfortable with the pace. Wants more architecture influence.",
+    actionItems: [
+      { text: "Draft architecture review cadence", done: true },
+      { text: "Pair Sarah with Noah on deploy story", done: false },
+    ],
+  },
+  {
+    id: "o2", employeeId: "e1", managerId: "e3", date: "2026-03-27",
+    agenda: ["Sprint recap", "Hiring pipeline"],
+    notes: "Strong demo. Interview loop needs calibration — inconsistent scorecards.",
+    actionItems: [
+      { text: "Schedule calibration session",       done: true },
+      { text: "Write the senior-engineer rubric",   done: true },
+    ],
+  },
+  {
+    id: "o3", employeeId: "e2", managerId: "e3", date: "2026-04-08",
+    agenda: ["Design system adoption", "Brand refresh brief"],
+    notes: "Energized by the v2 rollout. Wants more time for brand work.",
+    actionItems: [{ text: "Carve 20% time for brand", done: false }],
+  },
+  {
+    id: "o4", employeeId: "e9", managerId: "e1", date: "2026-04-09",
+    agenda: ["Deep-work balance", "Cutover ownership"],
+    notes: "Focus sessions are landing. Stretch goal: take the lead on the next cutover.",
+    actionItems: [{ text: "Assign cutover run book", done: true }],
+  },
+];
+
+export const growthNotesSeed: GrowthNote[] = [
+  { id: "gn1", employeeId: "e1", authorId: "e3", body: "Exceptional judgment under pressure during the Jan incident — made the right call to pause rollout.", tone: "praise",      createdAt: "2026-01-22" },
+  { id: "gn2", employeeId: "e1", authorId: "e3", body: "Tends to absorb too much work — watch for burnout signals and delegate.",                               tone: "observation", createdAt: "2026-03-12" },
+  { id: "gn3", employeeId: "e2", authorId: "e3", body: "Design critique format has lifted the whole team's quality bar.",                                       tone: "praise",      createdAt: "2026-03-30" },
+  { id: "gn4", employeeId: "e4", authorId: "e1", body: "Missed the Q1 reliability target — discuss realistic scope for Q2.",                                    tone: "concern",     createdAt: "2026-04-02" },
+  { id: "gn5", employeeId: "e9", authorId: "e1", body: "Pairing with Noah is producing real velocity gains on migration.",                                      tone: "praise",      createdAt: "2026-04-09" },
+];
+
 export const plugins = [
   { id: "pg1", name: "Slack", desc: "Sync notifications and approvals to Slack channels.", category: "Communication", installed: true, icon: "💬" },
   { id: "pg2", name: "Google Calendar", desc: "Two-way sync for leaves and meetings.", category: "Productivity", installed: true, icon: "📅" },
