@@ -1,14 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Plus, Check, X, Calendar } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Check, X, Calendar, Trash2, CalendarOff } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
+import { EmptyState } from "@/components/app/EmptyState";
+import { SkeletonRows } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
-import { leaveRequests, employeeById, type LeaveRequest } from "@/lib/mock-data";
+import { leaveRequests as seed, employeeById, type LeaveRequest } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/leave")({
   head: () => ({ meta: [{ title: "Leave — Pulse HR" }] }),
@@ -17,18 +23,34 @@ export const Route = createFileRoute("/leave")({
 
 function Leave() {
   const [selected, setSelected] = useState<LeaveRequest | null>(null);
+  const [list, setList] = useState<LeaveRequest[]>(seed);
   const [decisions, setDecisions] = useState<Record<string, "approved" | "rejected">>({});
+  const [toDelete, setToDelete] = useState<LeaveRequest | null>(null);
+  const [loading, setLoading] = useState(true);
   const { open: openAction } = useQuickAction();
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 420);
+    return () => clearTimeout(t);
+  }, []);
 
   const decide = (id: string, status: "approved" | "rejected") => {
     setDecisions(d => ({ ...d, [id]: status }));
-    const e = employeeById(leaveRequests.find(l => l.id === id)!.employeeId)!;
+    const e = employeeById(list.find(l => l.id === id)!.employeeId)!;
     if (status === "approved") toast.success(`Approved leave for ${e.name}`);
     else toast.error(`Rejected leave for ${e.name}`);
   };
 
+  const remove = (l: LeaveRequest) => {
+    setList(ls => ls.filter(x => x.id !== l.id));
+    setSelected(s => (s?.id === l.id ? null : s));
+    toast("Request deleted", {
+      action: { label: "Undo", onClick: () => setList(ls => [l, ...ls]) },
+    });
+  };
+
   const getStatus = (l: LeaveRequest): "pending" | "approved" | "rejected" => decisions[l.id] ?? l.status;
-  const filtered = (status: string) => leaveRequests.filter(l => getStatus(l) === status);
+  const filtered = (status: string) => list.filter(l => getStatus(l) === status);
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto fade-in">
@@ -63,18 +85,30 @@ function Leave() {
         {(["pending","approved","rejected"] as const).map(tab => (
           <TabsContent key={tab} value={tab} className="mt-4">
             <Card className="p-0 overflow-hidden">
-              {filtered(tab).length === 0 ? (
-                <div className="py-16 text-center">
-                  <div className="text-sm font-medium">No {tab} requests</div>
-                </div>
+              {loading ? (
+                <SkeletonRows rows={4} />
+              ) : filtered(tab).length === 0 ? (
+                <EmptyState
+                  compact
+                  icon={<CalendarOff className="h-6 w-6" />}
+                  title={`No ${tab} requests`}
+                  description={tab === "pending" ? "You're all caught up." : "Nothing here yet."}
+                  action={
+                    tab === "pending" ? (
+                      <Button size="sm" variant="outline" onClick={() => openAction("request-leave")}>
+                        <Plus className="h-4 w-4 mr-1.5" />Request leave
+                      </Button>
+                    ) : undefined
+                  }
+                />
               ) : (
-                <div className="divide-y">
+                <div className="divide-y stagger-in">
                   {filtered(tab).map(l => {
                     const e = employeeById(l.employeeId)!;
                     return (
                       <div
                         key={l.id}
-                        className="px-5 py-3.5 flex items-center gap-4 hover:bg-muted/40 cursor-pointer"
+                        className="group px-5 py-3.5 flex items-center gap-4 hover:bg-muted/40 cursor-pointer transition-colors"
                         onClick={() => setSelected(l)}
                       >
                         <Avatar initials={e.initials} color={e.avatarColor} size={36} />
@@ -83,13 +117,19 @@ function Leave() {
                           <div className="text-xs text-muted-foreground">{l.type} • {l.days} day{l.days > 1 ? "s" : ""} • {l.from} → {l.to}</div>
                         </div>
                         <StatusBadge status={getStatus(l)} />
-                        {tab === "pending" && (
+                        {tab === "pending" ? (
                           <div className="flex gap-1.5" onClick={(ev) => ev.stopPropagation()}>
-                            <Button size="sm" variant="ghost" className="h-8 px-2 text-destructive hover:bg-destructive/10" onClick={() => decide(l.id, "rejected")}>
+                            <Button size="sm" variant="ghost" className="h-8 px-2 text-destructive hover:bg-destructive/10 press-scale" onClick={() => decide(l.id, "rejected")}>
                               <X className="h-4 w-4" />
                             </Button>
-                            <Button size="sm" className="h-8 px-3 bg-success text-success-foreground hover:bg-success/90" onClick={() => decide(l.id, "approved")}>
+                            <Button size="sm" className="h-8 px-3 bg-success text-success-foreground hover:bg-success/90 press-scale" onClick={() => decide(l.id, "approved")}>
                               <Check className="h-4 w-4 mr-1" /> Approve
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={ev => ev.stopPropagation()}>
+                            <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => setToDelete(l)}>
+                              <Trash2 className="h-3.5 w-3.5" />
                             </Button>
                           </div>
                         )}
@@ -119,6 +159,26 @@ function Leave() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={!!toDelete} onOpenChange={o => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete leave request?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {toDelete && `${toDelete.days} day${toDelete.days > 1 ? "s" : ""} of ${toDelete.type} will be removed.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { if (toDelete) remove(toDelete); setToDelete(null); }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <SidePanel open={!!selected} onClose={() => setSelected(null)} title="Leave request">
         {selected && (() => {

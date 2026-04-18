@@ -1,13 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Plus, Upload, Check, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Upload, Check, X, Receipt, Trash2, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
+import { EmptyState } from "@/components/app/EmptyState";
+import { SkeletonRows } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
-import { expenses, employeeById, type Expense } from "@/lib/mock-data";
+import { expenses as seed, employeeById, type Expense } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/expenses")({
   head: () => ({ meta: [{ title: "Expenses — Pulse HR" }] }),
@@ -18,14 +27,29 @@ const sym = { USD: "$", EUR: "€", GBP: "£" };
 
 function Expenses() {
   const [selected, setSelected] = useState<Expense | null>(null);
+  const [list, setList] = useState<Expense[]>(seed);
   const [decisions, setDecisions] = useState<Record<string, Expense["status"]>>({});
+  const [toDelete, setToDelete] = useState<Expense | null>(null);
+  const [loading, setLoading] = useState(true);
   const { open: openAction } = useQuickAction();
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 450);
+    return () => clearTimeout(t);
+  }, []);
 
   const get = (e: Expense) => decisions[e.id] ?? e.status;
   const decide = (e: Expense, status: Expense["status"]) => {
     setDecisions(d => ({ ...d, [e.id]: status }));
     if (status === "approved") toast.success(`Approved: ${e.description}`);
     else if (status === "rejected") toast.error(`Rejected: ${e.description}`);
+  };
+  const remove = (e: Expense) => {
+    setList(ls => ls.filter(x => x.id !== e.id));
+    setSelected(s => (s?.id === e.id ? null : s));
+    toast("Expense deleted", {
+      action: { label: "Undo", onClick: () => setList(ls => [e, ...ls]) },
+    });
   };
 
   return (
@@ -56,39 +80,100 @@ function Expenses() {
           <div className="font-semibold text-sm">All expenses</div>
           <Button size="sm" variant="outline" onClick={() => toast.success("Receipt uploader opened", { description: "Drag PDFs or JPGs to upload" })}><Upload className="h-3.5 w-3.5 mr-1.5" />Upload receipts</Button>
         </div>
-        <table className="w-full text-sm">
-          <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
-            <tr>
-              <th className="text-left font-medium px-4 py-2.5">Description</th>
-              <th className="text-left font-medium px-4 py-2.5">Submitted by</th>
-              <th className="text-left font-medium px-4 py-2.5">Category</th>
-              <th className="text-right font-medium px-4 py-2.5">Amount</th>
-              <th className="text-left font-medium px-4 py-2.5">Date</th>
-              <th className="text-left font-medium px-4 py-2.5">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {expenses.map(x => {
-              const emp = employeeById(x.employeeId)!;
-              return (
-                <tr key={x.id} onClick={() => setSelected(x)} className="border-t hover:bg-muted/40 cursor-pointer">
-                  <td className="px-4 py-2.5 font-medium">{x.description}</td>
-                  <td className="px-4 py-2.5">
-                    <div className="flex items-center gap-2">
-                      <Avatar initials={emp.initials} color={emp.avatarColor} size={24} />
-                      <span className="text-muted-foreground">{emp.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2.5 text-muted-foreground">{x.category}</td>
-                  <td className="px-4 py-2.5 text-right font-medium">{sym[x.currency]}{x.amount.toLocaleString()}</td>
-                  <td className="px-4 py-2.5 text-muted-foreground text-xs">{x.date}</td>
-                  <td className="px-4 py-2.5"><StatusBadge status={get(x)} /></td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        {loading ? (
+          <SkeletonRows rows={5} />
+        ) : list.length === 0 ? (
+          <EmptyState
+            icon={<Receipt className="h-6 w-6" />}
+            title="No expenses yet"
+            description="Submit your first expense to start the reimbursement flow."
+            action={
+              <Button size="sm" onClick={() => openAction("submit-expense")}>
+                <Plus className="h-4 w-4 mr-1.5" />Submit expense
+              </Button>
+            }
+          />
+        ) : (
+          <table className="w-full text-sm">
+            <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+              <tr>
+                <th className="text-left font-medium px-4 py-2.5">Description</th>
+                <th className="text-left font-medium px-4 py-2.5">Submitted by</th>
+                <th className="text-left font-medium px-4 py-2.5">Category</th>
+                <th className="text-right font-medium px-4 py-2.5">Amount</th>
+                <th className="text-left font-medium px-4 py-2.5">Date</th>
+                <th className="text-left font-medium px-4 py-2.5">Status</th>
+                <th className="w-10"></th>
+              </tr>
+            </thead>
+            <tbody className="stagger-in">
+              {list.map(x => {
+                const emp = employeeById(x.employeeId)!;
+                return (
+                  <tr key={x.id} onClick={() => setSelected(x)} className="border-t hover:bg-muted/40 cursor-pointer group transition-colors">
+                    <td className="px-4 py-2.5 font-medium">{x.description}</td>
+                    <td className="px-4 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <Avatar initials={emp.initials} color={emp.avatarColor} size={24} />
+                        <span className="text-muted-foreground">{emp.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-2.5 text-muted-foreground">{x.category}</td>
+                    <td className="px-4 py-2.5 text-right font-medium tabular-nums">{sym[x.currency]}{x.amount.toLocaleString()}</td>
+                    <td className="px-4 py-2.5 text-muted-foreground text-xs">{x.date}</td>
+                    <td className="px-4 py-2.5"><StatusBadge status={get(x)} /></td>
+                    <td className="px-2" onClick={ev => ev.stopPropagation()}>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => setSelected(x)}>View detail</DropdownMenuItem>
+                          {get(x) === "pending" && (
+                            <>
+                              <DropdownMenuItem onClick={() => decide(x, "approved")}>
+                                <Check className="h-4 w-4 mr-2" />Approve
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => decide(x, "rejected")}>
+                                <X className="h-4 w-4 mr-2" />Reject
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          <DropdownMenuItem className="text-destructive" onClick={() => setToDelete(x)}>
+                            <Trash2 className="h-4 w-4 mr-2" />Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </Card>
+
+      <AlertDialog open={!!toDelete} onOpenChange={o => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete expense?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {toDelete && `"${toDelete.description}" (${sym[toDelete.currency]}${toDelete.amount.toLocaleString()}) will be removed.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { if (toDelete) remove(toDelete); setToDelete(null); }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <SidePanel open={!!selected} onClose={() => setSelected(null)} title="Expense detail">
         {selected && (() => {

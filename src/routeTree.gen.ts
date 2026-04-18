@@ -10,15 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TimeRouteImport } from './routes/time'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RecruitingRouteImport } from './routes/recruiting'
+import { Route as PulseRouteImport } from './routes/pulse'
 import { Route as PeopleRouteImport } from './routes/people'
 import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as OrgRouteImport } from './routes/org'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LeaveRouteImport } from './routes/leave'
+import { Route as LandingRouteImport } from './routes/landing'
+import { Route as KudosRouteImport } from './routes/kudos'
+import { Route as ForecastRouteImport } from './routes/forecast'
+import { Route as FocusRouteImport } from './routes/focus'
 import { Route as ExpensesRouteImport } from './routes/expenses'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as DevelopersRouteImport } from './routes/developers'
@@ -28,6 +35,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const TimeRoute = TimeRouteImport.update({
   id: '/time',
   path: '/time',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -43,6 +55,11 @@ const ReportsRoute = ReportsRouteImport.update({
 const RecruitingRoute = RecruitingRouteImport.update({
   id: '/recruiting',
   path: '/recruiting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PulseRoute = PulseRouteImport.update({
+  id: '/pulse',
+  path: '/pulse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PeopleRoute = PeopleRouteImport.update({
@@ -70,9 +87,34 @@ const MarketplaceRoute = MarketplaceRouteImport.update({
   path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeaveRoute = LeaveRouteImport.update({
   id: '/leave',
   path: '/leave',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandingRoute = LandingRouteImport.update({
+  id: '/landing',
+  path: '/landing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KudosRoute = KudosRouteImport.update({
+  id: '/kudos',
+  path: '/kudos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForecastRoute = ForecastRouteImport.update({
+  id: '/forecast',
+  path: '/forecast',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FocusRoute = FocusRouteImport.update({
+  id: '/focus',
+  path: '/focus',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExpensesRoute = ExpensesRouteImport.update({
@@ -107,15 +149,22 @@ export interface FileRoutesByFullPath {
   '/developers': typeof DevelopersRoute
   '/documents': typeof DocumentsRoute
   '/expenses': typeof ExpensesRoute
+  '/focus': typeof FocusRoute
+  '/forecast': typeof ForecastRoute
+  '/kudos': typeof KudosRoute
+  '/landing': typeof LandingRoute
   '/leave': typeof LeaveRoute
+  '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
   '/people': typeof PeopleRoute
+  '/pulse': typeof PulseRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
 }
 export interface FileRoutesByTo {
@@ -124,15 +173,22 @@ export interface FileRoutesByTo {
   '/developers': typeof DevelopersRoute
   '/documents': typeof DocumentsRoute
   '/expenses': typeof ExpensesRoute
+  '/focus': typeof FocusRoute
+  '/forecast': typeof ForecastRoute
+  '/kudos': typeof KudosRoute
+  '/landing': typeof LandingRoute
   '/leave': typeof LeaveRoute
+  '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
   '/people': typeof PeopleRoute
+  '/pulse': typeof PulseRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
 }
 export interface FileRoutesById {
@@ -142,15 +198,22 @@ export interface FileRoutesById {
   '/developers': typeof DevelopersRoute
   '/documents': typeof DocumentsRoute
   '/expenses': typeof ExpensesRoute
+  '/focus': typeof FocusRoute
+  '/forecast': typeof ForecastRoute
+  '/kudos': typeof KudosRoute
+  '/landing': typeof LandingRoute
   '/leave': typeof LeaveRoute
+  '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
   '/people': typeof PeopleRoute
+  '/pulse': typeof PulseRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
 }
 export interface FileRouteTypes {
@@ -161,15 +224,22 @@ export interface FileRouteTypes {
     | '/developers'
     | '/documents'
     | '/expenses'
+    | '/focus'
+    | '/forecast'
+    | '/kudos'
+    | '/landing'
     | '/leave'
+    | '/login'
     | '/marketplace'
     | '/onboarding'
     | '/org'
     | '/payroll'
     | '/people'
+    | '/pulse'
     | '/recruiting'
     | '/reports'
     | '/settings'
+    | '/signup'
     | '/time'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -178,15 +248,22 @@ export interface FileRouteTypes {
     | '/developers'
     | '/documents'
     | '/expenses'
+    | '/focus'
+    | '/forecast'
+    | '/kudos'
+    | '/landing'
     | '/leave'
+    | '/login'
     | '/marketplace'
     | '/onboarding'
     | '/org'
     | '/payroll'
     | '/people'
+    | '/pulse'
     | '/recruiting'
     | '/reports'
     | '/settings'
+    | '/signup'
     | '/time'
   id:
     | '__root__'
@@ -195,15 +272,22 @@ export interface FileRouteTypes {
     | '/developers'
     | '/documents'
     | '/expenses'
+    | '/focus'
+    | '/forecast'
+    | '/kudos'
+    | '/landing'
     | '/leave'
+    | '/login'
     | '/marketplace'
     | '/onboarding'
     | '/org'
     | '/payroll'
     | '/people'
+    | '/pulse'
     | '/recruiting'
     | '/reports'
     | '/settings'
+    | '/signup'
     | '/time'
   fileRoutesById: FileRoutesById
 }
@@ -213,15 +297,22 @@ export interface RootRouteChildren {
   DevelopersRoute: typeof DevelopersRoute
   DocumentsRoute: typeof DocumentsRoute
   ExpensesRoute: typeof ExpensesRoute
+  FocusRoute: typeof FocusRoute
+  ForecastRoute: typeof ForecastRoute
+  KudosRoute: typeof KudosRoute
+  LandingRoute: typeof LandingRoute
   LeaveRoute: typeof LeaveRoute
+  LoginRoute: typeof LoginRoute
   MarketplaceRoute: typeof MarketplaceRoute
   OnboardingRoute: typeof OnboardingRoute
   OrgRoute: typeof OrgRoute
   PayrollRoute: typeof PayrollRoute
   PeopleRoute: typeof PeopleRoute
+  PulseRoute: typeof PulseRoute
   RecruitingRoute: typeof RecruitingRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
+  SignupRoute: typeof SignupRoute
   TimeRoute: typeof TimeRoute
 }
 
@@ -232,6 +323,13 @@ declare module '@tanstack/react-router' {
       path: '/time'
       fullPath: '/time'
       preLoaderRoute: typeof TimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -253,6 +351,13 @@ declare module '@tanstack/react-router' {
       path: '/recruiting'
       fullPath: '/recruiting'
       preLoaderRoute: typeof RecruitingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pulse': {
+      id: '/pulse'
+      path: '/pulse'
+      fullPath: '/pulse'
+      preLoaderRoute: typeof PulseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/people': {
@@ -290,11 +395,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leave': {
       id: '/leave'
       path: '/leave'
       fullPath: '/leave'
       preLoaderRoute: typeof LeaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/landing': {
+      id: '/landing'
+      path: '/landing'
+      fullPath: '/landing'
+      preLoaderRoute: typeof LandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kudos': {
+      id: '/kudos'
+      path: '/kudos'
+      fullPath: '/kudos'
+      preLoaderRoute: typeof KudosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forecast': {
+      id: '/forecast'
+      path: '/forecast'
+      fullPath: '/forecast'
+      preLoaderRoute: typeof ForecastRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/focus': {
+      id: '/focus'
+      path: '/focus'
+      fullPath: '/focus'
+      preLoaderRoute: typeof FocusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/expenses': {
@@ -341,15 +481,22 @@ const rootRouteChildren: RootRouteChildren = {
   DevelopersRoute: DevelopersRoute,
   DocumentsRoute: DocumentsRoute,
   ExpensesRoute: ExpensesRoute,
+  FocusRoute: FocusRoute,
+  ForecastRoute: ForecastRoute,
+  KudosRoute: KudosRoute,
+  LandingRoute: LandingRoute,
   LeaveRoute: LeaveRoute,
+  LoginRoute: LoginRoute,
   MarketplaceRoute: MarketplaceRoute,
   OnboardingRoute: OnboardingRoute,
   OrgRoute: OrgRoute,
   PayrollRoute: PayrollRoute,
   PeopleRoute: PeopleRoute,
+  PulseRoute: PulseRoute,
   RecruitingRoute: RecruitingRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
+  SignupRoute: SignupRoute,
   TimeRoute: TimeRoute,
 }
 export const routeTree = rootRouteImport

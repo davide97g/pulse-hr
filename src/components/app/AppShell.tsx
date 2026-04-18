@@ -2,12 +2,15 @@ import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
 import { CommandPalette } from "./CommandPalette";
+import { CopilotLauncher, CopilotOverlay } from "./Copilot";
+import { NewBadge } from "./NewBadge";
 import { toast } from "sonner";
 import {
   LayoutDashboard, Users, Briefcase, Wallet, BarChart3, Settings,
   Search, Bell, Plus, ChevronDown, Building2, Sparkles, LifeBuoy,
   Clock, Calendar, FileText, Receipt, CreditCard, Network, GraduationCap,
   Megaphone, Puzzle, Code2, ShieldCheck, Languages, BookOpen, Zap,
+  Heart, TrendingUp, Gift, Focus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,8 +23,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Badge } from "@/components/ui/badge";
 import { notifications } from "@/lib/mock-data";
 
-type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }> };
-type NavGroup = { label: string; items: NavItem[] };
+type NavItem = { to: string; label: string; icon: React.ComponentType<{ className?: string }>; isNew?: boolean };
+type NavGroup = { label: string; items: NavItem[]; accent?: boolean };
 
 const groups: NavGroup[] = [
   {
@@ -62,6 +65,16 @@ const groups: NavGroup[] = [
     ],
   },
   {
+    label: "Labs",
+    accent: true,
+    items: [
+      { to: "/pulse",    label: "Team Pulse",       icon: Heart,      isNew: true },
+      { to: "/forecast", label: "Commessa Forecast", icon: TrendingUp, isNew: true },
+      { to: "/kudos",    label: "Kudos",            icon: Gift,       isNew: true },
+      { to: "/focus",    label: "Focus Mode",       icon: Focus,      isNew: true },
+    ],
+  },
+  {
     label: "Workspace",
     items: [
       { to: "/marketplace", label: "Marketplace", icon: Puzzle },
@@ -83,12 +96,17 @@ function AppShellInner() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [copilotOpen, setCopilotOpen] = useState(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         setPaletteOpen(true);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === "j") {
+        e.preventDefault();
+        setCopilotOpen(true);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -132,8 +150,9 @@ function AppShellInner() {
           {groups.map((group) => (
             <div key={group.label} className="mb-4">
               {!collapsed && (
-                <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground flex items-center gap-1.5">
                   {group.label}
+                  {group.accent && <span className="inline-block h-1 w-1 rounded-full bg-primary pulse-dot" />}
                 </div>
               )}
               <div className="space-y-0.5">
@@ -145,7 +164,7 @@ function AppShellInner() {
                       key={item.to}
                       to={item.to}
                       className={cn(
-                        "flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors",
+                        "group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors relative",
                         active
                           ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                           : "text-sidebar-foreground hover:bg-sidebar-accent/60",
@@ -154,7 +173,9 @@ function AppShellInner() {
                       title={collapsed ? item.label : undefined}
                     >
                       <Icon className="h-4 w-4 shrink-0" />
-                      {!collapsed && <span className="truncate">{item.label}</span>}
+                      {!collapsed && <span className="truncate flex-1">{item.label}</span>}
+                      {!collapsed && item.isNew && <NewBadge />}
+                      {collapsed && item.isNew && <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />}
                     </Link>
                   );
                 })}
@@ -176,19 +197,20 @@ function AppShellInner() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-        <Topbar onOpenPalette={() => setPaletteOpen(true)} />
+        <Topbar onOpenPalette={() => setPaletteOpen(true)} onOpenCopilot={() => setCopilotOpen(true)} />
         <main className="flex-1 overflow-y-auto scrollbar-thin">
           <Outlet />
         </main>
       </div>
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      <CopilotOverlay open={copilotOpen} onOpenChange={setCopilotOpen} />
     </div>
   );
 }
 
 
-function Topbar({ onOpenPalette }: { onOpenPalette: () => void }) {
+function Topbar({ onOpenPalette, onOpenCopilot }: { onOpenPalette: () => void; onOpenCopilot: () => void }) {
   const unread = notifications.filter(n => n.unread).length;
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
@@ -206,6 +228,8 @@ function Topbar({ onOpenPalette }: { onOpenPalette: () => void }) {
       </button>
 
       <div className="flex-1" />
+
+      <CopilotLauncher onClick={onOpenCopilot} />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -285,7 +309,8 @@ function Topbar({ onOpenPalette }: { onOpenPalette: () => void }) {
           <DropdownMenuItem>Profile</DropdownMenuItem>
           <DropdownMenuItem>Switch role</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Sign out</DropdownMenuItem>
+          <DropdownMenuItem asChild><Link to="/landing">Marketing site</Link></DropdownMenuItem>
+          <DropdownMenuItem asChild><Link to="/login">Sign out</Link></DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
@@ -294,11 +319,11 @@ function Topbar({ onOpenPalette }: { onOpenPalette: () => void }) {
 
 export function PageHeader({
   title, description, actions,
-}: { title: string; description?: string; actions?: React.ReactNode }) {
+}: { title: React.ReactNode; description?: React.ReactNode; actions?: React.ReactNode }) {
   return (
     <div className="flex items-start justify-between gap-4 mb-6">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
+        <h1 className="text-xl font-semibold tracking-tight flex items-center gap-2">{title}</h1>
         {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
       </div>
       {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}

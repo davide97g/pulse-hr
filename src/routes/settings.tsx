@@ -1,5 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Building2, Users, ShieldCheck, History, Languages, Plug } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Building2, Users, ShieldCheck, History, Languages, Plug, Plus, Pencil, Trash2,
+  AlertTriangle, Info, TriangleAlert, Search,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +12,20 @@ import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/app/AppShell";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { SkeletonRows } from "@/components/app/SkeletonList";
+import { EmptyState } from "@/components/app/EmptyState";
+import { rolesSeed, auditLogSeed, type Role, type AuditEntry } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Settings — Pulse HR" }] }),
@@ -15,6 +33,36 @@ export const Route = createFileRoute("/settings")({
 });
 
 function Settings() {
+  const [loading, setLoading] = useState(true);
+  const [roles, setRoles] = useState<Role[]>(rolesSeed);
+  const [editRole, setEditRole] = useState<Role | "new" | null>(null);
+  const [deleteRole, setDeleteRole] = useState<Role | null>(null);
+  const [security, setSecurity] = useState({
+    twofa: true, sso: true, sessionTimeout: false, ipAllowlist: false,
+  });
+  const [company, setCompany] = useState({ name: "Acme Inc.", legal: "Acme Holdings LLC", country: "United States", currency: "USD" });
+  const [dirty, setDirty] = useState(false);
+  const [auditQ, setAuditQ] = useState("");
+  const [auditFilter, setAuditFilter] = useState<"all" | AuditEntry["severity"]>("all");
+
+  useEffect(() => { const t = setTimeout(() => setLoading(false), 420); return () => clearTimeout(t); }, []);
+
+  const filteredAudit = auditLogSeed.filter(a => {
+    if (auditFilter !== "all" && a.severity !== auditFilter) return false;
+    if (auditQ && !`${a.who} ${a.what}`.toLowerCase().includes(auditQ.toLowerCase())) return false;
+    return true;
+  });
+
+  const saveRole = (data: Omit<Role, "id" | "color">, id?: string) => {
+    if (id) {
+      setRoles(rs => rs.map(r => (r.id === id ? { ...r, ...data } : r)));
+      toast.success("Role updated");
+    } else {
+      setRoles(rs => [...rs, { ...data, id: `r-${Date.now()}`, color: "oklch(0.6 0.16 195)" }]);
+      toast.success("Role created");
+    }
+  };
+
   return (
     <div className="p-6 max-w-[1100px] mx-auto fade-in">
       <PageHeader title="Settings" description="Company configuration, roles and integrations" />
@@ -31,48 +79,66 @@ function Settings() {
 
         <TabsContent value="company" className="mt-4">
           <Card className="p-6 space-y-4 max-w-2xl">
-            <div className="space-y-1.5"><Label>Company name</Label><Input defaultValue="Acme Inc." /></div>
-            <div className="space-y-1.5"><Label>Legal entity</Label><Input defaultValue="Acme Holdings LLC" /></div>
-            <div className="space-y-1.5"><Label>Country</Label><Input defaultValue="United States" /></div>
-            <div className="space-y-1.5"><Label>Default currency</Label><Input defaultValue="USD" /></div>
-            <Button onClick={() => toast.success("Company settings saved")}>Save changes</Button>
+            <div className="space-y-1.5"><Label>Company name</Label><Input value={company.name} onChange={e => { setCompany(c => ({ ...c, name: e.target.value })); setDirty(true); }} /></div>
+            <div className="space-y-1.5"><Label>Legal entity</Label><Input value={company.legal} onChange={e => { setCompany(c => ({ ...c, legal: e.target.value })); setDirty(true); }} /></div>
+            <div className="space-y-1.5"><Label>Country</Label><Input value={company.country} onChange={e => { setCompany(c => ({ ...c, country: e.target.value })); setDirty(true); }} /></div>
+            <div className="space-y-1.5"><Label>Default currency</Label>
+              <Select value={company.currency} onValueChange={v => { setCompany(c => ({ ...c, currency: v })); setDirty(true); }}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{["USD","EUR","GBP","JPY","CHF"].map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center justify-between pt-2">
+              {dirty && <span className="text-xs text-warning inline-flex items-center gap-1.5"><TriangleAlert className="h-3.5 w-3.5" />Unsaved changes</span>}
+              <Button className="ml-auto press-scale" disabled={!dirty} onClick={() => { toast.success("Company settings saved"); setDirty(false); }}>Save changes</Button>
+            </div>
           </Card>
         </TabsContent>
 
         <TabsContent value="roles" className="mt-4">
           <Card className="p-0 overflow-hidden">
-            <div className="px-5 py-4 border-b font-semibold text-sm">Roles & permissions</div>
-            <div className="divide-y">
-              {[
-                { name: "Admin", desc: "Full access to all modules and settings", count: 2 },
-                { name: "HR Manager", desc: "Manage employees, payroll, and reports", count: 3 },
-                { name: "Manager", desc: "Approve team requests, view team data", count: 4 },
-                { name: "Employee", desc: "Personal data, time, leave, expenses", count: 12 },
-              ].map(r => (
-                <div key={r.name} className="px-5 py-3.5 flex items-center gap-4">
-                  <div className="flex-1">
-                    <div className="font-medium">{r.name}</div>
-                    <div className="text-xs text-muted-foreground">{r.desc}</div>
-                  </div>
-                  <div className="text-sm text-muted-foreground">{r.count} users</div>
-                  <Button variant="outline" size="sm" onClick={() => toast(`Editing ${r.name} permissions`)}>Edit</Button>
-                </div>
-              ))}
+            <div className="px-5 py-4 border-b flex items-center justify-between">
+              <div className="font-semibold text-sm">Roles & permissions</div>
+              <Button size="sm" className="press-scale" onClick={() => setEditRole("new")}><Plus className="h-4 w-4 mr-1.5" />New role</Button>
             </div>
+            {loading ? <SkeletonRows rows={4} avatar={false} /> : (
+              <div className="divide-y stagger-in">
+                {roles.map(r => (
+                  <div key={r.id} className="px-5 py-3.5 flex items-center gap-4 group">
+                    <div className="h-8 w-1 rounded-full" style={{ backgroundColor: r.color }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium">{r.name}</div>
+                      <div className="text-xs text-muted-foreground truncate">{r.desc}</div>
+                    </div>
+                    <div className="text-sm text-muted-foreground tabular-nums">{r.count} users</div>
+                    <Button variant="outline" size="sm" className="press-scale" onClick={() => setEditRole(r)}><Pencil className="h-3.5 w-3.5 mr-1" />Edit</Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setDeleteRole(r)}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         </TabsContent>
 
         <TabsContent value="security" className="mt-4">
           <Card className="p-6 space-y-4 max-w-2xl">
             {[
-              { l: "Require 2FA for all users", v: true },
-              { l: "Single sign-on (SSO)", v: true },
-              { l: "Session timeout after 8h inactivity", v: false },
-              { l: "IP allowlist", v: false },
+              { k: "twofa",          l: "Require 2FA for all users",         d: "Users will be prompted to enroll on next sign-in." },
+              { k: "sso",            l: "Single sign-on (SSO)",               d: "Okta, Google Workspace, Microsoft Entra." },
+              { k: "sessionTimeout", l: "Session timeout after 8h inactivity",d: "Force re-authentication after inactivity." },
+              { k: "ipAllowlist",    l: "IP allowlist",                        d: "Restrict admin actions to approved IP ranges." },
             ].map(s => (
-              <div key={s.l} className="flex items-center justify-between py-2 border-b last:border-0">
-                <div className="text-sm">{s.l}</div>
-                <Switch defaultChecked={s.v} />
+              <div key={s.k} className="flex items-center justify-between py-2 border-b last:border-0 gap-4">
+                <div className="flex-1">
+                  <div className="text-sm font-medium">{s.l}</div>
+                  <div className="text-xs text-muted-foreground">{s.d}</div>
+                </div>
+                <Switch
+                  checked={security[s.k as keyof typeof security]}
+                  onCheckedChange={v => { setSecurity(x => ({ ...x, [s.k]: v })); toast.success(`${s.l} ${v ? "enabled" : "disabled"}`); }}
+                />
               </div>
             ))}
           </Card>
@@ -80,29 +146,73 @@ function Settings() {
 
         <TabsContent value="audit" className="mt-4">
           <Card className="p-0 overflow-hidden">
-            <div className="px-5 py-4 border-b font-semibold text-sm">Activity log</div>
-            <div className="divide-y">
-              {[
-                { who: "Aisha Patel", what: "approved leave request for Tom Becker", when: "2 hours ago" },
-                { who: "Lina Rossi", what: "ran payroll for March 2025", when: "Yesterday" },
-                { who: "Alex Carter", what: "added Emma Wilson as employee", when: "2 days ago" },
-                { who: "System", what: "synced 12 records with QuickBooks", when: "3 days ago" },
-              ].map((l, i) => (
-                <div key={i} className="px-5 py-3 text-sm">
-                  <span className="font-medium">{l.who}</span>
-                  <span className="text-muted-foreground"> {l.what}</span>
-                  <span className="text-xs text-muted-foreground ml-2">• {l.when}</span>
+            <div className="px-5 py-4 border-b flex items-center justify-between gap-3">
+              <div className="font-semibold text-sm">Activity log</div>
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Input value={auditQ} onChange={e => setAuditQ(e.target.value)} placeholder="Search…" className="h-8 w-[200px] pl-8" />
                 </div>
-              ))}
+                <Select value={auditFilter} onValueChange={v => setAuditFilter(v as "all" | AuditEntry["severity"])}>
+                  <SelectTrigger className="h-8 w-[140px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All severities</SelectItem>
+                    <SelectItem value="info">Info</SelectItem>
+                    <SelectItem value="warn">Warn</SelectItem>
+                    <SelectItem value="critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+            {filteredAudit.length === 0 ? (
+              <EmptyState compact icon={<History className="h-6 w-6" />} title="No activity matches" />
+            ) : (
+              <div className="divide-y stagger-in">
+                {filteredAudit.map(l => (
+                  <div key={l.id} className="px-5 py-3 text-sm flex items-center gap-3">
+                    <span className={cn(
+                      "inline-flex items-center justify-center h-6 w-6 rounded-full shrink-0",
+                      l.severity === "critical" ? "bg-destructive/10 text-destructive" :
+                      l.severity === "warn"     ? "bg-warning/10 text-warning" :
+                                                   "bg-muted text-muted-foreground"
+                    )}>
+                      {l.severity === "critical" ? <AlertTriangle className="h-3.5 w-3.5" /> :
+                       l.severity === "warn"     ? <TriangleAlert className="h-3.5 w-3.5" /> :
+                                                    <Info className="h-3.5 w-3.5" />}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <span className="font-medium">{l.who}</span>
+                      <span className="text-muted-foreground"> {l.what}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground shrink-0">{l.when}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         </TabsContent>
 
         <TabsContent value="locale" className="mt-4">
           <Card className="p-6 space-y-4 max-w-2xl">
-            <div className="space-y-1.5"><Label>Language</Label><Input defaultValue="English (US)" /></div>
+            <div className="space-y-1.5"><Label>Language</Label>
+              <Select defaultValue="en-US">
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {[
+                    ["en-US", "English (US)"], ["en-GB", "English (UK)"],
+                    ["it-IT", "Italiano"], ["fr-FR", "Français"], ["es-ES", "Español"], ["de-DE", "Deutsch"],
+                  ].map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-1.5"><Label>Timezone</Label><Input defaultValue="America/Los_Angeles" /></div>
-            <div className="space-y-1.5"><Label>Date format</Label><Input defaultValue="YYYY-MM-DD" /></div>
+            <div className="space-y-1.5"><Label>Date format</Label>
+              <Select defaultValue="YYYY-MM-DD">
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>{["YYYY-MM-DD","DD/MM/YYYY","MM/DD/YYYY","DD MMM YYYY"].map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <Button className="press-scale" onClick={() => toast.success("Locale saved")}>Save</Button>
           </Card>
         </TabsContent>
 
@@ -111,6 +221,59 @@ function Settings() {
           <Button variant="outline" asChild><a href="/marketplace">Open Marketplace</a></Button>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={editRole !== null} onOpenChange={o => !o && setEditRole(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editRole === "new" ? "New role" : `Edit ${editRole && editRole !== "new" ? editRole.name : ""}`}</DialogTitle>
+            <DialogDescription>Scoped permissions will apply to assigned users immediately.</DialogDescription>
+          </DialogHeader>
+          {editRole !== null && (
+            <RoleForm
+              role={editRole === "new" ? null : editRole}
+              onCancel={() => setEditRole(null)}
+              onSave={d => { saveRole(d, editRole === "new" ? undefined : editRole.id); setEditRole(null); }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={!!deleteRole} onOpenChange={o => !o && setDeleteRole(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete role?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteRole && `${deleteRole.name} has ${deleteRole.count} users. They will lose these permissions.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { if (deleteRole) { setRoles(rs => rs.filter(x => x.id !== deleteRole.id)); toast("Role deleted"); } setDeleteRole(null); }}
+            >Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
+  );
+}
+
+function RoleForm({ role, onCancel, onSave }: { role: Role | null; onCancel: () => void; onSave: (d: Omit<Role, "id" | "color">) => void }) {
+  const [name, setName] = useState(role?.name ?? "");
+  const [desc, setDesc] = useState(role?.desc ?? "");
+  const [count, setCount] = useState(role?.count ?? 0);
+  return (
+    <>
+      <div className="space-y-4">
+        <div className="space-y-1.5"><Label>Name</Label><Input autoFocus value={name} onChange={e => setName(e.target.value)} /></div>
+        <div className="space-y-1.5"><Label>Description</Label><Input value={desc} onChange={e => setDesc(e.target.value)} /></div>
+        <div className="space-y-1.5"><Label>Seat count</Label><Input type="number" value={count} onChange={e => setCount(Number(e.target.value))} /></div>
+      </div>
+      <DialogFooter>
+        <Button variant="ghost" onClick={onCancel}>Cancel</Button>
+        <Button disabled={!name.trim()} onClick={() => onSave({ name, desc, count })}>{role ? "Save changes" : "Create role"}</Button>
+      </DialogFooter>
+    </>
   );
 }

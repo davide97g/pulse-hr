@@ -141,6 +141,244 @@ export const payrollRuns: PayrollRun[] = [
   { id: "p4", period: "January 2025", status: "completed", employees: 11, gross: 114800, net: 82700, date: "2025-01-31" },
 ];
 
+export type Vibe = "amazing" | "good" | "meh" | "rough" | "awful";
+export interface PulseEntry {
+  id: string;
+  date: string;        // YYYY-MM-DD
+  vibe: Vibe;
+  note?: string;       // anonymous
+  tag?: "workload" | "team" | "tools" | "growth" | "other";
+}
+const VIBE_ROT: Vibe[] = ["amazing", "good", "good", "meh", "rough", "good", "good", "amazing", "good", "meh"];
+export const pulseEntries: PulseEntry[] = Array.from({ length: 42 }).map((_, i) => {
+  const d = new Date();
+  d.setDate(d.getDate() - (42 - i));
+  return {
+    id: `pl-${i}`,
+    date: d.toISOString().slice(0, 10),
+    vibe: VIBE_ROT[(i * 7) % VIBE_ROT.length],
+    note: i % 5 === 0 ? ["Great sprint review today","Too many meetings this week","Learned something new","Feeling stuck on migration","Shipped the thing!"][i % 5] : undefined,
+    tag: (["workload","team","tools","growth","other"] as const)[i % 5],
+  };
+});
+
+export interface Kudo {
+  id: string;
+  fromId: string;
+  toId: string;
+  amount: number;   // coins
+  message: string;
+  tag: "teamwork" | "craft" | "impact" | "courage" | "kindness";
+  date: string;
+}
+export const kudosSeed: Kudo[] = [
+  { id: "kd1", fromId: "e3", toId: "e2", amount: 25, tag: "craft",    date: "2025-04-15", message: "The new onboarding flow is chef's kiss. Polished every single state." },
+  { id: "kd2", fromId: "e1", toId: "e9", amount: 50, tag: "impact",   date: "2025-04-14", message: "Shipped the migration 2 days ahead of schedule. Huge." },
+  { id: "kd3", fromId: "e7", toId: "e4", amount: 10, tag: "kindness", date: "2025-04-13", message: "Jumped in on my on-call even though it wasn't your rotation." },
+  { id: "kd4", fromId: "e6", toId: "e10", amount: 30, tag: "teamwork", date: "2025-04-12", message: "Your Looker dashboards unlocked the whole pipeline conversation." },
+  { id: "kd5", fromId: "e2", toId: "e3", amount: 15, tag: "kindness", date: "2025-04-11", message: "Took time to walk me through the leave policy. Appreciated." },
+  { id: "kd6", fromId: "e1", toId: "e7", amount: 20, tag: "courage",  date: "2025-04-09", message: "Saying 'no, we shouldn't ship that yet' took guts. Right call." },
+  { id: "kd7", fromId: "e9", toId: "e2", amount: 10, tag: "craft",    date: "2025-04-08", message: "The microcopy rewrite made the whole flow feel 10× better." },
+  { id: "kd8", fromId: "e10", toId: "e1", amount: 40, tag: "impact",  date: "2025-04-07", message: "Your pairing session unblocked me for the rest of the sprint." },
+];
+
+export interface FocusSession {
+  id: string;
+  employeeId: string;
+  date: string;
+  startedAt: string; // HH:MM
+  durationMin: number;
+  commessaId: string;
+  note?: string;
+  meetingsDeclined: number;
+}
+export const focusSessionsSeed: FocusSession[] = [
+  { id: "fs1", employeeId: "e1", date: "2025-04-17", startedAt: "09:00", durationMin: 90, commessaId: "cm1", meetingsDeclined: 2, note: "Migration script v3" },
+  { id: "fs2", employeeId: "e1", date: "2025-04-17", startedAt: "14:00", durationMin: 60, commessaId: "cm1", meetingsDeclined: 1 },
+  { id: "fs3", employeeId: "e1", date: "2025-04-16", startedAt: "10:00", durationMin: 90, commessaId: "cm3", meetingsDeclined: 3, note: "Design token audit" },
+  { id: "fs4", employeeId: "e1", date: "2025-04-15", startedAt: "09:30", durationMin: 120, commessaId: "cm1", meetingsDeclined: 2 },
+  { id: "fs5", employeeId: "e1", date: "2025-04-14", startedAt: "13:00", durationMin: 60, commessaId: "cm2", meetingsDeclined: 0 },
+];
+
+export interface CopilotSuggestion {
+  id: string;
+  prompt: string;
+  category: "approvals" | "insights" | "admin" | "reports";
+}
+export const copilotSuggestions: CopilotSuggestion[] = [
+  { id: "q1", prompt: "Approve all expenses under $200 from this week",             category: "approvals" },
+  { id: "q2", prompt: "Who on the team has overlapping leave in May?",              category: "insights" },
+  { id: "q3", prompt: "Summarize April payroll anomalies",                           category: "reports" },
+  { id: "q4", prompt: "Draft a welcome email for Emma Wilson",                        category: "admin" },
+  { id: "q5", prompt: "Which commesse are over budget this month?",                  category: "insights" },
+  { id: "q6", prompt: "Generate a headcount report for Q2 planning",                  category: "reports" },
+];
+
+export interface Payslip {
+  id: string;
+  runId: string;
+  employeeId: string;
+  gross: number;
+  net: number;
+  tax: number;
+  benefits: number;
+  status: "pending" | "paid" | "hold";
+}
+export const payslips: Payslip[] = payrollRuns.flatMap(r =>
+  employees.slice(0, r.employees).map((e, i) => ({
+    id: `${r.id}-${e.id}`,
+    runId: r.id,
+    employeeId: e.id,
+    gross: Math.round(e.salary / 12),
+    net: Math.round(e.salary / 12 * 0.72),
+    tax: Math.round(e.salary / 12 * 0.22),
+    benefits: Math.round(e.salary / 12 * 0.06),
+    status: r.status === "completed" ? "paid" : r.status === "processing" ? "pending" : i % 9 === 0 ? "hold" : "pending",
+  }))
+);
+
+export interface JobPosting {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: "Full-time" | "Part-time" | "Contractor";
+  salary: string;
+  status: "draft" | "open" | "closed";
+  applicants: number;
+  posted: string;
+  owner: string;
+  description: string;
+}
+export const jobPostings: JobPosting[] = [
+  { id: "j1", title: "Senior Frontend Engineer", department: "Engineering", location: "Remote — EU", type: "Full-time", salary: "€80k – €110k", status: "open",  applicants: 12, posted: "2025-03-28", owner: "Sarah Chen",    description: "Ship the next generation of our platform UI with React, TanStack and Tailwind." },
+  { id: "j2", title: "Product Designer",          department: "Design",      location: "Berlin",     type: "Full-time", salary: "€65k – €85k",  status: "open",  applicants: 8,  posted: "2025-04-02", owner: "Marcus Rivera", description: "Lead design system evolution and deliver polished flows for core product." },
+  { id: "j3", title: "Account Executive",         department: "Sales",       location: "New York",   type: "Full-time", salary: "$90k + OTE",   status: "open",  applicants: 21, posted: "2025-04-10", owner: "David Park",    description: "Close mid-market deals and own relationships end-to-end." },
+  { id: "j4", title: "Junior Recruiter",          department: "People Ops",  location: "Dublin",     type: "Full-time", salary: "€42k – €55k",  status: "draft", applicants: 0,  posted: "",           owner: "Aisha Patel",   description: "Source and screen candidates across EU engineering funnels." },
+];
+
+export interface OnboardingTask {
+  id: string;
+  label: string;
+  done: boolean;
+  owner: string;
+  due?: string;
+  category: "Paperwork" | "Access" | "People" | "Training";
+}
+
+export interface OnboardingWorkflow {
+  id: string;
+  name: string;
+  role: string;
+  startDate: string;
+  type: "onboarding" | "offboarding";
+  initials: string;
+  color: string;
+  tasks: OnboardingTask[];
+}
+export const onboardingWorkflows: OnboardingWorkflow[] = [
+  {
+    id: "ow1", name: "Emma Wilson", role: "Senior Engineer", startDate: "2025-05-06", type: "onboarding",
+    initials: "EW", color: "oklch(0.7 0.15 30)",
+    tasks: [
+      { id: "t1", label: "Send offer letter",          done: true,  owner: "Aisha Patel",  category: "Paperwork", due: "2025-04-18" },
+      { id: "t2", label: "Run background check",       done: true,  owner: "Olivia Brown", category: "Paperwork", due: "2025-04-22" },
+      { id: "t3", label: "Order laptop & equipment",   done: true,  owner: "IT Team",      category: "Access",    due: "2025-04-25" },
+      { id: "t4", label: "Set up email & accounts",    done: false, owner: "IT Team",      category: "Access",    due: "2025-05-02" },
+      { id: "t5", label: "Schedule welcome call",      done: false, owner: "Sarah Chen",   category: "People",    due: "2025-05-05" },
+      { id: "t6", label: "Sign employment contract",   done: false, owner: "Emma Wilson",  category: "Paperwork", due: "2025-05-06" },
+      { id: "t7", label: "Complete tax forms",         done: false, owner: "Emma Wilson",  category: "Paperwork", due: "2025-05-06" },
+      { id: "t8", label: "First-week training plan",   done: false, owner: "Aisha Patel",  category: "Training",  due: "2025-05-13" },
+    ],
+  },
+  {
+    id: "ow2", name: "James Liu", role: "Senior Engineer", startDate: "2025-06-02", type: "onboarding",
+    initials: "JL", color: "oklch(0.6 0.16 220)",
+    tasks: [
+      { id: "t1", label: "Offer accepted", done: true,  owner: "Aisha Patel",  category: "Paperwork" },
+      { id: "t2", label: "Background check", done: false, owner: "Olivia Brown", category: "Paperwork" },
+    ],
+  },
+  {
+    id: "ow3", name: "Sofia Garcia", role: "Product Designer", startDate: "2025-05-19", type: "onboarding",
+    initials: "SG", color: "oklch(0.65 0.18 340)",
+    tasks: [
+      { id: "t1", label: "Offer accepted",          done: true,  owner: "Olivia Brown", category: "Paperwork" },
+      { id: "t2", label: "Background check",        done: true,  owner: "Olivia Brown", category: "Paperwork" },
+      { id: "t3", label: "Order laptop",            done: true,  owner: "IT Team",      category: "Access" },
+      { id: "t4", label: "Access to Figma org",     done: false, owner: "IT Team",      category: "Access" },
+      { id: "t5", label: "Design onboarding brief", done: false, owner: "Marcus Rivera", category: "Training" },
+    ],
+  },
+  {
+    id: "ow4", name: "Greg Holland", role: "DevOps Engineer", startDate: "2025-04-30", type: "offboarding",
+    initials: "GH", color: "oklch(0.7 0.13 110)",
+    tasks: [
+      { id: "t1", label: "Exit interview",        done: true,  owner: "Aisha Patel", category: "People" },
+      { id: "t2", label: "Revoke production SSH", done: true,  owner: "IT Team",     category: "Access" },
+      { id: "t3", label: "Return laptop",         done: false, owner: "Greg Holland", category: "Access" },
+      { id: "t4", label: "Final payroll",         done: false, owner: "Lina Rossi",  category: "Paperwork" },
+    ],
+  },
+];
+
+export interface Doc {
+  id: string;
+  name: string;
+  folder: string;
+  size: string;
+  updated: string;
+  status: "approved" | "pending" | "draft";
+  owner: string;
+}
+export const docsSeed: Doc[] = [
+  { id: "d1", name: "Employment contract — Emma Wilson", folder: "Contracts", size: "112 KB", updated: "2d ago",  status: "pending",  owner: "Aisha Patel" },
+  { id: "d2", name: "Company handbook 2025",              folder: "Policies",  size: "2.4 MB", updated: "1w ago",  status: "approved", owner: "Aisha Patel" },
+  { id: "d3", name: "NDA Template",                        folder: "Templates", size: "84 KB",  updated: "2w ago",  status: "approved", owner: "Lina Rossi" },
+  { id: "d4", name: "F24 — March 2025",                    folder: "Tax forms", size: "320 KB", updated: "3w ago",  status: "approved", owner: "Lina Rossi" },
+  { id: "d5", name: "Remote work policy",                  folder: "Policies",  size: "180 KB", updated: "1mo ago", status: "approved", owner: "Aisha Patel" },
+  { id: "d6", name: "Onboarding checklist v3",             folder: "Onboarding",size: "42 KB",  updated: "5d ago",  status: "draft",    owner: "Olivia Brown" },
+  { id: "d7", name: "Expense policy 2025",                 folder: "Policies",  size: "96 KB",  updated: "1mo ago", status: "approved", owner: "Lina Rossi" },
+];
+
+export interface ApiKey { id: string; name: string; key: string; env: "prod" | "test"; createdAt: string; lastUsed: string; status: "active" | "revoked"; }
+export const apiKeysSeed: ApiKey[] = [
+  { id: "k1", name: "Production",  key: "pk_live_8fK2nDm2qx4f72", env: "prod", createdAt: "2025-01-14", lastUsed: "2m ago",  status: "active" },
+  { id: "k2", name: "Staging",     key: "pk_test_D0pXvE9a91c",    env: "test", createdAt: "2025-03-02", lastUsed: "3h ago",  status: "active" },
+];
+
+export interface Webhook { id: string; url: string; events: string[]; status: "active" | "pending" | "paused"; deliveries: number; }
+export const webhooksSeed: Webhook[] = [
+  { id: "w1", url: "https://hooks.acme.co/hr/employees",   events: ["employee.created","employee.updated"], status: "active",  deliveries: 1204 },
+  { id: "w2", url: "https://hooks.acme.co/hr/timesheets",  events: ["timesheet.submitted"],                 status: "active",  deliveries: 842 },
+  { id: "w3", url: "https://internal.acme.co/payroll",      events: ["payroll.completed"],                   status: "pending", deliveries: 0 },
+];
+
+export interface CustomField { id: string; name: string; type: "Text" | "Select" | "Number" | "Date"; required: boolean; }
+export const customFieldsSeed: CustomField[] = [
+  { id: "cf1", name: "T-shirt size",         type: "Select", required: false },
+  { id: "cf2", name: "Dietary preference",   type: "Text",   required: false },
+  { id: "cf3", name: "Preferred pronouns",   type: "Text",   required: false },
+];
+
+export interface Role { id: string; name: string; desc: string; count: number; color: string; }
+export const rolesSeed: Role[] = [
+  { id: "r1", name: "Admin",      desc: "Full access to all modules and settings", count: 2,  color: "oklch(0.6 0.22 25)" },
+  { id: "r2", name: "HR Manager", desc: "Manage employees, payroll, and reports",  count: 3,  color: "oklch(0.6 0.16 220)" },
+  { id: "r3", name: "Manager",    desc: "Approve team requests, view team data",    count: 4,  color: "oklch(0.65 0.15 155)" },
+  { id: "r4", name: "Employee",   desc: "Personal data, time, leave, expenses",     count: 12, color: "oklch(0.52 0.02 258)" },
+];
+
+export interface AuditEntry { id: string; who: string; what: string; when: string; severity: "info" | "warn" | "critical"; }
+export const auditLogSeed: AuditEntry[] = [
+  { id: "a1", who: "Aisha Patel",   what: "approved leave request for Tom Becker",    when: "2h ago",    severity: "info" },
+  { id: "a2", who: "Lina Rossi",    what: "ran payroll for March 2025",                when: "Yesterday", severity: "info" },
+  { id: "a3", who: "Alex Carter",   what: "added Emma Wilson as employee",             when: "2d ago",    severity: "info" },
+  { id: "a4", who: "System",        what: "synced 12 records with QuickBooks",         when: "3d ago",    severity: "info" },
+  { id: "a5", who: "Alex Carter",   what: "revoked API key pk_live_••••2a17",          when: "5d ago",    severity: "warn" },
+  { id: "a6", who: "System",        what: "detected 3 failed SSO logins for e7",       when: "1w ago",    severity: "critical" },
+];
+
 export interface Notification {
   id: string;
   title: string;
@@ -161,6 +399,50 @@ export const announcements = [
   { id: "a1", author: "Aisha Patel", title: "Q2 OKRs published", body: "All teams: please review Q2 OKRs by Friday and confirm with your manager.", time: "2h ago", pinned: true },
   { id: "a2", author: "Sarah Chen", title: "All-hands moved to Thursday", body: "This week's all-hands is moved to Thursday at 4pm CET.", time: "1d ago", pinned: false },
   { id: "a3", author: "Lina Rossi", title: "Expense policy update", body: "New expense limits for travel apply starting May 1. See policy doc.", time: "3d ago", pinned: false },
+];
+
+export interface Commessa {
+  id: string;
+  code: string;
+  name: string;
+  client: string;
+  color: string;
+  budgetHours: number;
+  burnedHours: number;
+  status: "active" | "on_hold" | "closed";
+  manager: string;
+}
+
+export const commesse: Commessa[] = [
+  { id: "cm1", code: "ACM-2025-01", name: "Platform rebuild",     client: "Acme Corp",     color: "oklch(0.6 0.18 258)", budgetHours: 1200, burnedHours: 742, status: "active",  manager: "Sarah Chen" },
+  { id: "cm2", code: "NOV-2025-07", name: "Mobile onboarding",    client: "Nova Retail",   color: "oklch(0.7 0.15 30)",  budgetHours: 480,  burnedHours: 189, status: "active",  manager: "Yuki Tanaka" },
+  { id: "cm3", code: "BCO-2025-03", name: "Design system v2",     client: "Blanco Studio", color: "oklch(0.65 0.18 340)", budgetHours: 360,  burnedHours: 298, status: "active",  manager: "Marcus Rivera" },
+  { id: "cm4", code: "INT-2025-00", name: "Internal — HR tooling", client: "Internal",     color: "oklch(0.65 0.15 155)", budgetHours: 200,  burnedHours: 87,  status: "active",  manager: "Aisha Patel" },
+  { id: "cm5", code: "LGO-2024-12", name: "Legacy migration",     client: "Longo Group",   color: "oklch(0.7 0.13 110)",  budgetHours: 800,  burnedHours: 812, status: "on_hold", manager: "Tom Becker" },
+  { id: "cm6", code: "ZNE-2025-04", name: "Analytics dashboard",  client: "Zenith Energy", color: "oklch(0.6 0.16 195)",  budgetHours: 540,  burnedHours: 120, status: "active",  manager: "Fatima Al-Sayed" },
+];
+
+export const commessaById = (id: string) => commesse.find(c => c.id === id);
+
+export type TimesheetEntryStatus = "draft" | "submitted" | "approved" | "rejected";
+export interface TimesheetEntry {
+  id: string;
+  employeeId: string;
+  commessaId: string;
+  date: string;
+  hours: number;
+  description: string;
+  billable: boolean;
+  status: TimesheetEntryStatus;
+}
+
+export const timesheetEntries: TimesheetEntry[] = [
+  { id: "t1", employeeId: "e1", commessaId: "cm1", date: "2025-04-14", hours: 7.5, description: "API schema review + sprint planning", billable: true,  status: "approved" },
+  { id: "t2", employeeId: "e1", commessaId: "cm4", date: "2025-04-14", hours: 0.5, description: "1:1 with Aisha",                        billable: false, status: "approved" },
+  { id: "t3", employeeId: "e1", commessaId: "cm1", date: "2025-04-15", hours: 8,   description: "Migration dry-run on staging",           billable: true,  status: "submitted" },
+  { id: "t4", employeeId: "e1", commessaId: "cm2", date: "2025-04-16", hours: 4,   description: "Mobile sign-up flow spec",               billable: true,  status: "submitted" },
+  { id: "t5", employeeId: "e1", commessaId: "cm3", date: "2025-04-16", hours: 4,   description: "Token audit for v2",                     billable: true,  status: "draft" },
+  { id: "t6", employeeId: "e1", commessaId: "cm6", date: "2025-04-17", hours: 6,   description: "Dashboard wireframes review",            billable: true,  status: "draft" },
 ];
 
 export const plugins = [

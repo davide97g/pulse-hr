@@ -7,6 +7,8 @@ import {
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
+import { NewBadge } from "@/components/app/NewBadge";
+import { Heart, Gift, Focus as FocusIcon, Sparkles as SparkIcon } from "lucide-react";
 import { employees, leaveRequests, employeeById, expenses, announcements } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/")({
@@ -30,6 +32,30 @@ function Dashboard() {
           </Button>
         }
       />
+
+      {/* Labs spotlight */}
+      <div className="mb-6 relative rounded-xl iridescent-border bg-gradient-to-br from-primary/[0.05] via-transparent to-transparent p-5 overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.04] grid-bg pointer-events-none" aria-hidden />
+        <div className="relative flex items-start justify-between gap-4 flex-wrap">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-primary inline-flex items-center gap-1.5">
+                <SparkIcon className="h-3.5 w-3.5" />What's new in Pulse
+              </span>
+              <NewBadge />
+            </div>
+            <div className="font-display text-xl leading-snug max-w-xl">
+              Five Labs features are live — ask Copilot with <kbd className="font-mono text-[11px] border rounded px-1.5 py-0.5 bg-background">⌘J</kbd>, or jump straight in.
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full md:w-auto">
+            <LabsChip to="/pulse"     icon={<Heart     className="h-3.5 w-3.5" />} label="Team Pulse" />
+            <LabsChip to="/forecast"  icon={<TrendingUp className="h-3.5 w-3.5" />} label="Forecast" />
+            <LabsChip to="/kudos"     icon={<Gift      className="h-3.5 w-3.5" />} label="Kudos" />
+            <LabsChip to="/focus"     icon={<FocusIcon className="h-3.5 w-3.5" />} label="Focus Mode" />
+          </div>
+        </div>
+      </div>
 
       {/* KPI cards — action centers */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -223,6 +249,19 @@ function KpiCard({
       {delta && <div className="text-xs text-muted-foreground mt-1">{delta}</div>}
       {action && <div className="mt-3 pt-3 border-t">{action}</div>}
     </Card>
+  );
+}
+
+function LabsChip({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+  return (
+    <Link
+      to={to}
+      className="group inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border bg-background/80 hover:bg-background hover:border-primary/40 transition-colors press-scale text-xs font-medium"
+    >
+      <span className="text-primary">{icon}</span>
+      <span>{label}</span>
+      <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+    </Link>
   );
 }
 
