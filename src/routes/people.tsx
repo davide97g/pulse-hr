@@ -5,7 +5,9 @@ import {
   Calendar, Briefcase, DollarSign, FileText, Building2, Trash2, Send,
   UserX, Users as UsersIcon, Sparkles, Flame, Trophy, Target, ArrowUpRight, Zap,
 } from "lucide-react";
-import { growthSummaryFor, strengthRadarFor, type StrengthTag } from "@/lib/growth";
+import { growthSummaryFor, strengthRadarFor } from "@/lib/growth";
+import { STRENGTH_COLORS } from "@/lib/colors";
+import { MiniStat } from "@/components/app/StatTiles";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -420,13 +422,6 @@ function Field({ icon, label, value }: { icon: React.ReactNode; label: string; v
   );
 }
 
-const RADAR_TAG_COLOR: Record<StrengthTag, string> = {
-  impact:   "oklch(0.7 0.15 30)",
-  craft:    "oklch(0.65 0.18 340)",
-  teamwork: "oklch(0.6 0.16 220)",
-  courage:  "oklch(0.75 0.15 75)",
-  kindness: "oklch(0.65 0.15 155)",
-};
 
 function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
   const summary = useMemo(() => growthSummaryFor(employeeId), [employeeId]);
@@ -487,7 +482,7 @@ function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Top strength</div>
             <span
               className="h-2 w-2 rounded-full"
-              style={{ backgroundColor: RADAR_TAG_COLOR[topStrength.tag] }}
+              style={{ backgroundColor: STRENGTH_COLORS[topStrength.tag] }}
             />
             <span className="text-xs font-medium capitalize">{topStrength.tag}</span>
             <span className="font-mono text-[11px] tabular-nums text-muted-foreground ml-auto">{topStrength.value}/100</span>
@@ -507,13 +502,3 @@ function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
   );
 }
 
-function MiniStat({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
-  return (
-    <div className="text-center">
-      <div className="text-sm font-semibold tabular-nums flex items-center justify-center gap-1">
-        <span className="text-muted-foreground">{icon}</span>{value}
-      </div>
-      <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</div>
-    </div>
-  );
-}

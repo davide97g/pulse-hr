@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/tooltip";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { NewBadge } from "@/components/app/NewBadge";
+import { StrengthsRadar } from "@/components/app/StrengthsRadar";
+import { StatTile, MiniStat } from "@/components/app/StatTiles";
 import {
   allGrowthSummaries, growthSummaryFor, badgesFor, strengthRadarFor,
   goalsFor, challengesFor, oneOnOnesFor, notesFor,
@@ -530,27 +532,6 @@ function TeamCard({ summary, onPick }: { summary: GrowthSummary; onPick: (id: st
   );
 }
 
-function MiniStat({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
-  return (
-    <div className="text-center">
-      <div className="text-sm font-semibold tabular-nums flex items-center justify-center gap-1">
-        <span className="text-muted-foreground">{icon}</span>{value}
-      </div>
-      <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</div>
-    </div>
-  );
-}
-
-function StatTile({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: string; accent?: boolean }) {
-  return (
-    <Card className={cn("p-4 press-scale hover:shadow-md transition-shadow", accent && "iridescent-border")}>
-      <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
-        {icon}{label}
-      </div>
-      <div className="text-2xl font-display tabular-nums mt-1">{value}</div>
-    </Card>
-  );
-}
 
 // ─── Profile view ──────────────────────────────────────────────────────
 function GrowthProfile({ summary }: { summary: GrowthSummary }) {
@@ -674,82 +655,6 @@ function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-// ─── Strengths radar ──────────────────────────────────────────────────
-const TAG_COLOR: Record<StrengthTag, string> = {
-  impact:   "oklch(0.7 0.15 30)",
-  craft:    "oklch(0.65 0.18 340)",
-  teamwork: "oklch(0.6 0.16 220)",
-  courage:  "oklch(0.75 0.15 75)",
-  kindness: "oklch(0.65 0.15 155)",
-};
-
-function StrengthsRadar({ points }: { points: { tag: StrengthTag; value: number }[] }) {
-  const size = 220;
-  const r = 80;
-  const cx = size / 2;
-  const cy = size / 2;
-  const angle = (i: number) => (i / points.length) * 2 * Math.PI - Math.PI / 2;
-  const pt = (i: number, v: number) => {
-    const d = (v / 100) * r;
-    return [cx + Math.cos(angle(i)) * d, cy + Math.sin(angle(i)) * d] as const;
-  };
-  const path = points.map((p, i) => {
-    const [x, y] = pt(i, p.value);
-    return `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
-  }).join(" ") + " Z";
-
-  return (
-    <div className="flex items-center gap-5">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="shrink-0">
-        {/* grid circles */}
-        {[0.25, 0.5, 0.75, 1].map(f => (
-          <circle
-            key={f}
-            cx={cx} cy={cy} r={r * f}
-            fill="none" stroke="currentColor" strokeOpacity="0.1"
-          />
-        ))}
-        {/* axes */}
-        {points.map((p, i) => {
-          const [x, y] = pt(i, 100);
-          return <line key={p.tag} x1={cx} y1={cy} x2={x} y2={y} stroke="currentColor" strokeOpacity="0.08" />;
-        })}
-        {/* polygon */}
-        <path d={path} fill="oklch(0.72 0.17 295 / 0.18)" stroke="oklch(0.72 0.17 295)" strokeWidth="1.5" />
-        {/* dots */}
-        {points.map((p, i) => {
-          const [x, y] = pt(i, p.value);
-          return <circle key={p.tag} cx={x} cy={y} r="3" fill={TAG_COLOR[p.tag]} />;
-        })}
-        {/* labels */}
-        {points.map((p, i) => {
-          const [x, y] = pt(i, 128);
-          return (
-            <text
-              key={p.tag}
-              x={x} y={y}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="fill-current text-[10px] font-medium uppercase tracking-wider"
-              style={{ fontFeatureSettings: '"tnum"' }}
-            >
-              {p.tag}
-            </text>
-          );
-        })}
-      </svg>
-      <div className="flex-1 space-y-2">
-        {points.map(p => (
-          <div key={p.tag} className="flex items-center gap-2 text-xs">
-            <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: TAG_COLOR[p.tag] }} />
-            <span className="capitalize flex-1">{p.tag}</span>
-            <span className="font-mono tabular-nums text-muted-foreground">{p.value}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function XpBreakdownChart({ xp }: { xp: { kudos: number; focus: number; goals: number; challenges: number; oneOnOnes: number; total: number } }) {
   const rows = [

@@ -13,6 +13,8 @@ import {
 import {
   growthSummaryFor, strengthRadarFor, type StrengthTag,
 } from "@/lib/growth";
+import { STRENGTH_COLORS, strengthColor } from "@/lib/colors";
+import { MiniStat } from "@/components/app/StatTiles";
 import { cn } from "@/lib/utils";
 
 const ME = "e1";
@@ -21,14 +23,6 @@ export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile — Pulse HR" }] }),
   component: Profile,
 });
-
-const RADAR_TAG_COLOR: Record<StrengthTag, string> = {
-  impact:   "oklch(0.7 0.15 30)",
-  craft:    "oklch(0.65 0.18 340)",
-  teamwork: "oklch(0.6 0.16 220)",
-  courage:  "oklch(0.75 0.15 75)",
-  kindness: "oklch(0.65 0.15 155)",
-};
 
 function Profile() {
   const me = useMemo(() => employees.find(e => e.id === ME), []);
@@ -193,10 +187,10 @@ function Profile() {
           </div>
 
           <div className="grid grid-cols-4 gap-2 mb-4">
-            <MiniStat icon={<Gift className="h-3 w-3" />}    value={summary.kudosReceived}   label="kudos" />
-            <MiniStat icon={<Target className="h-3 w-3" />}  value={summary.goalsActive}      label="goals" />
-            <MiniStat icon={<Trophy className="h-3 w-3" />}  value={summary.challengesOpen}   label="open" />
-            <MiniStat icon={<Award className="h-3 w-3" />}   value={summary.badgesEarned}     label="badges" />
+            <MiniStat variant="card" icon={<Gift className="h-3 w-3" />}   value={summary.kudosReceived} label="kudos" />
+            <MiniStat variant="card" icon={<Target className="h-3 w-3" />} value={summary.goalsActive}    label="goals" />
+            <MiniStat variant="card" icon={<Trophy className="h-3 w-3" />} value={summary.challengesOpen} label="open" />
+            <MiniStat variant="card" icon={<Award className="h-3 w-3" />}  value={summary.badgesEarned}   label="badges" />
           </div>
 
           <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
@@ -205,12 +199,12 @@ function Profile() {
           <div className="space-y-2">
             {topStrengths.map(s => (
               <div key={s.tag} className="flex items-center gap-2 text-xs">
-                <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: RADAR_TAG_COLOR[s.tag] }} />
+                <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: STRENGTH_COLORS[s.tag] }} />
                 <span className="capitalize w-20 shrink-0">{s.tag}</span>
                 <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                   <div
                     className="h-full rounded-full transition-[width] duration-700"
-                    style={{ width: `${s.value}%`, backgroundColor: RADAR_TAG_COLOR[s.tag] }}
+                    style={{ width: `${s.value}%`, backgroundColor: STRENGTH_COLORS[s.tag] }}
                   />
                 </div>
                 <span className="font-mono tabular-nums text-muted-foreground w-8 text-right">{s.value}</span>
@@ -263,8 +257,8 @@ function Profile() {
                       <span
                         className="text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded"
                         style={{
-                          backgroundColor: `${RADAR_TAG_COLOR[k.tag as StrengthTag] ?? "oklch(0.6 0.1 0)"}22`,
-                          color: RADAR_TAG_COLOR[k.tag as StrengthTag] ?? "var(--muted-foreground)",
+                          backgroundColor: `${strengthColor(k.tag)}22`,
+                          color: strengthColor(k.tag),
                         }}
                       >
                         {k.tag}
@@ -336,13 +330,3 @@ function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string;
   );
 }
 
-function MiniStat({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
-  return (
-    <div className="text-center border rounded-md py-2">
-      <div className="text-base font-semibold tabular-nums flex items-center justify-center gap-1">
-        <span className="text-muted-foreground">{icon}</span>{value}
-      </div>
-      <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</div>
-    </div>
-  );
-}

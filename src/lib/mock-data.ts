@@ -98,12 +98,12 @@ export interface LeaveRequest {
 }
 
 export const leaveRequests: LeaveRequest[] = [
-  { id: "l1", employeeId: "e2", type: "Vacation", from: "2025-04-22", to: "2025-04-28", days: 5, status: "pending", reason: "Family trip", submittedAt: "2025-04-15" },
-  { id: "l2", employeeId: "e4", type: "Sick", from: "2025-04-17", to: "2025-04-19", days: 3, status: "approved", reason: "Flu", submittedAt: "2025-04-16" },
-  { id: "l3", employeeId: "e9", type: "Personal", from: "2025-05-02", to: "2025-05-02", days: 1, status: "pending", reason: "Appointment", submittedAt: "2025-04-14" },
-  { id: "l4", employeeId: "e6", type: "Vacation", from: "2025-05-10", to: "2025-05-17", days: 6, status: "pending", reason: "Honeymoon", submittedAt: "2025-04-12" },
-  { id: "l5", employeeId: "e10", type: "Parental", from: "2025-06-01", to: "2025-08-30", days: 64, status: "approved", reason: "Parental leave", submittedAt: "2025-03-20" },
-  { id: "l6", employeeId: "e8", type: "Vacation", from: "2025-04-25", to: "2025-04-26", days: 2, status: "rejected", reason: "Conflict with hiring sprint", submittedAt: "2025-04-10" },
+  { id: "l1", employeeId: "e2", type: "Vacation", from: "2026-04-22", to: "2026-04-28", days: 5, status: "pending", reason: "Family trip", submittedAt: "2026-04-15" },
+  { id: "l2", employeeId: "e4", type: "Sick", from: "2026-04-17", to: "2026-04-19", days: 3, status: "approved", reason: "Flu", submittedAt: "2026-04-16" },
+  { id: "l3", employeeId: "e9", type: "Personal", from: "2026-05-02", to: "2026-05-02", days: 1, status: "pending", reason: "Appointment", submittedAt: "2026-04-14" },
+  { id: "l4", employeeId: "e6", type: "Vacation", from: "2026-05-10", to: "2026-05-17", days: 6, status: "pending", reason: "Honeymoon", submittedAt: "2026-04-12" },
+  { id: "l5", employeeId: "e10", type: "Parental", from: "2026-06-01", to: "2026-08-30", days: 64, status: "approved", reason: "Parental leave", submittedAt: "2026-03-20" },
+  { id: "l6", employeeId: "e8", type: "Vacation", from: "2026-04-25", to: "2026-04-26", days: 2, status: "rejected", reason: "Conflict with hiring sprint", submittedAt: "2026-04-10" },
   // Current-month leave for the signed-in user (e1) so calendar shows live states
   { id: "l7", employeeId: "e1", type: "Sick",     from: "2026-04-09", to: "2026-04-10", days: 2, status: "approved", reason: "Flu",                   submittedAt: "2026-04-09" },
   { id: "l8", employeeId: "e1", type: "Vacation", from: "2026-04-20", to: "2026-04-24", days: 5, status: "approved", reason: "Spring break",          submittedAt: "2026-03-25" },
@@ -123,11 +123,11 @@ export interface Expense {
 }
 
 export const expenses: Expense[] = [
-  { id: "x1", employeeId: "e6", description: "Client dinner — Acme Corp", category: "Meals", amount: 184.50, currency: "USD", date: "2025-04-12", status: "pending" },
-  { id: "x2", employeeId: "e2", description: "Figma annual license", category: "Software", amount: 180, currency: "USD", date: "2025-04-08", status: "approved" },
-  { id: "x3", employeeId: "e7", description: "Flight TYO → SFO", category: "Travel", amount: 1240, currency: "USD", date: "2025-04-02", status: "reimbursed" },
-  { id: "x4", employeeId: "e9", description: "Standing desk", category: "Equipment", amount: 620, currency: "USD", date: "2025-04-14", status: "pending" },
-  { id: "x5", employeeId: "e3", description: "Team offsite — London", category: "Travel", amount: 890, currency: "GBP", date: "2025-04-05", status: "approved" },
+  { id: "x1", employeeId: "e6", description: "Client dinner — Acme Corp", category: "Meals", amount: 184.50, currency: "USD", date: "2026-04-12", status: "pending" },
+  { id: "x2", employeeId: "e2", description: "Figma annual license", category: "Software", amount: 180, currency: "USD", date: "2026-04-08", status: "approved" },
+  { id: "x3", employeeId: "e7", description: "Flight TYO → SFO", category: "Travel", amount: 1240, currency: "USD", date: "2026-04-02", status: "reimbursed" },
+  { id: "x4", employeeId: "e9", description: "Standing desk", category: "Equipment", amount: 620, currency: "USD", date: "2026-04-14", status: "pending" },
+  { id: "x5", employeeId: "e3", description: "Team offsite — London", category: "Travel", amount: 890, currency: "GBP", date: "2026-04-05", status: "approved" },
 ];
 
 export interface Candidate {
@@ -151,7 +151,7 @@ export const candidates: Candidate[] = cnames.map(([n,r], i) => ({
   id: `c${i+1}`, name: n, role: r,
   stage: stages[i % 5], initials: initials(n),
   avatarColor: colors[i % colors.length],
-  appliedDate: `2025-04-${String(14-i).padStart(2,"0")}`,
+  appliedDate: `2026-04-${String(14-i).padStart(2,"0")}`,
   rating: 3 + ((i*7) % 3),
 }));
 
@@ -165,10 +165,10 @@ export interface PayrollRun {
   date: string;
 }
 export const payrollRuns: PayrollRun[] = [
-  { id: "p1", period: "April 2025", status: "scheduled", employees: 12, gross: 124500, net: 89200, date: "2025-04-30" },
-  { id: "p2", period: "March 2025", status: "completed", employees: 12, gross: 122100, net: 87800, date: "2025-03-31" },
-  { id: "p3", period: "February 2025", status: "completed", employees: 11, gross: 115400, net: 83100, date: "2025-02-28" },
-  { id: "p4", period: "January 2025", status: "completed", employees: 11, gross: 114800, net: 82700, date: "2025-01-31" },
+  { id: "p1", period: "April 2026", status: "scheduled", employees: 12, gross: 124500, net: 89200, date: "2026-04-30" },
+  { id: "p2", period: "March 2026", status: "completed", employees: 12, gross: 122100, net: 87800, date: "2026-03-31" },
+  { id: "p3", period: "February 2026", status: "completed", employees: 11, gross: 115400, net: 83100, date: "2026-02-28" },
+  { id: "p4", period: "January 2026", status: "completed", employees: 11, gross: 114800, net: 82700, date: "2026-01-31" },
 ];
 
 export type Vibe = "amazing" | "good" | "meh" | "rough" | "awful";
@@ -361,9 +361,9 @@ export interface JobPosting {
   description: string;
 }
 export const jobPostings: JobPosting[] = [
-  { id: "j1", title: "Senior Frontend Engineer", department: "Engineering", location: "Remote — EU", type: "Full-time", salary: "€80k – €110k", status: "open",  applicants: 12, posted: "2025-03-28", owner: "Sarah Chen",    description: "Ship the next generation of our platform UI with React, TanStack and Tailwind." },
-  { id: "j2", title: "Product Designer",          department: "Design",      location: "Berlin",     type: "Full-time", salary: "€65k – €85k",  status: "open",  applicants: 8,  posted: "2025-04-02", owner: "Marcus Rivera", description: "Lead design system evolution and deliver polished flows for core product." },
-  { id: "j3", title: "Account Executive",         department: "Sales",       location: "New York",   type: "Full-time", salary: "$90k + OTE",   status: "open",  applicants: 21, posted: "2025-04-10", owner: "David Park",    description: "Close mid-market deals and own relationships end-to-end." },
+  { id: "j1", title: "Senior Frontend Engineer", department: "Engineering", location: "Remote — EU", type: "Full-time", salary: "€80k – €110k", status: "open",  applicants: 12, posted: "2026-03-28", owner: "Sarah Chen",    description: "Ship the next generation of our platform UI with React, TanStack and Tailwind." },
+  { id: "j2", title: "Product Designer",          department: "Design",      location: "Berlin",     type: "Full-time", salary: "€65k – €85k",  status: "open",  applicants: 8,  posted: "2026-04-02", owner: "Marcus Rivera", description: "Lead design system evolution and deliver polished flows for core product." },
+  { id: "j3", title: "Account Executive",         department: "Sales",       location: "New York",   type: "Full-time", salary: "$90k + OTE",   status: "open",  applicants: 21, posted: "2026-04-10", owner: "David Park",    description: "Close mid-market deals and own relationships end-to-end." },
   { id: "j4", title: "Junior Recruiter",          department: "People Ops",  location: "Dublin",     type: "Full-time", salary: "€42k – €55k",  status: "draft", applicants: 0,  posted: "",           owner: "Aisha Patel",   description: "Source and screen candidates across EU engineering funnels." },
 ];
 
@@ -388,21 +388,21 @@ export interface OnboardingWorkflow {
 }
 export const onboardingWorkflows: OnboardingWorkflow[] = [
   {
-    id: "ow1", name: "Emma Wilson", role: "Senior Engineer", startDate: "2025-05-06", type: "onboarding",
+    id: "ow1", name: "Emma Wilson", role: "Senior Engineer", startDate: "2026-05-06", type: "onboarding",
     initials: "EW", color: "oklch(0.7 0.15 30)",
     tasks: [
-      { id: "t1", label: "Send offer letter",          done: true,  owner: "Aisha Patel",  category: "Paperwork", due: "2025-04-18" },
-      { id: "t2", label: "Run background check",       done: true,  owner: "Olivia Brown", category: "Paperwork", due: "2025-04-22" },
-      { id: "t3", label: "Order laptop & equipment",   done: true,  owner: "IT Team",      category: "Access",    due: "2025-04-25" },
-      { id: "t4", label: "Set up email & accounts",    done: false, owner: "IT Team",      category: "Access",    due: "2025-05-02" },
-      { id: "t5", label: "Schedule welcome call",      done: false, owner: "Sarah Chen",   category: "People",    due: "2025-05-05" },
-      { id: "t6", label: "Sign employment contract",   done: false, owner: "Emma Wilson",  category: "Paperwork", due: "2025-05-06" },
-      { id: "t7", label: "Complete tax forms",         done: false, owner: "Emma Wilson",  category: "Paperwork", due: "2025-05-06" },
-      { id: "t8", label: "First-week training plan",   done: false, owner: "Aisha Patel",  category: "Training",  due: "2025-05-13" },
+      { id: "t1", label: "Send offer letter",          done: true,  owner: "Aisha Patel",  category: "Paperwork", due: "2026-04-18" },
+      { id: "t2", label: "Run background check",       done: true,  owner: "Olivia Brown", category: "Paperwork", due: "2026-04-22" },
+      { id: "t3", label: "Order laptop & equipment",   done: true,  owner: "IT Team",      category: "Access",    due: "2026-04-25" },
+      { id: "t4", label: "Set up email & accounts",    done: false, owner: "IT Team",      category: "Access",    due: "2026-05-02" },
+      { id: "t5", label: "Schedule welcome call",      done: false, owner: "Sarah Chen",   category: "People",    due: "2026-05-05" },
+      { id: "t6", label: "Sign employment contract",   done: false, owner: "Emma Wilson",  category: "Paperwork", due: "2026-05-06" },
+      { id: "t7", label: "Complete tax forms",         done: false, owner: "Emma Wilson",  category: "Paperwork", due: "2026-05-06" },
+      { id: "t8", label: "First-week training plan",   done: false, owner: "Aisha Patel",  category: "Training",  due: "2026-05-13" },
     ],
   },
   {
-    id: "ow2", name: "James Liu", role: "Senior Engineer", startDate: "2025-06-02", type: "onboarding",
+    id: "ow2", name: "James Liu", role: "Senior Engineer", startDate: "2026-06-02", type: "onboarding",
     initials: "JL", color: "oklch(0.6 0.16 220)",
     tasks: [
       { id: "t1", label: "Offer accepted", done: true,  owner: "Aisha Patel",  category: "Paperwork" },
@@ -410,7 +410,7 @@ export const onboardingWorkflows: OnboardingWorkflow[] = [
     ],
   },
   {
-    id: "ow3", name: "Sofia Garcia", role: "Product Designer", startDate: "2025-05-19", type: "onboarding",
+    id: "ow3", name: "Sofia Garcia", role: "Product Designer", startDate: "2026-05-19", type: "onboarding",
     initials: "SG", color: "oklch(0.65 0.18 340)",
     tasks: [
       { id: "t1", label: "Offer accepted",          done: true,  owner: "Olivia Brown", category: "Paperwork" },
@@ -421,7 +421,7 @@ export const onboardingWorkflows: OnboardingWorkflow[] = [
     ],
   },
   {
-    id: "ow4", name: "Greg Holland", role: "DevOps Engineer", startDate: "2025-04-30", type: "offboarding",
+    id: "ow4", name: "Greg Holland", role: "DevOps Engineer", startDate: "2026-04-30", type: "offboarding",
     initials: "GH", color: "oklch(0.7 0.13 110)",
     tasks: [
       { id: "t1", label: "Exit interview",        done: true,  owner: "Aisha Patel", category: "People" },
@@ -443,18 +443,18 @@ export interface Doc {
 }
 export const docsSeed: Doc[] = [
   { id: "d1", name: "Employment contract — Emma Wilson", folder: "Contracts", size: "112 KB", updated: "2d ago",  status: "pending",  owner: "Aisha Patel" },
-  { id: "d2", name: "Company handbook 2025",              folder: "Policies",  size: "2.4 MB", updated: "1w ago",  status: "approved", owner: "Aisha Patel" },
+  { id: "d2", name: "Company handbook 2026",              folder: "Policies",  size: "2.4 MB", updated: "1w ago",  status: "approved", owner: "Aisha Patel" },
   { id: "d3", name: "NDA Template",                        folder: "Templates", size: "84 KB",  updated: "2w ago",  status: "approved", owner: "Lina Rossi" },
-  { id: "d4", name: "F24 — March 2025",                    folder: "Tax forms", size: "320 KB", updated: "3w ago",  status: "approved", owner: "Lina Rossi" },
+  { id: "d4", name: "F24 — March 2026",                    folder: "Tax forms", size: "320 KB", updated: "3w ago",  status: "approved", owner: "Lina Rossi" },
   { id: "d5", name: "Remote work policy",                  folder: "Policies",  size: "180 KB", updated: "1mo ago", status: "approved", owner: "Aisha Patel" },
   { id: "d6", name: "Onboarding checklist v3",             folder: "Onboarding",size: "42 KB",  updated: "5d ago",  status: "draft",    owner: "Olivia Brown" },
-  { id: "d7", name: "Expense policy 2025",                 folder: "Policies",  size: "96 KB",  updated: "1mo ago", status: "approved", owner: "Lina Rossi" },
+  { id: "d7", name: "Expense policy 2026",                 folder: "Policies",  size: "96 KB",  updated: "1mo ago", status: "approved", owner: "Lina Rossi" },
 ];
 
 export interface ApiKey { id: string; name: string; key: string; env: "prod" | "test"; createdAt: string; lastUsed: string; status: "active" | "revoked"; }
 export const apiKeysSeed: ApiKey[] = [
-  { id: "k1", name: "Production",  key: "pk_live_8fK2nDm2qx4f72", env: "prod", createdAt: "2025-01-14", lastUsed: "2m ago",  status: "active" },
-  { id: "k2", name: "Staging",     key: "pk_test_D0pXvE9a91c",    env: "test", createdAt: "2025-03-02", lastUsed: "3h ago",  status: "active" },
+  { id: "k1", name: "Production",  key: "pk_live_8fK2nDm2qx4f72", env: "prod", createdAt: "2026-01-14", lastUsed: "2m ago",  status: "active" },
+  { id: "k2", name: "Staging",     key: "pk_test_D0pXvE9a91c",    env: "test", createdAt: "2026-03-02", lastUsed: "3h ago",  status: "active" },
 ];
 
 export interface Webhook { id: string; url: string; events: string[]; status: "active" | "pending" | "paused"; deliveries: number; }
@@ -482,7 +482,7 @@ export const rolesSeed: Role[] = [
 export interface AuditEntry { id: string; who: string; what: string; when: string; severity: "info" | "warn" | "critical"; }
 export const auditLogSeed: AuditEntry[] = [
   { id: "a1", who: "Aisha Patel",   what: "approved leave request for Tom Becker",    when: "2h ago",    severity: "info" },
-  { id: "a2", who: "Lina Rossi",    what: "ran payroll for March 2025",                when: "Yesterday", severity: "info" },
+  { id: "a2", who: "Lina Rossi",    what: "ran payroll for March 2026",                when: "Yesterday", severity: "info" },
   { id: "a3", who: "Alex Carter",   what: "added Emma Wilson as employee",             when: "2d ago",    severity: "info" },
   { id: "a4", who: "System",        what: "synced 12 records with QuickBooks",         when: "3d ago",    severity: "info" },
   { id: "a5", who: "Alex Carter",   what: "revoked API key pk_live_••••2a17",          when: "5d ago",    severity: "warn" },
@@ -500,7 +500,7 @@ export interface Notification {
 export const notifications: Notification[] = [
   { id: "n1", title: "Leave request from Marcus Rivera", desc: "5 days vacation • Apr 22 – 28", time: "2m ago", type: "approval", unread: true },
   { id: "n2", title: "Expense over threshold", desc: "Noah Williams submitted $620 equipment", time: "1h ago", type: "alert", unread: true },
-  { id: "n3", title: "Payroll run scheduled", desc: "April 2025 run will execute Apr 30", time: "3h ago", type: "info", unread: true },
+  { id: "n3", title: "Payroll run scheduled", desc: "April 2026 run will execute Apr 30", time: "3h ago", type: "info", unread: true },
   { id: "n4", title: "Tom Becker returning Monday", desc: "Sick leave ends Apr 19", time: "Yesterday", type: "info", unread: false },
   { id: "n5", title: "Onboarding task assigned", desc: "Send laptop to new hire", time: "2d ago", type: "info", unread: false },
 ];
@@ -597,12 +597,12 @@ export const timesheetTemplatesSeed: TimesheetTemplate[] = [
 
 export const timesheetEntries: TimesheetEntry[] = [
   // Historical seed
-  { id: "t1",  employeeId: "e1", commessaId: "cm1", date: "2025-04-14", hours: 7.5, description: "API schema review + sprint planning", billable: true,  status: "approved" },
-  { id: "t2",  employeeId: "e1", commessaId: "cm4", date: "2025-04-14", hours: 0.5, description: "1:1 with Aisha",                        billable: false, status: "approved" },
-  { id: "t3",  employeeId: "e1", commessaId: "cm1", date: "2025-04-15", hours: 8,   description: "Migration dry-run on staging",           billable: true,  status: "submitted" },
-  { id: "t4",  employeeId: "e1", commessaId: "cm2", date: "2025-04-16", hours: 4,   description: "Mobile sign-up flow spec",               billable: true,  status: "submitted" },
-  { id: "t5",  employeeId: "e1", commessaId: "cm3", date: "2025-04-16", hours: 4,   description: "Token audit for v2",                     billable: true,  status: "draft" },
-  { id: "t6",  employeeId: "e1", commessaId: "cm6", date: "2025-04-17", hours: 6,   description: "Dashboard wireframes review",            billable: true,  status: "draft" },
+  { id: "t1",  employeeId: "e1", commessaId: "cm1", date: "2026-04-14", hours: 7.5, description: "API schema review + sprint planning", billable: true,  status: "approved" },
+  { id: "t2",  employeeId: "e1", commessaId: "cm4", date: "2026-04-14", hours: 0.5, description: "1:1 with Aisha",                        billable: false, status: "approved" },
+  { id: "t3",  employeeId: "e1", commessaId: "cm1", date: "2026-04-15", hours: 8,   description: "Migration dry-run on staging",           billable: true,  status: "submitted" },
+  { id: "t4",  employeeId: "e1", commessaId: "cm2", date: "2026-04-16", hours: 4,   description: "Mobile sign-up flow spec",               billable: true,  status: "submitted" },
+  { id: "t5",  employeeId: "e1", commessaId: "cm3", date: "2026-04-16", hours: 4,   description: "Token audit for v2",                     billable: true,  status: "draft" },
+  { id: "t6",  employeeId: "e1", commessaId: "cm6", date: "2026-04-17", hours: 6,   description: "Dashboard wireframes review",            billable: true,  status: "draft" },
 
   // Current month (April 2026) — mix of filled / partial / missing days
   { id: "t10", employeeId: "e1", commessaId: "cm1", date: "2026-04-01", hours: 8,   description: "Quarter kickoff + architecture review",  billable: true,  status: "approved" },
