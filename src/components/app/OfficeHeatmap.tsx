@@ -46,9 +46,12 @@ export function OfficeHeatmap({ from, days, mode, officeIds, onCellClick }: Offi
         <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium self-end pl-1">
           Office
         </div>
-        {cols.map((d) => {
+        {cols.map((d, i) => {
           const date = new Date(d + "T12:00:00");
           const today = d === new Date().toISOString().slice(0, 10);
+          const prev = i > 0 ? new Date(cols[i - 1] + "T12:00:00") : null;
+          const showMonth = i === 0 || (prev && prev.getMonth() !== date.getMonth());
+          const monthLabel = date.toLocaleDateString(undefined, { month: "short" });
           return (
             <div
               key={d}
@@ -57,6 +60,15 @@ export function OfficeHeatmap({ from, days, mode, officeIds, onCellClick }: Offi
                 today ? "text-primary font-semibold" : "text-muted-foreground",
               )}
             >
+              <div
+                className={cn(
+                  "text-[9px] uppercase tracking-wider font-semibold mb-0.5 h-3",
+                  showMonth ? "text-foreground/80" : "opacity-0",
+                )}
+                aria-hidden={!showMonth}
+              >
+                {showMonth ? monthLabel : "."}
+              </div>
               <div className="font-medium">{date.toLocaleDateString(undefined, { weekday: "short" })[0]}</div>
               <div className="opacity-70">{date.getDate()}</div>
             </div>
