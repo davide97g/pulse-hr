@@ -6,6 +6,7 @@ import { QuickActionProvider, useQuickAction } from "./QuickActions";
 import { CommandPalette } from "./CommandPalette";
 import { CopilotLauncher, CopilotOverlay } from "./Copilot";
 import { NewBadge } from "./NewBadge";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 import { toast } from "sonner";
 import {
   LayoutDashboard, Users, Briefcase, Wallet, BarChart3, Settings,
@@ -224,7 +225,10 @@ function AppShellInner() {
             </div>
             <span className="text-sm font-semibold">Acme Inc.</span>
           </div>
-          <nav className="overflow-y-auto scrollbar-thin py-3 px-2 h-[calc(100%-3.5rem)]">
+          <div className="px-3 py-3 border-b">
+            <ThemeSwitcher />
+          </div>
+          <nav className="overflow-y-auto scrollbar-thin py-3 px-2 h-[calc(100%-6.75rem)]">
             {groups.map((group) => (
               <div key={group.label} className="mb-4">
                 <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground flex items-center gap-1.5">
@@ -324,6 +328,10 @@ function Topbar({
         </DropdownMenuContent>
       </DropdownMenu>
 
+
+      <div className="hidden md:block">
+        <ThemeSwitcher compact />
+      </div>
 
       <Popover>
         <PopoverTrigger asChild>

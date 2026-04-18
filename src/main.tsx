@@ -4,6 +4,7 @@ import { RouterProvider } from "@tanstack/react-router";
 import { registerSW } from "virtual:pwa-register";
 import { toast } from "sonner";
 import { getRouter } from "./router";
+import { ThemeProvider } from "./components/app/ThemeProvider";
 import "./styles.css";
 
 registerSW({
@@ -38,6 +39,8 @@ if (!el) throw new Error("#root not found");
 
 ReactDOM.createRoot(el).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>,
 );
