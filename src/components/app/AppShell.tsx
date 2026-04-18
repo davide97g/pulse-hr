@@ -8,6 +8,7 @@ import { CopilotLauncher, CopilotOverlay } from "./Copilot";
 import { NewBadge } from "./NewBadge";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { ActiveCommessaPin } from "./ActiveCommessaPin";
+import { ShortcutSheet } from "./ShortcutSheet";
 import { toast } from "sonner";
 import {
   LayoutDashboard, Users, Briefcase, Wallet, BarChart3, Settings,
@@ -216,6 +217,7 @@ function AppShellInner() {
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
       <CopilotOverlay open={copilotOpen} onOpenChange={setCopilotOpen} />
+      <ShortcutSheet />
 
       {/* Mobile nav drawer */}
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>

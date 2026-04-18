@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { NewBadge } from "@/components/app/NewBadge";
 import { Heart, Gift, Focus as FocusIcon, Sparkles as SparkIcon } from "lucide-react";
+import { MomentsCard } from "@/components/app/MomentsCard";
+import { SwipeRow } from "@/components/app/SwipeRow";
 import { employees, leaveRequests, employeeById, expenses, announcements } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/")({
@@ -106,39 +108,51 @@ function Dashboard() {
             {pendingLeaves.map((l) => {
               const emp = employeeById(l.employeeId)!;
               const state = decided[l.id];
+              const decide = (status: "approved" | "rejected") =>
+                setDecided(d => ({ ...d, [l.id]: status }));
               return (
-                <div key={l.id} className="px-5 py-3.5 flex items-center gap-3 hover:bg-muted/40 transition-colors">
-                  <Avatar initials={emp.initials} color={emp.avatarColor} size={36} />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium truncate">{emp.name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {l.type} • {l.days} day{l.days > 1 ? "s" : ""} • {l.from} → {l.to}
+                <SwipeRow
+                  key={l.id}
+                  onApprove={state ? undefined : () => decide("approved")}
+                  onReject={state ? undefined : () => decide("rejected")}
+                  disabled={!!state}
+                >
+                  <div className="px-5 py-3.5 flex items-center gap-3 hover:bg-muted/40 transition-colors">
+                    <Avatar initials={emp.initials} color={emp.avatarColor} size={36} />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium truncate">{emp.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {l.type} • {l.days} day{l.days > 1 ? "s" : ""} • {l.from} → {l.to}
+                      </div>
                     </div>
+                    {state ? (
+                      <StatusBadge status={state} />
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => decide("rejected")}
+                        >
+                          <X className="h-4 w-4 mr-1" /> Reject
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="h-8 px-3 bg-success text-success-foreground hover:bg-success/90"
+                          onClick={() => decide("approved")}
+                        >
+                          <Check className="h-4 w-4 mr-1" /> Approve
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  {state ? (
-                    <StatusBadge status={state} />
-                  ) : (
-                    <div className="flex items-center gap-1.5">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        onClick={() => setDecided(d => ({ ...d, [l.id]: "rejected" }))}
-                      >
-                        <X className="h-4 w-4 mr-1" /> Reject
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="h-8 px-3 bg-success text-success-foreground hover:bg-success/90"
-                        onClick={() => setDecided(d => ({ ...d, [l.id]: "approved" }))}
-                      >
-                        <Check className="h-4 w-4 mr-1" /> Approve
-                      </Button>
-                    </div>
-                  )}
-                </div>
+                </SwipeRow>
               );
             })}
+          </div>
+          <div className="px-5 py-2 border-t text-[11px] text-muted-foreground md:hidden">
+            Tip · swipe right to approve, left to reject.
           </div>
         </Card>
 
@@ -196,13 +210,16 @@ function Dashboard() {
 
       {/* Lower row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
-        <Card className="lg:col-span-2 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="font-semibold text-sm">Headcount trend</div>
-            <div className="text-xs text-muted-foreground">Last 6 months</div>
-          </div>
-          <MiniChart />
-        </Card>
+        <div className="lg:col-span-2 space-y-4">
+          <MomentsCard />
+          <Card className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="font-semibold text-sm">Headcount trend</div>
+              <div className="text-xs text-muted-foreground">Last 6 months</div>
+            </div>
+            <MiniChart />
+          </Card>
+        </div>
 
         <Card className="p-0">
           <div className="px-5 py-4 border-b flex items-center justify-between">

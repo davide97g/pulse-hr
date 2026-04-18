@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   Gift, Send, Sparkles, Trophy, Heart, Zap, Users, Rocket, ShieldCheck,
@@ -41,6 +41,20 @@ function Kudos() {
   const [amount, setAmount] = useState(25);
   const [tag, setTag] = useState<Kudo["tag"]>("craft");
   const [message, setMessage] = useState("");
+
+  // Consume a Moments-generated draft if present.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("pulse.kudos.draft");
+      if (!raw) return;
+      const d = JSON.parse(raw) as { toId?: string; message?: string; tag?: Kudo["tag"]; amount?: number };
+      if (d.toId) setToId(d.toId);
+      if (d.message) setMessage(d.message);
+      if (d.tag) setTag(d.tag);
+      if (d.amount) setAmount(d.amount);
+      localStorage.removeItem("pulse.kudos.draft");
+    } catch {}
+  }, []);
   const [confetti, setConfetti] = useState<{ id: number; dx: number; color: string }[]>([]);
   const [myBalance, setMyBalance] = useState(200);
 

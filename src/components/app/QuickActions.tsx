@@ -11,7 +11,7 @@ import { coverageForRange, computeLeaveDays, type CoverageForDate } from "@/lib/
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import {
-  Calendar, Receipt, UserPlus, Briefcase, Check, CalendarRange, CalendarClock, Users,
+  Calendar, Receipt, UserPlus, Briefcase, Check, CalendarRange, CalendarClock, Users, Sparkles,
 } from "lucide-react";
 
 type ActionId = "add-employee" | "request-leave" | "submit-expense" | "post-job" | "run-payroll" | null;
@@ -286,37 +286,107 @@ function CoveragePreview({
   );
 }
 
+const OCR_SAMPLES: { description: string; amount: string; currency: string; category: string; date: string; vendor: string }[] = [
+  { description: "Client dinner · Acme Corp",  amount: "184.50", currency: "USD", category: "Meals",     date: "2026-04-17", vendor: "Osteria Milano" },
+  { description: "Figma annual license",        amount: "180.00", currency: "USD", category: "Software",  date: "2026-04-15", vendor: "Figma Inc." },
+  { description: "Standing desk · Jarvis",      amount: "620.00", currency: "USD", category: "Equipment", date: "2026-04-12", vendor: "Fully" },
+  { description: "Flight MXP → SFO",            amount: "1240.00", currency: "USD", category: "Travel",    date: "2026-04-02", vendor: "Delta" },
+];
+
 function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("");
+  const [currency, setCurrency] = useState("USD");
   const [cat, setCat] = useState("Travel");
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [ocr, setOcr] = useState<{ vendor: string; confidence: number } | null>(null);
+  const [scanning, setScanning] = useState(false);
+
+  const runOcr = () => {
+    setScanning(true);
+    setOcr(null);
+    setTimeout(() => {
+      const sample = OCR_SAMPLES[Math.floor(Math.random() * OCR_SAMPLES.length)];
+      setDescription(sample.description);
+      setAmount(sample.amount);
+      setCurrency(sample.currency);
+      setCat(sample.category);
+      setDate(sample.date);
+      setOcr({ vendor: sample.vendor, confidence: Math.floor(88 + Math.random() * 10) });
+      setScanning(false);
+      toast.success("Receipt scanned", {
+        description: `${sample.vendor} · ${sample.currency} ${sample.amount}`,
+        icon: <Sparkles className="h-4 w-4" />,
+      });
+    }, 1100);
+  };
+
   const submit = () => {
     toast.success("Expense submitted", { description: "Sent to manager for review.", icon: <Receipt className="h-4 w-4" /> });
     onDone();
   };
+
   return (
     <>
       <FormBody>
-        <div className="space-y-1.5"><Label>Description</Label><Input placeholder="Client dinner" /></div>
+        <div className="space-y-1.5">
+          <Label>Receipt</Label>
+          <button
+            type="button"
+            onClick={runOcr}
+            disabled={scanning}
+            className={cn(
+              "w-full border-2 border-dashed rounded-md p-5 text-center hover:bg-muted/40 press-scale transition-colors relative overflow-hidden iridescent-border",
+              scanning && "pointer-events-none",
+            )}
+          >
+            {scanning ? (
+              <div className="flex flex-col items-center gap-2 py-2">
+                <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                <div className="text-sm font-medium">Scanning receipt…</div>
+                <div className="text-[11px] text-muted-foreground">Extracting vendor, amount, and date</div>
+              </div>
+            ) : ocr ? (
+              <div className="flex flex-col items-center gap-1 py-2">
+                <div className="text-2xl">🧾</div>
+                <div className="text-sm font-medium inline-flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  Parsed · {ocr.vendor}
+                </div>
+                <div className="text-[11px] text-muted-foreground">
+                  AI confidence {ocr.confidence}% · click to re-scan
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-1 py-2">
+                <div className="text-2xl">📎</div>
+                <div className="text-sm font-medium inline-flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  Drop receipt — AI fills the form
+                </div>
+                <div className="text-[11px] text-muted-foreground">PDF, JPG up to 10MB · OCR preview</div>
+              </div>
+            )}
+          </button>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label>Description</Label>
+          <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Client dinner" />
+        </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Amount</Label><Input placeholder="150.00" /></div>
-          <div className="space-y-1.5"><Label>Currency</Label><Input defaultValue="USD" /></div>
+          <div className="space-y-1.5"><Label>Amount</Label><Input value={amount} onChange={e => setAmount(e.target.value)} placeholder="150.00" /></div>
+          <div className="space-y-1.5"><Label>Currency</Label><Input value={currency} onChange={e => setCurrency(e.target.value)} /></div>
         </div>
         <div className="space-y-1.5">
           <Label>Category</Label>
           <div className="grid grid-cols-4 gap-1.5">
             {["Travel","Meals","Software","Equipment"].map(c => (
-              <button key={c} onClick={() => setCat(c)} className={`text-xs py-2 rounded-md border ${cat === c ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}>{c}</button>
+              <button key={c} type="button" onClick={() => setCat(c)} className={`text-xs py-2 rounded-md border press-scale ${cat === c ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}>{c}</button>
             ))}
           </div>
         </div>
-        <div className="space-y-1.5"><Label>Date</Label><Input type="date" defaultValue="2025-04-17" /></div>
-        <div className="space-y-1.5">
-          <Label>Receipt</Label>
-          <div className="border-2 border-dashed rounded-md p-6 text-center hover:bg-muted/40 cursor-pointer">
-            <div className="text-2xl mb-1">📎</div>
-            <div className="text-sm font-medium">Drop receipt or click to upload</div>
-            <div className="text-xs text-muted-foreground mt-0.5">PDF, JPG up to 10MB</div>
-          </div>
-        </div>
+        <div className="space-y-1.5"><Label>Date</Label><Input type="date" value={date} onChange={e => setDate(e.target.value)} /></div>
       </FormBody>
       <Footer onCancel={onDone} onSubmit={submit} label="Submit for approval" />
     </>

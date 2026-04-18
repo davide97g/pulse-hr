@@ -13,6 +13,7 @@ export interface Employee {
   avatarColor: string;
   initials: string;
   joinDate: string;
+  birthday?: string; // "MM-DD"
   salary: number;
   phone: string;
   employmentType: "Full-time" | "Part-time" | "Contractor";
@@ -41,10 +42,28 @@ const raw: Omit<Employee, "avatarColor" | "initials">[] = [
   { id: "e12", name: "Priya Shah", email: "priya.s@acme.co", role: "Marketing Lead", department: "Marketing", location: "Mumbai", status: "active", joinDate: "2022-01-10", salary: 88000, phone: "+91 22 5555 0143", employmentType: "Full-time" },
 ];
 
+// Deterministic birthdays — cluster a few around "today" (2026-04-18) so
+// the Moments ticker has live content, scatter the rest across the year.
+const birthdayOverrides: Record<string, string> = {
+  e1:  "07-22",
+  e2:  "04-20", // this week
+  e3:  "11-03",
+  e4:  "04-25", // this week
+  e5:  "02-14",
+  e6:  "04-19", // tomorrow
+  e7:  "09-07",
+  e8:  "05-02", // next week
+  e9:  "04-18", // today
+  e10: "12-01",
+  e11: "06-10",
+  e12: "03-28",
+};
+
 export const employees: Employee[] = raw.map((e, i) => ({
   ...e,
   initials: initials(e.name),
   avatarColor: colors[i % colors.length],
+  birthday: birthdayOverrides[e.id],
 }));
 
 export const employeeById = (id: string) => employees.find(e => e.id === id);
