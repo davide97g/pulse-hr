@@ -9,8 +9,92 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TimeRouteImport } from './routes/time'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as RecruitingRouteImport } from './routes/recruiting'
+import { Route as PeopleRouteImport } from './routes/people'
+import { Route as PayrollRouteImport } from './routes/payroll'
+import { Route as OrgRouteImport } from './routes/org'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
+import { Route as LeaveRouteImport } from './routes/leave'
+import { Route as ExpensesRouteImport } from './routes/expenses'
+import { Route as DocumentsRouteImport } from './routes/documents'
+import { Route as DevelopersRouteImport } from './routes/developers'
+import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TimeRoute = TimeRouteImport.update({
+  id: '/time',
+  path: '/time',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecruitingRoute = RecruitingRouteImport.update({
+  id: '/recruiting',
+  path: '/recruiting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PeopleRoute = PeopleRouteImport.update({
+  id: '/people',
+  path: '/people',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayrollRoute = PayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrgRoute = OrgRouteImport.update({
+  id: '/org',
+  path: '/org',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaveRoute = LeaveRouteImport.update({
+  id: '/leave',
+  path: '/leave',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesRoute = ExpensesRouteImport.update({
+  id: '/expenses',
+  path: '/expenses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocumentsRoute = DocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevelopersRoute = DevelopersRouteImport.update({
+  id: '/developers',
+  path: '/developers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnnouncementsRoute = AnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +103,228 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/developers': typeof DevelopersRoute
+  '/documents': typeof DocumentsRoute
+  '/expenses': typeof ExpensesRoute
+  '/leave': typeof LeaveRoute
+  '/marketplace': typeof MarketplaceRoute
+  '/onboarding': typeof OnboardingRoute
+  '/org': typeof OrgRoute
+  '/payroll': typeof PayrollRoute
+  '/people': typeof PeopleRoute
+  '/recruiting': typeof RecruitingRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/time': typeof TimeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/developers': typeof DevelopersRoute
+  '/documents': typeof DocumentsRoute
+  '/expenses': typeof ExpensesRoute
+  '/leave': typeof LeaveRoute
+  '/marketplace': typeof MarketplaceRoute
+  '/onboarding': typeof OnboardingRoute
+  '/org': typeof OrgRoute
+  '/payroll': typeof PayrollRoute
+  '/people': typeof PeopleRoute
+  '/recruiting': typeof RecruitingRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/time': typeof TimeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/developers': typeof DevelopersRoute
+  '/documents': typeof DocumentsRoute
+  '/expenses': typeof ExpensesRoute
+  '/leave': typeof LeaveRoute
+  '/marketplace': typeof MarketplaceRoute
+  '/onboarding': typeof OnboardingRoute
+  '/org': typeof OrgRoute
+  '/payroll': typeof PayrollRoute
+  '/people': typeof PeopleRoute
+  '/recruiting': typeof RecruitingRoute
+  '/reports': typeof ReportsRoute
+  '/settings': typeof SettingsRoute
+  '/time': typeof TimeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/announcements'
+    | '/developers'
+    | '/documents'
+    | '/expenses'
+    | '/leave'
+    | '/marketplace'
+    | '/onboarding'
+    | '/org'
+    | '/payroll'
+    | '/people'
+    | '/recruiting'
+    | '/reports'
+    | '/settings'
+    | '/time'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/announcements'
+    | '/developers'
+    | '/documents'
+    | '/expenses'
+    | '/leave'
+    | '/marketplace'
+    | '/onboarding'
+    | '/org'
+    | '/payroll'
+    | '/people'
+    | '/recruiting'
+    | '/reports'
+    | '/settings'
+    | '/time'
+  id:
+    | '__root__'
+    | '/'
+    | '/announcements'
+    | '/developers'
+    | '/documents'
+    | '/expenses'
+    | '/leave'
+    | '/marketplace'
+    | '/onboarding'
+    | '/org'
+    | '/payroll'
+    | '/people'
+    | '/recruiting'
+    | '/reports'
+    | '/settings'
+    | '/time'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnnouncementsRoute: typeof AnnouncementsRoute
+  DevelopersRoute: typeof DevelopersRoute
+  DocumentsRoute: typeof DocumentsRoute
+  ExpensesRoute: typeof ExpensesRoute
+  LeaveRoute: typeof LeaveRoute
+  MarketplaceRoute: typeof MarketplaceRoute
+  OnboardingRoute: typeof OnboardingRoute
+  OrgRoute: typeof OrgRoute
+  PayrollRoute: typeof PayrollRoute
+  PeopleRoute: typeof PeopleRoute
+  RecruitingRoute: typeof RecruitingRoute
+  ReportsRoute: typeof ReportsRoute
+  SettingsRoute: typeof SettingsRoute
+  TimeRoute: typeof TimeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/time': {
+      id: '/time'
+      path: '/time'
+      fullPath: '/time'
+      preLoaderRoute: typeof TimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recruiting': {
+      id: '/recruiting'
+      path: '/recruiting'
+      fullPath: '/recruiting'
+      preLoaderRoute: typeof RecruitingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/people': {
+      id: '/people'
+      path: '/people'
+      fullPath: '/people'
+      preLoaderRoute: typeof PeopleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payroll': {
+      id: '/payroll'
+      path: '/payroll'
+      fullPath: '/payroll'
+      preLoaderRoute: typeof PayrollRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/org': {
+      id: '/org'
+      path: '/org'
+      fullPath: '/org'
+      preLoaderRoute: typeof OrgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leave': {
+      id: '/leave'
+      path: '/leave'
+      fullPath: '/leave'
+      preLoaderRoute: typeof LeaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses': {
+      id: '/expenses'
+      path: '/expenses'
+      fullPath: '/expenses'
+      preLoaderRoute: typeof ExpensesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/documents': {
+      id: '/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof DocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/developers': {
+      id: '/developers'
+      path: '/developers'
+      fullPath: '/developers'
+      preLoaderRoute: typeof DevelopersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/announcements': {
+      id: '/announcements'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AnnouncementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +337,20 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnnouncementsRoute: AnnouncementsRoute,
+  DevelopersRoute: DevelopersRoute,
+  DocumentsRoute: DocumentsRoute,
+  ExpensesRoute: ExpensesRoute,
+  LeaveRoute: LeaveRoute,
+  MarketplaceRoute: MarketplaceRoute,
+  OnboardingRoute: OnboardingRoute,
+  OrgRoute: OrgRoute,
+  PayrollRoute: PayrollRoute,
+  PeopleRoute: PeopleRoute,
+  RecruitingRoute: RecruitingRoute,
+  ReportsRoute: ReportsRoute,
+  SettingsRoute: SettingsRoute,
+  TimeRoute: TimeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
