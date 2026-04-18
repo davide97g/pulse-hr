@@ -28,6 +28,9 @@ import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { TimesheetCalendar } from "@/components/app/TimesheetCalendar";
 import { useWorkspace } from "@/components/app/WorkspaceContext";
+import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
+import { useSavedViews } from "@/lib/useSavedViews";
+import { SavedViewsBar } from "@/components/app/SavedViewsBar";
 import {
   employees, commesse, commessaById,
   timesheetEntries as seedEntries, type TimesheetEntry,
@@ -37,6 +40,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/time")({
   head: () => ({ meta: [{ title: "Time & attendance — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Time,
 });
 
@@ -54,9 +58,16 @@ function Time() {
   const [templates, setTemplates] = useState<TimesheetTemplate[]>(timesheetTemplatesSeed);
   const [editEntry, setEditEntry] = useState<TimesheetEntry | "new" | null>(null);
   const [toDelete, setToDelete] = useState<TimesheetEntry | null>(null);
-  const [filterCommessa, setFilterCommessa] = useState<string>("all");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [q, setQ] = useState("");
+  const timeViews = useSavedViews<{ q: string; filterCommessa: string; filterStatus: string }>("time-timesheet", {
+    defaults: { q: "", filterCommessa: "all", filterStatus: "all" },
+    schema: { q: "string", filterCommessa: "string", filterStatus: "string" },
+  });
+  const q = timeViews.state.q;
+  const filterCommessa = timeViews.state.filterCommessa || "all";
+  const filterStatus = timeViews.state.filterStatus || "all";
+  const setQ = (v: string) => timeViews.setState({ q: v });
+  const setFilterCommessa = (v: string) => timeViews.setState({ filterCommessa: v });
+  const setFilterStatus = (v: string) => timeViews.setState({ filterStatus: v });
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 520);
@@ -176,6 +187,38 @@ function Time() {
       icon: <Send className="h-4 w-4" />,
     });
   };
+
+  const bulk = useBulkSelect(filteredEntries);
+
+  const bulkSubmit = () => {
+    const ids = [...bulk.selected];
+    setEntries(es => es.map(e => (ids.includes(e.id) && e.status === "draft" ? { ...e, status: "submitted" } : e)));
+    bulk.clear();
+    toast.success(`Submitted ${ids.length} entr${ids.length === 1 ? "y" : "ies"}`, {
+      description: "Sent to your manager for approval.",
+      icon: <Send className="h-4 w-4" />,
+    });
+  };
+  const bulkDuplicate = () => {
+    const rows = bulk.selectedRows;
+    setEntries(es => [
+      ...rows.map(r => ({ ...r, id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, status: "draft" as const })),
+      ...es,
+    ]);
+    bulk.clear();
+    toast.success(`Duplicated ${rows.length} entr${rows.length === 1 ? "y" : "ies"}`);
+  };
+  const bulkDelete = () => {
+    const rows = bulk.selectedRows;
+    setEntries(es => es.filter(e => !bulk.selected.has(e.id)));
+    bulk.clear();
+    toast(`Deleted ${rows.length} entr${rows.length === 1 ? "y" : "ies"}`, {
+      action: { label: "Undo", onClick: () => setEntries(es => [...rows, ...es]) },
+    });
+  };
+
+  // Clear selection whenever filters change the list identity
+  useEffect(() => { bulk.clear(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [filterCommessa, filterStatus, q]);
 
   const activeC = commessaById(activeCommessa);
 
@@ -378,6 +421,19 @@ function Time() {
 
         {/* Timesheet CRUD */}
         <TabsContent value="timesheet" className="mt-4">
+          <SavedViewsBar
+            savedViews={timeViews.savedViews}
+            activeViewId={timeViews.activeViewId}
+            isDirty={timeViews.isDirty}
+            shareUrl={timeViews.shareUrl}
+            onApply={timeViews.apply}
+            onSave={timeViews.save}
+            onRemove={timeViews.remove}
+            onRename={timeViews.rename}
+            onReset={timeViews.reset}
+            placeholder="Filter + save — your draft-queue view stays one click away."
+          />
+
           <Card className="p-3 mb-3 flex items-center gap-2 flex-wrap">
             <div className="relative flex-1 min-w-[220px]">
               <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -448,22 +504,37 @@ function Time() {
               />
             ) : (
               <>
-                <div className="px-5 py-3 border-b flex items-center justify-between bg-muted/30">
+                <div className="px-5 py-3 border-b flex items-center gap-3 bg-muted/30">
+                  <HeaderCheckbox
+                    allSelected={bulk.allSelected}
+                    someSelected={bulk.someSelected}
+                    onToggle={() => bulk.toggleAll()}
+                  />
                   <div className="text-xs text-muted-foreground">
-                    {filteredEntries.length} entr{filteredEntries.length === 1 ? "y" : "ies"} ·
-                    <span className="ml-1 font-medium text-foreground tabular-nums">
-                      {filteredEntries.reduce((a, e) => a + e.hours, 0).toFixed(1)}h
-                    </span>
+                    {bulk.count > 0
+                      ? <>{bulk.count} of {filteredEntries.length} selected</>
+                      : <>{filteredEntries.length} entr{filteredEntries.length === 1 ? "y" : "ies"} ·
+                          <span className="ml-1 font-medium text-foreground tabular-nums">
+                            {filteredEntries.reduce((a, e) => a + e.hours, 0).toFixed(1)}h
+                          </span>
+                        </>
+                    }
                   </div>
                 </div>
                 <ul className="divide-y stagger-in">
                   {filteredEntries.map(e => {
                     const c = commessaById(e.commessaId)!;
+                    const selected = bulk.isSelected(e.id);
                     return (
                       <li
                         key={e.id}
-                        className="group px-5 py-3 flex items-center gap-3 hover:bg-muted/40 transition-colors"
+                        className={`group px-5 py-3 flex items-center gap-3 hover:bg-muted/40 transition-colors ${selected ? "bg-primary/[0.04]" : ""}`}
                       >
+                        <RowCheckbox
+                          checked={selected}
+                          onChange={() => bulk.toggle(e.id)}
+                          visibleWhen={bulk.count > 0 ? "always" : "hover-or-selected"}
+                        />
                         <div className="relative h-9 w-1 rounded-full" style={{ backgroundColor: c.color }} />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
@@ -505,6 +576,16 @@ function Time() {
                     );
                   })}
                 </ul>
+                <BulkBar
+                  count={bulk.count}
+                  onClear={bulk.clear}
+                  noun="entry"
+                  actions={[
+                    { label: "Submit drafts", icon: <Send className="h-3.5 w-3.5" />, onClick: bulkSubmit, tone: "success", disabled: bulk.selectedRows.every(r => r.status !== "draft") },
+                    { label: "Duplicate",     icon: <Copy className="h-3.5 w-3.5" />, onClick: bulkDuplicate },
+                    { label: "Delete",        icon: <Trash2 className="h-3.5 w-3.5" />, onClick: bulkDelete, tone: "destructive" },
+                  ]}
+                />
               </>
             )}
           </Card>

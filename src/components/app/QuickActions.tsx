@@ -1,13 +1,18 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { format, parseISO } from "date-fns";
 import { SidePanel } from "@/components/app/SidePanel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/app/AppShell";
-import { employees } from "@/lib/mock-data";
+import { employees, employeeById } from "@/lib/mock-data";
+import { coverageForRange, computeLeaveDays, type CoverageForDate } from "@/lib/leave";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { Calendar, Receipt, UserPlus, Briefcase, Check } from "lucide-react";
+import {
+  Calendar, Receipt, UserPlus, Briefcase, Check, CalendarRange, CalendarClock, Users,
+} from "lucide-react";
 
 type ActionId = "add-employee" | "request-leave" | "submit-expense" | "post-job" | "run-payroll" | null;
 
@@ -92,10 +97,37 @@ function AddEmployeeForm({ onDone }: { onDone: () => void }) {
 
 function RequestLeaveForm({ onDone }: { onDone: () => void }) {
   const [type, setType] = useState("Vacation");
+  const [granularity, setGranularity] = useState<"full" | "half">("full");
+  const [halfPeriod, setHalfPeriod] = useState<"AM" | "PM">("AM");
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const [from, setFrom] = useState(todayIso);
+  const [to, setTo] = useState(todayIso);
+
+  useEffect(() => {
+    if (granularity === "half") setTo(from);
+  }, [granularity, from]);
+
+  const days = computeLeaveDays(from, to, granularity);
+  const coverage = useMemo(() => {
+    try {
+      return coverageForRange(parseISO(from), parseISO(granularity === "half" ? from : to), { excludeEmployeeId: ME_ID });
+    } catch { return []; }
+  }, [from, to, granularity]);
+
+  const worstCoverage = coverage.reduce<CoverageForDate | null>(
+    (acc, d) => (!acc || d.coveragePct < acc.coveragePct ? d : acc),
+    null,
+  );
+  const conflictCount = coverage.reduce((acc, d) => acc + d.onLeave.length, 0);
+
   const submit = () => {
-    toast.success("Leave request submitted", { description: `Sent to your manager for approval.`, icon: <Calendar className="h-4 w-4" /> });
+    toast.success("Leave request submitted", {
+      description: `${granularity === "half" ? `Half day · ${halfPeriod}` : `${days} working day${days === 1 ? "" : "s"}`} · ${from}${granularity === "half" ? "" : ` → ${to}`}`,
+      icon: <Calendar className="h-4 w-4" />,
+    });
     onDone();
   };
+
   return (
     <>
       <FormBody>
@@ -103,18 +135,69 @@ function RequestLeaveForm({ onDone }: { onDone: () => void }) {
           <Label>Type</Label>
           <div className="grid grid-cols-4 gap-1.5">
             {["Vacation","Sick","Personal","Parental"].map(t => (
-              <button key={t} onClick={() => setType(t)} className={`text-xs py-2 rounded-md border ${type === t ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}>{t}</button>
+              <button key={t} type="button" onClick={() => setType(t)} className={`text-xs py-2 rounded-md border press-scale ${type === t ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}>{t}</button>
             ))}
           </div>
         </div>
+
+        <div className="space-y-1.5">
+          <Label>Duration</Label>
+          <div className="grid grid-cols-2 gap-1.5">
+            {(["full", "half"] as const).map(g => (
+              <button
+                key={g}
+                type="button"
+                onClick={() => setGranularity(g)}
+                className={`text-xs py-2 rounded-md border press-scale inline-flex items-center justify-center gap-1.5 ${granularity === g ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}
+              >
+                {g === "full" ? <CalendarRange className="h-3.5 w-3.5" /> : <CalendarClock className="h-3.5 w-3.5" />}
+                {g === "full" ? "Full day" : "Half day"}
+              </button>
+            ))}
+          </div>
+          {granularity === "half" && (
+            <div className="inline-flex rounded-md border p-0.5 bg-muted/30 mt-1 fade-in">
+              {(["AM", "PM"] as const).map(p => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setHalfPeriod(p)}
+                  className={`px-3 h-7 text-[11px] rounded-sm press-scale ${halfPeriod === p ? "bg-primary text-primary-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>From</Label><Input type="date" defaultValue="2025-04-25" /></div>
-          <div className="space-y-1.5"><Label>To</Label><Input type="date" defaultValue="2025-04-29" /></div>
+          <div className="space-y-1.5">
+            <Label>From</Label>
+            <Input type="date" value={from} onChange={e => setFrom(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>To</Label>
+            <Input
+              type="date"
+              value={to}
+              onChange={e => setTo(e.target.value)}
+              disabled={granularity === "half"}
+            />
+          </div>
         </div>
+
         <div className="rounded-md bg-info/5 border border-info/20 p-3 text-xs">
-          <div className="font-medium text-info">3 working days</div>
-          <div className="text-muted-foreground mt-0.5">You have <strong>13 vacation days</strong> remaining after this.</div>
+          <div className="font-medium text-info">
+            {granularity === "half"
+              ? <>Half day · {halfPeriod} ({days} working day)</>
+              : <>{days} working day{days === 1 ? "" : "s"}</>}
+          </div>
+          <div className="text-muted-foreground mt-0.5">You have <strong>{(13 - days).toFixed(1)} vacation days</strong> remaining after this.</div>
         </div>
+
+        <CoveragePreview coverage={coverage} worst={worstCoverage} conflicts={conflictCount} />
+
         <div className="space-y-1.5"><Label>Reason (optional)</Label><Textarea placeholder="Family trip" rows={3} /></div>
         <div className="space-y-1.5">
           <Label>Approver</Label>
@@ -126,6 +209,80 @@ function RequestLeaveForm({ onDone }: { onDone: () => void }) {
       </FormBody>
       <Footer onCancel={onDone} onSubmit={submit} label="Submit request" />
     </>
+  );
+}
+
+const ME_ID = "e1";
+
+function CoveragePreview({
+  coverage, worst, conflicts,
+}: { coverage: CoverageForDate[]; worst: CoverageForDate | null; conflicts: number }) {
+  if (coverage.length === 0) return null;
+
+  const tone =
+    !worst || worst.coveragePct >= 75 ? "ok"
+    : worst.coveragePct >= 60 ? "warn"
+    : "alert";
+
+  return (
+    <div
+      className={cn(
+        "rounded-md border p-3 text-xs space-y-2",
+        tone === "ok" && "bg-success/5 border-success/20",
+        tone === "warn" && "bg-warning/5 border-warning/25",
+        tone === "alert" && "bg-destructive/5 border-destructive/25",
+      )}
+    >
+      <div className="flex items-center gap-2">
+        <Users className="h-3.5 w-3.5" />
+        <span className="font-medium">
+          {conflicts === 0
+            ? "No conflicts · team fully covered"
+            : <>{conflicts} teammate{conflicts === 1 ? "" : "s"} already out during this range</>}
+        </span>
+        {worst && (
+          <span className={cn(
+            "ml-auto font-mono tabular-nums",
+            tone === "warn" && "text-warning",
+            tone === "alert" && "text-destructive",
+          )}>
+            min {worst.coveragePct}%
+          </span>
+        )}
+      </div>
+      <ul className="space-y-1">
+        {coverage.slice(0, 7).map(d => (
+          <li key={d.date.toISOString()} className="flex items-center gap-2">
+            <span className="font-mono text-[10px] tabular-nums text-muted-foreground w-14 shrink-0">
+              {format(d.date, "EEE d")}
+            </span>
+            <div className="flex -space-x-1.5 flex-1 min-w-0">
+              {d.onLeave.slice(0, 6).map(l => {
+                const emp = employeeById(l.employeeId);
+                if (!emp) return null;
+                return (
+                  <div key={l.id} title={`${emp.name} · ${l.type}`} className="ring-2 ring-background rounded-full">
+                    <Avatar initials={emp.initials} color={emp.avatarColor} size={18} />
+                  </div>
+                );
+              })}
+              {d.onLeave.length > 6 && (
+                <span className="ml-1 text-[10px] text-muted-foreground">+{d.onLeave.length - 6}</span>
+              )}
+              {d.onLeave.length === 0 && (
+                <span className="text-[10px] text-muted-foreground">clear</span>
+              )}
+            </div>
+            <span className="font-mono text-[10px] tabular-nums text-muted-foreground w-10 text-right">
+              {d.coveragePct}%
+            </span>
+          </li>
+        ))}
+        {coverage.length > 7 && (
+          <li className="text-[10px] text-muted-foreground">+{coverage.length - 7} more days</li>
+        )}
+      </ul>
+    </div>
   );
 }
 

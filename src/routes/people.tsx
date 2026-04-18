@@ -23,16 +23,27 @@ import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
 import { employees as seed, type Employee, departments } from "@/lib/mock-data";
+import { useSavedViews } from "@/lib/useSavedViews";
+import { SavedViewsBar } from "@/components/app/SavedViewsBar";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/people")({
   head: () => ({ meta: [{ title: "Employees — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: People,
 });
 
+interface PeopleView { q: string; dept: string }
+
 function People() {
-  const [q, setQ] = useState("");
-  const [dept, setDept] = useState<string | null>(null);
+  const views = useSavedViews<PeopleView>("people", {
+    defaults: { q: "", dept: "" },
+    schema: { q: "string", dept: "string" },
+  });
+  const q = views.state.q;
+  const dept = views.state.dept || null;
+  const setQ = (v: string) => views.setState({ q: v });
+  const setDept = (v: string | null) => views.setState({ dept: v ?? "" });
   const [selected, setSelected] = useState<Employee | null>(null);
   const [list, setList] = useState<Employee[]>(seed);
   const [toDelete, setToDelete] = useState<Employee | null>(null);
@@ -88,6 +99,19 @@ function People() {
             </Button>
           </>
         }
+      />
+
+      <SavedViewsBar
+        savedViews={views.savedViews}
+        activeViewId={views.activeViewId}
+        isDirty={views.isDirty}
+        shareUrl={views.shareUrl}
+        onApply={views.apply}
+        onSave={views.save}
+        onRemove={views.remove}
+        onRename={views.rename}
+        onReset={views.reset}
+        placeholder="Save a people view once, jump to it with one click."
       />
 
       <Card className="p-3 mb-4 flex items-center gap-2 flex-wrap">

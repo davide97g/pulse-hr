@@ -60,16 +60,22 @@ export const departments = [
 ];
 
 export type LeaveStatus = "pending" | "approved" | "rejected";
+export type LeaveGranularity = "full" | "half";
+export type HalfPeriod = "AM" | "PM";
+
 export interface LeaveRequest {
   id: string;
   employeeId: string;
   type: "Vacation" | "Sick" | "Personal" | "Parental";
   from: string;
   to: string;
+  /** Equivalent working days (half-day rows store 0.5). */
   days: number;
   status: LeaveStatus;
   reason: string;
   submittedAt: string;
+  granularity?: LeaveGranularity;
+  halfPeriod?: HalfPeriod;
 }
 
 export const leaveRequests: LeaveRequest[] = [
@@ -82,7 +88,8 @@ export const leaveRequests: LeaveRequest[] = [
   // Current-month leave for the signed-in user (e1) so calendar shows live states
   { id: "l7", employeeId: "e1", type: "Sick",     from: "2026-04-09", to: "2026-04-10", days: 2, status: "approved", reason: "Flu",                   submittedAt: "2026-04-09" },
   { id: "l8", employeeId: "e1", type: "Vacation", from: "2026-04-20", to: "2026-04-24", days: 5, status: "approved", reason: "Spring break",          submittedAt: "2026-03-25" },
-  { id: "l9", employeeId: "e1", type: "Personal", from: "2026-04-30", to: "2026-04-30", days: 1, status: "approved", reason: "Family appointment",    submittedAt: "2026-04-16" },
+  { id: "l9",  employeeId: "e1", type: "Personal", from: "2026-04-30", to: "2026-04-30", days: 0.5, status: "approved", reason: "Family appointment",       submittedAt: "2026-04-16", granularity: "half", halfPeriod: "AM" },
+  { id: "l10", employeeId: "e1", type: "Vacation", from: "2026-04-27", to: "2026-04-27", days: 0.5, status: "approved", reason: "Long weekend kickoff",    submittedAt: "2026-04-17", granularity: "half", halfPeriod: "PM" },
 ];
 
 export interface Expense {

@@ -192,6 +192,9 @@ function HoverSummary({ info }: { info: DayInfo }) {
           <span className={cn("font-medium", leaveTone[info.leave.type] ?? "text-foreground")}>
             {info.leave.type}
           </span>
+          {info.leave.granularity === "half" && (
+            <span className="text-muted-foreground"> · Half day ({info.leave.halfPeriod})</span>
+          )}
           {info.leave.reason && <span className="text-muted-foreground"> · {info.leave.reason}</span>}
         </div>
       )}

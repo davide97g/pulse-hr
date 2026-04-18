@@ -15,9 +15,13 @@ import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
 import { leaveRequests as seed, employeeById, type LeaveRequest } from "@/lib/mock-data";
+import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
+import { useSavedViews } from "@/lib/useSavedViews";
+import { SavedViewsBar } from "@/components/app/SavedViewsBar";
 
 export const Route = createFileRoute("/leave")({
   head: () => ({ meta: [{ title: "Leave — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Leave,
 });
 
@@ -28,6 +32,12 @@ function Leave() {
   const [toDelete, setToDelete] = useState<LeaveRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const { open: openAction } = useQuickAction();
+  const leaveViews = useSavedViews<{ tab: string }>("leave", {
+    defaults: { tab: "pending" },
+    schema: { tab: "string" },
+  });
+  const activeTab = leaveViews.state.tab || "pending";
+  const setTab = (t: string) => leaveViews.setState({ tab: t });
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 420);
@@ -52,6 +62,50 @@ function Leave() {
   const getStatus = (l: LeaveRequest): "pending" | "approved" | "rejected" => decisions[l.id] ?? l.status;
   const filtered = (status: string) => list.filter(l => getStatus(l) === status);
 
+  const pendingRows = filtered("pending");
+  const bulk = useBulkSelect(pendingRows);
+
+  const bulkApprove = () => {
+    const ids = [...bulk.selected];
+    setDecisions(d => {
+      const next = { ...d };
+      for (const id of ids) next[id] = "approved";
+      return next;
+    });
+    bulk.clear();
+    toast.success(`Approved ${ids.length} request${ids.length === 1 ? "" : "s"}`, {
+      action: { label: "Undo", onClick: () => setDecisions(d => {
+        const next = { ...d };
+        for (const id of ids) delete next[id];
+        return next;
+      })},
+    });
+  };
+  const bulkReject = () => {
+    const ids = [...bulk.selected];
+    setDecisions(d => {
+      const next = { ...d };
+      for (const id of ids) next[id] = "rejected";
+      return next;
+    });
+    bulk.clear();
+    toast.error(`Rejected ${ids.length} request${ids.length === 1 ? "" : "s"}`, {
+      action: { label: "Undo", onClick: () => setDecisions(d => {
+        const next = { ...d };
+        for (const id of ids) delete next[id];
+        return next;
+      })},
+    });
+  };
+  const bulkDelete = () => {
+    const rows = bulk.selectedRows;
+    setList(ls => ls.filter(l => !bulk.selected.has(l.id)));
+    bulk.clear();
+    toast(`Deleted ${rows.length} request${rows.length === 1 ? "" : "s"}`, {
+      action: { label: "Undo", onClick: () => setList(ls => [...rows, ...ls]) },
+    });
+  };
+
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
@@ -74,7 +128,20 @@ function Leave() {
         ))}
       </div>
 
-      <Tabs defaultValue="pending">
+      <SavedViewsBar
+        savedViews={leaveViews.savedViews}
+        activeViewId={leaveViews.activeViewId}
+        isDirty={leaveViews.isDirty}
+        shareUrl={leaveViews.shareUrl}
+        onApply={leaveViews.apply}
+        onSave={leaveViews.save}
+        onRemove={leaveViews.remove}
+        onRename={leaveViews.rename}
+        onReset={leaveViews.reset}
+        placeholder="Pin a leave tab (pending / approved / calendar) as a bookmarkable link."
+      />
+
+      <Tabs value={activeTab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="pending">Pending ({filtered("pending").length})</TabsTrigger>
           <TabsTrigger value="approved">Approved ({filtered("approved").length})</TabsTrigger>
@@ -102,41 +169,86 @@ function Leave() {
                   }
                 />
               ) : (
-                <div className="divide-y stagger-in">
-                  {filtered(tab).map(l => {
-                    const e = employeeById(l.employeeId)!;
-                    return (
-                      <div
-                        key={l.id}
-                        className="group px-5 py-3.5 flex items-center gap-4 hover:bg-muted/40 cursor-pointer transition-colors"
-                        onClick={() => setSelected(l)}
-                      >
-                        <Avatar initials={e.initials} color={e.avatarColor} size={36} />
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm">{e.name}</div>
-                          <div className="text-xs text-muted-foreground">{l.type} • {l.days} day{l.days > 1 ? "s" : ""} • {l.from} → {l.to}</div>
+                <>
+                  {tab === "pending" && (
+                    <div className="px-5 py-2.5 border-b bg-muted/20 flex items-center gap-3 text-xs text-muted-foreground">
+                      <HeaderCheckbox
+                        allSelected={bulk.allSelected}
+                        someSelected={bulk.someSelected}
+                        onToggle={() => bulk.toggleAll()}
+                      />
+                      <span>
+                        {bulk.count > 0
+                          ? <>{bulk.count} of {pendingRows.length} selected</>
+                          : <>Select rows to approve or reject in bulk</>}
+                      </span>
+                    </div>
+                  )}
+                  <div className="divide-y stagger-in">
+                    {filtered(tab).map(l => {
+                      const e = employeeById(l.employeeId)!;
+                      const selected = tab === "pending" && bulk.isSelected(l.id);
+                      return (
+                        <div
+                          key={l.id}
+                          className={`group px-5 py-3.5 flex items-center gap-3 hover:bg-muted/40 cursor-pointer transition-colors ${selected ? "bg-primary/[0.04]" : ""}`}
+                          onClick={() => setSelected(l)}
+                        >
+                          {tab === "pending" && (
+                            <RowCheckbox
+                              checked={selected}
+                              onChange={() => bulk.toggle(l.id)}
+                              visibleWhen={bulk.count > 0 ? "always" : "hover-or-selected"}
+                            />
+                          )}
+                          <Avatar initials={e.initials} color={e.avatarColor} size={36} />
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-sm flex items-center gap-1.5">
+                              {e.name}
+                              {l.granularity === "half" && (
+                                <span className="inline-flex items-center gap-0.5 text-[9px] uppercase tracking-wider font-mono px-1.5 py-0.5 rounded border bg-muted/60 text-muted-foreground">
+                                  Half · {l.halfPeriod}
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {l.type} • {l.days} day{l.days === 1 ? "" : "s"} • {l.from}{l.granularity === "half" ? "" : ` → ${l.to}`}
+                            </div>
+                          </div>
+                          <StatusBadge status={getStatus(l)} />
+                          {tab === "pending" ? (
+                            <div className="flex gap-1.5" onClick={(ev) => ev.stopPropagation()}>
+                              <Button size="sm" variant="ghost" className="h-8 px-2 text-destructive hover:bg-destructive/10 press-scale" onClick={() => decide(l.id, "rejected")}>
+                                <X className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" className="h-8 px-3 bg-success text-success-foreground hover:bg-success/90 press-scale" onClick={() => decide(l.id, "approved")}>
+                                <Check className="h-4 w-4 mr-1" /> Approve
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={ev => ev.stopPropagation()}>
+                              <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => setToDelete(l)}>
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          )}
                         </div>
-                        <StatusBadge status={getStatus(l)} />
-                        {tab === "pending" ? (
-                          <div className="flex gap-1.5" onClick={(ev) => ev.stopPropagation()}>
-                            <Button size="sm" variant="ghost" className="h-8 px-2 text-destructive hover:bg-destructive/10 press-scale" onClick={() => decide(l.id, "rejected")}>
-                              <X className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" className="h-8 px-3 bg-success text-success-foreground hover:bg-success/90 press-scale" onClick={() => decide(l.id, "approved")}>
-                              <Check className="h-4 w-4 mr-1" /> Approve
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={ev => ev.stopPropagation()}>
-                            <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => setToDelete(l)}>
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                  {tab === "pending" && (
+                    <BulkBar
+                      count={bulk.count}
+                      onClear={bulk.clear}
+                      noun="request"
+                      actions={[
+                        { label: "Approve all", icon: <Check className="h-3.5 w-3.5" />, onClick: bulkApprove, tone: "success" },
+                        { label: "Reject all",  icon: <X className="h-3.5 w-3.5" />,     onClick: bulkReject },
+                        { label: "Delete",      icon: <Trash2 className="h-3.5 w-3.5" />, onClick: bulkDelete, tone: "destructive" },
+                      ]}
+                    />
+                  )}
+                </>
               )}
             </Card>
           </TabsContent>
