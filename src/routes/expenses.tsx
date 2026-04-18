@@ -52,6 +52,37 @@ function Expenses() {
     });
   };
 
+  useEffect(() => {
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+      const tag = (ev.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if ((ev.target as HTMLElement | null)?.isContentEditable) return;
+      if (ev.key === "A" && ev.shiftKey) {
+        ev.preventDefault();
+        const pending = list.filter(x => get(x) === "pending");
+        if (pending.length === 0) return;
+        setDecisions(d => {
+          const next = { ...d };
+          for (const x of pending) next[x.id] = "approved";
+          return next;
+        });
+        toast.success(`Approved ${pending.length} expense${pending.length === 1 ? "" : "s"}`, {
+          action: {
+            label: "Undo", onClick: () => setDecisions(d => {
+              const next = { ...d };
+              for (const x of pending) delete next[x.id];
+              return next;
+            }),
+          },
+        });
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [list, decisions]);
+
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
@@ -110,7 +141,26 @@ function Expenses() {
               {list.map(x => {
                 const emp = employeeById(x.employeeId)!;
                 return (
-                  <tr key={x.id} onClick={() => setSelected(x)} className="border-t hover:bg-muted/40 cursor-pointer group transition-colors">
+                  <tr
+                    key={x.id}
+                    tabIndex={get(x) === "pending" ? 0 : -1}
+                    onClick={() => setSelected(x)}
+                    onKeyDown={
+                      get(x) === "pending"
+                        ? (e) => {
+                            if (e.metaKey || e.ctrlKey || e.altKey) return;
+                            if (e.key === "a" && !e.shiftKey) {
+                              e.preventDefault();
+                              decide(x, "approved");
+                            } else if (e.key === "r" && !e.shiftKey) {
+                              e.preventDefault();
+                              decide(x, "rejected");
+                            }
+                          }
+                        : undefined
+                    }
+                    className="border-t hover:bg-muted/40 cursor-pointer group transition-colors focus:outline-none focus-visible:bg-primary/[0.04] focus-visible:ring-2 focus-visible:ring-primary/30"
+                  >
                     <td className="px-4 py-2.5 font-medium">{x.description}</td>
                     <td className="px-4 py-2.5">
                       <div className="flex items-center gap-2">

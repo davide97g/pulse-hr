@@ -54,6 +54,28 @@ const GROUPS_BY_PATH: Record<string, Group[]> = {
       shortcuts: [{ keys: ["Tab"], label: "Jump between fields" }],
     },
   ],
+  "/leave": [
+    {
+      name: "Leave · pending review",
+      shortcuts: [
+        { keys: ["Tab"], label: "Focus next pending request" },
+        { keys: ["a"], label: "Approve focused request" },
+        { keys: ["r"], label: "Reject focused request" },
+        { keys: ["⇧", "A"], label: "Approve all pending in view" },
+      ],
+    },
+  ],
+  "/expenses": [
+    {
+      name: "Expenses",
+      shortcuts: [
+        { keys: ["Tab"], label: "Focus next pending expense" },
+        { keys: ["a"], label: "Approve focused expense" },
+        { keys: ["r"], label: "Reject focused expense" },
+        { keys: ["⇧", "A"], label: "Approve all pending in view" },
+      ],
+    },
+  ],
 };
 
 function matchGroupsForPath(path: string): Group[] {

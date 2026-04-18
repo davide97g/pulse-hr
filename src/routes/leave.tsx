@@ -97,6 +97,42 @@ function Leave() {
       })},
     });
   };
+  const approveAllVisible = () => {
+    const ids = pendingRows.map(r => r.id);
+    if (ids.length === 0) return;
+    setDecisions(d => {
+      const next = { ...d };
+      for (const id of ids) next[id] = "approved";
+      return next;
+    });
+    toast.success(`Approved ${ids.length} request${ids.length === 1 ? "" : "s"}`, {
+      action: {
+        label: "Undo", onClick: () => setDecisions(d => {
+          const next = { ...d };
+          for (const id of ids) delete next[id];
+          return next;
+        }),
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (activeTab !== "pending") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if ((e.target as HTMLElement | null)?.isContentEditable) return;
+      if (e.key === "A" && e.shiftKey) {
+        e.preventDefault();
+        approveAllVisible();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, pendingRows]);
+
   const bulkDelete = () => {
     const rows = bulk.selectedRows;
     setList(ls => ls.filter(l => !bulk.selected.has(l.id)));
@@ -197,8 +233,23 @@ function Leave() {
                       return (
                         <div
                           key={l.id}
-                          className={`group px-3 sm:px-5 py-3 flex items-center gap-2 sm:gap-3 hover:bg-muted/40 cursor-pointer transition-colors ${selected ? "bg-primary/[0.04]" : ""}`}
+                          tabIndex={tab === "pending" ? 0 : -1}
+                          className={`group px-3 sm:px-5 py-3 flex items-center gap-2 sm:gap-3 hover:bg-muted/40 cursor-pointer transition-colors focus:outline-none focus-visible:bg-primary/[0.04] focus-visible:ring-2 focus-visible:ring-primary/30 ${selected ? "bg-primary/[0.04]" : ""}`}
                           onClick={() => setSelected(l)}
+                          onKeyDown={
+                            tab === "pending"
+                              ? (e) => {
+                                  if (e.metaKey || e.ctrlKey || e.altKey) return;
+                                  if (e.key === "a" && !e.shiftKey) {
+                                    e.preventDefault();
+                                    decide(l.id, "approved");
+                                  } else if (e.key === "r" && !e.shiftKey) {
+                                    e.preventDefault();
+                                    decide(l.id, "rejected");
+                                  }
+                                }
+                              : undefined
+                          }
                         >
                           {tab === "pending" && (
                             <RowCheckbox
