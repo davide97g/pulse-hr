@@ -122,40 +122,90 @@ function TeamGrid({ summaries, onPick }: { summaries: GrowthSummary[]; onPick: (
         <StatTile icon={<Gift className="h-4 w-4" />} label="Kudos received" value={`${totals.kudos}`} />
       </div>
 
-      <Leaderboard />
-
-      <div className="flex items-center gap-2 mt-6 mb-3">
-        <Users className="h-4 w-4 text-muted-foreground" />
-        <div className="text-sm font-semibold">Team</div>
-        <span className="text-[11px] text-muted-foreground">· click a card for full profile</span>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 stagger-in">
-        {summaries.map(s => <TeamCard key={s.employee.id} summary={s} onPick={onPick} />)}
-      </div>
+      <Tabs defaultValue="leaderboard">
+        <TabsList>
+          <TabsTrigger value="leaderboard">
+            <Trophy className="h-3.5 w-3.5 mr-1.5" /> Leaderboard
+          </TabsTrigger>
+          <TabsTrigger value="team">
+            <Users className="h-3.5 w-3.5 mr-1.5" /> Team ({summaries.length})
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="leaderboard" className="mt-4">
+          <Leaderboard />
+        </TabsContent>
+        <TabsContent value="team" className="mt-4">
+          <div className="text-[11px] text-muted-foreground mb-3 flex items-center gap-1.5">
+            <Users className="h-3 w-3" /> Click a card for full profile
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 stagger-in">
+            {summaries.map(s => <TeamCard key={s.employee.id} summary={s} onPick={onPick} />)}
+          </div>
+        </TabsContent>
+      </Tabs>
     </>
   );
 }
 
 // ─── Leaderboard ───────────────────────────────────────────────────────
+interface Prize {
+  xp: number;
+  reward: string;
+  emoji: string;
+  tint: string;
+  label: string;
+}
+const PRIZES: Record<SeasonalPeriod, [Prize, Prize, Prize]> = {
+  weekly: [
+    { xp: 500,  reward: "Shipping Sprint trophy + feature on all-hands",           emoji: "🏆", tint: "oklch(0.82 0.17 85)",  label: "Gold" },
+    { xp: 250,  reward: "Runner-up badge + coffee on the house",                   emoji: "🥈", tint: "oklch(0.78 0.03 250)", label: "Silver" },
+    { xp: 100,  reward: "Podium badge",                                             emoji: "🥉", tint: "oklch(0.68 0.14 50)",  label: "Bronze" },
+  ],
+  monthly: [
+    { xp: 2000, reward: "$100 gift card · Legend badge · half-day off",             emoji: "👑", tint: "oklch(0.82 0.17 85)",  label: "Gold" },
+    { xp: 1000, reward: "$50 gift card · Silver streak badge",                      emoji: "🥈", tint: "oklch(0.78 0.03 250)", label: "Silver" },
+    { xp: 500,  reward: "$25 gift card",                                            emoji: "🥉", tint: "oklch(0.68 0.14 50)",  label: "Bronze" },
+  ],
+  yearly: [
+    { xp: 10000, reward: "$500 · engraved trophy · extra day off · Hall of Fame",  emoji: "🏆", tint: "oklch(0.82 0.17 85)",  label: "Champion" },
+    { xp: 5000,  reward: "$250 · Silver laurel · off-site seat",                   emoji: "🥈", tint: "oklch(0.78 0.03 250)", label: "Silver" },
+    { xp: 2500,  reward: "$100 · Bronze laurel",                                    emoji: "🥉", tint: "oklch(0.68 0.14 50)",  label: "Bronze" },
+  ],
+};
+
 function Leaderboard() {
   const [period, setPeriod] = useState<SeasonalPeriod>("weekly");
   const entries = useMemo(() => leaderboard(period), [period]);
   const challenges = useMemo(() => seasonalChallengesFor(period), [period]);
-  const top = entries.filter(e => e.xp > 0).slice(0, 8);
+  const scored = entries.filter(e => e.xp > 0);
+  const podium = scored.slice(0, 3);
+  const rest = scored.slice(3, 10);
+  const prizes = PRIZES[period];
 
   const label = period === "weekly" ? "this week" : period === "monthly" ? "this month" : "this year";
+  const windowEnds = period === "weekly" ? "Sunday 23:59" : period === "monthly" ? "end of month" : "Dec 31";
 
   return (
     <Card className="p-5 overflow-hidden relative">
       <div
-        className="absolute -top-16 -left-10 h-40 w-40 rounded-full blur-3xl pointer-events-none"
-        style={{ background: "oklch(0.75 0.2 45 / 0.2)" }}
+        className="absolute -top-24 -left-24 h-64 w-64 rounded-full blur-3xl pointer-events-none"
+        style={{ background: "oklch(0.82 0.2 85 / 0.18)" }}
         aria-hidden
       />
-      <div className="relative flex items-center gap-2 mb-4">
-        <Trophy className="h-4 w-4 text-warning" />
-        <div className="font-semibold text-sm">Leaderboard</div>
-        <span className="text-[11px] text-muted-foreground">compete on XP earned {label}</span>
+      <div
+        className="absolute -top-24 -right-16 h-60 w-60 rounded-full blur-3xl pointer-events-none"
+        style={{ background: "oklch(0.65 0.22 330 / 0.15)" }}
+        aria-hidden
+      />
+
+      <div className="relative flex items-center gap-2 mb-4 flex-wrap">
+        <div className="h-8 w-8 rounded-md grid place-items-center" style={{ background: "oklch(0.82 0.17 85 / 0.15)", color: "oklch(0.72 0.17 75)" }}>
+          <Trophy className="h-4 w-4" />
+        </div>
+        <div>
+          <div className="font-display text-base leading-tight">Leaderboard</div>
+          <div className="text-[11px] text-muted-foreground">Compete on XP earned {label} · resets {windowEnds}</div>
+        </div>
         <div className="ml-auto inline-flex rounded-md border p-0.5 bg-background">
           {([
             ["weekly",  "Week",   CalendarDays],
@@ -178,19 +228,63 @@ function Leaderboard() {
         </div>
       </div>
 
-      <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-5">
+      {/* Podium */}
+      {podium.length > 0 && (
+        <Podium podium={podium} prizes={prizes} />
+      )}
+
+      <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-5 mt-5">
         <div>
-          {top.length === 0 ? (
-            <div className="text-sm text-muted-foreground py-8 text-center">
-              No XP earned yet {label}. Kick it off with some kudos or focus work.
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2 flex items-center gap-1.5">
+            <Medal className="h-3 w-3" /> Contenders
+          </div>
+          {rest.length === 0 && podium.length === 0 ? (
+            <div className="text-sm text-muted-foreground py-8 text-center border rounded-md">
+              No XP earned yet {label}. Kick it off with kudos or focus work.
+            </div>
+          ) : rest.length === 0 ? (
+            <div className="text-xs text-muted-foreground py-6 text-center border rounded-md">
+              Podium's all there is so far — catch up and claim a spot.
             </div>
           ) : (
             <ol className="space-y-1.5 stagger-in">
-              {top.map(row => (
-                <LeaderboardRow key={row.employee.id} row={row} maxXp={top[0].xp} />
+              {rest.map(row => (
+                <LeaderboardRow key={row.employee.id} row={row} maxXp={podium[0].xp} />
               ))}
             </ol>
           )}
+
+          {/* Prize ladder */}
+          <div className="mt-4 pt-4 border-t">
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2 flex items-center gap-1.5">
+              <Gift className="h-3 w-3" /> Prize ladder
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+              {prizes.map((p, i) => (
+                <div
+                  key={i}
+                  className="relative rounded-md border p-2.5 overflow-hidden"
+                  style={{ borderColor: `color-mix(in oklch, ${p.tint} 40%, var(--border))` }}
+                >
+                  <div
+                    className="absolute -top-6 -right-6 h-16 w-16 rounded-full blur-2xl pointer-events-none"
+                    style={{ background: p.tint, opacity: 0.25 }}
+                    aria-hidden
+                  />
+                  <div className="relative flex items-center gap-1.5">
+                    <span className="text-base leading-none">{p.emoji}</span>
+                    <span className="text-[10px] uppercase tracking-wider font-bold" style={{ color: p.tint }}>
+                      {i + 1}{i === 0 ? "st" : i === 1 ? "nd" : "rd"} · {p.label}
+                    </span>
+                    <span className="ml-auto font-mono text-[11px] tabular-nums text-primary">+{p.xp.toLocaleString()} XP</span>
+                  </div>
+                  <div className="relative text-[11px] text-muted-foreground mt-1 leading-snug">
+                    {p.reward}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div>
@@ -210,27 +304,102 @@ function Leaderboard() {
   );
 }
 
-function LeaderboardRow({ row, maxXp }: { row: LeaderboardEntry; maxXp: number }) {
-  const pct = Math.max(2, Math.round((row.xp / Math.max(1, maxXp)) * 100));
-  const isPodium = row.rank <= 3;
-  const podiumColor = row.rank === 1
-    ? "oklch(0.78 0.18 85)"
-    : row.rank === 2
-      ? "oklch(0.75 0.03 250)"
-      : "oklch(0.65 0.14 50)";
+function Podium({ podium, prizes }: { podium: LeaderboardEntry[]; prizes: [Prize, Prize, Prize] }) {
+  // Layout: silver (2nd) | gold (1st) | bronze (3rd). Missing ranks collapse.
+  const byRank: Record<1 | 2 | 3, LeaderboardEntry | undefined> = {
+    1: podium.find(p => p.rank === 1),
+    2: podium.find(p => p.rank === 2),
+    3: podium.find(p => p.rank === 3),
+  };
+  const order: (1 | 2 | 3)[] = [2, 1, 3];
   return (
-    <li className={cn(
-      "relative group rounded-md border px-2.5 py-2 flex items-center gap-3 transition-colors hover:bg-muted/40",
-      isPodium && "border-primary/20 bg-primary/[0.02]",
-    )}>
+    <div className="relative grid grid-cols-3 gap-3 items-end">
+      {order.map(rank => {
+        const entry = byRank[rank];
+        const prize = prizes[rank - 1];
+        if (!entry) return <div key={rank} aria-hidden />;
+        return <PodiumStep key={rank} entry={entry} prize={prize} rank={rank} />;
+      })}
+    </div>
+  );
+}
+
+function PodiumStep({ entry, prize, rank }: { entry: LeaderboardEntry; prize: Prize; rank: 1 | 2 | 3 }) {
+  const height = rank === 1 ? "h-[110px]" : rank === 2 ? "h-[82px]" : "h-[62px]";
+  const avatarSize = rank === 1 ? 56 : 44;
+  return (
+    <div className={cn("relative flex flex-col items-center", rank === 1 && "-translate-y-2")}>
+      {rank === 1 && (
+        <div className="mb-1 text-[10px] font-bold uppercase tracking-wider text-warning inline-flex items-center gap-1 shimmer">
+          <Crown className="h-3 w-3" /> Reigning champ
+        </div>
+      )}
+      <div className="relative">
+        {rank === 1 && (
+          <div
+            className="absolute -inset-2 rounded-full blur-md pointer-events-none pulse-dot"
+            style={{ background: prize.tint, opacity: 0.45 }}
+            aria-hidden
+          />
+        )}
+        <div
+          className="relative rounded-full p-0.5"
+          style={{
+            background: `conic-gradient(from 0deg, ${prize.tint}, color-mix(in oklch, ${prize.tint} 60%, transparent), ${prize.tint})`,
+          }}
+        >
+          <div className="bg-card rounded-full p-0.5">
+            <Avatar initials={entry.employee.initials} color={entry.employee.avatarColor} size={avatarSize} />
+          </div>
+        </div>
+        <div
+          className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full grid place-items-center text-base shadow-sm border-2 border-card"
+          style={{ backgroundColor: prize.tint }}
+          aria-label={`rank ${rank}`}
+        >
+          {prize.emoji}
+        </div>
+      </div>
+      <div className="mt-2 text-center min-w-0 w-full px-1">
+        <div className="text-sm font-semibold truncate">{entry.employee.name}</div>
+        <div className="text-[10px] text-muted-foreground truncate">{entry.employee.role}</div>
+      </div>
       <div
         className={cn(
-          "w-7 h-7 rounded-md grid place-items-center text-xs font-bold tabular-nums shrink-0",
-          isPodium ? "text-white" : "bg-muted text-muted-foreground",
+          "mt-2 w-full rounded-t-lg flex flex-col items-center justify-end px-1.5 pt-1.5 pb-2 relative overflow-hidden",
+          height,
         )}
-        style={isPodium ? { backgroundColor: podiumColor } : undefined}
+        style={{
+          background: `linear-gradient(180deg, color-mix(in oklch, ${prize.tint} 22%, transparent), color-mix(in oklch, ${prize.tint} 8%, transparent))`,
+          border: `1px solid color-mix(in oklch, ${prize.tint} 45%, var(--border))`,
+          borderBottom: "none",
+        }}
       >
-        {row.rank === 1 ? <Crown className="h-3.5 w-3.5" /> : row.rank <= 3 ? <Medal className="h-3.5 w-3.5" /> : row.rank}
+        <div
+          className="absolute inset-x-0 top-0 h-0.5"
+          style={{ background: prize.tint, opacity: 0.7 }}
+          aria-hidden
+        />
+        <div className="text-[9px] uppercase tracking-wider font-bold" style={{ color: prize.tint }}>
+          {prize.label}
+        </div>
+        <div className="font-mono text-sm tabular-nums font-bold">+{entry.xp.toLocaleString()}</div>
+        <div className="text-[9px] uppercase tracking-wider text-muted-foreground -mt-0.5">XP</div>
+        <div className="mt-1 text-[10px] text-center leading-tight line-clamp-2">
+          <span className="font-mono tabular-nums text-primary">+{prize.xp.toLocaleString()} XP</span>
+          <span className="text-muted-foreground"> · {prize.reward.split(" · ")[0]}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LeaderboardRow({ row, maxXp }: { row: LeaderboardEntry; maxXp: number }) {
+  const pct = Math.max(2, Math.round((row.xp / Math.max(1, maxXp)) * 100));
+  return (
+    <li className="relative group rounded-md border px-2.5 py-2 flex items-center gap-3 transition-colors hover:bg-muted/40">
+      <div className="w-7 h-7 rounded-md grid place-items-center text-xs font-bold tabular-nums shrink-0 bg-muted text-muted-foreground">
+        {row.rank}
       </div>
       <Avatar initials={row.employee.initials} color={row.employee.avatarColor} size={28} />
       <div className="flex-1 min-w-0">
@@ -240,8 +409,8 @@ function LeaderboardRow({ row, maxXp }: { row: LeaderboardEntry; maxXp: number }
         </div>
         <div className="mt-1 h-1.5 rounded-full bg-muted overflow-hidden">
           <div
-            className="h-full rounded-full transition-[width] duration-700"
-            style={{ width: `${pct}%`, backgroundColor: isPodium ? podiumColor : "var(--color-primary)" }}
+            className="h-full rounded-full transition-[width] duration-700 bg-primary"
+            style={{ width: `${pct}%` }}
           />
         </div>
         <div className="flex items-center gap-3 mt-1 text-[10px] text-muted-foreground tabular-nums">
