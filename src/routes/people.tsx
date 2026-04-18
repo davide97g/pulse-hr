@@ -36,17 +36,19 @@ export const Route = createFileRoute("/people")({
   component: People,
 });
 
-interface PeopleView { q: string; dept: string }
+interface PeopleView { q: string; dept: string; tab: string }
 
 function People() {
   const views = useSavedViews<PeopleView>("people", {
-    defaults: { q: "", dept: "" },
-    schema: { q: "string", dept: "string" },
+    defaults: { q: "", dept: "", tab: "list" },
+    schema: { q: "string", dept: "string", tab: "string" },
   });
   const q = views.state.q;
   const dept = views.state.dept || null;
+  const tab = views.state.tab || "list";
   const setQ = (v: string) => views.setState({ q: v });
   const setDept = (v: string | null) => views.setState({ dept: v ?? "" });
+  const setTab = (v: string) => views.setState({ tab: v });
   const [selected, setSelected] = useState<Employee | null>(null);
   const [list, setList] = useState<Employee[]>(seed);
   const [toDelete, setToDelete] = useState<Employee | null>(null);
@@ -150,7 +152,7 @@ function People() {
         </Button>
       </Card>
 
-      <Tabs defaultValue="list">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="list">List</TabsTrigger>
           <TabsTrigger value="grid">Cards</TabsTrigger>

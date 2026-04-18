@@ -31,6 +31,7 @@ const ME = "e1";
 interface GrowthSearch {
   employee?: string;
   view?: "team" | "me";
+  tab?: "leaderboard" | "team";
 }
 
 export const Route = createFileRoute("/growth")({
@@ -38,6 +39,7 @@ export const Route = createFileRoute("/growth")({
   validateSearch: (s: Record<string, unknown>): GrowthSearch => ({
     employee: typeof s.employee === "string" ? s.employee : undefined,
     view: s.view === "me" || s.view === "team" ? s.view : undefined,
+    tab: s.tab === "leaderboard" || s.tab === "team" ? s.tab : undefined,
   }),
   component: Growth,
 });
@@ -47,11 +49,14 @@ function Growth() {
   const search = useSearch({ from: "/growth" });
   const view: "team" | "me" = search.view ?? "team";
   const focusEmployee = search.employee ?? null;
+  const teamTab: "leaderboard" | "team" = search.tab ?? "leaderboard";
 
   const setView = (v: "team" | "me") =>
-    nav({ search: { view: v === "team" ? undefined : v, employee: undefined } });
+    nav({ search: { view: v === "team" ? undefined : v, employee: undefined, tab: undefined } });
   const setFocusEmployee = (id: string | null) =>
     nav({ search: (prev) => ({ ...prev, employee: id ?? undefined }) });
+  const setTeamTab = (t: string) =>
+    nav({ search: (prev) => ({ ...prev, tab: t === "leaderboard" ? undefined : (t as "team") }) });
 
   // Effective subject: Me view shows ME; Team view opens a drill-down.
   const subjectId = view === "me" ? ME : focusEmployee;
@@ -100,14 +105,29 @@ function Growth() {
           <GrowthProfile summary={subject} />
         </>
       ) : (
-        <TeamGrid summaries={summaries} onPick={id => setFocusEmployee(id)} />
+        <TeamGrid
+          summaries={summaries}
+          onPick={id => setFocusEmployee(id)}
+          tab={teamTab}
+          onTabChange={setTeamTab}
+        />
       )}
     </div>
   );
 }
 
 // ─── Team grid ─────────────────────────────────────────────────────────
-function TeamGrid({ summaries, onPick }: { summaries: GrowthSummary[]; onPick: (id: string) => void }) {
+function TeamGrid({
+  summaries,
+  onPick,
+  tab,
+  onTabChange,
+}: {
+  summaries: GrowthSummary[];
+  onPick: (id: string) => void;
+  tab: "leaderboard" | "team";
+  onTabChange: (v: string) => void;
+}) {
   const totals = useMemo(() => ({
     xp: summaries.reduce((a, s) => a + s.xp.total, 0),
     activeGoals: summaries.reduce((a, s) => a + s.goalsActive, 0),
@@ -124,7 +144,7 @@ function TeamGrid({ summaries, onPick }: { summaries: GrowthSummary[]; onPick: (
         <StatTile icon={<Gift className="h-4 w-4" />} label="Kudos received" value={`${totals.kudos}`} />
       </div>
 
-      <Tabs defaultValue="leaderboard">
+      <Tabs value={tab} onValueChange={onTabChange}>
         <TabsList>
           <TabsTrigger value="leaderboard">
             <Trophy className="h-3.5 w-3.5 mr-1.5" /> Leaderboard
