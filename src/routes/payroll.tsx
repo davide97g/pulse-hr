@@ -59,7 +59,7 @@ function Payroll() {
             </thead>
             <tbody>
               {payrollRuns.map(p => (
-                <tr key={p.id} className="border-t hover:bg-muted/40 cursor-pointer">
+                <tr key={p.id} onClick={() => toast(`${p.period} payslips`, { description: `Net $${p.net.toLocaleString()} • ${p.employees} employees` })} className="border-t hover:bg-muted/40 cursor-pointer">
                   <td className="px-4 py-2.5 font-medium">{p.period}</td>
                   <td className="px-4 py-2.5 text-muted-foreground">{p.date}</td>
                   <td className="px-4 py-2.5 text-right">{p.employees}</td>

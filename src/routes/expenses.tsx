@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Upload, Check, X } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
+import { useQuickAction } from "@/components/app/QuickActions";
 import { expenses, employeeById, type Expense } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/expenses")({
@@ -17,15 +19,21 @@ const sym = { USD: "$", EUR: "€", GBP: "£" };
 function Expenses() {
   const [selected, setSelected] = useState<Expense | null>(null);
   const [decisions, setDecisions] = useState<Record<string, Expense["status"]>>({});
+  const { open: openAction } = useQuickAction();
 
   const get = (e: Expense) => decisions[e.id] ?? e.status;
+  const decide = (e: Expense, status: Expense["status"]) => {
+    setDecisions(d => ({ ...d, [e.id]: status }));
+    if (status === "approved") toast.success(`Approved: ${e.description}`);
+    else if (status === "rejected") toast.error(`Rejected: ${e.description}`);
+  };
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Expenses"
         description="Submit, approve and reimburse expenses"
-        actions={<Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Submit expense</Button>}
+        actions={<Button size="sm" onClick={() => openAction("submit-expense")}><Plus className="h-4 w-4 mr-1.5" />Submit expense</Button>}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
