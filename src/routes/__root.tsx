@@ -1,6 +1,7 @@
-import { Outlet, createRootRoute, HeadContent, Scripts, Link } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Scripts, Link } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { AppShell } from "@/components/app/AppShell";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -28,7 +29,7 @@ export const Route = createRootRoute({
     links: [{ rel: "stylesheet", href: appCss }],
   }),
   shellComponent: RootShell,
-  component: () => <AppShell />,
+  component: () => (<><AppShell /><Toaster position="bottom-right" richColors closeButton /></>),
   notFoundComponent: NotFoundComponent,
 });
 

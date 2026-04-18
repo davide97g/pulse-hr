@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Upload, Check, X } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
+import { useQuickAction } from "@/components/app/QuickActions";
 import { expenses, employeeById, type Expense } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/expenses")({
@@ -17,15 +19,21 @@ const sym = { USD: "$", EUR: "€", GBP: "£" };
 function Expenses() {
   const [selected, setSelected] = useState<Expense | null>(null);
   const [decisions, setDecisions] = useState<Record<string, Expense["status"]>>({});
+  const { open: openAction } = useQuickAction();
 
   const get = (e: Expense) => decisions[e.id] ?? e.status;
+  const decide = (e: Expense, status: Expense["status"]) => {
+    setDecisions(d => ({ ...d, [e.id]: status }));
+    if (status === "approved") toast.success(`Approved: ${e.description}`);
+    else if (status === "rejected") toast.error(`Rejected: ${e.description}`);
+  };
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Expenses"
         description="Submit, approve and reimburse expenses"
-        actions={<Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Submit expense</Button>}
+        actions={<Button size="sm" onClick={() => openAction("submit-expense")}><Plus className="h-4 w-4 mr-1.5" />Submit expense</Button>}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
@@ -46,7 +54,7 @@ function Expenses() {
       <Card className="p-0 overflow-hidden">
         <div className="px-5 py-4 border-b flex items-center justify-between">
           <div className="font-semibold text-sm">All expenses</div>
-          <Button size="sm" variant="outline"><Upload className="h-3.5 w-3.5 mr-1.5" />Upload receipts</Button>
+          <Button size="sm" variant="outline" onClick={() => toast.success("Receipt uploader opened", { description: "Drag PDFs or JPGs to upload" })}><Upload className="h-3.5 w-3.5 mr-1.5" />Upload receipts</Button>
         </div>
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
@@ -110,8 +118,8 @@ function Expenses() {
               </div>
               {status === "pending" && (
                 <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1" onClick={() => setDecisions(d => ({ ...d, [selected.id]: "rejected" }))}><X className="h-4 w-4 mr-1.5" />Reject</Button>
-                  <Button className="flex-1 bg-success hover:bg-success/90 text-white" onClick={() => setDecisions(d => ({ ...d, [selected.id]: "approved" }))}><Check className="h-4 w-4 mr-1.5" />Approve</Button>
+                  <Button variant="outline" className="flex-1" onClick={() => decide(selected, "rejected")}><X className="h-4 w-4 mr-1.5" />Reject</Button>
+                  <Button className="flex-1 bg-success hover:bg-success/90 text-white" onClick={() => decide(selected, "approved")}><Check className="h-4 w-4 mr-1.5" />Approve</Button>
                 </div>
               )}
             </div>

@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Plus, Star, Calendar } from "lucide-react";
+import { Plus, Star, Calendar, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
-import { candidates, type Candidate } from "@/lib/mock-data";
+import { useQuickAction } from "@/components/app/QuickActions";
+import { candidates as initialCandidates, type Candidate } from "@/lib/mock-data";
 import { SidePanel } from "@/components/app/SidePanel";
 
 export const Route = createFileRoute("/recruiting")({
@@ -16,13 +18,26 @@ const stages: Candidate["stage"][] = ["Applied", "Screen", "Interview", "Offer",
 
 function Recruiting() {
   const [selected, setSelected] = useState<Candidate | null>(null);
+  const [candidates, setCandidates] = useState(initialCandidates);
+  const { open: openAction } = useQuickAction();
+
+  const moveStage = (id: string, dir: 1 | -1) => {
+    setCandidates(arr => arr.map(c => {
+      if (c.id !== id) return c;
+      const idx = stages.indexOf(c.stage);
+      const next = stages[Math.min(stages.length - 1, Math.max(0, idx + dir))];
+      return { ...c, stage: next };
+    }));
+    const c = candidates.find(c => c.id === id);
+    if (c) toast.success(`${c.name} moved to ${stages[Math.min(stages.length - 1, Math.max(0, stages.indexOf(c.stage) + dir))]}`);
+  };
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Recruiting"
         description="3 open roles • 8 candidates in pipeline"
-        actions={<Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Post a job</Button>}
+        actions={<Button size="sm" onClick={() => openAction("post-job")}><Plus className="h-4 w-4 mr-1.5" />Post a job</Button>}
       />
 
       <div className="grid grid-cols-5 gap-3">
@@ -84,8 +99,10 @@ function Recruiting() {
               </div>
             </div>
             <div className="flex gap-2 mb-5">
-              <Button size="sm" className="flex-1"><Calendar className="h-3.5 w-3.5 mr-1.5" />Schedule interview</Button>
-              <Button size="sm" variant="outline">Move stage</Button>
+              <Button size="sm" className="flex-1" onClick={() => toast.success("Interview scheduled", { description: `Sent calendar invite to ${selected.name}` })}><Calendar className="h-3.5 w-3.5 mr-1.5" />Schedule interview</Button>
+              <Button size="sm" variant="outline" onClick={() => { moveStage(selected.id, 1); setSelected(null); }}>
+                Advance stage <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              </Button>
             </div>
             <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Timeline</div>
             <div className="space-y-3">

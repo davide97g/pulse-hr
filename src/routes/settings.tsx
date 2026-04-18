@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Building2, Users, ShieldCheck, History, Languages, Plug } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +35,7 @@ function Settings() {
             <div className="space-y-1.5"><Label>Legal entity</Label><Input defaultValue="Acme Holdings LLC" /></div>
             <div className="space-y-1.5"><Label>Country</Label><Input defaultValue="United States" /></div>
             <div className="space-y-1.5"><Label>Default currency</Label><Input defaultValue="USD" /></div>
-            <Button>Save changes</Button>
+            <Button onClick={() => toast.success("Company settings saved")}>Save changes</Button>
           </Card>
         </TabsContent>
 
@@ -54,7 +55,7 @@ function Settings() {
                     <div className="text-xs text-muted-foreground">{r.desc}</div>
                   </div>
                   <div className="text-sm text-muted-foreground">{r.count} users</div>
-                  <Button variant="outline" size="sm">Edit</Button>
+                  <Button variant="outline" size="sm" onClick={() => toast(`Editing ${r.name} permissions`)}>Edit</Button>
                 </div>
               ))}
             </div>

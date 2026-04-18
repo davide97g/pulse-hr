@@ -1,5 +1,8 @@
-import { Link, Outlet, useLocation } from "@tanstack/react-router";
-import { useState } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { QuickActionProvider, useQuickAction } from "./QuickActions";
+import { CommandPalette } from "./CommandPalette";
+import { toast } from "sonner";
 import {
   LayoutDashboard, Users, Briefcase, Wallet, BarChart3, Settings,
   Search, Bell, Plus, ChevronDown, Building2, Sparkles, LifeBuoy,
@@ -69,8 +72,29 @@ const groups: NavGroup[] = [
 ];
 
 export function AppShell() {
+  return (
+    <QuickActionProvider>
+      <AppShellInner />
+    </QuickActionProvider>
+  );
+}
+
+function AppShellInner() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setPaletteOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
@@ -152,29 +176,34 @@ export function AppShell() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-        <Topbar />
+        <Topbar onOpenPalette={() => setPaletteOpen(true)} />
         <main className="flex-1 overflow-y-auto scrollbar-thin">
           <Outlet />
         </main>
       </div>
+
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </div>
   );
 }
 
-function Topbar() {
+
+function Topbar({ onOpenPalette }: { onOpenPalette: () => void }) {
   const unread = notifications.filter(n => n.unread).length;
+  const navigate = useNavigate();
+  const { open: openAction } = useQuickAction();
   return (
     <header className="h-14 border-b bg-background/80 backdrop-blur flex items-center px-4 gap-3 shrink-0">
-      <div className="relative flex-1 max-w-xl">
-        <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Search employees, documents, requests…"
-          className="pl-9 h-9 bg-muted/50 border-transparent focus-visible:bg-background"
-        />
-        <kbd className="hidden md:inline-flex absolute right-3 top-1/2 -translate-y-1/2 h-5 px-1.5 items-center rounded border bg-muted text-[10px] font-mono text-muted-foreground">
+      <button
+        onClick={onOpenPalette}
+        className="relative flex-1 max-w-xl text-left flex items-center h-9 px-3 rounded-md bg-muted/50 hover:bg-muted text-sm text-muted-foreground"
+      >
+        <Search className="h-4 w-4 mr-2" />
+        <span>Search employees, documents, requests…</span>
+        <kbd className="hidden md:inline-flex ml-auto h-5 px-1.5 items-center rounded border bg-background text-[10px] font-mono">
           ⌘K
         </kbd>
-      </div>
+      </button>
 
       <div className="flex-1" />
 
@@ -186,14 +215,15 @@ function Topbar() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>Quick actions</DropdownMenuLabel>
-          <DropdownMenuItem><Users className="h-4 w-4 mr-2" />Add employee</DropdownMenuItem>
-          <DropdownMenuItem><Calendar className="h-4 w-4 mr-2" />Request leave</DropdownMenuItem>
-          <DropdownMenuItem><Receipt className="h-4 w-4 mr-2" />Submit expense</DropdownMenuItem>
-          <DropdownMenuItem><Briefcase className="h-4 w-4 mr-2" />Post a job</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("add-employee")}><Users className="h-4 w-4 mr-2" />Add employee</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("request-leave")}><Calendar className="h-4 w-4 mr-2" />Request leave</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("submit-expense")}><Receipt className="h-4 w-4 mr-2" />Submit expense</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openAction("post-job")}><Briefcase className="h-4 w-4 mr-2" />Post a job</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem><Zap className="h-4 w-4 mr-2" />Run automation</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => toast.success("Automation triggered", { description: "Running 'Sync new hires to Slack'" })}><Zap className="h-4 w-4 mr-2" />Run automation</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
 
       <Popover>
         <PopoverTrigger asChild>
@@ -207,27 +237,31 @@ function Topbar() {
         <PopoverContent align="end" className="w-96 p-0">
           <div className="px-4 py-3 border-b flex items-center justify-between">
             <div className="font-semibold text-sm">Notifications</div>
-            <button className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>
+            <button onClick={() => toast.success("All notifications marked as read")} className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>
           </div>
           <div className="max-h-96 overflow-y-auto">
-            {notifications.map((n) => (
-              <div key={n.id} className={cn("px-4 py-3 border-b last:border-0 hover:bg-muted/50 cursor-pointer", n.unread && "bg-info/5")}>
-                <div className="flex items-start gap-3">
-                  <div className={cn(
-                    "h-2 w-2 mt-1.5 rounded-full shrink-0",
-                    n.type === "approval" && "bg-info",
-                    n.type === "alert" && "bg-destructive",
-                    n.type === "info" && "bg-muted-foreground/40",
-                  )} />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium">{n.title}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">{n.desc}</div>
-                    <div className="text-[11px] text-muted-foreground mt-1">{n.time}</div>
+            {notifications.map((n) => {
+              const target = n.type === "approval" ? "/leave" : n.type === "alert" ? "/expenses" : "/payroll";
+              return (
+                <button key={n.id} onClick={() => navigate({ to: target })} className={cn("w-full text-left px-4 py-3 border-b last:border-0 hover:bg-muted/50", n.unread && "bg-info/5")}>
+                  <div className="flex items-start gap-3">
+                    <div className={cn(
+                      "h-2 w-2 mt-1.5 rounded-full shrink-0",
+                      n.type === "approval" && "bg-info",
+                      n.type === "alert" && "bg-destructive",
+                      n.type === "info" && "bg-muted-foreground/40",
+                    )} />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium">{n.title}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{n.desc}</div>
+                      <div className="text-[11px] text-muted-foreground mt-1">{n.time}</div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                </button>
+              );
+            })}
           </div>
+
         </PopoverContent>
       </Popover>
 

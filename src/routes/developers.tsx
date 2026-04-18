@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Copy, Plus, Webhook, Key, Code2 } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader, StatusBadge } from "@/components/app/AppShell";
@@ -16,7 +17,7 @@ function Developers() {
       <PageHeader
         title="Developers"
         description="API keys, webhooks and custom workflows"
-        actions={<Button size="sm" variant="outline"><Code2 className="h-4 w-4 mr-1.5" />API docs</Button>}
+        actions={<Button size="sm" variant="outline" onClick={() => toast("API docs", { description: "Opening developer reference" })}><Code2 className="h-4 w-4 mr-1.5" />API docs</Button>}
       />
 
       <Tabs defaultValue="keys">
@@ -31,7 +32,7 @@ function Developers() {
           <Card className="p-0 overflow-hidden">
             <div className="px-5 py-4 border-b flex items-center justify-between">
               <div className="font-semibold text-sm">Active keys</div>
-              <Button size="sm"><Plus className="h-4 w-4 mr-1.5" />New key</Button>
+              <Button size="sm" onClick={() => toast.success("New API key generated", { description: "Copy and store it securely — it won't be shown again." })}><Plus className="h-4 w-4 mr-1.5" />New key</Button>
             </div>
             <div className="divide-y">
               {[
@@ -45,7 +46,7 @@ function Developers() {
                     <div className="text-[11px] text-muted-foreground mt-0.5">{k.date}</div>
                   </div>
                   <StatusBadge status="active" />
-                  <Button variant="ghost" size="sm"><Copy className="h-3.5 w-3.5" /></Button>
+                  <Button variant="ghost" size="sm" onClick={() => toast.success("API key copied to clipboard")}><Copy className="h-3.5 w-3.5" /></Button>
                 </div>
               ))}
             </div>
@@ -56,7 +57,7 @@ function Developers() {
           <Card className="p-0 overflow-hidden">
             <div className="px-5 py-4 border-b flex items-center justify-between">
               <div className="font-semibold text-sm">Webhooks</div>
-              <Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Add endpoint</Button>
+              <Button size="sm" onClick={() => toast.success("Webhook endpoint added")}><Plus className="h-4 w-4 mr-1.5" />Add endpoint</Button>
             </div>
             <div className="divide-y">
               {[

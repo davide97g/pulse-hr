@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { FileText, Folder, Upload, Search } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +26,7 @@ function Documents() {
       <PageHeader
         title="Documents"
         description="Contracts, policies, templates and e-signatures"
-        actions={<Button size="sm"><Upload className="h-4 w-4 mr-1.5" />Upload</Button>}
+        actions={<Button size="sm" onClick={() => toast.success("Upload dialog opened")}><Upload className="h-4 w-4 mr-1.5" />Upload</Button>}
       />
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">

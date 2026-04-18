@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Check, X, Calendar } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
+import { useQuickAction } from "@/components/app/QuickActions";
 import { leaveRequests, employeeById, type LeaveRequest } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/leave")({
@@ -16,9 +18,13 @@ export const Route = createFileRoute("/leave")({
 function Leave() {
   const [selected, setSelected] = useState<LeaveRequest | null>(null);
   const [decisions, setDecisions] = useState<Record<string, "approved" | "rejected">>({});
+  const { open: openAction } = useQuickAction();
 
   const decide = (id: string, status: "approved" | "rejected") => {
     setDecisions(d => ({ ...d, [id]: status }));
+    const e = employeeById(leaveRequests.find(l => l.id === id)!.employeeId)!;
+    if (status === "approved") toast.success(`Approved leave for ${e.name}`);
+    else toast.error(`Rejected leave for ${e.name}`);
   };
 
   const getStatus = (l: LeaveRequest): "pending" | "approved" | "rejected" => decisions[l.id] ?? l.status;
@@ -29,7 +35,7 @@ function Leave() {
       <PageHeader
         title="Leave"
         description="Manage leave requests, balances and the team calendar"
-        actions={<Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Request leave</Button>}
+        actions={<Button size="sm" onClick={() => openAction("request-leave")}><Plus className="h-4 w-4 mr-1.5" />Request leave</Button>}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">

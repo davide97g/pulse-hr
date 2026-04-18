@@ -2,14 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   Search, Filter, Download, Plus, MoreHorizontal, Mail, Phone, MapPin,
-  Calendar, Briefcase, DollarSign, FileText, Building2,
+  Calendar, Briefcase, DollarSign, FileText, Building2, Trash2, Send,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
+import { useQuickAction } from "@/components/app/QuickActions";
 import { employees, type Employee, departments } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +27,7 @@ function People() {
   const [q, setQ] = useState("");
   const [dept, setDept] = useState<string | null>(null);
   const [selected, setSelected] = useState<Employee | null>(null);
+  const { open: openAction } = useQuickAction();
 
   const filtered = useMemo(() => employees.filter(e =>
     (!q || e.name.toLowerCase().includes(q.toLowerCase()) || e.role.toLowerCase().includes(q.toLowerCase())) &&
@@ -35,8 +41,8 @@ function People() {
         description={`${employees.length} employees across ${departments.length} departments`}
         actions={
           <>
-            <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1.5" />Export</Button>
-            <Button size="sm"><Plus className="h-4 w-4 mr-1.5" />Add employee</Button>
+            <Button variant="outline" size="sm" onClick={() => toast.success("Export started", { description: "CSV will download shortly." })}><Download className="h-4 w-4 mr-1.5" />Export</Button>
+            <Button size="sm" onClick={() => openAction("add-employee")}><Plus className="h-4 w-4 mr-1.5" />Add employee</Button>
           </>
         }
       />
@@ -52,7 +58,7 @@ function People() {
             <button key={d.name} onClick={() => setDept(d.name)} className={cn("h-8 px-3 rounded-md text-sm", dept === d.name ? "bg-foreground text-background" : "hover:bg-muted")}>{d.name}</button>
           ))}
         </div>
-        <Button variant="outline" size="sm"><Filter className="h-4 w-4 mr-1.5" />More filters</Button>
+        <Button variant="outline" size="sm" onClick={() => toast("Filters", { description: "Open advanced filter builder" })}><Filter className="h-4 w-4 mr-1.5" />More filters</Button>
       </Card>
 
       <Card className="p-0 overflow-hidden">
@@ -87,10 +93,23 @@ function People() {
                 <td className="px-4 py-2.5 text-muted-foreground">{e.location}</td>
                 <td className="px-4 py-2.5"><StatusBadge status={e.status} /></td>
                 <td className="px-4 py-2.5 text-muted-foreground text-xs">{e.joinDate}</td>
-                <td className="px-2">
-                  <button onClick={(ev) => ev.stopPropagation()} className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </button>
+                <td className="px-2" onClick={(ev) => ev.stopPropagation()}>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setSelected(e)}>View profile</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => toast.success(`Email drafted to ${e.name}`)}><Send className="h-4 w-4 mr-2" />Send message</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => toast.success(`Started offboarding for ${e.name}`)}>Start offboarding</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="text-destructive" onClick={() => toast.error(`Removed ${e.name} from list (mock)`)}>
+                        <Trash2 className="h-4 w-4 mr-2" />Remove
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </td>
               </tr>
             ))}
@@ -133,9 +152,9 @@ function EmployeePanel({ employee, onClose }: { employee: Employee | null; onClo
             </div>
           </div>
           <div className="flex gap-2 mb-5">
-            <Button size="sm" variant="outline" className="flex-1"><Mail className="h-3.5 w-3.5 mr-1.5" />Email</Button>
-            <Button size="sm" variant="outline" className="flex-1"><Calendar className="h-3.5 w-3.5 mr-1.5" />Schedule</Button>
-            <Button size="sm" variant="outline" className="flex-1">Edit</Button>
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => toast.success(`Email drafted to ${employee.name}`)}><Mail className="h-3.5 w-3.5 mr-1.5" />Email</Button>
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => toast.success("Calendar opened", { description: `Schedule a meeting with ${employee.name}` })}><Calendar className="h-3.5 w-3.5 mr-1.5" />Schedule</Button>
+            <Button size="sm" variant="outline" className="flex-1" onClick={() => toast("Edit mode", { description: "Tap any field to edit inline" })}>Edit</Button>
           </div>
 
           <Tabs defaultValue="profile">
@@ -161,11 +180,11 @@ function EmployeePanel({ employee, onClose }: { employee: Employee | null; onClo
             <TabsContent value="docs" className="mt-4">
               <div className="space-y-2">
                 {["Employment contract", "NDA", "Tax form W-9", "Equipment policy"].map(d => (
-                  <div key={d} className="flex items-center gap-3 p-2.5 rounded-md border hover:bg-muted/40 cursor-pointer">
+                  <button key={d} onClick={() => toast.success(`Opening ${d}`, { description: "Document preview" })} className="w-full flex items-center gap-3 p-2.5 rounded-md border hover:bg-muted/40 text-left">
                     <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center"><FileText className="h-4 w-4 text-muted-foreground" /></div>
                     <div className="flex-1 text-sm">{d}</div>
                     <span className="text-xs text-muted-foreground">PDF</span>
-                  </div>
+                  </button>
                 ))}
               </div>
             </TabsContent>
