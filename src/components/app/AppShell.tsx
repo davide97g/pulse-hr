@@ -72,8 +72,29 @@ const groups: NavGroup[] = [
 ];
 
 export function AppShell() {
+  return (
+    <QuickActionProvider>
+      <AppShellInner />
+    </QuickActionProvider>
+  );
+}
+
+function AppShellInner() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setPaletteOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
