@@ -12,11 +12,11 @@ const STATUS_BG: Record<DayStatus, string> = {
   filled:   "bg-success/10 hover:bg-success/15 border-success/20",
   partial:  "bg-warning/10 hover:bg-warning/15 border-warning/25",
   missing:  "bg-destructive/[0.07] hover:bg-destructive/10 border-destructive/20",
-  sick:     "bg-info/10 hover:bg-info/15 border-info/25",
-  vacation: "bg-primary/10 hover:bg-primary/15 border-primary/25",
-  personal: "bg-primary/5 hover:bg-primary/10 border-primary/20",
-  parental: "bg-primary/5 hover:bg-primary/10 border-primary/20",
-  holiday:  "bg-accent hover:bg-accent/80 border-border [background-image:repeating-linear-gradient(45deg,transparent,transparent_4px,color-mix(in_oklch,var(--color-border)_50%,transparent)_4px,color-mix(in_oklch,var(--color-border)_50%,transparent)_5px)]",
+  sick:     "bg-cal-sick/12 hover:bg-cal-sick/20 border-cal-sick/30",
+  vacation: "bg-cal-vacation/12 hover:bg-cal-vacation/20 border-cal-vacation/30",
+  personal: "bg-cal-personal/12 hover:bg-cal-personal/20 border-cal-personal/30",
+  parental: "bg-cal-parental/12 hover:bg-cal-parental/20 border-cal-parental/30",
+  holiday:  "bg-cal-holiday/10 hover:bg-cal-holiday/15 border-cal-holiday/30 [background-image:repeating-linear-gradient(45deg,transparent,transparent_4px,color-mix(in_oklch,var(--color-border)_50%,transparent)_4px,color-mix(in_oklch,var(--color-border)_50%,transparent)_5px)]",
   weekend:  "bg-muted/30 hover:bg-muted/50 border-transparent",
   future:   "bg-background hover:bg-muted/30 border-border/60 border-dashed",
 };
@@ -102,12 +102,12 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
         {icon && (
           <span
             className={cn(
-              "text-muted-foreground shrink-0 opacity-80",
-              info.status === "sick" && "text-info",
-              info.status === "vacation" && "text-primary",
-              info.status === "personal" && "text-primary",
-              info.status === "parental" && "text-primary",
-              info.status === "holiday" && "text-warning",
+              "text-muted-foreground shrink-0 opacity-90",
+              info.status === "sick" && "text-cal-sick",
+              info.status === "vacation" && "text-cal-vacation",
+              info.status === "personal" && "text-cal-personal",
+              info.status === "parental" && "text-cal-parental",
+              info.status === "holiday" && "text-cal-holiday",
               info.status === "missing" && "text-destructive/80",
             )}
           >
@@ -154,7 +154,10 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
   return (
     <Tooltip>
       <TooltipTrigger asChild>{cell}</TooltipTrigger>
-      <TooltipContent side="top" className="max-w-[280px] p-0 overflow-hidden">
+      <TooltipContent
+        side="top"
+        className="max-w-[280px] p-0 overflow-hidden bg-popover text-popover-foreground border shadow-pop"
+      >
         <HoverSummary info={info} />
       </TooltipContent>
     </Tooltip>
@@ -162,31 +165,39 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
 });
 
 function HoverSummary({ info }: { info: DayInfo }) {
+  const leaveTone: Record<string, string> = {
+    Sick:     "text-cal-sick",
+    Vacation: "text-cal-vacation",
+    Personal: "text-cal-personal",
+    Parental: "text-cal-parental",
+  };
   return (
-    <div className="text-xs">
-      <div className="px-3 py-2 border-b bg-muted/40 flex items-center justify-between gap-2">
-        <div className="font-semibold">{format(info.date, "EEE, MMM d")}</div>
+    <div className="text-xs bg-popover text-popover-foreground">
+      <div className="px-3 py-2 border-b flex items-center justify-between gap-2">
+        <div className="font-semibold text-popover-foreground">{format(info.date, "EEE, MMM d")}</div>
         {info.hours > 0 && (
-          <div className="font-mono tabular-nums text-[11px]">{info.hours.toFixed(1)}h</div>
+          <div className="font-mono tabular-nums text-[11px] text-popover-foreground">{info.hours.toFixed(1)}h</div>
         )}
       </div>
 
       {info.holiday && (
-        <div className="px-3 py-2 border-b bg-accent text-[11px]">
-          <span className="font-medium">🎉 {info.holiday.name}</span>
+        <div className="px-3 py-2 border-b text-[11px]">
+          <span className="font-medium text-cal-holiday">🎉 {info.holiday.name}</span>
           <span className="text-muted-foreground"> · {info.holiday.country}</span>
         </div>
       )}
 
       {info.leave && (
-        <div className="px-3 py-2 border-b bg-info/10 text-[11px]">
-          <span className="font-medium">{info.leave.type}</span>
+        <div className="px-3 py-2 border-b text-[11px]">
+          <span className={cn("font-medium", leaveTone[info.leave.type] ?? "text-foreground")}>
+            {info.leave.type}
+          </span>
           {info.leave.reason && <span className="text-muted-foreground"> · {info.leave.reason}</span>}
         </div>
       )}
 
       {info.status === "missing" && !info.holiday && !info.leave && (
-        <div className="px-3 py-2 border-b bg-destructive/10 text-[11px] text-destructive">
+        <div className="px-3 py-2 border-b text-[11px] text-destructive">
           Missing hours — click to log.
         </div>
       )}
@@ -198,17 +209,17 @@ function HoverSummary({ info }: { info: DayInfo }) {
             return (
               <li key={e.id} className="px-3 py-2 flex items-start gap-2">
                 <span
-                  className="h-full w-0.5 self-stretch rounded-full shrink-0 mt-0.5"
+                  className="w-0.5 self-stretch rounded-full shrink-0"
                   style={{ backgroundColor: c?.color }}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="font-mono text-[10px] text-muted-foreground">{c?.code}</span>
-                    <span className="font-mono text-[10px] tabular-nums font-medium ml-auto">
+                    <span className="font-mono text-[10px] tabular-nums font-medium ml-auto text-popover-foreground">
                       {e.hours}h{!e.billable && " · internal"}
                     </span>
                   </div>
-                  <div className="text-[11px] leading-snug mt-0.5">{e.description}</div>
+                  <div className="text-[11px] leading-snug mt-0.5 text-popover-foreground">{e.description}</div>
                 </div>
               </li>
             );

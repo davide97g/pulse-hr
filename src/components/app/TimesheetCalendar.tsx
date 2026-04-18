@@ -402,11 +402,11 @@ function legendSwatch(s: DayStatus): string {
     case "filled":   return "bg-success/40 border-success/40";
     case "partial":  return "bg-warning/40 border-warning/40";
     case "missing":  return "bg-destructive/30 border-destructive/40";
-    case "sick":     return "bg-info/40 border-info/40";
-    case "vacation":
-    case "personal":
-    case "parental": return "bg-primary/40 border-primary/40";
-    case "holiday":  return "bg-accent border-border";
+    case "sick":     return "bg-cal-sick/40 border-cal-sick/40";
+    case "vacation": return "bg-cal-vacation/40 border-cal-vacation/40";
+    case "personal": return "bg-cal-personal/40 border-cal-personal/40";
+    case "parental": return "bg-cal-parental/40 border-cal-parental/40";
+    case "holiday":  return "bg-cal-holiday/40 border-cal-holiday/40";
     case "weekend":  return "bg-muted border-border";
     case "future":   return "bg-background border-dashed border-border";
   }
@@ -509,11 +509,11 @@ function dotClass(s: DayStatus): string {
     case "filled":   return "bg-success";
     case "partial":  return "bg-warning";
     case "missing":  return "bg-destructive";
-    case "sick":     return "bg-info";
-    case "vacation":
-    case "personal":
-    case "parental": return "bg-primary";
-    case "holiday":  return "bg-accent border border-border";
+    case "sick":     return "bg-cal-sick";
+    case "vacation": return "bg-cal-vacation";
+    case "personal": return "bg-cal-personal";
+    case "parental": return "bg-cal-parental";
+    case "holiday":  return "bg-cal-holiday";
     case "weekend":  return "bg-muted ring-1 ring-border/60";
     case "future":   return "bg-background ring-1 ring-border border-dashed";
   }

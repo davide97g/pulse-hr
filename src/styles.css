@@ -42,6 +42,23 @@
   --shadow-card: var(--shadow-card);
   --shadow-panel: var(--shadow-panel);
   --shadow-pop: var(--shadow-pop);
+
+  /* Calendar day-status colors — theme-independent so status meaning
+     never shifts when the user switches a role theme. */
+  --color-cal-vacation: var(--cal-vacation);
+  --color-cal-sick:     var(--cal-sick);
+  --color-cal-personal: var(--cal-personal);
+  --color-cal-parental: var(--cal-parental);
+  --color-cal-holiday:  var(--cal-holiday);
+}
+
+:root,
+html[data-theme] {
+  --cal-vacation: oklch(0.72 0.17 295);  /* purple — vacation */
+  --cal-sick:     oklch(0.72 0.15 230);  /* blue — sick */
+  --cal-personal: oklch(0.68 0.14 200);  /* teal — personal */
+  --cal-parental: oklch(0.74 0.15 160);  /* mint — parental */
+  --cal-holiday:  oklch(0.82 0.17 85);   /* amber — public holiday */
 }
 
 :root {
