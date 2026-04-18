@@ -15,6 +15,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RecruitingRouteImport } from './routes/recruiting'
 import { Route as PulseRouteImport } from './routes/pulse'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PeopleRouteImport } from './routes/people'
 import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as OrgRouteImport } from './routes/org'
@@ -61,6 +62,11 @@ const RecruitingRoute = RecruitingRouteImport.update({
 const PulseRoute = PulseRouteImport.update({
   id: '/pulse',
   path: '/pulse',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PeopleRoute = PeopleRouteImport.update({
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
   '/people': typeof PeopleRoute
+  '/profile': typeof ProfileRoute
   '/pulse': typeof PulseRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
   '/people': typeof PeopleRoute
+  '/profile': typeof ProfileRoute
   '/pulse': typeof PulseRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
@@ -218,6 +226,7 @@ export interface FileRoutesById {
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
   '/people': typeof PeopleRoute
+  '/profile': typeof ProfileRoute
   '/pulse': typeof PulseRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/org'
     | '/payroll'
     | '/people'
+    | '/profile'
     | '/pulse'
     | '/recruiting'
     | '/reports'
@@ -270,6 +280,7 @@ export interface FileRouteTypes {
     | '/org'
     | '/payroll'
     | '/people'
+    | '/profile'
     | '/pulse'
     | '/recruiting'
     | '/reports'
@@ -295,6 +306,7 @@ export interface FileRouteTypes {
     | '/org'
     | '/payroll'
     | '/people'
+    | '/profile'
     | '/pulse'
     | '/recruiting'
     | '/reports'
@@ -321,6 +333,7 @@ export interface RootRouteChildren {
   OrgRoute: typeof OrgRoute
   PayrollRoute: typeof PayrollRoute
   PeopleRoute: typeof PeopleRoute
+  ProfileRoute: typeof ProfileRoute
   PulseRoute: typeof PulseRoute
   RecruitingRoute: typeof RecruitingRoute
   ReportsRoute: typeof ReportsRoute
@@ -371,6 +384,13 @@ declare module '@tanstack/react-router' {
       path: '/pulse'
       fullPath: '/pulse'
       preLoaderRoute: typeof PulseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/people': {
@@ -513,6 +533,7 @@ const rootRouteChildren: RootRouteChildren = {
   OrgRoute: OrgRoute,
   PayrollRoute: PayrollRoute,
   PeopleRoute: PeopleRoute,
+  ProfileRoute: ProfileRoute,
   PulseRoute: PulseRoute,
   RecruitingRoute: RecruitingRoute,
   ReportsRoute: ReportsRoute,

@@ -509,7 +509,9 @@ function Topbar({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>Alex Carter</DropdownMenuLabel>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/profile">Profile</Link>
+          </DropdownMenuItem>
           <DropdownMenuItem>Switch role</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
