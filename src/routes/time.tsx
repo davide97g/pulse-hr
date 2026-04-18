@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Play, Square, MapPin, Smartphone, Wifi, Plus, Pencil, Trash2, Copy,
   CalendarDays, Briefcase, Timer, CheckCircle2, Send, Circle, Clock,
-  Search, SlidersHorizontal, Users,
+  Search, SlidersHorizontal, Users, Wand2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -27,6 +27,7 @@ import { SidePanel } from "@/components/app/SidePanel";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { TimesheetCalendar } from "@/components/app/TimesheetCalendar";
+import { TimesheetAutofillDialog } from "@/components/app/TimesheetAutofillDialog";
 import { useWorkspace } from "@/components/app/WorkspaceContext";
 import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
 import { useSavedViews } from "@/lib/useSavedViews";
@@ -61,6 +62,29 @@ function Time() {
   const [inlineEdit, setInlineEdit] = useState<
     { id: string; field: "hours" | "description"; draft: string } | null
   >(null);
+  const [smartFillOpen, setSmartFillOpen] = useState(false);
+  const acceptAutofill = (rows: Omit<TimesheetEntry, "id" | "status" | "employeeId">[]) => {
+    if (rows.length === 0) {
+      setSmartFillOpen(false);
+      return;
+    }
+    const prepared = rows.map(r => ({
+      ...r,
+      id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      employeeId: ME,
+      status: "draft" as const,
+    }));
+    setEntries(es => [...prepared, ...es]);
+    setSmartFillOpen(false);
+    toast.success(`Smart-filled ${prepared.length} entr${prepared.length === 1 ? "y" : "ies"}`, {
+      description: "Saved as drafts — review and submit.",
+      icon: <Send className="h-4 w-4" />,
+      action: {
+        label: "Undo",
+        onClick: () => setEntries(es => es.filter(e => !prepared.some(p => p.id === e.id))),
+      },
+    });
+  };
   const timeViews = useSavedViews<{ q: string; filterCommessa: string; filterStatus: string }>("time-timesheet", {
     defaults: { q: "", filterCommessa: "all", filterStatus: "all" },
     schema: { q: "string", filterCommessa: "string", filterStatus: "string" },
@@ -474,6 +498,16 @@ function Time() {
                 <SelectItem value="rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-9 gap-1.5 press-scale iridescent-border"
+              onClick={() => setSmartFillOpen(true)}
+              title="Generate a draft week from your calendar + focus sessions"
+            >
+              <Wand2 className="h-3.5 w-3.5 text-primary" />
+              Smart fill
+            </Button>
           </Card>
 
           <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
@@ -779,6 +813,14 @@ function Time() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <TimesheetAutofillDialog
+        open={smartFillOpen}
+        onClose={() => setSmartFillOpen(false)}
+        entries={entries}
+        employeeId={ME}
+        onAccept={acceptAutofill}
+      />
 
       <SidePanel
         open={editEntry !== null}
