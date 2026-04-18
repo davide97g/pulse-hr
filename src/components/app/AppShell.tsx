@@ -140,6 +140,7 @@ export function AppShell() {
 
 function AppShellInner() {
   const location = useLocation();
+  const appShellNav = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [copilotOpen, setCopilotOpen] = useState(false);
@@ -162,6 +163,10 @@ function AppShellInner() {
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === "." || e.code === "Period")) {
         e.preventDefault();
         voiceBus.emit({ kind: "toggle" });
+      }
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "m") {
+        e.preventDefault();
+        appShellNav({ to: "/moments" });
       }
     };
     window.addEventListener("keydown", onKey);

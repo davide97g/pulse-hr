@@ -153,6 +153,13 @@ function Profile() {
           accent="oklch(0.7 0.13 110)"
         />
         <EntryTile
+          to="/moments"
+          icon={<Sparkles className="h-5 w-5" />}
+          title="This week's moments"
+          hint="Cinematic reel · ⌘M"
+          accent="oklch(0.75 0.2 85)"
+        />
+        <EntryTile
           to="/settings"
           icon={<SettingsIcon className="h-5 w-5" />}
           title="Settings"

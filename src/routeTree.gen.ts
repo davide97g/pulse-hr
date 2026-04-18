@@ -20,6 +20,7 @@ import { Route as PeopleRouteImport } from './routes/people'
 import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as OrgRouteImport } from './routes/org'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as MomentsRouteImport } from './routes/moments'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LeaveRouteImport } from './routes/leave'
@@ -87,6 +88,11 @@ const OrgRoute = OrgRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MomentsRoute = MomentsRouteImport.update({
+  id: '/moments',
+  path: '/moments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketplaceRoute = MarketplaceRouteImport.update({
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/leave': typeof LeaveRoute
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
+  '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/leave': typeof LeaveRoute
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
+  '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
@@ -222,6 +230,7 @@ export interface FileRoutesById {
   '/leave': typeof LeaveRoute
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
+  '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
@@ -250,6 +259,7 @@ export interface FileRouteTypes {
     | '/leave'
     | '/login'
     | '/marketplace'
+    | '/moments'
     | '/onboarding'
     | '/org'
     | '/payroll'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/leave'
     | '/login'
     | '/marketplace'
+    | '/moments'
     | '/onboarding'
     | '/org'
     | '/payroll'
@@ -302,6 +313,7 @@ export interface FileRouteTypes {
     | '/leave'
     | '/login'
     | '/marketplace'
+    | '/moments'
     | '/onboarding'
     | '/org'
     | '/payroll'
@@ -329,6 +341,7 @@ export interface RootRouteChildren {
   LeaveRoute: typeof LeaveRoute
   LoginRoute: typeof LoginRoute
   MarketplaceRoute: typeof MarketplaceRoute
+  MomentsRoute: typeof MomentsRoute
   OnboardingRoute: typeof OnboardingRoute
   OrgRoute: typeof OrgRoute
   PayrollRoute: typeof PayrollRoute
@@ -419,6 +432,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moments': {
+      id: '/moments'
+      path: '/moments'
+      fullPath: '/moments'
+      preLoaderRoute: typeof MomentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/marketplace': {
@@ -529,6 +549,7 @@ const rootRouteChildren: RootRouteChildren = {
   LeaveRoute: LeaveRoute,
   LoginRoute: LoginRoute,
   MarketplaceRoute: MarketplaceRoute,
+  MomentsRoute: MomentsRoute,
   OnboardingRoute: OnboardingRoute,
   OrgRoute: OrgRoute,
   PayrollRoute: PayrollRoute,

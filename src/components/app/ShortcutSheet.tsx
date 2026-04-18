@@ -24,6 +24,7 @@ const GLOBAL: Group = {
     { keys: ["⌘", "K"], label: "Command palette · natural language" },
     { keys: ["⌘", "J"], label: "Ask Pulse Copilot" },
     { keys: ["⌘", "⇧", "."], label: "Voice dictate — insert or ask Pulse" },
+    { keys: ["⌘", "M"], label: "Open Moments (weekly reel)" },
     { keys: ["⌥", "C"], label: "Switch active commessa" },
     { keys: ["?"], label: "Show keyboard shortcuts" },
     { keys: ["Esc"], label: "Close overlay / deselect" },
