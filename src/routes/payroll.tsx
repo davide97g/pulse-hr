@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Play, Calendar, Users, DollarSign, FileText, ChevronRight } from "lucide-react";
+import { Play, Users, DollarSign, FileText, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader, StatusBadge } from "@/components/app/AppShell";
+import { useQuickAction } from "@/components/app/QuickActions";
 import { payrollRuns } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/payroll")({
@@ -12,12 +14,13 @@ export const Route = createFileRoute("/payroll")({
 
 function Payroll() {
   const upcoming = payrollRuns[0];
+  const { open: openAction } = useQuickAction();
   return (
     <div className="p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
         title="Payroll"
         description="Run payroll, manage salaries and tax filings (incl. Italy F24)"
-        actions={<Button size="sm"><Play className="h-4 w-4 mr-1.5" />Run payroll</Button>}
+        actions={<Button size="sm" onClick={() => openAction("run-payroll")}><Play className="h-4 w-4 mr-1.5" />Run payroll</Button>}
       />
 
       <Card className="p-6 mb-4 bg-gradient-to-br from-primary/5 to-transparent border-primary/20">
@@ -37,7 +40,7 @@ function Payroll() {
         </div>
         <div className="mt-5 pt-5 border-t flex items-center justify-between">
           <div className="text-sm text-muted-foreground">Includes withholding, social security, F24 module, and pension contributions</div>
-          <Button size="sm">Review & approve <ChevronRight className="h-4 w-4 ml-1" /></Button>
+          <Button size="sm" onClick={() => openAction("run-payroll")}>Review & approve <ChevronRight className="h-4 w-4 ml-1" /></Button>
         </div>
       </Card>
 

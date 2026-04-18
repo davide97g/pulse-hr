@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { CheckCircle2, Circle, Plus } from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
+import { useQuickAction } from "@/components/app/QuickActions";
 import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/onboarding")({
@@ -24,6 +26,7 @@ const initialTasks = [
 
 function Onboarding() {
   const [tasks, setTasks] = useState(initialTasks);
+  const { open: openAction } = useQuickAction();
   const done = tasks.filter(t => t.done).length;
   const pct = (done / tasks.length) * 100;
 
@@ -32,7 +35,7 @@ function Onboarding() {
       <PageHeader
         title="Onboarding"
         description="Active workflows for new hires"
-        actions={<Button size="sm"><Plus className="h-4 w-4 mr-1.5" />New workflow</Button>}
+        actions={<Button size="sm" onClick={() => openAction("add-employee")}><Plus className="h-4 w-4 mr-1.5" />New workflow</Button>}
       />
 
       <Card className="p-6 mb-4">
@@ -54,7 +57,10 @@ function Onboarding() {
             <div
               key={t.id}
               className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-muted/40 cursor-pointer group"
-              onClick={() => setTasks(arr => arr.map(x => x.id === t.id ? { ...x, done: !x.done } : x))}
+              onClick={() => {
+                setTasks(arr => arr.map(x => x.id === t.id ? { ...x, done: !x.done } : x));
+                if (!t.done) toast.success(`Completed: ${t.label}`);
+              }}
             >
               {t.done ? <CheckCircle2 className="h-5 w-5 text-success shrink-0" /> : <Circle className="h-5 w-5 text-muted-foreground/50 shrink-0" />}
               <div className={`flex-1 text-sm ${t.done ? "line-through text-muted-foreground" : ""}`}>{t.label}</div>
