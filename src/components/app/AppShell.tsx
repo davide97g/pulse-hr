@@ -429,6 +429,18 @@ export function StatusBadge({ status }: { status: string }) {
     processing:  { label: "Processing",  cls: "bg-info/10 text-info border-info/20" },
     scheduled:   { label: "Scheduled",   cls: "bg-info/10 text-info border-info/20" },
     draft:       { label: "Draft",       cls: "bg-muted text-muted-foreground border-border" },
+    // Day statuses (calendar)
+    filled:      { label: "Filled",      cls: "bg-success/10 text-success border-success/20" },
+    partial:     { label: "Partial",     cls: "bg-warning/10 text-warning border-warning/30" },
+    missing:     { label: "Missing",     cls: "bg-destructive/10 text-destructive border-destructive/20" },
+    sick:        { label: "Sick",        cls: "bg-info/10 text-info border-info/20" },
+    vacation:    { label: "Vacation",    cls: "bg-primary/10 text-primary border-primary/20" },
+    personal:    { label: "Personal",    cls: "bg-primary/10 text-primary border-primary/20" },
+    parental:    { label: "Parental",    cls: "bg-primary/10 text-primary border-primary/20" },
+    holiday:     { label: "Holiday",     cls: "bg-accent text-accent-foreground border-border" },
+    weekend:     { label: "Weekend",     cls: "bg-muted/50 text-muted-foreground border-border" },
+    future:      { label: "Upcoming",    cls: "bg-muted/30 text-muted-foreground border-border" },
+    day_off:     { label: "Day off",     cls: "bg-muted/50 text-muted-foreground border-border" },
   };
   const m = map[status] ?? { label: status, cls: "bg-muted text-muted-foreground border-border" };
   return (

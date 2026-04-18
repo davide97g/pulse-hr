@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Play, Square, MapPin, Smartphone, Wifi, Plus, Pencil, Trash2, Copy,
   CalendarDays, Briefcase, Timer, CheckCircle2, Send, Circle, Clock,
-  Search, SlidersHorizontal,
+  Search, SlidersHorizontal, Users,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -26,6 +26,7 @@ import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
+import { TimesheetCalendar } from "@/components/app/TimesheetCalendar";
 import {
   employees, commesse, commessaById,
   timesheetEntries as seedEntries, type TimesheetEntry,
@@ -325,12 +326,41 @@ function Time() {
         </Card>
       </div>
 
-      <Tabs defaultValue="timesheet">
+      <Tabs defaultValue="calendar">
         <TabsList>
+          <TabsTrigger value="calendar"><CalendarDays className="h-3.5 w-3.5 mr-1.5" />Calendar</TabsTrigger>
           <TabsTrigger value="timesheet"><Clock className="h-3.5 w-3.5 mr-1.5" />My timesheet</TabsTrigger>
           <TabsTrigger value="commesse"><Briefcase className="h-3.5 w-3.5 mr-1.5" />By commessa</TabsTrigger>
-          <TabsTrigger value="team"><CalendarDays className="h-3.5 w-3.5 mr-1.5" />Team presence</TabsTrigger>
+          <TabsTrigger value="team"><Users className="h-3.5 w-3.5 mr-1.5" />Team presence</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="calendar" className="mt-4">
+          <TimesheetCalendar
+            entries={entries}
+            onAdd={data => saveEntry(data)}
+            onAddMany={rows => {
+              setEntries(es => [
+                ...rows.map(r => ({
+                  ...r,
+                  id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                  employeeId: ME,
+                  status: "draft" as const,
+                })),
+                ...es,
+              ]);
+              toast.success(`Added ${rows.length} entr${rows.length === 1 ? "y" : "ies"}`, {
+                description: "Saved as drafts.",
+                icon: <Send className="h-4 w-4" />,
+                action: {
+                  label: "Undo",
+                  onClick: () => setEntries(es => es.slice(rows.length)),
+                },
+              });
+            }}
+            onEdit={e => setEditEntry(e)}
+            onDelete={id => setEntries(es => es.filter(e => e.id !== id))}
+          />
+        </TabsContent>
 
         {/* Timesheet CRUD */}
         <TabsContent value="timesheet" className="mt-4">

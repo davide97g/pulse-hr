@@ -79,6 +79,10 @@ export const leaveRequests: LeaveRequest[] = [
   { id: "l4", employeeId: "e6", type: "Vacation", from: "2025-05-10", to: "2025-05-17", days: 6, status: "pending", reason: "Honeymoon", submittedAt: "2025-04-12" },
   { id: "l5", employeeId: "e10", type: "Parental", from: "2025-06-01", to: "2025-08-30", days: 64, status: "approved", reason: "Parental leave", submittedAt: "2025-03-20" },
   { id: "l6", employeeId: "e8", type: "Vacation", from: "2025-04-25", to: "2025-04-26", days: 2, status: "rejected", reason: "Conflict with hiring sprint", submittedAt: "2025-04-10" },
+  // Current-month leave for the signed-in user (e1) so calendar shows live states
+  { id: "l7", employeeId: "e1", type: "Sick",     from: "2026-04-09", to: "2026-04-10", days: 2, status: "approved", reason: "Flu",                   submittedAt: "2026-04-09" },
+  { id: "l8", employeeId: "e1", type: "Vacation", from: "2026-04-20", to: "2026-04-24", days: 5, status: "approved", reason: "Spring break",          submittedAt: "2026-03-25" },
+  { id: "l9", employeeId: "e1", type: "Personal", from: "2026-04-30", to: "2026-04-30", days: 1, status: "approved", reason: "Family appointment",    submittedAt: "2026-04-16" },
 ];
 
 export interface Expense {
@@ -437,12 +441,46 @@ export interface TimesheetEntry {
 }
 
 export const timesheetEntries: TimesheetEntry[] = [
-  { id: "t1", employeeId: "e1", commessaId: "cm1", date: "2025-04-14", hours: 7.5, description: "API schema review + sprint planning", billable: true,  status: "approved" },
-  { id: "t2", employeeId: "e1", commessaId: "cm4", date: "2025-04-14", hours: 0.5, description: "1:1 with Aisha",                        billable: false, status: "approved" },
-  { id: "t3", employeeId: "e1", commessaId: "cm1", date: "2025-04-15", hours: 8,   description: "Migration dry-run on staging",           billable: true,  status: "submitted" },
-  { id: "t4", employeeId: "e1", commessaId: "cm2", date: "2025-04-16", hours: 4,   description: "Mobile sign-up flow spec",               billable: true,  status: "submitted" },
-  { id: "t5", employeeId: "e1", commessaId: "cm3", date: "2025-04-16", hours: 4,   description: "Token audit for v2",                     billable: true,  status: "draft" },
-  { id: "t6", employeeId: "e1", commessaId: "cm6", date: "2025-04-17", hours: 6,   description: "Dashboard wireframes review",            billable: true,  status: "draft" },
+  // Historical seed
+  { id: "t1",  employeeId: "e1", commessaId: "cm1", date: "2025-04-14", hours: 7.5, description: "API schema review + sprint planning", billable: true,  status: "approved" },
+  { id: "t2",  employeeId: "e1", commessaId: "cm4", date: "2025-04-14", hours: 0.5, description: "1:1 with Aisha",                        billable: false, status: "approved" },
+  { id: "t3",  employeeId: "e1", commessaId: "cm1", date: "2025-04-15", hours: 8,   description: "Migration dry-run on staging",           billable: true,  status: "submitted" },
+  { id: "t4",  employeeId: "e1", commessaId: "cm2", date: "2025-04-16", hours: 4,   description: "Mobile sign-up flow spec",               billable: true,  status: "submitted" },
+  { id: "t5",  employeeId: "e1", commessaId: "cm3", date: "2025-04-16", hours: 4,   description: "Token audit for v2",                     billable: true,  status: "draft" },
+  { id: "t6",  employeeId: "e1", commessaId: "cm6", date: "2025-04-17", hours: 6,   description: "Dashboard wireframes review",            billable: true,  status: "draft" },
+
+  // Current month (April 2026) — mix of filled / partial / missing days
+  { id: "t10", employeeId: "e1", commessaId: "cm1", date: "2026-04-01", hours: 8,   description: "Quarter kickoff + architecture review",  billable: true,  status: "approved" },
+  { id: "t11", employeeId: "e1", commessaId: "cm1", date: "2026-04-02", hours: 7,   description: "Migration rollback plan",                 billable: true,  status: "approved" },
+  { id: "t12", employeeId: "e1", commessaId: "cm4", date: "2026-04-02", hours: 1,   description: "HR weekly sync",                          billable: false, status: "approved" },
+  { id: "t13", employeeId: "e1", commessaId: "cm1", date: "2026-04-03", hours: 5,   description: "Staging smoke tests",                     billable: true,  status: "approved" }, // partial
+  { id: "t14", employeeId: "e1", commessaId: "cm2", date: "2026-04-06", hours: 8,   description: "Mobile onboarding API contract",          billable: true,  status: "submitted" },
+  { id: "t15", employeeId: "e1", commessaId: "cm3", date: "2026-04-07", hours: 4,   description: "Design tokens audit",                     billable: true,  status: "submitted" },
+  { id: "t16", employeeId: "e1", commessaId: "cm1", date: "2026-04-07", hours: 4,   description: "Pairing with Noah on migration",          billable: true,  status: "submitted" },
+  { id: "t17", employeeId: "e1", commessaId: "cm1", date: "2026-04-08", hours: 8,   description: "Cutover dry-run",                         billable: true,  status: "submitted" },
+  { id: "t18", employeeId: "e1", commessaId: "cm6", date: "2026-04-13", hours: 6,   description: "Analytics ingestion spike",               billable: true,  status: "draft" }, // partial
+  { id: "t19", employeeId: "e1", commessaId: "cm2", date: "2026-04-14", hours: 8,   description: "Mobile auth flow implementation",         billable: true,  status: "draft" },
+  { id: "t20", employeeId: "e1", commessaId: "cm1", date: "2026-04-15", hours: 3,   description: "Incident post-mortem",                    billable: true,  status: "draft" }, // partial
+  { id: "t21", employeeId: "e1", commessaId: "cm4", date: "2026-04-15", hours: 2,   description: "Interview loop — senior eng",             billable: false, status: "draft" },
+];
+
+export interface Holiday {
+  date: string;      // YYYY-MM-DD
+  name: string;
+  country: "IT" | "US" | "UK" | "DE" | "all";
+}
+export const holidaysSeed: Holiday[] = [
+  { date: "2026-01-01", name: "New Year's Day",        country: "all" },
+  { date: "2026-01-06", name: "Epiphany",               country: "IT" },
+  { date: "2026-04-06", name: "Easter Monday",          country: "IT" },
+  { date: "2026-04-25", name: "Liberation Day",         country: "IT" },
+  { date: "2026-05-01", name: "Labour Day",             country: "all" },
+  { date: "2026-05-25", name: "Memorial Day",           country: "US" },
+  { date: "2026-06-02", name: "Republic Day",           country: "IT" },
+  { date: "2026-07-04", name: "Independence Day",       country: "US" },
+  { date: "2026-08-15", name: "Ferragosto",             country: "IT" },
+  { date: "2026-12-25", name: "Christmas Day",          country: "all" },
+  { date: "2026-12-26", name: "St. Stephen's Day",      country: "IT" },
 ];
 
 export const plugins = [
