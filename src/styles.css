@@ -447,4 +447,28 @@ html[data-theme="finance"] ::selection {
     border-radius: 2px;
     transition: height 70ms linear;
   }
+
+  .birthday-halo {
+    background:
+      conic-gradient(
+        from 0deg,
+        oklch(0.75 0.2 85),
+        oklch(0.65 0.2 340),
+        oklch(0.7 0.2 200),
+        oklch(0.78 0.18 130),
+        oklch(0.75 0.2 85)
+      );
+    filter: saturate(1.1);
+    animation: birthdaySpin 6s linear infinite;
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, oklch(0.75 0.2 85) 30%, transparent),
+      0 0 18px -2px color-mix(in oklch, oklch(0.65 0.2 340) 35%, transparent);
+  }
+  @keyframes birthdaySpin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .birthday-halo { animation: none; }
+  }
 }

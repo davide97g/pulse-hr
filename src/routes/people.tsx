@@ -8,6 +8,8 @@ import {
 import { growthSummaryFor, strengthRadarFor } from "@/lib/growth";
 import { STRENGTH_COLORS } from "@/lib/colors";
 import { MiniStat } from "@/components/app/StatTiles";
+import { BirthdayHalo } from "@/components/app/BirthdayHalo";
+import { isBirthday } from "@/lib/birthday";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -202,7 +204,12 @@ function People() {
                     >
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-3">
-                          <Avatar initials={e.initials} color={e.avatarColor} size={32} />
+                          <BirthdayHalo
+                            initials={e.initials}
+                            color={e.avatarColor}
+                            size={32}
+                            active={isBirthday(e)}
+                          />
                           <div className="min-w-0">
                             <div className="font-medium truncate">{e.name}</div>
                             <div className="text-xs text-muted-foreground truncate">{e.role}</div>
@@ -273,7 +280,12 @@ function People() {
                   className="p-5 cursor-pointer hover:shadow-md transition-all press-scale"
                 >
                   <div className="flex items-start gap-3">
-                    <Avatar initials={e.initials} color={e.avatarColor} size={44} />
+                    <BirthdayHalo
+                      initials={e.initials}
+                      color={e.avatarColor}
+                      size={44}
+                      active={isBirthday(e)}
+                    />
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold truncate">{e.name}</div>
                       <div className="text-xs text-muted-foreground truncate">{e.role}</div>
@@ -336,7 +348,12 @@ function EmployeePanel({
       {employee && (
         <div className="p-5">
           <div className="flex items-center gap-4 mb-5">
-            <Avatar initials={employee.initials} color={employee.avatarColor} size={64} />
+            <BirthdayHalo
+              initials={employee.initials}
+              color={employee.avatarColor}
+              size={64}
+              active={isBirthday(employee)}
+            />
             <div className="flex-1">
               <div className="text-lg font-semibold">{employee.name}</div>
               <div className="text-sm text-muted-foreground">{employee.role}</div>

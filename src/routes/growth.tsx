@@ -14,6 +14,8 @@ import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { NewBadge } from "@/components/app/NewBadge";
 import { StrengthsRadar } from "@/components/app/StrengthsRadar";
 import { StatTile, MiniStat } from "@/components/app/StatTiles";
+import { BirthdayHalo } from "@/components/app/BirthdayHalo";
+import { isBirthday } from "@/lib/birthday";
 import {
   allGrowthSummaries, growthSummaryFor, badgesFor, strengthRadarFor,
   goalsFor, challengesFor, oneOnOnesFor, notesFor,
@@ -500,7 +502,12 @@ function TeamCard({ summary, onPick }: { summary: GrowthSummary; onPick: (id: st
       />
       <div className="relative">
         <div className="flex items-start gap-3 mb-3">
-          <Avatar initials={employee.initials} color={employee.avatarColor} size={40} />
+          <BirthdayHalo
+            initials={employee.initials}
+            color={employee.avatarColor}
+            size={40}
+            active={isBirthday(employee)}
+          />
           <div className="flex-1 min-w-0">
             <div className="text-sm font-semibold truncate">{employee.name}</div>
             <div className="text-[11px] text-muted-foreground truncate">{employee.role}</div>
@@ -575,7 +582,12 @@ function GrowthProfile({ summary }: { summary: GrowthSummary }) {
           aria-hidden
         />
         <div className="relative grid md:grid-cols-[auto_1fr_auto] gap-5 items-center">
-          <Avatar initials={employee.initials} color={employee.avatarColor} size={72} />
+          <BirthdayHalo
+            initials={employee.initials}
+            color={employee.avatarColor}
+            size={72}
+            active={isBirthday(employee)}
+          />
           <div className="min-w-0">
             <div className="font-display text-3xl leading-tight">{employee.name}</div>
             <div className="text-sm text-muted-foreground">{employee.role} · {employee.department}</div>

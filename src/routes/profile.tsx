@@ -15,6 +15,8 @@ import {
 } from "@/lib/growth";
 import { STRENGTH_COLORS, strengthColor } from "@/lib/colors";
 import { MiniStat } from "@/components/app/StatTiles";
+import { BirthdayHalo } from "@/components/app/BirthdayHalo";
+import { isBirthday } from "@/lib/birthday";
 import { cn } from "@/lib/utils";
 
 const ME = "e1";
@@ -58,7 +60,12 @@ function Profile() {
           aria-hidden
         />
         <div className="relative grid md:grid-cols-[auto_1fr_auto] gap-5 items-center">
-          <Avatar initials={me.initials} color={me.avatarColor} size={80} />
+          <BirthdayHalo
+            initials={me.initials}
+            color={me.avatarColor}
+            size={80}
+            active={isBirthday(me)}
+          />
           <div className="min-w-0">
             <div className="font-display text-3xl leading-tight">{me.name}</div>
             <div className="text-sm text-muted-foreground">{me.role} · {me.department}</div>

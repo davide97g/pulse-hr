@@ -17,6 +17,7 @@ import { NewBadge } from "@/components/app/NewBadge";
 import {
   employees, employeeById, kudosSeed, type Kudo,
 } from "@/lib/mock-data";
+import { isBirthday } from "@/lib/birthday";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/kudos")({
@@ -143,12 +144,31 @@ function Kudos() {
                       <SelectItem key={e.id} value={e.id}>
                         <span className="inline-flex items-center gap-2">
                           <span className="h-5 w-5 rounded-full grid place-items-center text-[9px] font-medium text-white" style={{ backgroundColor: e.avatarColor }}>{e.initials}</span>
-                          {e.name} · <span className="text-muted-foreground text-xs">{e.role}</span>
+                          {e.name}
+                          {isBirthday(e) && <span title="Birthday today">🎂</span>}
+                          · <span className="text-muted-foreground text-xs">{e.role}</span>
                         </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {(() => {
+                  const target = employeeById(toId);
+                  if (target && isBirthday(target)) {
+                    return (
+                      <div
+                        className="mt-1 inline-flex items-center gap-1.5 text-[11px] font-medium rounded-full px-2.5 py-1 shimmer"
+                        style={{
+                          background: "linear-gradient(90deg, oklch(0.75 0.2 85 / 0.18), oklch(0.65 0.2 340 / 0.18), oklch(0.7 0.2 200 / 0.18))",
+                          border: "1px solid color-mix(in oklch, oklch(0.75 0.2 85) 35%, transparent)",
+                        }}
+                      >
+                        🎂 Birthday boost · <span className="font-mono tabular-nums">+25% XP</span>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
 
               <div className="space-y-1.5">
