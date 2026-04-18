@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { NewBadge } from "./NewBadge";
 import { copilotSuggestions } from "@/lib/mock-data";
+import { buildNudges } from "@/lib/copilot-nudges";
 import { answerFor, type ActionCtx, type ActionRunnable } from "@/lib/actions";
 import { voiceBus } from "@/lib/voice-bus";
 import { cn } from "@/lib/utils";
@@ -273,20 +274,7 @@ export function CopilotOverlay({
           </div>
 
           {messages.length === 0 && !expanded && (
-            <div className="px-3 pt-2 pb-1 shrink-0 border-t">
-              <div className="flex gap-1.5 overflow-x-auto scrollbar-thin pb-1.5 -mb-1">
-                {copilotSuggestions.slice(0, 4).map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => send(s.prompt)}
-                    className="shrink-0 text-xs px-2.5 py-1.5 rounded-full border bg-background/60 hover:border-primary/40 hover:bg-primary/[0.04] whitespace-nowrap press-scale transition-colors"
-                    title={s.category}
-                  >
-                    {s.prompt}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <CompactSuggestions onPick={send} />
           )}
 
           <div className={cn("p-3 shrink-0", !(messages.length === 0 && !expanded) && "border-t")}>
@@ -354,6 +342,43 @@ export function CopilotOverlay({
         </div>
       </div>
     </>
+  );
+}
+
+function CompactSuggestions({ onPick }: { onPick: (q: string) => void }) {
+  const nudges = useMemo(() => buildNudges(), []);
+  return (
+    <div className="px-3 pt-2 pb-1 shrink-0 border-t">
+      <div className="text-[9px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5 px-0.5 flex items-center gap-1">
+        <Sparkles className="h-2.5 w-2.5" /> Next moves for you
+      </div>
+      <div className="flex gap-1.5 overflow-x-auto scrollbar-thin pb-1.5 -mb-1">
+        {nudges.length > 0 ? (
+          nudges.map((n) => (
+            <button
+              key={n.id}
+              onClick={() => onPick(n.prompt)}
+              className="group shrink-0 inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-full border bg-background/60 hover:border-primary/40 hover:bg-primary/[0.04] whitespace-nowrap press-scale transition-colors"
+              title={n.prompt}
+            >
+              <span className="text-sm leading-none">{n.emoji}</span>
+              <span>{n.headline}</span>
+            </button>
+          ))
+        ) : (
+          copilotSuggestions.slice(0, 4).map((s) => (
+            <button
+              key={s.id}
+              onClick={() => onPick(s.prompt)}
+              className="shrink-0 text-xs px-2.5 py-1.5 rounded-full border bg-background/60 hover:border-primary/40 hover:bg-primary/[0.04] whitespace-nowrap press-scale transition-colors"
+              title={s.category}
+            >
+              {s.prompt}
+            </button>
+          ))
+        )}
+      </div>
+    </div>
   );
 }
 
