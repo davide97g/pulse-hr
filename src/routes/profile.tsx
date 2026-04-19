@@ -409,7 +409,7 @@ function Profile() {
               if (!from) return null;
               return (
                 <li key={k.id} className="flex items-start gap-3 p-3 rounded-md border">
-                  <Avatar initials={from.initials} color={from.avatarColor} size={32} />
+                  <Avatar initials={from.initials} color={from.avatarColor} size={32} employeeId={from.id} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 text-xs">
                       <span className="font-medium">{from.name}</span>

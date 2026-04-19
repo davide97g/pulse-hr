@@ -496,7 +496,7 @@ function TeamGrid({
                   <tr key={eid} className="border-t hover:bg-muted/20 transition-colors">
                     <td className="px-3 py-1.5 sticky left-0 bg-background z-10">
                       <div className="flex items-center gap-2">
-                        <Avatar initials={emp.initials} color={emp.avatarColor} size={24} />
+                        <Avatar initials={emp.initials} color={emp.avatarColor} size={24} employeeId={emp.id} />
                         <div className="min-w-0">
                           <div className="text-xs font-medium truncate">{emp.name}</div>
                           <div className="text-[10px] text-muted-foreground truncate">{emp.department}</div>

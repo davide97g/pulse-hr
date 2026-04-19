@@ -375,7 +375,7 @@ function PodiumStep({ entry, prize, rank }: { entry: LeaderboardEntry; prize: Pr
           }}
         >
           <div className="bg-card rounded-full p-0.5">
-            <Avatar initials={entry.employee.initials} color={entry.employee.avatarColor} size={avatarSize} />
+            <Avatar initials={entry.employee.initials} color={entry.employee.avatarColor} size={avatarSize} employeeId={entry.employee.id} />
           </div>
         </div>
         <div
@@ -427,7 +427,7 @@ function LeaderboardRow({ row, maxXp }: { row: LeaderboardEntry; maxXp: number }
       <div className="w-7 h-7 rounded-md grid place-items-center text-xs font-bold tabular-nums shrink-0 bg-muted text-muted-foreground">
         {row.rank}
       </div>
-      <Avatar initials={row.employee.initials} color={row.employee.avatarColor} size={28} />
+      <Avatar initials={row.employee.initials} color={row.employee.avatarColor} size={28} employeeId={row.employee.id} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <div className="text-sm font-medium truncate">{row.employee.name}</div>
@@ -471,7 +471,7 @@ function SeasonalChallengeCard({ challenge }: { challenge: SeasonalChallenge }) 
           return (
             <div key={p.employeeId} className="flex items-center gap-2 text-[11px]">
               <span className="w-3 text-muted-foreground tabular-nums">{i + 1}</span>
-              <Avatar initials={emp.initials} color={emp.avatarColor} size={18} />
+              <Avatar initials={emp.initials} color={emp.avatarColor} size={18} employeeId={emp.id} />
               <span className="flex-1 truncate">{emp.name}</span>
               <div className="w-16 h-1 rounded-full bg-muted overflow-hidden">
                 <div
@@ -957,7 +957,7 @@ function KudosList({ rows }: { rows: Kudo[] }) {
         return (
           <Card key={k.id} className="p-4">
             <div className="flex items-center gap-2.5">
-              <Avatar initials={from.initials} color={from.avatarColor} size={28} />
+              <Avatar initials={from.initials} color={from.avatarColor} size={28} employeeId={from.id} />
               <div className="flex-1 min-w-0">
                 <div className="text-sm">
                   <span className="font-medium">{from.name}</span>

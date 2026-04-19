@@ -65,7 +65,7 @@ export function MomentsCard() {
                 isToday && "bg-primary/[0.03]",
               )}
             >
-              <Avatar initials={m.employee.initials} color={m.employee.avatarColor} size={32} />
+              <Avatar initials={m.employee.initials} color={m.employee.avatarColor} size={32} employeeId={m.employee.id} />
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium flex items-center gap-1.5">
                   <Icon className={cn("h-3.5 w-3.5", tone)} />

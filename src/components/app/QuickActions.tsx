@@ -262,7 +262,7 @@ function CoveragePreview({
                 if (!emp) return null;
                 return (
                   <div key={l.id} title={`${emp.name} · ${l.type}`} className="ring-2 ring-background rounded-full">
-                    <Avatar initials={emp.initials} color={emp.avatarColor} size={18} />
+                    <Avatar initials={emp.initials} color={emp.avatarColor} size={18} employeeId={emp.id} />
                   </div>
                 );
               })}

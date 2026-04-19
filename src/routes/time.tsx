@@ -809,7 +809,7 @@ function Time() {
                       <tr key={e.id} className="border-t hover:bg-muted/40">
                         <td className="px-4 py-2.5">
                           <div className="flex items-center gap-2.5">
-                            <Avatar initials={e.initials} color={e.avatarColor} size={28} />
+                            <Avatar initials={e.initials} color={e.avatarColor} size={28} employeeId={e.id} />
                             <div>
                               <div className="font-medium">{e.name}</div>
                               <div className="text-xs text-muted-foreground">{e.department}</div>

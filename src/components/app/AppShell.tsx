@@ -65,6 +65,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { notifications } from "@/lib/mock-data";
+import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 
 type NavItem = {
   to: string;
@@ -633,12 +634,15 @@ export function Avatar({
   initials,
   color,
   size = 32,
+  employeeId,
 }: {
   initials: string;
   color: string;
   size?: number;
+  /** When provided, the avatar becomes a hover card trigger with a mini profile. */
+  employeeId?: string;
 }) {
-  return (
+  const visual = (
     <div
       className="rounded-full flex items-center justify-center text-white font-medium shrink-0"
       style={{ backgroundColor: color, width: size, height: size, fontSize: size * 0.4 }}
@@ -646,4 +650,6 @@ export function Avatar({
       {initials}
     </div>
   );
+  if (!employeeId) return visual;
+  return <EmployeeHoverCard employeeId={employeeId}>{visual}</EmployeeHoverCard>;
 }

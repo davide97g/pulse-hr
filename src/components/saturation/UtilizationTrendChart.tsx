@@ -149,7 +149,7 @@ export function UtilizationTrendChart({
                   className="h-2 w-2 rounded-full shrink-0"
                   style={{ backgroundColor: e.avatarColor }}
                 />
-                <Avatar initials={e.initials} color={e.avatarColor} size={16} />
+                <Avatar initials={e.initials} color={e.avatarColor} size={16} employeeId={e.id} />
                 <span className="truncate flex-1 font-medium">{e.name}</span>
               </button>
             );

@@ -393,7 +393,7 @@ function ReservationRow({
 
       {showOwner && owner && (
         <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-          <Avatar initials={owner.initials} color={owner.avatarColor} size={22} />
+          <Avatar initials={owner.initials} color={owner.avatarColor} size={22} employeeId={owner.id} />
           <span className="text-xs text-muted-foreground">{owner.name.split(" ")[0]}</span>
         </div>
       )}
@@ -402,7 +402,7 @@ function ReservationRow({
         <div className="hidden md:flex -space-x-1.5 shrink-0">
           {attendees.slice(0, 4).map((a) => (
             <div key={a.id} title={a.name} className="ring-2 ring-background rounded-full">
-              <Avatar initials={a.initials} color={a.avatarColor} size={22} />
+              <Avatar initials={a.initials} color={a.avatarColor} size={22} employeeId={a.id} />
             </div>
           ))}
           {attendees.length > 4 && (

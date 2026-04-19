@@ -118,7 +118,7 @@ function Dashboard() {
                   disabled={!!state}
                 >
                   <div className="px-5 py-3.5 flex items-center gap-3 hover:bg-muted/40 transition-colors">
-                    <Avatar initials={emp.initials} color={emp.avatarColor} size={36} />
+                    <Avatar initials={emp.initials} color={emp.avatarColor} size={36} employeeId={emp.id} />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium truncate">{emp.name}</div>
                       <div className="text-xs text-muted-foreground">

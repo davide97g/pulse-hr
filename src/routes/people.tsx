@@ -6,6 +6,8 @@ import {
   UserX, Users as UsersIcon, Sparkles, Flame, Trophy, Target, ArrowUpRight, Zap,
 } from "lucide-react";
 import { growthSummaryFor, strengthRadarFor } from "@/lib/growth";
+import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
+import { computeEmployeeScore, scoreColor } from "@/lib/score";
 import { STRENGTH_COLORS } from "@/lib/colors";
 import { MiniStat } from "@/components/app/StatTiles";
 import { BirthdayHalo } from "@/components/app/BirthdayHalo";
@@ -339,7 +341,7 @@ function EmployeePanel({
       title={
         employee && (
           <div className="flex items-center gap-2.5">
-            <Avatar initials={employee.initials} color={employee.avatarColor} size={28} />
+            <Avatar initials={employee.initials} color={employee.avatarColor} size={28} employeeId={employee.id} />
             <span>{employee.name}</span>
           </div>
         )
@@ -372,6 +374,8 @@ function EmployeePanel({
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
           </div>
+
+          <ScoreStrip employeeId={employee.id} />
 
           <GrowthSummaryCard employeeId={employee.id} />
 
@@ -521,3 +525,37 @@ function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
   );
 }
 
+
+function ScoreStrip({ employeeId }: { employeeId: string }) {
+  const { score, grade } = computeEmployeeScore(employeeId);
+  const color = scoreColor(score);
+  return (
+    <Card
+      className="p-4 mb-3 flex items-center gap-3"
+      style={{
+        borderColor: `color-mix(in oklch, ${color} 35%, transparent)`,
+        backgroundColor: `color-mix(in oklch, ${color} 6%, transparent)`,
+      }}
+    >
+      <EmployeeScoreBadge employeeId={employeeId} size="lg" showInfo={false} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <div className="text-sm font-semibold">Employee score</div>
+          <span
+            className="text-[10px] uppercase tracking-wide font-medium px-1.5 py-0.5 rounded"
+            style={{
+              color,
+              backgroundColor: `color-mix(in oklch, ${color} 18%, transparent)`,
+            }}
+          >
+            {grade}
+          </span>
+        </div>
+        <div className="text-[11px] text-muted-foreground mt-0.5">
+          Weighted avg of delivery, load, value, kudos, focus, billable.
+        </div>
+      </div>
+      <EmployeeScoreBadge employeeId={employeeId} size="sm" />
+    </Card>
+  );
+}

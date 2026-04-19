@@ -108,7 +108,7 @@ export function UtilizationHeatmap({
                     >
                       <EmployeeHoverCard employeeId={emp.id}>
                         <div className="flex items-center gap-2 cursor-default">
-                          <Avatar initials={emp.initials} color={emp.avatarColor} size={22} />
+                          <Avatar initials={emp.initials} color={emp.avatarColor} size={22} employeeId={emp.id} />
                           <div>
                             <div className="font-medium text-xs">{emp.name}</div>
                             <div className="text-[10px] text-muted-foreground">{emp.department}</div>

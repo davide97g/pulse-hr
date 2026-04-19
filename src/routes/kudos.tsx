@@ -373,7 +373,7 @@ function Kudos() {
                       "w-6 text-center font-mono text-xs tabular-nums",
                       i === 0 ? "text-warning font-bold" : i < 3 ? "font-semibold" : "text-muted-foreground"
                     )}>#{i + 1}</div>
-                    <Avatar initials={r.employee.initials} color={r.employee.avatarColor} size={32} />
+                    <Avatar initials={r.employee.initials} color={r.employee.avatarColor} size={32} employeeId={r.employee.id} />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium truncate">{r.employee.name}</div>
                       <div className="h-1.5 rounded-full bg-muted mt-1 overflow-hidden">
@@ -423,7 +423,7 @@ function Kudos() {
             const Icon = t.icon;
             return (
               <div key={k.id} className="px-5 py-4 flex items-start gap-3 hover:bg-muted/30 transition-colors">
-                <Avatar initials={from.initials} color={from.avatarColor} size={36} />
+                <Avatar initials={from.initials} color={from.avatarColor} size={36} employeeId={from.id} />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm flex items-center gap-1.5 flex-wrap">
                     <span className="font-semibold">{from.name}</span>

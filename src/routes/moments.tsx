@@ -330,9 +330,9 @@ function SlideBody({
     return (
       <div className="grid md:grid-cols-[auto_1fr] gap-6 items-start">
         <div className="flex items-center gap-2">
-          <Avatar initials={from.initials} color={from.avatarColor} size={56} />
+          <Avatar initials={from.initials} color={from.avatarColor} size={56} employeeId={from.id} />
           <ChevronRight className="h-5 w-5 text-muted-foreground" />
-          <Avatar initials={to.initials} color={to.avatarColor} size={72} />
+          <Avatar initials={to.initials} color={to.avatarColor} size={72} employeeId={to.id} />
         </div>
         <div className="min-w-0">
           <div className="text-sm">
@@ -361,7 +361,7 @@ function SlideBody({
     const emp = ctx.focusChamp.employee;
     return (
       <div className="flex items-center gap-6 flex-wrap">
-        <Avatar initials={emp.initials} color={emp.avatarColor} size={96} />
+        <Avatar initials={emp.initials} color={emp.avatarColor} size={96} employeeId={emp.id} />
         <div>
           <div className="text-xl font-semibold">{emp.name}</div>
           <div className="text-sm text-muted-foreground">{emp.role}</div>
@@ -382,7 +382,7 @@ function SlideBody({
       <div className="space-y-4">
         {emp && (
           <div className="flex items-center gap-3">
-            <Avatar initials={emp.initials} color={emp.avatarColor} size={40} />
+            <Avatar initials={emp.initials} color={emp.avatarColor} size={40} employeeId={emp.id} />
             <div>
               <div className="text-sm font-medium">{emp.name}</div>
               <div className="text-[11px] text-muted-foreground">{emp.role}</div>
@@ -415,7 +415,7 @@ function SlideBody({
               }}
             >
               <div className="bg-card rounded-full p-0.5">
-                <Avatar initials={row.employee.initials} color={row.employee.avatarColor} size={i === 0 ? 72 : 56} />
+                <Avatar initials={row.employee.initials} color={row.employee.avatarColor} size={i === 0 ? 72 : 56} employeeId={row.employee.id} />
               </div>
               <div
                 className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full grid place-items-center text-base border-2 border-card"

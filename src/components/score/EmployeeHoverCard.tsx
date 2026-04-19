@@ -1,10 +1,21 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, Briefcase } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Avatar } from "@/components/app/AppShell";
 import { employeeById } from "@/lib/mock-data";
 import { computeEmployeeScore, scoreColor } from "@/lib/score";
 import { cn } from "@/lib/utils";
+
+/** Inlined to avoid pulling in AppShell's Avatar (which would create a cycle). */
+function Bubble({ initials, color, size }: { initials: string; color: string; size: number }) {
+  return (
+    <div
+      className="rounded-full flex items-center justify-center text-white font-medium shrink-0"
+      style={{ backgroundColor: color, width: size, height: size, fontSize: size * 0.4 }}
+    >
+      {initials}
+    </div>
+  );
+}
 
 /**
  * Wraps any avatar / identity element so that hovering surfaces a
@@ -35,7 +46,7 @@ export function EmployeeHoverCard({
       <HoverCardTrigger asChild={asChild}>{children}</HoverCardTrigger>
       <HoverCardContent align={align} className="w-72 p-4">
         <div className="flex items-start gap-3">
-          <Avatar initials={emp.initials} color={emp.avatarColor} size={44} />
+          <Bubble initials={emp.initials} color={emp.avatarColor} size={44} />
           <div className="flex-1 min-w-0">
             <Link
               to="/profile"

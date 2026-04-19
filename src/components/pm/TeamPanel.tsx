@@ -151,7 +151,7 @@ export function TeamPanel({
                     <td className="px-4 py-3">
                       {emp ? (
                         <div className="flex items-center gap-3">
-                          <Avatar initials={emp.initials} color={emp.avatarColor} size={28} />
+                          <Avatar initials={emp.initials} color={emp.avatarColor} size={28} employeeId={emp.id} />
                           <div>
                             <div className="font-medium">{emp.name}</div>
                             <div className="text-xs text-muted-foreground">{emp.role}</div>

@@ -289,7 +289,7 @@ function PayslipsPanel({ run }: { run: PayrollRun }) {
             if (!e) return null;
             return (
               <div key={s.id} className="px-4 py-3 flex items-center gap-3 hover:bg-muted/40 transition-colors">
-                <Avatar initials={e.initials} color={e.avatarColor} size={32} />
+                <Avatar initials={e.initials} color={e.avatarColor} size={32} employeeId={e.id} />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium truncate">{e.name}</div>
                   <div className="text-xs text-muted-foreground">{e.department}</div>

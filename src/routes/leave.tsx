@@ -262,7 +262,7 @@ function Leave() {
                               visibleWhen={bulk.count > 0 ? "always" : "hover-or-selected"}
                             />
                           )}
-                          <Avatar initials={e.initials} color={e.avatarColor} size={32} />
+                          <Avatar initials={e.initials} color={e.avatarColor} size={32} employeeId={e.id} />
                           <div className="flex-1 min-w-0">
                             <div className="font-medium text-sm flex items-center gap-1.5 min-w-0">
                               <span className="truncate">{e.name}</span>
@@ -363,7 +363,7 @@ function Leave() {
           return (
             <div className="p-5">
               <div className="flex items-center gap-3 mb-4">
-                <Avatar initials={e.initials} color={e.avatarColor} size={48} />
+                <Avatar initials={e.initials} color={e.avatarColor} size={48} employeeId={e.id} />
                 <div><div className="font-semibold">{e.name}</div><div className="text-xs text-muted-foreground">{e.role}</div></div>
               </div>
               <div className="grid grid-cols-2 gap-3 text-sm">

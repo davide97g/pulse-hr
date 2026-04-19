@@ -264,7 +264,7 @@ function RoomDrilldown() {
                   return (
                     <li key={b.id} className="py-2.5 flex items-center gap-3">
                       {owner && (
-                        <Avatar initials={owner.initials} color={owner.avatarColor} size={28} />
+                        <Avatar initials={owner.initials} color={owner.avatarColor} size={28} employeeId={owner.id} />
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium truncate flex items-center gap-1.5">
