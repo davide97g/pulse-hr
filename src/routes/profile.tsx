@@ -1,21 +1,34 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import {
-  Mail, Phone, MapPin, Calendar, Briefcase, Building2, Sparkles, Flame,
-  Clock, FileText, Receipt, Trophy, Settings as SettingsIcon, Gift,
-  TrendingUp, ArrowUpRight, Target, Award, Zap, MessageCircle,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Briefcase,
+  Building2,
+  Sparkles,
+  Flame,
+  Clock,
+  FileText,
+  Receipt,
+  Trophy,
+  Settings as SettingsIcon,
+  Gift,
+  TrendingUp,
+  ArrowUpRight,
+  Target,
+  Award,
+  Zap,
+  MessageCircle,
   DoorOpen,
 } from "lucide-react";
 import { useBookings } from "@/components/app/BookingsContext";
 import { officeById, roomById } from "@/lib/offices";
 import { Card } from "@/components/ui/card";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
-import {
-  employees, kudosSeed, employeeById, leaveRequests,
-} from "@/lib/mock-data";
-import {
-  growthSummaryFor, strengthRadarFor, type StrengthTag,
-} from "@/lib/growth";
+import { employees, kudosSeed, employeeById, leaveRequests } from "@/lib/mock-data";
+import { growthSummaryFor, strengthRadarFor, type StrengthTag } from "@/lib/growth";
 import { STRENGTH_COLORS, strengthColor } from "@/lib/colors";
 import { MiniStat } from "@/components/app/StatTiles";
 import { BirthdayHalo } from "@/components/app/BirthdayHalo";
@@ -30,28 +43,34 @@ export const Route = createFileRoute("/profile")({
 });
 
 function Profile() {
-  const me = useMemo(() => employees.find(e => e.id === ME), []);
+  const me = useMemo(() => employees.find((e) => e.id === ME), []);
   const summary = useMemo(() => growthSummaryFor(ME), []);
   const radar = useMemo(() => strengthRadarFor(ME), []);
   const kudosIn = useMemo(
-    () => kudosSeed.filter(k => k.toId === ME).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5),
+    () =>
+      kudosSeed
+        .filter((k) => k.toId === ME)
+        .sort((a, b) => b.date.localeCompare(a.date))
+        .slice(0, 5),
     [],
   );
   const leaveBalance = useMemo(() => {
-    const myLeave = leaveRequests.filter(l => l.employeeId === ME);
-    const pending = myLeave.filter(l => l.status === "pending").length;
-    const approvedDays = myLeave.filter(l => l.status === "approved").reduce((a, l) => a + l.days, 0);
+    const myLeave = leaveRequests.filter((l) => l.employeeId === ME);
+    const pending = myLeave.filter((l) => l.status === "pending").length;
+    const approvedDays = myLeave
+      .filter((l) => l.status === "approved")
+      .reduce((a, l) => a + l.days, 0);
     return { pending, approvedDays, remaining: Math.max(0, 25 - approvedDays) };
   }, []);
   const { bookings } = useBookings();
   const today = new Date().toISOString().slice(0, 10);
   const todayBookings = useMemo(
-    () => bookings.filter(b => b.userId === ME && b.date === today && b.status !== "cancelled"),
+    () => bookings.filter((b) => b.userId === ME && b.date === today && b.status !== "cancelled"),
     [bookings, today],
   );
-  const seatBooking = todayBookings.find(b => b.resourceKind === "seat");
+  const seatBooking = todayBookings.find((b) => b.resourceKind === "seat");
   const nextRoomBooking = todayBookings
-    .filter(b => b.resourceKind === "room")
+    .filter((b) => b.resourceKind === "room")
     .sort((a, b) => a.startTime.localeCompare(b.startTime))[0];
 
   if (!me || !summary) return null;
@@ -81,7 +100,9 @@ function Profile() {
           />
           <div className="min-w-0">
             <div className="font-display text-3xl leading-tight">{me.name}</div>
-            <div className="text-sm text-muted-foreground">{me.role} · {me.department}</div>
+            <div className="text-sm text-muted-foreground">
+              {me.role} · {me.department}
+            </div>
             <div className="flex items-center gap-2 mt-3 flex-wrap">
               <span
                 className="inline-flex items-center gap-1 text-xs uppercase tracking-wider font-semibold px-2 py-0.5 rounded"
@@ -100,38 +121,46 @@ function Profile() {
               <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
                 <Calendar className="h-3 w-3" /> Joined {me.joinDate}
               </span>
-              {seatBooking && (() => {
-                const office = officeById(seatBooking.officeId);
-                return (
-                  <Link
-                    to="/offices/$officeId"
-                    params={{ officeId: seatBooking.officeId }}
-                    className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border bg-success/10 border-success/30 text-success hover:bg-success/15 press-scale"
-                  >
-                    <Building2 className="h-3 w-3" />
-                    Today · {office?.emoji} {office?.name ?? "office"} · seat {seatBooking.resourceId.split("-").pop()}
-                  </Link>
-                );
-              })()}
-              {nextRoomBooking && (() => {
-                const room = roomById(nextRoomBooking.resourceId);
-                return (
-                  <Link
-                    to="/offices/$officeId/$roomId"
-                    params={{ officeId: nextRoomBooking.officeId, roomId: nextRoomBooking.resourceId }}
-                    className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border bg-primary/10 border-primary/30 text-primary hover:bg-primary/15 press-scale"
-                  >
-                    <DoorOpen className="h-3 w-3" />
-                    Next meeting · {room?.name ?? "room"} {nextRoomBooking.startTime}
-                  </Link>
-                );
-              })()}
+              {seatBooking &&
+                (() => {
+                  const office = officeById(seatBooking.officeId);
+                  return (
+                    <Link
+                      to="/offices/$officeId"
+                      params={{ officeId: seatBooking.officeId }}
+                      className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border bg-success/10 border-success/30 text-success hover:bg-success/15 press-scale"
+                    >
+                      <Building2 className="h-3 w-3" />
+                      Today · {office?.emoji} {office?.name ?? "office"} · seat{" "}
+                      {seatBooking.resourceId.split("-").pop()}
+                    </Link>
+                  );
+                })()}
+              {nextRoomBooking &&
+                (() => {
+                  const room = roomById(nextRoomBooking.resourceId);
+                  return (
+                    <Link
+                      to="/offices/$officeId/$roomId"
+                      params={{
+                        officeId: nextRoomBooking.officeId,
+                        roomId: nextRoomBooking.resourceId,
+                      }}
+                      className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border bg-primary/10 border-primary/30 text-primary hover:bg-primary/15 press-scale"
+                    >
+                      <DoorOpen className="h-3 w-3" />
+                      Next meeting · {room?.name ?? "room"} {nextRoomBooking.startTime}
+                    </Link>
+                  );
+                })()}
             </div>
           </div>
           <div className="w-full md:w-[280px]">
             <div className="flex items-center justify-between text-[11px] mb-1.5">
               <span className="text-muted-foreground">XP</span>
-              <span className="font-mono tabular-nums">{summary.xp.total.toLocaleString()} · {summary.progressPct}%</span>
+              <span className="font-mono tabular-nums">
+                {summary.xp.total.toLocaleString()} · {summary.progressPct}%
+              </span>
             </div>
             <div className="h-2 rounded-full bg-muted overflow-hidden">
               <div
@@ -199,7 +228,8 @@ function Profile() {
           accent="oklch(0.65 0.18 340)"
         />
         <EntryTile
-          to="/reservations"
+          to="/offices"
+          search={{ section: "reservations" }}
           icon={<DoorOpen className="h-5 w-5" />}
           title="My reservations"
           hint="Upcoming + past bookings"
@@ -230,12 +260,30 @@ function Profile() {
             <div className="font-semibold text-sm">Personal info</div>
           </div>
           <div className="space-y-0">
-            <InfoRow icon={<Mail className="h-3.5 w-3.5" />}      label="Email"      value={me.email} />
-            <InfoRow icon={<Phone className="h-3.5 w-3.5" />}     label="Phone"      value={me.phone} />
-            <InfoRow icon={<MapPin className="h-3.5 w-3.5" />}    label="Location"   value={me.location} />
-            <InfoRow icon={<Building2 className="h-3.5 w-3.5" />} label="Department" value={me.department} />
-            <InfoRow icon={<Briefcase className="h-3.5 w-3.5" />} label="Employment" value={me.employmentType} />
-            {me.manager && <InfoRow icon={<Briefcase className="h-3.5 w-3.5" />} label="Manager" value={me.manager} />}
+            <InfoRow icon={<Mail className="h-3.5 w-3.5" />} label="Email" value={me.email} />
+            <InfoRow icon={<Phone className="h-3.5 w-3.5" />} label="Phone" value={me.phone} />
+            <InfoRow
+              icon={<MapPin className="h-3.5 w-3.5" />}
+              label="Location"
+              value={me.location}
+            />
+            <InfoRow
+              icon={<Building2 className="h-3.5 w-3.5" />}
+              label="Department"
+              value={me.department}
+            />
+            <InfoRow
+              icon={<Briefcase className="h-3.5 w-3.5" />}
+              label="Employment"
+              value={me.employmentType}
+            />
+            {me.manager && (
+              <InfoRow
+                icon={<Briefcase className="h-3.5 w-3.5" />}
+                label="Manager"
+                value={me.manager}
+              />
+            )}
           </div>
         </Card>
 
@@ -254,19 +302,42 @@ function Profile() {
           </div>
 
           <div className="grid grid-cols-4 gap-2 mb-4">
-            <MiniStat variant="card" icon={<Gift className="h-3 w-3" />}   value={summary.kudosReceived} label="kudos" />
-            <MiniStat variant="card" icon={<Target className="h-3 w-3" />} value={summary.goalsActive}    label="goals" />
-            <MiniStat variant="card" icon={<Trophy className="h-3 w-3" />} value={summary.challengesOpen} label="open" />
-            <MiniStat variant="card" icon={<Award className="h-3 w-3" />}  value={summary.badgesEarned}   label="badges" />
+            <MiniStat
+              variant="card"
+              icon={<Gift className="h-3 w-3" />}
+              value={summary.kudosReceived}
+              label="kudos"
+            />
+            <MiniStat
+              variant="card"
+              icon={<Target className="h-3 w-3" />}
+              value={summary.goalsActive}
+              label="goals"
+            />
+            <MiniStat
+              variant="card"
+              icon={<Trophy className="h-3 w-3" />}
+              value={summary.challengesOpen}
+              label="open"
+            />
+            <MiniStat
+              variant="card"
+              icon={<Award className="h-3 w-3" />}
+              value={summary.badgesEarned}
+              label="badges"
+            />
           </div>
 
           <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-2">
             Top strengths
           </div>
           <div className="space-y-2">
-            {topStrengths.map(s => (
+            {topStrengths.map((s) => (
               <div key={s.tag} className="flex items-center gap-2 text-xs">
-                <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: STRENGTH_COLORS[s.tag] }} />
+                <span
+                  className="h-2 w-2 rounded-full shrink-0"
+                  style={{ backgroundColor: STRENGTH_COLORS[s.tag] }}
+                />
                 <span className="capitalize w-20 shrink-0">{s.tag}</span>
                 <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                   <div
@@ -274,7 +345,9 @@ function Profile() {
                     style={{ width: `${s.value}%`, backgroundColor: STRENGTH_COLORS[s.tag] }}
                   />
                 </div>
-                <span className="font-mono tabular-nums text-muted-foreground w-8 text-right">{s.value}</span>
+                <span className="font-mono tabular-nums text-muted-foreground w-8 text-right">
+                  {s.value}
+                </span>
               </div>
             ))}
           </div>
@@ -283,15 +356,20 @@ function Profile() {
             XP breakdown
           </div>
           <div className="grid grid-cols-5 gap-1.5 text-[10px]">
-            {([
-              ["Kudos",      summary.xp.kudos,      <Gift className="h-3 w-3" key="a" />],
-              ["Focus",      summary.xp.focus,      <Zap className="h-3 w-3" key="b" />],
-              ["Goals",      summary.xp.goals,      <Target className="h-3 w-3" key="c" />],
-              ["Challenges", summary.xp.challenges, <Trophy className="h-3 w-3" key="d" />],
-              ["1:1s",       summary.xp.oneOnOnes,  <MessageCircle className="h-3 w-3" key="e" />],
-            ] as const).map(([lbl, v, icon]) => (
+            {(
+              [
+                ["Kudos", summary.xp.kudos, <Gift className="h-3 w-3" key="a" />],
+                ["Focus", summary.xp.focus, <Zap className="h-3 w-3" key="b" />],
+                ["Goals", summary.xp.goals, <Target className="h-3 w-3" key="c" />],
+                ["Challenges", summary.xp.challenges, <Trophy className="h-3 w-3" key="d" />],
+                ["1:1s", summary.xp.oneOnOnes, <MessageCircle className="h-3 w-3" key="e" />],
+              ] as const
+            ).map(([lbl, v, icon]) => (
               <div key={lbl} className="rounded-md border p-2 text-center">
-                <div className="flex items-center justify-center gap-1 text-muted-foreground">{icon}{lbl}</div>
+                <div className="flex items-center justify-center gap-1 text-muted-foreground">
+                  {icon}
+                  {lbl}
+                </div>
                 <div className="font-mono font-semibold tabular-nums mt-0.5">{v}</div>
               </div>
             ))}
@@ -304,7 +382,9 @@ function Profile() {
         <div className="flex items-center gap-2 mb-3">
           <Gift className="h-4 w-4 text-primary" />
           <div className="font-semibold text-sm">Recent kudos received</div>
-          <span className="ml-auto text-[11px] text-muted-foreground">{kudosIn.length} most recent</span>
+          <span className="ml-auto text-[11px] text-muted-foreground">
+            {kudosIn.length} most recent
+          </span>
         </div>
         {kudosIn.length === 0 ? (
           <div className="text-sm text-muted-foreground py-6 text-center">
@@ -312,7 +392,7 @@ function Profile() {
           </div>
         ) : (
           <ul className="space-y-2 stagger-in">
-            {kudosIn.map(k => {
+            {kudosIn.map((k) => {
               const from = employeeById(k.fromId);
               if (!from) return null;
               return (
@@ -331,7 +411,9 @@ function Profile() {
                         {k.tag}
                       </span>
                       <span className="text-muted-foreground">· {k.amount} 🪙</span>
-                      <span className="ml-auto text-[11px] text-muted-foreground font-mono tabular-nums">{k.date}</span>
+                      <span className="ml-auto text-[11px] text-muted-foreground font-mono tabular-nums">
+                        {k.date}
+                      </span>
                     </div>
                     <div className="text-sm mt-1 leading-snug">"{k.message}"</div>
                   </div>
@@ -348,7 +430,12 @@ function Profile() {
 // ─── Helpers ───────────────────────────────────────────────────────────
 
 function EntryTile({
-  to, search, icon, title, hint, accent,
+  to,
+  search,
+  icon,
+  title,
+  hint,
+  accent,
 }: {
   to: string;
   search?: Record<string, unknown>;
@@ -391,9 +478,11 @@ function EntryTile({
 function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-4 py-2 border-b last:border-0">
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">{icon}{label}</div>
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        {icon}
+        {label}
+      </div>
       <div className="text-sm font-medium text-right break-all">{value}</div>
     </div>
   );
 }
-

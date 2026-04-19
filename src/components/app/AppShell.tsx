@@ -4,6 +4,7 @@ import { Menu } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
 import { BookingsProvider } from "./BookingsContext";
+import { OfficesStoreProvider } from "./OfficesStoreProvider";
 import { BookingDialog } from "./BookingDialog";
 import { CommandPalette } from "./CommandPalette";
 import { CopilotLauncher, CopilotOverlay } from "./Copilot";
@@ -95,7 +96,6 @@ const groups: NavGroup[] = [
       { to: "/leave", label: "Leave", icon: Calendar },
       { to: "/documents", label: "Documents", icon: FileText },
       { to: "/offices", label: "Offices", icon: Building2, isNew: true },
-      { to: "/reservations", label: "Reservations", icon: Calendar, isNew: true },
     ],
   },
   {
@@ -136,11 +136,13 @@ const groups: NavGroup[] = [
 
 export function AppShell() {
   return (
-    <BookingsProvider>
-      <QuickActionProvider>
-        <AppShellInner />
-      </QuickActionProvider>
-    </BookingsProvider>
+    <OfficesStoreProvider>
+      <BookingsProvider>
+        <QuickActionProvider>
+          <AppShellInner />
+        </QuickActionProvider>
+      </BookingsProvider>
+    </OfficesStoreProvider>
   );
 }
 

@@ -19,8 +19,14 @@ export interface Office {
 
 export type RoomKind = "meeting" | "phone" | "focus" | "event";
 export type Amenity =
-  | "tv" | "whiteboard" | "speakerphone" | "monitor" | "ac"
-  | "standing-desk" | "videoconf" | "projector";
+  | "tv"
+  | "whiteboard"
+  | "speakerphone"
+  | "monitor"
+  | "ac"
+  | "standing-desk"
+  | "videoconf"
+  | "projector";
 
 export interface Room {
   id: string;
@@ -76,7 +82,10 @@ export interface Closure {
 }
 
 // ── Seed data (today = 2026-04-18) ─────────────────────────────────────
-export const offices: Office[] = [
+// Exported as `let` to support in-app CRUD. ES-module live bindings mean
+// consumers always see the current array. Subscribe via `officesStore`
+// to trigger re-renders from React components.
+export let offices: Office[] = [
   {
     id: "of-mil",
     name: "Milan HQ",
@@ -127,37 +136,175 @@ export const offices: Office[] = [
   },
 ];
 
-export const officeById = (id: string) => offices.find(o => o.id === id);
+export const officeById = (id: string) => offices.find((o) => o.id === id);
+const offices_initial = offices;
 
-export const rooms: Room[] = [
+export let rooms: Room[] = [
   // Milan
-  { id: "rm-mil-atlas",  officeId: "of-mil", name: "Atlas",    kind: "meeting", capacity: 10, amenities: ["tv","whiteboard","videoconf","speakerphone"], color: "oklch(0.7 0.15 30)" },
-  { id: "rm-mil-helix",  officeId: "of-mil", name: "Helix",    kind: "meeting", capacity: 6,  amenities: ["tv","whiteboard","videoconf"], color: "oklch(0.72 0.17 295)" },
-  { id: "rm-mil-ion",    officeId: "of-mil", name: "Ion",      kind: "phone",   capacity: 1,  amenities: ["monitor","ac"], color: "oklch(0.65 0.18 340)" },
-  { id: "rm-mil-nova",   officeId: "of-mil", name: "Nova",     kind: "phone",   capacity: 1,  amenities: ["monitor"], color: "oklch(0.6 0.16 220)" },
-  { id: "rm-mil-aula",   officeId: "of-mil", name: "Aula",     kind: "event",   capacity: 40, amenities: ["tv","projector","speakerphone","ac"], color: "oklch(0.78 0.18 85)" },
-  { id: "rm-mil-focus",  officeId: "of-mil", name: "Focus Pod", kind: "focus",   capacity: 2, amenities: ["monitor","standing-desk","ac"], color: "oklch(0.65 0.15 155)" },
+  {
+    id: "rm-mil-atlas",
+    officeId: "of-mil",
+    name: "Atlas",
+    kind: "meeting",
+    capacity: 10,
+    amenities: ["tv", "whiteboard", "videoconf", "speakerphone"],
+    color: "oklch(0.7 0.15 30)",
+  },
+  {
+    id: "rm-mil-helix",
+    officeId: "of-mil",
+    name: "Helix",
+    kind: "meeting",
+    capacity: 6,
+    amenities: ["tv", "whiteboard", "videoconf"],
+    color: "oklch(0.72 0.17 295)",
+  },
+  {
+    id: "rm-mil-ion",
+    officeId: "of-mil",
+    name: "Ion",
+    kind: "phone",
+    capacity: 1,
+    amenities: ["monitor", "ac"],
+    color: "oklch(0.65 0.18 340)",
+  },
+  {
+    id: "rm-mil-nova",
+    officeId: "of-mil",
+    name: "Nova",
+    kind: "phone",
+    capacity: 1,
+    amenities: ["monitor"],
+    color: "oklch(0.6 0.16 220)",
+  },
+  {
+    id: "rm-mil-aula",
+    officeId: "of-mil",
+    name: "Aula",
+    kind: "event",
+    capacity: 40,
+    amenities: ["tv", "projector", "speakerphone", "ac"],
+    color: "oklch(0.78 0.18 85)",
+  },
+  {
+    id: "rm-mil-focus",
+    officeId: "of-mil",
+    name: "Focus Pod",
+    kind: "focus",
+    capacity: 2,
+    amenities: ["monitor", "standing-desk", "ac"],
+    color: "oklch(0.65 0.15 155)",
+  },
 
   // Berlin
-  { id: "rm-ber-kepler", officeId: "of-ber", name: "Kepler",   kind: "meeting", capacity: 8,  amenities: ["tv","whiteboard","videoconf"], color: "oklch(0.7 0.15 30)" },
-  { id: "rm-ber-bauhaus",officeId: "of-ber", name: "Bauhaus",  kind: "meeting", capacity: 12, amenities: ["tv","whiteboard","speakerphone","videoconf"], color: "oklch(0.72 0.17 295)" },
-  { id: "rm-ber-booth",  officeId: "of-ber", name: "Booth",    kind: "phone",   capacity: 1,  amenities: ["monitor"], color: "oklch(0.65 0.18 340)" },
-  { id: "rm-ber-lab",    officeId: "of-ber", name: "Lab",      kind: "focus",   capacity: 4,  amenities: ["monitor","whiteboard"], color: "oklch(0.65 0.15 155)" },
+  {
+    id: "rm-ber-kepler",
+    officeId: "of-ber",
+    name: "Kepler",
+    kind: "meeting",
+    capacity: 8,
+    amenities: ["tv", "whiteboard", "videoconf"],
+    color: "oklch(0.7 0.15 30)",
+  },
+  {
+    id: "rm-ber-bauhaus",
+    officeId: "of-ber",
+    name: "Bauhaus",
+    kind: "meeting",
+    capacity: 12,
+    amenities: ["tv", "whiteboard", "speakerphone", "videoconf"],
+    color: "oklch(0.72 0.17 295)",
+  },
+  {
+    id: "rm-ber-booth",
+    officeId: "of-ber",
+    name: "Booth",
+    kind: "phone",
+    capacity: 1,
+    amenities: ["monitor"],
+    color: "oklch(0.65 0.18 340)",
+  },
+  {
+    id: "rm-ber-lab",
+    officeId: "of-ber",
+    name: "Lab",
+    kind: "focus",
+    capacity: 4,
+    amenities: ["monitor", "whiteboard"],
+    color: "oklch(0.65 0.15 155)",
+  },
 
   // SF
-  { id: "rm-sf-golden",  officeId: "of-sf",  name: "Golden",   kind: "meeting", capacity: 10, amenities: ["tv","whiteboard","videoconf","speakerphone"], color: "oklch(0.78 0.18 85)" },
-  { id: "rm-sf-bay",     officeId: "of-sf",  name: "Bay",      kind: "meeting", capacity: 6,  amenities: ["tv","whiteboard"], color: "oklch(0.6 0.16 220)" },
-  { id: "rm-sf-pod-a",   officeId: "of-sf",  name: "Pod A",    kind: "phone",   capacity: 1,  amenities: ["monitor"], color: "oklch(0.65 0.18 340)" },
-  { id: "rm-sf-pod-b",   officeId: "of-sf",  name: "Pod B",    kind: "phone",   capacity: 1,  amenities: ["monitor"], color: "oklch(0.65 0.18 340)" },
+  {
+    id: "rm-sf-golden",
+    officeId: "of-sf",
+    name: "Golden",
+    kind: "meeting",
+    capacity: 10,
+    amenities: ["tv", "whiteboard", "videoconf", "speakerphone"],
+    color: "oklch(0.78 0.18 85)",
+  },
+  {
+    id: "rm-sf-bay",
+    officeId: "of-sf",
+    name: "Bay",
+    kind: "meeting",
+    capacity: 6,
+    amenities: ["tv", "whiteboard"],
+    color: "oklch(0.6 0.16 220)",
+  },
+  {
+    id: "rm-sf-pod-a",
+    officeId: "of-sf",
+    name: "Pod A",
+    kind: "phone",
+    capacity: 1,
+    amenities: ["monitor"],
+    color: "oklch(0.65 0.18 340)",
+  },
+  {
+    id: "rm-sf-pod-b",
+    officeId: "of-sf",
+    name: "Pod B",
+    kind: "phone",
+    capacity: 1,
+    amenities: ["monitor"],
+    color: "oklch(0.65 0.18 340)",
+  },
 
   // Remote Hub
-  { id: "rm-rem-sala",   officeId: "of-rem", name: "Sala Verde", kind: "meeting", capacity: 6, amenities: ["tv","whiteboard"], color: "oklch(0.65 0.15 155)" },
-  { id: "rm-rem-booth",  officeId: "of-rem", name: "Booth",    kind: "phone",   capacity: 1,  amenities: ["monitor"], color: "oklch(0.65 0.18 340)" },
-  { id: "rm-rem-sun",    officeId: "of-rem", name: "Sun Room", kind: "event",   capacity: 20, amenities: ["tv","projector","speakerphone"], color: "oklch(0.78 0.18 85)" },
+  {
+    id: "rm-rem-sala",
+    officeId: "of-rem",
+    name: "Sala Verde",
+    kind: "meeting",
+    capacity: 6,
+    amenities: ["tv", "whiteboard"],
+    color: "oklch(0.65 0.15 155)",
+  },
+  {
+    id: "rm-rem-booth",
+    officeId: "of-rem",
+    name: "Booth",
+    kind: "phone",
+    capacity: 1,
+    amenities: ["monitor"],
+    color: "oklch(0.65 0.18 340)",
+  },
+  {
+    id: "rm-rem-sun",
+    officeId: "of-rem",
+    name: "Sun Room",
+    kind: "event",
+    capacity: 20,
+    amenities: ["tv", "projector", "speakerphone"],
+    color: "oklch(0.78 0.18 85)",
+  },
 ];
 
-export const roomById = (id: string) => rooms.find(r => r.id === id);
-export const roomsByOffice = (officeId: string) => rooms.filter(r => r.officeId === officeId);
+export const roomById = (id: string) => rooms.find((r) => r.id === id);
+export const roomsByOffice = (officeId: string) => rooms.filter((r) => r.officeId === officeId);
+const rooms_initial = rooms;
 
 /** Generate seats for every office based on capacity. */
 function makeSeats(): Seat[] {
@@ -180,10 +327,11 @@ function makeSeats(): Seat[] {
   }
   return out;
 }
-export const seats: Seat[] = makeSeats();
+export let seats: Seat[] = makeSeats();
+const seats_initial = seats;
 
-export const seatById = (id: string) => seats.find(s => s.id === id);
-export const seatsByOffice = (officeId: string) => seats.filter(s => s.officeId === officeId);
+export const seatById = (id: string) => seats.find((s) => s.id === id);
+export const seatsByOffice = (officeId: string) => seats.filter((s) => s.officeId === officeId);
 
 // ── Home-office assignment per employee (mock) ────────────────────────
 export const HOME_OFFICE: Record<string, string> = {
@@ -215,70 +363,497 @@ const TODAY = "2026-04-18";
 
 export const bookings: Booking[] = [
   // ── Milan room bookings ───────────────────────────────────────────
-  { id: "bk-1",  resourceId: "rm-mil-atlas",  resourceKind: "room", userId: "e1", officeId: "of-mil", date: TODAY,               startTime: "09:00", endTime: "10:00", title: "Platform standup", attendees: ["e1","e9","e4"], status: "confirmed", recurring: "daily" },
-  { id: "bk-2",  resourceId: "rm-mil-atlas",  resourceKind: "room", userId: "e3", officeId: "of-mil", date: TODAY,               startTime: "10:30", endTime: "12:00", title: "Cutover rehearsal", attendees: ["e1","e9"], status: "confirmed" },
-  { id: "bk-3",  resourceId: "rm-mil-helix",  resourceKind: "room", userId: "e2", officeId: "of-mil", date: TODAY,               startTime: "14:00", endTime: "15:00", title: "Design critique", attendees: ["e2","e1"], status: "confirmed" },
-  { id: "bk-4",  resourceId: "rm-mil-aula",   resourceKind: "room", userId: "e3", officeId: "of-mil", date: TODAY,               startTime: "16:00", endTime: "17:30", title: "All-hands", attendees: ["e1","e2","e3","e9","e4"], status: "confirmed" },
-  { id: "bk-5",  resourceId: "rm-mil-ion",    resourceKind: "room", userId: "e9", officeId: "of-mil", date: TODAY,               startTime: "11:00", endTime: "11:30", title: "Call w/ vendor", attendees: ["e9"], status: "confirmed" },
-  { id: "bk-6",  resourceId: "rm-mil-atlas",  resourceKind: "room", userId: "e1", officeId: "of-mil", date: addDays(TODAY, 1),   startTime: "09:00", endTime: "10:00", title: "Platform standup", attendees: ["e1","e9","e4"], status: "confirmed", recurring: "daily" },
-  { id: "bk-7",  resourceId: "rm-mil-helix",  resourceKind: "room", userId: "e7", officeId: "of-mil", date: addDays(TODAY, 1),   startTime: "11:00", endTime: "12:00", title: "Roadmap review", attendees: ["e7","e1"], status: "confirmed" },
-  { id: "bk-8",  resourceId: "rm-mil-focus",  resourceKind: "room", userId: "e9", officeId: "of-mil", date: addDays(TODAY, 2),   startTime: "10:00", endTime: "12:00", title: "Deep work", attendees: ["e9"], status: "confirmed" },
-  { id: "bk-9",  resourceId: "rm-mil-aula",   resourceKind: "room", userId: "e3", officeId: "of-mil", date: addDays(TODAY, 4),   startTime: "09:30", endTime: "12:00", title: "Design town hall", attendees: ["e2","e3","e8","e12"], status: "tentative" },
+  {
+    id: "bk-1",
+    resourceId: "rm-mil-atlas",
+    resourceKind: "room",
+    userId: "e1",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "10:00",
+    title: "Platform standup",
+    attendees: ["e1", "e9", "e4"],
+    status: "confirmed",
+    recurring: "daily",
+  },
+  {
+    id: "bk-2",
+    resourceId: "rm-mil-atlas",
+    resourceKind: "room",
+    userId: "e3",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "10:30",
+    endTime: "12:00",
+    title: "Cutover rehearsal",
+    attendees: ["e1", "e9"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-3",
+    resourceId: "rm-mil-helix",
+    resourceKind: "room",
+    userId: "e2",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "14:00",
+    endTime: "15:00",
+    title: "Design critique",
+    attendees: ["e2", "e1"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-4",
+    resourceId: "rm-mil-aula",
+    resourceKind: "room",
+    userId: "e3",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "16:00",
+    endTime: "17:30",
+    title: "All-hands",
+    attendees: ["e1", "e2", "e3", "e9", "e4"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-5",
+    resourceId: "rm-mil-ion",
+    resourceKind: "room",
+    userId: "e9",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "11:00",
+    endTime: "11:30",
+    title: "Call w/ vendor",
+    attendees: ["e9"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-6",
+    resourceId: "rm-mil-atlas",
+    resourceKind: "room",
+    userId: "e1",
+    officeId: "of-mil",
+    date: addDays(TODAY, 1),
+    startTime: "09:00",
+    endTime: "10:00",
+    title: "Platform standup",
+    attendees: ["e1", "e9", "e4"],
+    status: "confirmed",
+    recurring: "daily",
+  },
+  {
+    id: "bk-7",
+    resourceId: "rm-mil-helix",
+    resourceKind: "room",
+    userId: "e7",
+    officeId: "of-mil",
+    date: addDays(TODAY, 1),
+    startTime: "11:00",
+    endTime: "12:00",
+    title: "Roadmap review",
+    attendees: ["e7", "e1"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-8",
+    resourceId: "rm-mil-focus",
+    resourceKind: "room",
+    userId: "e9",
+    officeId: "of-mil",
+    date: addDays(TODAY, 2),
+    startTime: "10:00",
+    endTime: "12:00",
+    title: "Deep work",
+    attendees: ["e9"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-9",
+    resourceId: "rm-mil-aula",
+    resourceKind: "room",
+    userId: "e3",
+    officeId: "of-mil",
+    date: addDays(TODAY, 4),
+    startTime: "09:30",
+    endTime: "12:00",
+    title: "Design town hall",
+    attendees: ["e2", "e3", "e8", "e12"],
+    status: "tentative",
+  },
 
   // ── Milan seat bookings ───────────────────────────────────────────
-  { id: "bk-10", resourceId: "st-of-mil-A-01", resourceKind: "seat", userId: "e1", officeId: "of-mil", date: TODAY,             startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
-  { id: "bk-11", resourceId: "st-of-mil-A-02", resourceKind: "seat", userId: "e9", officeId: "of-mil", date: TODAY,             startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
-  { id: "bk-12", resourceId: "st-of-mil-A-03", resourceKind: "seat", userId: "e2", officeId: "of-mil", date: TODAY,             startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
-  { id: "bk-13", resourceId: "st-of-mil-B-01", resourceKind: "seat", userId: "e3", officeId: "of-mil", date: TODAY,             startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
-  { id: "bk-14", resourceId: "st-of-mil-B-02", resourceKind: "seat", userId: "e7", officeId: "of-mil", date: TODAY,             startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
-  { id: "bk-15", resourceId: "st-of-mil-Quiet-01", resourceKind: "seat", userId: "e4", officeId: "of-mil", date: TODAY,         startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
-  { id: "bk-16", resourceId: "st-of-mil-A-04", resourceKind: "seat", userId: "e1", officeId: "of-mil", date: addDays(TODAY, 1), startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed", recurring: "weekly" },
-  { id: "bk-17", resourceId: "st-of-mil-A-05", resourceKind: "seat", userId: "e9", officeId: "of-mil", date: addDays(TODAY, 1), startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
-  { id: "bk-18", resourceId: "st-of-mil-B-03", resourceKind: "seat", userId: "e2", officeId: "of-mil", date: addDays(TODAY, 1), startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
+  {
+    id: "bk-10",
+    resourceId: "st-of-mil-A-01",
+    resourceKind: "seat",
+    userId: "e1",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
+  {
+    id: "bk-11",
+    resourceId: "st-of-mil-A-02",
+    resourceKind: "seat",
+    userId: "e9",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
+  {
+    id: "bk-12",
+    resourceId: "st-of-mil-A-03",
+    resourceKind: "seat",
+    userId: "e2",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
+  {
+    id: "bk-13",
+    resourceId: "st-of-mil-B-01",
+    resourceKind: "seat",
+    userId: "e3",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
+  {
+    id: "bk-14",
+    resourceId: "st-of-mil-B-02",
+    resourceKind: "seat",
+    userId: "e7",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
+  {
+    id: "bk-15",
+    resourceId: "st-of-mil-Quiet-01",
+    resourceKind: "seat",
+    userId: "e4",
+    officeId: "of-mil",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
+  {
+    id: "bk-16",
+    resourceId: "st-of-mil-A-04",
+    resourceKind: "seat",
+    userId: "e1",
+    officeId: "of-mil",
+    date: addDays(TODAY, 1),
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+    recurring: "weekly",
+  },
+  {
+    id: "bk-17",
+    resourceId: "st-of-mil-A-05",
+    resourceKind: "seat",
+    userId: "e9",
+    officeId: "of-mil",
+    date: addDays(TODAY, 1),
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
+  {
+    id: "bk-18",
+    resourceId: "st-of-mil-B-03",
+    resourceKind: "seat",
+    userId: "e2",
+    officeId: "of-mil",
+    date: addDays(TODAY, 1),
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
 
   // ── Berlin room bookings ──────────────────────────────────────────
-  { id: "bk-20", resourceId: "rm-ber-kepler", resourceKind: "room", userId: "e4",  officeId: "of-ber", date: TODAY,             startTime: "10:00", endTime: "11:00", title: "Interview — senior eng", attendees: ["e4","e3","e8"], status: "confirmed" },
-  { id: "bk-21", resourceId: "rm-ber-kepler", resourceKind: "room", userId: "e4",  officeId: "of-ber", date: TODAY,             startTime: "14:00", endTime: "15:00", title: "Architecture review", attendees: ["e4","e1"], status: "confirmed" },
-  { id: "bk-22", resourceId: "rm-ber-bauhaus",resourceKind: "room", userId: "e2",  officeId: "of-ber", date: TODAY,             startTime: "13:00", endTime: "14:30", title: "Brand review", attendees: ["e2","e12"], status: "confirmed" },
-  { id: "bk-23", resourceId: "rm-ber-kepler", resourceKind: "room", userId: "e4",  officeId: "of-ber", date: addDays(TODAY, 3), startTime: "09:30", endTime: "10:30", title: "Sprint planning", attendees: ["e4","e1"], status: "confirmed" },
-  { id: "bk-24", resourceId: "rm-ber-booth",  resourceKind: "room", userId: "e4",  officeId: "of-ber", date: TODAY,             startTime: "11:30", endTime: "12:00", title: "Call", attendees: ["e4"], status: "confirmed" },
+  {
+    id: "bk-20",
+    resourceId: "rm-ber-kepler",
+    resourceKind: "room",
+    userId: "e4",
+    officeId: "of-ber",
+    date: TODAY,
+    startTime: "10:00",
+    endTime: "11:00",
+    title: "Interview — senior eng",
+    attendees: ["e4", "e3", "e8"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-21",
+    resourceId: "rm-ber-kepler",
+    resourceKind: "room",
+    userId: "e4",
+    officeId: "of-ber",
+    date: TODAY,
+    startTime: "14:00",
+    endTime: "15:00",
+    title: "Architecture review",
+    attendees: ["e4", "e1"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-22",
+    resourceId: "rm-ber-bauhaus",
+    resourceKind: "room",
+    userId: "e2",
+    officeId: "of-ber",
+    date: TODAY,
+    startTime: "13:00",
+    endTime: "14:30",
+    title: "Brand review",
+    attendees: ["e2", "e12"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-23",
+    resourceId: "rm-ber-kepler",
+    resourceKind: "room",
+    userId: "e4",
+    officeId: "of-ber",
+    date: addDays(TODAY, 3),
+    startTime: "09:30",
+    endTime: "10:30",
+    title: "Sprint planning",
+    attendees: ["e4", "e1"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-24",
+    resourceId: "rm-ber-booth",
+    resourceKind: "room",
+    userId: "e4",
+    officeId: "of-ber",
+    date: TODAY,
+    startTime: "11:30",
+    endTime: "12:00",
+    title: "Call",
+    attendees: ["e4"],
+    status: "confirmed",
+  },
 
   // ── Berlin seats ──────────────────────────────────────────────────
-  { id: "bk-30", resourceId: "st-of-ber-A-01", resourceKind: "seat", userId: "e4", officeId: "of-ber", date: TODAY,             startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
-  { id: "bk-31", resourceId: "st-of-ber-A-02", resourceKind: "seat", userId: "e2", officeId: "of-ber", date: TODAY,             startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
-  { id: "bk-32", resourceId: "st-of-ber-B-01", resourceKind: "seat", userId: "e11", officeId: "of-ber", date: TODAY,            startTime: "09:00", endTime: "18:00", attendees: [], status: "confirmed" },
+  {
+    id: "bk-30",
+    resourceId: "st-of-ber-A-01",
+    resourceKind: "seat",
+    userId: "e4",
+    officeId: "of-ber",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
+  {
+    id: "bk-31",
+    resourceId: "st-of-ber-A-02",
+    resourceKind: "seat",
+    userId: "e2",
+    officeId: "of-ber",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
+  {
+    id: "bk-32",
+    resourceId: "st-of-ber-B-01",
+    resourceKind: "seat",
+    userId: "e11",
+    officeId: "of-ber",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "18:00",
+    attendees: [],
+    status: "confirmed",
+  },
 
   // ── SF bookings ──────────────────────────────────────────────────
-  { id: "bk-40", resourceId: "rm-sf-golden",  resourceKind: "room", userId: "e6",  officeId: "of-sf", date: TODAY,              startTime: "09:00", endTime: "10:00", title: "Pipeline review", attendees: ["e6"], status: "confirmed" },
-  { id: "bk-41", resourceId: "rm-sf-golden",  resourceKind: "room", userId: "e6",  officeId: "of-sf", date: TODAY,              startTime: "14:00", endTime: "15:30", title: "Customer demo", attendees: ["e6","e10"], status: "confirmed" },
-  { id: "bk-42", resourceId: "rm-sf-bay",     resourceKind: "room", userId: "e10", officeId: "of-sf", date: addDays(TODAY, 2),  startTime: "10:00", endTime: "11:00", title: "Data sync", attendees: ["e10","e6"], status: "confirmed" },
-  { id: "bk-43", resourceId: "st-of-sf-A-01", resourceKind: "seat", userId: "e6",  officeId: "of-sf", date: TODAY,              startTime: "09:00", endTime: "17:00", attendees: [], status: "confirmed" },
-  { id: "bk-44", resourceId: "st-of-sf-A-02", resourceKind: "seat", userId: "e10", officeId: "of-sf", date: TODAY,              startTime: "09:00", endTime: "17:00", attendees: [], status: "confirmed" },
+  {
+    id: "bk-40",
+    resourceId: "rm-sf-golden",
+    resourceKind: "room",
+    userId: "e6",
+    officeId: "of-sf",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "10:00",
+    title: "Pipeline review",
+    attendees: ["e6"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-41",
+    resourceId: "rm-sf-golden",
+    resourceKind: "room",
+    userId: "e6",
+    officeId: "of-sf",
+    date: TODAY,
+    startTime: "14:00",
+    endTime: "15:30",
+    title: "Customer demo",
+    attendees: ["e6", "e10"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-42",
+    resourceId: "rm-sf-bay",
+    resourceKind: "room",
+    userId: "e10",
+    officeId: "of-sf",
+    date: addDays(TODAY, 2),
+    startTime: "10:00",
+    endTime: "11:00",
+    title: "Data sync",
+    attendees: ["e10", "e6"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-43",
+    resourceId: "st-of-sf-A-01",
+    resourceKind: "seat",
+    userId: "e6",
+    officeId: "of-sf",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "17:00",
+    attendees: [],
+    status: "confirmed",
+  },
+  {
+    id: "bk-44",
+    resourceId: "st-of-sf-A-02",
+    resourceKind: "seat",
+    userId: "e10",
+    officeId: "of-sf",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "17:00",
+    attendees: [],
+    status: "confirmed",
+  },
 
   // ── Lisbon ──────────────────────────────────────────────────────
-  { id: "bk-50", resourceId: "rm-rem-sala",   resourceKind: "room", userId: "e5", officeId: "of-rem", date: TODAY,              startTime: "10:00", endTime: "11:00", title: "Finance sync", attendees: ["e5"], status: "confirmed" },
-  { id: "bk-51", resourceId: "st-of-rem-A-01",resourceKind: "seat", userId: "e5", officeId: "of-rem", date: TODAY,              startTime: "09:00", endTime: "17:00", attendees: [], status: "confirmed" },
+  {
+    id: "bk-50",
+    resourceId: "rm-rem-sala",
+    resourceKind: "room",
+    userId: "e5",
+    officeId: "of-rem",
+    date: TODAY,
+    startTime: "10:00",
+    endTime: "11:00",
+    title: "Finance sync",
+    attendees: ["e5"],
+    status: "confirmed",
+  },
+  {
+    id: "bk-51",
+    resourceId: "st-of-rem-A-01",
+    resourceKind: "seat",
+    userId: "e5",
+    officeId: "of-rem",
+    date: TODAY,
+    startTime: "09:00",
+    endTime: "17:00",
+    attendees: [],
+    status: "confirmed",
+  },
 ];
 
 // ── Closures (maintenance / holidays) ────────────────────────────────
-export const closures: Closure[] = [
+export let closures: Closure[] = [
   // Milan — elevator maintenance on Apr 20
-  { id: "cl-1", scopeKind: "office", scopeId: "of-mil", from: addDays(TODAY, 2), to: addDays(TODAY, 2), kind: "maintenance", title: "Elevator maintenance", note: "AM hours impacted." },
+  {
+    id: "cl-1",
+    scopeKind: "office",
+    scopeId: "of-mil",
+    from: addDays(TODAY, 2),
+    to: addDays(TODAY, 2),
+    kind: "maintenance",
+    title: "Elevator maintenance",
+    note: "AM hours impacted.",
+  },
   // Milan — event blocks Aula Apr 22
-  { id: "cl-2", scopeKind: "room", scopeId: "rm-mil-aula", from: addDays(TODAY, 4), to: addDays(TODAY, 4), kind: "event", title: "Partner summit", note: "Room fully booked by event team." },
+  {
+    id: "cl-2",
+    scopeKind: "room",
+    scopeId: "rm-mil-aula",
+    from: addDays(TODAY, 4),
+    to: addDays(TODAY, 4),
+    kind: "event",
+    title: "Partner summit",
+    note: "Room fully booked by event team.",
+  },
   // SF — holiday Apr 25
-  { id: "cl-3", scopeKind: "office", scopeId: "of-sf", from: addDays(TODAY, 7), to: addDays(TODAY, 7), kind: "holiday", title: "Patriots' Day (observed)" },
+  {
+    id: "cl-3",
+    scopeKind: "office",
+    scopeId: "of-sf",
+    from: addDays(TODAY, 7),
+    to: addDays(TODAY, 7),
+    kind: "holiday",
+    title: "Patriots' Day (observed)",
+  },
   // Berlin — deep clean weekend
-  { id: "cl-4", scopeKind: "office", scopeId: "of-ber", from: addDays(TODAY, 8), to: addDays(TODAY, 9), kind: "maintenance", title: "Deep clean weekend", note: "Doors closed Sat–Sun." },
+  {
+    id: "cl-4",
+    scopeKind: "office",
+    scopeId: "of-ber",
+    from: addDays(TODAY, 8),
+    to: addDays(TODAY, 9),
+    kind: "maintenance",
+    title: "Deep clean weekend",
+    note: "Doors closed Sat–Sun.",
+  },
   // Lisbon — workshop Apr 24
-  { id: "cl-5", scopeKind: "room", scopeId: "rm-rem-sun", from: addDays(TODAY, 6), to: addDays(TODAY, 6), kind: "event", title: "Customer workshop" },
+  {
+    id: "cl-5",
+    scopeKind: "room",
+    scopeId: "rm-rem-sun",
+    from: addDays(TODAY, 6),
+    to: addDays(TODAY, 6),
+    kind: "event",
+    title: "Customer workshop",
+  },
 ];
 
 // ── Helpers ──────────────────────────────────────────────────────────
 export function minutesBetween(start: string, end: string): number {
   const [sh, sm] = start.split(":").map(Number);
   const [eh, em] = end.split(":").map(Number);
-  return (eh * 60 + em) - (sh * 60 + sm);
+  return eh * 60 + em - (sh * 60 + sm);
 }
 
 export function minutesOpen(office: Office): number {
@@ -291,10 +866,16 @@ export function isWeekend(date: string): boolean {
   return day === 0 || day === 6;
 }
 
-export function closureFor(scopeKind: "office" | "room", scopeId: string, date: string): Closure | null {
-  return closures.find(
-    c => c.scopeKind === scopeKind && c.scopeId === scopeId && date >= c.from && date <= c.to,
-  ) ?? null;
+export function closureFor(
+  scopeKind: "office" | "room",
+  scopeId: string,
+  date: string,
+): Closure | null {
+  return (
+    closures.find(
+      (c) => c.scopeKind === scopeKind && c.scopeId === scopeId && date >= c.from && date <= c.to,
+    ) ?? null
+  );
 }
 
 /** Utilization 0..1 for a room on a date. `null` when closed. */
@@ -307,7 +888,7 @@ export function roomUtilization(roomId: string, date: string): number | null {
   if (closureFor("office", r.officeId, date)) return null;
   if (closureFor("room", r.id, date)) return 1; // treat as fully closed → show as red/striped
   const dayBookings = bookings.filter(
-    b => b.resourceId === r.id && b.date === date && b.status !== "cancelled",
+    (b) => b.resourceId === r.id && b.date === date && b.status !== "cancelled",
   );
   const used = dayBookings.reduce((a, b) => a + minutesBetween(b.startTime, b.endTime), 0);
   return Math.min(1, used / minutesOpen(office));
@@ -320,18 +901,18 @@ export function officeUtilization(officeId: string, date: string): number | null
   if (isWeekend(date)) return null;
   if (closureFor("office", officeId, date)) return null;
   const dayBookings = bookings.filter(
-    b => b.officeId === officeId && b.date === date && b.status !== "cancelled",
+    (b) => b.officeId === officeId && b.date === date && b.status !== "cancelled",
   );
   // Seats: booked count / capacity.
-  const seatBooked = new Set(dayBookings.filter(b => b.resourceKind === "seat").map(b => b.resourceId)).size;
+  const seatBooked = new Set(
+    dayBookings.filter((b) => b.resourceKind === "seat").map((b) => b.resourceId),
+  ).size;
   const seatFactor = office.seatCapacity > 0 ? seatBooked / office.seatCapacity : 0;
 
   // Rooms: avg utilization across rooms.
   const rs = roomsByOffice(officeId);
   const roomAvg =
-    rs.length > 0
-      ? rs.reduce((a, r) => a + (roomUtilization(r.id, date) ?? 0), 0) / rs.length
-      : 0;
+    rs.length > 0 ? rs.reduce((a, r) => a + (roomUtilization(r.id, date) ?? 0), 0) / rs.length : 0;
 
   // Blend 60% seats / 40% rooms — seats drive office density more.
   return Math.min(1, seatFactor * 0.6 + roomAvg * 0.4);
@@ -344,8 +925,10 @@ export function seatUtilization(seatId: string, date: string): number | null {
   if (isWeekend(date)) return null;
   if (closureFor("office", s.officeId, date)) return null;
   return bookings.some(
-    b => b.resourceId === seatId && b.date === date && b.status !== "cancelled",
-  ) ? 1 : 0;
+    (b) => b.resourceId === seatId && b.date === date && b.status !== "cancelled",
+  )
+    ? 1
+    : 0;
 }
 
 export function dateRange(fromISO: string, days: number): string[] {
@@ -362,11 +945,11 @@ export function utilizationBucket(u: number | null): "closed" | "low" | "medium"
 }
 
 export const BUCKET_COLOR: Record<ReturnType<typeof utilizationBucket>, string> = {
-  closed:  "oklch(0.3 0.02 260 / 0.15)",
-  low:     "oklch(0.78 0.18 130 / 0.55)",
-  medium:  "oklch(0.78 0.18 85 / 0.7)",
-  high:    "oklch(0.72 0.17 55 / 0.75)",
-  full:    "oklch(0.65 0.2 25 / 0.8)",
+  closed: "oklch(0.3 0.02 260 / 0.15)",
+  low: "oklch(0.78 0.18 130 / 0.55)",
+  medium: "oklch(0.78 0.18 85 / 0.7)",
+  high: "oklch(0.72 0.17 55 / 0.75)",
+  full: "oklch(0.65 0.2 25 / 0.8)",
 };
 
 /** Format a HH:mm from office-local to display string. */
@@ -392,9 +975,9 @@ export function officeLocalDate(office: Office, now: Date = new Date()): string 
     day: "2-digit",
     timeZone: office.timezone,
   }).formatToParts(now);
-  const y = parts.find(p => p.type === "year")?.value;
-  const m = parts.find(p => p.type === "month")?.value;
-  const d = parts.find(p => p.type === "day")?.value;
+  const y = parts.find((p) => p.type === "year")?.value;
+  const m = parts.find((p) => p.type === "month")?.value;
+  const d = parts.find((p) => p.type === "day")?.value;
   return `${y}-${m}-${d}`;
 }
 
@@ -415,7 +998,7 @@ export function findConflict(
   const e = toMin(endTime);
   if (e <= s) return null;
   return (
-    bookingList.find(b => {
+    bookingList.find((b) => {
       if (b.id === ignoreBookingId) return false;
       if (b.resourceId !== resourceId) return false;
       if (b.date !== date) return false;
@@ -427,8 +1010,112 @@ export function findConflict(
   );
 }
 
-export function bookingsFor(resourceId: string, date: string, list: Booking[] = bookings): Booking[] {
+export function bookingsFor(
+  resourceId: string,
+  date: string,
+  list: Booking[] = bookings,
+): Booking[] {
   return list
-    .filter(b => b.resourceId === resourceId && b.date === date && b.status !== "cancelled")
+    .filter((b) => b.resourceId === resourceId && b.date === date && b.status !== "cancelled")
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
 }
+
+// ── Mutable store (for CRUD UI) ─────────────────────────────────────
+type Listener = () => void;
+const listeners = new Set<Listener>();
+let version = 0;
+function notify() {
+  version += 1;
+  listeners.forEach((l) => {
+    try {
+      l();
+    } catch (err) {
+      console.warn("officesStore listener", err);
+    }
+  });
+}
+
+function newId(prefix: string) {
+  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+}
+
+export const officesStore = {
+  subscribe(l: Listener) {
+    listeners.add(l);
+    return () => {
+      listeners.delete(l);
+    };
+  },
+  getVersion: () => version,
+
+  // ── Offices ─────────────────────────────────────────────────────
+  addOffice(o: Omit<Office, "id">): Office {
+    const office: Office = { ...o, id: newId("of") };
+    offices = [...offices, office];
+    notify();
+    return office;
+  },
+  updateOffice(id: string, patch: Partial<Omit<Office, "id">>) {
+    offices = offices.map((o) => (o.id === id ? { ...o, ...patch } : o));
+    notify();
+  },
+  removeOffice(id: string) {
+    offices = offices.filter((o) => o.id !== id);
+    rooms = rooms.filter((r) => r.officeId !== id);
+    seats = seats.filter((s) => s.officeId !== id);
+    closures = closures.filter((c) => !(c.scopeKind === "office" && c.scopeId === id));
+    notify();
+  },
+
+  // ── Rooms ───────────────────────────────────────────────────────
+  addRoom(r: Omit<Room, "id">): Room {
+    const room: Room = { ...r, id: newId("rm") };
+    rooms = [...rooms, room];
+    notify();
+    return room;
+  },
+  updateRoom(id: string, patch: Partial<Omit<Room, "id">>) {
+    rooms = rooms.map((r) => (r.id === id ? { ...r, ...patch } : r));
+    notify();
+  },
+  removeRoom(id: string) {
+    rooms = rooms.filter((r) => r.id !== id);
+    closures = closures.filter((c) => !(c.scopeKind === "room" && c.scopeId === id));
+    notify();
+  },
+
+  // ── Seats ───────────────────────────────────────────────────────
+  addSeat(s: Omit<Seat, "id">): Seat {
+    const seat: Seat = { ...s, id: newId("st") };
+    seats = [...seats, seat];
+    notify();
+    return seat;
+  },
+  updateSeat(id: string, patch: Partial<Omit<Seat, "id">>) {
+    seats = seats.map((s) => (s.id === id ? { ...s, ...patch } : s));
+    notify();
+  },
+  removeSeat(id: string) {
+    seats = seats.filter((s) => s.id !== id);
+    notify();
+  },
+
+  // ── Closures ────────────────────────────────────────────────────
+  addClosure(c: Omit<Closure, "id">): Closure {
+    const closure: Closure = { ...c, id: newId("cl") };
+    closures = [...closures, closure];
+    notify();
+    return closure;
+  },
+  removeClosure(id: string) {
+    closures = closures.filter((c) => c.id !== id);
+    notify();
+  },
+
+  reset() {
+    offices = offices_initial;
+    rooms = rooms_initial;
+    seats = seats_initial;
+    notify();
+  },
+};

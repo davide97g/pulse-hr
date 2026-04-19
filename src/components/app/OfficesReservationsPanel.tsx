@@ -1,101 +1,99 @@
-import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
-  CalendarDays, CalendarClock, History, ShieldCheck, DoorOpen, Armchair,
-  Plus, Trash2, Pencil, Filter, ArrowUpRight, X, Repeat,
+  CalendarDays,
+  CalendarClock,
+  History,
+  ShieldCheck,
+  DoorOpen,
+  Armchair,
+  Plus,
+  Trash2,
+  Pencil,
+  Filter,
+  ArrowUpRight,
+  X,
+  Repeat,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { PageHeader, Avatar } from "@/components/app/AppShell";
-import { NewBadge } from "@/components/app/NewBadge";
+import { Avatar } from "@/components/app/AppShell";
 import { EmptyState } from "@/components/app/EmptyState";
 import { BookingDialog, type BookingDialogPrefill } from "@/components/app/BookingDialog";
 import { useBookings } from "@/components/app/BookingsContext";
 import {
-  offices, officeById, roomById, seatById, minutesBetween, type Booking,
+  offices,
+  officeById,
+  roomById,
+  seatById,
+  minutesBetween,
+  type Booking,
 } from "@/lib/offices";
 import { employeeById } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 const ME = "e1";
-/** Demo: treat ME as admin — wire to real role once auth exists. */
 const IS_ADMIN = true;
-const TODAY = "2026-04-18";
+const TODAY = "2026-04-19";
 
-type Tab = "upcoming" | "past" | "all";
+type ResTab = "upcoming" | "past" | "all";
 
-interface ReservationsSearch {
-  tab?: Tab;
-  office?: string;
-  user?: string;
-  kind?: "room" | "seat";
-  q?: string;
-}
-
-export const Route = createFileRoute("/reservations")({
-  head: () => ({ meta: [{ title: "Reservations — Pulse HR" }] }),
-  validateSearch: (s: Record<string, unknown>): ReservationsSearch => ({
-    tab:
-      s.tab === "upcoming" || s.tab === "past" || s.tab === "all"
-        ? s.tab
-        : undefined,
-    office: typeof s.office === "string" ? s.office : undefined,
-    user: typeof s.user === "string" ? s.user : undefined,
-    kind:
-      s.kind === "room" || s.kind === "seat" ? s.kind : undefined,
-    q: typeof s.q === "string" ? s.q : undefined,
-  }),
-  component: Reservations,
-});
-
-function Reservations() {
-  const nav = useNavigate({ from: "/reservations" });
-  const search = useSearch({ from: "/reservations" });
-  const tab: Tab = search.tab ?? "upcoming";
-  const officeFilter = search.office ?? "all";
-  const userFilter = search.user ?? "all";
-  const kindFilter = search.kind ?? "all";
-  const q = search.q ?? "";
+export function OfficesReservationsPanel() {
+  const nav = useNavigate({ from: "/offices" });
+  const search = useSearch({ from: "/offices" }) as {
+    rtab?: ResTab;
+    roffice?: string;
+    ruser?: string;
+    rkind?: "room" | "seat";
+    rq?: string;
+  };
+  const tab: ResTab = search.rtab ?? "upcoming";
+  const officeFilter = search.roffice ?? "all";
+  const userFilter = search.ruser ?? "all";
+  const kindFilter = search.rkind ?? "all";
+  const q = search.rq ?? "";
 
   const setTab = (t: string) =>
-    nav({ search: (prev) => ({ ...prev, tab: t === "upcoming" ? undefined : (t as Tab) }) });
+    nav({ search: (prev) => ({ ...prev, rtab: t === "upcoming" ? undefined : (t as ResTab) }) });
   const setOffice = (v: string) =>
-    nav({ search: (prev) => ({ ...prev, office: v === "all" ? undefined : v }) });
+    nav({ search: (prev) => ({ ...prev, roffice: v === "all" ? undefined : v }) });
   const setUser = (v: string) =>
-    nav({ search: (prev) => ({ ...prev, user: v === "all" ? undefined : v }) });
+    nav({ search: (prev) => ({ ...prev, ruser: v === "all" ? undefined : v }) });
   const setKind = (v: string) =>
     nav({
-      search: (prev) => ({
-        ...prev,
-        kind: v === "all" ? undefined : (v as "room" | "seat"),
-      }),
+      search: (prev) => ({ ...prev, rkind: v === "all" ? undefined : (v as "room" | "seat") }),
     });
-  const setQ = (v: string) =>
-    nav({ search: (prev) => ({ ...prev, q: v || undefined }) });
+  const setQ = (v: string) => nav({ search: (prev) => ({ ...prev, rq: v || undefined }) });
 
   const { bookings, cancelBooking, restoreBooking } = useBookings();
   const [prefill, setPrefill] = useState<BookingDialogPrefill | null>(null);
   const [toCancel, setToCancel] = useState<Booking | null>(null);
 
-  // ── filter pipeline ───────────────────────────────────────────────
   const scoped = useMemo(() => {
     let list = bookings.filter((b) => b.status !== "cancelled");
-    if (tab !== "all") {
-      list = list.filter((b) => b.userId === ME);
-    }
+    if (tab !== "all") list = list.filter((b) => b.userId === ME);
     if (tab === "upcoming") list = list.filter((b) => b.date >= TODAY);
     if (tab === "past") list = list.filter((b) => b.date < TODAY);
-
     if (officeFilter !== "all") list = list.filter((b) => b.officeId === officeFilter);
     if (kindFilter !== "all") list = list.filter((b) => b.resourceKind === kindFilter);
     if (userFilter !== "all") list = list.filter((b) => b.userId === userFilter);
@@ -104,8 +102,10 @@ function Reservations() {
       list = list.filter((b) => {
         const title = (b.title ?? "").toLowerCase();
         const owner = employeeById(b.userId)?.name.toLowerCase() ?? "";
-        const room = b.resourceKind === "room" ? roomById(b.resourceId)?.name.toLowerCase() ?? "" : "";
-        const seat = b.resourceKind === "seat" ? seatById(b.resourceId)?.label.toLowerCase() ?? "" : "";
+        const room =
+          b.resourceKind === "room" ? (roomById(b.resourceId)?.name.toLowerCase() ?? "") : "";
+        const seat =
+          b.resourceKind === "seat" ? (seatById(b.resourceId)?.label.toLowerCase() ?? "") : "";
         return (
           title.includes(needle) ||
           owner.includes(needle) ||
@@ -114,7 +114,6 @@ function Reservations() {
         );
       });
     }
-    // Sort: upcoming ascending, past descending
     list = [...list].sort((a, b) => {
       const av = a.date + a.startTime;
       const bv = b.date + b.startTime;
@@ -122,16 +121,6 @@ function Reservations() {
     });
     return list;
   }, [bookings, tab, officeFilter, userFilter, kindFilter, q]);
-
-  const kpis = useMemo(() => {
-    const mine = bookings.filter((b) => b.userId === ME && b.status !== "cancelled");
-    const mineUpcoming = mine.filter((b) => b.date >= TODAY).length;
-    const minePast = mine.filter((b) => b.date < TODAY).length;
-    const allUpcoming = bookings.filter(
-      (b) => b.date >= TODAY && b.status !== "cancelled",
-    ).length;
-    return { mineUpcoming, minePast, allUpcoming };
-  }, [bookings]);
 
   const userOptions = useMemo(() => {
     const ids = new Set(bookings.map((b) => b.userId));
@@ -148,10 +137,7 @@ function Reservations() {
         b.resourceKind === "room"
           ? `${roomById(b.resourceId)?.name ?? "Room"} · ${b.date} ${b.startTime}–${b.endTime}`
           : `Seat ${seatById(b.resourceId)?.label ?? ""} · ${b.date}`,
-      action: {
-        label: "Undo",
-        onClick: () => restoreBooking(b),
-      },
+      action: { label: "Undo", onClick: () => restoreBooking(b) },
     });
   };
 
@@ -168,40 +154,22 @@ function Reservations() {
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-[1280px] mx-auto fade-in">
-      <PageHeader
-        title={<><span>Reservations</span><NewBadge /></>}
-        description="Your upcoming and past workspace bookings. Cancel, reschedule, or spin up a new one."
-        actions={
-          <div className="flex items-center gap-2">
-            <Link
-              to="/offices"
-              className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 press-scale"
-            >
-              Offices overview <ArrowUpRight className="h-3 w-3" />
-            </Link>
-            <Button size="sm" onClick={() => setPrefill({})}>
-              <Plus className="h-4 w-4 mr-1.5" /> New reservation
-            </Button>
-          </div>
-        }
-      />
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-        <KpiCard icon={<CalendarClock className="h-4 w-4" />} label="Your upcoming" value={kpis.mineUpcoming} accent />
-        <KpiCard icon={<History className="h-4 w-4" />} label="Your past" value={kpis.minePast} />
-        {IS_ADMIN && (
-          <KpiCard icon={<ShieldCheck className="h-4 w-4" />} label="All upcoming" value={kpis.allUpcoming} />
-        )}
-        <KpiCard icon={<DoorOpen className="h-4 w-4" />} label="Active spaces" value={offices.length} />
-      </div>
-
+    <div className="space-y-3">
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
-          <TabsTrigger value="upcoming"><CalendarClock className="h-3.5 w-3.5 mr-1.5" />Upcoming</TabsTrigger>
-          <TabsTrigger value="past"><History className="h-3.5 w-3.5 mr-1.5" />Past</TabsTrigger>
+          <TabsTrigger value="upcoming">
+            <CalendarClock className="h-3.5 w-3.5 mr-1.5" />
+            Upcoming
+          </TabsTrigger>
+          <TabsTrigger value="past">
+            <History className="h-3.5 w-3.5 mr-1.5" />
+            Past
+          </TabsTrigger>
           {IS_ADMIN && (
-            <TabsTrigger value="all"><ShieldCheck className="h-3.5 w-3.5 mr-1.5" />All (admin)</TabsTrigger>
+            <TabsTrigger value="all">
+              <ShieldCheck className="h-3.5 w-3.5 mr-1.5" />
+              All (admin)
+            </TabsTrigger>
           )}
         </TabsList>
 
@@ -217,7 +185,9 @@ function Reservations() {
               />
             </div>
             <Select value={officeFilter} onValueChange={setOffice}>
-              <SelectTrigger className="h-9 w-[200px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-9 w-[200px]">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All offices</SelectItem>
                 {offices.map((o) => (
@@ -228,7 +198,9 @@ function Reservations() {
               </SelectContent>
             </Select>
             <Select value={kindFilter} onValueChange={setKind}>
-              <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-9 w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Rooms + seats</SelectItem>
                 <SelectItem value="room">Rooms only</SelectItem>
@@ -237,7 +209,9 @@ function Reservations() {
             </Select>
             {tab === "all" && IS_ADMIN && (
               <Select value={userFilter} onValueChange={setUser}>
-                <SelectTrigger className="h-9 w-[180px]"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-9 w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Everyone</SelectItem>
                   {userOptions.map((e) => (
@@ -248,6 +222,9 @@ function Reservations() {
                 </SelectContent>
               </Select>
             )}
+            <Button size="sm" onClick={() => setPrefill({})}>
+              <Plus className="h-4 w-4 mr-1.5" /> New
+            </Button>
           </Card>
 
           {scoped.length === 0 ? (
@@ -310,7 +287,8 @@ function Reservations() {
                     ? roomById(toCancel.resourceId)?.name
                     : `Seat ${seatById(toCancel.resourceId)?.label}`}
                   {" · "}
-                  {toCancel.date} {toCancel.startTime}–{toCancel.endTime}. You can undo from the toast.
+                  {toCancel.date} {toCancel.startTime}–{toCancel.endTime}. You can undo from the
+                  toast.
                 </span>
               )}
             </AlertDialogDescription>
@@ -333,21 +311,13 @@ function Reservations() {
   );
 }
 
-function KpiCard({
-  icon, label, value, accent,
-}: { icon: React.ReactNode; label: string; value: number; accent?: boolean }) {
-  return (
-    <Card className={cn("p-4", accent && "iridescent-border")}>
-      <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
-        {icon}{label}
-      </div>
-      <div className="text-2xl font-display tabular-nums mt-1">{value}</div>
-    </Card>
-  );
-}
-
 function ReservationRow({
-  b, showOwner, isPast, canMutate, onCancel, onReschedule,
+  b,
+  showOwner,
+  isPast,
+  canMutate,
+  onCancel,
+  onReschedule,
 }: {
   b: Booking;
   showOwner: boolean;
@@ -366,12 +336,16 @@ function ReservationRow({
     .filter((e): e is NonNullable<typeof e> => !!e);
 
   return (
-    <li className={cn("px-4 py-3 flex items-center gap-3 hover:bg-muted/30 transition-colors", isPast && "opacity-75")}>
+    <li
+      className={cn(
+        "px-4 py-3 flex items-center gap-3 hover:bg-muted/30 transition-colors",
+        isPast && "opacity-75",
+      )}
+    >
       <div
         className="relative h-10 w-1.5 rounded-full shrink-0"
         style={{ backgroundColor: room?.color ?? office?.color ?? "oklch(0.6 0.1 260)" }}
       />
-
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           {b.resourceKind === "room" ? (
@@ -404,9 +378,15 @@ function ReservationRow({
         </div>
         <div className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-2 flex-wrap">
           <span className="font-mono tabular-nums">{b.date}</span>
-          <span className="font-mono tabular-nums">{b.startTime}–{b.endTime}</span>
+          <span className="font-mono tabular-nums">
+            {b.startTime}–{b.endTime}
+          </span>
           <span>· {mins}m</span>
-          {room && <span>· {room.kind} · cap {room.capacity}</span>}
+          {room && (
+            <span>
+              · {room.kind} · cap {room.capacity}
+            </span>
+          )}
           {seat && <span>· zone {seat.zone}</span>}
         </div>
       </div>
@@ -421,11 +401,7 @@ function ReservationRow({
       {attendees.length > 0 && (
         <div className="hidden md:flex -space-x-1.5 shrink-0">
           {attendees.slice(0, 4).map((a) => (
-            <div
-              key={a.id}
-              title={a.name}
-              className="ring-2 ring-background rounded-full"
-            >
+            <div key={a.id} title={a.name} className="ring-2 ring-background rounded-full">
               <Avatar initials={a.initials} color={a.avatarColor} size={22} />
             </div>
           ))}
