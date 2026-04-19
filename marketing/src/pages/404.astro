@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { ArrowLeft } from "lucide-astro";
+---
+
+<BaseLayout
+  title="404 — page not found — Pulse HR"
+  description="The page you asked for doesn't exist. Head back to the Pulse HR overview or search from the nav."
+  path="/404"
+  noIndex={true}
+>
+  <Nav />
+  <main id="main" class="max-w-[720px] mx-auto px-6 py-24 md:py-32 text-center">
+    <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">Error 404</p>
+    <h1 class="font-display text-6xl md:text-8xl leading-[0.95] tracking-tight">
+      Page not <em class="italic text-[#b4ff39]">found</em>.
+    </h1>
+    <p class="mt-6 text-white/70 text-lg leading-relaxed">
+      You followed a link that no longer exists, or typed the URL by hand.
+      The overview usually has what you're looking for.
+    </p>
+    <div class="mt-10 inline-flex items-center gap-3 flex-wrap justify-center">
+      <a href="/" class="inline-flex items-center gap-2 bg-[#b4ff39] text-[#0b0b0d] px-5 py-3 rounded-md font-medium press-scale hover:bg-[#c6ff5a] transition-colors">
+        <ArrowLeft class="h-4 w-4" />
+        Back to Pulse HR
+      </a>
+      <a href="mailto:hello@pulsehr.com" class="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] px-5 py-3 rounded-md font-medium press-scale transition-colors">
+        Tell us what broke
+      </a>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

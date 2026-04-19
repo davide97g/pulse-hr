@@ -1,0 +1,57 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import LabsSection from "../components/LabsSection.astro";
+import Cta from "../components/Cta.astro";
+import { SITE, LABS } from "../data/landing";
+
+const title = "Pulse Labs — AI Copilot, forecasting, kudos & focus tools";
+const description =
+  "Five Labs features shipping now: Team Pulse sentiment, Commessa Forecast (AI scenario planning), Kudos peer recognition, Focus Mode deep work, and Saturation utilization. Included on every plan.";
+const path = "/labs";
+
+// Labs landing is an `ItemList` — each feature is a SoftwareFeature node
+// linked back to the main product by @id.
+const labsLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Pulse Labs features",
+  itemListElement: LABS.map((lab, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: {
+      "@type": "SoftwareApplication",
+      name: lab.kind,
+      applicationCategory: "BusinessApplication",
+      description: lab.body,
+      isPartOf: { "@id": `${SITE.url}/#software` },
+    },
+  })),
+};
+---
+
+<BaseLayout {title} {description} {path}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">
+        Labs · shipping now · free on every plan
+      </p>
+      <h1 class="font-display text-[56px] md:text-[80px] leading-[0.95] tracking-tight max-w-4xl">
+        The five Pulse features<br />
+        <em class="italic text-[#b4ff39]">reinventing</em> HR software.
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        Labs is where we ship experimental capabilities first — AI forecasting,
+        sentiment heatmaps, peer recognition, deep-work automation and live
+        utilization insights. No waiting lists, no upsells, no enterprise-tier
+        paywall.
+      </p>
+    </section>
+    <LabsSection />
+    <Cta />
+  </main>
+  <Footer />
+  <script type="application/ld+json" set:html={JSON.stringify(labsLd)} />
+</BaseLayout>

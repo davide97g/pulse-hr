@@ -1,0 +1,62 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { Sparkles, ArrowLeft } from "lucide-astro";
+
+interface Props {
+  title: string;
+  /** Path relative to site root (e.g. "/pricing"). Used for canonical. */
+  path: string;
+  /** One-line summary shown as the page description and under the H1. */
+  description: string;
+  /** Optional subtitle paragraph under the H1. */
+  body?: string;
+}
+
+const { title, path, description, body } = Astro.props;
+const absoluteTitle = `${title} — Pulse HR`;
+---
+
+<BaseLayout
+  title={absoluteTitle}
+  description={description}
+  path={path}
+  noIndex={true}
+>
+  <Nav />
+  <main id="main" class="max-w-[960px] mx-auto px-6 py-24 md:py-32">
+    <a href="/" class="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors mb-10">
+      <ArrowLeft class="h-4 w-4" /> Back to Pulse HR
+    </a>
+
+    <p class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/70 mb-6">
+      <Sparkles class="h-3 w-3 text-[#b4ff39]" />
+      Coming soon
+    </p>
+
+    <h1 class="font-display text-5xl md:text-7xl leading-[0.98] tracking-tight">
+      {title}
+    </h1>
+
+    <p class="mt-6 text-white/70 text-lg leading-relaxed max-w-2xl">
+      {description}
+    </p>
+
+    {body && (
+      <div class="mt-8 text-white/60 leading-relaxed max-w-2xl">
+        <slot />
+      </div>
+    )}
+
+    <div class="mt-12 flex items-center gap-3 flex-wrap">
+      <a href="/" class="inline-flex items-center gap-2 bg-[#b4ff39] text-[#0b0b0d] px-5 py-3 rounded-md font-medium press-scale hover:bg-[#c6ff5a] transition-colors">
+        See the overview
+      </a>
+      <a href="mailto:hello@pulsehr.com" class="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] px-5 py-3 rounded-md font-medium press-scale transition-colors">
+        Ping us about {title.toLowerCase()}
+      </a>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

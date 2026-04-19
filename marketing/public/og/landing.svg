@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Pulse HR — the HR and payroll platform you'll actually use">
+  <defs>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b4ff39" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#b4ff39" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="grid" x="0" y="0" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M 64 0 L 0 0 0 64" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Base -->
+  <rect width="1200" height="630" fill="#0b0b0d"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <circle cx="300" cy="260" r="380" fill="url(#glow)"/>
+
+  <!-- Logo mark -->
+  <g transform="translate(80, 80)">
+    <rect x="0" y="0" width="56" height="56" rx="12" fill="#b4ff39"/>
+    <path d="M28 14l4.94 10 11.06 1.6-8 7.8 1.88 11-9.88-5.2-9.88 5.2 1.88-11-8-7.8 11.06-1.6z" fill="#0b0b0d"/>
+    <text x="76" y="38" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="32" font-weight="600" fill="#f2f2ee">Pulse HR</text>
+  </g>
+
+  <!-- Eyebrow -->
+  <text x="80" y="260" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="20" letter-spacing="5" fill="#b4ff39">HR · PAYROLL · TIME TRACKING</text>
+
+  <!-- Headline -->
+  <text x="80" y="360" font-family="Georgia, 'Times New Roman', serif" font-size="84" font-weight="700" fill="#f2f2ee" letter-spacing="-2">The people platform</text>
+  <text x="80" y="452" font-family="Georgia, 'Times New Roman', serif" font-size="84" font-weight="700" fill="#f2f2ee" letter-spacing="-2">
+    you'll <tspan font-style="italic" fill="#b4ff39">actually</tspan> use.
+  </text>
+
+  <!-- Subline -->
+  <text x="80" y="528" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#f2f2ee" fill-opacity="0.7">Multi-country payroll · AI Copilot · keyboard-first · free for 5 employees</text>
+
+  <!-- Bottom accent -->
+  <rect x="80" y="560" width="120" height="4" fill="#b4ff39"/>
+  <text x="80" y="594" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="16" letter-spacing="3" fill="#f2f2ee" fill-opacity="0.5">PULSEHR.COM</text>
+</svg>

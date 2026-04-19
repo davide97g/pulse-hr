@@ -1,0 +1,28 @@
+# Pulse HR
+
+> The HR & payroll platform for teams of 5–500. Unified payroll, time tracking, leave, recruiting, onboarding and kudos in one workspace. Multi-country payroll (US, UK, IT, ES, FR, DE, IE, NL natively), AI Copilot, keyboard-first, PWA-ready. Free for the first 5 employees.
+
+## Overview
+- [Product tour](https://pulsehr.com/product) — Nine products that feel like one: payroll, time, leave, recruiting, onboarding, documents, saturation, Copilot, growth.
+- [Labs features](https://pulsehr.com/labs) — Team Pulse (sentiment), Commessa Forecast (AI scenario planning), Kudos (peer recognition), Focus Mode (deep work), Saturation (utilization).
+- [Changelog](https://pulsehr.com/changelog) — Reverse-chronological product updates.
+- [Pricing](https://pulsehr.com/pricing) — One transparent tier per active employee per month. Free up to 5 employees.
+- [Security](https://pulsehr.com/security) — SOC 2 Type II, GDPR-compliant, EU data residency, ISO 27001 in progress.
+- [API reference](https://pulsehr.com/docs/api) — REST API, webhooks on every resource, SDKs for TypeScript, Python, Go.
+
+## Concepts
+- **Commessa-first** — Every hour, expense and headcount dollar traces to a project (commessa is Italian for a billable job code). Matches how finance sees the company.
+- **One surface** — Replaces Deel, Rippling, and a dozen Google Docs. ⌘K opens search from anywhere.
+- **Workflows not forms** — Leave, expenses, onboarding are structured workflows with owners, deadlines and automation, not forms landing in a shared inbox.
+- **Open by default** — Export anything. Webhooks on every event. Public API with versioned contracts.
+
+## Copilot (AI)
+⌘J opens a streaming natural-language Copilot. Prompts are scoped to the current user's permissions only. No cross-tenant training. Can be disabled per role or org-wide, or routed through a private Azure OpenAI tenant.
+
+## Offline (PWA)
+Installs as a PWA on macOS, Windows, iOS, Android. Recent views, timesheets and kudos drafts work offline and sync on reconnect. Payroll runs require a live connection and queue if offline.
+
+## Contact
+- Email: hello@pulsehr.com · sales@pulsehr.com
+- Status: https://status.pulsehr.com
+- GitHub: https://github.com/pulsehr

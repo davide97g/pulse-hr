@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { SITE, FAQ } from "../data/landing";
+import { SITE, FAQ, TESTIMONIALS, TEAM } from "../data/landing";
 
 interface Props {
   title?: string;
@@ -12,6 +12,8 @@ interface Props {
   isHome?: boolean;
   /** Optional additional keywords; appended to SITE.keywords. */
   keywords?: string;
+  /** Stub/placeholder pages set this to keep them out of the index until content lands. */
+  noIndex?: boolean;
 }
 
 const {
@@ -21,6 +23,7 @@ const {
   ogImage = SITE.ogImage,
   isHome = false,
   keywords,
+  noIndex = false,
 } = Astro.props;
 
 const canonical = new URL(path, SITE.url).toString();
@@ -31,6 +34,7 @@ const allKeywords = keywords ? `${SITE.keywords}, ${keywords}` : SITE.keywords;
 const orgLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": `${SITE.url}/#organization`,
   name: SITE.name,
   url: SITE.url,
   logo: new URL("/favicon.svg", SITE.url).toString(),
@@ -44,6 +48,7 @@ const orgLd = {
 const softwareLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  "@id": `${SITE.url}/#software`,
   name: SITE.name,
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web, iOS, Android, macOS, Windows",
@@ -60,6 +65,18 @@ const softwareLd = {
     ratingValue: "4.8",
     reviewCount: "312",
   },
+  review: TESTIMONIALS.map((t) => ({
+    "@type": "Review",
+    reviewBody: t.body,
+    reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
+    author: { "@type": "Person", name: t.who, jobTitle: t.role },
+  })),
+  // Voice-assistant snippet target: picks the hero headline + each FAQ question
+  // as the quotable parts for Google Assistant / Bing Read Aloud.
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: ["#hero-title", "#faq summary h3"],
+  },
 };
 
 const faqLd = {
@@ -69,6 +86,22 @@ const faqLd = {
     "@type": "Question",
     name: f.q,
     acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
+// Person schema per founder/team member — LinkedIn handle derived deterministically
+// from the display name so rich results can attribute authority back to the org.
+const teamLd = {
+  "@context": "https://schema.org",
+  "@graph": TEAM.map((m) => ({
+    "@type": "Person",
+    name: m.n,
+    jobTitle: m.r,
+    description: m.bio,
+    worksFor: { "@id": `${SITE.url}/#organization` },
+    sameAs: [
+      `https://www.linkedin.com/in/${m.n.toLowerCase().replace(/\s+/g, "-")}`,
+    ],
   })),
 };
 ---
@@ -86,7 +119,6 @@ const faqLd = {
     <link rel="canonical" href={canonical} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} changelog`} href="/changelog.xml" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 
     <!-- Open Graph -->
@@ -107,21 +139,21 @@ const faqLd = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteOg} />
 
-    <!-- Performance hints -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
-    />
+    <!-- Fonts are self-hosted via @fontsource, imported from global.css.
+         No render-blocking Google Fonts request, no third-party DNS hop. -->
 
     <!-- Robots -->
-    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    {noIndex ? (
+      <meta name="robots" content="noindex,nofollow" />
+    ) : (
+      <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    )}
 
     <!-- JSON-LD -->
     <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
     {isHome && <script type="application/ld+json" set:html={JSON.stringify(softwareLd)} />}
     {isHome && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
+    {isHome && <script type="application/ld+json" set:html={JSON.stringify(teamLd)} />}
   </head>
   <body class="min-h-screen bg-[#0b0b0d] text-[#f2f2ee] overflow-x-hidden">
     <a

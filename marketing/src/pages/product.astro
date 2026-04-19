@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Features from "../components/Features.astro";
+import ProductPreview from "../components/ProductPreview.astro";
+import KeyboardCopilot from "../components/KeyboardCopilot.astro";
+import RolesSection from "../components/RolesSection.astro";
+import Cta from "../components/Cta.astro";
+
+const title = "Product tour — Pulse HR platform overview";
+const description =
+  "Nine products that feel like one: payroll, time, leave, recruiting, onboarding, documents, saturation, Copilot and growth. Keyboard-first, role-themed, multi-country.";
+const path = "/product";
+---
+
+<BaseLayout {title} {description} {path}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">
+        Product tour
+      </p>
+      <h1 class="font-display text-[56px] md:text-[80px] leading-[0.95] tracking-tight max-w-4xl">
+        Nine products,<br />
+        <em class="italic text-[#b4ff39]">one workspace</em>.
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        Every module goes deep enough to replace a standalone tool — and they
+        share one profile, one search, one audit log. See how time, payroll
+        and AI Copilot work together in a single surface.
+      </p>
+    </section>
+    <Features />
+    <ProductPreview />
+    <KeyboardCopilot />
+    <RolesSection />
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>

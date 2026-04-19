@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { CHANGELOG } from "../data/landing";
+
+const title = "Pulse HR changelog — product updates & feature shipments";
+const description =
+  "Every meaningful update to the Pulse HR platform. Gantt polish, color decluttering, Employee Score, Saturation tabs, AI Forecast, Copilot streaming — in reverse chronological order.";
+const path = "/changelog";
+---
+
+<BaseLayout {title} {description} {path}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[960px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">
+        Changelog
+      </p>
+      <h1 class="font-display text-[56px] md:text-[80px] leading-[0.95] tracking-tight">
+        What's <em class="italic text-[#b4ff39]">shipped</em>.
+      </h1>
+      <p class="mt-6 max-w-xl text-white/70 text-lg leading-relaxed">
+        Meaningful updates only — no "version 2.38.4 bug fixes" padding.
+        New entries land every week or two, and each one gets a quick note
+        about why it mattered.
+      </p>
+    </section>
+
+    <section class="max-w-[960px] mx-auto px-6 pb-20">
+      <ol class="relative border-l border-white/10 ml-3 space-y-8 list-none p-0">
+        {CHANGELOG.map((e) => (
+          <li class="relative pl-8">
+            <span class="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full bg-[#b4ff39] ring-4 ring-[#0b0b0d]" aria-hidden="true"></span>
+            <div class="flex items-baseline gap-3 flex-wrap mb-2">
+              <time class="font-mono text-xs text-white/40 tabular-nums w-16">{e.d}</time>
+              <span class="text-[10px] font-mono uppercase tracking-[0.18em] text-[#b4ff39] border border-[#b4ff39]/30 px-1.5 py-0.5 rounded-sm">
+                {e.k}
+              </span>
+              <h2 class="font-display text-2xl md:text-3xl m-0">{e.t}</h2>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

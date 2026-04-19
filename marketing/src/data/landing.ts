@@ -2,11 +2,11 @@ export const SITE = {
   name: "Pulse HR",
   url: "https://pulsehr.com",
   description:
-    "Pulse HR unifies payroll, time tracking, leave, recruiting, onboarding and kudos in one workspace. Multi-country payroll, AI Copilot, keyboard-first. Free for the first 5 employees.",
+    "Unified HR, payroll, time tracking, leave, recruiting and kudos. Multi-country payroll, AI Copilot, keyboard-first. Free for the first 5 employees.",
   tagline: "The HR & payroll platform you'll actually use.",
   keywords:
     "HR software, payroll software, time tracking, people platform, HRIS, multi-country payroll, commessa, project hours, AI copilot, PWA",
-  ogImage: "/og/landing.png",
+  ogImage: "/og/landing.svg",
   twitter: "@pulsehr",
 };
 
@@ -53,21 +53,21 @@ export const TESTIMONIALS = [
 
 export const FAQ = [
   { q: "Can I import data from my current HR tool?",
-    a: "Yes. We provide one-click importers for BambooHR, Personio, Rippling, Deel and Factorial, plus a generic CSV importer with column mapping. Most teams migrate a full dataset in under an hour." },
+    a: "Yes. We ship one-click importers for BambooHR, Personio, Rippling, Deel and Factorial, plus a generic CSV importer with column mapping for anything else. The importer runs a dry-run first so you can fix bad rows before committing, and it preserves employee IDs so integrations keep working. Most teams migrate a full dataset — employees, payroll history, leave balances, documents — in under an hour." },
   { q: "How is Pulse HR priced?",
-    a: "Per active employee, per month. A single transparent tier with every feature — no 'talk to sales for payroll'. Free for the first 5 employees, forever." },
+    a: "Per active employee, per month. One transparent tier with every feature included — no 'talk to sales for payroll', no upsell for Labs features, no per-seat add-ons for API access or SSO. Free for the first 5 active employees, forever. Contractors are priced differently and capped at $4 per active contractor per month. Annual billing is 15% off." },
   { q: "Which countries does payroll support?",
-    a: "We natively run payroll in the US, UK, Italy, Spain, France, Germany, Ireland and the Netherlands. For other countries, we integrate with Deel and Remote as contractor rails." },
+    a: "We natively run payroll in the US, UK, Italy, Spain, France, Germany, Ireland and the Netherlands — all tax filings (F24, Form 941, HMRC PAYE, Modelo 111, URSSAF, Lohnsteuer) and statutory reporting included. For every other country, we integrate with Deel and Remote as contractor rails, and with local Employers of Record for full employment where needed." },
   { q: "Is it SOC 2 / GDPR compliant?",
-    a: "SOC 2 Type II audited annually. GDPR-compliant by design, with EU data residency options. ISO 27001 in progress for late 2026." },
+    a: "SOC 2 Type II audited annually — report available under NDA. GDPR-compliant by design with EU data residency options (Frankfurt, Dublin, Milan). Every customer gets a signed Data Processing Agreement at sign-up, sub-processors published at pulsehr.com/security. ISO 27001 certification in progress for late 2026; HIPAA BAAs available for US healthcare customers." },
   { q: "Do you have an API?",
-    a: "Yes — a full REST API, webhooks on every resource, and SDKs for TypeScript, Python and Go. See the Developers tab inside the app." },
+    a: "Yes — a full REST API, webhooks on every resource event (employee.created, leave.approved, payslip.finalised, etc.), and maintained SDKs for TypeScript, Python and Go. API keys are scoped per environment with granular permissions. Full OpenAPI spec published at pulsehr.com/docs/api. Rate limits are 1,000 requests/minute on the standard tier." },
   { q: "Can we self-host?",
-    a: "Yes. The core platform is source-available under the FSL license. Self-hosted deployments on Docker or Kubernetes are supported for teams over 50." },
+    a: "Yes. The core platform is source-available under the Functional Source License (FSL). Self-hosted deployments on Docker or Kubernetes are supported for teams over 50 employees, with a reference Helm chart and Terraform modules. Payroll filing connectors remain managed by Pulse (you'd need tax authority integrations otherwise), but the rest runs entirely on your infrastructure." },
   { q: "Where does Copilot run — and what does it see?",
-    a: "Copilot runs on your tenant's data only. Every prompt is scoped to the current user's permissions, and nothing is used to train cross-tenant models. You can disable AI features per role or org-wide with one toggle." },
+    a: "Copilot runs on your tenant's data only. Every prompt is scoped to the current user's permissions, so an employee can't ask about others' salaries, and no prompts or responses are used to train cross-tenant models. You can disable AI features per role or organisation-wide with one toggle. For regulated industries, Copilot can be routed through a private Azure OpenAI tenant you own." },
   { q: "Does Pulse work offline?",
-    a: "The whole surface installs as a PWA on macOS, Windows, iOS and Android. Recent views, timesheets and kudos drafts keep working offline and sync as soon as you're back — no 'loading…' screens at the airport." },
+    a: "The whole surface installs as a PWA on macOS, Windows, iOS and Android. Recent views, timesheets and kudos drafts keep working offline and sync as soon as you're back — no 'loading…' screens at the airport or in a basement meeting room. Payroll runs and other destructive actions require a live connection and will queue if offline, so you never double-pay someone by mistake." },
 ];
 
 export const TEAM = [

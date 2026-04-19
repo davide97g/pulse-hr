@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
+/* Self-hosted fonts — kill third-party dependency on fonts.googleapis.com.
+   Variable axes (wght 100–900) cover every weight used across the site. */
+@import "@fontsource-variable/fraunces/index.css";
+@import "@fontsource-variable/fraunces/wght-italic.css";
+@import "@fontsource-variable/geist/index.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/600.css";
+
 @theme {
-  --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
-  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Fraunces Variable", "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: "Geist Variable", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --color-brand: #b4ff39;
