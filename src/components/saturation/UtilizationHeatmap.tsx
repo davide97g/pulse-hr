@@ -23,12 +23,12 @@ export function UtilizationHeatmap({ startDate, weeks = 12 }: { startDate: Date;
   }, [weekList, active]);
 
   const cellColor = (pct: number) => {
-    if (pct === 0) return "oklch(0.95 0.01 260)";
-    if (pct <= 40) return `oklch(0.85 0.08 155)`;
-    if (pct <= 70) return `oklch(0.78 0.12 155)`;
-    if (pct <= 100) return `oklch(0.68 0.16 130)`;
-    if (pct <= 130) return `oklch(0.7 0.16 70)`;
-    return `oklch(0.6 0.2 25)`;
+    if (pct === 0) return null; // renders as muted surface, theme-aware
+    if (pct <= 40) return `oklch(0.82 0.1 155)`;
+    if (pct <= 70) return `oklch(0.72 0.14 150)`;
+    if (pct <= 100) return `oklch(0.62 0.17 135)`;
+    if (pct <= 130) return `oklch(0.68 0.18 70)`;
+    return `oklch(0.58 0.21 25)`;
   };
 
   const selectedAllocs = selected
@@ -86,21 +86,30 @@ export function UtilizationHeatmap({ startDate, weeks = 12 }: { startDate: Date;
                         </div>
                       </div>
                     </td>
-                    {cells.map((pct, i) => (
-                      <td key={i} className="p-0.5">
-                        <button
-                          onClick={() => setSelected({ employeeId: emp.id, week: weekList[i] })}
-                          className={cn(
-                            "h-7 w-10 rounded-sm border border-border/50 flex items-center justify-center text-[9px] font-mono transition hover:scale-110",
-                            pct > 100 && "text-white font-semibold",
-                          )}
-                          style={{ backgroundColor: cellColor(pct) }}
-                          title={`${emp.name} · ${weekList[i].toDateString()} · ${pct}%`}
-                        >
-                          {pct > 0 ? pct : ""}
-                        </button>
-                      </td>
-                    ))}
+                    {cells.map((pct, i) => {
+                      const bg = cellColor(pct);
+                      const idle = bg === null;
+                      const burnout = pct > 130;
+                      return (
+                        <td key={i} className="p-0.5">
+                          <button
+                            onClick={() => setSelected({ employeeId: emp.id, week: weekList[i] })}
+                            className={cn(
+                              "h-7 w-10 rounded-sm border flex items-center justify-center text-[10px] font-mono font-semibold transition hover:scale-110",
+                              idle
+                                ? "bg-muted/40 border-border/60 text-muted-foreground/50"
+                                : burnout
+                                  ? "text-white border-black/20"
+                                  : "text-black/80 border-black/10",
+                            )}
+                            style={idle ? undefined : { backgroundColor: bg! }}
+                            title={`${emp.name} · ${weekList[i].toDateString()} · ${pct}%`}
+                          >
+                            {pct > 0 ? pct : ""}
+                          </button>
+                        </td>
+                      );
+                    })}
                   </tr>
                 );
               })}
@@ -164,24 +173,30 @@ function HeatmapLegend() {
     { pct: 150, label: "burnout" },
   ];
   const cellColor = (pct: number) => {
-    if (pct === 0) return "oklch(0.95 0.01 260)";
-    if (pct <= 40) return `oklch(0.85 0.08 155)`;
-    if (pct <= 70) return `oklch(0.78 0.12 155)`;
-    if (pct <= 100) return `oklch(0.68 0.16 130)`;
-    if (pct <= 130) return `oklch(0.7 0.16 70)`;
-    return `oklch(0.6 0.2 25)`;
+    if (pct === 0) return null; // renders as muted surface, theme-aware
+    if (pct <= 40) return `oklch(0.82 0.1 155)`;
+    if (pct <= 70) return `oklch(0.72 0.14 150)`;
+    if (pct <= 100) return `oklch(0.62 0.17 135)`;
+    if (pct <= 130) return `oklch(0.68 0.18 70)`;
+    return `oklch(0.58 0.21 25)`;
   };
   return (
     <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-      {items.map((i) => (
-        <div key={i.pct} className="flex items-center gap-1">
-          <span
-            className="h-3 w-4 rounded-sm border border-border/40"
-            style={{ backgroundColor: cellColor(i.pct) }}
-          />
-          {i.label}
-        </div>
-      ))}
+      {items.map((i) => {
+        const bg = cellColor(i.pct);
+        return (
+          <div key={i.pct} className="flex items-center gap-1">
+            <span
+              className={cn(
+                "h-3 w-4 rounded-sm border",
+                bg ? "border-black/10" : "bg-muted/40 border-border/60",
+              )}
+              style={bg ? { backgroundColor: bg } : undefined}
+            />
+            {i.label}
+          </div>
+        );
+      })}
     </div>
   );
 }

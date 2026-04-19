@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   ZAxis,
   ReferenceLine,
+  Cell,
 } from "recharts";
 import { Card } from "@/components/ui/card";
 import { personValue } from "@/lib/projects";
@@ -89,9 +90,9 @@ export function CostValueScatter() {
               formatter={(v: number, k: string) => (k === "hours" ? `${v}h` : fmt(v))}
               labelFormatter={(_, payload) => payload?.[0]?.payload?.name ?? ""}
             />
-            <Scatter data={data} shape="circle">
+            <Scatter data={data} shape="circle" fillOpacity={0.85}>
               {data.map((d, i) => (
-                <circle key={i} fill={d.color} />
+                <Cell key={i} fill={d.color} stroke="var(--card)" strokeWidth={1.5} />
               ))}
             </Scatter>
           </ScatterChart>
