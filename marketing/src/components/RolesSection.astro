@@ -1,0 +1,50 @@
+---
+import { Palette } from "lucide-astro";
+import { ROLES } from "../data/landing";
+---
+
+<section class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="roles-title">
+  <div class="flex items-end justify-between gap-8 flex-wrap mb-14">
+    <div class="max-w-2xl">
+      <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+        <Palette class="h-3 w-3" /> Every persona, one surface
+      </p>
+      <h2 id="roles-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+        The same app,<br />
+        <em class="italic">five</em> points of view.
+      </h2>
+    </div>
+    <p class="text-white/60 max-w-md text-sm leading-relaxed">
+      Role themes aren't cosmetic. Each persona ships with its own palette, default view, and shortcut set. Engineers don't see payroll drafts. CFOs don't see sprint standups.
+    </p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-px rounded-xl overflow-hidden border border-white/10 bg-white/5">
+    {ROLES.map((r) => (
+      <article
+        class="relative p-6 min-h-[220px] flex flex-col overflow-hidden hover:-translate-y-0.5 transition-transform"
+        style={`background-color: ${r.bg};`}
+      >
+        <div
+          class="absolute -top-12 -right-12 h-32 w-32 rounded-full blur-3xl pointer-events-none opacity-60"
+          style={`background-color: ${r.accent};`}
+          aria-hidden="true"
+        ></div>
+        <div
+          class="h-8 w-8 rounded-md grid place-items-center mb-auto"
+          style={`background-color: ${r.accent}22; color: ${r.accent}; border: 1px solid ${r.accent}66;`}
+        >
+          <span class="font-mono text-xs font-bold">{r.k[0]}</span>
+        </div>
+        <div class="relative mt-6">
+          <h3 class="font-display text-xl">{r.k}</h3>
+          <p class="text-xs text-white/55 mt-1.5 leading-relaxed">{r.d}</p>
+        </div>
+        <div
+          class="relative mt-4 h-1 rounded-full"
+          style={`background-color: ${r.accent};`}
+          aria-hidden="true"
+        ></div>
+      </article>
+    ))}
+  </div>
+</section>

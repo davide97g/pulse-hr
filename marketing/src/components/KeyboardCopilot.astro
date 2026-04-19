@@ -1,0 +1,67 @@
+---
+import { Keyboard, Mic, Command, WifiOff, Sparkles, ArrowRight } from "lucide-astro";
+---
+
+<section class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="keyboard-title">
+  <div class="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 items-center">
+    <div>
+      <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+        <Keyboard class="h-3 w-3" /> Keyboard-first
+      </p>
+      <h2 id="keyboard-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+        Two keys.<br />
+        <em class="italic text-[#b4ff39]">Everything</em>.
+      </h2>
+      <p class="text-white/70 mt-6 max-w-md leading-relaxed">
+        <kbd class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-white/10 border border-white/15">⌘K</kbd> opens a fuzzy command palette — jump to any employee, project, document, setting.
+        <br class="hidden md:inline" />
+        <kbd class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-white/10 border border-white/15 mt-3 inline-block">⌘J</kbd> wakes Copilot — ask anything, approve anything, generate anything. Streamed answers, runnable actions.
+      </p>
+      <ul class="mt-8 flex items-center gap-5 flex-wrap text-sm list-none p-0">
+        <li class="inline-flex items-center gap-2 text-white/70">
+          <Mic class="h-4 w-4 text-[#b4ff39]" />Dictate anywhere
+        </li>
+        <li class="inline-flex items-center gap-2 text-white/70">
+          <Command class="h-4 w-4 text-[#b4ff39]" />40+ shortcuts
+        </li>
+        <li class="inline-flex items-center gap-2 text-white/70">
+          <WifiOff class="h-4 w-4 text-[#b4ff39]" />Works offline
+        </li>
+      </ul>
+    </div>
+    <div class="relative rounded-2xl border border-white/10 bg-[#0f0f11] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] overflow-hidden">
+      <div
+        class="absolute inset-0 pointer-events-none opacity-[0.12]"
+        style="background-image: linear-gradient(to right, #ffffff22 1px, transparent 1px), linear-gradient(to bottom, #ffffff22 1px, transparent 1px); background-size: 32px 32px;"
+        aria-hidden="true"
+      ></div>
+      <div class="relative p-6 space-y-3">
+        <p class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-[11px] text-white/60 m-0">
+          <Sparkles class="h-3 w-3 text-[#b4ff39]" /> Ask Pulse
+          <kbd class="ml-2 font-mono text-[10px] px-1 py-0 rounded bg-white/10 border border-white/15">⌘J</kbd>
+        </p>
+        <div class="rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-sm text-white/80">
+          <span class="text-white/40">&gt;&nbsp;</span>Who's overallocated this sprint on Mobile onboarding?
+        </div>
+        <div class="rounded-lg border border-[#b4ff39]/25 bg-[#b4ff39]/[0.04] px-4 py-3 text-[13px] text-white/85 leading-relaxed space-y-2">
+          <p class="font-mono text-[10px] text-[#b4ff39] uppercase tracking-wider m-0">Answer · streamed in 420ms</p>
+          <p class="m-0">
+            Two people are above 100% load on <span class="font-mono text-[#b4ff39]">NOV-2025-07</span>: Noah Williams (130%) and Yuki Tanaka (108%).
+            The next bottleneck lands in W19 unless you reshuffle.
+          </p>
+          <div class="flex gap-2 pt-1 flex-wrap">
+            {["Draft reshuffle", "Open Saturation", "Message Yuki"].map((a) => (
+              <span class="inline-flex items-center gap-1 h-7 px-2 rounded-md border border-white/15 bg-white/[0.04] text-[11px] text-white/80 hover:border-[#b4ff39]/40 cursor-default">
+                <ArrowRight class="h-3 w-3 text-[#b4ff39]" />{a}
+              </span>
+            ))}
+          </div>
+        </div>
+        <p class="flex gap-2 text-[10px] text-white/35 pt-1 m-0">
+          <span class="font-mono">scoped: your tenant · 12 employees</span>
+          <span class="ml-auto font-mono">no training · no cross-tenant</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,57 @@
+---
+import { Heart, TrendingUp, Gift, Target, Gauge } from "lucide-astro";
+import { LABS } from "../data/landing";
+
+const ICONS: Record<string, any> = { Heart, TrendingUp, Gift, Target, Gauge };
+---
+
+<section id="labs" class="relative max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="labs-title">
+  <div
+    class="absolute inset-x-8 top-10 bottom-10 pointer-events-none rounded-3xl opacity-60"
+    style="background: radial-gradient(ellipse 60% 50% at 30% 20%, #b4ff3914 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 80% 80%, #c06bff12 0%, transparent 60%);"
+    aria-hidden="true"
+  ></div>
+  <div class="relative flex items-end justify-between gap-8 flex-wrap mb-16">
+    <div class="max-w-2xl">
+      <p class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">
+        <span class="h-1.5 w-1.5 rounded-full bg-[#b4ff39] pulse-dot"></span>
+        Labs · shipping now
+      </p>
+      <h2 id="labs-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+        Five bets that landed.
+      </h2>
+    </div>
+    <p class="text-white/60 max-w-md text-sm leading-relaxed">
+      Labs is where we ship the experimental stuff. Every team on Pulse gets it by default — no waiting lists, no upsells, no "enterprise tier" paywall.
+    </p>
+  </div>
+  <div class="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+    {LABS.map((lab, i) => {
+      const Icon = ICONS[lab.icon];
+      const wide = i === 0 || i === 3 ? "lg:col-span-2" : "";
+      return (
+        <article class={`group relative rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent p-6 hover:-translate-y-0.5 transition-transform overflow-hidden ${wide}`}>
+          <div
+            class="absolute -top-20 -right-16 h-52 w-52 rounded-full blur-3xl pointer-events-none opacity-0 group-hover:opacity-60 transition-opacity"
+            style="background: radial-gradient(circle, #b4ff3940 0%, transparent 70%);"
+            aria-hidden="true"
+          ></div>
+          <div class="relative flex items-start gap-4">
+            <div class="h-11 w-11 shrink-0 rounded-md border border-[#b4ff39]/30 bg-[#b4ff39]/[0.08] text-[#b4ff39] grid place-items-center">
+              <Icon class="h-5 w-5" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="flex items-center gap-2 text-[10px] font-mono tracking-[0.18em] uppercase">
+                <span class="text-[#b4ff39]">NEW</span>
+                <span class="text-white/30">·</span>
+                <span class="text-white/60">{lab.tag}</span>
+              </p>
+              <h3 class="font-display text-2xl mt-1">{lab.kind}</h3>
+              <p class="text-sm text-white/60 leading-relaxed mt-2">{lab.body}</p>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>

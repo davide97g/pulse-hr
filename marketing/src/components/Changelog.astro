@@ -1,0 +1,36 @@
+---
+import { ArrowRight } from "lucide-astro";
+import { CHANGELOG } from "../data/landing";
+---
+
+<section id="changelog" class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="changelog-title">
+  <div class="flex items-end justify-between gap-8 flex-wrap mb-12">
+    <div class="max-w-2xl">
+      <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">Shipped recently</p>
+      <h2 id="changelog-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+        A changelog<br />
+        <em class="italic">worth reading</em>.
+      </h2>
+    </div>
+    <a
+      href="/changelog"
+      class="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white border-b border-white/20 hover:border-[#b4ff39] pb-1 transition-colors"
+    >
+      Full changelog <ArrowRight class="h-4 w-4" />
+    </a>
+  </div>
+  <ol class="relative border-l border-white/10 ml-3 space-y-5 list-none p-0">
+    {CHANGELOG.map((e) => (
+      <li class="relative pl-8">
+        <span class="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full bg-[#b4ff39] ring-4 ring-[#0b0b0d]" aria-hidden="true"></span>
+        <div class="flex items-baseline gap-3 flex-wrap">
+          <time class="font-mono text-xs text-white/40 tabular-nums w-16">{e.d}</time>
+          <span class="text-[10px] font-mono uppercase tracking-[0.18em] text-[#b4ff39] border border-[#b4ff39]/30 px-1.5 py-0.5 rounded-sm">
+            {e.k}
+          </span>
+          <span class="font-display text-xl md:text-2xl">{e.t}</span>
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>

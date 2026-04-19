@@ -1,0 +1,38 @@
+---
+import { Sparkles, ChevronDown } from "lucide-astro";
+---
+
+<header class="sticky top-0 z-50 backdrop-blur bg-[#0b0b0d]/70 border-b border-white/5">
+  <div class="max-w-[1280px] mx-auto px-6 h-16 flex items-center gap-8">
+    <a href="/" class="flex items-center gap-2" aria-label="Pulse HR home">
+      <span class="h-7 w-7 rounded-md bg-[#b4ff39] text-[#0b0b0d] flex items-center justify-center">
+        <Sparkles class="h-4 w-4" strokeWidth={2.5} />
+      </span>
+      <span class="font-display text-xl">Pulse HR</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-6 text-sm text-white/70" aria-label="Primary">
+      <a href="#features" class="hover:text-white transition-colors">Features</a>
+      <a href="#labs" class="hover:text-white transition-colors inline-flex items-center gap-1">
+        Labs<span class="h-1 w-1 rounded-full bg-[#b4ff39] pulse-dot"></span>
+      </a>
+      <a href="#product" class="hover:text-white transition-colors">Product</a>
+      <a href="#changelog" class="hover:text-white transition-colors">Changelog</a>
+      <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-2">
+      <a href="https://app.pulsehr.com/login" class="text-sm text-white/70 hover:text-white px-3 py-1.5 rounded-md transition-colors">Sign in</a>
+      <a
+        href="https://app.pulsehr.com/signup"
+        class="text-sm font-medium bg-[#b4ff39] text-[#0b0b0d] px-4 py-2 rounded-md hover:bg-[#c6ff5a] transition-colors press-scale"
+      >
+        Start free
+      </a>
+      <button
+        class="md:hidden h-9 w-9 grid place-items-center rounded-md border border-white/10"
+        aria-label="Toggle menu"
+      >
+        <ChevronDown class="h-4 w-4" />
+      </button>
+    </div>
+  </div>
+</header>

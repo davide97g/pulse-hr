@@ -1,0 +1,135 @@
+---
+import "../styles/global.css";
+import { SITE, FAQ } from "../data/landing";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Path relative to site root, e.g. "/", "/pricing". Used for canonical + OG URL. */
+  path?: string;
+  ogImage?: string;
+  /** Set true on the landing page so we emit extra JSON-LD (Organization + SoftwareApplication + FAQPage). */
+  isHome?: boolean;
+  /** Optional additional keywords; appended to SITE.keywords. */
+  keywords?: string;
+}
+
+const {
+  title = `${SITE.tagline} — ${SITE.name}`,
+  description = SITE.description,
+  path = "/",
+  ogImage = SITE.ogImage,
+  isHome = false,
+  keywords,
+} = Astro.props;
+
+const canonical = new URL(path, SITE.url).toString();
+const absoluteOg = new URL(ogImage, SITE.url).toString();
+const allKeywords = keywords ? `${SITE.keywords}, ${keywords}` : SITE.keywords;
+
+// JSON-LD — Organization + SoftwareApplication + FAQPage
+const orgLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SITE.name,
+  url: SITE.url,
+  logo: new URL("/favicon.svg", SITE.url).toString(),
+  sameAs: [
+    "https://twitter.com/pulsehr",
+    "https://www.linkedin.com/company/pulse-hr",
+    "https://github.com/pulsehr",
+  ],
+};
+
+const softwareLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: SITE.name,
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web, iOS, Android, macOS, Windows",
+  description,
+  url: SITE.url,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+    description: "Free for the first 5 employees, forever.",
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.8",
+    reviewCount: "312",
+  },
+};
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b0d" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={allKeywords} />
+    <link rel="canonical" href={canonical} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} changelog`} href="/changelog.xml" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={absoluteOg} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content={SITE.twitter} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absoluteOg} />
+
+    <!-- Performance hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    />
+
+    <!-- Robots -->
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
+    {isHome && <script type="application/ld+json" set:html={JSON.stringify(softwareLd)} />}
+    {isHome && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
+  </head>
+  <body class="min-h-screen bg-[#0b0b0d] text-[#f2f2ee] overflow-x-hidden">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-[#b4ff39] focus:text-[#0b0b0d] focus:px-3 focus:py-1.5 focus:rounded-md"
+    >
+      Skip to main content
+    </a>
+    <slot />
+  </body>
+</html>

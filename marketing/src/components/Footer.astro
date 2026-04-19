@@ -1,0 +1,68 @@
+---
+import { Sparkles, Twitter, Linkedin, Github, BookOpen, MessageCircle } from "lucide-astro";
+
+const cols = [
+  { t: "Product",   l: [
+    { n: "Features",     h: "#features" },
+    { n: "Product tour", h: "#product" },
+    { n: "Pricing",      h: "/pricing" },
+    { n: "Changelog",    h: "#changelog" },
+    { n: "Roadmap",      h: "/roadmap" },
+  ]},
+  { t: "Company",   l: [
+    { n: "About",      h: "/about" },
+    { n: "Team",       h: "#team" },
+    { n: "Customers",  h: "/customers" },
+    { n: "Careers",    h: "/careers" },
+    { n: "Contact",    h: "/contact" },
+  ]},
+  { t: "Resources", l: [
+    { n: "Docs",          h: "/docs" },
+    { n: "API reference", h: "/docs/api" },
+    { n: "Guides",        h: "/guides" },
+    { n: "Help center",   h: "/help" },
+    { n: "Community",     h: "/community" },
+  ]},
+];
+---
+
+<footer class="border-t border-white/5 mt-12" aria-label="Footer">
+  <div class="max-w-[1280px] mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-5 gap-8">
+    <div class="col-span-2">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="h-7 w-7 rounded-md bg-[#b4ff39] text-[#0b0b0d] grid place-items-center">
+          <Sparkles class="h-4 w-4" strokeWidth={2.5} />
+        </span>
+        <span class="font-display text-xl">Pulse HR</span>
+      </div>
+      <p class="text-sm text-white/50 max-w-xs">The people platform for modern teams. Made in Milan, Berlin and San Francisco.</p>
+      <ul class="flex gap-3 mt-5 text-white/50 list-none p-0">
+        <li><a href="https://twitter.com/pulsehr" class="hover:text-white transition-colors" aria-label="Twitter"><Twitter class="h-4 w-4" /></a></li>
+        <li><a href="https://www.linkedin.com/company/pulse-hr" class="hover:text-white transition-colors" aria-label="LinkedIn"><Linkedin class="h-4 w-4" /></a></li>
+        <li><a href="https://github.com/pulsehr" class="hover:text-white transition-colors" aria-label="GitHub"><Github class="h-4 w-4" /></a></li>
+      </ul>
+    </div>
+    {cols.map((c) => (
+      <nav aria-label={c.t}>
+        <p class="text-xs uppercase tracking-[0.2em] text-white/40 mb-3 m-0">{c.t}</p>
+        <ul class="space-y-2 text-sm text-white/70 list-none p-0">
+          {c.l.map((x) => (
+            <li><a href={x.h} class="hover:text-white transition-colors">{x.n}</a></li>
+          ))}
+        </ul>
+      </nav>
+    ))}
+  </div>
+  <div class="border-t border-white/5">
+    <div class="max-w-[1280px] mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/40">
+      <p class="m-0">© {new Date().getFullYear()} Pulse HR · All rights reserved</p>
+      <div class="flex items-center gap-5">
+        <a href="/privacy" class="hover:text-white">Privacy</a>
+        <a href="/terms" class="hover:text-white">Terms</a>
+        <a href="/security" class="hover:text-white">Security</a>
+        <a href="/docs" class="hover:text-white inline-flex items-center gap-1"><BookOpen class="h-3 w-3" />Docs</a>
+        <a href="https://status.pulsehr.com" class="hover:text-white inline-flex items-center gap-1"><MessageCircle class="h-3 w-3" />Status</a>
+      </div>
+    </div>
+  </div>
+</footer>
