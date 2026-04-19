@@ -7,7 +7,7 @@ import { BookingsProvider } from "./BookingsContext";
 import { OfficesStoreProvider } from "./OfficesStoreProvider";
 import { BookingDialog } from "./BookingDialog";
 import { CommandPalette } from "./CommandPalette";
-import { CopilotLauncher, CopilotOverlay } from "./Copilot";
+import { LogOverlay } from "./LogOverlay";
 import { NewBadge } from "./NewBadge";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { ActiveCommessaPin } from "./ActiveCommessaPin";
@@ -43,8 +43,8 @@ import {
   Languages,
   BookOpen,
   Zap,
-  Heart,
   TrendingUp,
+  MessagesSquare,
   Gift,
   Focus,
   Trophy,
@@ -82,6 +82,10 @@ const groups: NavGroup[] = [
       { to: "/", label: "Dashboard", icon: LayoutDashboard },
       { to: "/announcements", label: "Announcements", icon: Megaphone },
     ],
+  },
+  {
+    label: "Me",
+    items: [{ to: "/log", label: "Status Log", icon: MessagesSquare, isNew: true }],
   },
   {
     label: "People",
@@ -122,7 +126,6 @@ const groups: NavGroup[] = [
     label: "Labs",
     accent: true,
     items: [
-      { to: "/pulse", label: "Team Pulse", icon: Heart, isNew: true },
       { to: "/forecast", label: "Commessa Forecast", icon: TrendingUp, isNew: true },
       { to: "/kudos", label: "Kudos", icon: Gift, isNew: true },
       { to: "/focus", label: "Focus Mode", icon: Focus, isNew: true },
@@ -157,7 +160,7 @@ function AppShellInner() {
   const appShellNav = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [copilotOpen, setCopilotOpen] = useState(false);
+  const [logOpen, setLogOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -173,7 +176,7 @@ function AppShellInner() {
       }
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === "j") {
         e.preventDefault();
-        setCopilotOpen(true);
+        setLogOpen(true);
       }
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === "." || e.code === "Period")) {
         e.preventDefault();
@@ -194,7 +197,7 @@ function AppShellInner() {
 
   useEffect(() => {
     return voiceBus.on((ev) => {
-      if (ev.kind === "draftPrompt" && ev.source === "copilot") setCopilotOpen(true);
+      if (ev.kind === "draftPrompt" && ev.source === "log") setLogOpen(true);
     });
   }, []);
 
@@ -301,7 +304,7 @@ function AppShellInner() {
       <div className="flex-1 flex flex-col min-w-0">
         <Topbar
           onOpenPalette={() => setPaletteOpen(true)}
-          onOpenCopilot={() => setCopilotOpen(true)}
+          onOpenLog={() => setLogOpen(true)}
           onOpenMobileNav={() => setMobileNavOpen(true)}
         />
         <main className="flex-1 overflow-y-auto scrollbar-thin">
@@ -310,7 +313,7 @@ function AppShellInner() {
       </div>
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
-      <CopilotOverlay open={copilotOpen} onOpenChange={setCopilotOpen} />
+      <LogOverlay open={logOpen} onOpenChange={setLogOpen} />
       <ShortcutSheet />
       <VoiceDock />
       <BookingDialog open={bookingOpen} onClose={() => setBookingOpen(false)} />
@@ -356,9 +359,7 @@ function AppShellInner() {
                       >
                         <Icon className="h-4 w-4 shrink-0" />
                         <span className="truncate flex-1">{item.label}</span>
-                        {item.isNew && (
-                          <span className="accent-dot pulse-dot" aria-label="New" />
-                        )}
+                        {item.isNew && <span className="accent-dot pulse-dot" aria-label="New" />}
                       </Link>
                     );
                   })}
@@ -374,11 +375,11 @@ function AppShellInner() {
 
 function Topbar({
   onOpenPalette,
-  onOpenCopilot,
+  onOpenLog,
   onOpenMobileNav,
 }: {
   onOpenPalette: () => void;
-  onOpenCopilot: () => void;
+  onOpenLog: () => void;
   onOpenMobileNav: () => void;
 }) {
   const unread = notifications.filter((n) => n.unread).length;
@@ -414,12 +415,22 @@ function Topbar({
         <ActiveCommessaPin />
       </div>
       <div className="hidden md:inline-flex">
-        <CopilotLauncher onClick={onOpenCopilot} />
+        <button
+          onClick={onOpenLog}
+          className="group relative inline-flex items-center gap-2 h-9 px-3 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale"
+        >
+          <Sparkles className="h-4 w-4 text-primary" />
+          <span className="font-medium">Status Log</span>
+          <NewBadge />
+          <kbd className="hidden md:inline-flex h-5 px-1.5 items-center rounded border bg-muted text-[10px] font-mono">
+            ⌘J
+          </kbd>
+        </button>
       </div>
       <button
-        onClick={onOpenCopilot}
+        onClick={onOpenLog}
         className="md:hidden h-9 w-9 rounded-md border bg-background/80 hover:bg-muted flex items-center justify-center"
-        aria-label="Ask Pulse"
+        aria-label="Status Log"
       >
         <Sparkles className="h-4 w-4 text-primary" />
       </button>
