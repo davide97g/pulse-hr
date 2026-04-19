@@ -1,0 +1,18 @@
+---
+import { USE_CASES } from "../data/landing";
+---
+
+<section class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="usecases-title">
+  <h2 id="usecases-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight max-w-3xl">
+    Built for the way <em class="italic">your</em> team actually works.
+  </h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-14">
+    {USE_CASES.map((u, i) => (
+      <article class="rounded-xl border border-white/10 bg-white/[0.02] p-7 hover:-translate-y-1 transition-transform">
+        <p class="font-mono text-xs text-[#b4ff39] tabular-nums mb-4">{`→ 0${i + 1}`}</p>
+        <h3 class="font-display text-2xl mb-2">{u.k}</h3>
+        <p class="text-white/60 text-sm leading-relaxed">{u.d}</p>
+      </article>
+    ))}
+  </div>
+</section>

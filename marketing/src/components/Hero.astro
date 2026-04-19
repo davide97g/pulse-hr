@@ -1,0 +1,64 @@
+---
+import { ArrowRight, Play, Shield, Globe2, Zap } from "lucide-astro";
+import { HERO_NEW_TAGS } from "../data/landing";
+---
+
+<section class="relative" aria-labelledby="hero-title">
+  <div
+    class="absolute inset-0 pointer-events-none opacity-[0.15]"
+    style="background-image: linear-gradient(to right, #ffffff22 1px, transparent 1px), linear-gradient(to bottom, #ffffff22 1px, transparent 1px); background-size: 64px 64px; mask-image: radial-gradient(ellipse 60% 60% at 50% 40%, black 40%, transparent 100%);"
+    aria-hidden="true"
+  ></div>
+  <div class="absolute top-40 left-1/2 -translate-x-1/2 h-[400px] w-[700px] rounded-full bg-[#b4ff39]/15 blur-[120px] pointer-events-none" aria-hidden="true"></div>
+
+  <div class="relative max-w-[1280px] mx-auto px-6 pt-24 pb-24 md:pt-32">
+    <p class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.02] px-3 py-1 text-xs text-white/70 mb-7">
+      <span class="h-1.5 w-1.5 rounded-full bg-[#b4ff39] pulse-dot"></span>
+      Now in public beta · 4,800+ teams
+    </p>
+
+    <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">
+      HR, payroll &amp; time tracking in one workspace
+    </p>
+
+    <h1 id="hero-title" class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight">
+      The people platform<br />
+      you'll <em class="italic text-[#b4ff39]">actually</em> use<span class="text-[#b4ff39]">.</span>
+    </h1>
+
+    <p class="mt-6 max-w-xl text-white/70 text-lg leading-relaxed">
+      Pulse HR unifies payroll, time, leave, recruiting, onboarding and documents
+      behind a single workspace — <em class="italic">commessa-aware</em> (project-first,
+      the way finance sees it), keyboard-first, fast enough you'll forget it's software.
+    </p>
+
+    <div class="mt-9 flex items-center gap-3 flex-wrap">
+      <a href="https://app.pulsehr.com/signup" class="group inline-flex items-center gap-2 bg-[#b4ff39] text-[#0b0b0d] px-5 py-3 rounded-md font-medium press-scale hover:bg-[#c6ff5a] transition-colors">
+        Start free — 5 employees
+        <ArrowRight class="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+      </a>
+      <a href="#product" class="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] px-5 py-3 rounded-md font-medium press-scale transition-colors">
+        <Play class="h-4 w-4 text-[#b4ff39]" />
+        Tour the app
+      </a>
+    </div>
+
+    <ul class="mt-12 flex items-center gap-6 text-xs text-white/50 flex-wrap list-none p-0">
+      <li class="inline-flex items-center gap-1.5"><Shield class="h-3.5 w-3.5 text-[#b4ff39]" />SOC 2 Type II</li>
+      <li aria-hidden="true">·</li>
+      <li class="inline-flex items-center gap-1.5"><Globe2 class="h-3.5 w-3.5 text-[#b4ff39]" />GDPR · EU data residency</li>
+      <li aria-hidden="true">·</li>
+      <li class="inline-flex items-center gap-1.5"><Zap class="h-3.5 w-3.5 text-[#b4ff39]" />99.99% uptime SLA</li>
+    </ul>
+
+    <div class="mt-10 flex items-center gap-2 flex-wrap text-[11px] text-white/60">
+      <span class="font-mono uppercase tracking-[0.2em] text-[#b4ff39]">New this quarter</span>
+      {HERO_NEW_TAGS.map((t) => (
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 hover:border-[#b4ff39]/40 transition-colors">
+          <span class="h-1 w-1 rounded-full bg-[#b4ff39]"></span>
+          {t}
+        </span>
+      ))}
+    </div>
+  </div>
+</section>

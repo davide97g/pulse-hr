@@ -1,10 +1,11 @@
-export type VoiceSource = "copilot" | "kudos" | "field" | "default";
+export type VoiceSource = "copilot" | "kudos" | "field" | "log" | "default";
 
 export type VoiceEvent =
-  | { kind: "toggle" }
-  | { kind: "start" }
-  | { kind: "stop" }
+  | { kind: "toggle"; source?: VoiceSource }
+  | { kind: "start"; source?: VoiceSource }
+  | { kind: "stop"; source?: VoiceSource }
   | { kind: "state"; listening: boolean }
+  | { kind: "listening"; source: VoiceSource; on: boolean }
   | { kind: "draftPrompt"; text: string; source: VoiceSource };
 
 type Handler = (ev: VoiceEvent) => void;

@@ -1,0 +1,27 @@
+---
+import { ChevronDown } from "lucide-astro";
+import { FAQ } from "../data/landing";
+---
+
+<section id="faq" class="max-w-[1024px] mx-auto px-6 py-24" aria-labelledby="faq-title">
+  <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">Questions we get a lot</p>
+  <h2 id="faq-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight mb-14">
+    Questions, <em class="italic">answered</em>.
+  </h2>
+  <div class="divide-y divide-white/10 border-y border-white/10">
+    {FAQ.map((f, i) => (
+      <details class="group" open={i === 0 ? true : undefined}>
+        <summary class="flex items-center justify-between gap-6 py-6 text-left hover:bg-white/[0.02] transition-colors px-2 cursor-pointer list-none">
+          <h3 class="font-display text-xl md:text-2xl m-0">{f.q}</h3>
+          <ChevronDown class="h-5 w-5 text-[#b4ff39] shrink-0 transition-transform group-open:rotate-180" />
+        </summary>
+        <div class="pb-7 px-2 text-white/70 leading-relaxed max-w-3xl">{f.a}</div>
+      </details>
+    ))}
+  </div>
+</section>
+
+<style>
+  summary::-webkit-details-marker { display: none; }
+  summary { list-style: none; }
+</style>

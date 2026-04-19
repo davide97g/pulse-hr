@@ -554,6 +554,217 @@ export const pulseEntries: PulseEntry[] = Array.from({ length: 42 }).map((_, i) 
   };
 });
 
+export type LogTopic = "status" | "win" | "pain" | "challenge" | "feedback" | "freeform";
+export type LogSentiment = "positive" | "neutral" | "mixed" | "negative";
+
+export interface LogMessage {
+  id: string;
+  employeeId: string;
+  role: "agent" | "employee";
+  text: string;
+  createdAt: string; // ISO
+  topic?: LogTopic;
+  sentiment?: LogSentiment;
+  voice?: boolean;
+  actionId?: string;
+}
+
+export interface LogSession {
+  id: string;
+  employeeId: string;
+  startedAt: string; // ISO date
+  endedAt?: string; // undefined = active
+  summary?: string; // visible to the employee
+  managerSummary?: string; // redacted; only summary crosses the boundary
+  topics: LogTopic[];
+  healthDelta: number; // -10..+10
+}
+
+export interface ManagerAsk {
+  id: string;
+  managerId: string;
+  employeeId: string;
+  topic: string; // "Feedback on ACME demo"
+  prompt: string; // what the agent will ask
+  createdAt: string;
+  dueAt?: string;
+  answeredAt?: string;
+  answerSummary?: string; // only summary crosses the boundary
+  status: "pending" | "answered" | "expired";
+  tone?: "neutral" | "empathetic" | "probing";
+}
+
+export interface EmployeeLogHealth {
+  employeeId: string;
+  score: number; // 0..100
+  trend: "up" | "flat" | "down";
+  lastLogAt?: string;
+  lastSentiment?: LogSentiment;
+  openAsks: number;
+  recap: string; // 1-2 sentence AI mock, manager-safe
+  recapUpdatedAt: string;
+  sparkline: number[]; // 14 daily sentiment ticks, -1..+1
+}
+
+function lcg(seed: number) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 0xffffffff;
+  };
+}
+
+const TOPICS_ORDER: LogTopic[] = ["status", "win", "pain", "challenge", "feedback", "freeform"];
+const SENTIMENTS: LogSentiment[] = ["positive", "neutral", "mixed", "negative"];
+
+function iso(daysAgo: number, hour = 9) {
+  const d = new Date();
+  d.setHours(hour, 0, 0, 0);
+  d.setDate(d.getDate() - daysAgo);
+  return d.toISOString();
+}
+
+const SAMPLE_EMP_LINES = [
+  "Shipped the pricing page ahead of the sprint goal.",
+  "Blocked on the legal review for the ACME contract.",
+  "Spent the morning debugging a flaky export in payroll.",
+  "Pairing session with Luca helped me unstick the onboarding flow.",
+  "Feeling stretched thin — three clients active at once.",
+  "Client demo went well, they want to scope phase 2.",
+  "Stuck on a bug in the time-tracking module; escalating to ops.",
+];
+const SAMPLE_AGENT_LINES = [
+  "Nice — want me to log that as a win?",
+  "Noted. What would unblock this the fastest?",
+  "Got it. Anything you'd want your manager to know, summary-only?",
+  "Mid-sprint check: any risks I should flag into next Monday's plan?",
+  "Thanks for sharing. I'll tag this as a pain point in your recap.",
+];
+
+export const logSessions: LogSession[] = (() => {
+  const rand = lcg(42);
+  const out: LogSession[] = [];
+  for (const e of employees) {
+    for (let day = 28; day >= 0; day -= Math.max(1, Math.floor(rand() * 3))) {
+      const topics = [TOPICS_ORDER[Math.floor(rand() * 4)]];
+      if (rand() > 0.6) topics.push(TOPICS_ORDER[Math.floor(rand() * 6)]);
+      out.push({
+        id: `ls-${e.id}-${day}`,
+        employeeId: e.id,
+        startedAt: iso(day, 9),
+        endedAt: day === 0 ? undefined : iso(day, 17),
+        summary:
+          day === 0
+            ? undefined
+            : `Covered ${topics.join(", ")} with ${Math.floor(rand() * 4) + 2} exchanges.`,
+        managerSummary:
+          day === 0
+            ? undefined
+            : `Recent focus: ${topics[0]}. Sentiment ${SENTIMENTS[Math.floor(rand() * SENTIMENTS.length)]}.`,
+        topics,
+        healthDelta: Math.round((rand() * 20 - 10) * 10) / 10,
+      });
+    }
+  }
+  return out;
+})();
+
+export const logMessages: LogMessage[] = (() => {
+  const rand = lcg(101);
+  const out: LogMessage[] = [];
+  for (const s of logSessions) {
+    const turns = 3 + Math.floor(rand() * 4);
+    for (let t = 0; t < turns; t++) {
+      const isAgent = t % 2 === 0;
+      const createdAt = new Date(new Date(s.startedAt).getTime() + t * 8 * 60_000).toISOString();
+      out.push({
+        id: `lm-${s.id}-${t}`,
+        employeeId: s.employeeId,
+        role: isAgent ? "agent" : "employee",
+        text: isAgent
+          ? SAMPLE_AGENT_LINES[Math.floor(rand() * SAMPLE_AGENT_LINES.length)]
+          : SAMPLE_EMP_LINES[Math.floor(rand() * SAMPLE_EMP_LINES.length)],
+        createdAt,
+        topic: s.topics[Math.floor(rand() * s.topics.length)],
+        sentiment: SENTIMENTS[Math.floor(rand() * SENTIMENTS.length)],
+        voice: rand() > 0.85,
+      });
+    }
+  }
+  return out;
+})();
+
+export const managerAsks: ManagerAsk[] = [
+  {
+    id: "ma-1",
+    managerId: employees[0].id,
+    employeeId: employees[3].id,
+    topic: "Feedback on the ACME demo",
+    prompt:
+      "How did the ACME demo feel from your side? Anything we should change before the follow-up?",
+    createdAt: iso(1),
+    dueAt: iso(-3),
+    status: "pending",
+    tone: "neutral",
+  },
+  {
+    id: "ma-2",
+    managerId: employees[0].id,
+    employeeId: employees[5].id,
+    topic: "Mid-sprint blockers",
+    prompt: "Anything blocking you mid-sprint that I can help unstick?",
+    createdAt: iso(2),
+    status: "pending",
+    tone: "empathetic",
+  },
+  {
+    id: "ma-3",
+    managerId: employees[0].id,
+    employeeId: employees[2].id,
+    topic: "Internal project — payroll v2",
+    prompt: "Quick read on the payroll v2 kickoff — risks you see, wins so far?",
+    createdAt: iso(4),
+    answeredAt: iso(2),
+    answerSummary: "Confident on scope; worried about QA capacity. Wants a week buffer.",
+    status: "answered",
+    tone: "probing",
+  },
+  {
+    id: "ma-4",
+    managerId: employees[0].id,
+    employeeId: employees[7].id,
+    topic: "Energy check",
+    prompt: "Just a pulse — how's your week feeling energy-wise?",
+    createdAt: iso(5),
+    dueAt: iso(-1),
+    status: "expired",
+    tone: "empathetic",
+  },
+];
+
+export const employeeLogHealth: EmployeeLogHealth[] = employees.map((e, i) => {
+  const rand = lcg(200 + i);
+  const score = Math.round(55 + rand() * 45);
+  const trend: EmployeeLogHealth["trend"] = score > 78 ? "up" : score < 60 ? "down" : "flat";
+  const days = Math.floor(rand() * 8);
+  return {
+    employeeId: e.id,
+    score,
+    trend,
+    lastLogAt: iso(days),
+    lastSentiment: SENTIMENTS[Math.floor(rand() * SENTIMENTS.length)],
+    openAsks: managerAsks.filter((a) => a.employeeId === e.id && a.status === "pending").length,
+    recap:
+      score > 78
+        ? `${e.name.split(" ")[0]} is shipping consistently and flagging risks early.`
+        : score < 60
+          ? `${e.name.split(" ")[0]} is signalling overload — two pain points in the last week.`
+          : `${e.name.split(" ")[0]} is steady; mix of wins and minor blockers.`,
+    recapUpdatedAt: iso(0, 7),
+    sparkline: Array.from({ length: 14 }, () => Math.round((rand() * 2 - 1) * 100) / 100),
+  };
+});
+
 export interface Kudo {
   id: string;
   fromId: string;
@@ -1325,20 +1536,6 @@ export const focusSessionsSeed: FocusSession[] = [
     commessaId: "cm4",
     meetingsDeclined: 1,
   },
-];
-
-export interface CopilotSuggestion {
-  id: string;
-  prompt: string;
-  category: "approvals" | "insights" | "admin" | "reports";
-}
-export const copilotSuggestions: CopilotSuggestion[] = [
-  { id: "q1", prompt: "Approve all expenses under $200 from this week", category: "approvals" },
-  { id: "q2", prompt: "Who on the team has overlapping leave in May?", category: "insights" },
-  { id: "q3", prompt: "Summarize April payroll anomalies", category: "reports" },
-  { id: "q4", prompt: "Draft a welcome email for Emma Wilson", category: "admin" },
-  { id: "q5", prompt: "Which commesse are over budget this month?", category: "insights" },
-  { id: "q6", prompt: "Generate a headcount report for Q2 planning", category: "reports" },
 ];
 
 export interface Payslip {

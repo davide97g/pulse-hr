@@ -37,7 +37,13 @@ export type FactorKey =
   | "value"
   | "recognition"
   | "focus"
-  | "billable";
+  | "billable"
+  | "logFreshness";
+
+export interface ScoreOptions {
+  includeLogFreshness?: boolean;
+  logFreshness?: number; // 0..100
+}
 
 export interface EmployeeScore {
   employeeId: string;
@@ -53,6 +59,7 @@ export const SCORE_WEIGHTS: Record<FactorKey, number> = {
   recognition: 0.15,
   focus: 0.1,
   billable: 0.1,
+  logFreshness: 0, // opt-in via ScoreOptions; default weight is 0
 };
 
 export const FACTOR_LABELS: Record<FactorKey, string> = {
@@ -62,6 +69,7 @@ export const FACTOR_LABELS: Record<FactorKey, string> = {
   recognition: "Recognition",
   focus: "Focus",
   billable: "Billable",
+  logFreshness: "Log Freshness",
 };
 
 export const FACTOR_DESCRIPTIONS: Record<FactorKey, string> = {
@@ -74,27 +82,62 @@ export const FACTOR_DESCRIPTIONS: Record<FactorKey, string> = {
   focus: "Count of focus sessions in the last 30 days — proxy for deep work discipline.",
   billable:
     "Share of tracked hours that are billable to clients — skipped for internal-only roles.",
+  logFreshness:
+    "Recency and cadence of Status Log reflections — rewards consistent self-reporting.",
 };
 
-export function computeEmployeeScore(employeeId: string): EmployeeScore {
+export function computeEmployeeScore(employeeId: string, opts?: ScoreOptions): EmployeeScore {
   const emp = employees.find((e) => e.id === employeeId);
   if (!emp) {
     return { employeeId, score: 0, grade: "struggling", factors: [] };
   }
 
+  const useFreshness = opts?.includeLogFreshness === true && typeof opts?.logFreshness === "number";
+
+  // When freshness is opted in, shave 5 off focus + 5 off billable and
+  // give 10 to logFreshness. Otherwise keep the original weights exactly.
+  const weights: Record<FactorKey, number> = useFreshness
+    ? {
+        delivery: 0.25,
+        utilization: 0.2,
+        value: 0.2,
+        recognition: 0.15,
+        focus: 0.05,
+        billable: 0.05,
+        logFreshness: 0.1,
+      }
+    : {
+        delivery: SCORE_WEIGHTS.delivery,
+        utilization: SCORE_WEIGHTS.utilization,
+        value: SCORE_WEIGHTS.value,
+        recognition: SCORE_WEIGHTS.recognition,
+        focus: SCORE_WEIGHTS.focus,
+        billable: SCORE_WEIGHTS.billable,
+        logFreshness: 0,
+      };
+
   const factors: FactorBreakdown[] = [
-    deliveryFactor(emp),
-    utilizationFactor(emp),
-    valueFactor(emp),
-    recognitionFactor(emp),
-    focusFactor(emp),
-    billableFactor(emp),
+    withWeight(deliveryFactor(emp), weights.delivery),
+    withWeight(utilizationFactor(emp), weights.utilization),
+    withWeight(valueFactor(emp), weights.value),
+    withWeight(recognitionFactor(emp), weights.recognition),
+    withWeight(focusFactor(emp), weights.focus),
+    withWeight(billableFactor(emp), weights.billable),
   ];
 
+  if (useFreshness) {
+    const v = clamp(Math.round(opts!.logFreshness as number));
+    factors.push({
+      key: "logFreshness",
+      label: FACTOR_LABELS.logFreshness,
+      value: v,
+      weight: weights.logFreshness,
+      detail: `Status Log freshness score ${v}/100.`,
+    });
+  }
+
   // Rescale weights over non-missing factors
-  const totalWeight = factors
-    .filter((f) => !f.missing)
-    .reduce((s, f) => s + f.weight, 0);
+  const totalWeight = factors.filter((f) => !f.missing).reduce((s, f) => s + f.weight, 0);
   const weighted = factors.reduce(
     (s, f) => (f.missing ? s : s + f.value * (f.weight / Math.max(1e-6, totalWeight))),
     0,
@@ -103,8 +146,12 @@ export function computeEmployeeScore(employeeId: string): EmployeeScore {
   return { employeeId, score, grade: grade(score), factors };
 }
 
-export function allEmployeeScores(): EmployeeScore[] {
-  return employees.map((e) => computeEmployeeScore(e.id));
+function withWeight(f: FactorBreakdown, weight: number): FactorBreakdown {
+  return f.weight === weight ? f : { ...f, weight };
+}
+
+export function allEmployeeScores(opts?: ScoreOptions): EmployeeScore[] {
+  return employees.map((e) => computeEmployeeScore(e.id, opts));
 }
 
 function grade(score: number): EmployeeScore["grade"] {
@@ -148,9 +195,12 @@ function utilizationFactor(e: Employee): FactorBreakdown {
   // Piecewise: 0 at ≤10%, rises to 100 at 80%, falls to 60 at 110%+, 30 at 140%
   let v: number;
   if (load <= 10) v = 0;
-  else if (load < 80) v = 20 + ((load - 10) / 70) * 80; // 20 → 100 linearly
-  else if (load <= 100) v = 100 - ((load - 80) / 20) * 10; // 100 → 90
-  else if (load <= 120) v = 90 - ((load - 100) / 20) * 30; // 90 → 60
+  else if (load < 80)
+    v = 20 + ((load - 10) / 70) * 80; // 20 → 100 linearly
+  else if (load <= 100)
+    v = 100 - ((load - 80) / 20) * 10; // 100 → 90
+  else if (load <= 120)
+    v = 90 - ((load - 100) / 20) * 30; // 90 → 60
   else v = Math.max(20, 60 - ((load - 120) / 30) * 30);
   return {
     key: "utilization",
@@ -199,11 +249,8 @@ function recognitionFactor(e: Employee): FactorBreakdown {
   const given = kudosSeed
     .filter((k) => k.fromId === e.id && within(k.date))
     .reduce((s, k) => s + k.amount, 0);
-  const totalReceived = employees.map(
-    (emp) =>
-      kudosSeed
-        .filter((k) => k.toId === emp.id && within(k.date))
-        .reduce((s, k) => s + k.amount, 0),
+  const totalReceived = employees.map((emp) =>
+    kudosSeed.filter((k) => k.toId === emp.id && within(k.date)).reduce((s, k) => s + k.amount, 0),
   );
   const max = Math.max(1, ...totalReceived);
   const norm = (received / max) * 80 + Math.min(20, (given / max) * 20);

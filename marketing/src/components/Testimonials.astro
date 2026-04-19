@@ -1,0 +1,30 @@
+---
+import { Star } from "lucide-astro";
+import { TESTIMONIALS } from "../data/landing";
+---
+
+<section class="max-w-[1280px] mx-auto px-6 py-24" aria-label="Customer testimonials">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    {TESTIMONIALS.map((t, i) => (
+      <figure
+        class={`rounded-xl border border-white/10 p-7 bg-gradient-to-b ${i === 1 ? "from-[#b4ff39]/10 to-transparent md:scale-[1.02]" : "from-white/[0.03] to-transparent"}`}
+      >
+        <div class="flex gap-0.5 mb-4" aria-label="5 out of 5 stars">
+          {[1,2,3,4,5].map(() => <Star class="h-3.5 w-3.5 fill-[#b4ff39] text-[#b4ff39]" />)}
+        </div>
+        <blockquote class="font-display text-xl leading-snug m-0">
+          "{t.body}"
+        </blockquote>
+        <figcaption class="mt-6 pt-5 border-t border-white/10 flex items-center gap-3">
+          <div class="h-9 w-9 rounded-full bg-white/10 grid place-items-center text-sm" aria-hidden="true">
+            {t.who.split(" ").map((p) => p[0]).join("")}
+          </div>
+          <div>
+            <div class="text-sm font-medium">{t.who}</div>
+            <div class="text-xs text-white/50">{t.role}</div>
+          </div>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</section>

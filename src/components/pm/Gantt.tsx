@@ -49,7 +49,7 @@ export function Gantt({
   );
   const startTs = new Date(rangeStart).getTime();
   const totalMs = new Date(rangeEnd).getTime() - startTs;
-  const rowHeight = 44;
+  const rowHeight = 64;
   const columnWidth = unit === "day" ? 36 : unit === "week" ? 60 : 110;
   const totalWidth = columnWidth * headers.length;
 
@@ -135,42 +135,64 @@ export function Gantt({
                     const width = Math.max(6, right - left);
                     const soft = bar.tone === "soft";
                     return (
-                      <button
+                      <div
                         key={bar.id}
-                        type="button"
-                        onClick={bar.onClick}
-                        className={cn(
-                          "absolute top-1/2 -translate-y-1/2 rounded-md text-[11px] px-2 py-1 text-left truncate border transition press-scale",
-                          bar.onClick && "hover:brightness-110 cursor-pointer",
-                        )}
-                        style={{
-                          left,
-                          width,
-                          backgroundColor: soft
-                            ? `color-mix(in oklch, ${bar.color} 18%, transparent)`
-                            : bar.color,
-                          borderColor: soft
-                            ? `color-mix(in oklch, ${bar.color} 35%, transparent)`
-                            : bar.color,
-                          color: soft ? undefined : "white",
-                          height: rowHeight - 14,
-                        }}
-                        title={`${bar.label} · ${bar.start} → ${bar.end}`}
+                        className="group absolute top-1/2 -translate-y-1/2"
+                        style={{ left, width, height: rowHeight - 16 }}
                       >
-                        <div className="truncate font-medium">{bar.label}</div>
-                        {bar.subtitle && (
-                          <div className="truncate opacity-80 text-[10px]">{bar.subtitle}</div>
-                        )}
-                        {typeof bar.progress === "number" && (
-                          <div
-                            className="absolute bottom-0 left-0 h-1 rounded-b"
-                            style={{
-                              width: `${bar.progress * 100}%`,
-                              backgroundColor: "rgba(255,255,255,0.55)",
-                            }}
-                          />
-                        )}
-                      </button>
+                        <button
+                          type="button"
+                          onClick={bar.onClick}
+                          className={cn(
+                            "w-full h-full rounded-md text-[11px] px-2 py-1.5 text-left border transition press-scale overflow-hidden",
+                            bar.onClick && "hover:brightness-110 cursor-pointer",
+                          )}
+                          style={{
+                            backgroundColor: soft
+                              ? `color-mix(in oklch, ${bar.color} 18%, transparent)`
+                              : bar.color,
+                            borderColor: soft
+                              ? `color-mix(in oklch, ${bar.color} 35%, transparent)`
+                              : bar.color,
+                            color: soft ? undefined : "white",
+                          }}
+                        >
+                          <div className="truncate font-medium leading-tight">{bar.label}</div>
+                          {bar.subtitle && (
+                            <div className="truncate opacity-85 text-[10px] leading-tight mt-0.5">
+                              {bar.subtitle}
+                            </div>
+                          )}
+                          {typeof bar.progress === "number" && (
+                            <div
+                              className="absolute bottom-0 left-0 h-1 rounded-b"
+                              style={{
+                                width: `${bar.progress * 100}%`,
+                                backgroundColor: "rgba(255,255,255,0.55)",
+                              }}
+                            />
+                          )}
+                        </button>
+                        {/* Rich hover card — full data, no truncation */}
+                        <div
+                          className="pointer-events-none absolute left-0 bottom-full mb-2 min-w-[220px] max-w-[320px] rounded-md border bg-popover text-popover-foreground shadow-pop px-3 py-2 text-xs opacity-0 translate-y-1 transition group-hover:opacity-100 group-hover:translate-y-0 z-[3]"
+                        >
+                          <div className="font-semibold mb-0.5 break-words">{bar.label}</div>
+                          {bar.subtitle && (
+                            <div className="text-muted-foreground mb-1 break-words">
+                              {bar.subtitle}
+                            </div>
+                          )}
+                          <div className="font-mono tabular-nums text-[11px] text-muted-foreground">
+                            {bar.start} → {bar.end}
+                          </div>
+                          {typeof bar.progress === "number" && (
+                            <div className="mt-1 text-[11px] tabular-nums">
+                              Progress: {Math.round(bar.progress * 100)}%
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     );
                   })}
                 </div>

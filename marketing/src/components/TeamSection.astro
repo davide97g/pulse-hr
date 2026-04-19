@@ -1,0 +1,30 @@
+---
+import { TEAM } from "../data/landing";
+---
+
+<section id="team" class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="team-title">
+  <div class="flex items-end justify-between gap-8 flex-wrap mb-12">
+    <h2 id="team-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight max-w-xl">
+      The people behind <em class="italic">Pulse</em>.
+    </h2>
+    <p class="text-sm text-white/60 max-w-sm">
+      A team of 18 across six countries, half building, half in the field. We hire from the industries we serve — payroll, HR ops, design.
+    </p>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+    {TEAM.map((m, i) => (
+      <article class="rounded-lg border border-white/10 bg-white/[0.02] p-5 hover:bg-white/[0.05] transition-colors group">
+        <div
+          class="h-12 w-12 rounded-full grid place-items-center text-sm font-medium mb-4 text-white/80 bg-white/10"
+          style={`background-color: hsl(${(i * 53) % 360}, 40%, 25%);`}
+          aria-hidden="true"
+        >
+          {m.n.split(" ").map((p) => p[0]).join("")}
+        </div>
+        <p class="text-sm font-medium m-0">{m.n}</p>
+        <p class="text-[11px] text-[#b4ff39] uppercase tracking-wider mt-0.5 m-0">{m.r}</p>
+        <p class="text-xs text-white/50 mt-3 leading-relaxed m-0">{m.bio}</p>
+      </article>
+    ))}
+  </div>
+</section>

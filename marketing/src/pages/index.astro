@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Hero from "../components/Hero.astro";
+import Marquee from "../components/Marquee.astro";
+import StatsBar from "../components/StatsBar.astro";
+import Concepts from "../components/Concepts.astro";
+import Features from "../components/Features.astro";
+import LabsSection from "../components/LabsSection.astro";
+import KeyboardCopilot from "../components/KeyboardCopilot.astro";
+import ProductPreview from "../components/ProductPreview.astro";
+import RolesSection from "../components/RolesSection.astro";
+import UseCases from "../components/UseCases.astro";
+import Testimonials from "../components/Testimonials.astro";
+import Changelog from "../components/Changelog.astro";
+import TeamSection from "../components/TeamSection.astro";
+import FaqSection from "../components/FaqSection.astro";
+import Cta from "../components/Cta.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<BaseLayout
+  title="HR & payroll platform for teams of 5–500 — Pulse HR"
+  description="Pulse HR unifies payroll, time tracking, leave, recruiting, onboarding and kudos in one workspace. Multi-country payroll, AI Copilot (⌘J), keyboard-first. Free for the first 5 employees."
+  path="/"
+  isHome={true}
+>
+  <Nav />
+  <main id="main">
+    <Hero />
+    <Marquee />
+    <StatsBar />
+    <Concepts />
+    <Features />
+    <LabsSection />
+    <KeyboardCopilot />
+    <ProductPreview />
+    <RolesSection />
+    <UseCases />
+    <Testimonials />
+    <Changelog />
+    <TeamSection />
+    <FaqSection />
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>
