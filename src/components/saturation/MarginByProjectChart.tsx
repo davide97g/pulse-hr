@@ -75,7 +75,10 @@ export function MarginByProjectChart() {
                 border: "1px solid var(--border)",
                 borderRadius: 8,
                 fontSize: 12,
+                color: "var(--foreground)",
               }}
+              itemStyle={{ color: "var(--foreground)" }}
+              labelStyle={{ color: "var(--foreground)", fontWeight: 600 }}
               formatter={(v: number) => fmt(v)}
             />
             <Bar dataKey="margin" radius={[4, 4, 4, 4]}>

@@ -87,7 +87,10 @@ export function UtilizationTrendChart({
                   border: "1px solid var(--border)",
                   borderRadius: 8,
                   fontSize: 12,
+                  color: "var(--foreground)",
                 }}
+                itemStyle={{ color: "var(--foreground)" }}
+                labelStyle={{ color: "var(--foreground)", fontWeight: 600, marginBottom: 4 }}
                 formatter={(v: number, name: string) => {
                   const emp = active.find((e) => e.id === name);
                   return [`${v}%`, emp?.name ?? name];

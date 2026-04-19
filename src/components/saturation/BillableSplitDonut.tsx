@@ -34,7 +34,10 @@ export function BillableSplitDonut() {
                   border: "1px solid var(--border)",
                   borderRadius: 8,
                   fontSize: 12,
+                  color: "var(--foreground)",
                 }}
+                itemStyle={{ color: "var(--foreground)" }}
+                labelStyle={{ color: "var(--foreground)" }}
                 formatter={(v: number) => `${v}h`}
               />
             </PieChart>

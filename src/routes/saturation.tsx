@@ -1,22 +1,36 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Gauge } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SaturationKPIs } from "@/components/saturation/SaturationKPIs";
 import { UtilizationHeatmap } from "@/components/saturation/UtilizationHeatmap";
 import { UtilizationTrendChart } from "@/components/saturation/UtilizationTrendChart";
 import { MarginByProjectChart } from "@/components/saturation/MarginByProjectChart";
 import { CostValueScatter } from "@/components/saturation/CostValueScatter";
 import { BillableSplitDonut } from "@/components/saturation/BillableSplitDonut";
+import { SaturationInsights } from "@/components/saturation/SaturationInsights";
 import { commesse, employees } from "@/lib/mock-data";
 import { orgUtilization, personValue, billableSplit } from "@/lib/projects";
 
+type SaturationSection = "load" | "margins" | "value" | "insights";
+type SaturationSearch = { section?: SaturationSection };
+
 export const Route = createFileRoute("/saturation")({
   head: () => ({ meta: [{ title: "Saturation — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>): SaturationSearch => ({
+    section: (s.section as SaturationSection) || undefined,
+  }),
   component: Saturation,
 });
 
 function Saturation() {
+  const nav = useNavigate({ from: "/saturation" });
+  const search = Route.useSearch();
+  const section = search.section ?? "load";
+  const setSection = (v: string) =>
+    nav({ search: (prev) => ({ ...prev, section: v === "load" ? undefined : (v as SaturationSection) }) });
+
   const [startWeek] = useState(() => new Date());
   const [hoveredEmployeeId, setHoveredEmployeeId] = useState<string | null>(null);
 
@@ -27,14 +41,12 @@ function Saturation() {
     const used = (orgUtilPct / 100) * capacity;
     return Math.max(0, capacity - used);
   }, [orgUtilPct]);
-
   const blendedMarginPct = useMemo(() => {
     const ppl = personValue();
     const totalRev = ppl.reduce((s, p) => s + p.revenue, 0);
     const totalCost = ppl.reduce((s, p) => s + p.cost, 0);
     return totalRev > 0 ? ((totalRev - totalCost) / totalRev) * 100 : 0;
   }, []);
-
   const atRiskProjects = useMemo(
     () => commesse.filter((p) => p.status === "at_risk" || p.status === "on_hold").length,
     [],
@@ -46,16 +58,12 @@ function Saturation() {
       <div
         aria-hidden
         className="pointer-events-none absolute -top-24 -left-24 h-80 w-80 rounded-full blur-3xl opacity-60"
-        style={{
-          background: "radial-gradient(closest-side, oklch(0.75 0.18 260 / .35), transparent)",
-        }}
+        style={{ background: "radial-gradient(closest-side, oklch(0.75 0.18 260 / .35), transparent)" }}
       />
       <div
         aria-hidden
         className="pointer-events-none absolute -top-16 right-0 h-72 w-72 rounded-full blur-3xl opacity-50"
-        style={{
-          background: "radial-gradient(closest-side, oklch(0.75 0.18 320 / .35), transparent)",
-        }}
+        style={{ background: "radial-gradient(closest-side, oklch(0.75 0.18 320 / .35), transparent)" }}
       />
 
       <div className="relative">
@@ -69,7 +77,7 @@ function Saturation() {
                   <span className="new-badge">NEW</span>
                 </span>
               }
-              description="How busy the org is, who is leaning in, and what each hour returns in €. Updates with allocations + timesheets."
+              description="How busy the org is, who is leaning in, and what each hour returns in €."
             />
           </div>
         </div>
@@ -79,62 +87,88 @@ function Saturation() {
           benchHours={benchHours}
           blendedMarginPct={blendedMarginPct}
           atRiskProjects={atRiskProjects}
+          onJumpTo={(target) => setSection(target)}
         />
 
-        <div className="mt-5 grid grid-cols-1 gap-4">
-          <UtilizationHeatmap
-            startDate={startWeek}
-            weeks={12}
-            hoveredEmployeeId={hoveredEmployeeId}
-            onHoverEmployee={setHoveredEmployeeId}
-          />
-          <UtilizationTrendChart
-            startDate={startWeek}
-            weeks={12}
-            hoveredEmployeeId={hoveredEmployeeId}
-            onHoverEmployee={setHoveredEmployeeId}
-          />
-        </div>
+        <div className="mt-6">
+          <Tabs value={section} onValueChange={setSection}>
+            <TabsList>
+              <TabsTrigger value="load">Team load</TabsTrigger>
+              <TabsTrigger value="margins">Project margins</TabsTrigger>
+              <TabsTrigger value="value">Employee value</TabsTrigger>
+              <TabsTrigger value="insights">Insights</TabsTrigger>
+            </TabsList>
 
-        <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <MarginByProjectChart />
-          <CostValueScatter />
-        </div>
+            <TabsContent value="load" className="pt-5 space-y-4">
+              <UtilizationHeatmap
+                startDate={startWeek}
+                weeks={12}
+                hoveredEmployeeId={hoveredEmployeeId}
+                onHoverEmployee={setHoveredEmployeeId}
+              />
+              <UtilizationTrendChart
+                startDate={startWeek}
+                weeks={12}
+                hoveredEmployeeId={hoveredEmployeeId}
+                onHoverEmployee={setHoveredEmployeeId}
+              />
+            </TabsContent>
 
-        <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <BillableSplitDonut />
-          <div className="lg:col-span-2 rounded-lg border bg-card p-5">
-            <div className="text-sm font-semibold mb-3">Reading guide</div>
-            <ul className="text-xs text-muted-foreground space-y-2 list-disc pl-5">
-              <li>
-                <span className="text-foreground font-medium">Heatmap</span> — columns are weeks,
-                cells are each employee's load. Anything &gt;100% is a staffing risk; blank columns
-                are bench.
-              </li>
-              <li>
-                <span className="text-foreground font-medium">Margin by project</span> — positive
-                bars in the project's own color, negative bars in red. Sorted to surface the biggest
-                earners and drains.
-              </li>
-              <li>
-                <span className="text-foreground font-medium">Cost vs value</span> — upper-right
-                quadrant is the high-leverage cohort; lower-right means we're paying more than we're
-                selling.
-              </li>
-              <li>
-                <span className="text-foreground font-medium">Billable split</span> — fed from
-                timesheets. Low billable ratio signals too much internal work vs client delivery.
-              </li>
-              <li className="text-[10px]">
-                Cost = salary / 1,800h baseline · Revenue = allocation % × rate × hours. Both are
-                mock.
-              </li>
-            </ul>
-            <div className="mt-4 text-[11px] text-muted-foreground">
-              {split.total.toFixed(0)}h tracked this period · org running at {orgUtilPct.toFixed(0)}
-              %.
-            </div>
-          </div>
+            <TabsContent value="margins" className="pt-5 space-y-4">
+              <MarginByProjectChart />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <BillableSplitDonut />
+                <div className="rounded-lg border bg-card p-5">
+                  <div className="text-sm font-semibold mb-3">How to read this</div>
+                  <ul className="text-xs text-muted-foreground space-y-2 list-disc pl-5">
+                    <li>
+                      <span className="text-foreground font-medium">Bars in the project's own color</span> are
+                      making money. Bars in red are net losses YTD.
+                    </li>
+                    <li>
+                      <span className="text-foreground font-medium">Billable share</span> is fed from timesheets —
+                      a low number means internal work is crowding out client delivery.
+                    </li>
+                    <li className="text-[10px]">
+                      Cost = salary / 1,800h baseline · Revenue = allocation % × rate × hours.
+                    </li>
+                  </ul>
+                  <div className="mt-4 text-[11px] text-muted-foreground">
+                    {split.total.toFixed(0)}h tracked this period.
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="value" className="pt-5 space-y-4">
+              <CostValueScatter />
+              <div className="rounded-lg border bg-card p-5">
+                <div className="text-sm font-semibold mb-2">Quadrant guide</div>
+                <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
+                  <div>
+                    <span className="text-success font-medium">↗ Upper right</span> — high cost, high revenue.
+                    Profitable senior talent.
+                  </div>
+                  <div>
+                    <span className="text-foreground font-medium">↖ Upper left</span> — cheap to run, strong
+                    revenue. Leverage points — keep them happy.
+                  </div>
+                  <div>
+                    <span className="text-destructive font-medium">↘ Lower right</span> — expensive, low return.
+                    Re-deploy to higher-leverage work.
+                  </div>
+                  <div>
+                    <span className="text-foreground font-medium">↙ Lower left</span> — low cost, low revenue.
+                    Bench or training — fine until it isn't.
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="insights" className="pt-5">
+              <SaturationInsights />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

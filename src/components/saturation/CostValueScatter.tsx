@@ -86,7 +86,10 @@ export function CostValueScatter() {
                 border: "1px solid var(--border)",
                 borderRadius: 8,
                 fontSize: 12,
+                color: "var(--foreground)",
               }}
+              itemStyle={{ color: "var(--foreground)" }}
+              labelStyle={{ color: "var(--foreground)", fontWeight: 600, marginBottom: 4 }}
               formatter={(v: number, k: string) => (k === "hours" ? `${v}h` : fmt(v))}
               labelFormatter={(_, payload) => payload?.[0]?.payload?.name ?? ""}
             />
