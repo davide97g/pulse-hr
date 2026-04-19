@@ -161,11 +161,8 @@ function FocusPage() {
           <div className="max-w-md mx-auto mt-6">
             <div className="h-1.5 rounded-full bg-muted overflow-hidden">
               <div
-                className="h-full rounded-full transition-[width] duration-1000 ease-linear"
-                style={{
-                  width: `${progress}%`,
-                  background: "linear-gradient(90deg,#b4ff39,#39e1ff,#c06bff)",
-                }}
+                className="h-full rounded-full bg-primary transition-[width] duration-1000 ease-linear"
+                style={{ width: `${progress}%` }}
               />
             </div>
           </div>

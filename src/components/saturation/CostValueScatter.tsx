@@ -13,8 +13,6 @@ import {
 } from "recharts";
 import { Card } from "@/components/ui/card";
 import { personValue } from "@/lib/projects";
-import { employeeById } from "@/lib/mock-data";
-
 const fmt = (n: number) => {
   const abs = Math.abs(n);
   if (abs >= 1_000) return `€${(n / 1_000).toFixed(0)}k`;
@@ -26,21 +24,25 @@ export function CostValueScatter() {
     () =>
       personValue()
         .filter((p) => p.hours > 0)
-        .map((p) => {
-          const e = employeeById(p.employeeId);
-          return {
-            name: p.name,
-            cost: Math.round(p.cost),
-            revenue: Math.round(p.revenue),
-            hours: Math.round(p.hours),
-            color: e?.avatarColor ?? "oklch(0.6 0.1 260)",
-          };
-        }),
+        .map((p) => ({
+          name: p.name,
+          cost: Math.round(p.cost),
+          revenue: Math.round(p.revenue),
+          hours: Math.round(p.hours),
+        })),
     [],
   );
 
   const medianCost = median(data.map((d) => d.cost));
   const medianRev = median(data.map((d) => d.revenue));
+
+  // Quadrant-driven color: high revenue + low cost → primary (leverage);
+  // high cost + low revenue → destructive (watch); rest → muted.
+  const dotFill = (d: (typeof data)[number]) => {
+    if (d.revenue >= medianRev && d.cost <= medianCost) return "var(--primary)";
+    if (d.revenue < medianRev && d.cost > medianCost) return "var(--destructive)";
+    return "var(--chart-muted)";
+  };
 
   return (
     <Card className="p-5">
@@ -95,7 +97,7 @@ export function CostValueScatter() {
             />
             <Scatter data={data} shape="circle" fillOpacity={0.85}>
               {data.map((d, i) => (
-                <Cell key={i} fill={d.color} stroke="var(--card)" strokeWidth={1.5} />
+                <Cell key={i} fill={dotFill(d)} stroke="var(--card)" strokeWidth={1.5} />
               ))}
             </Scatter>
           </ScatterChart>

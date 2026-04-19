@@ -274,14 +274,20 @@ function Moments() {
   );
 }
 
+// Single-slide reel — tint per kind. Collapsed to tokens so theme switching
+// flows through; celebrations use warning/amber, achievements use primary.
 function slideTint(kind: SlideKind): string {
   switch (kind) {
-    case "birthday": return "oklch(0.75 0.2 85)";
-    case "kudos":    return "oklch(0.65 0.18 340)";
-    case "focus":    return "oklch(0.78 0.18 130)";
-    case "goal":     return "oklch(0.6 0.16 220)";
-    case "podium":   return "oklch(0.82 0.17 85)";
-    case "vibe":     return "oklch(0.7 0.15 30)";
+    case "birthday":
+    case "podium":
+      return "var(--warning)";
+    case "kudos":
+    case "vibe":
+      return "var(--destructive)";
+    case "focus":
+      return "var(--success)";
+    case "goal":
+      return "var(--primary)";
   }
 }
 
@@ -403,29 +409,23 @@ function SlideBody({
     );
   }
   if (slide.kind === "podium" && ctx.podium.length > 0) {
-    const tints = ["oklch(0.82 0.17 85)", "oklch(0.78 0.03 250)", "oklch(0.68 0.14 50)"];
     return (
       <div className="grid grid-cols-3 gap-4 items-end">
         {ctx.podium.map((row, i) => (
           <div key={row.employee.id} className="text-center">
-            <div
-              className="relative inline-block rounded-full p-1 mb-2"
-              style={{
-                background: `conic-gradient(from 0deg, ${tints[i]}, color-mix(in oklch, ${tints[i]} 50%, transparent), ${tints[i]})`,
-              }}
-            >
-              <div className="bg-card rounded-full p-0.5">
-                <Avatar initials={row.employee.initials} color={row.employee.avatarColor} size={i === 0 ? 72 : 56} employeeId={row.employee.id} />
-              </div>
+            <div className="relative inline-block mb-2">
+              <Avatar initials={row.employee.initials} color={row.employee.avatarColor} size={i === 0 ? 72 : 56} employeeId={row.employee.id} />
               <div
-                className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full grid place-items-center text-base border-2 border-card"
-                style={{ backgroundColor: tints[i] }}
+                className={cn(
+                  "absolute -bottom-1 -right-1 h-7 w-7 rounded-full grid place-items-center text-sm font-semibold border-2 border-card bg-card tabular-nums",
+                  i === 0 && "text-warning",
+                )}
               >
-                {i === 0 ? <Crown className="h-4 w-4 text-white" /> : i + 1}
+                {i === 0 ? <Crown className="h-4 w-4" /> : i + 1}
               </div>
             </div>
             <div className="text-sm font-semibold truncate">{row.employee.name}</div>
-            <div className="font-mono text-xl tabular-nums mt-1" style={{ color: tints[i] }}>
+            <div className="font-mono text-xl tabular-nums mt-1 text-primary">
               +{row.xp.toLocaleString()} XP
             </div>
           </div>

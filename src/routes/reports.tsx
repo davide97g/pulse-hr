@@ -50,31 +50,24 @@ function attendanceSeries(days = 30) {
   });
 }
 
+// Bar fill is picked per row at render time so charts follow the active
+// theme's primary + warn for outliers. Keeps the rainbow out of reports.
 function overtimeByTeam() {
   return [
-    { team: "Engineering", hours: 42, color: "oklch(0.6 0.16 220)" },
-    { team: "Product",     hours: 28, color: "oklch(0.65 0.18 340)" },
-    { team: "Design",      hours: 18, color: "oklch(0.7 0.15 30)"  },
-    { team: "Sales",       hours: 24, color: "oklch(0.75 0.15 75)" },
-    { team: "Finance",     hours: 9,  color: "oklch(0.65 0.15 155)"},
-    { team: "People Ops",  hours: 14, color: "oklch(0.6 0.18 280)" },
+    { team: "Engineering", hours: 42 },
+    { team: "Product",     hours: 28 },
+    { team: "Design",      hours: 18 },
+    { team: "Sales",       hours: 24 },
+    { team: "Finance",     hours: 9  },
+    { team: "People Ops",  hours: 14 },
   ];
 }
 
 function costByDepartment() {
-  return departments.map((d, i) => ({
+  return departments.map((d) => ({
     department: d.name,
     cost: Math.round(d.budget / 1000), // k€/$
     headcount: d.count,
-    color: [
-      "oklch(0.6 0.16 220)",
-      "oklch(0.65 0.18 340)",
-      "oklch(0.7 0.15 30)",
-      "oklch(0.75 0.15 75)",
-      "oklch(0.65 0.15 155)",
-      "oklch(0.6 0.18 280)",
-      "oklch(0.6 0.16 195)",
-    ][i % 7],
   })).sort((a, b) => b.cost - a.cost);
 }
 
@@ -157,7 +150,7 @@ function Reports() {
             value="12"
             delta="+18% YoY"
             deltaTone="success"
-            color="oklch(0.6 0.16 220)"
+            color="var(--primary)"
             spark={sparklineFor("headcount")}
           />
           <KpiTile
@@ -166,7 +159,7 @@ function Reports() {
             value="4.2%"
             delta="Below industry avg"
             deltaTone="success"
-            color="oklch(0.65 0.15 155)"
+            color="var(--success)"
             spark={sparklineFor("turnover")}
           />
           <KpiTile
@@ -175,7 +168,7 @@ function Reports() {
             value="$118k"
             delta="+3% vs Q1"
             deltaTone="warn"
-            color="oklch(0.75 0.15 75)"
+            color="var(--warning)"
             spark={sparklineFor("cost")}
           />
           <KpiTile
@@ -184,7 +177,7 @@ function Reports() {
             value="2.1%"
             delta="−0.4 pts"
             deltaTone="success"
-            color="oklch(0.6 0.18 280)"
+            color="var(--primary)"
             spark={sparklineFor("absent")}
           />
         </div>
@@ -308,8 +301,8 @@ const AXIS_PROPS = {
 };
 
 function AttendanceChart({ data }: { data: ReturnType<typeof attendanceSeries> }) {
-  const accent = "oklch(0.6 0.16 220)";
-  const muted  = "oklch(0.5 0.02 260)";
+  const accent = "var(--primary)";
+  const muted  = "var(--chart-muted)";
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} margin={{ top: 8, right: 4, left: -16, bottom: 0 }}>
@@ -336,7 +329,9 @@ function CostByDeptChart({ data }: { data: ReturnType<typeof costByDepartment> }
         <YAxis type="category" dataKey="department" width={88} {...AXIS_PROPS} />
         <Tooltip content={<ChartTooltip suffix="k" />} cursor={{ fill: "currentColor", fillOpacity: 0.04 }} />
         <Bar dataKey="cost" name="Annual budget" radius={[0, 4, 4, 0]}>
-          {data.map((d, i) => <Cell key={i} fill={d.color} />)}
+          {data.map((_, i) => (
+            <Cell key={i} fill={i === 0 ? "var(--primary)" : "var(--chart-muted)"} />
+          ))}
         </Bar>
       </BarChart>
     </ResponsiveContainer>
@@ -352,7 +347,9 @@ function OvertimeChart({ data }: { data: ReturnType<typeof overtimeByTeam> }) {
         <YAxis unit="h" {...AXIS_PROPS} />
         <Tooltip content={<ChartTooltip suffix="h" />} cursor={{ fill: "currentColor", fillOpacity: 0.04 }} />
         <Bar dataKey="hours" name="Overtime" radius={[4, 4, 0, 0]}>
-          {data.map((d, i) => <Cell key={i} fill={d.color} />)}
+          {data.map((d, i) => (
+            <Cell key={i} fill={d.hours > 30 ? "var(--warning)" : "var(--primary)"} />
+          ))}
         </Bar>
       </BarChart>
     </ResponsiveContainer>
@@ -360,7 +357,7 @@ function OvertimeChart({ data }: { data: ReturnType<typeof overtimeByTeam> }) {
 }
 
 function HeadcountChart({ data }: { data: ReturnType<typeof headcountGrowth> }) {
-  const accent = "oklch(0.7 0.17 258)";
+  const accent = "var(--primary)";
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data} margin={{ top: 8, right: 4, left: -16, bottom: 0 }}>

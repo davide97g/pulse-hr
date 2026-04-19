@@ -213,19 +213,8 @@ function Leaderboard() {
 
   return (
     <Card className="p-5 overflow-hidden relative">
-      <div
-        className="absolute -top-24 -left-24 h-64 w-64 rounded-full blur-3xl pointer-events-none"
-        style={{ background: "oklch(0.82 0.2 85 / 0.18)" }}
-        aria-hidden
-      />
-      <div
-        className="absolute -top-24 -right-16 h-60 w-60 rounded-full blur-3xl pointer-events-none"
-        style={{ background: "oklch(0.65 0.22 330 / 0.15)" }}
-        aria-hidden
-      />
-
       <div className="relative flex items-center gap-2 mb-4 flex-wrap">
-        <div className="h-8 w-8 rounded-md grid place-items-center" style={{ background: "oklch(0.82 0.17 85 / 0.15)", color: "oklch(0.72 0.17 75)" }}>
+        <div className="h-8 w-8 rounded-md grid place-items-center bg-warning/15 text-warning">
           <Trophy className="h-4 w-4" />
         </div>
         <div>
@@ -361,26 +350,9 @@ function PodiumStep({ entry, prize, rank }: { entry: LeaderboardEntry; prize: Pr
         </div>
       )}
       <div className="relative">
-        {rank === 1 && (
-          <div
-            className="absolute -inset-2 rounded-full blur-md pointer-events-none pulse-dot"
-            style={{ background: prize.tint, opacity: 0.45 }}
-            aria-hidden
-          />
-        )}
+        <Avatar initials={entry.employee.initials} color={entry.employee.avatarColor} size={avatarSize} employeeId={entry.employee.id} />
         <div
-          className="relative rounded-full p-0.5"
-          style={{
-            background: `conic-gradient(from 0deg, ${prize.tint}, color-mix(in oklch, ${prize.tint} 60%, transparent), ${prize.tint})`,
-          }}
-        >
-          <div className="bg-card rounded-full p-0.5">
-            <Avatar initials={entry.employee.initials} color={entry.employee.avatarColor} size={avatarSize} employeeId={entry.employee.id} />
-          </div>
-        </div>
-        <div
-          className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full grid place-items-center text-base shadow-sm border-2 border-card"
-          style={{ backgroundColor: prize.tint }}
+          className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full grid place-items-center text-base shadow-sm border-2 border-card bg-card"
           aria-label={`rank ${rank}`}
         >
           {prize.emoji}

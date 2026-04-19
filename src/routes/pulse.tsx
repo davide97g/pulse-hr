@@ -148,7 +148,7 @@ function Pulse() {
           <div className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1.5"><Users className="h-3 w-3" />Participation</div>
           <div className="text-3xl font-display mt-1 tabular-nums">{stats.participation}%</div>
           <div className="h-1.5 mt-2 rounded-full bg-muted overflow-hidden">
-            <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${stats.participation}%`, background: "linear-gradient(90deg,#b4ff39,#39e1ff)" }} />
+            <div className="h-full rounded-full bg-primary transition-[width] duration-700" style={{ width: `${stats.participation}%` }} />
           </div>
         </Card>
         <Card className="p-5 col-span-2">

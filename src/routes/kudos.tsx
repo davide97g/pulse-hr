@@ -145,8 +145,8 @@ function Kudos() {
       } catch { /* noop */ }
       return next;
     });
-    // confetti burst
-    const palette = ["#b4ff39", "#39e1ff", "#c06bff", "#ff6b9a", "#ffd939"];
+    // confetti burst — theme primary + neutral, no rainbow
+    const palette = ["var(--primary)", "var(--muted-foreground)"];
     const bursts = Array.from({ length: 18 }).map((_, i) => ({
       id: Date.now() + i,
       dx: (Math.random() - 0.5) * 220,
@@ -171,8 +171,8 @@ function Kudos() {
           <div className="relative">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-md grid place-items-center" style={{ background: "linear-gradient(135deg,#b4ff39,#39e1ff)" }}>
-                  <Gift className="h-4 w-4 text-[#0b0b0d]" />
+                <div className="h-8 w-8 rounded-md grid place-items-center bg-primary/15 text-primary">
+                  <Gift className="h-4 w-4" />
                 </div>
                 <div>
                   <div className="font-semibold text-sm">Send kudos</div>
@@ -182,7 +182,7 @@ function Kudos() {
               <div className="text-right">
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Monthly allowance</div>
                 <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden mt-1">
-                  <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${(myBalance / 200) * 100}%`, background: "linear-gradient(90deg,#b4ff39,#39e1ff)" }} />
+                  <div className="h-full rounded-full bg-primary transition-[width] duration-500" style={{ width: `${(myBalance / 200) * 100}%` }} />
                 </div>
               </div>
             </div>
@@ -378,8 +378,11 @@ function Kudos() {
                       <div className="text-sm font-medium truncate">{r.employee.name}</div>
                       <div className="h-1.5 rounded-full bg-muted mt-1 overflow-hidden">
                         <div
-                          className="h-full rounded-full transition-[width] duration-700"
-                          style={{ width: `${(r.coins / maxCoins) * 100}%`, background: i === 0 ? "linear-gradient(90deg,#b4ff39,#39e1ff)" : r.employee.avatarColor }}
+                          className={cn(
+                            "h-full rounded-full transition-[width] duration-700",
+                            i === 0 ? "bg-primary" : "bg-muted-foreground/40",
+                          )}
+                          style={{ width: `${(r.coins / maxCoins) * 100}%` }}
                         />
                       </div>
                     </div>
