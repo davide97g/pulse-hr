@@ -170,7 +170,7 @@ function Dashboard() {
               </div>
               <div className="h-10 w-px bg-border" />
               <div>
-                <div className="text-3xl font-semibold text-warning">2</div>
+                <div className="text-3xl font-semibold">2</div>
                 <div className="text-xs text-muted-foreground">On leave</div>
               </div>
               <div className="h-10 w-px bg-border" />
@@ -180,9 +180,9 @@ function Dashboard() {
               </div>
             </div>
             <div className="mt-4 h-2 rounded-full bg-muted overflow-hidden flex">
-              <div className="bg-success h-full" style={{ width: "75%" }} />
-              <div className="bg-warning h-full" style={{ width: "17%" }} />
-              <div className="bg-muted-foreground/30 h-full" style={{ width: "8%" }} />
+              <div className="bg-primary/70 h-full" style={{ width: "75%" }} />
+              <div className="bg-muted-foreground/50 h-full" style={{ width: "17%" }} />
+              <div className="bg-muted-foreground/25 h-full" style={{ width: "8%" }} />
             </div>
             <Button variant="outline" size="sm" className="w-full mt-4">
               View attendance <ArrowRight className="h-3.5 w-3.5 ml-1" />

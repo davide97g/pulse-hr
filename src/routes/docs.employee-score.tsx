@@ -45,7 +45,7 @@ const TIPS: Record<FactorKey, { how: string; gotcha?: string }> = {
 function EmployeeScoreDoc() {
   return (
     <div className="space-y-6 max-w-3xl">
-      <Card className="p-5 iridescent-border">
+      <Card className="p-5">
         <div className="flex items-center gap-3 mb-2">
           <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
             <Sparkles className="h-5 w-5" />

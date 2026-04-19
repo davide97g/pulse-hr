@@ -54,11 +54,13 @@
 
 :root,
 html[data-theme] {
-  --cal-vacation: oklch(0.72 0.17 295);  /* purple — vacation */
-  --cal-sick:     oklch(0.72 0.15 230);  /* blue — sick */
-  --cal-personal: oklch(0.68 0.14 200);  /* teal — personal */
-  --cal-parental: oklch(0.74 0.15 160);  /* mint — parental */
-  --cal-holiday:  oklch(0.82 0.17 85);   /* amber — public holiday */
+  /* Leave types collapsed to a 3-hue system: primary (PTO), destructive
+     (sick), muted (personal/parental), amber (public holiday, rare). */
+  --cal-vacation: var(--primary);
+  --cal-sick:     color-mix(in oklch, var(--destructive) 60%, transparent);
+  --cal-personal: var(--muted-foreground);
+  --cal-parental: var(--muted-foreground);
+  --cal-holiday:  oklch(0.82 0.17 85);
 }
 
 :root {
@@ -110,6 +112,16 @@ html[data-theme] {
   --shadow-card: 0 1px 2px oklch(0.2 0.02 260 / 0.04), 0 1px 3px oklch(0.2 0.02 260 / 0.04);
   --shadow-panel: -8px 0 24px -8px oklch(0.2 0.02 260 / 0.08);
   --shadow-pop: 0 8px 24px -8px oklch(0.2 0.02 260 / 0.18), 0 2px 6px oklch(0.2 0.02 260 / 0.06);
+
+  /* Chart + identity tokens. Spend saturation on signal, not decoration. */
+  --chart-1: var(--primary);
+  --chart-muted: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+  --chart-grid: var(--border);
+  --avatar-surface: var(--muted);
+  --avatar-ink: color-mix(in oklch, var(--foreground) 75%, transparent);
+  --status-ok:   var(--success);
+  --status-risk: var(--warning);
+  --status-over: var(--destructive);
 }
 
 /* ─── Dark + role-themed palettes ─────────────────────────────────────────
@@ -360,6 +372,21 @@ html[data-theme="finance"] ::selection {
     font-family: "JetBrains Mono", ui-monospace, monospace;
     font-weight: 600;
     letter-spacing: 0.08em;
+  }
+  .new-badge-quiet {
+    background: color-mix(in oklch, var(--primary) 14%, transparent);
+    color: var(--primary);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  .accent-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--primary);
+    color: var(--primary);
   }
   @keyframes newBadgeShift {
     0%, 100% { background-position: 0% 0; }

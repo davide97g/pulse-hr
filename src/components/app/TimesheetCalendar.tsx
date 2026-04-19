@@ -174,7 +174,7 @@ export function TimesheetCalendar({
             </button>
           </div>
           <Button
-            variant="outline" size="sm" className="h-9 press-scale iridescent-border"
+            variant="outline" size="sm" className="h-9 press-scale"
             onClick={() => setAutofillOpen(true)}
           >
             <Sparkles className="h-4 w-4 mr-1.5 text-primary" /> Draft week

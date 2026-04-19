@@ -17,6 +17,15 @@ export const Route = createFileRoute("/forecast")({
   component: Forecast,
 });
 
+// Status-driven color token for commesse on this page. Identity hue on
+// `Commessa.color` is intentionally ignored here — the dot/line/progress bar
+// should encode health, not project identity.
+function statusColor(overBudget: boolean, weeksToBudget: number) {
+  if (overBudget) return "var(--status-over)";
+  if (weeksToBudget < 4) return "var(--status-risk)";
+  return "var(--status-ok)";
+}
+
 // Simulated weekly burn rate per commessa (derived deterministically)
 function weeklyBurnRate(c: Commessa) {
   const base = c.burnedHours / 14; // assume 14 weeks of work in
@@ -88,7 +97,7 @@ function Forecast() {
             {summaries.reduce((a, s) => a + Math.max(0, s.f.remaining), 0)}h
           </div>
         </Card>
-        <Card className="p-5 iridescent-border">
+        <Card className="p-5">
           <div className="text-[11px] uppercase tracking-wider text-primary font-semibold flex items-center gap-1">
             <Sparkles className="h-3 w-3" />AI forecast
           </div>
@@ -141,6 +150,7 @@ function Forecast() {
           {summaries.map(({ c, f }) => {
             const pct = Math.min(100, Math.round((c.burnedHours / c.budgetHours) * 100));
             const isActive = c.id === activeId;
+            const tone = statusColor(f.overBudget, f.weeksToBudget);
             return (
               <button
                 key={c.id}
@@ -151,7 +161,7 @@ function Forecast() {
                 )}
               >
                 <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
+                  <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: tone }} />
                   <span className="text-[11px] font-mono">{c.code}</span>
                   {f.overBudget && <span className="text-[10px] px-1 rounded bg-destructive/10 text-destructive font-medium">over</span>}
                   {!f.overBudget && f.weeksToBudget < 4 && <span className="text-[10px] px-1 rounded bg-warning/10 text-warning font-medium">risk</span>}
@@ -160,7 +170,7 @@ function Forecast() {
                 <div className="h-1.5 rounded-full bg-muted mt-2 overflow-hidden">
                   <div
                     className="h-full transition-[width] duration-700"
-                    style={{ width: `${pct}%`, backgroundColor: f.overBudget ? "var(--color-destructive)" : c.color }}
+                    style={{ width: `${pct}%`, backgroundColor: tone }}
                   />
                 </div>
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground mt-1.5 tabular-nums">
@@ -177,7 +187,7 @@ function Forecast() {
             <div className="flex items-start justify-between mb-5 gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="h-3 w-3 rounded-full" style={{ backgroundColor: active.c.color }} />
+                  <span className="h-3 w-3 rounded-full" style={{ backgroundColor: statusColor(active.f.overBudget, active.f.weeksToBudget) }} />
                   <span className="font-mono text-xs">{active.c.code}</span>
                   <StatusBadge status={active.c.status === "active" ? "active" : active.c.status === "on_hold" ? "pending" : "rejected"} />
                 </div>
@@ -224,8 +234,8 @@ function Forecast() {
                   const path = active.f.projection.map((p, i) => `${i === 0 ? "M" : "L"} ${(i / 11) * 600} ${200 - (p.burned / (active.c.budgetHours * 1.4)) * 200}`).join(" ");
                   return (
                     <>
-                      <path d={`${path} L 600 200 L 0 200 Z`} fill={`${active.c.color.replace("oklch(", "oklch(").replace(")", " / 0.15)")}`} />
-                      <path d={path} fill="none" stroke={active.c.color} strokeWidth="2.5" />
+                      <path d={`${path} L 600 200 L 0 200 Z`} fill="color-mix(in oklch, var(--primary) 12%, transparent)" />
+                      <path d={path} fill="none" stroke="var(--primary)" strokeWidth="2.5" />
                     </>
                   );
                 })()}
@@ -233,7 +243,7 @@ function Forecast() {
               <div className="absolute bottom-1 left-4 text-[10px] text-muted-foreground">W1</div>
               <div className="absolute bottom-1 right-4 text-[10px] text-muted-foreground">W12</div>
               <div className="absolute top-2 left-4 flex gap-3 text-[10px]">
-                <span className="inline-flex items-center gap-1.5"><span className="h-0.5 w-4" style={{ backgroundColor: active.c.color }} />Scenario</span>
+                <span className="inline-flex items-center gap-1.5"><span className="h-0.5 w-4 bg-primary" />Scenario</span>
                 <span className="inline-flex items-center gap-1.5 text-muted-foreground"><span className="h-0.5 w-4 border-t border-dashed border-current" />Baseline</span>
                 <span className="inline-flex items-center gap-1.5 text-destructive"><span className="h-0.5 w-4 border-t border-dashed border-current" />Budget ceiling</span>
               </div>

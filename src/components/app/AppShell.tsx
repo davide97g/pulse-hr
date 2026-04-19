@@ -272,7 +272,9 @@ function AppShellInner() {
                     >
                       <Icon className="h-4 w-4 shrink-0" />
                       {!collapsed && <span className="truncate flex-1">{item.label}</span>}
-                      {!collapsed && item.isNew && <NewBadge />}
+                      {!collapsed && item.isNew && (
+                        <span className="accent-dot pulse-dot" aria-label="New" />
+                      )}
                       {collapsed && item.isNew && (
                         <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
                       )}
@@ -354,7 +356,9 @@ function AppShellInner() {
                       >
                         <Icon className="h-4 w-4 shrink-0" />
                         <span className="truncate flex-1">{item.label}</span>
-                        {item.isNew && <NewBadge />}
+                        {item.isNew && (
+                          <span className="accent-dot pulse-dot" aria-label="New" />
+                        )}
                       </Link>
                     );
                   })}
@@ -414,7 +418,7 @@ function Topbar({
       </div>
       <button
         onClick={onOpenCopilot}
-        className="md:hidden h-9 w-9 rounded-md border bg-background/80 hover:bg-muted flex items-center justify-center iridescent-border"
+        className="md:hidden h-9 w-9 rounded-md border bg-background/80 hover:bg-muted flex items-center justify-center"
         aria-label="Ask Pulse"
       >
         <Sparkles className="h-4 w-4 text-primary" />
@@ -644,7 +648,7 @@ export function Avatar({
 }) {
   const visual = (
     <div
-      className="rounded-full flex items-center justify-center text-white font-medium shrink-0"
+      className="rounded-full flex items-center justify-center font-medium shrink-0 text-[color:var(--avatar-ink)]"
       style={{ backgroundColor: color, width: size, height: size, fontSize: size * 0.4 }}
     >
       {initials}

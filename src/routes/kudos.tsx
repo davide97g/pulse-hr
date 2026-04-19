@@ -167,7 +167,7 @@ function Kudos() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-4 mb-4">
         {/* Sender */}
-        <Card className="p-6 iridescent-border relative overflow-visible">
+        <Card className="p-6 relative overflow-visible">
           <div className="relative">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">

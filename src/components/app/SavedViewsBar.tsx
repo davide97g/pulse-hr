@@ -60,7 +60,7 @@ export function SavedViewsBar<State>({
               className={cn(
                 "h-8 pl-2.5 pr-1 rounded-l-md border border-r-0 text-xs inline-flex items-center gap-1.5 transition-colors press-scale",
                 active
-                  ? "bg-primary/10 border-primary/40 text-foreground iridescent-border"
+                  ? "bg-primary/10 border-primary/40 text-foreground"
                   : "hover:bg-muted",
               )}
             >

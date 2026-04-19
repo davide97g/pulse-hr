@@ -521,7 +521,7 @@ function Time() {
             <Button
               size="sm"
               variant="outline"
-              className="h-9 gap-1.5 press-scale iridescent-border"
+              className="h-9 gap-1.5 press-scale"
               onClick={() => setSmartFillOpen(true)}
               title="Generate a draft week from your calendar + focus sessions"
             >

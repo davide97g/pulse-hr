@@ -19,16 +19,9 @@ export interface Employee {
   employmentType: "Full-time" | "Part-time" | "Contractor";
 }
 
-const colors = [
-  "oklch(0.7 0.15 30)",
-  "oklch(0.7 0.15 80)",
-  "oklch(0.65 0.15 155)",
-  "oklch(0.6 0.16 220)",
-  "oklch(0.6 0.18 280)",
-  "oklch(0.65 0.18 340)",
-  "oklch(0.7 0.13 110)",
-  "oklch(0.6 0.16 195)",
-];
+// Avatars render on a single neutral surface with themed ink; identity comes
+// from initials, not hue. Keeps the UI calm even with 50+ avatars visible.
+const AVATAR_SURFACE = "var(--avatar-surface)";
 
 const initials = (n: string) =>
   n
@@ -223,7 +216,7 @@ const birthdayOverrides: Record<string, string> = {
 export const employees: Employee[] = raw.map((e, i) => ({
   ...e,
   initials: initials(e.name),
-  avatarColor: colors[i % colors.length],
+  avatarColor: AVATAR_SURFACE,
   birthday: birthdayOverrides[e.id],
 }));
 
@@ -467,7 +460,7 @@ export const candidates: Candidate[] = cnames.map(([n, r], i) => ({
   role: r,
   stage: stages[i % 5],
   initials: initials(n),
-  avatarColor: colors[i % colors.length],
+  avatarColor: AVATAR_SURFACE,
   appliedDate: `2026-04-${String(14 - i).padStart(2, "0")}`,
   rating: 3 + ((i * 7) % 3),
 }));

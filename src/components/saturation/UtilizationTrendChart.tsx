@@ -100,18 +100,20 @@ export function UtilizationTrendChart({
               {active.map((e) => {
                 const isHovered = hoveredEmployeeId === e.id;
                 const dimmed = someHovered && !isHovered;
+                const stroke = isHovered ? "var(--primary)" : "var(--chart-muted)";
+                const opacity = isHovered ? 1 : dimmed ? 0.08 : 0.4;
                 return (
                   <Line
                     key={e.id}
                     type="monotone"
                     dataKey={e.id}
-                    stroke={e.avatarColor}
-                    strokeWidth={isHovered ? 3 : 1.75}
-                    strokeOpacity={dimmed ? 0.12 : 0.95}
-                    dot={isHovered ? { r: 3.5, fill: e.avatarColor, strokeWidth: 0 } : false}
+                    stroke={stroke}
+                    strokeWidth={isHovered ? 2.5 : 1.25}
+                    strokeOpacity={opacity}
+                    dot={isHovered ? { r: 3.5, fill: "var(--primary)", strokeWidth: 0 } : false}
                     activeDot={{
                       r: 5,
-                      fill: e.avatarColor,
+                      fill: "var(--primary)",
                       stroke: "var(--card)",
                       strokeWidth: 2,
                       onMouseEnter: () => onHoverEmployee(e.id),
@@ -147,7 +149,9 @@ export function UtilizationTrendChart({
               >
                 <span
                   className="h-2 w-2 rounded-full shrink-0"
-                  style={{ backgroundColor: e.avatarColor }}
+                  style={{
+                    backgroundColor: isHovered ? "var(--primary)" : "var(--chart-muted)",
+                  }}
                 />
                 <Avatar initials={e.initials} color={e.avatarColor} size={16} employeeId={e.id} />
                 <span className="truncate flex-1 font-medium">{e.name}</span>

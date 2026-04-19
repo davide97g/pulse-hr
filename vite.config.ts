@@ -86,6 +86,31 @@ export default defineConfig(() => {
     build: {
       outDir: "dist",
       sourcemap: false,
+      chunkSizeWarningLimit: 800,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes("node_modules")) return;
+            if (id.includes("/react/") || id.includes("/react-dom/") || id.includes("/scheduler/")) return "react";
+            if (id.includes("@tanstack/")) return "tanstack";
+            if (id.includes("recharts") || id.includes("d3-") || id.includes("victory-vendor")) return "recharts";
+            if (id.includes("@radix-ui/")) return "radix";
+            if (id.includes("@dnd-kit/")) return "dnd-kit";
+            if (id.includes("react-hook-form") || id.includes("@hookform/") || id.includes("/zod/")) return "forms";
+            if (id.includes("date-fns") || id.includes("react-day-picker")) return "date";
+            if (id.includes("lucide-react")) return "icons";
+            if (
+              id.includes("embla-carousel") ||
+              id.includes("vaul") ||
+              id.includes("react-resizable-panels") ||
+              id.includes("input-otp") ||
+              id.includes("cmdk") ||
+              id.includes("sonner")
+            )
+              return "ui-extras";
+          },
+        },
+      },
     },
   };
 });

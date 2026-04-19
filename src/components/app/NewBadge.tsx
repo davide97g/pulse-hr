@@ -1,10 +1,19 @@
 import { cn } from "@/lib/utils";
 
-export function NewBadge({ className, label = "NEW" }: { className?: string; label?: string }) {
+export function NewBadge({
+  className,
+  label = "NEW",
+  variant = "quiet",
+}: {
+  className?: string;
+  label?: string;
+  variant?: "quiet" | "loud";
+}) {
   return (
     <span
       className={cn(
-        "inline-flex items-center justify-center h-[18px] px-1.5 text-[9px] rounded new-badge shadow-sm",
+        "inline-flex items-center justify-center h-[18px] px-1.5 text-[9px] rounded",
+        variant === "loud" ? "new-badge shadow-sm" : "new-badge-quiet",
         className
       )}
     >

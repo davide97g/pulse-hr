@@ -38,7 +38,7 @@ export function CopilotLauncher({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="group relative inline-flex items-center gap-2 h-9 px-3 rounded-md border bg-background/80 hover:bg-muted text-sm iridescent-border press-scale"
+      className="group relative inline-flex items-center gap-2 h-9 px-3 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale"
     >
       <Sparkles className="h-4 w-4 text-primary" />
       <span className="font-medium">Ask Pulse</span>
@@ -292,7 +292,7 @@ export function CopilotOverlay({
                 </button>
               </div>
             )}
-            <div className="relative iridescent-border rounded-lg flex items-end">
+            <div className="relative rounded-lg flex items-end">
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
@@ -385,7 +385,7 @@ function CompactSuggestions({ onPick }: { onPick: (q: string) => void }) {
 function CompactEmpty() {
   return (
     <div className="h-full flex flex-col items-center justify-center p-6 text-center">
-      <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary grid place-items-center mb-3 iridescent-border">
+      <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary grid place-items-center mb-3">
         <Wand2 className="h-5 w-5" />
       </div>
       <div className="text-lg font-display leading-snug">Hi — ask me anything.</div>

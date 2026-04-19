@@ -454,7 +454,7 @@ function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
   const topStrength = [...radar].sort((a, b) => b.value - a.value)[0];
 
   return (
-    <Card className="p-4 mb-5 relative overflow-hidden iridescent-border">
+    <Card className="p-4 mb-5 relative overflow-hidden">
       <div
         className="absolute -top-10 -right-10 h-28 w-28 rounded-full blur-2xl pointer-events-none"
         style={{ backgroundColor: level.color, opacity: 0.18 }}

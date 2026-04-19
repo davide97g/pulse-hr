@@ -82,7 +82,7 @@ export function MomentsCard() {
               </div>
               <button
                 onClick={() => draftKudos(m)}
-                className="inline-flex items-center gap-1 h-7 px-2 rounded-md border text-[11px] hover:bg-muted press-scale iridescent-border"
+                className="inline-flex items-center gap-1 h-7 px-2 rounded-md border text-[11px] hover:bg-muted press-scale"
                 title={`Draft kudos for ${m.employee.name}`}
               >
                 <Gift className="h-3 w-3 text-primary" /> Kudos

@@ -89,8 +89,6 @@ function Kpi({
       <Card
         className={cn(
           "p-4 pop-in h-full",
-          tone === "good" && "border-success/30",
-          tone === "warn" && "border-warning/30",
           onClick && "hover:border-primary/40 hover:shadow-md",
         )}
       >
@@ -109,13 +107,7 @@ function Kpi({
           </span>
           {label}
         </div>
-        <div
-          className={cn(
-            "text-2xl font-semibold tracking-tight mt-1.5 tabular-nums",
-            tone === "good" && "text-success",
-            tone === "warn" && "text-warning",
-          )}
-        >
+        <div className="text-2xl font-semibold tracking-tight mt-1.5 tabular-nums">
           {value}
         </div>
         <div className="flex items-center justify-between mt-1">

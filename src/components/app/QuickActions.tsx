@@ -336,7 +336,7 @@ function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
             onClick={runOcr}
             disabled={scanning}
             className={cn(
-              "w-full border-2 border-dashed rounded-md p-5 text-center hover:bg-muted/40 press-scale transition-colors relative overflow-hidden iridescent-border",
+              "w-full border-2 border-dashed rounded-md p-5 text-center hover:bg-muted/40 press-scale transition-colors relative overflow-hidden",
               scanning && "pointer-events-none",
             )}
           >

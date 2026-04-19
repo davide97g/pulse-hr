@@ -14,7 +14,7 @@ export function StatTile({ icon, label, value, accent }: StatTileProps) {
     <Card
       className={cn(
         "p-4 press-scale hover:shadow-md transition-shadow",
-        accent && "iridescent-border",
+        accent && "border-primary/40",
       )}
     >
       <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">

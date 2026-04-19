@@ -34,15 +34,6 @@ export function UtilizationHeatmap({
     return map;
   }, [weekList, active]);
 
-  const cellColor = (pct: number) => {
-    if (pct === 0) return null; // renders as muted surface, theme-aware
-    if (pct <= 40) return `oklch(0.82 0.1 155)`;
-    if (pct <= 70) return `oklch(0.72 0.14 150)`;
-    if (pct <= 100) return `oklch(0.62 0.17 135)`;
-    if (pct <= 130) return `oklch(0.68 0.18 70)`;
-    return `oklch(0.58 0.21 25)`;
-  };
-
   const selectedAllocs = selected
     ? allocations.filter((a) => {
         if (a.employeeId !== selected.employeeId) return false;
@@ -119,18 +110,18 @@ export function UtilizationHeatmap({
                     {cells.map((pct, i) => {
                       const bg = cellColor(pct);
                       const idle = bg === null;
-                      const burnout = pct > 130;
+                      const overload = pct > 100;
                       return (
                         <td key={i} className="p-0.5">
                           <button
                             onClick={() => setSelected({ employeeId: emp.id, week: weekList[i] })}
                             className={cn(
-                              "h-7 w-8 rounded-sm border flex items-center justify-center text-[10px] font-mono font-semibold transition hover:scale-110",
+                              "h-7 w-8 rounded-sm border border-border/60 flex items-center justify-center text-[10px] font-mono font-semibold transition hover:scale-110",
                               idle
-                                ? "bg-muted/40 border-border/60 text-muted-foreground/50"
-                                : burnout
-                                  ? "text-white border-black/20"
-                                  : "text-black/80 border-black/10",
+                                ? "bg-muted/40 text-muted-foreground/50"
+                                : overload
+                                  ? "text-[color:var(--destructive-foreground)]"
+                                  : "text-foreground",
                             )}
                             style={idle ? undefined : { backgroundColor: bg! }}
                             title={`${emp.name} · ${weekList[i].toDateString()} · ${pct}%`}
@@ -193,23 +184,24 @@ export function UtilizationHeatmap({
   );
 }
 
+// Primary-based ramp keeps the heatmap calm in the "normal" band and reserves
+// amber/red strictly for overload. Cell colors follow the active role theme.
+const cellColor = (pct: number) => {
+  if (pct === 0) return null; // renders as muted surface
+  if (pct <= 70) return `color-mix(in oklch, var(--primary) 18%, transparent)`;
+  if (pct <= 100) return `color-mix(in oklch, var(--primary) 55%, transparent)`;
+  if (pct <= 130) return `var(--warning)`;
+  return `var(--destructive)`;
+};
+
 function HeatmapLegend() {
   const items = [
     { pct: 0, label: "idle" },
-    { pct: 40, label: "light" },
-    { pct: 70, label: "healthy" },
-    { pct: 100, label: "full" },
-    { pct: 130, label: "over" },
+    { pct: 50, label: "light" },
+    { pct: 90, label: "full" },
+    { pct: 120, label: "over" },
     { pct: 150, label: "burnout" },
   ];
-  const cellColor = (pct: number) => {
-    if (pct === 0) return null; // renders as muted surface, theme-aware
-    if (pct <= 40) return `oklch(0.82 0.1 155)`;
-    if (pct <= 70) return `oklch(0.72 0.14 150)`;
-    if (pct <= 100) return `oklch(0.62 0.17 135)`;
-    if (pct <= 130) return `oklch(0.68 0.18 70)`;
-    return `oklch(0.58 0.21 25)`;
-  };
   return (
     <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
       {items.map((i) => {
@@ -218,8 +210,8 @@ function HeatmapLegend() {
           <div key={i.pct} className="flex items-center gap-1">
             <span
               className={cn(
-                "h-3 w-4 rounded-sm border",
-                bg ? "border-black/10" : "bg-muted/40 border-border/60",
+                "h-3 w-4 rounded-sm border border-border/60",
+                !bg && "bg-muted/40",
               )}
               style={bg ? { backgroundColor: bg } : undefined}
             />

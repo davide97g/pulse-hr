@@ -1,16 +1,29 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { Gauge } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SaturationKPIs } from "@/components/saturation/SaturationKPIs";
 import { UtilizationHeatmap } from "@/components/saturation/UtilizationHeatmap";
-import { UtilizationTrendChart } from "@/components/saturation/UtilizationTrendChart";
-import { MarginByProjectChart } from "@/components/saturation/MarginByProjectChart";
-import { CostValueScatter } from "@/components/saturation/CostValueScatter";
-import { BillableSplitDonut } from "@/components/saturation/BillableSplitDonut";
 import { SaturationInsights } from "@/components/saturation/SaturationInsights";
 import { EmployeeScoreLeaderboard } from "@/components/saturation/EmployeeScoreLeaderboard";
+
+const UtilizationTrendChart = lazy(() =>
+  import("@/components/saturation/UtilizationTrendChart").then((m) => ({ default: m.UtilizationTrendChart })),
+);
+const MarginByProjectChart = lazy(() =>
+  import("@/components/saturation/MarginByProjectChart").then((m) => ({ default: m.MarginByProjectChart })),
+);
+const CostValueScatter = lazy(() =>
+  import("@/components/saturation/CostValueScatter").then((m) => ({ default: m.CostValueScatter })),
+);
+const BillableSplitDonut = lazy(() =>
+  import("@/components/saturation/BillableSplitDonut").then((m) => ({ default: m.BillableSplitDonut })),
+);
+
+function ChartFallback({ className = "h-64" }: { className?: string }) {
+  return <div className={`${className} rounded-lg border bg-card animate-pulse`} />;
+}
 import { commesse, employees } from "@/lib/mock-data";
 import { orgUtilization, personValue, billableSplit } from "@/lib/projects";
 
@@ -111,20 +124,26 @@ function Saturation() {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <UtilizationTrendChart
-                    startDate={startWeek}
-                    weeks={12}
-                    hoveredEmployeeId={hoveredEmployeeId}
-                    onHoverEmployee={setHoveredEmployeeId}
-                  />
+                  <Suspense fallback={<ChartFallback className="h-full min-h-64" />}>
+                    <UtilizationTrendChart
+                      startDate={startWeek}
+                      weeks={12}
+                      hoveredEmployeeId={hoveredEmployeeId}
+                      onHoverEmployee={setHoveredEmployeeId}
+                    />
+                  </Suspense>
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="margins" className="pt-5 space-y-4">
-              <MarginByProjectChart />
+              <Suspense fallback={<ChartFallback className="h-80" />}>
+                <MarginByProjectChart />
+              </Suspense>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <BillableSplitDonut />
+                <Suspense fallback={<ChartFallback />}>
+                  <BillableSplitDonut />
+                </Suspense>
                 <div className="rounded-lg border bg-card p-5">
                   <div className="text-sm font-semibold mb-3">How to read this</div>
                   <ul className="text-xs text-muted-foreground space-y-2 list-disc pl-5">
@@ -149,7 +168,9 @@ function Saturation() {
 
             <TabsContent value="value" className="pt-5 space-y-4">
               <EmployeeScoreLeaderboard />
-              <CostValueScatter />
+              <Suspense fallback={<ChartFallback className="h-80" />}>
+                <CostValueScatter />
+              </Suspense>
               <div className="rounded-lg border bg-card p-5">
                 <div className="text-sm font-semibold mb-2">Quadrant guide</div>
                 <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">

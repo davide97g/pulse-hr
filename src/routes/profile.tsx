@@ -300,7 +300,7 @@ function Profile() {
         </Card>
 
         {/* Growth at a glance */}
-        <Card className="p-5 iridescent-border relative overflow-hidden">
+        <Card className="p-5 relative overflow-hidden">
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="h-4 w-4 text-primary" />
             <div className="font-semibold text-sm">Growth at a glance</div>

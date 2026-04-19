@@ -315,7 +315,7 @@ function OfficeDetail() {
 
 function MiniMetric({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className={cn("rounded-md border p-2.5", accent && "iridescent-border")}>
+    <div className={cn("rounded-md border p-2.5", accent && "border-primary/40")}>
       <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{label}</div>
       <div className="text-lg font-display tabular-nums mt-0.5">{value}</div>
     </div>
