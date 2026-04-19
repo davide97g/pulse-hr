@@ -3,7 +3,8 @@ import { useState } from "react";
 import {
   ArrowRight, Sparkles, Clock, Users, Wallet, Briefcase, Shield, Plug, Zap,
   BarChart3, Globe2, Play, Check, ChevronDown, Star, Github, Twitter, Linkedin,
-  BookOpen, MessageCircle,
+  BookOpen, MessageCircle, Heart, TrendingUp, Gift, Target, Command, Mic,
+  Gauge, Trophy, PartyPopper, Palette, WifiOff, Keyboard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,40 @@ const FEATURES = [
   { icon: Briefcase,  title: "Recruiting & onboarding", body: "Kanban pipeline for candidates, automated onboarding workflows the moment someone says yes." },
   { icon: BarChart3,  title: "Reports everyone reads", body: "Headcount, turnover, cost per hire, absenteeism — export to PDF/CSV or pipe to BI in a click." },
   { icon: Plug,       title: "Integrations & API",   body: "Slack, Google, QuickBooks, Okta, Stripe. And when we don't have it, our API and webhooks do." },
+  { icon: Gauge,      title: "Saturation & margins", body: "Org utilization, weekly bench, blended margin, at-risk projects. A live read on whether the company is over- or under-sold." },
+  { icon: Sparkles,   title: "Copilot (⌘J)",         body: "Ask anything in natural language — approvals, balances, forecasts, payroll previews. Answers stream with runnable actions attached." },
+  { icon: Trophy,     title: "Growth & recognition", body: "XP, kudos coins, leaderboards, weekly podiums. Engagement data that HR and managers actually read, not a feel-good gimmick." },
+];
+
+// Labs — the "NEW this quarter" surfaces. Each gets an iridescent spotlight
+// treatment on the landing grid; order matches the in-app sidebar group.
+const LABS = [
+  { icon: Heart,       kind: "Team Pulse",        tag: "Signal",    body: "Anonymous vibe checks + weekly heatmap. See sentiment before it shows up in a 1:1." },
+  { icon: TrendingUp,  kind: "Commessa Forecast", tag: "AI",        body: "Scenario sliders on top of project burn. 'What if I add a designer?' answered in milliseconds." },
+  { icon: Gift,        kind: "Kudos",             tag: "Recognition", body: "Peer coins with reasons attached, confetti included. Leaderboards reset weekly, monthly and yearly." },
+  { icon: Target,      kind: "Focus Mode",        tag: "Depth",     body: "Deep-work timer that auto-declines meetings, posts a status, and logs the session to your timesheet." },
+  { icon: Gauge,       kind: "Saturation",        tag: "Load",      body: "Utilization heatmap, cost-vs-value scatter, margin tab. Who's leaning in, what's returning in €/h." },
+];
+
+// Role themes — each persona gets a dedicated palette shift inside the app.
+// Tiles render as mini swatches on landing so the theming story is visible
+// without needing a screenshot carousel.
+const ROLES: { k: string; d: string; accent: string; bg: string }[] = [
+  { k: "Employee", d: "Lime accent. Clock, leave, kudos, focus.",                 accent: "#b4ff39", bg: "#111113" },
+  { k: "Manager",  d: "Amber warmth. Approvals, team load, kudos authority.",      accent: "#ffbf4a", bg: "#17130c" },
+  { k: "HR",       d: "Coral. People ops, onboarding, anomalies.",                 accent: "#ff8a7a", bg: "#1a1110" },
+  { k: "Admin",    d: "Electric cyan. Integrations, API, audit.",                  accent: "#6fd8ff", bg: "#0d151a" },
+  { k: "Finance",  d: "Violet. Payroll, margins, forecast.",                       accent: "#c48fff", bg: "#141019" },
+];
+
+// Changelog teaser — hand-picked highlights from the last quarter.
+const CHANGELOG = [
+  { d: "Apr 19", t: "Gantt rows taller + rich hover",     k: "Polish" },
+  { d: "Apr 18", t: "App-wide color decluttering pass",   k: "Design" },
+  { d: "Apr 14", t: "Avatar hover cards + Employee Score", k: "People" },
+  { d: "Apr 09", t: "Saturation tabs + Insights view",    k: "Labs" },
+  { d: "Apr 02", t: "Commessa Forecast with AI scenarios", k: "Labs" },
+  { d: "Mar 28", t: "Copilot ⌘J with streaming actions",   k: "AI" },
 ];
 
 const CONCEPTS = [
@@ -47,6 +82,10 @@ const FAQ = [
     a: "Yes — a full REST API, webhooks on every resource, and SDKs for TypeScript, Python and Go. See the Developers tab inside the app." },
   { q: "Can we self-host?",
     a: "Yes. The core platform is source-available under the FSL license. Self-hosted deployments on Docker or Kubernetes are supported for teams over 50." },
+  { q: "Where does Copilot run — and what does it see?",
+    a: "Copilot runs on your tenant's data only. Every prompt is scoped to the current user's permissions, and nothing is used to train cross-tenant models. You can disable AI features per role or org-wide with one toggle." },
+  { q: "Does Pulse work offline?",
+    a: "The whole surface installs as a PWA on macOS, Windows, iOS and Android. Recent views, timesheets and kudos drafts keep working offline and sync as soon as you're back — no 'loading…' screens at the airport." },
 ];
 
 const TEAM = [
@@ -62,7 +101,7 @@ const STATS = [
   { v: "$1.2B",    l: "Processed in payroll" },
   { v: "47",       l: "Countries supported" },
   { v: "4,800+",   l: "Teams on Pulse HR" },
-  { v: "99.99%",   l: "Rolling uptime" },
+  { v: "312k",     l: "Copilot actions run" },
 ];
 
 const USE_CASES = [
@@ -80,9 +119,13 @@ function Landing() {
       <StatsBar />
       <Concepts />
       <Features />
+      <LabsSection />
+      <KeyboardCopilot />
       <ProductPreview />
+      <RolesSection />
       <UseCases />
       <Testimonials />
+      <Changelog />
       <TeamSection />
       <FaqSection />
       <Cta />
@@ -104,10 +147,12 @@ function Nav() {
         </Link>
         <nav className="hidden md:flex items-center gap-6 text-sm text-white/70">
           <a href="#features" className="hover:text-white transition-colors">Features</a>
-          <a href="#concepts" className="hover:text-white transition-colors">Concepts</a>
+          <a href="#labs" className="hover:text-white transition-colors inline-flex items-center gap-1">
+            Labs<span className="h-1 w-1 rounded-full bg-[#b4ff39] pulse-dot" />
+          </a>
           <a href="#product" className="hover:text-white transition-colors">Product</a>
+          <a href="#changelog" className="hover:text-white transition-colors">Changelog</a>
           <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
-          <a href="#team" className="hover:text-white transition-colors">Team</a>
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <Link to="/login" className="text-sm text-white/70 hover:text-white px-3 py-1.5 rounded-md transition-colors">Sign in</Link>
@@ -171,6 +216,19 @@ function Hero() {
           <span className="inline-flex items-center gap-1.5"><Globe2 className="h-3.5 w-3.5 text-[#b4ff39]" />GDPR · EU data residency</span>
           <span>·</span>
           <span className="inline-flex items-center gap-1.5"><Zap className="h-3.5 w-3.5 text-[#b4ff39]" />99.99% uptime SLA</span>
+        </div>
+
+        <div className="mt-10 flex items-center gap-2 flex-wrap text-[11px] text-white/60">
+          <span className="font-mono uppercase tracking-[0.2em] text-[#b4ff39]">New this quarter</span>
+          {["Copilot ⌘J", "Commessa Forecast", "Saturation", "Team Pulse", "Kudos", "Focus Mode", "Growth"].map((t) => (
+            <span
+              key={t}
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 hover:border-[#b4ff39]/40 transition-colors"
+            >
+              <span className="h-1 w-1 rounded-full bg-[#b4ff39]" />
+              {t}
+            </span>
+          ))}
         </div>
       </div>
     </section>
@@ -238,7 +296,7 @@ function Features() {
         <div className="max-w-2xl">
           <div className="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">Everything in one place</div>
           <h2 className="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
-            Six products that feel like one.
+            Nine products that feel like one.
           </h2>
         </div>
         <p className="text-white/60 max-w-md text-sm leading-relaxed">
@@ -490,6 +548,229 @@ function FaqSection() {
           </div>
         ))}
       </div>
+    </section>
+  );
+}
+
+function LabsSection() {
+  return (
+    <section id="labs" className="relative max-w-[1280px] mx-auto px-6 py-24">
+      <div
+        className="absolute inset-x-8 top-10 bottom-10 pointer-events-none rounded-3xl opacity-60"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 50% at 30% 20%, #b4ff3914 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 80% 80%, #c06bff12 0%, transparent 60%)",
+        }}
+        aria-hidden
+      />
+      <div className="relative flex items-end justify-between gap-8 flex-wrap mb-16">
+        <div className="max-w-2xl">
+          <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#b4ff39] pulse-dot" />
+            Labs · shipping now
+          </div>
+          <h2 className="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+            Five bets that landed.
+          </h2>
+        </div>
+        <p className="text-white/60 max-w-md text-sm leading-relaxed">
+          Labs is where we ship the experimental stuff. Every team on Pulse gets it by default — no waiting lists, no upsells, no "enterprise tier" paywall.
+        </p>
+      </div>
+      <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {LABS.map((lab, i) => {
+          const Icon = lab.icon;
+          const wide = i === 0 || i === 3;
+          return (
+            <article
+              key={lab.kind}
+              className={cn(
+                "group relative rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent p-6 hover:-translate-y-0.5 transition-transform overflow-hidden",
+                wide && "lg:col-span-2",
+              )}
+            >
+              <div
+                className="absolute -top-20 -right-16 h-52 w-52 rounded-full blur-3xl pointer-events-none opacity-0 group-hover:opacity-60 transition-opacity"
+                style={{ background: "radial-gradient(circle, #b4ff3940 0%, transparent 70%)" }}
+                aria-hidden
+              />
+              <div className="relative flex items-start gap-4">
+                <div className="h-11 w-11 shrink-0 rounded-md border border-[#b4ff39]/30 bg-[#b4ff39]/[0.08] text-[#b4ff39] grid place-items-center">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.18em] uppercase">
+                    <span className="text-[#b4ff39]">NEW</span>
+                    <span className="text-white/30">·</span>
+                    <span className="text-white/60">{lab.tag}</span>
+                  </div>
+                  <h3 className="font-display text-2xl mt-1">{lab.kind}</h3>
+                  <p className="text-sm text-white/60 leading-relaxed mt-2">{lab.body}</p>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function KeyboardCopilot() {
+  return (
+    <section className="max-w-[1280px] mx-auto px-6 py-24">
+      <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 items-center">
+        <div>
+          <div className="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+            <Keyboard className="h-3 w-3" /> Keyboard-first
+          </div>
+          <h2 className="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+            Two keys.<br />
+            <em className="italic text-[#b4ff39]">Everything</em>.
+          </h2>
+          <p className="text-white/70 mt-6 max-w-md leading-relaxed">
+            <kbd className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-white/10 border border-white/15">⌘K</kbd> opens a fuzzy command palette — jump to any employee, project, document, setting.
+            <br className="hidden md:inline" />
+            <kbd className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-white/10 border border-white/15 mt-3 inline-block">⌘J</kbd> wakes Copilot — ask anything, approve anything, generate anything. Streamed answers, runnable actions.
+          </p>
+          <div className="mt-8 flex items-center gap-5 flex-wrap text-sm">
+            <span className="inline-flex items-center gap-2 text-white/70">
+              <Mic className="h-4 w-4 text-[#b4ff39]" />Dictate anywhere
+            </span>
+            <span className="inline-flex items-center gap-2 text-white/70">
+              <Command className="h-4 w-4 text-[#b4ff39]" />40+ shortcuts
+            </span>
+            <span className="inline-flex items-center gap-2 text-white/70">
+              <WifiOff className="h-4 w-4 text-[#b4ff39]" />Works offline
+            </span>
+          </div>
+        </div>
+        <div className="relative rounded-2xl border border-white/10 bg-[#0f0f11] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] overflow-hidden">
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.12]"
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #ffffff22 1px, transparent 1px), linear-gradient(to bottom, #ffffff22 1px, transparent 1px)",
+              backgroundSize: "32px 32px",
+            }}
+            aria-hidden
+          />
+          <div className="relative p-6 space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-[11px] text-white/60">
+              <Sparkles className="h-3 w-3 text-[#b4ff39]" /> Ask Pulse
+              <kbd className="ml-2 font-mono text-[10px] px-1 py-0 rounded bg-white/10 border border-white/15">⌘J</kbd>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-sm text-white/80">
+              <span className="text-white/40">&gt;&nbsp;</span>Who's overallocated this sprint on Mobile onboarding?
+            </div>
+            <div className="rounded-lg border border-[#b4ff39]/25 bg-[#b4ff39]/[0.04] px-4 py-3 text-[13px] text-white/85 leading-relaxed space-y-2">
+              <div className="font-mono text-[10px] text-[#b4ff39] uppercase tracking-wider">Answer · streamed in 420ms</div>
+              <p>
+                Two people are above 100% load on <span className="font-mono text-[#b4ff39]">NOV-2025-07</span>: Noah Williams (130%) and Yuki Tanaka (108%).
+                The next bottleneck lands in W19 unless you reshuffle.
+              </p>
+              <div className="flex gap-2 pt-1 flex-wrap">
+                {["Draft reshuffle", "Open Saturation", "Message Yuki"].map((a) => (
+                  <span key={a} className="inline-flex items-center gap-1 h-7 px-2 rounded-md border border-white/15 bg-white/[0.04] text-[11px] text-white/80 hover:border-[#b4ff39]/40 cursor-default">
+                    <ArrowRight className="h-3 w-3 text-[#b4ff39]" />{a}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-2 text-[10px] text-white/35 pt-1">
+              <span className="font-mono">scoped: your tenant · 12 employees</span>
+              <span className="ml-auto font-mono">no training · no cross-tenant</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RolesSection() {
+  return (
+    <section className="max-w-[1280px] mx-auto px-6 py-24">
+      <div className="flex items-end justify-between gap-8 flex-wrap mb-14">
+        <div className="max-w-2xl">
+          <div className="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+            <Palette className="h-3 w-3" /> Every persona, one surface
+          </div>
+          <h2 className="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+            The same app,<br />
+            <em className="italic">five</em> points of view.
+          </h2>
+        </div>
+        <p className="text-white/60 max-w-md text-sm leading-relaxed">
+          Role themes aren't cosmetic. Each persona ships with its own palette, default view, and shortcut set. Engineers don't see payroll drafts. CFOs don't see sprint standups.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-px rounded-xl overflow-hidden border border-white/10 bg-white/5">
+        {ROLES.map((r) => (
+          <div
+            key={r.k}
+            className="relative p-6 min-h-[220px] flex flex-col overflow-hidden hover:-translate-y-0.5 transition-transform"
+            style={{ backgroundColor: r.bg }}
+          >
+            <div
+              className="absolute -top-12 -right-12 h-32 w-32 rounded-full blur-3xl pointer-events-none opacity-60"
+              style={{ backgroundColor: r.accent }}
+              aria-hidden
+            />
+            <div
+              className="h-8 w-8 rounded-md grid place-items-center mb-auto"
+              style={{ backgroundColor: `${r.accent}22`, color: r.accent, border: `1px solid ${r.accent}66` }}
+            >
+              <span className="font-mono text-xs font-bold">{r.k[0]}</span>
+            </div>
+            <div className="relative mt-6">
+              <div className="font-display text-xl">{r.k}</div>
+              <div className="text-xs text-white/55 mt-1.5 leading-relaxed">{r.d}</div>
+            </div>
+            <div
+              className="relative mt-4 h-1 rounded-full"
+              style={{ backgroundColor: r.accent }}
+              aria-hidden
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Changelog() {
+  return (
+    <section id="changelog" className="max-w-[1280px] mx-auto px-6 py-24">
+      <div className="flex items-end justify-between gap-8 flex-wrap mb-12">
+        <div className="max-w-2xl">
+          <div className="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">Shipped recently</div>
+          <h2 className="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+            A changelog<br />
+            <em className="italic">worth reading</em>.
+          </h2>
+        </div>
+        <a
+          href="#"
+          className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white border-b border-white/20 hover:border-[#b4ff39] pb-1 transition-colors"
+        >
+          Full changelog <ArrowRight className="h-4 w-4" />
+        </a>
+      </div>
+      <ol className="relative border-l border-white/10 ml-3 space-y-5">
+        {CHANGELOG.map((e) => (
+          <li key={e.t} className="relative pl-8">
+            <span className="absolute -left-[7px] top-1.5 h-3 w-3 rounded-full bg-[#b4ff39] ring-4 ring-[#0b0b0d]" />
+            <div className="flex items-baseline gap-3 flex-wrap">
+              <span className="font-mono text-xs text-white/40 tabular-nums w-16">{e.d}</span>
+              <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-[#b4ff39] border border-[#b4ff39]/30 px-1.5 py-0.5 rounded-sm">
+                {e.k}
+              </span>
+              <span className="font-display text-xl md:text-2xl">{e.t}</span>
+            </div>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
