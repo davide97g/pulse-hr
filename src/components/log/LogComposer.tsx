@@ -18,7 +18,7 @@ export function LogComposer({
 
   useEffect(() => {
     return voiceBus.on((ev) => {
-      if (ev.kind === "listening" && ev.source === "log") setListening(ev.on);
+      if (ev.kind === "state") setListening(ev.listening);
       if (ev.kind === "draftPrompt" && ev.source === "log" && ev.text) {
         setText((prev) => (prev ? `${prev.trimEnd()} ${ev.text}` : ev.text));
         setFromVoice(true);
@@ -57,7 +57,10 @@ export function LogComposer({
           type="button"
           variant="ghost"
           size="icon"
-          onClick={() => voiceBus.emit({ kind: "toggle", source: "log" })}
+          onClick={() => {
+            voiceBus.requestSource("log");
+            voiceBus.emit({ kind: "toggle" });
+          }}
           className={cn("press-scale", listening && "text-destructive")}
           aria-pressed={listening}
           aria-label="Toggle voice capture"
