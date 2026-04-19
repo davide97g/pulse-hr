@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Check, X, Calendar, Trash2, CalendarOff } from "lucide-react";
+import { Plus, Check, X, Calendar, Trash2, CalendarOff, Plane, Thermometer, User, Baby } from "lucide-react";
+import {
+  startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval,
+  isSameMonth, format, parseISO, isWithinInterval, startOfDay,
+} from "date-fns";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -326,20 +330,10 @@ function Leave() {
         ))}
 
         <TabsContent value="calendar" className="mt-4">
-          <Card className="p-5">
-            <div className="grid grid-cols-7 gap-1">
-              {["S","M","T","W","T","F","S"].map(d => <div key={d} className="text-center text-xs font-medium text-muted-foreground py-2">{d}</div>)}
-              {Array.from({length: 30}).map((_, i) => {
-                const onLeave = [3, 4, 12, 13, 14, 15, 22, 23].includes(i);
-                return (
-                  <div key={i} className="aspect-square border rounded-md p-1.5 hover:bg-muted/40 cursor-pointer">
-                    <div className="text-xs">{i + 1}</div>
-                    {onLeave && <div className="mt-1 h-1 rounded bg-info" />}
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
+          <LeaveCalendar
+            requests={list.filter(l => getStatus(l) !== "rejected")}
+            onSelect={setSelected}
+          />
         </TabsContent>
       </Tabs>
 
@@ -395,6 +389,114 @@ function Leave() {
         })()}
       </SidePanel>
     </div>
+  );
+}
+
+const LEAVE_STYLE: Record<LeaveRequest["type"], { icon: typeof Plane; bg: string; fg: string; label: string }> = {
+  Vacation: { icon: Plane,       bg: "oklch(0.6 0.16 220 / 0.18)",  fg: "oklch(0.72 0.14 220)", label: "Vacation" },
+  Sick:     { icon: Thermometer, bg: "oklch(0.7 0.15 30 / 0.2)",    fg: "oklch(0.78 0.14 30)",  label: "Sick" },
+  Personal: { icon: User,        bg: "oklch(0.6 0.18 280 / 0.2)",   fg: "oklch(0.78 0.14 280)", label: "Personal" },
+  Parental: { icon: Baby,        bg: "oklch(0.65 0.15 155 / 0.2)",  fg: "oklch(0.78 0.13 155)", label: "Parental" },
+};
+
+function LeaveCalendar({
+  requests,
+  onSelect,
+}: {
+  requests: LeaveRequest[];
+  onSelect: (l: LeaveRequest) => void;
+}) {
+  const today = new Date();
+  const monthStart = startOfMonth(today);
+  const monthEnd = endOfMonth(today);
+  const gridStart = startOfWeek(monthStart, { weekStartsOn: 0 });
+  const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+  const days = eachDayOfInterval({ start: gridStart, end: gridEnd });
+
+  const leavesOn = (day: Date) =>
+    requests.filter(l =>
+      isWithinInterval(startOfDay(day), {
+        start: startOfDay(parseISO(l.from)),
+        end: startOfDay(parseISO(l.to)),
+      })
+    );
+
+  const MAX_VISIBLE = 3;
+
+  return (
+    <Card className="p-4">
+      <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
+        <div className="text-sm font-semibold">{format(today, "MMMM yyyy")}</div>
+        <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+          {(Object.keys(LEAVE_STYLE) as LeaveRequest["type"][]).map(t => {
+            const s = LEAVE_STYLE[t];
+            const Icon = s.icon;
+            return (
+              <span key={t} className="inline-flex items-center gap-1.5">
+                <span
+                  className="inline-flex items-center justify-center h-4 w-4 rounded"
+                  style={{ backgroundColor: s.bg, color: s.fg }}
+                >
+                  <Icon className="h-2.5 w-2.5" />
+                </span>
+                {s.label}
+              </span>
+            );
+          })}
+        </div>
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
+          <div key={`${d}-${i}`} className="text-center text-[10px] font-medium text-muted-foreground uppercase tracking-wider py-1.5">
+            {d}
+          </div>
+        ))}
+        {days.map(day => {
+          const inMonth = isSameMonth(day, today);
+          const isToday = startOfDay(day).getTime() === startOfDay(today).getTime();
+          const entries = leavesOn(day);
+          const visible = entries.slice(0, MAX_VISIBLE);
+          const overflow = entries.length - visible.length;
+          return (
+            <div
+              key={day.toISOString()}
+              className={`min-h-[84px] border rounded-md p-1 flex flex-col gap-0.5 transition-colors ${
+                inMonth ? "bg-background" : "bg-muted/20 text-muted-foreground/50"
+              } ${isToday ? "ring-1 ring-primary/50" : ""}`}
+            >
+              <div className={`text-[11px] leading-none px-1 pt-0.5 pb-1 ${isToday ? "font-semibold text-primary" : ""}`}>
+                {format(day, "d")}
+              </div>
+              <div className="flex flex-col gap-0.5 min-h-0">
+                {visible.map(l => {
+                  const s = LEAVE_STYLE[l.type];
+                  const Icon = s.icon;
+                  const e = employeeById(l.employeeId);
+                  const initials = e?.initials ?? "??";
+                  const isHalf = l.granularity === "half";
+                  return (
+                    <button
+                      key={l.id}
+                      onClick={() => onSelect(l)}
+                      className="flex items-center gap-1 rounded px-1 py-0.5 text-[10px] font-medium truncate hover:brightness-110 press-scale text-left"
+                      style={{ backgroundColor: s.bg, color: s.fg }}
+                      title={`${e?.name ?? "?"} — ${l.type}${isHalf ? ` (${l.halfPeriod})` : ""}`}
+                    >
+                      <Icon className="h-2.5 w-2.5 shrink-0" />
+                      <span className="truncate">{initials}</span>
+                      {isHalf && <span className="ml-auto text-[9px] opacity-80">½</span>}
+                    </button>
+                  );
+                })}
+                {overflow > 0 && (
+                  <div className="text-[10px] text-muted-foreground px-1">+{overflow} more</div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </Card>
   );
 }
 

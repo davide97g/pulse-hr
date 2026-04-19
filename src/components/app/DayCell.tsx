@@ -79,7 +79,7 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
       aria-current={isToday ? "date" : undefined}
       aria-label={`${format(info.date, "EEEE, MMMM d")} · ${info.status}${info.hours ? ` · ${info.hours}h` : ""}`}
       className={cn(
-        "group relative aspect-square sm:aspect-[4/3] w-full p-2 rounded-md border text-left transition-all",
+        "group relative aspect-square sm:aspect-auto sm:h-[84px] w-full p-1.5 rounded-md border text-left transition-all",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:z-10",
         STATUS_BG[info.status],
         muted && "opacity-40",

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Play, Square, MapPin, Smartphone, Wifi, Plus, Pencil, Trash2, Copy,
   CalendarDays, Briefcase, Timer, CheckCircle2, Send, Circle, Clock,
-  Search, SlidersHorizontal, Users, Wand2,
+  Search, SlidersHorizontal, Users, Wand2, ChevronDown, Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -50,6 +50,7 @@ const ME = "e1";
 function Time() {
   const [clockedIn, setClockedIn] = useState(false);
   const [seconds, setSeconds] = useState(0);
+  const [logNowOpen, setLogNowOpen] = useState(false);
   const workspace = useWorkspace();
   const activeCommessa = workspace.activeCommessaId;
   const setActiveCommessa = workspace.setActiveCommessaId;
@@ -256,6 +257,19 @@ function Time() {
         description="Track presence, log hours against commesse, and submit your timesheet."
         actions={
           <>
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn("press-scale", logNowOpen && "border-primary text-primary")}
+              onClick={() => setLogNowOpen(o => !o)}
+              aria-expanded={logNowOpen}
+            >
+              <Zap className="h-4 w-4 mr-1.5" /> Log now
+              {clockedIn && (
+                <span className="ml-1.5 h-1.5 w-1.5 rounded-full bg-success pulse-dot" aria-label="clocked in" />
+              )}
+              <ChevronDown className={cn("h-3.5 w-3.5 ml-1 transition-transform", logNowOpen && "rotate-180")} />
+            </Button>
             <Button variant="outline" size="sm" className="press-scale" onClick={submitDrafts}>
               <Send className="h-4 w-4 mr-1.5" /> Submit drafts
             </Button>
@@ -266,8 +280,14 @@ function Time() {
         }
       />
 
-      {/* Clock + week summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+      {/* Clock + week summary — collapsed by default, opens via "Log now" */}
+      <div
+        className={cn(
+          "grid grid-cols-1 lg:grid-cols-3 gap-4 overflow-hidden transition-all duration-300 ease-out",
+          logNowOpen ? "max-h-[1200px] opacity-100 mb-4" : "max-h-0 opacity-0 mb-0 pointer-events-none",
+        )}
+        aria-hidden={!logNowOpen}
+      >
         <Card className="p-6 lg:col-span-1 relative overflow-hidden">
           <div
             className="absolute inset-0 opacity-[0.08] grid-bg pointer-events-none"
