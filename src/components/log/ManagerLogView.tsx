@@ -5,21 +5,28 @@ import { ArrowUpRight, ArrowDownRight, Minus, Lock, MessageSquare } from "lucide
 import { Button } from "@/components/ui/button";
 import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
-import { employees, employeeLogHealth, type EmployeeLogHealth } from "@/lib/mock-data";
+import {
+  employees,
+  employeeLogHealth,
+  managerAsks as managerAsksSeed,
+  type EmployeeLogHealth,
+} from "@/lib/mock-data";
 import { AskTopicDialog } from "./AskTopicDialog";
 import { cn } from "@/lib/utils";
 
 export function ManagerLogView() {
+  const [asks, setAsks] = useState(managerAsksSeed);
   const rows = employees.map((e) => ({
     employee: e,
     health: employeeLogHealth.find((h) => h.employeeId === e.id)!,
+    openAsks: asks.filter((a) => a.employeeId === e.id && a.status === "pending").length,
   }));
   const [askFor, setAskFor] = useState<string | null>(null);
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto p-4 md:p-6">
       <div className="grid gap-3 stagger-in grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-        {rows.map(({ employee, health }) => (
+        {rows.map(({ employee, health, openAsks }) => (
           <article
             key={employee.id}
             className="group rounded-xl border bg-card p-4 hover:shadow-sm transition-shadow"
@@ -46,9 +53,9 @@ export function ManagerLogView() {
                       {formatDistanceToNow(new Date(health.lastLogAt), { addSuffix: true })}
                     </span>
                   )}
-                  {health.openAsks > 0 && (
+                  {openAsks > 0 && (
                     <span className="rounded-full bg-primary/10 text-primary px-1.5 py-0.5">
-                      {health.openAsks} open ask{health.openAsks === 1 ? "" : "s"}
+                      {openAsks} open ask{openAsks === 1 ? "" : "s"}
                     </span>
                   )}
                 </div>
@@ -67,7 +74,12 @@ export function ManagerLogView() {
         ))}
       </div>
       {askFor && (
-        <AskTopicDialog employeeId={askFor} open onOpenChange={(o) => !o && setAskFor(null)} />
+        <AskTopicDialog
+          employeeId={askFor}
+          open
+          onOpenChange={(o) => !o && setAskFor(null)}
+          onCreate={(a) => setAsks((prev) => [...prev, a])}
+        />
       )}
     </div>
   );
