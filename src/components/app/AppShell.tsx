@@ -64,7 +64,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
-import { notifications } from "@/lib/mock-data";
+import { notifications, managerAsks } from "@/lib/mock-data";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 
 type NavItem = {
@@ -72,7 +72,10 @@ type NavItem = {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   isNew?: boolean;
+  unreadDot?: boolean;
 };
+
+const hasOpenManagerAsks = managerAsks.some((a) => a.status === "pending");
 type NavGroup = { label: string; items: NavItem[]; accent?: boolean };
 
 const groups: NavGroup[] = [
@@ -85,7 +88,15 @@ const groups: NavGroup[] = [
   },
   {
     label: "Me",
-    items: [{ to: "/log", label: "Status Log", icon: MessagesSquare, isNew: true }],
+    items: [
+      {
+        to: "/log",
+        label: "Status Log",
+        icon: MessagesSquare,
+        isNew: true,
+        unreadDot: hasOpenManagerAsks,
+      },
+    ],
   },
   {
     label: "People",
@@ -278,7 +289,13 @@ function AppShellInner() {
                       {!collapsed && item.isNew && (
                         <span className="accent-dot pulse-dot" aria-label="New" />
                       )}
-                      {collapsed && item.isNew && (
+                      {!collapsed && item.unreadDot && !item.isNew && (
+                        <span
+                          className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
+                          aria-label="Open asks"
+                        />
+                      )}
+                      {collapsed && (item.isNew || item.unreadDot) && (
                         <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
                       )}
                     </Link>
@@ -360,6 +377,12 @@ function AppShellInner() {
                         <Icon className="h-4 w-4 shrink-0" />
                         <span className="truncate flex-1">{item.label}</span>
                         {item.isNew && <span className="accent-dot pulse-dot" aria-label="New" />}
+                        {item.unreadDot && !item.isNew && (
+                          <span
+                            className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
+                            aria-label="Open asks"
+                          />
+                        )}
                       </Link>
                     );
                   })}

@@ -41,7 +41,20 @@ function LogRoute() {
           showTeam ? "Team health and recaps — no raw chats." : "Your private agentic log."
         }
       />
-      {ready ? showTeam ? <ManagerLogView /> : <EmployeeLogView /> : null}
+      {ready ? (
+        showTeam ? (
+          <ManagerLogView />
+        ) : (
+          <EmployeeLogView />
+        )
+      ) : (
+        <div className="space-y-3 p-4 md:p-6">
+          <div className="h-14 rounded-lg bg-muted animate-pulse" />
+          <div className="h-14 rounded-lg bg-muted animate-pulse" />
+          <div className="h-14 rounded-lg bg-muted animate-pulse" />
+          <div className="h-14 rounded-lg bg-muted animate-pulse" />
+        </div>
+      )}
     </div>
   );
 }

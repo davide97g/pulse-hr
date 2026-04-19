@@ -1538,20 +1538,6 @@ export const focusSessionsSeed: FocusSession[] = [
   },
 ];
 
-export interface CopilotSuggestion {
-  id: string;
-  prompt: string;
-  category: "approvals" | "insights" | "admin" | "reports";
-}
-export const copilotSuggestions: CopilotSuggestion[] = [
-  { id: "q1", prompt: "Approve all expenses under $200 from this week", category: "approvals" },
-  { id: "q2", prompt: "Who on the team has overlapping leave in May?", category: "insights" },
-  { id: "q3", prompt: "Summarize April payroll anomalies", category: "reports" },
-  { id: "q4", prompt: "Draft a welcome email for Emma Wilson", category: "admin" },
-  { id: "q5", prompt: "Which commesse are over budget this month?", category: "insights" },
-  { id: "q6", prompt: "Generate a headcount report for Q2 planning", category: "reports" },
-];
-
 export interface Payslip {
   id: string;
   runId: string;
