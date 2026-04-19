@@ -25,6 +25,7 @@ import { Route as OfficesRouteImport } from './routes/offices'
 import { Route as MomentsRouteImport } from './routes/moments'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as LogRouteImport } from './routes/log'
 import { Route as LeaveRouteImport } from './routes/leave'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as KudosRouteImport } from './routes/kudos'
@@ -42,6 +43,7 @@ import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
 import { Route as OfficesOfficeIdRouteImport } from './routes/offices.$officeId'
+import { Route as LogEmployeeIdRouteImport } from './routes/log.$employeeId'
 import { Route as DocsSaturationRouteImport } from './routes/docs.saturation'
 import { Route as DocsKudosRouteImport } from './routes/docs.kudos'
 import { Route as DocsIntegrationsRouteImport } from './routes/docs.integrations'
@@ -130,6 +132,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LogRoute = LogRouteImport.update({
+  id: '/log',
+  path: '/log',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeaveRoute = LeaveRouteImport.update({
   id: '/leave',
   path: '/leave',
@@ -215,6 +222,11 @@ const OfficesOfficeIdRoute = OfficesOfficeIdRouteImport.update({
   path: '/$officeId',
   getParentRoute: () => OfficesRoute,
 } as any)
+const LogEmployeeIdRoute = LogEmployeeIdRouteImport.update({
+  id: '/$employeeId',
+  path: '/$employeeId',
+  getParentRoute: () => LogRoute,
+} as any)
 const DocsSaturationRoute = DocsSaturationRouteImport.update({
   id: '/saturation',
   path: '/saturation',
@@ -265,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/kudos': typeof KudosRoute
   '/landing': typeof LandingRoute
   '/leave': typeof LeaveRoute
+  '/log': typeof LogRouteWithChildren
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
   '/moments': typeof MomentsRoute
@@ -287,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/docs/integrations': typeof DocsIntegrationsRoute
   '/docs/kudos': typeof DocsKudosRoute
   '/docs/saturation': typeof DocsSaturationRoute
+  '/log/$employeeId': typeof LogEmployeeIdRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/clients/': typeof ClientsIndexRoute
@@ -305,6 +319,7 @@ export interface FileRoutesByTo {
   '/kudos': typeof KudosRoute
   '/landing': typeof LandingRoute
   '/leave': typeof LeaveRoute
+  '/log': typeof LogRouteWithChildren
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
   '/moments': typeof MomentsRoute
@@ -327,6 +342,7 @@ export interface FileRoutesByTo {
   '/docs/integrations': typeof DocsIntegrationsRoute
   '/docs/kudos': typeof DocsKudosRoute
   '/docs/saturation': typeof DocsSaturationRoute
+  '/log/$employeeId': typeof LogEmployeeIdRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/clients': typeof ClientsIndexRoute
@@ -348,6 +364,7 @@ export interface FileRoutesById {
   '/kudos': typeof KudosRoute
   '/landing': typeof LandingRoute
   '/leave': typeof LeaveRoute
+  '/log': typeof LogRouteWithChildren
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
   '/moments': typeof MomentsRoute
@@ -370,6 +387,7 @@ export interface FileRoutesById {
   '/docs/integrations': typeof DocsIntegrationsRoute
   '/docs/kudos': typeof DocsKudosRoute
   '/docs/saturation': typeof DocsSaturationRoute
+  '/log/$employeeId': typeof LogEmployeeIdRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/clients/': typeof ClientsIndexRoute
@@ -392,6 +410,7 @@ export interface FileRouteTypes {
     | '/kudos'
     | '/landing'
     | '/leave'
+    | '/log'
     | '/login'
     | '/marketplace'
     | '/moments'
@@ -414,6 +433,7 @@ export interface FileRouteTypes {
     | '/docs/integrations'
     | '/docs/kudos'
     | '/docs/saturation'
+    | '/log/$employeeId'
     | '/offices/$officeId'
     | '/projects/$projectId'
     | '/clients/'
@@ -432,6 +452,7 @@ export interface FileRouteTypes {
     | '/kudos'
     | '/landing'
     | '/leave'
+    | '/log'
     | '/login'
     | '/marketplace'
     | '/moments'
@@ -454,6 +475,7 @@ export interface FileRouteTypes {
     | '/docs/integrations'
     | '/docs/kudos'
     | '/docs/saturation'
+    | '/log/$employeeId'
     | '/offices/$officeId'
     | '/projects/$projectId'
     | '/clients'
@@ -474,6 +496,7 @@ export interface FileRouteTypes {
     | '/kudos'
     | '/landing'
     | '/leave'
+    | '/log'
     | '/login'
     | '/marketplace'
     | '/moments'
@@ -496,6 +519,7 @@ export interface FileRouteTypes {
     | '/docs/integrations'
     | '/docs/kudos'
     | '/docs/saturation'
+    | '/log/$employeeId'
     | '/offices/$officeId'
     | '/projects/$projectId'
     | '/clients/'
@@ -517,6 +541,7 @@ export interface RootRouteChildren {
   KudosRoute: typeof KudosRoute
   LandingRoute: typeof LandingRoute
   LeaveRoute: typeof LeaveRoute
+  LogRoute: typeof LogRouteWithChildren
   LoginRoute: typeof LoginRoute
   MarketplaceRoute: typeof MarketplaceRoute
   MomentsRoute: typeof MomentsRoute
@@ -650,6 +675,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/log': {
+      id: '/log'
+      path: '/log'
+      fullPath: '/log'
+      preLoaderRoute: typeof LogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leave': {
       id: '/leave'
       path: '/leave'
@@ -769,6 +801,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfficesOfficeIdRouteImport
       parentRoute: typeof OfficesRoute
     }
+    '/log/$employeeId': {
+      id: '/log/$employeeId'
+      path: '/$employeeId'
+      fullPath: '/log/$employeeId'
+      preLoaderRoute: typeof LogEmployeeIdRouteImport
+      parentRoute: typeof LogRoute
+    }
     '/docs/saturation': {
       id: '/docs/saturation'
       path: '/saturation'
@@ -854,6 +893,16 @@ const DocsRouteChildren: DocsRouteChildren = {
 
 const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
 
+interface LogRouteChildren {
+  LogEmployeeIdRoute: typeof LogEmployeeIdRoute
+}
+
+const LogRouteChildren: LogRouteChildren = {
+  LogEmployeeIdRoute: LogEmployeeIdRoute,
+}
+
+const LogRouteWithChildren = LogRoute._addFileChildren(LogRouteChildren)
+
 interface OfficesOfficeIdRouteChildren {
   OfficesOfficeIdRoomIdRoute: typeof OfficesOfficeIdRoomIdRoute
 }
@@ -891,6 +940,7 @@ const rootRouteChildren: RootRouteChildren = {
   KudosRoute: KudosRoute,
   LandingRoute: LandingRoute,
   LeaveRoute: LeaveRoute,
+  LogRoute: LogRouteWithChildren,
   LoginRoute: LoginRoute,
   MarketplaceRoute: MarketplaceRoute,
   MomentsRoute: MomentsRoute,
