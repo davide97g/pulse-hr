@@ -24,7 +24,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { EmptyState } from "@/components/app/EmptyState";
-import { rolesSeed, auditLogSeed, type Role, type AuditEntry } from "@/lib/mock-data";
+import { rolesSeed, auditLogSeed, integrationsSeed, type Role, type AuditEntry, type IntegrationConnection } from "@/lib/mock-data";
+import { IntegrationConnectCard } from "@/components/pm/IntegrationConnectCard";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/settings")({
@@ -216,9 +217,15 @@ function Settings() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="integrations" className="mt-4">
-          <div className="text-sm text-muted-foreground mb-3">Manage installed integrations from the Marketplace.</div>
-          <Button variant="outline" asChild><a href="/marketplace">Open Marketplace</a></Button>
+        <TabsContent value="integrations" className="mt-4 space-y-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-sm font-semibold">Work-item integrations</div>
+              <div className="text-xs text-muted-foreground mt-0.5">Connect Jira and Linear to pull issues into projects and link them to activities.</div>
+            </div>
+            <Button variant="outline" asChild><a href="/marketplace">Open Marketplace</a></Button>
+          </div>
+          <IntegrationsSection />
         </TabsContent>
       </Tabs>
 
@@ -275,5 +282,18 @@ function RoleForm({ role, onCancel, onSave }: { role: Role | null; onCancel: () 
         <Button disabled={!name.trim()} onClick={() => onSave({ name, desc, count })}>{role ? "Save changes" : "Create role"}</Button>
       </DialogFooter>
     </>
+  );
+}
+
+function IntegrationsSection() {
+  const [connections, setConnections] = useState<IntegrationConnection[]>(integrationsSeed);
+  const update = (c: IntegrationConnection) =>
+    setConnections(list => list.map(x => (x.provider === c.provider ? c : x)));
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {connections.map(c => (
+        <IntegrationConnectCard key={c.provider} provider={c.provider} connection={c} onChange={update} />
+      ))}
+    </div>
   );
 }

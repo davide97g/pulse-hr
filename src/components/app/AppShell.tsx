@@ -48,6 +48,8 @@ import {
   Gift,
   Focus,
   Trophy,
+  Gauge,
+  Briefcase as BriefcaseIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -92,6 +94,7 @@ const groups: NavGroup[] = [
   {
     label: "Work",
     items: [
+      { to: "/clients", label: "Clients & Projects", icon: BriefcaseIcon, isNew: true },
       { to: "/time", label: "Time & attendance", icon: Clock },
       { to: "/leave", label: "Leave", icon: Calendar },
       { to: "/documents", label: "Documents", icon: FileText },
@@ -122,6 +125,7 @@ const groups: NavGroup[] = [
       { to: "/forecast", label: "Commessa Forecast", icon: TrendingUp, isNew: true },
       { to: "/kudos", label: "Kudos", icon: Gift, isNew: true },
       { to: "/focus", label: "Focus Mode", icon: Focus, isNew: true },
+      { to: "/saturation", label: "Saturation", icon: Gauge, isNew: true },
     ],
   },
   {
@@ -603,6 +607,18 @@ export function StatusBadge({ status }: { status: string }) {
     weekend: { label: "Weekend", cls: "bg-muted/50 text-muted-foreground border-border" },
     future: { label: "Upcoming", cls: "bg-muted/30 text-muted-foreground border-border" },
     day_off: { label: "Day off", cls: "bg-muted/50 text-muted-foreground border-border" },
+    // Project + activity statuses
+    on_hold: { label: "On hold", cls: "bg-warning/10 text-warning border-warning/30" },
+    closed: { label: "Closed", cls: "bg-muted text-muted-foreground border-border" },
+    at_risk: { label: "At risk", cls: "bg-destructive/10 text-destructive border-destructive/20" },
+    done: { label: "Done", cls: "bg-success/10 text-success border-success/20" },
+    todo: { label: "To do", cls: "bg-muted text-muted-foreground border-border" },
+    in_progress: { label: "In progress", cls: "bg-info/10 text-info border-info/20" },
+    review: { label: "Review", cls: "bg-warning/10 text-warning border-warning/30" },
+    blocked: { label: "Blocked", cls: "bg-destructive/10 text-destructive border-destructive/20" },
+    connected: { label: "Connected", cls: "bg-success/10 text-success border-success/20" },
+    disconnected: { label: "Disconnected", cls: "bg-muted text-muted-foreground border-border" },
+    error: { label: "Error", cls: "bg-destructive/10 text-destructive border-destructive/20" },
   };
   const m = map[status] ?? { label: status, cls: "bg-muted text-muted-foreground border-border" };
   return (
