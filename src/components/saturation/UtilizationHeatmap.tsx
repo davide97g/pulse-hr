@@ -5,6 +5,7 @@ import { SidePanel } from "@/components/app/SidePanel";
 import { employees, allocations, commesse, employeeById } from "@/lib/mock-data";
 import { personWeeklyLoad, weekRange } from "@/lib/projects";
 import { cn } from "@/lib/utils";
+import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 
 export function UtilizationHeatmap({
   startDate,
@@ -70,7 +71,7 @@ export function UtilizationHeatmap({
           <table className="text-xs">
             <thead>
               <tr>
-                <th className="text-left px-3 py-2 text-muted-foreground font-medium sticky left-0 bg-card z-[1] min-w-[180px]">
+                <th className="text-left px-3 py-2 text-muted-foreground font-medium sticky left-0 bg-card z-[1] min-w-[150px]">
                   Person
                 </th>
                 {weekList.map((w) => (
@@ -105,13 +106,15 @@ export function UtilizationHeatmap({
                         isHovered ? "bg-muted" : "bg-card",
                       )}
                     >
-                      <div className="flex items-center gap-2">
-                        <Avatar initials={emp.initials} color={emp.avatarColor} size={22} />
-                        <div>
-                          <div className="font-medium text-xs">{emp.name}</div>
-                          <div className="text-[10px] text-muted-foreground">{emp.department}</div>
+                      <EmployeeHoverCard employeeId={emp.id}>
+                        <div className="flex items-center gap-2 cursor-default">
+                          <Avatar initials={emp.initials} color={emp.avatarColor} size={22} />
+                          <div>
+                            <div className="font-medium text-xs">{emp.name}</div>
+                            <div className="text-[10px] text-muted-foreground">{emp.department}</div>
+                          </div>
                         </div>
-                      </div>
+                      </EmployeeHoverCard>
                     </td>
                     {cells.map((pct, i) => {
                       const bg = cellColor(pct);
@@ -122,7 +125,7 @@ export function UtilizationHeatmap({
                           <button
                             onClick={() => setSelected({ employeeId: emp.id, week: weekList[i] })}
                             className={cn(
-                              "h-7 w-10 rounded-sm border flex items-center justify-center text-[10px] font-mono font-semibold transition hover:scale-110",
+                              "h-7 w-8 rounded-sm border flex items-center justify-center text-[10px] font-mono font-semibold transition hover:scale-110",
                               idle
                                 ? "bg-muted/40 border-border/60 text-muted-foreground/50"
                                 : burnout

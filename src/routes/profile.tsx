@@ -27,6 +27,7 @@ import { useBookings } from "@/components/app/BookingsContext";
 import { officeById, roomById } from "@/lib/offices";
 import { Card } from "@/components/ui/card";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
+import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
 import { employees, kudosSeed, employeeById, leaveRequests } from "@/lib/mock-data";
 import { growthSummaryFor, strengthRadarFor, type StrengthTag } from "@/lib/growth";
 import { STRENGTH_COLORS, strengthColor } from "@/lib/colors";
@@ -155,7 +156,18 @@ function Profile() {
                 })()}
             </div>
           </div>
-          <div className="w-full md:w-[280px]">
+          <div className="w-full md:w-[280px] space-y-3">
+            <div className="rounded-lg border bg-card/60 p-3 flex items-center gap-3">
+              <EmployeeScoreBadge employeeId={me.id} size="lg" showInfo={true} />
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                  Employee score
+                </div>
+                <div className="text-xs font-medium mt-0.5">
+                  Weighted avg of delivery, load, value, kudos, focus, billable.
+                </div>
+              </div>
+            </div>
             <div className="flex items-center justify-between text-[11px] mb-1.5">
               <span className="text-muted-foreground">XP</span>
               <span className="font-mono tabular-nums">

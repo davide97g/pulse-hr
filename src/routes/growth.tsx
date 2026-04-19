@@ -11,6 +11,8 @@ import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
+import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
+import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 import { NewBadge } from "@/components/app/NewBadge";
 import { StrengthsRadar } from "@/components/app/StrengthsRadar";
 import { StatTile, MiniStat } from "@/components/app/StatTiles";
@@ -502,24 +504,31 @@ function TeamCard({ summary, onPick }: { summary: GrowthSummary; onPick: (id: st
       />
       <div className="relative">
         <div className="flex items-start gap-3 mb-3">
-          <BirthdayHalo
-            initials={employee.initials}
-            color={employee.avatarColor}
-            size={40}
-            active={isBirthday(employee)}
-          />
+          <EmployeeHoverCard employeeId={employee.id}>
+            <span>
+              <BirthdayHalo
+                initials={employee.initials}
+                color={employee.avatarColor}
+                size={40}
+                active={isBirthday(employee)}
+              />
+            </span>
+          </EmployeeHoverCard>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-semibold truncate">{employee.name}</div>
             <div className="text-[11px] text-muted-foreground truncate">{employee.role}</div>
           </div>
-          {streak > 0 && (
-            <div
-              className="inline-flex items-center gap-1 text-[11px] text-warning font-medium"
-              title={`${streak}-week activity streak`}
-            >
-              <Flame className="h-3 w-3" /> {streak}w
-            </div>
-          )}
+          <div className="flex flex-col items-end gap-1">
+            <EmployeeScoreBadge employeeId={employee.id} size="sm" showInfo={false} />
+            {streak > 0 && (
+              <div
+                className="inline-flex items-center gap-1 text-[10px] text-warning font-medium"
+                title={`${streak}-week activity streak`}
+              >
+                <Flame className="h-3 w-3" /> {streak}w
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Level + XP */}

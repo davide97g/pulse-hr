@@ -133,6 +133,7 @@ const groups: NavGroup[] = [
     items: [
       { to: "/marketplace", label: "Marketplace", icon: Puzzle },
       { to: "/developers", label: "Developers", icon: Code2 },
+      { to: "/docs", label: "Docs", icon: BookOpen, isNew: true },
       { to: "/settings", label: "Settings", icon: Settings },
     ],
   },

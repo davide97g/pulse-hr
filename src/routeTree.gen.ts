@@ -33,13 +33,20 @@ import { Route as ForecastRouteImport } from './routes/forecast'
 import { Route as FocusRouteImport } from './routes/focus'
 import { Route as ExpensesRouteImport } from './routes/expenses'
 import { Route as DocumentsRouteImport } from './routes/documents'
+import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
 import { Route as OfficesOfficeIdRouteImport } from './routes/offices.$officeId'
+import { Route as DocsSaturationRouteImport } from './routes/docs.saturation'
+import { Route as DocsKudosRouteImport } from './routes/docs.kudos'
+import { Route as DocsIntegrationsRouteImport } from './routes/docs.integrations'
+import { Route as DocsEmployeeScoreRouteImport } from './routes/docs.employee-score'
+import { Route as DocsClientsProjectsRouteImport } from './routes/docs.clients-projects'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$officeId.$roomId'
 
@@ -163,6 +170,11 @@ const DocumentsRoute = DocumentsRouteImport.update({
   path: '/documents',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DevelopersRoute = DevelopersRouteImport.update({
   id: '/developers',
   path: '/developers',
@@ -183,6 +195,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsIndexRoute = DocsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DocsRoute,
+} as any)
 const ClientsIndexRoute = ClientsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -197,6 +214,31 @@ const OfficesOfficeIdRoute = OfficesOfficeIdRouteImport.update({
   id: '/$officeId',
   path: '/$officeId',
   getParentRoute: () => OfficesRoute,
+} as any)
+const DocsSaturationRoute = DocsSaturationRouteImport.update({
+  id: '/saturation',
+  path: '/saturation',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsKudosRoute = DocsKudosRouteImport.update({
+  id: '/kudos',
+  path: '/kudos',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsIntegrationsRoute = DocsIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsEmployeeScoreRoute = DocsEmployeeScoreRouteImport.update({
+  id: '/employee-score',
+  path: '/employee-score',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsClientsProjectsRoute = DocsClientsProjectsRouteImport.update({
+  id: '/clients-projects',
+  path: '/clients-projects',
+  getParentRoute: () => DocsRoute,
 } as any)
 const ClientsClientIdRoute = ClientsClientIdRouteImport.update({
   id: '/$clientId',
@@ -214,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/announcements': typeof AnnouncementsRoute
   '/clients': typeof ClientsRouteWithChildren
   '/developers': typeof DevelopersRoute
+  '/docs': typeof DocsRouteWithChildren
   '/documents': typeof DocumentsRoute
   '/expenses': typeof ExpensesRoute
   '/focus': typeof FocusRoute
@@ -239,9 +282,15 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
+  '/docs/clients-projects': typeof DocsClientsProjectsRoute
+  '/docs/employee-score': typeof DocsEmployeeScoreRoute
+  '/docs/integrations': typeof DocsIntegrationsRoute
+  '/docs/kudos': typeof DocsKudosRoute
+  '/docs/saturation': typeof DocsSaturationRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/clients/': typeof ClientsIndexRoute
+  '/docs/': typeof DocsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
 }
 export interface FileRoutesByTo {
@@ -273,9 +322,15 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
+  '/docs/clients-projects': typeof DocsClientsProjectsRoute
+  '/docs/employee-score': typeof DocsEmployeeScoreRoute
+  '/docs/integrations': typeof DocsIntegrationsRoute
+  '/docs/kudos': typeof DocsKudosRoute
+  '/docs/saturation': typeof DocsSaturationRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/clients': typeof ClientsIndexRoute
+  '/docs': typeof DocsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
 }
 export interface FileRoutesById {
@@ -284,6 +339,7 @@ export interface FileRoutesById {
   '/announcements': typeof AnnouncementsRoute
   '/clients': typeof ClientsRouteWithChildren
   '/developers': typeof DevelopersRoute
+  '/docs': typeof DocsRouteWithChildren
   '/documents': typeof DocumentsRoute
   '/expenses': typeof ExpensesRoute
   '/focus': typeof FocusRoute
@@ -309,9 +365,15 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
+  '/docs/clients-projects': typeof DocsClientsProjectsRoute
+  '/docs/employee-score': typeof DocsEmployeeScoreRoute
+  '/docs/integrations': typeof DocsIntegrationsRoute
+  '/docs/kudos': typeof DocsKudosRoute
+  '/docs/saturation': typeof DocsSaturationRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/clients/': typeof ClientsIndexRoute
+  '/docs/': typeof DocsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
 }
 export interface FileRouteTypes {
@@ -321,6 +383,7 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/clients'
     | '/developers'
+    | '/docs'
     | '/documents'
     | '/expenses'
     | '/focus'
@@ -346,9 +409,15 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/clients/$clientId'
+    | '/docs/clients-projects'
+    | '/docs/employee-score'
+    | '/docs/integrations'
+    | '/docs/kudos'
+    | '/docs/saturation'
     | '/offices/$officeId'
     | '/projects/$projectId'
     | '/clients/'
+    | '/docs/'
     | '/offices/$officeId/$roomId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -380,9 +449,15 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/clients/$clientId'
+    | '/docs/clients-projects'
+    | '/docs/employee-score'
+    | '/docs/integrations'
+    | '/docs/kudos'
+    | '/docs/saturation'
     | '/offices/$officeId'
     | '/projects/$projectId'
     | '/clients'
+    | '/docs'
     | '/offices/$officeId/$roomId'
   id:
     | '__root__'
@@ -390,6 +465,7 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/clients'
     | '/developers'
+    | '/docs'
     | '/documents'
     | '/expenses'
     | '/focus'
@@ -415,9 +491,15 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/clients/$clientId'
+    | '/docs/clients-projects'
+    | '/docs/employee-score'
+    | '/docs/integrations'
+    | '/docs/kudos'
+    | '/docs/saturation'
     | '/offices/$officeId'
     | '/projects/$projectId'
     | '/clients/'
+    | '/docs/'
     | '/offices/$officeId/$roomId'
   fileRoutesById: FileRoutesById
 }
@@ -426,6 +508,7 @@ export interface RootRouteChildren {
   AnnouncementsRoute: typeof AnnouncementsRoute
   ClientsRoute: typeof ClientsRouteWithChildren
   DevelopersRoute: typeof DevelopersRoute
+  DocsRoute: typeof DocsRouteWithChildren
   DocumentsRoute: typeof DocumentsRoute
   ExpensesRoute: typeof ExpensesRoute
   FocusRoute: typeof FocusRoute
@@ -623,6 +706,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocumentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/developers': {
       id: '/developers'
       path: '/developers'
@@ -651,6 +741,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs/': {
+      id: '/docs/'
+      path: '/'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof DocsRoute
+    }
     '/clients/': {
       id: '/clients/'
       path: '/'
@@ -671,6 +768,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/offices/$officeId'
       preLoaderRoute: typeof OfficesOfficeIdRouteImport
       parentRoute: typeof OfficesRoute
+    }
+    '/docs/saturation': {
+      id: '/docs/saturation'
+      path: '/saturation'
+      fullPath: '/docs/saturation'
+      preLoaderRoute: typeof DocsSaturationRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/kudos': {
+      id: '/docs/kudos'
+      path: '/kudos'
+      fullPath: '/docs/kudos'
+      preLoaderRoute: typeof DocsKudosRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/integrations': {
+      id: '/docs/integrations'
+      path: '/integrations'
+      fullPath: '/docs/integrations'
+      preLoaderRoute: typeof DocsIntegrationsRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/employee-score': {
+      id: '/docs/employee-score'
+      path: '/employee-score'
+      fullPath: '/docs/employee-score'
+      preLoaderRoute: typeof DocsEmployeeScoreRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/clients-projects': {
+      id: '/docs/clients-projects'
+      path: '/clients-projects'
+      fullPath: '/docs/clients-projects'
+      preLoaderRoute: typeof DocsClientsProjectsRouteImport
+      parentRoute: typeof DocsRoute
     }
     '/clients/$clientId': {
       id: '/clients/$clientId'
@@ -702,6 +834,26 @@ const ClientsRouteChildren: ClientsRouteChildren = {
 const ClientsRouteWithChildren =
   ClientsRoute._addFileChildren(ClientsRouteChildren)
 
+interface DocsRouteChildren {
+  DocsClientsProjectsRoute: typeof DocsClientsProjectsRoute
+  DocsEmployeeScoreRoute: typeof DocsEmployeeScoreRoute
+  DocsIntegrationsRoute: typeof DocsIntegrationsRoute
+  DocsKudosRoute: typeof DocsKudosRoute
+  DocsSaturationRoute: typeof DocsSaturationRoute
+  DocsIndexRoute: typeof DocsIndexRoute
+}
+
+const DocsRouteChildren: DocsRouteChildren = {
+  DocsClientsProjectsRoute: DocsClientsProjectsRoute,
+  DocsEmployeeScoreRoute: DocsEmployeeScoreRoute,
+  DocsIntegrationsRoute: DocsIntegrationsRoute,
+  DocsKudosRoute: DocsKudosRoute,
+  DocsSaturationRoute: DocsSaturationRoute,
+  DocsIndexRoute: DocsIndexRoute,
+}
+
+const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
+
 interface OfficesOfficeIdRouteChildren {
   OfficesOfficeIdRoomIdRoute: typeof OfficesOfficeIdRoomIdRoute
 }
@@ -730,6 +882,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnnouncementsRoute: AnnouncementsRoute,
   ClientsRoute: ClientsRouteWithChildren,
   DevelopersRoute: DevelopersRoute,
+  DocsRoute: DocsRouteWithChildren,
   DocumentsRoute: DocumentsRoute,
   ExpensesRoute: ExpensesRoute,
   FocusRoute: FocusRoute,

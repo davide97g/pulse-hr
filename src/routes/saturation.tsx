@@ -10,6 +10,7 @@ import { MarginByProjectChart } from "@/components/saturation/MarginByProjectCha
 import { CostValueScatter } from "@/components/saturation/CostValueScatter";
 import { BillableSplitDonut } from "@/components/saturation/BillableSplitDonut";
 import { SaturationInsights } from "@/components/saturation/SaturationInsights";
+import { EmployeeScoreLeaderboard } from "@/components/saturation/EmployeeScoreLeaderboard";
 import { commesse, employees } from "@/lib/mock-data";
 import { orgUtilization, personValue, billableSplit } from "@/lib/projects";
 
@@ -99,19 +100,25 @@ function Saturation() {
               <TabsTrigger value="insights">Insights</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="load" className="pt-5 space-y-4">
-              <UtilizationHeatmap
-                startDate={startWeek}
-                weeks={12}
-                hoveredEmployeeId={hoveredEmployeeId}
-                onHoverEmployee={setHoveredEmployeeId}
-              />
-              <UtilizationTrendChart
-                startDate={startWeek}
-                weeks={12}
-                hoveredEmployeeId={hoveredEmployeeId}
-                onHoverEmployee={setHoveredEmployeeId}
-              />
+            <TabsContent value="load" className="pt-5">
+              <div className="flex flex-col lg:flex-row gap-4 items-stretch">
+                <div className="flex-1 min-w-0">
+                  <UtilizationHeatmap
+                    startDate={startWeek}
+                    weeks={12}
+                    hoveredEmployeeId={hoveredEmployeeId}
+                    onHoverEmployee={setHoveredEmployeeId}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <UtilizationTrendChart
+                    startDate={startWeek}
+                    weeks={12}
+                    hoveredEmployeeId={hoveredEmployeeId}
+                    onHoverEmployee={setHoveredEmployeeId}
+                  />
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="margins" className="pt-5 space-y-4">
@@ -141,6 +148,7 @@ function Saturation() {
             </TabsContent>
 
             <TabsContent value="value" className="pt-5 space-y-4">
+              <EmployeeScoreLeaderboard />
               <CostValueScatter />
               <div className="rounded-lg border bg-card p-5">
                 <div className="text-sm font-semibold mb-2">Quadrant guide</div>

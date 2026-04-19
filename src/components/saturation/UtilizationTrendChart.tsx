@@ -52,8 +52,8 @@ export function UtilizationTrendChart({
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-[1fr_180px] gap-4">
-        <div style={{ height: 320 }}>
+      <div className="flex flex-col sm:grid sm:grid-cols-[1fr_150px] gap-3">
+        <div style={{ height: 320 }} className="min-w-0">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={data}
@@ -139,17 +139,17 @@ export function UtilizationTrendChart({
                 onFocus={() => onHoverEmployee(e.id)}
                 onBlur={() => onHoverEmployee(null)}
                 className={cn(
-                  "w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition text-xs",
+                  "w-full flex items-center gap-1.5 px-1.5 py-1 rounded-md text-left transition text-[11px]",
                   isHovered && "bg-muted",
                   dimmed ? "opacity-40" : "opacity-100",
                   "hover:bg-muted/60",
                 )}
               >
                 <span
-                  className="h-2.5 w-2.5 rounded-full shrink-0"
+                  className="h-2 w-2 rounded-full shrink-0"
                   style={{ backgroundColor: e.avatarColor }}
                 />
-                <Avatar initials={e.initials} color={e.avatarColor} size={18} />
+                <Avatar initials={e.initials} color={e.avatarColor} size={16} />
                 <span className="truncate flex-1 font-medium">{e.name}</span>
               </button>
             );
