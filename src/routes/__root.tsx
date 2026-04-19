@@ -11,7 +11,9 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">The page you're looking for doesn't exist.</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          The page you're looking for doesn't exist.
+        </p>
         <div className="mt-6">
           <Link
             to="/"
@@ -26,28 +28,27 @@ function NotFoundComponent() {
 }
 
 const TITLE_BY_PATH: Record<string, string> = {
-  "/":              "Dashboard — Pulse HR",
-  "/landing":       "Pulse HR — the people platform you'll actually use",
-  "/login":         "Sign in — Pulse HR",
-  "/signup":        "Create your workspace — Pulse HR",
-  "/people":        "Employees — Pulse HR",
-  "/org":           "Org chart — Pulse HR",
-  "/recruiting":    "Recruiting — Pulse HR",
-  "/onboarding":    "Onboarding — Pulse HR",
-  "/time":          "Time & attendance — Pulse HR",
-  "/leave":         "Leave — Pulse HR",
-  "/documents":     "Documents — Pulse HR",
-  "/payroll":       "Payroll — Pulse HR",
-  "/expenses":      "Expenses — Pulse HR",
-  "/reports":       "Reports — Pulse HR",
-  "/marketplace":   "Marketplace — Pulse HR",
-  "/developers":    "Developers — Pulse HR",
-  "/settings":      "Settings — Pulse HR",
+  "/": "Dashboard — Pulse HR",
+  "/landing": "Pulse HR — the people platform you'll actually use",
+  "/login": "Sign in — Pulse HR",
+  "/signup": "Create your workspace — Pulse HR",
+  "/people": "Employees — Pulse HR",
+  "/org": "Org chart — Pulse HR",
+  "/recruiting": "Recruiting — Pulse HR",
+  "/onboarding": "Onboarding — Pulse HR",
+  "/time": "Time & attendance — Pulse HR",
+  "/leave": "Leave — Pulse HR",
+  "/documents": "Documents — Pulse HR",
+  "/payroll": "Payroll — Pulse HR",
+  "/expenses": "Expenses — Pulse HR",
+  "/reports": "Reports — Pulse HR",
+  "/marketplace": "Marketplace — Pulse HR",
+  "/developers": "Developers — Pulse HR",
+  "/settings": "Settings — Pulse HR",
   "/announcements": "Announcements — Pulse HR",
-  "/pulse":         "Team Pulse — Pulse HR",
-  "/forecast":      "Commessa Forecast — Pulse HR",
-  "/kudos":         "Kudos — Pulse HR",
-  "/focus":         "Focus Mode — Pulse HR",
+  "/forecast": "Commessa Forecast — Pulse HR",
+  "/kudos": "Kudos — Pulse HR",
+  "/focus": "Focus Mode — Pulse HR",
 };
 
 function RootComponent() {

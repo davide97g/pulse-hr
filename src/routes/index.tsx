@@ -1,8 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  ArrowRight, ArrowUpRight, ArrowDownRight, Check, X, Clock,
-  Users, Wallet, AlertTriangle, TrendingUp, Calendar, FileCheck2,
+  ArrowRight,
+  ArrowUpRight,
+  ArrowDownRight,
+  Check,
+  X,
+  Clock,
+  Users,
+  Wallet,
+  AlertTriangle,
+  TrendingUp,
+  Calendar,
+  FileCheck2,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,8 +29,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const pendingLeaves = leaveRequests.filter(l => l.status === "pending");
-  const pendingExpenses = expenses.filter(e => e.status === "pending");
+  const pendingLeaves = leaveRequests.filter((l) => l.status === "pending");
+  const pendingExpenses = expenses.filter((e) => e.status === "pending");
   const [decided, setDecided] = useState<Record<string, "approved" | "rejected">>({});
 
   return (
@@ -42,19 +52,28 @@ function Dashboard() {
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-primary inline-flex items-center gap-1.5">
-                <SparkIcon className="h-3.5 w-3.5" />What's new in Pulse
+                <SparkIcon className="h-3.5 w-3.5" />
+                What's new in Pulse
               </span>
               <NewBadge />
             </div>
             <div className="font-display text-xl leading-snug max-w-xl">
-              Five Labs features are live — ask Copilot with <kbd className="font-mono text-[11px] border rounded px-1.5 py-0.5 bg-background">⌘J</kbd>, or jump straight in.
+              Five Labs features are live — ask Copilot with{" "}
+              <kbd className="font-mono text-[11px] border rounded px-1.5 py-0.5 bg-background">
+                ⌘J
+              </kbd>
+              , or jump straight in.
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full md:w-auto">
-            <LabsChip to="/pulse"     icon={<Heart     className="h-3.5 w-3.5" />} label="Team Pulse" />
-            <LabsChip to="/forecast"  icon={<TrendingUp className="h-3.5 w-3.5" />} label="Forecast" />
-            <LabsChip to="/kudos"     icon={<Gift      className="h-3.5 w-3.5" />} label="Kudos" />
-            <LabsChip to="/focus"     icon={<FocusIcon className="h-3.5 w-3.5" />} label="Focus Mode" />
+            <LabsChip to="/log" icon={<Heart className="h-3.5 w-3.5" />} label="Status Log" />
+            <LabsChip
+              to="/forecast"
+              icon={<TrendingUp className="h-3.5 w-3.5" />}
+              label="Forecast"
+            />
+            <LabsChip to="/kudos" icon={<Gift className="h-3.5 w-3.5" />} label="Kudos" />
+            <LabsChip to="/focus" icon={<FocusIcon className="h-3.5 w-3.5" />} label="Focus Mode" />
           </div>
         </div>
       </div>
@@ -66,7 +85,11 @@ function Dashboard() {
           label="Pending approvals"
           value={pendingLeaves.length + pendingExpenses.length}
           delta={`${pendingLeaves.length} leave • ${pendingExpenses.length} expense`}
-          action={<Link to="/leave" className="text-primary text-xs font-medium hover:underline">Review now →</Link>}
+          action={
+            <Link to="/leave" className="text-primary text-xs font-medium hover:underline">
+              Review now →
+            </Link>
+          }
         />
         <KpiCard
           icon={<Users className="h-4 w-4" />}
@@ -74,7 +97,11 @@ function Dashboard() {
           value={employees.length}
           delta="+2 this month"
           trend="up"
-          action={<Link to="/people" className="text-primary text-xs font-medium hover:underline">View employees →</Link>}
+          action={
+            <Link to="/people" className="text-primary text-xs font-medium hover:underline">
+              View employees →
+            </Link>
+          }
         />
         <KpiCard
           icon={<Clock className="h-4 w-4" />}
@@ -83,14 +110,22 @@ function Dashboard() {
           delta="+18% vs last week"
           trend="up"
           warn
-          action={<Link to="/time" className="text-primary text-xs font-medium hover:underline">View details →</Link>}
+          action={
+            <Link to="/time" className="text-primary text-xs font-medium hover:underline">
+              View details →
+            </Link>
+          }
         />
         <KpiCard
           icon={<Wallet className="h-4 w-4" />}
           label="Payroll runs Apr 30"
           value="$124.5k"
           delta="12 employees"
-          action={<Link to="/payroll" className="text-primary text-xs font-medium hover:underline">Review run →</Link>}
+          action={
+            <Link to="/payroll" className="text-primary text-xs font-medium hover:underline">
+              Review run →
+            </Link>
+          }
         />
       </div>
 
@@ -100,16 +135,20 @@ function Dashboard() {
           <div className="px-5 py-4 border-b flex items-center justify-between">
             <div>
               <div className="font-semibold text-sm">Approvals queue</div>
-              <div className="text-xs text-muted-foreground mt-0.5">Inline approve or reject — no page reloads</div>
+              <div className="text-xs text-muted-foreground mt-0.5">
+                Inline approve or reject — no page reloads
+              </div>
             </div>
-            <Link to="/leave" className="text-xs text-primary font-medium hover:underline">See all</Link>
+            <Link to="/leave" className="text-xs text-primary font-medium hover:underline">
+              See all
+            </Link>
           </div>
           <div className="divide-y">
             {pendingLeaves.map((l) => {
               const emp = employeeById(l.employeeId)!;
               const state = decided[l.id];
               const decide = (status: "approved" | "rejected") =>
-                setDecided(d => ({ ...d, [l.id]: status }));
+                setDecided((d) => ({ ...d, [l.id]: status }));
               return (
                 <SwipeRow
                   key={l.id}
@@ -118,7 +157,12 @@ function Dashboard() {
                   disabled={!!state}
                 >
                   <div className="px-5 py-3.5 flex items-center gap-3 hover:bg-muted/40 transition-colors">
-                    <Avatar initials={emp.initials} color={emp.avatarColor} size={36} employeeId={emp.id} />
+                    <Avatar
+                      initials={emp.initials}
+                      color={emp.avatarColor}
+                      size={36}
+                      employeeId={emp.id}
+                    />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium truncate">{emp.name}</div>
                       <div className="text-xs text-muted-foreground">
@@ -197,11 +241,15 @@ function Dashboard() {
             <div className="space-y-2.5 text-sm">
               <div className="flex items-start gap-2">
                 <TrendingUp className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
-                <div className="flex-1">Engineering overtime up <strong>18%</strong> this week.</div>
+                <div className="flex-1">
+                  Engineering overtime up <strong>18%</strong> this week.
+                </div>
               </div>
               <div className="flex items-start gap-2">
                 <Calendar className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
-                <div className="flex-1">Overlapping leave: <strong>Sales team</strong> May 10–17.</div>
+                <div className="flex-1">
+                  Overlapping leave: <strong>Sales team</strong> May 10–17.
+                </div>
               </div>
             </div>
           </Card>
@@ -224,14 +272,18 @@ function Dashboard() {
         <Card className="p-0">
           <div className="px-5 py-4 border-b flex items-center justify-between">
             <div className="font-semibold text-sm">Announcements</div>
-            <Link to="/announcements" className="text-xs text-primary font-medium hover:underline">All</Link>
+            <Link to="/announcements" className="text-xs text-primary font-medium hover:underline">
+              All
+            </Link>
           </div>
           <div className="divide-y">
             {announcements.slice(0, 3).map((a) => (
               <div key={a.id} className="px-5 py-3.5 hover:bg-muted/40 cursor-pointer">
                 <div className="text-sm font-medium">{a.title}</div>
                 <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{a.body}</div>
-                <div className="text-[11px] text-muted-foreground mt-1.5">{a.author} • {a.time}</div>
+                <div className="text-[11px] text-muted-foreground mt-1.5">
+                  {a.author} • {a.time}
+                </div>
               </div>
             ))}
           </div>
@@ -242,7 +294,13 @@ function Dashboard() {
 }
 
 function KpiCard({
-  icon, label, value, delta, action, trend, warn,
+  icon,
+  label,
+  value,
+  delta,
+  action,
+  trend,
+  warn,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -255,7 +313,9 @@ function KpiCard({
   return (
     <Card className="p-5 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
-        <div className={`h-8 w-8 rounded-md flex items-center justify-center ${warn ? "bg-warning/10 text-warning" : "bg-primary/10 text-primary"}`}>
+        <div
+          className={`h-8 w-8 rounded-md flex items-center justify-center ${warn ? "bg-warning/10 text-warning" : "bg-primary/10 text-primary"}`}
+        >
           {icon}
         </div>
         {trend === "up" && <ArrowUpRight className="h-4 w-4 text-success" />}

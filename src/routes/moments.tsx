@@ -1,16 +1,30 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
-  Sparkles, Gift, Flame, Trophy, ChevronLeft, ChevronRight, X, Target,
-  Heart, Crown,
+  Sparkles,
+  Gift,
+  Flame,
+  Trophy,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Target,
+  Heart,
+  Crown,
 } from "lucide-react";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
 import { NewBadge } from "@/components/app/NewBadge";
 import { BirthdayHalo } from "@/components/app/BirthdayHalo";
 import { strengthColor } from "@/lib/colors";
 import {
-  employees, employeeById, kudosSeed, focusSessionsSeed, goalsSeed,
-  pulseEntries, type Kudo, type Vibe,
+  employees,
+  employeeById,
+  kudosSeed,
+  focusSessionsSeed,
+  goalsSeed,
+  pulseEntries,
+  type Kudo,
+  type Vibe,
 } from "@/lib/mock-data";
 import { leaderboard } from "@/lib/growth";
 import { isBirthday } from "@/lib/birthday";
@@ -48,13 +62,10 @@ function Moments() {
   const now = useMemo(() => new Date(), []);
 
   // ── pick content ───────────────────────────────────────────────────
-  const birthdayPerson = useMemo(
-    () => employees.find(e => isBirthday(e, now)),
-    [now],
-  );
+  const birthdayPerson = useMemo(() => employees.find((e) => isBirthday(e, now)), [now]);
 
   const heroKudo = useMemo<Kudo | null>(() => {
-    const recent = kudosSeed.filter(k => withinDays(k.date, 7, now));
+    const recent = kudosSeed.filter((k) => withinDays(k.date, 7, now));
     if (recent.length === 0) return null;
     return [...recent].sort((a, b) => b.amount - a.amount)[0];
   }, [now]);
@@ -62,8 +73,8 @@ function Moments() {
   const focusChamp = useMemo(() => {
     const counts = new Map<string, number>();
     focusSessionsSeed
-      .filter(f => withinDays(f.date, 7, now))
-      .forEach(f => counts.set(f.employeeId, (counts.get(f.employeeId) ?? 0) + 1));
+      .filter((f) => withinDays(f.date, 7, now))
+      .forEach((f) => counts.set(f.employeeId, (counts.get(f.employeeId) ?? 0) + 1));
     const top = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
     if (!top) return null;
     const emp = employeeById(top[0]);
@@ -72,7 +83,7 @@ function Moments() {
 
   const recentGoalHit = useMemo(() => {
     const hits = goalsSeed
-      .filter(g => g.status === "hit")
+      .filter((g) => g.status === "hit")
       .sort((a, b) => b.dueAt.localeCompare(a.dueAt));
     if (hits.length === 0) return null;
     const g = hits[0];
@@ -83,59 +94,62 @@ function Moments() {
 
   const teamVibe = useMemo(() => {
     const score: Record<Vibe, number> = { amazing: 4, good: 3, meh: 2, rough: 1 };
-    const recent = pulseEntries.filter(p => withinDays(p.date, 7, now));
+    const recent = pulseEntries.filter((p) => withinDays(p.date, 7, now));
     if (recent.length === 0) return null;
     const avg = recent.reduce((a, p) => a + score[p.vibe], 0) / recent.length;
-    const label: Vibe =
-      avg >= 3.5 ? "amazing" :
-      avg >= 2.8 ? "good" :
-      avg >= 1.8 ? "meh" : "rough";
+    const label: Vibe = avg >= 3.5 ? "amazing" : avg >= 2.8 ? "good" : avg >= 1.8 ? "meh" : "rough";
     return { label, count: recent.length, avg: avg.toFixed(2) };
   }, [now]);
 
   const slides: Slide[] = [];
-  if (birthdayPerson) slides.push({
-    kind: "birthday",
-    title: `Happy birthday, ${birthdayPerson.name.split(" ")[0]}!`,
-    kicker: "Today's celebration",
-    emoji: "🎂",
-    confetti: true,
-  });
-  if (heroKudo) slides.push({
-    kind: "kudos",
-    title: "Kudos of the week",
-    kicker: "Biggest boost received",
-    emoji: "💐",
-    confetti: true,
-  });
-  if (focusChamp) slides.push({
-    kind: "focus",
-    title: "Focus champion",
-    kicker: "Deepest work streak",
-    emoji: "🎯",
-    confetti: false,
-  });
-  if (recentGoalHit) slides.push({
-    kind: "goal",
-    title: "Goal hit",
-    kicker: "Target cleared",
-    emoji: "🏁",
-    confetti: true,
-  });
-  if (podium.length > 0) slides.push({
-    kind: "podium",
-    title: "This week's podium",
-    kicker: "XP leaderboard",
-    emoji: "🏆",
-    confetti: true,
-  });
-  if (teamVibe) slides.push({
-    kind: "vibe",
-    title: `Team vibe — ${teamVibe.label}`,
-    kicker: "Pulse this week",
-    emoji: VIBE_EMOJI[teamVibe.label],
-    confetti: teamVibe.label === "amazing",
-  });
+  if (birthdayPerson)
+    slides.push({
+      kind: "birthday",
+      title: `Happy birthday, ${birthdayPerson.name.split(" ")[0]}!`,
+      kicker: "Today's celebration",
+      emoji: "🎂",
+      confetti: true,
+    });
+  if (heroKudo)
+    slides.push({
+      kind: "kudos",
+      title: "Kudos of the week",
+      kicker: "Biggest boost received",
+      emoji: "💐",
+      confetti: true,
+    });
+  if (focusChamp)
+    slides.push({
+      kind: "focus",
+      title: "Focus champion",
+      kicker: "Deepest work streak",
+      emoji: "🎯",
+      confetti: false,
+    });
+  if (recentGoalHit)
+    slides.push({
+      kind: "goal",
+      title: "Goal hit",
+      kicker: "Target cleared",
+      emoji: "🏁",
+      confetti: true,
+    });
+  if (podium.length > 0)
+    slides.push({
+      kind: "podium",
+      title: "This week's podium",
+      kicker: "XP leaderboard",
+      emoji: "🏆",
+      confetti: true,
+    });
+  if (teamVibe)
+    slides.push({
+      kind: "vibe",
+      title: `Team vibe — ${teamVibe.label}`,
+      kicker: "Pulse this week",
+      emoji: VIBE_EMOJI[teamVibe.label],
+      confetti: teamVibe.label === "amazing",
+    });
 
   // ── navigation ─────────────────────────────────────────────────────
   const [idx, setIdx] = useState(0);
@@ -144,17 +158,19 @@ function Moments() {
 
   useEffect(() => {
     if (paused || total <= 1) return;
-    const t = setTimeout(() => setIdx(i => (i + 1) % total), 5200);
+    const t = setTimeout(() => setIdx((i) => (i + 1) % total), 5200);
     return () => clearTimeout(t);
   }, [idx, paused, total]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.key === "ArrowRight") setIdx(i => (i + 1) % total);
-      else if (e.key === "ArrowLeft") setIdx(i => (i - 1 + total) % total);
-      else if (e.key === " ") { e.preventDefault(); setPaused(p => !p); }
-      else if (e.key === "Escape") nav({ to: "/" });
+      if (e.key === "ArrowRight") setIdx((i) => (i + 1) % total);
+      else if (e.key === "ArrowLeft") setIdx((i) => (i - 1 + total) % total);
+      else if (e.key === " ") {
+        e.preventDefault();
+        setPaused((p) => !p);
+      } else if (e.key === "Escape") nav({ to: "/" });
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -163,7 +179,15 @@ function Moments() {
   if (total === 0) {
     return (
       <div className="p-10 max-w-2xl mx-auto text-center fade-in">
-        <PageHeader title={<><span>Moments</span><NewBadge /></>} description="A curated weekly reel of team highlights." />
+        <PageHeader
+          title={
+            <>
+              <span>Moments</span>
+              <NewBadge />
+            </>
+          }
+          description="A curated weekly reel of team highlights."
+        />
         <div className="rounded-lg border p-10 bg-card">
           <Sparkles className="h-8 w-8 mx-auto text-primary" />
           <div className="mt-3 font-display text-lg">Not much to celebrate yet</div>
@@ -248,13 +272,16 @@ function Moments() {
             <div className="font-display text-4xl md:text-5xl leading-[1.05] mt-3 mb-6">
               {slide.title}
             </div>
-            <SlideBody slide={slide} ctx={{ birthdayPerson, heroKudo, focusChamp, recentGoalHit, podium, teamVibe }} />
+            <SlideBody
+              slide={slide}
+              ctx={{ birthdayPerson, heroKudo, focusChamp, recentGoalHit, podium, teamVibe }}
+            />
           </div>
         </div>
 
         <div className="flex items-center justify-between mt-4">
           <button
-            onClick={() => setIdx(i => (i - 1 + total) % total)}
+            onClick={() => setIdx((i) => (i - 1 + total) % total)}
             className="h-10 px-3 rounded-md border hover:bg-muted press-scale inline-flex items-center gap-1.5 text-sm"
           >
             <ChevronLeft className="h-4 w-4" /> Prev
@@ -263,7 +290,7 @@ function Moments() {
             {idx + 1} / {total} {paused && "· paused"}
           </div>
           <button
-            onClick={() => setIdx(i => (i + 1) % total)}
+            onClick={() => setIdx((i) => (i + 1) % total)}
             className="h-10 px-3 rounded-md border hover:bg-muted press-scale inline-flex items-center gap-1.5 text-sm"
           >
             Next <ChevronRight className="h-4 w-4" />
@@ -292,14 +319,18 @@ function slideTint(kind: SlideKind): string {
 }
 
 function SlideBody({
-  slide, ctx,
+  slide,
+  ctx,
 }: {
   slide: Slide;
   ctx: {
     birthdayPerson: ReturnType<typeof employees.find>;
     heroKudo: Kudo | null;
     focusChamp: { employee: ReturnType<typeof employeeById>; sessions: number } | null;
-    recentGoalHit: { goal: typeof goalsSeed[number]; employee: ReturnType<typeof employeeById> } | null;
+    recentGoalHit: {
+      goal: (typeof goalsSeed)[number];
+      employee: ReturnType<typeof employeeById>;
+    } | null;
     podium: ReturnType<typeof leaderboard>;
     teamVibe: { label: Vibe; count: number; avg: string } | null;
   };
@@ -311,7 +342,9 @@ function SlideBody({
         <BirthdayHalo initials={p.initials} color={p.avatarColor} size={120} active />
         <div>
           <div className="text-xl font-semibold">{p.name}</div>
-          <div className="text-sm text-muted-foreground">{p.role} · {p.department}</div>
+          <div className="text-sm text-muted-foreground">
+            {p.role} · {p.department}
+          </div>
           <div className="mt-4">
             <Link
               to="/kudos"
@@ -336,7 +369,12 @@ function SlideBody({
     return (
       <div className="grid md:grid-cols-[auto_1fr] gap-6 items-start">
         <div className="flex items-center gap-2">
-          <Avatar initials={from.initials} color={from.avatarColor} size={56} employeeId={from.id} />
+          <Avatar
+            initials={from.initials}
+            color={from.avatarColor}
+            size={56}
+            employeeId={from.id}
+          />
           <ChevronRight className="h-5 w-5 text-muted-foreground" />
           <Avatar initials={to.initials} color={to.avatarColor} size={72} employeeId={to.id} />
         </div>
@@ -356,7 +394,10 @@ function SlideBody({
             <span className="font-mono text-sm tabular-nums text-primary">+{k.amount} 🪙</span>
             <span className="text-xs text-muted-foreground ml-auto tabular-nums">{k.date}</span>
           </div>
-          <blockquote className="mt-4 text-lg italic leading-snug border-l-4 pl-4" style={{ borderColor: color }}>
+          <blockquote
+            className="mt-4 text-lg italic leading-snug border-l-4 pl-4"
+            style={{ borderColor: color }}
+          >
             "{k.message}"
           </blockquote>
         </div>
@@ -396,9 +437,13 @@ function SlideBody({
           </div>
         )}
         <div className="rounded-lg border bg-success/5 border-success/30 p-5">
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">{g.quarter}</div>
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">
+            {g.quarter}
+          </div>
           <div className="text-lg font-semibold mt-1">{g.title}</div>
-          <div className="text-sm text-muted-foreground mt-0.5">{g.metric} · target {g.target}</div>
+          <div className="text-sm text-muted-foreground mt-0.5">
+            {g.metric} · target {g.target}
+          </div>
           <div className="flex items-center gap-3 mt-3 text-sm">
             <Target className="h-4 w-4 text-success" />
             <span className="font-mono tabular-nums">{g.progress}%</span>
@@ -414,7 +459,12 @@ function SlideBody({
         {ctx.podium.map((row, i) => (
           <div key={row.employee.id} className="text-center">
             <div className="relative inline-block mb-2">
-              <Avatar initials={row.employee.initials} color={row.employee.avatarColor} size={i === 0 ? 72 : 56} employeeId={row.employee.id} />
+              <Avatar
+                initials={row.employee.initials}
+                color={row.employee.avatarColor}
+                size={i === 0 ? 72 : 56}
+                employeeId={row.employee.id}
+              />
               <div
                 className={cn(
                   "absolute -bottom-1 -right-1 h-7 w-7 rounded-full grid place-items-center text-sm font-semibold border-2 border-card bg-card tabular-nums",
@@ -443,7 +493,10 @@ function SlideBody({
             Based on {ctx.teamVibe.count} pulse check-ins this week · avg {ctx.teamVibe.avg}/4
           </div>
           <div className="mt-3 flex items-center gap-1.5 text-xs text-primary">
-            <Heart className="h-3.5 w-3.5" /> <Link to="/pulse" className="hover:underline">Open Team Pulse →</Link>
+            <Heart className="h-3.5 w-3.5" />{" "}
+            <Link to="/log" className="hover:underline">
+              Open Status Log →
+            </Link>
           </div>
         </div>
       </div>
@@ -463,7 +516,7 @@ function ConfettiBurst() {
   return (
     <div className="absolute inset-x-0 top-10 pointer-events-none flex justify-center" aria-hidden>
       <div className="relative h-0 w-0">
-        {pieces.map(p => (
+        {pieces.map((p) => (
           <span
             key={p.id}
             className="confetti-piece"
