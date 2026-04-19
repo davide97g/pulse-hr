@@ -30,17 +30,19 @@ function LogRoute() {
 
   return (
     <div className="flex flex-col h-[calc(100dvh-4rem)]">
-      <PageHeader
-        title={
-          <span className="inline-flex items-center gap-2">
-            <MessagesSquare className="h-5 w-5" />
-            Status Log
-          </span>
-        }
-        description={
-          showTeam ? "Team health and recaps — no raw chats." : "Your private agentic log."
-        }
-      />
+      <div className="px-4 md:px-6 pt-4 md:pt-6">
+        <PageHeader
+          title={
+            <span className="flex items-center gap-2">
+              <MessagesSquare className="h-5 w-5" />
+              Status Log
+            </span>
+          }
+          description={
+            showTeam ? "Team health and recaps — no raw chats." : "Your private agentic log."
+          }
+        />
+      </div>
       {ready ? (
         showTeam ? (
           <ManagerLogView />
