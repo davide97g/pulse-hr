@@ -32,8 +32,3 @@ dist-ssr
 *.sw?
 
 # Agent tooling (not committed)
-.agents/
-.claude/
-.cursor/
-skills-lock.json
-CLAUDE.md
