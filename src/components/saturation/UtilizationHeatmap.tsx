@@ -6,8 +6,19 @@ import { employees, allocations, commesse, employeeById } from "@/lib/mock-data"
 import { personWeeklyLoad, weekRange } from "@/lib/projects";
 import { cn } from "@/lib/utils";
 
-export function UtilizationHeatmap({ startDate, weeks = 12 }: { startDate: Date; weeks?: number }) {
+export function UtilizationHeatmap({
+  startDate,
+  weeks = 12,
+  hoveredEmployeeId,
+  onHoverEmployee,
+}: {
+  startDate: Date;
+  weeks?: number;
+  hoveredEmployeeId?: string | null;
+  onHoverEmployee?: (id: string | null) => void;
+}) {
   const [selected, setSelected] = useState<{ employeeId: string; week: Date } | null>(null);
+  const someHovered = !!hoveredEmployeeId;
   const weekList = useMemo(() => weekRange(startDate, weeks), [startDate, weeks]);
   const active = employees.filter((e) => e.status !== "offboarding");
 
@@ -75,9 +86,25 @@ export function UtilizationHeatmap({ startDate, weeks = 12 }: { startDate: Date;
             <tbody>
               {active.map((emp) => {
                 const cells = cellsByEmployee.get(emp.id) ?? [];
+                const isHovered = hoveredEmployeeId === emp.id;
+                const dimmed = someHovered && !isHovered;
                 return (
-                  <tr key={emp.id} className="border-t">
-                    <td className="px-3 py-1.5 sticky left-0 bg-card z-[1]">
+                  <tr
+                    key={emp.id}
+                    className={cn(
+                      "border-t transition",
+                      isHovered && "bg-muted/40",
+                      dimmed && "opacity-35",
+                    )}
+                    onMouseEnter={() => onHoverEmployee?.(emp.id)}
+                    onMouseLeave={() => onHoverEmployee?.(null)}
+                  >
+                    <td
+                      className={cn(
+                        "px-3 py-1.5 sticky left-0 z-[1]",
+                        isHovered ? "bg-muted" : "bg-card",
+                      )}
+                    >
                       <div className="flex items-center gap-2">
                         <Avatar initials={emp.initials} color={emp.avatarColor} size={22} />
                         <div>

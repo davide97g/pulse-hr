@@ -4,6 +4,7 @@ import { Gauge } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
 import { SaturationKPIs } from "@/components/saturation/SaturationKPIs";
 import { UtilizationHeatmap } from "@/components/saturation/UtilizationHeatmap";
+import { UtilizationTrendChart } from "@/components/saturation/UtilizationTrendChart";
 import { MarginByProjectChart } from "@/components/saturation/MarginByProjectChart";
 import { CostValueScatter } from "@/components/saturation/CostValueScatter";
 import { BillableSplitDonut } from "@/components/saturation/BillableSplitDonut";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/saturation")({
 
 function Saturation() {
   const [startWeek] = useState(() => new Date());
+  const [hoveredEmployeeId, setHoveredEmployeeId] = useState<string | null>(null);
 
   const orgUtilPct = useMemo(() => orgUtilization(), []);
   const benchHours = useMemo(() => {
@@ -80,7 +82,18 @@ function Saturation() {
         />
 
         <div className="mt-5 grid grid-cols-1 gap-4">
-          <UtilizationHeatmap startDate={startWeek} weeks={12} />
+          <UtilizationHeatmap
+            startDate={startWeek}
+            weeks={12}
+            hoveredEmployeeId={hoveredEmployeeId}
+            onHoverEmployee={setHoveredEmployeeId}
+          />
+          <UtilizationTrendChart
+            startDate={startWeek}
+            weeks={12}
+            hoveredEmployeeId={hoveredEmployeeId}
+            onHoverEmployee={setHoveredEmployeeId}
+          />
         </div>
 
         <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
