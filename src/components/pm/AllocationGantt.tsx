@@ -33,7 +33,7 @@ export function AllocationGantt({
           end: a.endDate,
           label: p?.name ?? a.projectId,
           subtitle: `${a.percent}% · ${a.type}`,
-          color: p?.color ?? "oklch(0.6 0.08 260)",
+          color: p?.color ?? "var(--primary)",
           tone: a.percent < 30 ? ("soft" as const) : ("solid" as const),
         };
       }),

@@ -156,10 +156,10 @@ function Leave() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         {[
-          { label: "Vacation", value: "12 / 25", color: "oklch(0.6 0.16 220)" },
-          { label: "Sick", value: "2 / 10", color: "oklch(0.7 0.15 30)" },
-          { label: "Personal", value: "1 / 5", color: "oklch(0.6 0.18 280)" },
-          { label: "Carry over", value: "3 days", color: "oklch(0.65 0.15 155)" },
+          { label: "Vacation", value: "12 / 25", color: "var(--cal-vacation)" },
+          { label: "Sick", value: "2 / 10", color: "var(--cal-sick)" },
+          { label: "Personal", value: "1 / 5", color: "var(--muted-foreground)" },
+          { label: "Carry over", value: "3 days", color: "var(--success)" },
         ].map(b => (
           <Card key={b.label} className="p-4">
             <div className="flex items-center gap-2 text-xs text-muted-foreground"><div className="h-2 w-2 rounded-full" style={{ backgroundColor: b.color }} />{b.label}</div>
@@ -393,10 +393,10 @@ function Leave() {
 }
 
 const LEAVE_STYLE: Record<LeaveRequest["type"], { icon: typeof Plane; bg: string; fg: string; label: string }> = {
-  Vacation: { icon: Plane,       bg: "oklch(0.6 0.16 220 / 0.18)",  fg: "oklch(0.72 0.14 220)", label: "Vacation" },
-  Sick:     { icon: Thermometer, bg: "oklch(0.7 0.15 30 / 0.2)",    fg: "oklch(0.78 0.14 30)",  label: "Sick" },
-  Personal: { icon: User,        bg: "oklch(0.6 0.18 280 / 0.2)",   fg: "oklch(0.78 0.14 280)", label: "Personal" },
-  Parental: { icon: Baby,        bg: "oklch(0.65 0.15 155 / 0.2)",  fg: "oklch(0.78 0.13 155)", label: "Parental" },
+  Vacation: { icon: Plane,       bg: "color-mix(in oklch, var(--cal-vacation) 18%, transparent)", fg: "var(--cal-vacation)", label: "Vacation" },
+  Sick:     { icon: Thermometer, bg: "color-mix(in oklch, var(--destructive) 18%, transparent)",  fg: "var(--destructive)",  label: "Sick" },
+  Personal: { icon: User,        bg: "color-mix(in oklch, var(--muted-foreground) 18%, transparent)", fg: "var(--muted-foreground)", label: "Personal" },
+  Parental: { icon: Baby,        bg: "color-mix(in oklch, var(--success) 18%, transparent)",      fg: "var(--success)",      label: "Parental" },
 };
 
 function LeaveCalendar({

@@ -22,11 +22,11 @@ import { employeeById, type Activity, type ActivityStatus } from "@/lib/mock-dat
 import { cn } from "@/lib/utils";
 
 const COLUMNS: { id: ActivityStatus; label: string; tone: string }[] = [
-  { id: "todo", label: "To do", tone: "oklch(0.75 0.04 260)" },
-  { id: "in_progress", label: "In progress", tone: "oklch(0.7 0.15 220)" },
-  { id: "review", label: "Review", tone: "oklch(0.78 0.12 80)" },
-  { id: "done", label: "Done", tone: "oklch(0.7 0.15 155)" },
-  { id: "blocked", label: "Blocked", tone: "oklch(0.65 0.18 30)" },
+  { id: "todo", label: "To do", tone: "var(--muted-foreground)" },
+  { id: "in_progress", label: "In progress", tone: "var(--info)" },
+  { id: "review", label: "Review", tone: "var(--warning)" },
+  { id: "done", label: "Done", tone: "var(--success)" },
+  { id: "blocked", label: "Blocked", tone: "var(--destructive)" },
 ];
 
 export function ActivityBoard({

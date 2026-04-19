@@ -453,7 +453,7 @@ function SlideBody({
 }
 
 function ConfettiBurst() {
-  const palette = ["#b4ff39", "#39e1ff", "#c06bff", "#ff6b9a", "#ffd939"];
+  const palette = ["var(--primary)", "var(--warning)", "var(--muted-foreground)"];
   const pieces = Array.from({ length: 24 }).map((_, i) => ({
     id: i,
     dx: (Math.random() - 0.5) * 600,

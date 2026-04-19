@@ -2,11 +2,11 @@ import { Gantt, type GanttRow, type GanttDependency } from "./Gantt";
 import type { Activity, Commessa } from "@/lib/mock-data";
 
 const statusTone: Record<Activity["status"], string> = {
-  todo: "oklch(0.6 0.05 260)",
-  in_progress: "oklch(0.65 0.16 220)",
-  review: "oklch(0.72 0.14 80)",
-  done: "oklch(0.65 0.15 155)",
-  blocked: "oklch(0.65 0.18 30)",
+  todo: "var(--muted-foreground)",
+  in_progress: "var(--info)",
+  review: "var(--warning)",
+  done: "var(--success)",
+  blocked: "var(--destructive)",
 };
 
 export function ProjectActivitiesGantt({

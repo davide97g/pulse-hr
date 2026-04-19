@@ -43,8 +43,8 @@ export function MomentsCard() {
     <Card className="p-0 overflow-hidden">
       <div className="px-5 py-4 border-b flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-md grid place-items-center" style={{ background: "linear-gradient(135deg,#ffd939,#ff6b9a)" }}>
-            <PartyPopper className="h-4 w-4 text-[#0b0b0d]" />
+          <div className="h-7 w-7 rounded-md grid place-items-center bg-warning/15 text-warning">
+            <PartyPopper className="h-4 w-4" />
           </div>
           <div>
             <div className="font-semibold text-sm">Moments this week</div>

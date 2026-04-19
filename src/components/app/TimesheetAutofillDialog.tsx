@@ -97,8 +97,8 @@ export function TimesheetAutofillDialog({
       <DialogContent className="max-w-[720px] p-0 overflow-hidden">
         <DialogHeader className="px-6 pt-5 pb-3 border-b">
           <DialogTitle className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-md grid place-items-center" style={{ background: "linear-gradient(135deg,#b4ff39,#39e1ff)" }}>
-              <Sparkles className="h-4 w-4 text-[#0b0b0d]" />
+            <div className="h-7 w-7 rounded-md grid place-items-center bg-primary/15 text-primary">
+              <Sparkles className="h-4 w-4" />
             </div>
             Draft my week
             <NewBadge />

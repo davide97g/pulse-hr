@@ -70,8 +70,8 @@ export function StrengthsRadar({
         })}
         <path
           d={path}
-          fill="oklch(0.72 0.17 295 / 0.18)"
-          stroke="oklch(0.72 0.17 295)"
+          fill="color-mix(in oklch, var(--primary) 18%, transparent)"
+          stroke="var(--primary)"
           strokeWidth="1.5"
         />
         {points.map((p, i) => {
