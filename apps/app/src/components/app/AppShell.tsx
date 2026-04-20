@@ -1,77 +1,44 @@
+import { useClerk, useUser } from "@clerk/react";
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { useUser, useClerk } from "@clerk/react";
-import { Menu } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { useSidebarFeatures } from "@/components/app/SidebarFeaturesContext";
+import { SidebarRouteGuard } from "@/components/app/SidebarRouteGuard";
+import { CommentPill } from "@/components/comments/CommentPill";
+import { CommentsOverlayProvider } from "@/components/comments/CommentsOverlayProvider";
+import { PinLayer } from "@/components/comments/PinLayer";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { QuickActionProvider, useQuickAction } from "./QuickActions";
-import { BookingsProvider } from "./BookingsContext";
-import { OfficesStoreProvider } from "./OfficesStoreProvider";
+import { useTrackPageViews } from "@/lib/usage-tracking";
+import { voiceBus } from "@/lib/voice-bus";
+import { ActiveCommessaPin } from "./ActiveCommessaPin";
 import { BookingDialog } from "./BookingDialog";
+import { BookingsProvider } from "./BookingsContext";
 import { CommandPalette } from "./CommandPalette";
 import { LogOverlay } from "./LogOverlay";
 import { NewBadge } from "./NewBadge";
-import { ThemeSwitcher } from "./ThemeSwitcher";
-import { ActiveCommessaPin } from "./ActiveCommessaPin";
+import { OfficesStoreProvider } from "./OfficesStoreProvider";
+import { QuickActionProvider, useQuickAction } from "./QuickActions";
 import { ShortcutSheet } from "./ShortcutSheet";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 import { VoiceDock } from "./VoiceDock";
-import { CommentsOverlayProvider } from "@/components/comments/CommentsOverlayProvider";
-import { CommentPill } from "@/components/comments/CommentPill";
-import { PinLayer } from "@/components/comments/PinLayer";
-import { voiceBus } from "@/lib/voice-bus";
-import { useTrackPageViews } from "@/lib/usage-tracking";
-import { toast } from "sonner";
 import {
-  LayoutDashboard,
-  Users,
   Briefcase,
-  Wallet,
-  BarChart3,
-  Settings,
-  Search,
-  Bell,
-  Plus,
-  ChevronDown,
   Building2,
-  Sparkles,
-  LifeBuoy,
-  Clock,
   Calendar,
-  CalendarDays,
-  FileText,
-  Receipt,
-  CreditCard,
-  Network,
-  GraduationCap,
-  Megaphone,
-  Puzzle,
-  Code2,
-  ShieldCheck,
-  Languages,
-  BookOpen,
-  Zap,
-  TrendingUp,
-  MessagesSquare,
-  Gift,
-  Focus,
-  Trophy,
-  Gauge,
+  ChevronDown,
+  LifeBuoy,
+  Menu,
   MessageSquare,
-  Briefcase as BriefcaseIcon,
+  Plus,
+  Receipt,
   RotateCcw,
+  Search,
+  Sparkles,
+  Users,
+  Zap,
+  Bell,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
+import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -82,98 +49,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { isAdminUser } from "@/lib/comments/admin";
 import { notifications, managerAsks } from "@/lib/mock-data";
-import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
+import { buildSidebarNavGroups } from "@/lib/sidebar-nav-groups";
+import { cn } from "@/lib/utils";
 import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
-
-type NavItem = {
-  to: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  isNew?: boolean;
-  unreadDot?: boolean;
-};
-
-const hasOpenManagerAsks = managerAsks.some((a) => a.status === "pending");
-type NavGroup = { label: string; items: NavItem[]; accent?: boolean };
-
-const groups: NavGroup[] = [
-  {
-    label: "Overview",
-    items: [
-      { to: "/", label: "Dashboard", icon: LayoutDashboard },
-      { to: "/announcements", label: "Announcements", icon: Megaphone },
-    ],
-  },
-  {
-    label: "Me",
-    items: [
-      {
-        to: "/log",
-        label: "Status Log",
-        icon: MessagesSquare,
-        isNew: true,
-        unreadDot: hasOpenManagerAsks,
-      },
-    ],
-  },
-  {
-    label: "People",
-    items: [
-      { to: "/people", label: "Employees", icon: Users },
-      { to: "/org", label: "Org chart", icon: Network },
-      { to: "/recruiting", label: "Recruiting", icon: Briefcase },
-      { to: "/onboarding", label: "Onboarding", icon: GraduationCap },
-    ],
-  },
-  {
-    label: "Work",
-    items: [
-      { to: "/clients", label: "Clients & Projects", icon: BriefcaseIcon, isNew: true },
-      { to: "/time", label: "Time & attendance", icon: Clock },
-      { to: "/calendar", label: "Calendar", icon: CalendarDays, isNew: true },
-      { to: "/leave", label: "Leave", icon: Calendar },
-      { to: "/documents", label: "Documents", icon: FileText },
-      { to: "/offices", label: "Offices", icon: Building2, isNew: true },
-    ],
-  },
-  {
-    label: "Money",
-    items: [
-      { to: "/payroll", label: "Payroll", icon: CreditCard },
-      { to: "/expenses", label: "Expenses", icon: Receipt },
-    ],
-  },
-  {
-    label: "Insights",
-    items: [{ to: "/reports", label: "Reports", icon: BarChart3 }],
-  },
-  {
-    label: "Growth",
-    accent: true,
-    items: [{ to: "/growth", label: "Growth", icon: Trophy, isNew: true }],
-  },
-  {
-    label: "Labs",
-    accent: true,
-    items: [
-      { to: "/forecast", label: "Commessa Forecast", icon: TrendingUp, isNew: true },
-      { to: "/kudos", label: "Kudos", icon: Gift, isNew: true },
-      { to: "/focus", label: "Focus Mode", icon: Focus, isNew: true },
-      { to: "/saturation", label: "Saturation", icon: Gauge, isNew: true },
-    ],
-  },
-  {
-    label: "Workspace",
-    items: [
-      { to: "/feedback", label: "Feedback", icon: MessageSquare, isNew: true },
-      { to: "/marketplace", label: "Marketplace", icon: Puzzle },
-      { to: "/developers", label: "Developers", icon: Code2 },
-      { to: "/docs", label: "Docs", icon: BookOpen, isNew: true },
-      { to: "/settings", label: "Settings", icon: Settings },
-    ],
-  },
-];
 
 export function AppShell() {
   return (
@@ -192,6 +83,22 @@ export function AppShell() {
 function AppShellInner() {
   const location = useLocation();
   const appShellNav = useNavigate();
+  const { user } = useUser();
+  const admin = isAdminUser(user);
+  const { isFeatureEnabled } = useSidebarFeatures();
+  const hasOpenManagerAsks = useMemo(() => managerAsks.some((a) => a.status === "pending"), []);
+  const groups = useMemo(() => {
+    const raw = buildSidebarNavGroups(hasOpenManagerAsks, admin);
+    return raw
+      .map((g) => ({
+        ...g,
+        items: g.items.filter((item) => {
+          if (!item.featureId) return true;
+          return admin || isFeatureEnabled(item.featureId);
+        }),
+      }))
+      .filter((g) => g.items.length > 0);
+  }, [hasOpenManagerAsks, admin, isFeatureEnabled]);
   useTrackPageViews();
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -351,9 +258,12 @@ function AppShellInner() {
           onOpenPalette={() => setPaletteOpen(true)}
           onOpenLog={() => setLogOpen(true)}
           onOpenMobileNav={() => setMobileNavOpen(true)}
+          showFeedbackLink={admin || isFeatureEnabled("feedback")}
         />
         <main className="flex-1 overflow-y-auto scrollbar-thin">
-          <Outlet />
+          <SidebarRouteGuard>
+            <Outlet />
+          </SidebarRouteGuard>
         </main>
       </div>
 
@@ -457,10 +367,12 @@ function Topbar({
   onOpenPalette,
   onOpenLog,
   onOpenMobileNav,
+  showFeedbackLink,
 }: {
   onOpenPalette: () => void;
   onOpenLog: () => void;
   onOpenMobileNav: () => void;
+  showFeedbackLink: boolean;
 }) {
   const unread = notifications.filter((n) => n.unread).length;
   const navigate = useNavigate();
@@ -509,14 +421,16 @@ function Topbar({
       <div className="hidden lg:inline-flex">
         <ActiveCommessaPin />
       </div>
-      <Link
-        to="/feedback"
-        className="hidden lg:inline-flex h-9 items-center gap-1.5 px-2.5 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale transition-colors"
-        title="Feedback board"
-      >
-        <MessageSquare className="h-4 w-4 text-primary" />
-        <span className="hidden xl:inline font-medium">Feedback</span>
-      </Link>
+      {showFeedbackLink && (
+        <Link
+          to="/feedback"
+          className="hidden lg:inline-flex h-9 items-center gap-1.5 px-2.5 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale transition-colors"
+          title="Feedback board"
+        >
+          <MessageSquare className="h-4 w-4 text-primary" />
+          <span className="hidden xl:inline font-medium">Feedback</span>
+        </Link>
+      )}
       <div className="hidden md:inline-flex">
         <button
           onClick={onOpenLog}

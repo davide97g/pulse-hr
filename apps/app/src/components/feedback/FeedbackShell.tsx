@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useUser, useClerk } from "@clerk/react";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SidebarRouteGuard } from "@/components/app/SidebarRouteGuard";
 
 export function FeedbackShell({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
@@ -79,7 +80,9 @@ export function FeedbackShell({ children }: { children: React.ReactNode }) {
           </div>
         )}
       </header>
-      <main className="flex-1 overflow-y-auto scrollbar-thin">{children}</main>
+      <main className="flex-1 overflow-y-auto scrollbar-thin">
+        <SidebarRouteGuard>{children}</SidebarRouteGuard>
+      </main>
     </div>
   );
 }

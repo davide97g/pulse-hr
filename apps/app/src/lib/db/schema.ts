@@ -88,8 +88,18 @@ export const commentRevisions = pgTable("comment_revisions", {
   editedAt: timestamp("edited_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** Enabled/disabled Pulse sidebar modules per workspace (Neon). */
+export const workspaceSidebarFeatures = pgTable("workspace_sidebar_features", {
+  workspaceKey: text("workspace_key").primaryKey(),
+  /** Partial map of feature id → boolean; missing keys default to true in the app. */
+  features: jsonb("features").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export type DbComment = typeof comments.$inferSelect;
 export type DbCommentInsert = typeof comments.$inferInsert;
 export type DbReply = typeof commentReplies.$inferSelect;
 export type DbReplyInsert = typeof commentReplies.$inferInsert;
 export type DbVote = typeof commentVotes.$inferSelect;
+export type DbWorkspaceSidebarFeatures = typeof workspaceSidebarFeatures.$inferSelect;
+export type DbWorkspaceSidebarFeaturesInsert = typeof workspaceSidebarFeatures.$inferInsert;

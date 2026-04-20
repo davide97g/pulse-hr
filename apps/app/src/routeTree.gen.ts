@@ -51,6 +51,7 @@ import { Route as DocsIntegrationsRouteImport } from './routes/docs.integrations
 import { Route as DocsEmployeeScoreRouteImport } from './routes/docs.employee-score'
 import { Route as DocsClientsProjectsRouteImport } from './routes/docs.clients-projects'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
+import { Route as AdminSidebarVisibilityRouteImport } from './routes/admin.sidebar-visibility'
 import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$officeId.$roomId'
 
 const WelcomeRoute = WelcomeRouteImport.update({
@@ -263,6 +264,11 @@ const ClientsClientIdRoute = ClientsClientIdRouteImport.update({
   path: '/$clientId',
   getParentRoute: () => ClientsRoute,
 } as any)
+const AdminSidebarVisibilityRoute = AdminSidebarVisibilityRouteImport.update({
+  id: '/admin/sidebar-visibility',
+  path: '/admin/sidebar-visibility',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OfficesOfficeIdRoomIdRoute = OfficesOfficeIdRoomIdRouteImport.update({
   id: '/$roomId',
   path: '/$roomId',
@@ -301,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
+  '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
   '/docs/employee-score': typeof DocsEmployeeScoreRoute
@@ -344,6 +351,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
+  '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
   '/docs/employee-score': typeof DocsEmployeeScoreRoute
@@ -390,6 +398,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
+  '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
   '/docs/employee-score': typeof DocsEmployeeScoreRoute
@@ -437,6 +446,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
+    | '/admin/sidebar-visibility'
     | '/clients/$clientId'
     | '/docs/clients-projects'
     | '/docs/employee-score'
@@ -480,6 +490,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
+    | '/admin/sidebar-visibility'
     | '/clients/$clientId'
     | '/docs/clients-projects'
     | '/docs/employee-score'
@@ -525,6 +536,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
+    | '/admin/sidebar-visibility'
     | '/clients/$clientId'
     | '/docs/clients-projects'
     | '/docs/employee-score'
@@ -571,6 +583,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TimeRoute: typeof TimeRoute
   WelcomeRoute: typeof WelcomeRoute
+  AdminSidebarVisibilityRoute: typeof AdminSidebarVisibilityRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
 }
 
@@ -870,6 +883,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClientsClientIdRouteImport
       parentRoute: typeof ClientsRoute
     }
+    '/admin/sidebar-visibility': {
+      id: '/admin/sidebar-visibility'
+      path: '/admin/sidebar-visibility'
+      fullPath: '/admin/sidebar-visibility'
+      preLoaderRoute: typeof AdminSidebarVisibilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/offices/$officeId/$roomId': {
       id: '/offices/$officeId/$roomId'
       path: '/$roomId'
@@ -978,6 +998,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TimeRoute: TimeRoute,
   WelcomeRoute: WelcomeRoute,
+  AdminSidebarVisibilityRoute: AdminSidebarVisibilityRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
 }
 export const routeTree = rootRouteImport
