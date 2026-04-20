@@ -16,7 +16,8 @@ export function NewCommentComposer({
   y: number;
   onDismiss: () => void;
 }) {
-  const { submitNew, author } = useCommentsOverlay();
+  const { submitNew, author, pendingScreenshotUrl, screenshotStatus } =
+    useCommentsOverlay();
   const [body, setBody] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [showTags, setShowTags] = useState(false);
@@ -77,6 +78,27 @@ export function NewCommentComposer({
         "shadow-[0_16px_48px_rgba(0,0,0,0.18)]",
       )}
     >
+      {pendingScreenshotUrl && (
+        <div className="px-3 pt-3">
+          <div className="relative rounded-md overflow-hidden border bg-muted/40">
+            <img
+              src={pendingScreenshotUrl}
+              alt="Snapshot"
+              className="w-full h-24 object-cover object-top"
+            />
+            <span className="absolute bottom-1 left-1 inline-flex items-center gap-1 h-5 px-1.5 rounded-full bg-black/60 text-white text-[10px]">
+              <Camera className="h-2.5 w-2.5" /> snapshot
+            </span>
+          </div>
+        </div>
+      )}
+      {screenshotStatus === "capturing" && !pendingScreenshotUrl && (
+        <div className="px-3 pt-3">
+          <div className="h-24 rounded-md bg-muted/40 border flex items-center justify-center text-[11px] text-muted-foreground">
+            Capturing snapshot…
+          </div>
+        </div>
+      )}
       <div className="px-3 pt-3">
         <input
           ref={inputRef}

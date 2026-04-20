@@ -83,6 +83,7 @@ export default async function handler(request: Request): Promise<Response> {
           authorName: user.name,
           authorAvatar: user.avatarUrl,
           tags: input.tags ?? [],
+          screenshotUrl: input.screenshotUrl ?? null,
         })
         .returning();
 

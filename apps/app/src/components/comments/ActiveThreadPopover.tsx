@@ -166,6 +166,20 @@ export function ActiveThreadPopover({
       </div>
 
       <div className="px-3 py-2 overflow-y-auto scrollbar-thin">
+        {comment.screenshotUrl && !editing && (
+          <a
+            href={comment.screenshotUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="block mb-2 rounded-md overflow-hidden border bg-muted/40 group/shot"
+          >
+            <img
+              src={comment.screenshotUrl}
+              alt="Snapshot of the page when the comment was placed"
+              className="w-full h-32 object-cover object-top group-hover/shot:opacity-90 transition-opacity"
+            />
+          </a>
+        )}
         {editing ? (
           <div className="space-y-2">
             <textarea

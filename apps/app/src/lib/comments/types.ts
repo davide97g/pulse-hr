@@ -54,4 +54,5 @@ export type NewCommentInput = {
   pageMeta: PageMeta;
   body: string;
   tags?: string[];
+  screenshotUrl?: string | null;
 };

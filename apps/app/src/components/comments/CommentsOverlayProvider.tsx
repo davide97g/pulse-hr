@@ -4,6 +4,7 @@ import { useAuth, useUser } from "@clerk/react";
 import { useComments } from "@/lib/comments/useComments";
 import { setTokenGetter } from "@/lib/comments/api";
 import { getScrollRoot, resolveAnchor } from "@/lib/comments/anchor";
+import { captureViewport, uploadScreenshot } from "@/lib/comments/screenshot";
 import type { Author, Comment } from "@/lib/comments/types";
 
 type Mode = "idle" | "placing";
@@ -17,6 +18,8 @@ type CommentsContextValue = {
   cancelPlacement: () => void;
   placementPoint: PlacementPoint | null;
   setPlacementPoint: (p: PlacementPoint | null) => void;
+  pendingScreenshotUrl: string | null;
+  screenshotStatus: "idle" | "capturing" | "ready" | "failed";
   activeCommentId: string | null;
   openThread: (id: string) => void;
   closeThread: () => void;
@@ -73,25 +76,71 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
   const autoOpenedRef = useRef<string | null>(null);
 
   const [mode, setMode] = useState<Mode>("idle");
-  const [placementPoint, setPlacementPoint] = useState<PlacementPoint | null>(null);
+  const [placementPoint, setPlacementPointState] = useState<PlacementPoint | null>(null);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
+  const [screenshotStatus, setScreenshotStatus] = useState<
+    "idle" | "capturing" | "ready" | "failed"
+  >("idle");
+  const [pendingScreenshotUrl, setPendingScreenshotUrl] = useState<string | null>(null);
+  const pendingScreenshotBlobRef = useRef<Blob | null>(null);
+
+  const resetScreenshot = useCallback(() => {
+    pendingScreenshotBlobRef.current = null;
+    setPendingScreenshotUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+    setScreenshotStatus("idle");
+  }, []);
+
+  const setPlacementPoint = useCallback(
+    (p: PlacementPoint | null) => {
+      setPlacementPointState(p);
+      if (!p) {
+        resetScreenshot();
+        return;
+      }
+      setScreenshotStatus("capturing");
+      captureViewport()
+        .then((blob) => {
+          if (!blob) {
+            setScreenshotStatus("failed");
+            return;
+          }
+          pendingScreenshotBlobRef.current = blob;
+          setPendingScreenshotUrl((prev) => {
+            if (prev) URL.revokeObjectURL(prev);
+            return URL.createObjectURL(blob);
+          });
+          setScreenshotStatus("ready");
+        })
+        .catch(() => setScreenshotStatus("failed"));
+    },
+    [resetScreenshot],
+  );
 
   const enterPlacement = useCallback(() => {
     setActiveCommentId(null);
-    setPlacementPoint(null);
+    setPlacementPointState(null);
+    resetScreenshot();
     setMode("placing");
-  }, []);
+  }, [resetScreenshot]);
 
   const cancelPlacement = useCallback(() => {
-    setPlacementPoint(null);
+    setPlacementPointState(null);
+    resetScreenshot();
     setMode("idle");
-  }, []);
+  }, [resetScreenshot]);
 
-  const openThread = useCallback((id: string) => {
-    setMode("idle");
-    setPlacementPoint(null);
-    setActiveCommentId(id);
-  }, []);
+  const openThread = useCallback(
+    (id: string) => {
+      setMode("idle");
+      setPlacementPointState(null);
+      resetScreenshot();
+      setActiveCommentId(id);
+    },
+    [resetScreenshot],
+  );
 
   const closeThread = useCallback(() => setActiveCommentId(null), []);
 
@@ -129,6 +178,17 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
       const { captureAnchor, capturePageMeta } = await import("@/lib/comments/anchor");
       const anchor = captureAnchor(captureAt.x, captureAt.y);
       const pageMeta = capturePageMeta();
+
+      let screenshotUrl: string | null = null;
+      const blob = pendingScreenshotBlobRef.current;
+      if (blob) {
+        try {
+          screenshotUrl = await uploadScreenshot(blob, () => getToken());
+        } catch {
+          screenshotUrl = null;
+        }
+      }
+
       await addComment(
         {
           route,
@@ -136,13 +196,15 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
           pageMeta,
           body: trimmed,
           tags: tags && tags.length > 0 ? tags : undefined,
+          screenshotUrl,
         },
         author,
       );
-      setPlacementPoint(null);
+      setPlacementPointState(null);
+      resetScreenshot();
       setMode("idle");
     },
-    [addComment, author, route],
+    [addComment, author, getToken, resetScreenshot, route],
   );
 
   const addReply = useCallback(
@@ -186,6 +248,8 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
     cancelPlacement,
     placementPoint,
     setPlacementPoint,
+    pendingScreenshotUrl,
+    screenshotStatus,
     activeCommentId,
     openThread,
     closeThread,

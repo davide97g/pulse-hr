@@ -73,7 +73,7 @@ export function useComments(route: string, userId: string | null) {
         author,
         status: "open",
         tags: input.tags ?? [],
-        screenshotUrl: null,
+        screenshotUrl: input.screenshotUrl ?? null,
         voteScore: 0,
         myVote: 0,
         replies: [],

@@ -145,14 +145,61 @@ function FeedbackBoard() {
     })();
   };
 
+  const allComments = useMemo(
+    () => ([] as Comment[]).concat(...(Object.values(board) as Comment[][])),
+    [board],
+  );
+
+  const availableRoutes = useMemo(() => {
+    const s = new Set<string>();
+    for (const c of allComments) s.add(c.route);
+    return Array.from(s).sort();
+  }, [allComments]);
+
+  const availableTags = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const c of allComments) for (const t of c.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
+    return Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([tag, count]) => ({ tag, count }));
+  }, [allComments]);
+
+  const filteredBoard = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const passes = (c: Comment) => {
+      if (routeFilter && c.route !== routeFilter) return false;
+      if (activeTags.size > 0 && !c.tags.some((t) => activeTags.has(t))) return false;
+      if (q) {
+        const hay = `${c.body}\n${c.author.name}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    };
+    const next: BoardBuckets = {
+      open: board.open.filter(passes),
+      triaged: board.triaged.filter(passes),
+      planned: board.planned.filter(passes),
+      shipped: board.shipped.filter(passes),
+      wont_do: board.wont_do.filter(passes),
+    };
+    return next;
+  }, [board, query, routeFilter, activeTags]);
+
   const totals = {
-    open: board.open.length,
-    triaged: board.triaged.length,
-    planned: board.planned.length,
-    shipped: board.shipped.length,
-    wont_do: board.wont_do.length,
+    open: filteredBoard.open.length,
+    triaged: filteredBoard.triaged.length,
+    planned: filteredBoard.planned.length,
+    shipped: filteredBoard.shipped.length,
+    wont_do: filteredBoard.wont_do.length,
   };
   const totalAll = totals.open + totals.triaged + totals.planned + totals.shipped + totals.wont_do;
+  const totalAllUnfiltered =
+    board.open.length +
+    board.triaged.length +
+    board.planned.length +
+    board.shipped.length +
+    board.wont_do.length;
+  const filterActive = query !== "" || routeFilter !== "" || activeTags.size > 0;
 
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto w-full">
@@ -190,32 +237,153 @@ function FeedbackBoard() {
 
       {!loaded ? (
         <div className="text-sm text-muted-foreground">Loading comments…</div>
-      ) : totalAll === 0 ? (
+      ) : totalAllUnfiltered === 0 ? (
         <EmptyState />
       ) : (
-        <DndContext
-          sensors={sensors}
-          onDragStart={(e) => setDraggingId(e.active.id as string)}
-          onDragCancel={() => setDraggingId(null)}
-          onDragEnd={onDragEnd}
+        <>
+          <FilterBar
+            query={query}
+            onQuery={setQuery}
+            routes={availableRoutes}
+            routeFilter={routeFilter}
+            onRouteFilter={setRouteFilter}
+            tags={availableTags}
+            activeTags={activeTags}
+            onToggleTag={(t) => {
+              setActiveTags((prev) => {
+                const next = new Set(prev);
+                if (next.has(t)) next.delete(t);
+                else next.add(t);
+                return next;
+              });
+            }}
+            onReset={() => {
+              setQuery("");
+              setRouteFilter("");
+              setActiveTags(new Set());
+            }}
+            filterActive={filterActive}
+          />
+          {totalAll === 0 ? (
+            <div className="rounded-[var(--radius-md)] border border-dashed bg-background/50 p-8 text-center text-sm text-muted-foreground">
+              No comments match these filters.
+            </div>
+          ) : (
+            <DndContext
+              sensors={sensors}
+              onDragStart={(e) => setDraggingId(e.active.id as string)}
+              onDragCancel={() => setDraggingId(null)}
+              onDragEnd={onDragEnd}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                {COLUMNS.map((col) => (
+                  <Column
+                    key={col.status}
+                    column={col}
+                    items={filteredBoard[col.status]}
+                    admin={admin}
+                  />
+                ))}
+              </div>
+              <DragOverlay>
+                {draggingComment && (
+                  <FeedbackCard
+                    comment={draggingComment}
+                    onVote={() => undefined}
+                    dragHandleProps={null}
+                    admin={admin}
+                    isOverlay
+                  />
+                )}
+              </DragOverlay>
+            </DndContext>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+function FilterBar({
+  query,
+  onQuery,
+  routes,
+  routeFilter,
+  onRouteFilter,
+  tags,
+  activeTags,
+  onToggleTag,
+  onReset,
+  filterActive,
+}: {
+  query: string;
+  onQuery: (v: string) => void;
+  routes: string[];
+  routeFilter: string;
+  onRouteFilter: (v: string) => void;
+  tags: { tag: string; count: number }[];
+  activeTags: Set<string>;
+  onToggleTag: (tag: string) => void;
+  onReset: () => void;
+  filterActive: boolean;
+}) {
+  return (
+    <div className="mb-4 rounded-[var(--radius-md)] border bg-background p-3 space-y-2">
+      <div className="flex items-center gap-2 flex-wrap">
+        <label className="relative flex items-center h-9 flex-1 min-w-[220px]">
+          <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
+          <input
+            value={query}
+            onChange={(e) => onQuery(e.target.value)}
+            placeholder="Search body or author…"
+            className="w-full h-9 pl-8 pr-2 rounded-md bg-muted/40 text-sm outline-none placeholder:text-muted-foreground"
+          />
+        </label>
+        <select
+          value={routeFilter}
+          onChange={(e) => onRouteFilter(e.target.value)}
+          className="h-9 px-2 rounded-md border bg-background text-sm font-mono text-muted-foreground"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {COLUMNS.map((col) => (
-              <Column key={col.status} column={col} items={board[col.status]} admin={admin} />
-            ))}
-          </div>
-          <DragOverlay>
-            {draggingComment && (
-              <FeedbackCard
-                comment={draggingComment}
-                onVote={() => undefined}
-                dragHandleProps={null}
-                admin={admin}
-                isOverlay
-              />
-            )}
-          </DragOverlay>
-        </DndContext>
+          <option value="">All routes</option>
+          {routes.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
+        {filterActive && (
+          <button
+            type="button"
+            onClick={onReset}
+            className="inline-flex items-center gap-1 h-9 px-2.5 rounded-md text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
+          >
+            <XIcon className="h-3.5 w-3.5" />
+            Clear
+          </button>
+        )}
+      </div>
+      {tags.length > 0 && (
+        <div className="flex items-center flex-wrap gap-1">
+          {tags.map(({ tag, count }) => {
+            const active = activeTags.has(tag);
+            return (
+              <button
+                type="button"
+                key={tag}
+                onClick={() => onToggleTag(tag)}
+                className={cn(
+                  "inline-flex items-center h-6 px-2 rounded-full text-[11px] border transition-colors",
+                  active
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-muted border-transparent hover:bg-muted/70",
+                )}
+              >
+                {tag}
+                <span className="ml-1 opacity-60">{count}</span>
+              </button>
+            );
+          })}
+        </div>
       )}
     </div>
   );
@@ -346,6 +514,13 @@ function FeedbackCard({
           </button>
         </div>
         <div className="flex-1 min-w-0">
+          {comment.screenshotUrl && (
+            <img
+              src={comment.screenshotUrl}
+              alt=""
+              className="w-full h-20 object-cover object-top rounded-sm border mb-2"
+            />
+          )}
           <p className="text-sm leading-snug line-clamp-3 break-words">{comment.body}</p>
           <div className="mt-2 flex items-center flex-wrap gap-1.5">
             <Link

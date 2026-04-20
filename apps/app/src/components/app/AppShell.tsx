@@ -15,7 +15,7 @@ import { ActiveCommessaPin } from "./ActiveCommessaPin";
 import { ShortcutSheet } from "./ShortcutSheet";
 import { VoiceDock } from "./VoiceDock";
 import { CommentsOverlayProvider } from "@/components/comments/CommentsOverlayProvider";
-import { CommentModeToggle } from "@/components/comments/CommentModeToggle";
+import { CommentPill } from "@/components/comments/CommentPill";
 import { PinLayer } from "@/components/comments/PinLayer";
 import { voiceBus } from "@/lib/voice-bus";
 import { useTrackPageViews } from "@/lib/usage-tracking";
@@ -347,7 +347,7 @@ function AppShellInner() {
       <VoiceDock />
       <BookingDialog open={bookingOpen} onClose={() => setBookingOpen(false)} />
       <PinLayer />
-      <CommentModeToggle variant="pill" />
+      <CommentPill />
 
       {/* Mobile nav drawer */}
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
@@ -466,7 +466,14 @@ function Topbar({
       <div className="hidden lg:inline-flex">
         <ActiveCommessaPin />
       </div>
-      <CommentModeToggle variant="topbar" />
+      <Link
+        to="/feedback"
+        className="hidden lg:inline-flex h-9 items-center gap-1.5 px-2.5 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale transition-colors"
+        title="Feedback board"
+      >
+        <MessageSquare className="h-4 w-4 text-primary" />
+        <span className="hidden xl:inline font-medium">Feedback</span>
+      </Link>
       <div className="hidden md:inline-flex">
         <button
           onClick={onOpenLog}

@@ -95,6 +95,7 @@ export function PinLayer() {
     <div
       ref={layerRef}
       onClick={onLayerClick}
+      data-comments-ignore
       className="fixed inset-0 z-40"
       style={{
         pointerEvents: placing ? "auto" : "none",

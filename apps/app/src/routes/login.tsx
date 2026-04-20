@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useClerk, useSignIn } from "@clerk/react";
 import { ArrowRight, Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -22,10 +22,6 @@ function Login() {
   const [remember, setRemember] = useState(true);
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    void signIn.reset();
-  }, [signIn]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

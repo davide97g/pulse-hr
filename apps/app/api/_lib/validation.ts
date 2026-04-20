@@ -29,6 +29,7 @@ export const NewCommentSchema = z.object({
     .array(z.string().regex(/^[a-z0-9-]{1,24}$/))
     .max(10)
     .optional(),
+  screenshotUrl: z.string().url().max(1024).nullable().optional(),
 });
 
 export const NewReplySchema = z.object({
