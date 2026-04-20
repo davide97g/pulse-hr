@@ -16,10 +16,10 @@ import { useSidebarFeatures } from "@/components/app/SidebarFeaturesContext";
 export function SidebarRouteGuard({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const { isLoaded } = useUser();
-  const { enabled } = useSidebarFeatures();
+  const { enabled, roleFeatures } = useSidebarFeatures();
   const admin = useIsEffectiveAdmin();
   const role = useEffectiveRole();
-  const roleAllowed = featuresForRole(role);
+  const roleAllowed = featuresForRole(role, roleFeatures);
 
   if (!isLoaded) {
     return (

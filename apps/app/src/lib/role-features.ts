@@ -71,15 +71,38 @@ const ALLOW: Record<Exclude<Role, "admin">, SidebarFeatureId[]> = {
   ],
 };
 
-export function featuresForRole(role: string): Set<SidebarFeatureId> {
-  if (role === "admin" || !role) {
-    return new Set(ALL_SIDEBAR_FEATURE_IDS);
+export type RoleFeatureOverrides = Partial<Record<Role, Partial<Record<SidebarFeatureId, boolean>>>>;
+
+/**
+ * Resolve the visible feature set for a role. Starts from the hardcoded
+ * baseline, then applies any per-role overrides persisted at the workspace
+ * level (admin grants extra modules to HR, etc.).
+ */
+export function featuresForRole(
+  role: string,
+  overrides?: RoleFeatureOverrides | null,
+): Set<SidebarFeatureId> {
+  const base =
+    role === "admin" || !role
+      ? new Set<SidebarFeatureId>(ALL_SIDEBAR_FEATURE_IDS)
+      : new Set<SidebarFeatureId>(
+          ALLOW[role as Exclude<Role, "admin">] ?? ALL_SIDEBAR_FEATURE_IDS,
+        );
+  const override = overrides?.[role as Role];
+  if (override) {
+    for (const id of ALL_SIDEBAR_FEATURE_IDS) {
+      const v = override[id];
+      if (v === true) base.add(id);
+      else if (v === false) base.delete(id);
+    }
   }
-  const list = ALLOW[role as Exclude<Role, "admin">];
-  if (!list) return new Set(ALL_SIDEBAR_FEATURE_IDS);
-  return new Set(list);
+  return base;
 }
 
-export function isFeatureAllowedForRole(role: string, id: SidebarFeatureId): boolean {
-  return featuresForRole(role).has(id);
+export function isFeatureAllowedForRole(
+  role: string,
+  id: SidebarFeatureId,
+  overrides?: RoleFeatureOverrides | null,
+): boolean {
+  return featuresForRole(role, overrides).has(id);
 }

@@ -95,8 +95,11 @@ function AppShellInner() {
   const appShellNav = useNavigate();
   const admin = useIsEffectiveAdmin();
   const effectiveRole = useEffectiveRole();
-  const { isFeatureEnabled } = useSidebarFeatures();
-  const roleAllowed = useMemo(() => featuresForRole(effectiveRole), [effectiveRole]);
+  const { isFeatureEnabled, roleFeatures } = useSidebarFeatures();
+  const roleAllowed = useMemo(
+    () => featuresForRole(effectiveRole, roleFeatures),
+    [effectiveRole, roleFeatures],
+  );
   const hasOpenManagerAsks = useMemo(() => managerAsks.some((a) => a.status === "pending"), []);
   const groups = useMemo(() => {
     const raw = buildSidebarNavGroups(hasOpenManagerAsks, admin);
@@ -387,6 +390,10 @@ function Topbar({
   showFeedbackLink: boolean;
 }) {
   const unread = notifications.filter((n) => n.unread).length;
+  const { pathname } = useLocation();
+  const showCommessaPin = ["/focus", "/time", "/forecast"].some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
   const { user } = useUser();
@@ -423,7 +430,7 @@ function Topbar({
 
       <button
         onClick={onOpenPalette}
-        className="relative flex-1 max-w-xl text-left flex items-center h-9 px-3 rounded-md bg-muted/50 hover:bg-muted text-sm text-muted-foreground min-w-0"
+        className="relative flex-1 max-w-2xl text-left flex items-center h-9 px-3 rounded-md bg-muted/50 hover:bg-muted text-sm text-muted-foreground min-w-0"
       >
         <Search className="h-4 w-4 mr-2 shrink-0" />
         <span className="truncate">
@@ -435,11 +442,13 @@ function Topbar({
         </kbd>
       </button>
 
-      <div className="hidden md:block flex-1" />
+      <div className="flex-1" />
 
-      <div className="hidden lg:inline-flex">
-        <ActiveCommessaPin />
-      </div>
+      {showCommessaPin && (
+        <div className="hidden lg:inline-flex">
+          <ActiveCommessaPin />
+        </div>
+      )}
       {showFeedbackLink && (
         <Link
           to="/feedback"

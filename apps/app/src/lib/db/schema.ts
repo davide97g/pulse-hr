@@ -93,6 +93,12 @@ export const workspaceSidebarFeatures = pgTable("workspace_sidebar_features", {
   workspaceKey: text("workspace_key").primaryKey(),
   /** Partial map of feature id → boolean; missing keys default to true in the app. */
   features: jsonb("features").notNull(),
+  /**
+   * Optional per-role overrides applied on top of the hardcoded role allowlist:
+   * `Record<Role, Record<SidebarFeatureId, boolean>>`. Missing roles/keys
+   * fall back to the code-defined defaults.
+   */
+  roleFeatures: jsonb("role_features"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
