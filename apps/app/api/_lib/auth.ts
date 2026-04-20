@@ -29,10 +29,10 @@ export async function requireUser(request: Request): Promise<AuthedUser | Respon
   const header = request.headers.get("authorization") ?? "";
   const match = header.match(/^Bearer\s+(.+)$/i);
   if (!match) {
-    return new Response(JSON.stringify({ error: { code: "unauthorized" } }), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: { code: "no_bearer_token", message: "Authorization header missing or malformed" } }),
+      { status: 401, headers: { "content-type": "application/json" } },
+    );
   }
   const token = match[1];
   try {
@@ -84,11 +84,15 @@ export async function requireUser(request: Request): Promise<AuthedUser | Respon
       email: email ?? null,
       role: role ?? null,
     };
-  } catch {
-    return new Response(JSON.stringify({ error: { code: "unauthorized" } }), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "token verification failed";
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[api/auth] verifyToken failed:", message);
+    }
+    return new Response(
+      JSON.stringify({ error: { code: "token_verify_failed", message } }),
+      { status: 401, headers: { "content-type": "application/json" } },
+    );
   }
 }
 

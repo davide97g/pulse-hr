@@ -7,6 +7,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { useCommentsOverlay } from "./CommentsOverlayProvider";
 import { VoteButtons } from "./VoteButtons";
@@ -32,6 +42,8 @@ export function ActiveThreadPopover({
   const [editing, setEditing] = useState(false);
   const [editBody, setEditBody] = useState(comment.body);
   const [savingEdit, setSavingEdit] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const isAuthor = !!author && comment.author.id === author.id;
 
@@ -41,7 +53,12 @@ export function ActiveThreadPopover({
     };
     const onDocClick = (e: MouseEvent) => {
       if (!wrapRef.current) return;
-      if (wrapRef.current.contains(e.target as Node)) return;
+      const target = e.target as Element | null;
+      if (wrapRef.current.contains(target)) return;
+      // Don't close when the click is inside a portal'd overlay (dropdowns,
+      // dialogs, tooltips) — otherwise the Delete AlertDialog and similar
+      // unmount along with the popover before their handlers can fire.
+      if (target && target.closest("[role='dialog'], [role='menu'], [data-comments-ignore]")) return;
       onClose();
     };
     window.addEventListener("keydown", onKey);
@@ -83,21 +100,20 @@ export function ActiveThreadPopover({
     }
   };
 
-  const confirmDelete = () => {
-    toast("Delete this comment?", {
-      description: "Replies and votes will be removed with it.",
-      action: {
-        label: "Delete",
-        onClick: async () => {
-          try {
-            await deleteComment(comment.id);
-            toast.success("Comment deleted");
-          } catch {
-            toast.error("Delete failed");
-          }
-        },
-      },
-    });
+  const runDelete = async () => {
+    if (deleting) return;
+    setDeleting(true);
+    try {
+      await deleteComment(comment.id);
+      toast.success("Comment deleted");
+      setDeleteOpen(false);
+    } catch (err) {
+      console.error("[comments] delete failed", err);
+      const e = err as { code?: string; status?: number; message?: string };
+      const detail = e.code || e.message || `HTTP ${e.status ?? "?"}`;
+      toast.error(`Delete failed: ${detail}`);
+      setDeleting(false);
+    }
   };
 
   const left = Math.min(Math.max(8, x + 12), window.innerWidth - POPOVER_W - 8);
@@ -147,7 +163,13 @@ export function ActiveThreadPopover({
                   <Pencil className="h-3.5 w-3.5 mr-2" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={confirmDelete} className="text-destructive">
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setDeleteOpen(true);
+                  }}
+                  className="text-destructive"
+                >
                   <Trash2 className="h-3.5 w-3.5 mr-2" />
                   Delete
                 </DropdownMenuItem>
@@ -273,6 +295,30 @@ export function ActiveThreadPopover({
           <Send className="h-4 w-4" />
         </button>
       </div>
+
+      <AlertDialog open={deleteOpen} onOpenChange={(o) => !deleting && setDeleteOpen(o)}>
+        <AlertDialogContent data-comments-ignore>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this comment?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Replies and votes will be removed with it. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={(e) => {
+                e.preventDefault();
+                runDelete();
+              }}
+            >
+              {deleting ? "Deleting…" : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

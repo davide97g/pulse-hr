@@ -25,6 +25,7 @@ import { announcements } from "@/lib/mock-data";
 import { useEmployees, employeeById } from "@/lib/tables/employees";
 import { useLeaveRequests, leaveTable } from "@/lib/tables/leave";
 import { useExpenses } from "@/lib/tables/expenses";
+import { useGreeting } from "@/lib/current-user";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: "Dashboard — Pulse HR" }] }),
@@ -37,11 +38,12 @@ function Dashboard() {
   const expenses = useExpenses();
   const pendingLeaves = leaveRequests.filter((l) => l.status === "pending");
   const pendingExpenses = expenses.filter((e) => e.status === "pending");
+  const greeting = useGreeting();
 
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title="Good morning, Alex"
+        title={greeting}
         description="Here's what needs your attention today."
         actions={
           <Button variant="outline" size="sm">

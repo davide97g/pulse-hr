@@ -9,8 +9,16 @@ export function setTokenGetter(getter: TokenGetter | null): void {
 }
 
 async function authHeader(): Promise<Record<string, string>> {
-  if (!tokenGetter) return {};
+  if (!tokenGetter) {
+    if (import.meta.env.DEV) {
+      console.warn("[comments/api] no tokenGetter registered — request will 401");
+    }
+    return {};
+  }
   const token = await tokenGetter();
+  if (!token && import.meta.env.DEV) {
+    console.warn("[comments/api] tokenGetter returned null — Clerk session not ready?");
+  }
   return token ? { authorization: `Bearer ${token}` } : {};
 }
 

@@ -46,7 +46,12 @@ function Settings() {
   const [security, setSecurity] = useState({
     twofa: true, sso: true, sessionTimeout: false, ipAllowlist: false,
   });
-  const [company, setCompany] = useState({ name: "Acme Inc.", legal: "Acme Holdings LLC", country: "United States", currency: "USD" });
+  const [company, setCompany] = useState(() => ({
+    name: workspace.name || "Acme",
+    legal: `${workspace.name || "Acme"} Holdings LLC`,
+    country: "United States",
+    currency: "USD",
+  }));
   const [dirty, setDirty] = useState(false);
   const [auditQ, setAuditQ] = useState("");
   const [auditFilter, setAuditFilter] = useState<"all" | AuditEntry["severity"]>("all");
