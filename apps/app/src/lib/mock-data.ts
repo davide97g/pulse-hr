@@ -2131,7 +2131,7 @@ export const announcements = [
 
 // ── Clients / Projects / PM ────────────────────────────────────────────
 
-export type IntegrationProvider = "jira" | "linear";
+export type IntegrationProvider = "jira" | "linear" | "google-calendar";
 export type AllocationType = "dev" | "design" | "pm" | "qa" | "ops" | "consult";
 export type ProjectStatus = "active" | "on_hold" | "closed" | "at_risk" | "done" | "draft";
 export type ActivityStatus = "todo" | "in_progress" | "review" | "done" | "blocked";
@@ -2837,18 +2837,23 @@ export const activities: Activity[] = [
   },
 ];
 
+export type SyncDirection = "import" | "two-way";
+
 export interface IntegrationConnection {
   provider: IntegrationProvider;
   status: "connected" | "disconnected" | "error";
   workspace?: string;
   connectedAt?: string;
   syncedAt?: string;
+  /** Only meaningful for google-calendar. Import = read-only; two-way = push + pull. */
+  syncDirection?: SyncDirection;
   webhookEvents: { id: string; at: string; kind: string; summary: string }[];
 }
 
 export const integrationsSeed: IntegrationConnection[] = [
   { provider: "jira", status: "disconnected", webhookEvents: [] },
   { provider: "linear", status: "disconnected", webhookEvents: [] },
+  { provider: "google-calendar", status: "disconnected", webhookEvents: [] },
 ];
 
 /** Seeded ticket pool returned by the mock Jira/Linear sync. */
@@ -3908,5 +3913,119 @@ export const plugins = [
     category: "Automation",
     installed: false,
     icon: "⚡",
+  },
+];
+
+// ── Google Calendar sync (mock) ─────────────────────────────────────────
+// Distinct from the AI-timesheet `CalendarEvent` above: this models fully-fledged
+// calendar entries surfaced in the /calendar page once a Google account is linked.
+
+export type GCalEventStatus = "confirmed" | "tentative" | "cancelled";
+export type GCalEventSource = "google" | "pulse";
+
+export interface GCalEvent {
+  id: string;
+  title: string;
+  /** ISO datetime — event start. */
+  start: string;
+  /** ISO datetime — event end. */
+  end: string;
+  /** Employee ids — used to render attendee avatars. */
+  attendees: string[];
+  location?: string;
+  commessaId?: string;
+  source: GCalEventSource;
+  status: GCalEventStatus;
+  description?: string;
+}
+
+/**
+ * Seeded events around today (2026-04-20). A few "pulse"-origin entries live here
+ * too so the two-way sync UI has something to show off the distinction.
+ */
+export const gcalEventsSeed: GCalEvent[] = [
+  {
+    id: "gc-1",
+    title: "Daily standup",
+    start: "2026-04-20T09:30:00",
+    end: "2026-04-20T10:00:00",
+    attendees: ["e1", "e2", "e3", "e7"],
+    location: "Meet — /standup-platform",
+    commessaId: "cm1",
+    source: "google",
+    status: "confirmed",
+    description: "Quick round-robin on sprint progress.",
+  },
+  {
+    id: "gc-2",
+    title: "Design review — Acme",
+    start: "2026-04-20T14:00:00",
+    end: "2026-04-20T15:00:00",
+    attendees: ["e1", "e2"],
+    location: "Room Nebula",
+    commessaId: "cm1",
+    source: "google",
+    status: "confirmed",
+  },
+  {
+    id: "gc-3",
+    title: "1:1 with manager",
+    start: "2026-04-21T11:00:00",
+    end: "2026-04-21T11:30:00",
+    attendees: ["e1"],
+    source: "google",
+    status: "confirmed",
+    description: "Career check-in.",
+  },
+  {
+    id: "gc-4",
+    title: "Sprint planning",
+    start: "2026-04-22T15:00:00",
+    end: "2026-04-22T16:30:00",
+    attendees: ["e1", "e2", "e3", "e7", "e4"],
+    commessaId: "cm2",
+    source: "google",
+    status: "confirmed",
+  },
+  {
+    id: "gc-5",
+    title: "Client call — Nova Retail",
+    start: "2026-04-23T10:00:00",
+    end: "2026-04-23T11:00:00",
+    attendees: ["e7", "e1"],
+    location: "Meet — /nova-weekly",
+    commessaId: "cm2",
+    source: "google",
+    status: "confirmed",
+  },
+  {
+    id: "gc-6",
+    title: "Focus block — design system",
+    start: "2026-04-23T14:00:00",
+    end: "2026-04-23T17:00:00",
+    attendees: ["e2"],
+    commessaId: "cm3",
+    source: "pulse",
+    status: "tentative",
+    description: "Auto-created from Focus Mode.",
+  },
+  {
+    id: "gc-7",
+    title: "Team retro",
+    start: "2026-04-24T16:00:00",
+    end: "2026-04-24T17:00:00",
+    attendees: ["e1", "e2", "e3", "e4", "e7"],
+    source: "google",
+    status: "confirmed",
+  },
+  {
+    id: "gc-8",
+    title: "Kickoff — new commessa",
+    start: "2026-04-27T09:00:00",
+    end: "2026-04-27T10:30:00",
+    attendees: ["e1", "e2", "e7"],
+    location: "Room Polaris",
+    source: "google",
+    status: "tentative",
   },
 ];

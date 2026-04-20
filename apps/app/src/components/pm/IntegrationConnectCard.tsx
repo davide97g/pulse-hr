@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plug, PlugZap, RefreshCw, AlertTriangle, Check } from "lucide-react";
+import {
+  Plug,
+  PlugZap,
+  RefreshCw,
+  AlertTriangle,
+  Check,
+  ArrowDownToLine,
+  ArrowLeftRight,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,8 +19,9 @@ import {
   providerLabel,
   providerAccent,
 } from "@/lib/integrations";
-import type { IntegrationConnection, IntegrationProvider } from "@/lib/mock-data";
+import type { IntegrationConnection, IntegrationProvider, SyncDirection } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { GoogleOAuthDialog } from "./GoogleOAuthDialog";
 
 function relativeTime(iso?: string): string {
   if (!iso) return "never";
@@ -36,8 +45,14 @@ export function IntegrationConnectCard({
   provider: IntegrationProvider;
 }) {
   const [busy, setBusy] = useState<"connect" | "sync" | null>(null);
+  const [googleOpen, setGoogleOpen] = useState(false);
+  const isGoogle = provider === "google-calendar";
 
   const connect = async () => {
+    if (isGoogle) {
+      setGoogleOpen(true);
+      return;
+    }
     setBusy("connect");
     try {
       const c = await fakeOAuthConnect(provider);
@@ -47,6 +62,15 @@ export function IntegrationConnectCard({
       setBusy(null);
     }
   };
+
+  const setSyncDirection = (dir: SyncDirection) => {
+    onChange({ ...connection, syncDirection: dir });
+    toast.success(
+      dir === "two-way"
+        ? "Two-way sync enabled — Pulse events will push to Google"
+        : "Import-only sync — Pulse won't write to Google",
+    );
+  };
   const disconnect = () => {
     onChange(fakeDisconnect(provider));
     toast(`Disconnected ${providerLabel[provider]}`);
@@ -54,9 +78,11 @@ export function IntegrationConnectCard({
   const sync = () => {
     setBusy("sync");
     setTimeout(() => {
-      onChange(
-        mockWebhookEvent(connection, "sync", `Pulled 5 issues from ${providerLabel[provider]}`),
-      );
+      const summary = isGoogle
+        ? "Imported 3 events from Google"
+        : `Pulled 5 issues from ${providerLabel[provider]}`;
+      const kind = isGoogle ? "events.imported" : "sync";
+      onChange(mockWebhookEvent(connection, kind, summary));
       toast.success(`${providerLabel[provider]} synced`);
       setBusy(null);
     }, 700);
@@ -75,12 +101,14 @@ export function IntegrationConnectCard({
       <div className="flex items-start gap-4">
         <div
           className={cn(
-            "h-10 w-10 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0",
-            !connected && !errored && "grayscale opacity-80",
+            "h-10 w-10 rounded-lg flex items-center justify-center font-bold text-sm shrink-0",
+            isGoogle ? "bg-white border border-neutral-200" : "text-white",
+            !connected && !errored && !isGoogle && "grayscale opacity-80",
+            !connected && !errored && isGoogle && "opacity-90",
           )}
-          style={{ backgroundColor: accent }}
+          style={isGoogle ? undefined : { backgroundColor: accent }}
         >
-          {providerLabel[provider][0]}
+          {isGoogle ? <GoogleMark /> : providerLabel[provider][0]}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -109,11 +137,14 @@ export function IntegrationConnectCard({
           <div className="text-xs text-muted-foreground mt-1">
             {connected ? (
               <>
-                Workspace <span className="font-mono">{connection.workspace}</span> · Last sync{" "}
+                {isGoogle ? "Account" : "Workspace"}{" "}
+                <span className="font-mono">{connection.workspace}</span> · Last sync{" "}
                 {relativeTime(connection.syncedAt)}
               </>
             ) : errored ? (
               <>Webhook delivery failed — reconnect to retry.</>
+            ) : isGoogle ? (
+              <>Sync events from Google Calendar into Pulse. Two-way push optional.</>
             ) : (
               <>Pull issues linked to projects and activities into Pulse HR.</>
             )}
@@ -150,6 +181,38 @@ export function IntegrationConnectCard({
         </div>
       </div>
 
+      {connected && isGoogle && (
+        <div className="mt-4 flex items-center gap-3 text-xs">
+          <span className="text-muted-foreground">Sync direction</span>
+          <div className="inline-flex rounded-md border p-0.5 bg-muted/30">
+            <button
+              onClick={() => setSyncDirection("import")}
+              className={cn(
+                "px-2.5 py-1 rounded flex items-center gap-1.5 font-medium transition-colors",
+                (connection.syncDirection ?? "import") === "import"
+                  ? "bg-background shadow-sm text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <ArrowDownToLine className="h-3 w-3" />
+              Import only
+            </button>
+            <button
+              onClick={() => setSyncDirection("two-way")}
+              className={cn(
+                "px-2.5 py-1 rounded flex items-center gap-1.5 font-medium transition-colors",
+                connection.syncDirection === "two-way"
+                  ? "bg-background shadow-sm text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <ArrowLeftRight className="h-3 w-3" />
+              Two-way
+            </button>
+          </div>
+        </div>
+      )}
+
       {connected && connection.webhookEvents.length > 0 && (
         <div className="mt-5 rounded-md border bg-muted/30 divide-y">
           <div className="px-3 py-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
@@ -176,6 +239,40 @@ export function IntegrationConnectCard({
           </button>
         </div>
       )}
+
+      {isGoogle && (
+        <GoogleOAuthDialog
+          open={googleOpen}
+          onOpenChange={setGoogleOpen}
+          onConnected={(c) => {
+            onChange(c);
+            toast.success(`Connected ${c.workspace}`);
+          }}
+        />
+      )}
     </Card>
+  );
+}
+
+function GoogleMark() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+      <path
+        fill="#EA4335"
+        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+      />
+      <path
+        fill="#4285F4"
+        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+      />
+      <path
+        fill="#34A853"
+        d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+      />
+    </svg>
   );
 }

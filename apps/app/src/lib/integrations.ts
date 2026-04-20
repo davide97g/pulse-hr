@@ -4,6 +4,7 @@ import { mockIssuePool } from "./mock-data";
 const workspaceSlug: Record<IntegrationProvider, string> = {
   jira: "acme-internal.atlassian.net",
   linear: "linear.app/acme",
+  "google-calendar": "davide@pulsehr.test",
 };
 
 export function fakeOAuthConnect(provider: IntegrationProvider): Promise<IntegrationConnection> {
@@ -55,9 +56,11 @@ export function mockWebhookEvent(
 export const providerLabel: Record<IntegrationProvider, string> = {
   jira: "Jira",
   linear: "Linear",
+  "google-calendar": "Google Calendar",
 };
 
 export const providerAccent: Record<IntegrationProvider, string> = {
   jira: "oklch(0.6 0.18 258)",
   linear: "oklch(0.65 0.18 290)",
+  "google-calendar": "oklch(0.68 0.18 25)",
 };

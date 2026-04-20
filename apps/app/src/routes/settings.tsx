@@ -24,8 +24,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { EmptyState } from "@/components/app/EmptyState";
-import { rolesSeed, auditLogSeed, integrationsSeed, type Role, type AuditEntry, type IntegrationConnection } from "@/lib/mock-data";
+import { rolesSeed, auditLogSeed, type Role, type AuditEntry } from "@/lib/mock-data";
 import { IntegrationConnectCard } from "@/components/pm/IntegrationConnectCard";
+import { useIntegrations, updateIntegration } from "@/lib/integrations-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/settings")({
@@ -286,13 +287,11 @@ function RoleForm({ role, onCancel, onSave }: { role: Role | null; onCancel: () 
 }
 
 function IntegrationsSection() {
-  const [connections, setConnections] = useState<IntegrationConnection[]>(integrationsSeed);
-  const update = (c: IntegrationConnection) =>
-    setConnections(list => list.map(x => (x.provider === c.provider ? c : x)));
+  const connections = useIntegrations();
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {connections.map(c => (
-        <IntegrationConnectCard key={c.provider} provider={c.provider} connection={c} onChange={update} />
+        <IntegrationConnectCard key={c.provider} provider={c.provider} connection={c} onChange={updateIntegration} />
       ))}
     </div>
   );

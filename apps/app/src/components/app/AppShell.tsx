@@ -31,6 +31,7 @@ import {
   LifeBuoy,
   Clock,
   Calendar,
+  CalendarDays,
   FileText,
   Receipt,
   CreditCard,
@@ -112,6 +113,7 @@ const groups: NavGroup[] = [
     items: [
       { to: "/clients", label: "Clients & Projects", icon: BriefcaseIcon, isNew: true },
       { to: "/time", label: "Time & attendance", icon: Clock },
+      { to: "/calendar", label: "Calendar", icon: CalendarDays, isNew: true },
       { to: "/leave", label: "Leave", icon: Calendar },
       { to: "/documents", label: "Documents", icon: FileText },
       { to: "/offices", label: "Offices", icon: Building2, isNew: true },
