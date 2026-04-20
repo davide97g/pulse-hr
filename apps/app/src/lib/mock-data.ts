@@ -481,7 +481,7 @@ const cnames = [
   ["Kai Yamamoto", "Account Executive"],
 ];
 const stages: Candidate["stage"][] = ["Applied", "Screen", "Interview", "Offer", "Hired"];
-export const candidates: Candidate[] = cnames.map(([n, r], i) => ({
+export let candidates: Candidate[] = cnames.map(([n, r], i) => ({
   id: `c${i + 1}`,
   name: n,
   role: r,
@@ -501,7 +501,7 @@ export interface PayrollRun {
   net: number;
   date: string;
 }
-export const payrollRuns: PayrollRun[] = [
+export let payrollRuns: PayrollRun[] = [
   {
     id: "p1",
     period: "April 2026",
@@ -560,7 +560,7 @@ const VIBE_ROT: Vibe[] = [
   "good",
   "meh",
 ];
-export const pulseEntries: PulseEntry[] = Array.from({ length: 42 }).map((_, i) => {
+export let pulseEntries: PulseEntry[] = Array.from({ length: 42 }).map((_, i) => {
   const d = new Date();
   d.setDate(d.getDate() - (42 - i));
   return {
@@ -668,7 +668,7 @@ const SAMPLE_AGENT_LINES = [
   "Thanks for sharing. I'll tag this as a pain point in your recap.",
 ];
 
-export const logSessions: LogSession[] = (() => {
+export let logSessions: LogSession[] = (() => {
   const rand = lcg(42);
   const out: LogSession[] = [];
   for (const e of employees) {
@@ -696,7 +696,7 @@ export const logSessions: LogSession[] = (() => {
   return out;
 })();
 
-export const logMessages: LogMessage[] = (() => {
+export let logMessages: LogMessage[] = (() => {
   const rand = lcg(101);
   const out: LogMessage[] = [];
   for (const s of logSessions) {
@@ -721,7 +721,7 @@ export const logMessages: LogMessage[] = (() => {
   return out;
 })();
 
-export const managerAsks: ManagerAsk[] = [
+export let managerAsks: ManagerAsk[] = [
   {
     id: "ma-1",
     managerId: employees[0].id,
@@ -801,7 +801,7 @@ export interface Kudo {
   tag: "teamwork" | "craft" | "impact" | "courage" | "kindness";
   date: string;
 }
-export const kudosSeed: Kudo[] = [
+export let kudosSeed: Kudo[] = [
   // ── recent (this week · 2026-04-12..18) ─────────────────────────────
   {
     id: "kd1",
@@ -1323,7 +1323,7 @@ export interface FocusSession {
   note?: string;
   meetingsDeclined: number;
 }
-export const focusSessionsSeed: FocusSession[] = [
+export let focusSessionsSeed: FocusSession[] = [
   // e1 — Sarah
   {
     id: "fs1",
@@ -1575,7 +1575,7 @@ export interface Payslip {
   benefits: number;
   status: "pending" | "paid" | "hold";
 }
-export const payslips: Payslip[] = payrollRuns.flatMap((r) =>
+export let payslips: Payslip[] = payrollRuns.flatMap((r) =>
   employees.slice(0, r.employees).map((e, i) => ({
     id: `${r.id}-${e.id}`,
     runId: r.id,
@@ -1608,7 +1608,7 @@ export interface JobPosting {
   owner: string;
   description: string;
 }
-export const jobPostings: JobPosting[] = [
+export let jobPostings: JobPosting[] = [
   {
     id: "j1",
     title: "Senior Frontend Engineer",
@@ -1682,7 +1682,7 @@ export interface OnboardingWorkflow {
   color: string;
   tasks: OnboardingTask[];
 }
-export const onboardingWorkflows: OnboardingWorkflow[] = [
+export let onboardingWorkflows: OnboardingWorkflow[] = [
   {
     id: "ow1",
     name: "Emma Wilson",
@@ -1849,7 +1849,7 @@ export interface Doc {
   status: "approved" | "pending" | "draft";
   owner: string;
 }
-export const docsSeed: Doc[] = [
+export let docsSeed: Doc[] = [
   {
     id: "d1",
     name: "Employment contract — Emma Wilson",
@@ -1924,7 +1924,7 @@ export interface ApiKey {
   lastUsed: string;
   status: "active" | "revoked";
 }
-export const apiKeysSeed: ApiKey[] = [
+export let apiKeysSeed: ApiKey[] = [
   {
     id: "k1",
     name: "Production",
@@ -1952,7 +1952,7 @@ export interface Webhook {
   status: "active" | "pending" | "paused";
   deliveries: number;
 }
-export const webhooksSeed: Webhook[] = [
+export let webhooksSeed: Webhook[] = [
   {
     id: "w1",
     url: "https://hooks.acme.co/hr/employees",
@@ -1982,7 +1982,7 @@ export interface CustomField {
   type: "Text" | "Select" | "Number" | "Date";
   required: boolean;
 }
-export const customFieldsSeed: CustomField[] = [
+export let customFieldsSeed: CustomField[] = [
   { id: "cf1", name: "T-shirt size", type: "Select", required: false },
   { id: "cf2", name: "Dietary preference", type: "Text", required: false },
   { id: "cf3", name: "Preferred pronouns", type: "Text", required: false },
@@ -1995,7 +1995,7 @@ export interface Role {
   count: number;
   color: string;
 }
-export const rolesSeed: Role[] = [
+export let rolesSeed: Role[] = [
   {
     id: "r1",
     name: "Admin",
@@ -2033,7 +2033,7 @@ export interface AuditEntry {
   when: string;
   severity: "info" | "warn" | "critical";
 }
-export const auditLogSeed: AuditEntry[] = [
+export let auditLogSeed: AuditEntry[] = [
   {
     id: "a1",
     who: "Aisha Patel",
@@ -2086,7 +2086,7 @@ export interface Notification {
   type: "approval" | "info" | "alert";
   unread: boolean;
 }
-export const notifications: Notification[] = [
+export let notifications: Notification[] = [
   {
     id: "n1",
     title: "Leave request from Marcus Rivera",
@@ -2129,7 +2129,8 @@ export const notifications: Notification[] = [
   },
 ];
 
-export const announcements = [
+export type Announcement = { id: string; author: string; title: string; body: string; time: string; pinned: boolean };
+export let announcements: Announcement[] = [
   {
     id: "a1",
     author: "Aisha Patel",
@@ -2178,7 +2179,7 @@ export interface Client {
   colorToken: string;
 }
 
-export const clients: Client[] = [
+export let clients: Client[] = [
   {
     id: "cl1",
     name: "Acme Corp",
@@ -2293,7 +2294,7 @@ export interface Commessa {
 
 export type Project = Commessa;
 
-export const commesse: Commessa[] = [
+export let commesse: Commessa[] = [
   {
     id: "cm1",
     code: "ACM-2025-01",
@@ -2419,7 +2420,7 @@ export interface Allocation {
   note?: string;
 }
 
-export const allocations: Allocation[] = [
+export let allocations: Allocation[] = [
   // cm1 — Platform rebuild
   {
     id: "al1",
@@ -2622,7 +2623,7 @@ export interface Activity {
   order: number;
 }
 
-export const activities: Activity[] = [
+export let activities: Activity[] = [
   // cm1
   {
     id: "ac1",
@@ -3022,7 +3023,7 @@ export interface CalendarEvent {
  * Synthetic "Google Calendar" events spanning recent weeks.
  * Used by the AI auto-fill flow to materialize draft timesheet entries.
  */
-export const mockCalendarEvents: CalendarEvent[] = [
+export let mockCalendarEvents: CalendarEvent[] = [
   {
     id: "ev-100",
     date: "2026-04-13",
@@ -3226,7 +3227,7 @@ export const timesheetTemplatesSeed: TimesheetTemplate[] = [
   },
 ];
 
-export const timesheetEntries: TimesheetEntry[] = [
+export let timesheetEntries: TimesheetEntry[] = [
   // Historical seed
   {
     id: "t1",
@@ -3417,7 +3418,7 @@ export interface Holiday {
   name: string;
   country: "IT" | "US" | "UK" | "DE" | "all";
 }
-export const holidaysSeed: Holiday[] = [
+export let holidaysSeed: Holiday[] = [
   { date: "2026-01-01", name: "New Year's Day", country: "all" },
   { date: "2026-01-06", name: "Epiphany", country: "IT" },
   { date: "2026-04-06", name: "Easter Monday", country: "IT" },
@@ -3487,7 +3488,7 @@ export interface GrowthNote {
   privateNote?: boolean;
 }
 
-export const goalsSeed: Goal[] = [
+export let goalsSeed: Goal[] = [
   {
     id: "g1",
     employeeId: "e1",
@@ -3594,7 +3595,7 @@ export const goalsSeed: Goal[] = [
   },
 ];
 
-export const challengesSeed: Challenge[] = [
+export let challengesSeed: Challenge[] = [
   {
     id: "ch1",
     employeeId: "e1",
@@ -3669,7 +3670,7 @@ export const challengesSeed: Challenge[] = [
   },
 ];
 
-export const oneOnOnesSeed: OneOnOne[] = [
+export let oneOnOnesSeed: OneOnOne[] = [
   {
     id: "o1",
     employeeId: "e1",
@@ -3730,7 +3731,7 @@ export interface SeasonalChallenge {
   participants: { employeeId: string; progress: number }[];
 }
 
-export const seasonalChallengesSeed: SeasonalChallenge[] = [
+export let seasonalChallengesSeed: SeasonalChallenge[] = [
   {
     id: "sc-week-1",
     period: "weekly",
@@ -3833,7 +3834,7 @@ export const seasonalChallengesSeed: SeasonalChallenge[] = [
   },
 ];
 
-export const growthNotesSeed: GrowthNote[] = [
+export let growthNotesSeed: GrowthNote[] = [
   {
     id: "gn1",
     employeeId: "e1",
@@ -3970,7 +3971,7 @@ export interface GCalEvent {
  * Seeded events around today (2026-04-20). A few "pulse"-origin entries live here
  * too so the two-way sync UI has something to show off the distinction.
  */
-export const gcalEventsSeed: GCalEvent[] = [
+export let gcalEventsSeed: GCalEvent[] = [
   {
     id: "gc-1",
     title: "Daily standup",
@@ -4056,3 +4057,38 @@ export const gcalEventsSeed: GCalEvent[] = [
     status: "tentative",
   },
 ];
+
+// ── Persistent table setters (auto-generated) ────────────────────────
+// Each __set<Name> reassigns the live binding so table mutations flow
+// back to legacy `import { <name> }` consumers via TableStoreProvider.
+export function __setCandidates(n: Candidate[]) { candidates = n; }
+export function __setPayrollRuns(n: PayrollRun[]) { payrollRuns = n; }
+export function __setPulseEntries(n: PulseEntry[]) { pulseEntries = n; }
+export function __setLogSessions(n: LogSession[]) { logSessions = n; }
+export function __setLogMessages(n: LogMessage[]) { logMessages = n; }
+export function __setManagerAsks(n: ManagerAsk[]) { managerAsks = n; }
+export function __setKudosSeed(n: Kudo[]) { kudosSeed = n; }
+export function __setFocusSessionsSeed(n: FocusSession[]) { focusSessionsSeed = n; }
+export function __setPayslips(n: Payslip[]) { payslips = n; }
+export function __setJobPostings(n: JobPosting[]) { jobPostings = n; }
+export function __setOnboardingWorkflows(n: OnboardingWorkflow[]) { onboardingWorkflows = n; }
+export function __setDocsSeed(n: Doc[]) { docsSeed = n; }
+export function __setApiKeysSeed(n: ApiKey[]) { apiKeysSeed = n; }
+export function __setWebhooksSeed(n: Webhook[]) { webhooksSeed = n; }
+export function __setCustomFieldsSeed(n: CustomField[]) { customFieldsSeed = n; }
+export function __setRolesSeed(n: Role[]) { rolesSeed = n; }
+export function __setAuditLogSeed(n: AuditEntry[]) { auditLogSeed = n; }
+export function __setNotifications(n: Notification[]) { notifications = n; }
+export function __setClients(n: Client[]) { clients = n; }
+export function __setCommesse(n: Commessa[]) { commesse = n; }
+export function __setAllocations(n: Allocation[]) { allocations = n; }
+export function __setActivities(n: Activity[]) { activities = n; }
+export function __setMockCalendarEvents(n: CalendarEvent[]) { mockCalendarEvents = n; }
+export function __setTimesheetEntries(n: TimesheetEntry[]) { timesheetEntries = n; }
+export function __setGoalsSeed(n: Goal[]) { goalsSeed = n; }
+export function __setChallengesSeed(n: Challenge[]) { challengesSeed = n; }
+export function __setOneOnOnesSeed(n: OneOnOne[]) { oneOnOnesSeed = n; }
+export function __setSeasonalChallengesSeed(n: SeasonalChallenge[]) { seasonalChallengesSeed = n; }
+export function __setGrowthNotesSeed(n: GrowthNote[]) { growthNotesSeed = n; }
+export function __setGcalEventsSeed(n: GCalEvent[]) { gcalEventsSeed = n; }
+export function __setAnnouncements(n: Announcement[]) { announcements = n; }
