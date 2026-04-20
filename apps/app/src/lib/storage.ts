@@ -18,6 +18,33 @@ function newId(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${idCounter.toString(36)}`;
 }
 
+// ── Global "any table changed" pulse ──────────────────────────────────
+// Used by TableStoreProvider to re-render the whole React subtree whenever
+// any persistent table mutates. Lets legacy components that still read live
+// bindings from `mock-data.ts` (instead of the new table hooks) pick up
+// changes without per-file migration.
+const globalListeners = new Set<() => void>();
+let globalVersion = 0;
+function pulse() {
+  globalVersion += 1;
+  for (const l of globalListeners) {
+    try {
+      l();
+    } catch (err) {
+      console.warn("storage: global listener threw", err);
+    }
+  }
+}
+export function subscribeToAnyTable(listener: () => void): () => void {
+  globalListeners.add(listener);
+  return () => {
+    globalListeners.delete(listener);
+  };
+}
+export function getAnyTableVersion(): number {
+  return globalVersion;
+}
+
 export interface Table<T extends { id: string }> {
   /** React hook — re-renders on any mutation (or workspace switch). */
   useAll(): T[];
@@ -71,6 +98,7 @@ export function createTable<T extends { id: string }>(
         console.warn(`storage[${tableKey}]: listener threw`, err);
       }
     }
+    pulse();
   }
 
   function hydrate() {

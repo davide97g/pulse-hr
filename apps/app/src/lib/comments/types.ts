@@ -53,4 +53,5 @@ export type NewCommentInput = {
   anchor: Anchor;
   pageMeta: PageMeta;
   body: string;
+  tags?: string[];
 };

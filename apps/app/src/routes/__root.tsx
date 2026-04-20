@@ -4,8 +4,15 @@ import { useAuth } from "@clerk/react";
 import { AppShell } from "@/components/app/AppShell";
 import { FeedbackShell } from "@/components/feedback/FeedbackShell";
 import { WorkspaceMount } from "@/components/app/WorkspaceMount";
+import { TableStoreProvider } from "@/components/app/TableStoreProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { useWorkspaceStatus } from "@/lib/workspace";
+// Side-effect imports: register persistent tables + wire their sync into
+// mock-data.ts. Each new entity table goes here so it's loaded before any
+// route mounts and consumers can rely on hooks/imports working at first paint.
+import "@/lib/tables/employees";
+import "@/lib/tables/leave";
+import "@/lib/tables/expenses";
 
 const PUBLIC_PREFIXES = ["/login", "/signup"];
 const FEEDBACK_PREFIXES = ["/feedback"];
@@ -122,7 +129,7 @@ function RootComponent() {
   const showWelcomeOnly = isSignedIn && workspace.hasUser && !workspace.ready;
 
   return (
-    <>
+    <TableStoreProvider>
       <WorkspaceMount />
       {isPublic ? (
         <Outlet />
@@ -136,7 +143,7 @@ function RootComponent() {
         <AppShell />
       )}
       <Toaster position="bottom-right" richColors closeButton />
-    </>
+    </TableStoreProvider>
   );
 }
 

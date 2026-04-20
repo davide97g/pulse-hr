@@ -18,7 +18,9 @@ import { SidePanel } from "@/components/app/SidePanel";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
-import { leaveRequests as seed, employeeById, type LeaveRequest } from "@/lib/mock-data";
+import { type LeaveRequest } from "@/lib/mock-data";
+import { leaveTable, useLeaveRequests } from "@/lib/tables/leave";
+import { employeeById } from "@/lib/tables/employees";
 import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
 import { useSavedViews } from "@/lib/useSavedViews";
 import { SavedViewsBar } from "@/components/app/SavedViewsBar";
@@ -31,8 +33,7 @@ export const Route = createFileRoute("/leave")({
 
 function Leave() {
   const [selected, setSelected] = useState<LeaveRequest | null>(null);
-  const [list, setList] = useState<LeaveRequest[]>(seed);
-  const [decisions, setDecisions] = useState<Record<string, "approved" | "rejected">>({});
+  const list = useLeaveRequests();
   const [toDelete, setToDelete] = useState<LeaveRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const { open: openAction } = useQuickAction();
@@ -49,73 +50,67 @@ function Leave() {
   }, []);
 
   const decide = (id: string, status: "approved" | "rejected") => {
-    setDecisions(d => ({ ...d, [id]: status }));
-    const e = employeeById(list.find(l => l.id === id)!.employeeId)!;
-    if (status === "approved") toast.success(`Approved leave for ${e.name}`);
-    else toast.error(`Rejected leave for ${e.name}`);
+    const before = leaveTable.getAll().find(l => l.id === id);
+    if (!before) return;
+    leaveTable.update(id, { status });
+    const e = employeeById(before.employeeId);
+    const undo = () => leaveTable.update(id, { status: before.status });
+    if (status === "approved") {
+      toast.success(`Approved leave for ${e?.name ?? "employee"}`, { action: { label: "Undo", onClick: undo } });
+    } else {
+      toast.error(`Rejected leave for ${e?.name ?? "employee"}`, { action: { label: "Undo", onClick: undo } });
+    }
   };
 
   const remove = (l: LeaveRequest) => {
-    setList(ls => ls.filter(x => x.id !== l.id));
+    leaveTable.remove(l.id);
     setSelected(s => (s?.id === l.id ? null : s));
     toast("Request deleted", {
-      action: { label: "Undo", onClick: () => setList(ls => [l, ...ls]) },
+      action: { label: "Undo", onClick: () => leaveTable.add(l) },
     });
   };
 
-  const getStatus = (l: LeaveRequest): "pending" | "approved" | "rejected" => decisions[l.id] ?? l.status;
-  const filtered = (status: string) => list.filter(l => getStatus(l) === status);
+  const filtered = (status: string) => list.filter(l => l.status === status);
 
   const pendingRows = filtered("pending");
   const bulk = useBulkSelect(pendingRows);
 
   const bulkApprove = () => {
     const ids = [...bulk.selected];
-    setDecisions(d => {
-      const next = { ...d };
-      for (const id of ids) next[id] = "approved";
-      return next;
-    });
+    const snapshot = ids
+      .map(id => leaveTable.getAll().find(l => l.id === id))
+      .filter((l): l is LeaveRequest => !!l);
+    for (const id of ids) leaveTable.update(id, { status: "approved" });
     bulk.clear();
     toast.success(`Approved ${ids.length} request${ids.length === 1 ? "" : "s"}`, {
-      action: { label: "Undo", onClick: () => setDecisions(d => {
-        const next = { ...d };
-        for (const id of ids) delete next[id];
-        return next;
-      })},
+      action: { label: "Undo", onClick: () => {
+        for (const l of snapshot) leaveTable.update(l.id, { status: l.status });
+      }},
     });
   };
   const bulkReject = () => {
     const ids = [...bulk.selected];
-    setDecisions(d => {
-      const next = { ...d };
-      for (const id of ids) next[id] = "rejected";
-      return next;
-    });
+    const snapshot = ids
+      .map(id => leaveTable.getAll().find(l => l.id === id))
+      .filter((l): l is LeaveRequest => !!l);
+    for (const id of ids) leaveTable.update(id, { status: "rejected" });
     bulk.clear();
     toast.error(`Rejected ${ids.length} request${ids.length === 1 ? "" : "s"}`, {
-      action: { label: "Undo", onClick: () => setDecisions(d => {
-        const next = { ...d };
-        for (const id of ids) delete next[id];
-        return next;
-      })},
+      action: { label: "Undo", onClick: () => {
+        for (const l of snapshot) leaveTable.update(l.id, { status: l.status });
+      }},
     });
   };
   const approveAllVisible = () => {
-    const ids = pendingRows.map(r => r.id);
-    if (ids.length === 0) return;
-    setDecisions(d => {
-      const next = { ...d };
-      for (const id of ids) next[id] = "approved";
-      return next;
-    });
-    toast.success(`Approved ${ids.length} request${ids.length === 1 ? "" : "s"}`, {
+    const snapshot = pendingRows.slice();
+    if (snapshot.length === 0) return;
+    for (const l of snapshot) leaveTable.update(l.id, { status: "approved" });
+    toast.success(`Approved ${snapshot.length} request${snapshot.length === 1 ? "" : "s"}`, {
       action: {
-        label: "Undo", onClick: () => setDecisions(d => {
-          const next = { ...d };
-          for (const id of ids) delete next[id];
-          return next;
-        }),
+        label: "Undo",
+        onClick: () => {
+          for (const l of snapshot) leaveTable.update(l.id, { status: l.status });
+        },
       },
     });
   };
@@ -139,10 +134,12 @@ function Leave() {
 
   const bulkDelete = () => {
     const rows = bulk.selectedRows;
-    setList(ls => ls.filter(l => !bulk.selected.has(l.id)));
+    for (const r of rows) leaveTable.remove(r.id);
     bulk.clear();
     toast(`Deleted ${rows.length} request${rows.length === 1 ? "" : "s"}`, {
-      action: { label: "Undo", onClick: () => setList(ls => [...rows, ...ls]) },
+      action: { label: "Undo", onClick: () => {
+        for (const r of rows) leaveTable.add(r);
+      } },
     });
   };
 
@@ -277,7 +274,7 @@ function Leave() {
                             </div>
                           </div>
                           <span className="hidden sm:inline-flex shrink-0">
-                            <StatusBadge status={getStatus(l)} />
+                            <StatusBadge status={l.status} />
                           </span>
                           {tab === "pending" ? (
                             <div className="flex gap-1 shrink-0" onClick={(ev) => ev.stopPropagation()}>
@@ -331,7 +328,7 @@ function Leave() {
 
         <TabsContent value="calendar" className="mt-4">
           <LeaveCalendar
-            requests={list.filter(l => getStatus(l) !== "rejected")}
+            requests={list.filter(l => l.status !== "rejected")}
             onSelect={setSelected}
           />
         </TabsContent>
@@ -372,13 +369,13 @@ function Leave() {
                 <Field label="From" value={selected.from} />
                 <Field label="To" value={selected.to} />
                 <Field label="Submitted" value={selected.submittedAt} />
-                <Field label="Status" value={<StatusBadge status={getStatus(selected)} />} />
+                <Field label="Status" value={<StatusBadge status={selected.status} />} />
               </div>
               <div className="mt-4">
                 <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Reason</div>
                 <div className="text-sm p-3 rounded-md bg-muted/40">{selected.reason}</div>
               </div>
-              {getStatus(selected) === "pending" && (
+              {selected.status === "pending" && (
                 <div className="flex gap-2 mt-5">
                   <Button variant="outline" className="flex-1" onClick={() => decide(selected.id, "rejected")}><X className="h-4 w-4 mr-1.5" />Reject</Button>
                   <Button className="flex-1 bg-success hover:bg-success/90 text-white" onClick={() => decide(selected.id, "approved")}><Check className="h-4 w-4 mr-1.5" />Approve</Button>

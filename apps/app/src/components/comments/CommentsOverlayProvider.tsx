@@ -1,8 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { useAuth, useUser } from "@clerk/react";
 import { useComments } from "@/lib/comments/useComments";
 import { setTokenGetter } from "@/lib/comments/api";
+import { getScrollRoot, resolveAnchor } from "@/lib/comments/anchor";
 import type { Author, Comment } from "@/lib/comments/types";
 
 type Mode = "idle" | "placing";
@@ -21,9 +22,11 @@ type CommentsContextValue = {
   closeThread: () => void;
   comments: Comment[];
   author: Author | null;
-  submitNew: (body: string, captureAt: PlacementPoint) => Promise<void>;
+  submitNew: (body: string, captureAt: PlacementPoint, tags?: string[]) => Promise<void>;
   addReply: (commentId: string, body: string) => Promise<void>;
   vote: (commentId: string, value: -1 | 0 | 1) => Promise<void>;
+  editComment: (commentId: string, body: string) => Promise<void>;
+  deleteComment: (commentId: string) => Promise<void>;
 };
 
 const CommentsContext = createContext<CommentsContextValue | null>(null);
@@ -58,10 +61,16 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
     };
   }, [user]);
 
-  const { comments, addComment, addReply: addReplyApi, vote: voteApi } = useComments(
-    route,
-    user?.id ?? null,
-  );
+  const {
+    comments,
+    loaded,
+    addComment,
+    addReply: addReplyApi,
+    vote: voteApi,
+    editComment: editCommentApi,
+    deleteComment: deleteCommentApi,
+  } = useComments(route, user?.id ?? null);
+  const autoOpenedRef = useRef<string | null>(null);
 
   const [mode, setMode] = useState<Mode>("idle");
   const [placementPoint, setPlacementPoint] = useState<PlacementPoint | null>(null);
@@ -86,8 +95,34 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
 
   const closeThread = useCallback(() => setActiveCommentId(null), []);
 
+  // Deep link: /{route}?thread=<id> auto-opens that pin once comments load and
+  // scrolls it into view. Runs once per route visit.
+  useEffect(() => {
+    if (!loaded) return;
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const threadId = params.get("thread");
+    if (!threadId) return;
+    if (autoOpenedRef.current === threadId) return;
+    const target = comments.find((c) => c.id === threadId);
+    if (!target) return;
+    autoOpenedRef.current = threadId;
+    setActiveCommentId(threadId);
+    const pos = resolveAnchor(target.anchor);
+    if (pos) {
+      const scrollRoot = getScrollRoot();
+      const rootTop = scrollRoot?.getBoundingClientRect().top ?? 0;
+      const targetTop = pos.y - rootTop - 120;
+      scrollRoot?.scrollTo({ top: Math.max(0, scrollRoot.scrollTop + targetTop), behavior: "smooth" });
+    }
+    params.delete("thread");
+    const qs = params.toString();
+    const next = window.location.pathname + (qs ? `?${qs}` : "");
+    window.history.replaceState(null, "", next);
+  }, [loaded, comments, route]);
+
   const submitNew = useCallback(
-    async (body: string, captureAt: PlacementPoint) => {
+    async (body: string, captureAt: PlacementPoint, tags?: string[]) => {
       if (!author) return;
       const trimmed = body.trim();
       if (!trimmed) return;
@@ -95,7 +130,13 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
       const anchor = captureAnchor(captureAt.x, captureAt.y);
       const pageMeta = capturePageMeta();
       await addComment(
-        { route, anchor, pageMeta, body: trimmed },
+        {
+          route,
+          anchor,
+          pageMeta,
+          body: trimmed,
+          tags: tags && tags.length > 0 ? tags : undefined,
+        },
         author,
       );
       setPlacementPoint(null);
@@ -121,6 +162,23 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
     [voteApi],
   );
 
+  const editComment = useCallback(
+    async (commentId: string, body: string) => {
+      const trimmed = body.trim();
+      if (!trimmed) return;
+      await editCommentApi(commentId, trimmed);
+    },
+    [editCommentApi],
+  );
+
+  const deleteComment = useCallback(
+    async (commentId: string) => {
+      await deleteCommentApi(commentId);
+      setActiveCommentId(null);
+    },
+    [deleteCommentApi],
+  );
+
   const value: CommentsContextValue = {
     route,
     mode,
@@ -136,6 +194,8 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
     submitNew,
     addReply,
     vote,
+    editComment,
+    deleteComment,
   };
 
   return <CommentsContext.Provider value={value}>{children}</CommentsContext.Provider>;

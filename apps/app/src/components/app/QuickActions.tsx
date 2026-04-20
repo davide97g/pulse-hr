@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/app/AppShell";
 import { employees, employeeById } from "@/lib/mock-data";
 import { employeesTable, makeEmployee } from "@/lib/tables/employees";
+import { leaveTable } from "@/lib/tables/leave";
+import { expensesTable } from "@/lib/tables/expenses";
 import { coverageForRange, computeLeaveDays, type CoverageForDate } from "@/lib/leave";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -153,6 +155,18 @@ function RequestLeaveForm({ onDone }: { onDone: () => void }) {
   const conflictCount = coverage.reduce((acc, d) => acc + d.onLeave.length, 0);
 
   const submit = () => {
+    leaveTable.add({
+      employeeId: ME_ID,
+      type: type as "Vacation" | "Sick" | "Personal" | "Parental",
+      from,
+      to: granularity === "half" ? from : to,
+      days,
+      status: "pending",
+      reason: "",
+      submittedAt: new Date().toISOString(),
+      granularity,
+      halfPeriod: granularity === "half" ? halfPeriod : undefined,
+    });
     toast.success("Leave request submitted", {
       description: `${granularity === "half" ? `Half day · ${halfPeriod}` : `${days} working day${days === 1 ? "" : "s"}`} · ${from}${granularity === "half" ? "" : ` → ${to}`}`,
       icon: <Calendar className="h-4 w-4" />,
@@ -354,6 +368,19 @@ function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
   };
 
   const submit = () => {
+    if (!description.trim()) {
+      toast.error("Description is required");
+      return;
+    }
+    expensesTable.add({
+      employeeId: ME_ID,
+      description: description.trim(),
+      amount: Number(amount) || 0,
+      currency: (currency as "USD" | "EUR" | "GBP") || "USD",
+      category: cat as "Travel" | "Meals" | "Software" | "Equipment",
+      date,
+      status: "pending",
+    });
     toast.success("Expense submitted", { description: "Sent to manager for review.", icon: <Receipt className="h-4 w-4" /> });
     onDone();
   };

@@ -16,7 +16,9 @@ import { SidePanel } from "@/components/app/SidePanel";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
-import { expenses as seed, employeeById, type Expense } from "@/lib/mock-data";
+import { type Expense } from "@/lib/mock-data";
+import { expensesTable, useExpenses } from "@/lib/tables/expenses";
+import { employeeById } from "@/lib/tables/employees";
 
 export const Route = createFileRoute("/expenses")({
   head: () => ({ meta: [{ title: "Expenses — Pulse HR" }] }),
@@ -27,8 +29,7 @@ const sym = { USD: "$", EUR: "€", GBP: "£" };
 
 function Expenses() {
   const [selected, setSelected] = useState<Expense | null>(null);
-  const [list, setList] = useState<Expense[]>(seed);
-  const [decisions, setDecisions] = useState<Record<string, Expense["status"]>>({});
+  const list = useExpenses();
   const [toDelete, setToDelete] = useState<Expense | null>(null);
   const [loading, setLoading] = useState(true);
   const { open: openAction } = useQuickAction();
@@ -38,17 +39,18 @@ function Expenses() {
     return () => clearTimeout(t);
   }, []);
 
-  const get = (e: Expense) => decisions[e.id] ?? e.status;
   const decide = (e: Expense, status: Expense["status"]) => {
-    setDecisions(d => ({ ...d, [e.id]: status }));
-    if (status === "approved") toast.success(`Approved: ${e.description}`);
-    else if (status === "rejected") toast.error(`Rejected: ${e.description}`);
+    const before = e.status;
+    expensesTable.update(e.id, { status });
+    const undo = () => expensesTable.update(e.id, { status: before });
+    if (status === "approved") toast.success(`Approved: ${e.description}`, { action: { label: "Undo", onClick: undo } });
+    else if (status === "rejected") toast.error(`Rejected: ${e.description}`, { action: { label: "Undo", onClick: undo } });
   };
   const remove = (e: Expense) => {
-    setList(ls => ls.filter(x => x.id !== e.id));
+    expensesTable.remove(e.id);
     setSelected(s => (s?.id === e.id ? null : s));
     toast("Expense deleted", {
-      action: { label: "Undo", onClick: () => setList(ls => [e, ...ls]) },
+      action: { label: "Undo", onClick: () => expensesTable.add(e) },
     });
   };
 
@@ -60,28 +62,22 @@ function Expenses() {
       if ((ev.target as HTMLElement | null)?.isContentEditable) return;
       if (ev.key === "A" && ev.shiftKey) {
         ev.preventDefault();
-        const pending = list.filter(x => get(x) === "pending");
+        const pending = list.filter(x => x.status === "pending");
         if (pending.length === 0) return;
-        setDecisions(d => {
-          const next = { ...d };
-          for (const x of pending) next[x.id] = "approved";
-          return next;
-        });
+        for (const x of pending) expensesTable.update(x.id, { status: "approved" });
         toast.success(`Approved ${pending.length} expense${pending.length === 1 ? "" : "s"}`, {
           action: {
-            label: "Undo", onClick: () => setDecisions(d => {
-              const next = { ...d };
-              for (const x of pending) delete next[x.id];
-              return next;
-            }),
+            label: "Undo",
+            onClick: () => {
+              for (const x of pending) expensesTable.update(x.id, { status: x.status });
+            },
           },
         });
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list, decisions]);
+  }, [list]);
 
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
@@ -143,10 +139,10 @@ function Expenses() {
                 return (
                   <tr
                     key={x.id}
-                    tabIndex={get(x) === "pending" ? 0 : -1}
+                    tabIndex={x.status === "pending" ? 0 : -1}
                     onClick={() => setSelected(x)}
                     onKeyDown={
-                      get(x) === "pending"
+                      x.status === "pending"
                         ? (e) => {
                             if (e.metaKey || e.ctrlKey || e.altKey) return;
                             if (e.key === "a" && !e.shiftKey) {
@@ -171,7 +167,7 @@ function Expenses() {
                     <td className="px-4 py-2.5 text-muted-foreground">{x.category}</td>
                     <td className="px-4 py-2.5 text-right font-medium tabular-nums">{sym[x.currency]}{x.amount.toLocaleString()}</td>
                     <td className="px-4 py-2.5 text-muted-foreground text-xs">{x.date}</td>
-                    <td className="px-4 py-2.5"><StatusBadge status={get(x)} /></td>
+                    <td className="px-4 py-2.5"><StatusBadge status={x.status} /></td>
                     <td className="px-2" onClick={ev => ev.stopPropagation()}>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -181,7 +177,7 @@ function Expenses() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => setSelected(x)}>View detail</DropdownMenuItem>
-                          {get(x) === "pending" && (
+                          {x.status === "pending" && (
                             <>
                               <DropdownMenuItem onClick={() => decide(x, "approved")}>
                                 <Check className="h-4 w-4 mr-2" />Approve
@@ -228,7 +224,7 @@ function Expenses() {
       <SidePanel open={!!selected} onClose={() => setSelected(null)} title="Expense detail">
         {selected && (() => {
           const emp = employeeById(selected.employeeId)!;
-          const status = get(selected);
+          const status = selected.status;
           return (
             <div className="p-5">
               <div className="text-2xl font-semibold mb-1">{sym[selected.currency]}{selected.amount.toLocaleString()}</div>

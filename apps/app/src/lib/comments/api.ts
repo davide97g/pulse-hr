@@ -75,3 +75,21 @@ export type BoardBuckets = Record<CommentStatus, Comment[]>;
 export async function fetchBoard(): Promise<BoardBuckets> {
   return request<BoardBuckets>("/api/feedback/board");
 }
+
+export async function setStatus(commentId: string, status: CommentStatus): Promise<Comment> {
+  return request<Comment>(`/api/comments/${commentId}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+}
+
+export async function editComment(commentId: string, body: string): Promise<Comment> {
+  return request<Comment>(`/api/comments/${commentId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ body }),
+  });
+}
+
+export async function deleteComment(commentId: string): Promise<void> {
+  await request<void>(`/api/comments/${commentId}`, { method: "DELETE" });
+}

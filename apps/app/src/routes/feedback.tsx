@@ -1,11 +1,36 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useDraggable,
+  useDroppable,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
 import { useAuth, useUser } from "@clerk/react";
-import { MessageSquare, ChevronUp, ChevronDown } from "lucide-react";
+import {
+  MessageSquare,
+  ChevronUp,
+  ChevronDown,
+  GripVertical,
+  ShieldCheck,
+  Search,
+  X as XIcon,
+} from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { fetchBoard, setVote, setTokenGetter } from "@/lib/comments/api";
+import {
+  fetchBoard,
+  setVote,
+  setStatus,
+  setTokenGetter,
+} from "@/lib/comments/api";
 import type { BoardBuckets } from "@/lib/comments/api";
 import type { Comment, CommentStatus } from "@/lib/comments/types";
+import { isAdminUser } from "@/lib/comments/admin";
 
 export const Route = createFileRoute("/feedback")({
   head: () => ({ meta: [{ title: "Feedback — Pulse" }] }),
@@ -33,6 +58,11 @@ function FeedbackBoard() {
   const { getToken } = useAuth();
   const [board, setBoard] = useState<BoardBuckets>(EMPTY_BOARD);
   const [loaded, setLoaded] = useState(false);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [routeFilter, setRouteFilter] = useState<string>("");
+  const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
+  const admin = isAdminUser(user);
 
   useEffect(() => {
     setTokenGetter(() => getToken());
@@ -46,7 +76,6 @@ function FeedbackBoard() {
       setBoard(next);
       setLoaded(true);
     } catch {
-      // keep previous; the real error surfaces via empty state if first load
       setLoaded(true);
     }
   };
@@ -58,6 +87,63 @@ function FeedbackBoard() {
     return () => window.clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+  );
+
+  const draggingComment = useMemo(() => {
+    if (!draggingId) return null;
+    for (const status of Object.keys(board) as CommentStatus[]) {
+      const match = board[status].find((c) => c.id === draggingId);
+      if (match) return match;
+    }
+    return null;
+  }, [board, draggingId]);
+
+  const onDragEnd = (event: DragEndEvent) => {
+    setDraggingId(null);
+    const id = event.active.id as string;
+    const overId = event.over?.id as string | undefined;
+    if (!overId) return;
+    const targetStatus = COLUMNS.find((c) => c.status === overId)?.status;
+    if (!targetStatus) return;
+
+    let fromStatus: CommentStatus | null = null;
+    let moved: Comment | null = null;
+    for (const status of Object.keys(board) as CommentStatus[]) {
+      const match = board[status].find((c) => c.id === id);
+      if (match) {
+        fromStatus = status;
+        moved = match;
+        break;
+      }
+    }
+    if (!moved || !fromStatus || fromStatus === targetStatus) return;
+
+    const optimistic: BoardBuckets = {
+      ...board,
+      [fromStatus]: board[fromStatus].filter((c) => c.id !== id),
+      [targetStatus]: [...board[targetStatus], { ...moved, status: targetStatus }].sort(
+        (a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
+      ),
+    };
+    setBoard(optimistic);
+
+    (async () => {
+      try {
+        await setStatus(id, targetStatus);
+        toast.success(`Moved to ${labelFor(targetStatus)}`);
+      } catch (err) {
+        setBoard(board);
+        const message =
+          err instanceof Error && "code" in err && (err as { code?: string }).code === "forbidden"
+            ? "Only admins can change status."
+            : "Failed to move card.";
+        toast.error(message);
+      }
+    })();
+  };
 
   const totals = {
     open: board.open.length,
@@ -75,10 +161,21 @@ function FeedbackBoard() {
           <h1 className="text-2xl font-display tracking-tight">Feature board</h1>
           <p className="text-sm text-muted-foreground mt-1 max-w-[560px]">
             Every pin dropped across the product, collected here. Upvote what matters, reply to
-            what you recognize. Admins move cards as they move through triage.
+            what you recognize.{" "}
+            {admin ? (
+              <span className="text-foreground">Drag cards between columns to triage.</span>
+            ) : (
+              <>Admins move cards as they move through triage.</>
+            )}
           </p>
         </div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
+          {admin && (
+            <span className="inline-flex items-center gap-1.5 h-6 px-2 rounded-full bg-primary/10 text-primary font-medium">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Admin
+            </span>
+          )}
           <span className="inline-flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-primary" /> {totals.open} open
           </span>
@@ -96,46 +193,99 @@ function FeedbackBoard() {
       ) : totalAll === 0 ? (
         <EmptyState />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {COLUMNS.map((col) => {
-            const items = board[col.status];
-            return (
-              <div key={col.status} className="flex flex-col min-w-0">
-                <div className="flex items-center gap-2 mb-2 px-1">
-                  <span className={cn("h-2 w-2 rounded-full", col.accent)} />
-                  <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    {col.label}
-                  </h2>
-                  <span className="text-xs text-muted-foreground tabular-nums">
-                    {items.length}
-                  </span>
-                </div>
-                <div className="flex-1 space-y-2">
-                  {items.map((c) => (
-                    <FeedbackCard
-                      key={c.id}
-                      comment={c}
-                      onVote={async (value) => {
-                        try {
-                          await setVote(c.id, value);
-                          refresh();
-                        } catch {
-                          // toast later
-                        }
-                      }}
-                    />
-                  ))}
-                  {items.length === 0 && (
-                    <div className="text-xs text-muted-foreground/60 px-1 py-3 italic">
-                      nothing here yet
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <DndContext
+          sensors={sensors}
+          onDragStart={(e) => setDraggingId(e.active.id as string)}
+          onDragCancel={() => setDraggingId(null)}
+          onDragEnd={onDragEnd}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {COLUMNS.map((col) => (
+              <Column key={col.status} column={col} items={board[col.status]} admin={admin} />
+            ))}
+          </div>
+          <DragOverlay>
+            {draggingComment && (
+              <FeedbackCard
+                comment={draggingComment}
+                onVote={() => undefined}
+                dragHandleProps={null}
+                admin={admin}
+                isOverlay
+              />
+            )}
+          </DragOverlay>
+        </DndContext>
       )}
+    </div>
+  );
+}
+
+function Column({
+  column,
+  items,
+  admin,
+}: {
+  column: { status: CommentStatus; label: string; accent: string };
+  items: Comment[];
+  admin: boolean;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: column.status });
+  return (
+    <div ref={setNodeRef} className="flex flex-col min-w-0">
+      <div className="flex items-center gap-2 mb-2 px-1">
+        <span className={cn("h-2 w-2 rounded-full", column.accent)} />
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {column.label}
+        </h2>
+        <span className="text-xs text-muted-foreground tabular-nums">{items.length}</span>
+      </div>
+      <div
+        className={cn(
+          "flex-1 space-y-2 rounded-[var(--radius-md)] transition-colors min-h-[120px] p-0.5",
+          isOver && "bg-primary/5 outline outline-2 outline-dashed outline-primary/30",
+        )}
+      >
+        {items.map((c) => (
+          <DraggableCard key={c.id} comment={c} admin={admin} />
+        ))}
+        {items.length === 0 && (
+          <div className="text-xs text-muted-foreground/60 px-1 py-3 italic">nothing here yet</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function DraggableCard({ comment, admin }: { comment: Comment; admin: boolean }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: comment.id,
+    disabled: !admin,
+  });
+  const style = transform
+    ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
+    : undefined;
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(isDragging && "opacity-40")}
+      {...attributes}
+    >
+      <FeedbackCard
+        comment={comment}
+        onVote={async (value) => {
+          try {
+            await setVote(comment.id, value);
+          } catch {
+            toast.error("Vote failed");
+          }
+        }}
+        dragHandleProps={
+          admin ? (listeners as Record<string, (event: unknown) => void> | undefined) : null
+        }
+        admin={admin}
+      />
     </div>
   );
 }
@@ -143,9 +293,15 @@ function FeedbackBoard() {
 function FeedbackCard({
   comment,
   onVote,
+  dragHandleProps,
+  admin,
+  isOverlay,
 }: {
   comment: Comment;
   onVote: (value: -1 | 0 | 1) => void;
+  dragHandleProps: Record<string, (event: unknown) => void> | null | undefined;
+  admin: boolean;
+  isOverlay?: boolean;
 }) {
   const initials =
     comment.author.name
@@ -158,8 +314,9 @@ function FeedbackCard({
   return (
     <article
       className={cn(
-        "group rounded-[var(--radius-md)] border bg-card p-3 stagger-in",
-        "hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow",
+        "group rounded-[var(--radius-md)] border bg-card p-3",
+        !isOverlay && "stagger-in hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow",
+        isOverlay && "shadow-[0_16px_40px_rgba(0,0,0,0.2)] rotate-[1.5deg]",
       )}
     >
       <div className="flex items-start gap-2">
@@ -193,6 +350,7 @@ function FeedbackCard({
           <div className="mt-2 flex items-center flex-wrap gap-1.5">
             <Link
               to={comment.route}
+              search={{ thread: comment.id }}
               className="inline-flex items-center h-5 px-1.5 rounded border bg-background text-[10px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
               title={`Open ${comment.route}`}
             >
@@ -230,9 +388,27 @@ function FeedbackCard({
             )}
           </div>
         </div>
+        {admin && (
+          <button
+            type="button"
+            className={cn(
+              "h-6 w-5 -mr-1 shrink-0 flex items-center justify-center text-muted-foreground cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity",
+              isOverlay && "opacity-100",
+            )}
+            aria-label="Drag to change status"
+            {...(dragHandleProps ?? {})}
+            onClick={(e) => e.preventDefault()}
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+        )}
       </div>
     </article>
   );
+}
+
+function labelFor(status: CommentStatus): string {
+  return COLUMNS.find((c) => c.status === status)?.label ?? status;
 }
 
 function EmptyState() {

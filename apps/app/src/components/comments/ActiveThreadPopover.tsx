@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Send } from "lucide-react";
+import { X, Send, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useCommentsOverlay } from "./CommentsOverlayProvider";
 import { VoteButtons } from "./VoteButtons";
@@ -19,10 +26,14 @@ export function ActiveThreadPopover({
   y: number;
   onClose: () => void;
 }) {
-  const { addReply, vote } = useCommentsOverlay();
+  const { addReply, vote, editComment, deleteComment, author } = useCommentsOverlay();
   const [reply, setReply] = useState("");
   const [pending, setPending] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editBody, setEditBody] = useState(comment.body);
+  const [savingEdit, setSavingEdit] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
+  const isAuthor = !!author && comment.author.id === author.id;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -53,6 +64,42 @@ export function ActiveThreadPopover({
     }
   };
 
+  const saveEdit = async () => {
+    const next = editBody.trim();
+    if (!next || next === comment.body || savingEdit) {
+      setEditing(false);
+      setEditBody(comment.body);
+      return;
+    }
+    setSavingEdit(true);
+    try {
+      await editComment(comment.id, next);
+      setEditing(false);
+      toast.success("Comment updated");
+    } catch {
+      toast.error("Could not save edit");
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const confirmDelete = () => {
+    toast("Delete this comment?", {
+      description: "Replies and votes will be removed with it.",
+      action: {
+        label: "Delete",
+        onClick: async () => {
+          try {
+            await deleteComment(comment.id);
+            toast.success("Comment deleted");
+          } catch {
+            toast.error("Delete failed");
+          }
+        },
+      },
+    });
+  };
+
   const left = Math.min(Math.max(8, x + 12), window.innerWidth - POPOVER_W - 8);
   const top = Math.min(Math.max(8, y + 12), window.innerHeight - 200);
 
@@ -79,6 +126,34 @@ export function ActiveThreadPopover({
             myVote={comment.myVote}
             onChange={(v) => vote(comment.id, v)}
           />
+          {isAuthor && !editing && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center"
+                  aria-label="More"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setEditBody(comment.body);
+                    setEditing(true);
+                  }}
+                >
+                  <Pencil className="h-3.5 w-3.5 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={confirmDelete} className="text-destructive">
+                  <Trash2 className="h-3.5 w-3.5 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           <button
             type="button"
             onClick={onClose}
@@ -91,7 +166,56 @@ export function ActiveThreadPopover({
       </div>
 
       <div className="px-3 py-2 overflow-y-auto scrollbar-thin">
-        <p className="text-sm whitespace-pre-wrap leading-relaxed">{comment.body}</p>
+        {editing ? (
+          <div className="space-y-2">
+            <textarea
+              value={editBody}
+              onChange={(e) => setEditBody(e.target.value)}
+              rows={3}
+              className="w-full resize-none text-sm rounded-md border bg-background p-2 outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              autoFocus
+            />
+            <div className="flex items-center justify-end gap-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setEditing(false);
+                  setEditBody(comment.body);
+                }}
+                className="h-7 px-2.5 rounded-md text-xs hover:bg-muted"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={saveEdit}
+                disabled={savingEdit || !editBody.trim()}
+                className={cn(
+                  "h-7 px-2.5 rounded-md bg-primary text-primary-foreground text-xs font-medium",
+                  (savingEdit || !editBody.trim()) && "opacity-50 cursor-not-allowed",
+                )}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <p className="text-sm whitespace-pre-wrap leading-relaxed">{comment.body}</p>
+            {comment.tags.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {comment.tags.map((t) => (
+                  <span
+                    key={t}
+                    className="inline-flex items-center h-5 px-1.5 rounded-full bg-muted text-[10px] font-medium"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
+          </>
+        )}
         {comment.replies.length > 0 && (
           <div className="mt-3 space-y-3">
             {comment.replies.map((r) => (

@@ -11,11 +11,25 @@
  * data and get a complete row back.
  */
 import { createTable } from "@/lib/storage";
-import { employeesSeed, type Employee } from "@/lib/mock-data";
+import { isWorkspaceReady } from "@/lib/workspace";
+import { employeesSeed, __setEmployees, type Employee } from "@/lib/mock-data";
 
 const AVATAR_SURFACE = "var(--avatar-surface)";
 
 export const employeesTable = createTable<Employee>("employees", employeesSeed, "e");
+
+// Keep the live binding in mock-data synced with the table so legacy consumers
+// that still `import { employees } from "@/lib/mock-data"` always read fresh
+// data. TableStoreProvider re-renders the React tree on every change.
+//
+// Only sync when a workspace is actually provisioned — between sign-in and
+// `createWorkspace()` the table reads as [] but lib helpers may briefly
+// query for derived data, so leaving the seed intact during that window is
+// the safer default.
+employeesTable.subscribe(() => {
+  if (!isWorkspaceReady()) return;
+  __setEmployees(employeesTable.getAll());
+});
 
 export function useEmployees(): Employee[] {
   return employeesTable.useAll();

@@ -213,20 +213,29 @@ const birthdayOverrides: Record<string, string> = {
   e12: "03-28",
 };
 
-export const employees: Employee[] = raw.map((e, i) => ({
+/**
+ * `employees` is a `let` so the persistent table (lib/tables/employees.ts)
+ * can keep this binding in sync with workspace state via `__setEmployees`.
+ * ES module live bindings mean every `import { employees } from "@/lib/mock-data"`
+ * site sees the latest array on every read — pair with EmployeesStoreProvider
+ * mounted at the root to make React subtrees re-render on changes.
+ *
+ * `employeesSeed` is the pristine initial array, used as the table's seed
+ * source and as a fallback for module-init-time derived data below.
+ */
+export let employees: Employee[] = raw.map((e) => ({
   ...e,
   initials: initials(e.name),
   avatarColor: AVATAR_SURFACE,
   birthday: birthdayOverrides[e.id],
 }));
 
-/**
- * Stable seed for the persistent employees table. `employees` above remains
- * exported as the static fallback used by lib helpers + downstream seed
- * computation in this file; `employeesSeed` is the named entry point for the
- * persistence layer (see lib/tables/employees.ts).
- */
 export const employeesSeed: Employee[] = employees;
+
+/** Internal: called by the persistent table to push live state into this binding. */
+export function __setEmployees(next: Employee[]) {
+  employees = next;
+}
 
 export const employeeById = (id: string) => employees.find((e) => e.id === id);
 
@@ -259,7 +268,7 @@ export interface LeaveRequest {
   halfPeriod?: HalfPeriod;
 }
 
-export const leaveRequests: LeaveRequest[] = [
+export let leaveRequests: LeaveRequest[] = [
   {
     id: "l1",
     employeeId: "e2",
@@ -377,6 +386,11 @@ export const leaveRequests: LeaveRequest[] = [
   },
 ];
 
+export const leaveRequestsSeed: LeaveRequest[] = leaveRequests;
+export function __setLeaveRequests(next: LeaveRequest[]) {
+  leaveRequests = next;
+}
+
 export interface Expense {
   id: string;
   employeeId: string;
@@ -388,7 +402,7 @@ export interface Expense {
   status: "pending" | "approved" | "reimbursed" | "rejected";
 }
 
-export const expenses: Expense[] = [
+export let expenses: Expense[] = [
   {
     id: "x1",
     employeeId: "e6",
@@ -440,6 +454,11 @@ export const expenses: Expense[] = [
     status: "approved",
   },
 ];
+
+export const expensesSeed: Expense[] = expenses;
+export function __setExpenses(next: Expense[]) {
+  expenses = next;
+}
 
 export interface Candidate {
   id: string;

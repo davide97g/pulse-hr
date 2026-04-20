@@ -72,7 +72,7 @@ export function useComments(route: string, userId: string | null) {
         body: input.body,
         author,
         status: "open",
-        tags: [],
+        tags: input.tags ?? [],
         screenshotUrl: null,
         voteScore: 0,
         myVote: 0,
@@ -126,5 +126,16 @@ export function useComments(route: string, userId: string | null) {
     [refetch],
   );
 
-  return { comments, loaded, refetch, addComment, addReply, vote };
+  const editComment = useCallback(async (commentId: string, body: string) => {
+    const updated = await api.editComment(commentId, body);
+    setComments((prev) => prev.map((c) => (c.id === commentId ? updated : c)));
+    return updated;
+  }, []);
+
+  const deleteComment = useCallback(async (commentId: string) => {
+    await api.deleteComment(commentId);
+    setComments((prev) => prev.filter((c) => c.id !== commentId));
+  }, []);
+
+  return { comments, loaded, refetch, addComment, addReply, vote, editComment, deleteComment };
 }
