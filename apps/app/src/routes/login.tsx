@@ -128,7 +128,11 @@ function Login() {
           <span>Remember this device for 30 days</span>
         </label>
 
-        <Button type="submit" disabled={loading || fetchStatus === "fetching"} className="w-full h-11 press-scale">
+        <Button
+          type="submit"
+          disabled={loading || fetchStatus === "fetching"}
+          className="w-full h-11 press-scale"
+        >
           {loading ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -156,4 +160,3 @@ function Login() {
     </AuthLayout>
   );
 }
-

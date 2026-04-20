@@ -5,6 +5,7 @@ import { AppShell } from "@/components/app/AppShell";
 import { FeedbackShell } from "@/components/feedback/FeedbackShell";
 import { WorkspaceMount } from "@/components/app/WorkspaceMount";
 import { TableStoreProvider } from "@/components/app/TableStoreProvider";
+import { SidebarFeaturesProvider } from "@/components/app/SidebarFeaturesContext";
 import { Toaster } from "@/components/ui/sonner";
 import { useWorkspaceStatus } from "@/lib/workspace";
 // Side-effect imports: register persistent tables + wire their sync into
@@ -95,6 +96,7 @@ const TITLE_BY_PATH: Record<string, string> = {
   "/focus": "Focus Mode — Pulse HR",
   "/feedback": "Feedback — Pulse",
   "/welcome": "Welcome — Pulse HR",
+  "/admin/sidebar-visibility": "Visibilità menu — Pulse HR",
 };
 
 function RootComponent() {
@@ -161,19 +163,21 @@ function RootComponent() {
 
   return (
     <TableStoreProvider>
-      <WorkspaceMount />
-      {isPublic ? (
-        <Outlet />
-      ) : isFeedback ? (
-        <FeedbackShell>
+      <SidebarFeaturesProvider>
+        <WorkspaceMount />
+        {isPublic ? (
           <Outlet />
-        </FeedbackShell>
-      ) : isWelcome || showWelcomeOnly ? (
-        <Outlet />
-      ) : (
-        <AppShell />
-      )}
-      <Toaster position="bottom-right" richColors closeButton />
+        ) : isFeedback ? (
+          <FeedbackShell>
+            <Outlet />
+          </FeedbackShell>
+        ) : isWelcome || showWelcomeOnly ? (
+          <Outlet />
+        ) : (
+          <AppShell />
+        )}
+        <Toaster position="bottom-right" richColors closeButton />
+      </SidebarFeaturesProvider>
     </TableStoreProvider>
   );
 }
