@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useUser, useClerk } from "@clerk/react";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
@@ -14,6 +15,7 @@ import { ActiveCommessaPin } from "./ActiveCommessaPin";
 import { ShortcutSheet } from "./ShortcutSheet";
 import { VoiceDock } from "./VoiceDock";
 import { voiceBus } from "@/lib/voice-bus";
+import { useTrackPageViews } from "@/lib/usage-tracking";
 import { toast } from "sonner";
 import {
   LayoutDashboard,
@@ -171,6 +173,7 @@ export function AppShell() {
 function AppShellInner() {
   const location = useLocation();
   const appShellNav = useNavigate();
+  useTrackPageViews();
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [logOpen, setLogOpen] = useState(false);
@@ -410,6 +413,21 @@ function Topbar({
   const unread = notifications.filter((n) => n.unread).length;
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
+  const { user } = useUser();
+  const { signOut } = useClerk();
+  const displayName =
+    user?.fullName ||
+    user?.firstName ||
+    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
+    "Signed in";
+  const displayEmail = user?.primaryEmailAddress?.emailAddress ?? "";
+  const initials =
+    (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") ||
+    displayName.slice(0, 2).toUpperCase();
+  const handleSignOut = async () => {
+    await signOut();
+    navigate({ to: "/login", replace: true });
+  };
   return (
     <header className="h-14 border-b bg-background/80 backdrop-blur flex items-center px-3 md:px-4 gap-2 md:gap-3 shrink-0">
       <button
@@ -560,31 +578,36 @@ function Topbar({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2 h-9 pl-1 pr-2 rounded-md hover:bg-muted">
-            <div
-              className="h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-medium"
-              style={{ backgroundColor: "oklch(0.6 0.16 220)" }}
-            >
-              AC
-            </div>
-            <div className="hidden md:block text-left">
-              <div className="text-xs font-medium leading-tight">Alex Carter</div>
-              <div className="text-[10px] text-muted-foreground leading-tight">HR Admin</div>
+            {user?.imageUrl ? (
+              <img
+                src={user.imageUrl}
+                alt={displayName}
+                className="h-7 w-7 rounded-full object-cover"
+              />
+            ) : (
+              <div
+                className="h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-medium"
+                style={{ backgroundColor: "oklch(0.6 0.16 220)" }}
+              >
+                {initials.toUpperCase().slice(0, 2) || "?"}
+              </div>
+            )}
+            <div className="hidden md:block text-left max-w-[140px]">
+              <div className="text-xs font-medium leading-tight truncate">{displayName}</div>
+              <div className="text-[10px] text-muted-foreground leading-tight truncate">
+                {displayEmail || "Pulse HR workspace"}
+              </div>
             </div>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Alex Carter</DropdownMenuLabel>
+          <DropdownMenuLabel className="truncate">{displayName}</DropdownMenuLabel>
           <DropdownMenuItem asChild>
             <Link to="/profile">Profile</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>Switch role</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link to="/landing">Marketing site</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/login">Sign out</Link>
-          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

@@ -1,9 +1,10 @@
-import { createRootRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
+import { createRootRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useAuth } from "@clerk/react";
 import { AppShell } from "@/components/app/AppShell";
 import { Toaster } from "@/components/ui/sonner";
 
-const PUBLIC_PREFIXES = ["/landing", "/login", "/signup"];
+const PUBLIC_PREFIXES = ["/login", "/signup"];
 
 function NotFoundComponent() {
   return (
@@ -29,7 +30,6 @@ function NotFoundComponent() {
 
 const TITLE_BY_PATH: Record<string, string> = {
   "/": "Dashboard — Pulse HR",
-  "/landing": "Pulse HR — the people platform you'll actually use",
   "/login": "Sign in — Pulse HR",
   "/signup": "Create your workspace — Pulse HR",
   "/people": "Employees — Pulse HR",
@@ -54,6 +54,8 @@ const TITLE_BY_PATH: Record<string, string> = {
 
 function RootComponent() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isLoaded, isSignedIn } = useAuth();
   const isPublic = PUBLIC_PREFIXES.some(
     (p) => location.pathname === p || location.pathname.startsWith(`${p}/`),
   );
@@ -61,6 +63,23 @@ function RootComponent() {
     const t = TITLE_BY_PATH[location.pathname] ?? "Pulse HR";
     if (typeof document !== "undefined") document.title = t;
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!isSignedIn && !isPublic) {
+      navigate({ to: "/login", replace: true });
+    }
+  }, [isLoaded, isSignedIn, isPublic, navigate]);
+
+  if (!isLoaded) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-6 w-6 rounded-full border-2 border-muted-foreground/30 border-t-foreground animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isSignedIn && !isPublic) return null;
 
   return (
     <>

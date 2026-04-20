@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
 import { Sparkles, Star } from "lucide-react";
 
 export function AuthLayout({
@@ -19,13 +18,12 @@ export function AuthLayout({
     <div className="min-h-screen grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] bg-background">
       <div className="flex flex-col">
         <div className="px-8 lg:px-14 py-6 flex items-center justify-between">
-          <Link to="/landing" className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <div className="h-7 w-7 rounded-md bg-primary text-primary-foreground grid place-items-center">
               <Sparkles className="h-4 w-4" strokeWidth={2.5} />
             </div>
             <span className="font-display text-xl">Pulse HR</span>
-          </Link>
-          <Link to="/landing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">← Back to site</Link>
+          </div>
         </div>
         <div className="flex-1 flex items-center justify-center px-8 lg:px-14 pb-14">
           <div className="w-full max-w-[420px] fade-in">

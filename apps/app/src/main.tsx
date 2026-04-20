@@ -1,12 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
+import { ClerkProvider } from "@clerk/react";
 import { registerSW } from "virtual:pwa-register";
 import { toast } from "sonner";
 import { getRouter } from "./router";
 import { ThemeProvider } from "./components/app/ThemeProvider";
 import { WorkspaceProvider } from "./components/app/WorkspaceContext";
 import "./styles.css";
+
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY in .env.local");
+}
 
 registerSW({
   immediate: true,
@@ -40,10 +46,12 @@ if (!el) throw new Error("#root not found");
 
 ReactDOM.createRoot(el).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <WorkspaceProvider>
-        <RouterProvider router={router} />
-      </WorkspaceProvider>
-    </ThemeProvider>
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/login">
+      <ThemeProvider>
+        <WorkspaceProvider>
+          <RouterProvider router={router} />
+        </WorkspaceProvider>
+      </ThemeProvider>
+    </ClerkProvider>
   </React.StrictMode>,
 );
