@@ -31,3 +31,13 @@ dist-ssr
 # Agent tooling (not committed)
 
 .env
+
+# Test credentials for recorded demos
+apps/app/test.credentials.json
+
+# Recording outputs (testreel)
+apps/app/recordings/output/
+apps/app/recordings/testreel-output/
+apps/app/recordings/output/*.mp4
+apps/app/recordings/output/*.webm
+apps/app/recordings/output/*.png

@@ -2,7 +2,7 @@
   "name": "workflows-people",
   "private": true,
   "type": "module",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": ["apps/*", "apps/app/recordings", "packages/*"],
   "scripts": {
     "dev": "bun run --filter '@workflows-people/app' dev",
     "dev:marketing": "bun run --filter 'pulse-hr-marketing' dev",
@@ -12,7 +12,8 @@
     "preview": "bun run --filter '@workflows-people/app' preview",
     "preview:marketing": "bun run --filter 'pulse-hr-marketing' preview",
     "lint": "bun run --filter '@workflows-people/app' lint",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "demo:record": "bun --cwd apps/app/recordings scripts/run.ts"
   },
   "devDependencies": {
     "prettier": "^3.7.3"

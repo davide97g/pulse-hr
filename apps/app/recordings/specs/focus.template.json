@@ -1,0 +1,32 @@
+{
+  "$schema": "../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/focus",
+  "viewport": { "width": 1440, "height": 900 },
+  "chrome": { "title": "Pulse HR — Focus" },
+  "background": { "padding": 48, "borderRadius": 14 },
+  "cursor": true,
+  "setup": "{{SETUP}}",
+  "steps": [
+    { "action": "wait", "ms": 1400 },
+    { "action": "screenshot", "name": "01-focus-idle" },
+
+    { "action": "click", "selector": "button:has-text('Deep work')", "zoom": 1.7 },
+    { "action": "wait", "ms": 800 },
+    { "action": "screenshot", "name": "02-preset-deepwork" },
+
+    { "action": "zoom", "selector": "text=Auto-decline meetings", "scale": 1.5, "duration": 600 },
+    { "action": "wait", "ms": 500 },
+    { "action": "screenshot", "name": "03-automations" },
+    { "action": "zoom", "scale": 1, "duration": 500 },
+    { "action": "wait", "ms": 400 },
+
+    { "action": "click", "selector": "button:has-text('Start focusing')", "zoom": 1.8 },
+    { "action": "wait", "ms": 1800 },
+    { "action": "screenshot", "name": "04-in-flow" },
+
+    { "action": "zoom", "selector": "[class*='font-mono'][class*='text-'][class*='9xl'], div:has-text('49:') , main", "scale": 1.3, "duration": 800 },
+    { "action": "wait", "ms": 2200 },
+    { "action": "screenshot", "name": "05-timer-glow" },
+    { "action": "zoom", "scale": 1, "duration": 600 }
+  ]
+}

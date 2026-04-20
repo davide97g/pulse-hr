@@ -1,0 +1,58 @@
+{
+  "$schema": "../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/login",
+  "viewport": { "width": 1440, "height": 900 },
+  "colorScheme": "dark",
+  "chrome": { "title": "Pulse HR" },
+  "background": { "padding": 48, "borderRadius": 14, "color": "#0a0a0f" },
+  "cursor": true,
+  "localStorage": { "pulse.theme": "employee" },
+  "steps": [
+    { "action": "wait", "ms": 500 },
+    { "action": "zoom", "selector": "input[type=email]", "scale": 1.7, "duration": 350 },
+    { "action": "type", "selector": "input[type=email]", "text": "{{TEST_EMAIL}}", "delay": 25 },
+    { "action": "zoom", "selector": "input[type=password]", "scale": 1.7, "duration": 350 },
+    { "action": "type", "selector": "input[type=password]", "text": "{{TEST_PASSWORD}}", "delay": 25 },
+    { "action": "zoom", "scale": 1, "duration": 250 },
+    { "action": "click", "selector": "button[type=submit]", "zoom": 2 },
+    { "action": "wait", "ms": 2200 },
+
+    { "action": "zoom", "selector": "#workspace-name", "scale": 1.8, "duration": 350 },
+    { "action": "fill", "selector": "#workspace-name", "text": "" },
+    { "action": "type", "selector": "#workspace-name", "text": "Acme", "delay": 35 },
+    { "action": "zoom", "scale": 1, "duration": 200 },
+    { "action": "click", "selector": "button:has-text('Create my workspace')", "zoom": 2.1 },
+    { "action": "wait", "ms": 1800 },
+
+    { "action": "screenshot", "name": "01-dashboard" },
+    { "action": "wait", "ms": 500 },
+
+    { "action": "click", "selector": "a[href='/people'], a:has-text('Employees')", "zoom": 1.9 },
+    { "action": "wait", "ms": 900 },
+    { "action": "screenshot", "name": "02-employees" },
+
+    { "action": "click", "selector": "tr:has-text('Marcus Rivera'), [role=row]:has-text('Marcus Rivera'), .cursor-pointer:has-text('Marcus Rivera')", "zoom": 1.9 },
+    { "action": "wait", "ms": 1100 },
+    { "action": "screenshot", "name": "03-employee-panel" },
+    { "action": "keyboard", "key": "Escape" },
+    { "action": "wait", "ms": 400 },
+
+    { "action": "click", "selector": "a[href='/time'], a:has-text('Time & attendance')", "zoom": 1.9 },
+    { "action": "wait", "ms": 1000 },
+    { "action": "screenshot", "name": "04-time" },
+
+    { "action": "click", "selector": "button:has-text('New entry')", "zoom": 2 },
+    { "action": "wait", "ms": 900 },
+
+    { "action": "click", "selector": "button:has-text('4h')", "zoom": 1.9 },
+    { "action": "wait", "ms": 300 },
+
+    { "action": "zoom", "selector": "textarea[placeholder='What did you work on?']", "scale": 1.8, "duration": 400 },
+    { "action": "type", "selector": "textarea[placeholder='What did you work on?']", "text": "Migration cutover + smoke tests", "delay": 30 },
+    { "action": "zoom", "scale": 1, "duration": 300 },
+
+    { "action": "click", "selector": "button:has-text('Add entry')", "zoom": 2.1 },
+    { "action": "wait", "ms": 2000 },
+    { "action": "screenshot", "name": "05-entry-added" }
+  ]
+}
