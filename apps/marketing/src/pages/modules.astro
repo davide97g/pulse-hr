@@ -1,0 +1,139 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Cta from "../components/Cta.astro";
+import { Package, Wallet, Users, Briefcase, ArrowRight } from "lucide-astro";
+
+const title = "Modular — Money, People, Work as three independent products";
+const description =
+  "Pulse is three independent modules sharing one workspace, one keyboard and one API. Adopt Money on its own, add People later, keep your existing Work tool — or roll out all three. No all-or-nothing migration.";
+const path = "/modules";
+
+const modules = [
+  {
+    icon: Wallet,
+    k: "Money",
+    tag: "Finance + payroll",
+    p: "Multi-country payroll, expenses, invoicing, cost centers, P&L per commessa. Close the month in an afternoon instead of a week.",
+    includes: [
+      "Payroll in US, UK, IT, ES, FR, DE, IE, NL",
+      "Expense approval chains with receipts",
+      "Commessa-native cost tracking",
+      "Journal export to QuickBooks / Xero / SAP",
+      "Payslips, tax filings (F24, 941, PAYE)",
+    ],
+    standalone: "Roll out Money first if you're drowning in spreadsheets at month-end.",
+    accent: "#c48fff",
+  },
+  {
+    icon: Users,
+    k: "People",
+    tag: "HR + recruiting",
+    p: "One profile per teammate. Org chart, documents, e-signatures, onboarding workflows, recruiting kanban, offboarding, org pulse.",
+    includes: [
+      "Employee directory + org chart",
+      "Leave, time-off, holiday calendars",
+      "Document vault + e-signatures",
+      "Recruiting kanban + onboarding workflows",
+      "Team Pulse anonymous sentiment",
+    ],
+    standalone: "Roll out People first if onboarding is stuck in Google Docs and Gmail.",
+    accent: "#ff8a7a",
+  },
+  {
+    icon: Briefcase,
+    k: "Work",
+    tag: "Time + projects",
+    p: "Clock in, track against commesse (project codes, the finance way), run saturation and forecast analyses on top. Focus Mode auto-declines meetings.",
+    includes: [
+      "Time tracking + timesheets",
+      "Commessa (project) hours + costs",
+      "Saturation heatmap + margin view",
+      "Commessa Forecast with scenario sliders",
+      "Focus Mode deep-work timer",
+    ],
+    standalone: "Roll out Work first if you bill by the hour and can't answer \"is this project profitable?\".",
+    accent: "#b4ff39",
+  },
+];
+---
+
+<BaseLayout {title} {description} {path}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+        <Package class="h-3 w-3" /> Modular
+      </p>
+      <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-5xl">
+        Three products.<br />
+        <em class="italic text-[#b4ff39]">Pick any combination</em>.
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        Rippling makes you buy the whole suite. Deel pushes you into contractors-only.
+        Pulse lets you adopt <strong class="font-semibold">Money</strong>,
+        <strong class="font-semibold">People</strong> or
+        <strong class="font-semibold">Work</strong> independently —
+        each goes deep enough to replace a standalone tool, and they share one
+        profile, one search, one audit log, one API.
+      </p>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-20 space-y-4">
+      {modules.map((m) => (
+        <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-8 md:p-10 grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-8">
+          <div>
+            <div class="flex items-center gap-3 mb-4">
+              <span
+                class="h-10 w-10 rounded-lg grid place-items-center"
+                style={`background: ${m.accent}14; border: 1px solid ${m.accent}33;`}
+              >
+                <m.icon class="h-5 w-5" style={`color: ${m.accent}`} />
+              </span>
+              <span class="font-mono uppercase tracking-[0.2em] text-xs text-white/50">{m.tag}</span>
+            </div>
+            <h2 class="font-display text-5xl md:text-6xl mb-4" style={`color: ${m.accent}`}>{m.k}</h2>
+            <p class="text-white/70 leading-relaxed max-w-md">{m.p}</p>
+            <p class="mt-6 text-sm text-white/55 italic max-w-md">{m.standalone}</p>
+          </div>
+          <div>
+            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-4">Inside {m.k.toLowerCase()}</p>
+            <ul class="space-y-2 list-none p-0">
+              {m.includes.map((f) => (
+                <li class="flex items-start gap-3 text-white/75">
+                  <ArrowRight class="h-4 w-4 mt-1 flex-shrink-0" style={`color: ${m.accent}`} />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section class="max-w-[960px] mx-auto px-6 py-20">
+      <h2 class="font-display text-4xl md:text-5xl tracking-tight mb-6">What "modular" means, concretely.</h2>
+      <div class="space-y-4 text-white/70 leading-relaxed">
+        <p>
+          Each module has its own routes, its own permissions, its own API scope.
+          If you pay for People only, People is all you see — no ghost payroll menus,
+          no greyed-out finance tabs, no upsell banners.
+        </p>
+        <p>
+          Swap a module out whenever you want. Export anything via the API, close
+          the module, point your webhooks at the new vendor. No data hostage, no
+          migration fees, no "book a call with our retention team".
+        </p>
+        <p>
+          And because Money, People and Work share the same data model, adding a
+          second module later takes minutes — employees, commesse, org chart are
+          already there.
+        </p>
+      </div>
+    </section>
+
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>

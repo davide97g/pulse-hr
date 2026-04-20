@@ -1,0 +1,130 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Cta from "../components/Cta.astro";
+import { Code2, Github, FileText, Server, GitFork, CheckCircle2 } from "lucide-astro";
+
+const GITHUB_REPO = "davide97g/workflows-people";
+
+const title = "Open source — Pulse HR is on GitHub under FSL-1.1-MIT";
+const description =
+  "The full source of Pulse HR is public on GitHub under the Functional Source License (converts to MIT after 2 years). Read it, run it, fork it, contribute back. Self-host on Docker or Kubernetes.";
+const path = "/open-source";
+
+const faq = [
+  {
+    q: "What is FSL-1.1-MIT exactly?",
+    a: "Functional Source License 1.1 with an MIT Future License. You get full source access from day one with permission to use, modify and redistribute for any non-competing purpose. Two years after each release, the license converts automatically to plain MIT — fully permissive, no strings. The two-year window only blocks building a competing closed-source SaaS out of the code; everything else (internal deployment, consulting, forks, contributions, self-host, commercial use that isn't a direct Pulse competitor) is unrestricted.",
+  },
+  {
+    q: "Why not plain MIT or Apache?",
+    a: "Permissive licenses invite a well-funded competitor to fork the repo, rebrand it, and sell it as closed-source SaaS — starving the people who actually built and maintain the project. FSL is the minimum protection needed to fund continued development. After two years, every release is plain MIT anyway, so the long-term commons grows just as fast.",
+  },
+  {
+    q: "Can I self-host the whole thing?",
+    a: "Yes. The platform is a Bun workspace you can clone and run with `bun install && bun run build`. A reference Docker Compose setup and a Helm chart for Kubernetes are in the repo. The only component you cannot self-host is the managed payroll filing rails (F24, Form 941, HMRC PAYE, etc.) — those integrate with tax authorities on our side because running them yourself means becoming a licensed payroll processor.",
+  },
+  {
+    q: "Do I have to credit Pulse if I fork?",
+    a: "Yes. The NOTICE file in the repo asks you to preserve the copyright header and include a visible attribution (\"Built on workflows-people by Davide Ghiotto\") in the About screen or docs of any public derivative work. No royalties, no paperwork — just a link back.",
+  },
+];
+---
+
+<BaseLayout {title} {description} {path}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+        <Code2 class="h-3 w-3" /> Open source
+      </p>
+      <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
+        HR you can<br />
+        <em class="italic text-[#b4ff39]">read</em>, fork, run.
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        The entire platform — app, marketing site, Bun workspace configuration,
+        every line of logic — lives on GitHub under FSL-1.1-MIT. No "enterprise-only"
+        source dump, no black-box core. What you run is what you can read.
+      </p>
+
+      <div class="mt-10 flex items-center gap-3 flex-wrap">
+        <a
+          href={`https://github.com/${GITHUB_REPO}`}
+          class="group inline-flex items-center gap-2 bg-[#b4ff39] text-[#0b0b0d] px-5 py-3 rounded-md font-medium press-scale hover:bg-[#c6ff5a] transition-colors"
+        >
+          <Github class="h-4 w-4" />
+          View on GitHub
+        </a>
+        <a
+          href={`https://github.com/${GITHUB_REPO}/blob/main/LICENSE`}
+          class="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] px-5 py-3 rounded-md font-medium press-scale transition-colors"
+        >
+          <FileText class="h-4 w-4 text-[#b4ff39]" />
+          Read LICENSE
+        </a>
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-20">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          { icon: Github, k: "Public repo", p: `github.com/${GITHUB_REPO}. Issues, PRs, discussions — open to anyone. Merge conflicts resolved in public.` },
+          { icon: Server, k: "Self-host", p: "Docker Compose for single-node, Helm chart for K8s clusters. Your data, your infra, your call on compliance boundaries." },
+          { icon: GitFork, k: "Forkable", p: "Take the 20% that matches your workflow, throw away the 80% that doesn't. FSL allows it; MIT will allow even more in 2 years." },
+        ].map((v) => (
+          <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
+            <v.icon class="h-5 w-5 text-[#b4ff39] mb-4" />
+            <h3 class="font-display text-2xl mb-2">{v.k}</h3>
+            <p class="text-white/65 leading-relaxed text-sm">{v.p}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="max-w-[960px] mx-auto px-6 py-20">
+      <h2 class="font-display text-4xl md:text-5xl tracking-tight mb-8">The license, in one table.</h2>
+      <div class="rounded-2xl border border-white/10 overflow-hidden">
+        <table class="w-full text-sm">
+          <tbody>
+            {[
+              ["Source visible", "Day one"],
+              ["Run internally / self-host", "Day one, any scale"],
+              ["Fork & modify for non-competing use", "Day one"],
+              ["Build competing closed-source SaaS", "Blocked for 2 years"],
+              ["Converts to plain MIT", "2 years after each release"],
+              ["Attribution required", "Preserve NOTICE in public derivatives"],
+              ["Royalties / per-seat fees", "None, ever"],
+            ].map(([k, v], i) => (
+              <tr class={i % 2 === 0 ? "bg-white/[0.02]" : ""}>
+                <td class="px-5 py-3 text-white/80 border-r border-white/5">{k}</td>
+                <td class="px-5 py-3 text-white/60 font-mono text-[13px]">
+                  <CheckCircle2 class="inline h-3.5 w-3.5 text-[#b4ff39] mr-2 -mt-0.5" />
+                  {v}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="max-w-[960px] mx-auto px-6 py-20">
+      <h2 class="font-display text-4xl md:text-5xl tracking-tight mb-10">Honest answers.</h2>
+      <div class="space-y-6">
+        {faq.map((f) => (
+          <details class="rounded-xl border border-white/10 bg-[#0f0f11] p-6 group">
+            <summary class="cursor-pointer font-display text-xl text-white group-open:text-[#b4ff39] transition-colors list-none">
+              {f.q}
+            </summary>
+            <p class="mt-4 text-white/70 leading-relaxed">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,155 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Cta from "../components/Cta.astro";
+import { Plug, Webhook, Code, BookOpen } from "lucide-astro";
+
+const title = "Ecosystem — webhooks, REST API, integrations & SDKs";
+const description =
+  "Webhooks on every resource event, a public REST API, maintained SDKs for TypeScript / Python / Go. First-class integrations with Slack, Google, QuickBooks, Okta, Stripe, DocuSign, Greenhouse, Zapier. Anything we don't ship, you can add.";
+const path = "/ecosystem";
+
+// status: "live" | "beta" | "roadmap"
+const integrations = [
+  { n: "Slack",           c: "Comms",      s: "live" },
+  { n: "Google Workspace",c: "Identity",   s: "live" },
+  { n: "Okta",            c: "Identity",   s: "live" },
+  { n: "QuickBooks",      c: "Accounting", s: "live" },
+  { n: "Xero",            c: "Accounting", s: "beta" },
+  { n: "Stripe",          c: "Payments",   s: "live" },
+  { n: "DocuSign",        c: "Docs",       s: "live" },
+  { n: "Greenhouse",      c: "Recruiting", s: "live" },
+  { n: "Zapier",          c: "Automation", s: "live" },
+  { n: "Make.com",        c: "Automation", s: "beta" },
+  { n: "Jira",            c: "Work mgmt",  s: "beta" },
+  { n: "Linear",          c: "Work mgmt",  s: "beta" },
+  { n: "BambooHR",        c: "Importer",   s: "live" },
+  { n: "Personio",        c: "Importer",   s: "live" },
+  { n: "Rippling",        c: "Importer",   s: "beta" },
+  { n: "SAP",             c: "ERP",        s: "roadmap" },
+];
+
+const webhookEvents = [
+  "employee.created",
+  "employee.updated",
+  "leave.requested",
+  "leave.approved",
+  "timesheet.submitted",
+  "timesheet.approved",
+  "expense.submitted",
+  "expense.approved",
+  "payroll.run.started",
+  "payroll.run.completed",
+  "payslip.finalised",
+  "candidate.stage.changed",
+  "kudos.awarded",
+  "commessa.created",
+];
+
+const statusStyles = {
+  live:    { dot: "#b4ff39", label: "Live" },
+  beta:    { dot: "#ffbf4a", label: "Beta" },
+  roadmap: { dot: "#6fd8ff", label: "Roadmap" },
+};
+---
+
+<BaseLayout {title} {description} {path}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+        <Plug class="h-3 w-3" /> Ecosystem-first
+      </p>
+      <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
+        Webhooks on<br />
+        <em class="italic text-[#b4ff39]">every</em> event.
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        Most HR vendors gate the API behind an enterprise tier and ship "integrations"
+        that are really just Zapier wrappers. Pulse treats the API and the UI as
+        equal citizens — every resource has a REST endpoint, every state change
+        fires a webhook, every integration ships with source.
+      </p>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+        {[
+          { icon: Webhook, k: "Webhooks", p: `${webhookEvents.length}+ resource events, HMAC-signed, with automatic retries and replay from the dashboard.` },
+          { icon: Code,    k: "REST API", p: "Full CRUD on every resource, pagination, filters, consistent auth. Rate-limited at 1k req/min on the standard tier." },
+          { icon: BookOpen, k: "SDKs",    p: "Maintained clients for TypeScript, Python and Go. Generated from the OpenAPI spec so they never drift from the API." },
+        ].map((v) => (
+          <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
+            <v.icon class="h-5 w-5 text-[#b4ff39] mb-4" />
+            <h3 class="font-display text-2xl mb-2">{v.k}</h3>
+            <p class="text-white/65 leading-relaxed text-sm">{v.p}</p>
+          </article>
+        ))}
+      </div>
+
+      <h2 class="font-display text-4xl tracking-tight mb-6">Integrations — status-honest.</h2>
+      <p class="text-white/60 mb-6 max-w-2xl">
+        We label every integration with its real status. <span class="text-[#b4ff39] font-mono">Live</span> means
+        production-ready with OAuth and sync; <span class="text-[#ffbf4a] font-mono">Beta</span> means it works
+        but we want more field testing; <span class="text-[#6fd8ff] font-mono">Roadmap</span> means it's scoped,
+        not shipped.
+      </p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {integrations.map((i) => {
+          const s = statusStyles[i.s as keyof typeof statusStyles];
+          return (
+            <article class="rounded-xl border border-white/10 bg-[#0f0f11] p-4 hover:border-white/20 transition-colors">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="h-1.5 w-1.5 rounded-full" style={`background:${s.dot}`}></span>
+                <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50">{s.label}</span>
+              </div>
+              <h3 class="font-display text-lg m-0">{i.n}</h3>
+              <p class="text-[11px] text-white/45 font-mono uppercase tracking-[0.15em] mt-1">{i.c}</p>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-16">
+      <h2 class="font-display text-4xl tracking-tight mb-6">Webhook events (partial).</h2>
+      <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 font-mono text-[13px]">
+          {webhookEvents.map((e) => (
+            <span class="text-white/75">
+              <span class="text-[#b4ff39]">→</span> {e}
+            </span>
+          ))}
+        </div>
+        <p class="mt-6 text-xs text-white/45">
+          Each event ships with a stable schema, a delivery dashboard, HMAC signing,
+          and one-click replay. Missed events queue and retry with exponential
+          backoff for 72 hours.
+        </p>
+      </div>
+    </section>
+
+    <section class="max-w-[960px] mx-auto px-6 py-20">
+      <h2 class="font-display text-4xl md:text-5xl tracking-tight mb-6">Build your own integration.</h2>
+      <p class="text-white/70 leading-relaxed mb-6 max-w-2xl">
+        Because the whole platform is open source, the supported integrations live
+        in <code class="font-mono text-[13px] text-[#b4ff39]">apps/app/src/lib/integrations/</code>
+        as regular TypeScript modules. Copy one, swap the API calls, open a PR. The
+        same OAuth scaffolding, webhook router and retry logic you'd build for
+        yourself — already there.
+      </p>
+      <div class="flex items-center gap-3 flex-wrap">
+        <a href="/docs/api" class="inline-flex items-center gap-2 bg-[#b4ff39] text-[#0b0b0d] px-5 py-3 rounded-md font-medium press-scale hover:bg-[#c6ff5a] transition-colors">
+          Read the API docs
+        </a>
+        <a href="https://github.com/davide97g/workflows-people" class="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] px-5 py-3 rounded-md font-medium press-scale transition-colors">
+          Browse integrations on GitHub
+        </a>
+      </div>
+    </section>
+
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>

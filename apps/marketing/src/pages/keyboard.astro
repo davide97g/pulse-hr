@@ -1,0 +1,141 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Cta from "../components/Cta.astro";
+import { Keyboard, Command, Mic, WifiOff, ArrowRight } from "lucide-astro";
+
+const title = "Keyboard-first — ⌘K, ⌘J command bar, voice, offline PWA";
+const description =
+  "⌘K opens a fuzzy finder, ⌘J opens a command bar that runs a local intent parser. Voice dictation, 40+ shortcuts, works offline as a PWA. No LLM call, no cross-tenant training — every keystroke stays on your device.";
+const path = "/keyboard";
+
+const shortcuts = [
+  { k: "⌘K", n: "Open fuzzy search", d: "Jump to any employee, project, document or setting." },
+  { k: "⌘J", n: "Open command bar",  d: "Type a natural-language action; local parser runs it." },
+  { k: "⌘⇧.", n: "Start voice",       d: "Dictate into any input via Web Speech API." },
+  { k: "G P", n: "Go to People",      d: "Navigate to /people without a mouse." },
+  { k: "G T", n: "Go to Time",        d: "Navigate to /time." },
+  { k: "G $", n: "Go to Payroll",     d: "Navigate to /payroll." },
+  { k: "N",   n: "New (context-aware)", d: "In /people: new employee. In /time: new entry. Etc." },
+  { k: "?",   n: "Show all shortcuts", d: "Cheat-sheet overlay, always up to date." },
+];
+
+const commands = [
+  { in: "log 4h on NOV-2025-07 yesterday, feature work", out: "log-hours · 4h · NOV-2025-07 · Apr 19 · feature · confidence 0.94" },
+  { in: "approve Aisha's last expense",                  out: "approve-expense · employee=Aisha Patel · confidence 0.88" },
+  { in: "book leave next Friday, PTO",                   out: "book-leave · 2026-04-24 · kind=PTO · confidence 0.91" },
+  { in: "add employee Marco Rossi, Milan, contractor",   out: "add-employee · Marco Rossi · Milan · contractor · confidence 0.82" },
+  { in: "fill missing hours for this week",              out: "fill-missing · scope=this-week · confidence 0.96" },
+];
+---
+
+<BaseLayout {title} {description} {path}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+        <Keyboard class="h-3 w-3" /> Keyboard-first
+      </p>
+      <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
+        Two keys.<br />
+        <em class="italic text-[#b4ff39]">Everything</em>.
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        <kbd class="font-mono text-[12px] px-1.5 py-0.5 rounded bg-white/10 border border-white/15">⌘K</kbd>
+        opens fuzzy search across every resource.
+        <kbd class="font-mono text-[12px] px-1.5 py-0.5 rounded bg-white/10 border border-white/15">⌘J</kbd>
+        opens a command bar — type what you want in plain language and a local intent
+        parser turns it into a runnable action. No LLM round-trip, no cross-tenant
+        training, works fully offline as part of the PWA.
+      </p>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+        {[
+          { icon: Command, k: "⌘K fuzzy finder", p: "Employees, commesse, documents, settings — sub-50ms search over your whole tenant." },
+          { icon: Keyboard, k: "⌘J command bar", p: "Deterministic intent parser with confidence scoring. 6 intent kinds today, growing." },
+          { icon: Mic,      k: "Voice dictation", p: "Native Web Speech API. ⌘⇧. starts dictation in any input or in the command bar." },
+        ].map((v) => (
+          <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
+            <v.icon class="h-5 w-5 text-[#b4ff39] mb-4" />
+            <h3 class="font-display text-2xl mb-2">{v.k}</h3>
+            <p class="text-white/65 leading-relaxed text-sm">{v.p}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-16">
+      <h2 class="font-display text-4xl tracking-tight mb-6">What the command bar actually does.</h2>
+      <p class="text-white/60 max-w-2xl mb-8">
+        We could have slapped "AI Copilot" on this. We didn't, because no LLM is
+        involved — the code lives at <code class="font-mono text-[13px] text-[#b4ff39]">apps/app/src/lib/nlp.ts</code>
+        and you can read it. Below are real parsed intents, with the confidence
+        score the parser produces.
+      </p>
+      <div class="rounded-2xl border border-white/10 bg-[#0f0f11] overflow-hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
+          <div class="p-6">
+            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-4">You type</p>
+            <ul class="space-y-3 list-none p-0">
+              {commands.map((c) => (
+                <li class="text-white/80 font-mono text-[13px]">
+                  <span class="text-white/40">&gt;&nbsp;</span>{c.in}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="p-6 bg-black/20">
+            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-[#b4ff39] mb-4">Parser output</p>
+            <ul class="space-y-3 list-none p-0">
+              {commands.map((c) => (
+                <li class="text-[#b4ff39] font-mono text-[13px]">{c.out}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-16">
+      <h2 class="font-display text-4xl tracking-tight mb-8">Shortcuts cheat sheet.</h2>
+      <div class="rounded-2xl border border-white/10 bg-[#0f0f11] overflow-hidden">
+        <table class="w-full">
+          <tbody>
+            {shortcuts.map((s, i) => (
+              <tr class={i % 2 === 0 ? "bg-white/[0.02]" : ""}>
+                <td class="px-5 py-3 border-r border-white/5 w-[120px]">
+                  <kbd class="font-mono text-[12px] px-2 py-1 rounded bg-white/10 border border-white/15">{s.k}</kbd>
+                </td>
+                <td class="px-5 py-3 text-white/85 border-r border-white/5 w-[220px]">{s.n}</td>
+                <td class="px-5 py-3 text-white/55 text-sm">{s.d}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="max-w-[960px] mx-auto px-6 py-20">
+      <div class="flex items-center gap-3 mb-4">
+        <WifiOff class="h-5 w-5 text-[#b4ff39]" />
+        <h2 class="font-display text-4xl tracking-tight m-0">Offline by default.</h2>
+      </div>
+      <p class="text-white/70 leading-relaxed max-w-2xl">
+        Pulse installs as a PWA on macOS, Windows, iOS and Android. Recent views,
+        timesheets and kudos drafts keep working offline and sync as soon as you're
+        back. The command bar runs locally, so even your "log 4h on NOV-07"
+        typing still parses in a basement meeting room. Destructive actions
+        (payroll runs, offer sends) require a live connection and queue if offline.
+      </p>
+      <a href="/" class="mt-8 inline-flex items-center gap-2 text-[#b4ff39] font-mono hover:gap-3 transition-all">
+        Back to the overview <ArrowRight class="h-4 w-4" />
+      </a>
+    </section>
+
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>

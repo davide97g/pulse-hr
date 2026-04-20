@@ -1,0 +1,75 @@
+---
+import { Code2, Package, Plug, Keyboard, ArrowRight } from "lucide-astro";
+
+const GITHUB_REPO = "davide97g/workflows-people";
+
+const values = [
+  {
+    icon: Code2,
+    k: "Open source",
+    p: "The full source is on GitHub under FSL-1.1-MIT. Read every line, run it on your own hardware, fork it if we ever let you down.",
+    href: "/open-source",
+    cta: "LICENSE · self-host · contribute",
+  },
+  {
+    icon: Package,
+    k: "Modular",
+    p: "Money, People and Work are three independent products. Roll out one, skip the others, swap any of them later. No all-or-nothing migration.",
+    href: "/modules",
+    cta: "Three modules, one workspace",
+  },
+  {
+    icon: Plug,
+    k: "Ecosystem-first",
+    p: "Webhooks on every resource event, a public REST API, SDKs for TypeScript / Python / Go. Anything we don't ship, the community can add.",
+    href: "/ecosystem",
+    cta: "Webhooks · REST · integrations",
+  },
+  {
+    icon: Keyboard,
+    k: "Keyboard-first",
+    p: "⌘K finds anything, ⌘J runs anything. Local intent parser, voice dictation, 40+ shortcuts, offline PWA. No mouse required, no LLM call.",
+    href: "/keyboard",
+    cta: "⌘K · ⌘J · voice · offline",
+  },
+];
+---
+
+<section id="why" class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="why-title">
+  <div class="max-w-2xl mb-14">
+    <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">Why Pulse</p>
+    <h2 id="why-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+      No other HR vendor<br />matches <em class="italic">all four</em>.
+    </h2>
+    <p class="mt-6 text-white/70 leading-relaxed">
+      Rippling is closed. Deel is contractors-only. BambooHR has no API to speak of.
+      Pulse is the only platform where every one of these four principles is non-negotiable.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {values.map((v) => (
+      <a
+        href={v.href}
+        class="group block rounded-2xl border border-white/10 bg-[#0f0f11] hover:bg-[#141418] hover:border-[#b4ff39]/30 transition-colors p-8"
+      >
+        <div class="flex items-center gap-3 mb-6">
+          <span class="h-10 w-10 rounded-lg border border-white/10 bg-white/[0.03] grid place-items-center">
+            <v.icon class="h-5 w-5 text-[#b4ff39]" />
+          </span>
+          <h3 class="font-display text-3xl">{v.k}</h3>
+        </div>
+        <p class="text-white/70 leading-relaxed mb-6">{v.p}</p>
+        <p class="inline-flex items-center gap-2 text-sm text-[#b4ff39] font-mono m-0">
+          {v.cta}
+          <ArrowRight class="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+        </p>
+      </a>
+    ))}
+  </div>
+
+  <div class="mt-10 flex items-center gap-3 flex-wrap text-xs text-white/40">
+    <span class="font-mono uppercase tracking-[0.2em]">Source</span>
+    <a href={`https://github.com/${GITHUB_REPO}`} class="text-white/60 hover:text-white font-mono">github.com/{GITHUB_REPO}</a>
+  </div>
+</section>
