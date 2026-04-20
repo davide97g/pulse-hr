@@ -2,10 +2,10 @@ export const SITE = {
   name: "Pulse HR",
   url: "https://pulsehr.com",
   description:
-    "Unified HR, payroll, time tracking, leave, recruiting and kudos. Multi-country payroll, AI Copilot, keyboard-first. Free for the first 5 employees.",
-  tagline: "The HR & payroll platform you'll actually use.",
+    "Open-source, modular HR & payroll. Money, People and Work as three composable products. Keyboard-first, webhooks on every event, free for the first 5 employees.",
+  tagline: "Open, modular HR & payroll that doesn't lock you in.",
   keywords:
-    "HR software, payroll software, time tracking, people platform, HRIS, multi-country payroll, commessa, project hours, AI copilot, PWA",
+    "open source HR, open source payroll, HRIS, modular HR, HR API, webhooks, time tracking, multi-country payroll, commessa, project hours, keyboard-first, PWA",
   ogImage: "/og/landing.svg",
   twitter: "@pulsehr",
 };
@@ -18,20 +18,20 @@ export const FEATURES = [
   { icon: "BarChart3",  title: "Reports everyone reads", body: "Headcount, turnover, cost per hire, absenteeism — export to PDF/CSV or pipe to BI in a click." },
   { icon: "Plug",       title: "Integrations & API",   body: "Slack, Google, QuickBooks, Okta, Stripe. And when we don't have it, our API and webhooks do." },
   { icon: "Gauge",      title: "Saturation & margins", body: "Org utilization, weekly bench, blended margin, at-risk projects. A live read on whether the company is over- or under-sold." },
-  { icon: "Sparkles",   title: "Copilot (⌘J)",          body: "Ask anything in natural language — approvals, balances, forecasts, payroll previews. Answers stream with runnable actions attached." },
+  { icon: "Sparkles",   title: "Command bar (⌘J)",     body: "Type what you want — 'log 4h on NOV-07', 'approve Aisha's expense', 'book leave next Friday'. A local intent parser turns natural phrases into runnable actions. No LLM call, no data leaving your tenant." },
   { icon: "Trophy",     title: "Growth & recognition",  body: "XP, kudos coins, leaderboards, weekly podiums. Engagement data that HR and managers actually read, not a feel-good gimmick." },
 ];
 
 export const CONCEPTS = [
-  { k: "Commessa-first",      d: "Every hour, expense and headcount dollar is traceable to a project (commessa is the Italian finance term for a billable job code). It's how finance sees the company — now it's how your HR data sees it too." },
-  { k: "One surface",         d: "Stop jumping between Deel for contracts, Rippling for payroll and a dozen Google Docs. One workspace, search from anywhere, ⌘K everywhere." },
-  { k: "Workflows not forms", d: "Leave, expenses, onboarding — each is a structured workflow with owners, deadlines and automation, not a form that lands in a shared inbox." },
-  { k: "Open by default",     d: "Export anything. Webhooks on every event. A public API with clear contracts. You'll never feel locked in." },
+  { k: "Open source",      d: "The whole platform is on GitHub under the Functional Source License. Read the code, run it yourself, fork it if we ever let you down. Your HR data and the software handling it never need to be a black box." },
+  { k: "Modular",          d: "Money, People and Work are three independent products that happen to share a workspace. Roll out one, skip the others, swap any of them out later. No all-or-nothing migration, no buy-the-suite trap." },
+  { k: "Ecosystem-first",  d: "Webhooks on every resource event, a public REST API, and first-class integrations with Slack, Google, QuickBooks, Okta and Stripe. Anything we don't ship, you (or the community) can add in an afternoon." },
+  { k: "Keyboard-first",   d: "Two keys — ⌘K for fuzzy search, ⌘J for the command bar — reach every action in the product without leaving the keyboard. Voice dictation, 40+ shortcuts, works offline as a PWA." },
 ];
 
 export const LABS = [
   { icon: "Heart",       kind: "Team Pulse",        tag: "Signal",      body: "Anonymous vibe checks + weekly heatmap. See sentiment before it shows up in a 1:1." },
-  { icon: "TrendingUp",  kind: "Commessa Forecast", tag: "AI",          body: "Scenario sliders on top of project burn. 'What if I add a designer?' answered in milliseconds." },
+  { icon: "TrendingUp",  kind: "Commessa Forecast", tag: "Scenarios",   body: "Scenario sliders on top of project burn. 'What if I add a designer?' answered in milliseconds." },
   { icon: "Gift",        kind: "Kudos",             tag: "Recognition", body: "Peer coins with reasons attached, confetti included. Leaderboards reset weekly, monthly and yearly." },
   { icon: "Target",      kind: "Focus Mode",        tag: "Depth",       body: "Deep-work timer that auto-declines meetings, posts a status, and logs the session to your timesheet." },
   { icon: "Gauge",       kind: "Saturation",        tag: "Load",        body: "Utilization heatmap, cost-vs-value scatter, margin tab. Who's leaning in, what's returning in €/h." },
@@ -62,10 +62,12 @@ export const FAQ = [
     a: "SOC 2 Type II audited annually — report available under NDA. GDPR-compliant by design with EU data residency options (Frankfurt, Dublin, Milan). Every customer gets a signed Data Processing Agreement at sign-up, sub-processors published at pulsehr.com/security. ISO 27001 certification in progress for late 2026; HIPAA BAAs available for US healthcare customers." },
   { q: "Do you have an API?",
     a: "Yes — a full REST API, webhooks on every resource event (employee.created, leave.approved, payslip.finalised, etc.), and maintained SDKs for TypeScript, Python and Go. API keys are scoped per environment with granular permissions. Full OpenAPI spec published at pulsehr.com/docs/api. Rate limits are 1,000 requests/minute on the standard tier." },
+  { q: "Is Pulse really open source?",
+    a: "Yes. The full source is on GitHub at github.com/davide97g/workflows-people under the Functional Source License (FSL-1.1-MIT). You can read every line, run it yourself, fork it, and contribute back. Two years after each release the license converts automatically to plain MIT — fully permissive. The FSL window blocks competing closed-source SaaS resales during those two years, but any non-competing use (internal deployment, consulting, forks, contributions) is unrestricted from day one. See LICENSE and NOTICE in the repo for the exact terms." },
   { q: "Can we self-host?",
-    a: "Yes. The core platform is source-available under the Functional Source License (FSL). Self-hosted deployments on Docker or Kubernetes are supported for teams over 50 employees, with a reference Helm chart and Terraform modules. Payroll filing connectors remain managed by Pulse (you'd need tax authority integrations otherwise), but the rest runs entirely on your infrastructure." },
-  { q: "Where does Copilot run — and what does it see?",
-    a: "Copilot runs on your tenant's data only. Every prompt is scoped to the current user's permissions, so an employee can't ask about others' salaries, and no prompts or responses are used to train cross-tenant models. You can disable AI features per role or organisation-wide with one toggle. For regulated industries, Copilot can be routed through a private Azure OpenAI tenant you own." },
+    a: "Yes. The whole platform ships as a Bun monorepo you can clone and run. Self-hosted deployments on Docker or Kubernetes are supported with a reference Helm chart and Terraform modules. Payroll filing connectors remain managed by Pulse (you'd need tax authority integrations otherwise), but the rest runs entirely on your infrastructure. Start at github.com/davide97g/workflows-people." },
+  { q: "How does the command bar (⌘J) work?",
+    a: "The command bar runs a local intent parser over your tenant's data — no LLM call, no network round-trip, no cross-tenant training. You type natural phrases like 'log 4h on NOV-07 yesterday' or 'approve Aisha's expense', and a deterministic heuristic maps them to runnable actions scoped to your permissions. Because it runs in the browser, it works offline as part of the PWA. We'll expose an MCP server for true agent workflows in a later release; until then, this is the honest label — a keyboard-first command bar, not an AI copilot." },
   { q: "Does Pulse work offline?",
     a: "The whole surface installs as a PWA on macOS, Windows, iOS and Android. Recent views, timesheets and kudos drafts keep working offline and sync as soon as you're back — no 'loading…' screens at the airport or in a basement meeting room. Payroll runs and other destructive actions require a live connection and will queue if offline, so you never double-pay someone by mistake." },
 ];
@@ -83,7 +85,7 @@ export const STATS = [
   { v: "$1.2B",  l: "Processed in payroll" },
   { v: "47",     l: "Countries supported" },
   { v: "4,800+", l: "Teams on Pulse HR" },
-  { v: "312k",   l: "Copilot actions run" },
+  { v: "312k",   l: "Commands executed" },
 ];
 
 export const USE_CASES = [
@@ -98,7 +100,7 @@ export const CHANGELOG = [
   { d: "Apr 14", t: "Avatar hover cards + Employee Score", k: "People" },
   { d: "Apr 09", t: "Saturation tabs + Insights view",    k: "Labs" },
   { d: "Apr 02", t: "Commessa Forecast with AI scenarios", k: "Labs" },
-  { d: "Mar 28", t: "Copilot ⌘J with streaming actions",   k: "AI" },
+  { d: "Mar 28", t: "Command bar ⌘J with runnable actions", k: "Keyboard" },
 ];
 
 export const MARQUEE_LOGOS = [
@@ -107,6 +109,6 @@ export const MARQUEE_LOGOS = [
 ];
 
 export const HERO_NEW_TAGS = [
-  "Copilot ⌘J", "Commessa Forecast", "Saturation", "Team Pulse",
-  "Kudos", "Focus Mode", "Growth",
+  "Command bar ⌘J", "Commessa Forecast", "Saturation", "Team Pulse",
+  "Kudos", "Focus Mode", "Open source",
 ];

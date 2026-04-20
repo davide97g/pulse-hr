@@ -13,9 +13,9 @@ import { Keyboard, Mic, Command, WifiOff, Sparkles, ArrowRight } from "lucide-as
         <em class="italic text-[#b4ff39]">Everything</em>.
       </h2>
       <p class="text-white/70 mt-6 max-w-md leading-relaxed">
-        <kbd class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-white/10 border border-white/15">⌘K</kbd> opens a fuzzy command palette — jump to any employee, project, document, setting.
+        <kbd class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-white/10 border border-white/15">⌘K</kbd> opens a fuzzy palette — jump to any employee, project, document or setting.
         <br class="hidden md:inline" />
-        <kbd class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-white/10 border border-white/15 mt-3 inline-block">⌘J</kbd> wakes Copilot — ask anything, approve anything, generate anything. Streamed answers, runnable actions.
+        <kbd class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-white/10 border border-white/15 mt-3 inline-block">⌘J</kbd> opens the command bar — type what you want in plain language, a local parser turns it into a runnable action. No LLM call, no cross-tenant training, works offline.
       </p>
       <ul class="mt-8 flex items-center gap-5 flex-wrap text-sm list-none p-0">
         <li class="inline-flex items-center gap-2 text-white/70">
@@ -37,20 +37,19 @@ import { Keyboard, Mic, Command, WifiOff, Sparkles, ArrowRight } from "lucide-as
       ></div>
       <div class="relative p-6 space-y-3">
         <p class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-[11px] text-white/60 m-0">
-          <Sparkles class="h-3 w-3 text-[#b4ff39]" /> Ask Pulse
+          <Sparkles class="h-3 w-3 text-[#b4ff39]" /> Command bar
           <kbd class="ml-2 font-mono text-[10px] px-1 py-0 rounded bg-white/10 border border-white/15">⌘J</kbd>
         </p>
         <div class="rounded-lg border border-white/10 bg-black/40 px-4 py-3 text-sm text-white/80">
-          <span class="text-white/40">&gt;&nbsp;</span>Who's overallocated this sprint on Mobile onboarding?
+          <span class="text-white/40">&gt;&nbsp;</span>log 4h on NOV-2025-07 yesterday, feature work
         </div>
         <div class="rounded-lg border border-[#b4ff39]/25 bg-[#b4ff39]/[0.04] px-4 py-3 text-[13px] text-white/85 leading-relaxed space-y-2">
-          <p class="font-mono text-[10px] text-[#b4ff39] uppercase tracking-wider m-0">Answer · streamed in 420ms</p>
+          <p class="font-mono text-[10px] text-[#b4ff39] uppercase tracking-wider m-0">Parsed · intent=log-hours · confidence 0.94</p>
           <p class="m-0">
-            Two people are above 100% load on <span class="font-mono text-[#b4ff39]">NOV-2025-07</span>: Noah Williams (130%) and Yuki Tanaka (108%).
-            The next bottleneck lands in W19 unless you reshuffle.
+            Log <span class="font-mono text-[#b4ff39]">4h</span> to <span class="font-mono text-[#b4ff39]">NOV-2025-07</span> on <span class="font-mono text-[#b4ff39]">Apr 19</span>, tagged <span class="font-mono text-[#b4ff39]">feature</span>.
           </p>
           <div class="flex gap-2 pt-1 flex-wrap">
-            {["Draft reshuffle", "Open Saturation", "Message Yuki"].map((a) => (
+            {["Confirm", "Edit details", "Open timesheet"].map((a) => (
               <span class="inline-flex items-center gap-1 h-7 px-2 rounded-md border border-white/15 bg-white/[0.04] text-[11px] text-white/80 hover:border-[#b4ff39]/40 cursor-default">
                 <ArrowRight class="h-3 w-3 text-[#b4ff39]" />{a}
               </span>
@@ -58,8 +57,8 @@ import { Keyboard, Mic, Command, WifiOff, Sparkles, ArrowRight } from "lucide-as
           </div>
         </div>
         <p class="flex gap-2 text-[10px] text-white/35 pt-1 m-0">
-          <span class="font-mono">scoped: your tenant · 12 employees</span>
-          <span class="ml-auto font-mono">no training · no cross-tenant</span>
+          <span class="font-mono">local parser · no network call</span>
+          <span class="ml-auto font-mono">works offline</span>
         </p>
       </div>
     </div>

@@ -31,7 +31,7 @@
   </text>
 
   <!-- Subline -->
-  <text x="80" y="528" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#f2f2ee" fill-opacity="0.7">Multi-country payroll · AI Copilot · keyboard-first · free for 5 employees</text>
+  <text x="80" y="528" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#f2f2ee" fill-opacity="0.7">Open source · modular · ecosystem-first · keyboard-first · free for 5</text>
 
   <!-- Bottom accent -->
   <rect x="80" y="560" width="120" height="4" fill="#b4ff39"/>

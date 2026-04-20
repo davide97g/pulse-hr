@@ -1,6 +1,8 @@
 ---
 import { Sparkles, Twitter, Linkedin, Github, BookOpen, MessageCircle } from "lucide-astro";
 
+const GITHUB_REPO = "davide97g/workflows-people";
+
 const cols = [
   { t: "Product",   l: [
     { n: "Product tour", h: "/product" },
@@ -9,19 +11,16 @@ const cols = [
     { n: "Changelog",    h: "/changelog" },
     { n: "Roadmap",      h: "/roadmap" },
   ]},
-  { t: "Company",   l: [
-    { n: "About",      h: "/about" },
-    { n: "Team",       h: "#team" },
-    { n: "Customers",  h: "/customers" },
-    { n: "Careers",    h: "/careers" },
-    { n: "Contact",    h: "/contact" },
+  { t: "Open source", l: [
+    { n: "GitHub",       h: `https://github.com/${GITHUB_REPO}` },
+    { n: "License",      h: `https://github.com/${GITHUB_REPO}/blob/main/LICENSE` },
+    { n: "Contribute",   h: `https://github.com/${GITHUB_REPO}/blob/main/CONTRIBUTING.md` },
+    { n: "Self-host",    h: "/#faq" },
   ]},
   { t: "Resources", l: [
     { n: "Docs",          h: "/docs" },
     { n: "API reference", h: "/docs/api" },
-    { n: "Guides",        h: "/guides" },
-    { n: "Help center",   h: "/help" },
-    { n: "Community",     h: "/community" },
+    { n: "Contact",       h: "/contact" },
   ]},
 ];
 ---
@@ -39,7 +38,7 @@ const cols = [
       <ul class="flex gap-3 mt-5 text-white/50 list-none p-0">
         <li><a href="https://twitter.com/pulsehr" class="hover:text-white transition-colors" aria-label="Twitter"><Twitter class="h-4 w-4" /></a></li>
         <li><a href="https://www.linkedin.com/company/pulse-hr" class="hover:text-white transition-colors" aria-label="LinkedIn"><Linkedin class="h-4 w-4" /></a></li>
-        <li><a href="https://github.com/pulsehr" class="hover:text-white transition-colors" aria-label="GitHub"><Github class="h-4 w-4" /></a></li>
+        <li><a href={`https://github.com/${GITHUB_REPO}`} class="hover:text-white transition-colors" aria-label="GitHub"><Github class="h-4 w-4" /></a></li>
       </ul>
     </div>
     {cols.map((c) => (

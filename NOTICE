@@ -1,0 +1,25 @@
+workflows-people (Pulse HR)
+Copyright (c) 2026 Davide Ghiotto
+https://github.com/davide97g/workflows-people
+
+This product is licensed under the Functional Source License, Version 1.1,
+with an MIT Future License (FSL-1.1-MIT). See LICENSE for the full terms.
+
+Attribution
+-----------
+
+If you use, fork, modify, or redistribute this software (in whole or in part),
+you must preserve this NOTICE file and the copyright header above, and include
+visible attribution to the original project in any public-facing documentation,
+user interface credits, or "About" screen of the derivative work.
+
+Suggested attribution line:
+
+    Built on workflows-people by Davide Ghiotto
+    https://github.com/davide97g/workflows-people
+
+Third-Party Components
+----------------------
+
+This repository includes open-source components under their own licenses.
+See each package's node_modules/<package>/LICENSE for details.
