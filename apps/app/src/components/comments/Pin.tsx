@@ -1,8 +1,15 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { Comment } from "@/lib/comments/types";
 
 const DRAG_THRESHOLD_PX = 4;
+
+type DragState = {
+  startX: number;
+  startY: number;
+  pointerId: number;
+  dragging: boolean;
+};
 
 export function Pin({
   comment,
@@ -22,12 +29,8 @@ export function Pin({
   onDragEnd?: (clientX: number, clientY: number) => void;
 }) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const dragStateRef = useRef<{
-    startX: number;
-    startY: number;
-    pointerId: number;
-    dragging: boolean;
-  } | null>(null);
+  const dragRef = useRef<DragState | null>(null);
+  const suppressNextClickRef = useRef(false);
   const [dragOffset, setDragOffset] = useState<{ dx: number; dy: number } | null>(null);
 
   const initials =
@@ -40,54 +43,68 @@ export function Pin({
       .toUpperCase() || "?";
   const count = comment.replies.length + 1;
 
-  const onPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+  useEffect(() => {
     if (!draggable) return;
-    if (e.button !== 0) return;
-    dragStateRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      pointerId: e.pointerId,
-      dragging: false,
+    // Listeners installed only while a drag is active — armed by pointerdown.
+    const onMove = (e: PointerEvent) => {
+      const s = dragRef.current;
+      if (!s || s.pointerId !== e.pointerId) return;
+      const dx = e.clientX - s.startX;
+      const dy = e.clientY - s.startY;
+      if (!s.dragging && Math.hypot(dx, dy) < DRAG_THRESHOLD_PX) return;
+      s.dragging = true;
+      setDragOffset({ dx, dy });
     };
-    e.currentTarget.setPointerCapture(e.pointerId);
-  };
+    const finish = (e: PointerEvent, commit: boolean) => {
+      const s = dragRef.current;
+      if (!s || s.pointerId !== e.pointerId) return;
+      dragRef.current = null;
+      const dragged = s.dragging;
+      setDragOffset(null);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
+      if (dragged) {
+        suppressNextClickRef.current = true;
+        if (commit && onDragEnd) {
+          const btn = btnRef.current;
+          const prevVis = btn?.style.visibility;
+          if (btn) btn.style.visibility = "hidden";
+          onDragEnd(e.clientX, e.clientY);
+          if (btn) btn.style.visibility = prevVis ?? "";
+        }
+      }
+    };
+    const onUp = (e: PointerEvent) => finish(e, true);
+    const onCancel = (e: PointerEvent) => finish(e, false);
 
-  const onPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
-    const s = dragStateRef.current;
-    if (!s || s.pointerId !== e.pointerId) return;
-    const dx = e.clientX - s.startX;
-    const dy = e.clientY - s.startY;
-    if (!s.dragging && Math.hypot(dx, dy) < DRAG_THRESHOLD_PX) return;
-    s.dragging = true;
-    setDragOffset({ dx, dy });
-  };
+    const btn = btnRef.current;
+    if (!btn) return;
+    const onDown = (e: PointerEvent) => {
+      if (e.button !== 0) return;
+      dragRef.current = {
+        startX: e.clientX,
+        startY: e.clientY,
+        pointerId: e.pointerId,
+        dragging: false,
+      };
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onCancel);
+    };
+    btn.addEventListener("pointerdown", onDown);
+    return () => {
+      btn.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
+    };
+  }, [draggable, onDragEnd]);
 
-  const finishDrag = (e: React.PointerEvent<HTMLButtonElement>, commit: boolean) => {
-    const s = dragStateRef.current;
-    if (!s || s.pointerId !== e.pointerId) return;
-    dragStateRef.current = null;
-    const dragged = s.dragging;
-    setDragOffset(null);
-    try {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    } catch {
-      // ignore
-    }
-    if (dragged && commit && onDragEnd) {
-      const btn = btnRef.current;
-      const prevPE = btn?.style.pointerEvents;
-      if (btn) btn.style.pointerEvents = "none";
-      onDragEnd(e.clientX, e.clientY);
-      if (btn) btn.style.pointerEvents = prevPE ?? "";
-    }
-  };
-
-  const onPointerUp = (e: React.PointerEvent<HTMLButtonElement>) => finishDrag(e, true);
-  const onPointerCancel = (e: React.PointerEvent<HTMLButtonElement>) => finishDrag(e, false);
-
-  const suppressClickIfDragged = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onClickHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (dragOffset !== null) {
+    if (suppressNextClickRef.current) {
+      suppressNextClickRef.current = false;
       e.preventDefault();
       return;
     }
@@ -102,20 +119,19 @@ export function Pin({
     <button
       ref={btnRef}
       type="button"
-      onClick={suppressClickIfDragged}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerCancel}
+      onClick={onClickHandler}
+      onDragStart={(e) => e.preventDefault()}
       style={{
         left: x + offsetX,
         top: y + offsetY,
         cursor: draggable ? (isDragging ? "grabbing" : "grab") : "pointer",
         touchAction: draggable ? "none" : undefined,
+        userSelect: "none",
       }}
       className={cn(
         "absolute -translate-x-1 -translate-y-full pointer-events-auto",
-        "group flex items-end gap-0 press-scale",
+        "group flex items-end gap-0",
+        !isDragging && "press-scale",
         isDragging && "opacity-90",
       )}
       aria-label={

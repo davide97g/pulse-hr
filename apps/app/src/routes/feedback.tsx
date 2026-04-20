@@ -19,6 +19,9 @@ import {
   ShieldCheck,
   Search,
   X as XIcon,
+  ExternalLink,
+  PanelRight,
+  Send,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -27,10 +30,18 @@ import {
   setVote,
   setStatus,
   setTokenGetter,
+  createReply,
 } from "@/lib/comments/api";
 import type { BoardBuckets } from "@/lib/comments/api";
-import type { Comment, CommentStatus } from "@/lib/comments/types";
+import type { Comment, CommentStatus, Reply } from "@/lib/comments/types";
 import { useIsEffectiveAdmin } from "@/lib/role-override";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/feedback")({
   head: () => ({ meta: [{ title: "Feedback — Pulse" }] }),
@@ -62,6 +73,7 @@ function FeedbackBoard() {
   const [query, setQuery] = useState("");
   const [routeFilter, setRouteFilter] = useState<string>("");
   const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
+  const [threadId, setThreadId] = useState<string | null>(null);
   const admin = useIsEffectiveAdmin();
 
   useEffect(() => {
@@ -100,6 +112,61 @@ function FeedbackBoard() {
     }
     return null;
   }, [board, draggingId]);
+
+  const threadComment = useMemo(() => {
+    if (!threadId) return null;
+    for (const status of Object.keys(board) as CommentStatus[]) {
+      const match = board[status].find((c) => c.id === threadId);
+      if (match) return match;
+    }
+    return null;
+  }, [board, threadId]);
+
+  const applyVote = async (commentId: string, value: -1 | 0 | 1) => {
+    // optimistic
+    setBoard((prev) => {
+      const next = { ...prev } as BoardBuckets;
+      for (const status of Object.keys(next) as CommentStatus[]) {
+        next[status] = next[status].map((c) => {
+          if (c.id !== commentId) return c;
+          const delta = value - c.myVote;
+          return { ...c, myVote: value, voteScore: c.voteScore + delta };
+        });
+      }
+      return next;
+    });
+    try {
+      const { voteScore, myVote } = await setVote(commentId, value);
+      setBoard((prev) => {
+        const next = { ...prev } as BoardBuckets;
+        for (const status of Object.keys(next) as CommentStatus[]) {
+          next[status] = next[status].map((c) =>
+            c.id === commentId ? { ...c, voteScore, myVote } : c,
+          );
+        }
+        return next;
+      });
+    } catch {
+      toast.error("Vote failed");
+      refresh();
+    }
+  };
+
+  const applyReply = async (commentId: string, body: string): Promise<Reply> => {
+    const reply = await createReply(commentId, body);
+    setBoard((prev) => {
+      const next = { ...prev } as BoardBuckets;
+      for (const status of Object.keys(next) as CommentStatus[]) {
+        next[status] = next[status].map((c) =>
+          c.id === commentId
+            ? { ...c, replies: [...c.replies, reply], updatedAt: reply.createdAt }
+            : c,
+        );
+      }
+      return next;
+    });
+    return reply;
+  };
 
   const onDragEnd = (event: DragEndEvent) => {
     setDraggingId(null);
@@ -282,6 +349,8 @@ function FeedbackBoard() {
                     column={col}
                     items={filteredBoard[col.status]}
                     admin={admin}
+                    onVote={applyVote}
+                    onOpenThread={setThreadId}
                   />
                 ))}
               </div>
@@ -290,6 +359,7 @@ function FeedbackBoard() {
                   <FeedbackCard
                     comment={draggingComment}
                     onVote={() => undefined}
+                    onOpenThread={() => undefined}
                     dragHandleProps={null}
                     admin={admin}
                     isOverlay
@@ -300,6 +370,13 @@ function FeedbackBoard() {
           )}
         </>
       )}
+
+      <ThreadSidebar
+        comment={threadComment}
+        onClose={() => setThreadId(null)}
+        onVote={applyVote}
+        onReply={applyReply}
+      />
     </div>
   );
 }
@@ -393,10 +470,14 @@ function Column({
   column,
   items,
   admin,
+  onVote,
+  onOpenThread,
 }: {
   column: { status: CommentStatus; label: string; accent: string };
   items: Comment[];
   admin: boolean;
+  onVote: (id: string, value: -1 | 0 | 1) => Promise<void>;
+  onOpenThread: (id: string) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.status });
   return (
@@ -415,7 +496,13 @@ function Column({
         )}
       >
         {items.map((c) => (
-          <DraggableCard key={c.id} comment={c} admin={admin} />
+          <DraggableCard
+            key={c.id}
+            comment={c}
+            admin={admin}
+            onVote={onVote}
+            onOpenThread={onOpenThread}
+          />
         ))}
         {items.length === 0 && (
           <div className="text-xs text-muted-foreground/60 px-1 py-3 italic">nothing here yet</div>
@@ -425,7 +512,17 @@ function Column({
   );
 }
 
-function DraggableCard({ comment, admin }: { comment: Comment; admin: boolean }) {
+function DraggableCard({
+  comment,
+  admin,
+  onVote,
+  onOpenThread,
+}: {
+  comment: Comment;
+  admin: boolean;
+  onVote: (id: string, value: -1 | 0 | 1) => Promise<void>;
+  onOpenThread: (id: string) => void;
+}) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: comment.id,
     disabled: !admin,
@@ -442,13 +539,8 @@ function DraggableCard({ comment, admin }: { comment: Comment; admin: boolean })
     >
       <FeedbackCard
         comment={comment}
-        onVote={async (value) => {
-          try {
-            await setVote(comment.id, value);
-          } catch {
-            toast.error("Vote failed");
-          }
-        }}
+        onVote={(v) => onVote(comment.id, v)}
+        onOpenThread={() => onOpenThread(comment.id)}
         dragHandleProps={
           admin ? (listeners as Record<string, (event: unknown) => void> | undefined) : null
         }
@@ -461,12 +553,14 @@ function DraggableCard({ comment, admin }: { comment: Comment; admin: boolean })
 function FeedbackCard({
   comment,
   onVote,
+  onOpenThread,
   dragHandleProps,
   admin,
   isOverlay,
 }: {
   comment: Comment;
   onVote: (value: -1 | 0 | 1) => void;
+  onOpenThread: () => void;
   dragHandleProps: Record<string, (event: unknown) => void> | null | undefined;
   admin: boolean;
   isOverlay?: boolean;
@@ -526,11 +620,25 @@ function FeedbackCard({
             <Link
               to={comment.route}
               search={{ thread: comment.id }}
-              className="inline-flex items-center h-5 px-1.5 rounded border bg-background text-[10px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
-              title={`Open ${comment.route}`}
+              className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
+              title={`Open ${comment.route} with this thread`}
             >
+              <ExternalLink className="h-3 w-3" />
               {comment.route}
             </Link>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenThread();
+              }}
+              className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] text-muted-foreground hover:text-foreground hover:border-primary/50"
+              title="Open full thread"
+              {...(isOverlay ? {} : {})}
+            >
+              <PanelRight className="h-3 w-3" />
+              Thread
+            </button>
             {comment.tags.slice(0, 3).map((t) => (
               <span
                 key={t}
@@ -580,6 +688,229 @@ function FeedbackCard({
       </div>
     </article>
   );
+}
+
+function ThreadSidebar({
+  comment,
+  onClose,
+  onVote,
+  onReply,
+}: {
+  comment: Comment | null;
+  onClose: () => void;
+  onVote: (id: string, value: -1 | 0 | 1) => Promise<void>;
+  onReply: (id: string, body: string) => Promise<Reply>;
+}) {
+  const [reply, setReply] = useState("");
+  const [pending, setPending] = useState(false);
+
+  // Reset reply when switching comments or closing
+  useEffect(() => {
+    setReply("");
+    setPending(false);
+  }, [comment?.id]);
+
+  const submit = async () => {
+    if (!comment || pending) return;
+    const trimmed = reply.trim();
+    if (!trimmed) return;
+    setPending(true);
+    try {
+      await onReply(comment.id, trimmed);
+      setReply("");
+    } catch {
+      toast.error("Reply failed");
+    } finally {
+      setPending(false);
+    }
+  };
+
+  const initials = (name: string) =>
+    name
+      .split(" ")
+      .map((s) => s[0])
+      .filter(Boolean)
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "?";
+
+  return (
+    <Sheet open={!!comment} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-md p-0 flex flex-col gap-0"
+      >
+        <SheetHeader className="px-4 py-3 border-b space-y-1">
+          <SheetTitle className="text-sm font-semibold">Thread</SheetTitle>
+          <SheetDescription className="text-xs text-muted-foreground">
+            {comment ? `On ${comment.route}` : ""}
+          </SheetDescription>
+        </SheetHeader>
+
+        {comment && (
+          <>
+            <div className="flex-1 overflow-y-auto scrollbar-thin p-4 space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="flex flex-col items-center gap-0.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => onVote(comment.id, comment.myVote === 1 ? 0 : 1)}
+                    className={cn(
+                      "h-7 w-7 rounded hover:bg-muted flex items-center justify-center",
+                      comment.myVote === 1 && "text-primary",
+                    )}
+                    aria-label="Upvote"
+                  >
+                    <ChevronUp className="h-4 w-4" />
+                  </button>
+                  <span className="text-sm font-semibold tabular-nums">{comment.voteScore}</span>
+                  <button
+                    type="button"
+                    onClick={() => onVote(comment.id, comment.myVote === -1 ? 0 : -1)}
+                    className={cn(
+                      "h-7 w-7 rounded hover:bg-muted flex items-center justify-center",
+                      comment.myVote === -1 && "text-destructive",
+                    )}
+                    aria-label="Downvote"
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    {comment.author.avatarUrl ? (
+                      <img
+                        src={comment.author.avatarUrl}
+                        alt=""
+                        className="h-6 w-6 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="h-6 w-6 rounded-full text-[10px] font-semibold flex items-center justify-center text-white bg-gradient-to-br from-[#8b5cf6] via-[#ec4899] to-[#f59e0b]">
+                        {initials(comment.author.name)}
+                      </span>
+                    )}
+                    <span className="text-sm font-medium truncate">{comment.author.name}</span>
+                    <span className="text-[11px] text-muted-foreground">
+                      {relativeTime(comment.createdAt)}
+                    </span>
+                  </div>
+                  {comment.screenshotUrl && (
+                    <a
+                      href={comment.screenshotUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block mb-2 rounded-md overflow-hidden border bg-muted/40"
+                    >
+                      <img
+                        src={comment.screenshotUrl}
+                        alt=""
+                        className="w-full max-h-60 object-cover object-top"
+                      />
+                    </a>
+                  )}
+                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{comment.body}</p>
+                  {comment.tags.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {comment.tags.map((t) => (
+                        <span
+                          key={t}
+                          className="inline-flex items-center h-5 px-1.5 rounded-full bg-muted text-[10px] font-medium"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-3 flex items-center gap-2">
+                    <Link
+                      to={comment.route}
+                      search={{ thread: comment.id }}
+                      className="inline-flex items-center gap-1 h-7 px-2 rounded-md border bg-background text-[11px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
+                      title={`Open ${comment.route}`}
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      Open in app
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {comment.replies.length > 0 && (
+                <div className="space-y-3 pl-9">
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    {comment.replies.length} {comment.replies.length === 1 ? "reply" : "replies"}
+                  </div>
+                  {comment.replies.map((r) => (
+                    <div key={r.id} className="border-l-2 border-border pl-3">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        {r.author.avatarUrl ? (
+                          <img
+                            src={r.author.avatarUrl}
+                            alt=""
+                            className="h-5 w-5 rounded-full object-cover"
+                          />
+                        ) : (
+                          <span className="h-5 w-5 rounded-full text-[9px] font-semibold flex items-center justify-center text-white bg-gradient-to-br from-[#8b5cf6] via-[#ec4899] to-[#f59e0b]">
+                            {initials(r.author.name)}
+                          </span>
+                        )}
+                        <span className="text-xs font-medium">{r.author.name}</span>
+                        <span className="text-[11px] text-muted-foreground">
+                          {relativeTime(r.createdAt)}
+                        </span>
+                      </div>
+                      <p className="text-sm whitespace-pre-wrap leading-relaxed">{r.body}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="border-t px-3 py-2 flex items-center gap-2">
+              <input
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    submit();
+                  }
+                }}
+                placeholder="Reply…"
+                className="flex-1 h-9 px-2 rounded-md bg-muted/40 text-sm outline-none placeholder:text-muted-foreground"
+              />
+              <button
+                type="button"
+                onClick={submit}
+                disabled={!reply.trim() || pending}
+                className={cn(
+                  "h-9 w-9 rounded-full flex items-center justify-center text-white bg-primary hover:bg-primary/90",
+                  (!reply.trim() || pending) && "opacity-40 cursor-not-allowed",
+                )}
+                aria-label="Send reply"
+              >
+                <Send className="h-4 w-4" />
+              </button>
+            </div>
+          </>
+        )}
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function relativeTime(iso: string): string {
+  const then = new Date(iso).getTime();
+  const now = Date.now();
+  const diff = Math.max(0, now - then);
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d ago`;
+  return new Date(iso).toLocaleDateString();
 }
 
 function labelFor(status: CommentStatus): string {
