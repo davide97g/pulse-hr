@@ -123,15 +123,21 @@ function FeedbackBoard() {
   }, [board, threadId]);
 
   const applyVote = async (commentId: string, value: -1 | 0 | 1) => {
-    // optimistic
+    // optimistic — update score + reorder column so upvoted card rises immediately
     setBoard((prev) => {
       const next = { ...prev } as BoardBuckets;
       for (const status of Object.keys(next) as CommentStatus[]) {
-        next[status] = next[status].map((c) => {
-          if (c.id !== commentId) return c;
-          const delta = value - c.myVote;
-          return { ...c, myVote: value, voteScore: c.voteScore + delta };
-        });
+        const touched = next[status].some((c) => c.id === commentId);
+        if (!touched) continue;
+        next[status] = next[status]
+          .map((c) => {
+            if (c.id !== commentId) return c;
+            const delta = value - c.myVote;
+            return { ...c, myVote: value, voteScore: c.voteScore + delta };
+          })
+          .sort(
+            (a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
+          );
       }
       return next;
     });
@@ -140,9 +146,13 @@ function FeedbackBoard() {
       setBoard((prev) => {
         const next = { ...prev } as BoardBuckets;
         for (const status of Object.keys(next) as CommentStatus[]) {
-          next[status] = next[status].map((c) =>
-            c.id === commentId ? { ...c, voteScore, myVote } : c,
-          );
+          const touched = next[status].some((c) => c.id === commentId);
+          if (!touched) continue;
+          next[status] = next[status]
+            .map((c) => (c.id === commentId ? { ...c, voteScore, myVote } : c))
+            .sort(
+              (a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
+            );
         }
         return next;
       });
