@@ -70,6 +70,7 @@ import {
   useIsRealAdmin,
   useRoleOverride,
 } from "@/lib/role-override";
+import { featuresForRole } from "@/lib/role-features";
 import { notifications, managerAsks } from "@/lib/mock-data";
 import { buildSidebarNavGroups } from "@/lib/sidebar-nav-groups";
 import { cn } from "@/lib/utils";
@@ -93,7 +94,9 @@ function AppShellInner() {
   const location = useLocation();
   const appShellNav = useNavigate();
   const admin = useIsEffectiveAdmin();
+  const effectiveRole = useEffectiveRole();
   const { isFeatureEnabled } = useSidebarFeatures();
+  const roleAllowed = useMemo(() => featuresForRole(effectiveRole), [effectiveRole]);
   const hasOpenManagerAsks = useMemo(() => managerAsks.some((a) => a.status === "pending"), []);
   const groups = useMemo(() => {
     const raw = buildSidebarNavGroups(hasOpenManagerAsks, admin);
@@ -102,11 +105,12 @@ function AppShellInner() {
         ...g,
         items: g.items.filter((item) => {
           if (!item.featureId) return true;
+          if (!admin && !roleAllowed.has(item.featureId)) return false;
           return admin || isFeatureEnabled(item.featureId);
         }),
       }))
       .filter((g) => g.items.length > 0);
-  }, [hasOpenManagerAsks, admin, isFeatureEnabled]);
+  }, [hasOpenManagerAsks, admin, roleAllowed, isFeatureEnabled]);
   useTrackPageViews();
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);

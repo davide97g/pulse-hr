@@ -1,6 +1,7 @@
 import { useUser } from "@clerk/react";
 import { Navigate, useLocation } from "@tanstack/react-router";
-import { useIsEffectiveAdmin } from "@/lib/role-override";
+import { useEffectiveRole, useIsEffectiveAdmin } from "@/lib/role-override";
+import { featuresForRole } from "@/lib/role-features";
 import {
   ADMIN_SIDEBAR_VISIBILITY_PATH,
   firstEnabledAppPath,
@@ -17,6 +18,8 @@ export function SidebarRouteGuard({ children }: { children: React.ReactNode }) {
   const { isLoaded } = useUser();
   const { enabled } = useSidebarFeatures();
   const admin = useIsEffectiveAdmin();
+  const role = useEffectiveRole();
+  const roleAllowed = featuresForRole(role);
 
   if (!isLoaded) {
     return (
@@ -35,10 +38,13 @@ export function SidebarRouteGuard({ children }: { children: React.ReactNode }) {
 
   if (!admin) {
     const fid = pathToSidebarFeatureId(pathname);
-    if (fid && enabled[fid] === false) {
+    const blockedByRole = fid ? !roleAllowed.has(fid) : false;
+    const blockedByWorkspace = fid ? enabled[fid] === false : false;
+    if (fid && (blockedByRole || blockedByWorkspace)) {
       const dest = firstEnabledAppPath(enabled);
       const destFid = pathToSidebarFeatureId(dest);
-      const destOk = !destFid || enabled[destFid] !== false;
+      const destOk =
+        !destFid || (roleAllowed.has(destFid) && enabled[destFid] !== false);
       return <Navigate to={destOk ? dest : "/profile"} replace />;
     }
   }
