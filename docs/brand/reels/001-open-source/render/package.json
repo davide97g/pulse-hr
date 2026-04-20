@@ -1,0 +1,13 @@
+{
+  "name": "pulse-reel-renderer",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "render": "node render.mjs",
+    "install:chromium": "playwright install chromium"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0"
+  }
+}
