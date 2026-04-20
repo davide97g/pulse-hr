@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Card } from "@/components/ui/card";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
-import { employees, departments } from "@/lib/mock-data";
+import { departments } from "@/lib/mock-data";
+import { useEmployees } from "@/lib/tables/employees";
 
 export const Route = createFileRoute("/org")({
   head: () => ({ meta: [{ title: "Org chart — Pulse HR" }] }),
@@ -9,23 +10,41 @@ export const Route = createFileRoute("/org")({
 });
 
 function Org() {
-  const ceo = employees.find(e => e.role === "Head of Engineering")!;
-  const directs = employees.filter(e => e.manager === ceo.name);
+  const employees = useEmployees();
+  const ceo = employees.find(e => e.role === "Head of Engineering");
+  const directs = ceo ? employees.filter(e => e.manager === ceo.name) : [];
+  const others = ceo ? employees.filter(e => e.id !== ceo.id && e.manager !== ceo.name) : employees;
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader title="Org chart" description="How your company is structured" />
 
       <Card className="p-8 mb-6">
         <div className="flex flex-col items-center gap-8">
-          <OrgNode name={ceo.name} role={ceo.role} initials={ceo.initials} color={ceo.avatarColor} accent />
-          <div className="h-8 w-px bg-border" />
-          <div className="flex items-start gap-6 flex-wrap justify-center">
-            {directs.map(e => (
-              <div key={e.id} className="flex flex-col items-center gap-3">
-                <OrgNode name={e.name} role={e.role} initials={e.initials} color={e.avatarColor} />
+          {ceo && (
+            <>
+              <OrgNode name={ceo.name} role={ceo.role} initials={ceo.initials} color={ceo.avatarColor} accent />
+              <div className="h-8 w-px bg-border" />
+              <div className="flex items-start gap-6 flex-wrap justify-center">
+                {directs.map(e => (
+                  <div key={e.id} className="flex flex-col items-center gap-3">
+                    <OrgNode name={e.name} role={e.role} initials={e.initials} color={e.avatarColor} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
+          {others.length > 0 && (
+            <>
+              <div className="text-[11px] uppercase tracking-wider text-muted-foreground mt-2">Other team members</div>
+              <div className="flex items-start gap-6 flex-wrap justify-center">
+                {others.map(e => (
+                  <div key={e.id} className="flex flex-col items-center gap-3">
+                    <OrgNode name={e.name} role={e.role} initials={e.initials} color={e.avatarColor} />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </Card>
 

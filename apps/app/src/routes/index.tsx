@@ -21,7 +21,8 @@ import { NewBadge } from "@/components/app/NewBadge";
 import { Heart, Gift, Focus as FocusIcon, Sparkles as SparkIcon } from "lucide-react";
 import { MomentsCard } from "@/components/app/MomentsCard";
 import { SwipeRow } from "@/components/app/SwipeRow";
-import { employees, leaveRequests, employeeById, expenses, announcements } from "@/lib/mock-data";
+import { leaveRequests, employeeById, expenses, announcements } from "@/lib/mock-data";
+import { useEmployees } from "@/lib/tables/employees";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: "Dashboard — Pulse HR" }] }),
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
+  const employees = useEmployees();
   const pendingLeaves = leaveRequests.filter((l) => l.status === "pending");
   const pendingExpenses = expenses.filter((e) => e.status === "pending");
   const [decided, setDecided] = useState<Record<string, "approved" | "rejected">>({});
@@ -120,7 +122,7 @@ function Dashboard() {
           icon={<Wallet className="h-4 w-4" />}
           label="Payroll runs Apr 30"
           value="$124.5k"
-          delta="12 employees"
+          delta={`${employees.length} employees`}
           action={
             <Link to="/payroll" className="text-primary text-xs font-medium hover:underline">
               Review run →
@@ -205,7 +207,7 @@ function Dashboard() {
           <Card className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="font-semibold text-sm">Today's presence</div>
-              <div className="text-xs text-muted-foreground">12 employees</div>
+              <div className="text-xs text-muted-foreground">{employees.length} employees</div>
             </div>
             <div className="flex items-end gap-3">
               <div>

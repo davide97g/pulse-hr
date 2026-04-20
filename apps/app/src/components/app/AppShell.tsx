@@ -14,6 +14,9 @@ import { ThemeSwitcher } from "./ThemeSwitcher";
 import { ActiveCommessaPin } from "./ActiveCommessaPin";
 import { ShortcutSheet } from "./ShortcutSheet";
 import { VoiceDock } from "./VoiceDock";
+import { CommentsOverlayProvider } from "@/components/comments/CommentsOverlayProvider";
+import { CommentModeToggle } from "@/components/comments/CommentModeToggle";
+import { PinLayer } from "@/components/comments/PinLayer";
 import { voiceBus } from "@/lib/voice-bus";
 import { useTrackPageViews } from "@/lib/usage-tracking";
 import { toast } from "sonner";
@@ -52,6 +55,7 @@ import {
   Focus,
   Trophy,
   Gauge,
+  MessageSquare,
   Briefcase as BriefcaseIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -150,6 +154,7 @@ const groups: NavGroup[] = [
   {
     label: "Workspace",
     items: [
+      { to: "/feedback", label: "Feedback", icon: MessageSquare, isNew: true },
       { to: "/marketplace", label: "Marketplace", icon: Puzzle },
       { to: "/developers", label: "Developers", icon: Code2 },
       { to: "/docs", label: "Docs", icon: BookOpen, isNew: true },
@@ -163,7 +168,9 @@ export function AppShell() {
     <OfficesStoreProvider>
       <BookingsProvider>
         <QuickActionProvider>
-          <AppShellInner />
+          <CommentsOverlayProvider>
+            <AppShellInner />
+          </CommentsOverlayProvider>
         </QuickActionProvider>
       </BookingsProvider>
     </OfficesStoreProvider>
@@ -339,6 +346,8 @@ function AppShellInner() {
       <ShortcutSheet />
       <VoiceDock />
       <BookingDialog open={bookingOpen} onClose={() => setBookingOpen(false)} />
+      <PinLayer />
+      <CommentModeToggle variant="pill" />
 
       {/* Mobile nav drawer */}
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
@@ -457,6 +466,7 @@ function Topbar({
       <div className="hidden lg:inline-flex">
         <ActiveCommessaPin />
       </div>
+      <CommentModeToggle variant="topbar" />
       <div className="hidden md:inline-flex">
         <button
           onClick={onOpenLog}

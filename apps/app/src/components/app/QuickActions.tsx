@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "@/components/app/AppShell";
 import { employees, employeeById } from "@/lib/mock-data";
+import { employeesTable, makeEmployee } from "@/lib/tables/employees";
 import { coverageForRange, computeLeaveDays, type CoverageForDate } from "@/lib/leave";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -62,32 +63,63 @@ function Footer({ onCancel, onSubmit, label = "Submit" }: { onCancel: () => void
 }
 
 function AddEmployeeForm({ onDone }: { onDone: () => void }) {
-  const [name, setName] = useState("");
+  const [first, setFirst] = useState("");
+  const [last, setLast] = useState("");
+  const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
+  const [department, setDepartment] = useState("");
+  const [manager, setManager] = useState("");
+  const [joinDate, setJoinDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [salary, setSalary] = useState("");
+
   const submit = () => {
-    toast.success("Employee added", { description: `${name || "New employee"} will receive an onboarding email.`, icon: <UserPlus className="h-4 w-4" /> });
+    const fullName = `${first.trim()} ${last.trim()}`.trim();
+    if (!fullName) {
+      toast.error("Name is required");
+      return;
+    }
+    const created = employeesTable.add(
+      makeEmployee({
+        name: fullName,
+        email: email.trim() || `${first.toLowerCase() || "new"}@acme.co`,
+        role: role.trim() || "Team member",
+        department: department.trim() || "—",
+        manager: manager.trim() || undefined,
+        location: "Remote",
+        status: "active",
+        joinDate,
+        salary: Number(salary) || 0,
+        phone: "",
+        employmentType: "Full-time",
+      }),
+    );
+    toast.success("Employee added", {
+      description: `${created.name} is now in the directory.`,
+      icon: <UserPlus className="h-4 w-4" />,
+    });
     onDone();
   };
+
   return (
     <>
       <FormBody>
         <div className="flex items-center gap-3 p-3 rounded-md bg-muted/40">
           <UserPlus className="h-5 w-5 text-primary" />
-          <div className="text-sm text-muted-foreground">An invite will be sent and an onboarding workflow created.</div>
+          <div className="text-sm text-muted-foreground">Adds the employee to the directory and every linked view.</div>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>First name</Label><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Emma" /></div>
-          <div className="space-y-1.5"><Label>Last name</Label><Input placeholder="Wilson" /></div>
+          <div className="space-y-1.5"><Label>First name</Label><Input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="Emma" /></div>
+          <div className="space-y-1.5"><Label>Last name</Label><Input value={last} onChange={(e) => setLast(e.target.value)} placeholder="Wilson" /></div>
         </div>
-        <div className="space-y-1.5"><Label>Work email</Label><Input type="email" placeholder="emma@acme.co" /></div>
+        <div className="space-y-1.5"><Label>Work email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="emma@acme.co" /></div>
         <div className="space-y-1.5"><Label>Role</Label><Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Senior Engineer" /></div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Department</Label><Input placeholder="Engineering" /></div>
-          <div className="space-y-1.5"><Label>Manager</Label><Input placeholder="Sarah Chen" /></div>
+          <div className="space-y-1.5"><Label>Department</Label><Input value={department} onChange={(e) => setDepartment(e.target.value)} placeholder="Engineering" /></div>
+          <div className="space-y-1.5"><Label>Manager</Label><Input value={manager} onChange={(e) => setManager(e.target.value)} placeholder="Sarah Chen" /></div>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Start date</Label><Input type="date" defaultValue="2025-05-06" /></div>
-          <div className="space-y-1.5"><Label>Salary</Label><Input placeholder="95000" /></div>
+          <div className="space-y-1.5"><Label>Start date</Label><Input type="date" value={joinDate} onChange={(e) => setJoinDate(e.target.value)} /></div>
+          <div className="space-y-1.5"><Label>Salary</Label><Input value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="95000" /></div>
         </div>
       </FormBody>
       <Footer onCancel={onDone} onSubmit={submit} label="Add & invite" />

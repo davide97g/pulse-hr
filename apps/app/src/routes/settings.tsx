@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   Building2, Users, ShieldCheck, History, Languages, Plug, Plus, Pencil, Trash2,
-  AlertTriangle, Info, TriangleAlert, Search,
+  AlertTriangle, Info, TriangleAlert, Search, Database, RotateCcw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -27,6 +27,7 @@ import { EmptyState } from "@/components/app/EmptyState";
 import { rolesSeed, auditLogSeed, type Role, type AuditEntry } from "@/lib/mock-data";
 import { IntegrationConnectCard } from "@/components/pm/IntegrationConnectCard";
 import { useIntegrations, updateIntegration } from "@/lib/integrations-store";
+import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/settings")({
@@ -39,6 +40,9 @@ function Settings() {
   const [roles, setRoles] = useState<Role[]>(rolesSeed);
   const [editRole, setEditRole] = useState<Role | "new" | null>(null);
   const [deleteRole, setDeleteRole] = useState<Role | null>(null);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const navigate = useNavigate();
+  const workspace = useWorkspaceStatus();
   const [security, setSecurity] = useState({
     twofa: true, sso: true, sessionTimeout: false, ipAllowlist: false,
   });
@@ -77,6 +81,7 @@ function Settings() {
           <TabsTrigger value="audit"><History className="h-3.5 w-3.5 mr-1.5" />Audit log</TabsTrigger>
           <TabsTrigger value="locale"><Languages className="h-3.5 w-3.5 mr-1.5" />Localization</TabsTrigger>
           <TabsTrigger value="integrations"><Plug className="h-3.5 w-3.5 mr-1.5" />Integrations</TabsTrigger>
+          <TabsTrigger value="workspace"><Database className="h-3.5 w-3.5 mr-1.5" />Workspace</TabsTrigger>
         </TabsList>
 
         <TabsContent value="company" className="mt-4">
@@ -228,6 +233,39 @@ function Settings() {
           </div>
           <IntegrationsSection />
         </TabsContent>
+
+        <TabsContent value="workspace" className="mt-4">
+          <Card className="p-6 space-y-5 max-w-2xl">
+            <div>
+              <div className="text-sm font-semibold">Demo workspace</div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                All Pulse data lives locally in your browser. Edits persist across reloads.
+                {workspace.ready
+                  ? " Resetting wipes everything for this account and re-runs the welcome flow."
+                  : " No workspace is provisioned yet."}
+              </p>
+            </div>
+            <div className="border-t pt-5 flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <div className="text-sm font-medium inline-flex items-center gap-2">
+                  <RotateCcw className="h-3.5 w-3.5 text-destructive" />
+                  Reset workspace
+                </div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  Removes every locally-stored entity, counter, and edit. Cannot be undone.
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                className="border-destructive/40 text-destructive hover:bg-destructive/10 press-scale"
+                disabled={!workspace.ready}
+                onClick={() => setConfirmReset(true)}
+              >
+                Reset
+              </Button>
+            </div>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       <Dialog open={editRole !== null} onOpenChange={o => !o && setEditRole(null)}>
@@ -245,6 +283,32 @@ function Settings() {
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={confirmReset} onOpenChange={setConfirmReset}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reset this workspace?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Every employee, project, request, comment, and counter you've touched will be cleared.
+              You'll be returned to the welcome flow to seed a fresh demo. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                resetWorkspace();
+                setConfirmReset(false);
+                toast.success("Workspace reset");
+                navigate({ to: "/welcome", replace: true });
+              }}
+            >
+              Reset workspace
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog open={!!deleteRole} onOpenChange={o => !o && setDeleteRole(null)}>
         <AlertDialogContent>

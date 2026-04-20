@@ -2,9 +2,14 @@ import { createRootRoute, Link, Outlet, useLocation, useNavigate } from "@tansta
 import { useEffect } from "react";
 import { useAuth } from "@clerk/react";
 import { AppShell } from "@/components/app/AppShell";
+import { FeedbackShell } from "@/components/feedback/FeedbackShell";
+import { WorkspaceMount } from "@/components/app/WorkspaceMount";
 import { Toaster } from "@/components/ui/sonner";
+import { useWorkspaceStatus } from "@/lib/workspace";
 
 const PUBLIC_PREFIXES = ["/login", "/signup"];
+const FEEDBACK_PREFIXES = ["/feedback"];
+const WELCOME_PATH = "/welcome";
 
 function NotFoundComponent() {
   return (
@@ -50,6 +55,8 @@ const TITLE_BY_PATH: Record<string, string> = {
   "/forecast": "Commessa Forecast — Pulse HR",
   "/kudos": "Kudos — Pulse HR",
   "/focus": "Focus Mode — Pulse HR",
+  "/feedback": "Feedback — Pulse",
+  "/welcome": "Welcome — Pulse HR",
 };
 
 function RootComponent() {
@@ -59,6 +66,11 @@ function RootComponent() {
   const isPublic = PUBLIC_PREFIXES.some(
     (p) => location.pathname === p || location.pathname.startsWith(`${p}/`),
   );
+  const isFeedback = FEEDBACK_PREFIXES.some(
+    (p) => location.pathname === p || location.pathname.startsWith(`${p}/`),
+  );
+  const isWelcome = location.pathname === WELCOME_PATH;
+  const workspace = useWorkspaceStatus();
   useEffect(() => {
     const t = TITLE_BY_PATH[location.pathname] ?? "Pulse HR";
     if (typeof document !== "undefined") document.title = t;
@@ -68,8 +80,31 @@ function RootComponent() {
     if (!isLoaded) return;
     if (!isSignedIn && !isPublic) {
       navigate({ to: "/login", replace: true });
+      return;
     }
-  }, [isLoaded, isSignedIn, isPublic, navigate]);
+    if (!isSignedIn) return;
+    // Authed. Gate on workspace readiness — except for public, feedback, and
+    // the welcome page itself.
+    if (isPublic || isFeedback) return;
+    // Wait until WorkspaceMount has propagated the Clerk userId before we
+    // route on workspace readiness; otherwise we'd flash to /welcome on
+    // every reload before the controller hydrates.
+    if (!workspace.hasUser) return;
+    if (!workspace.ready && !isWelcome) {
+      navigate({ to: "/welcome", replace: true });
+    } else if (workspace.ready && isWelcome) {
+      navigate({ to: "/", replace: true });
+    }
+  }, [
+    isLoaded,
+    isSignedIn,
+    isPublic,
+    isFeedback,
+    isWelcome,
+    workspace.hasUser,
+    workspace.ready,
+    navigate,
+  ]);
 
   if (!isLoaded) {
     return (
@@ -81,9 +116,25 @@ function RootComponent() {
 
   if (!isSignedIn && !isPublic) return null;
 
+  // Authed but no workspace yet → render only the welcome route until the user
+  // creates one. Suppresses an AppShell flash when redirecting from any
+  // protected page after sign-up.
+  const showWelcomeOnly = isSignedIn && workspace.hasUser && !workspace.ready;
+
   return (
     <>
-      {isPublic ? <Outlet /> : <AppShell />}
+      <WorkspaceMount />
+      {isPublic ? (
+        <Outlet />
+      ) : isFeedback ? (
+        <FeedbackShell>
+          <Outlet />
+        </FeedbackShell>
+      ) : isWelcome || showWelcomeOnly ? (
+        <Outlet />
+      ) : (
+        <AppShell />
+      )}
       <Toaster position="bottom-right" richColors closeButton />
     </>
   );

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TimeRouteImport } from './routes/time'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -30,6 +31,7 @@ import { Route as KudosRouteImport } from './routes/kudos'
 import { Route as GrowthRouteImport } from './routes/growth'
 import { Route as ForecastRouteImport } from './routes/forecast'
 import { Route as FocusRouteImport } from './routes/focus'
+import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as ExpensesRouteImport } from './routes/expenses'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as DocsRouteImport } from './routes/docs'
@@ -51,6 +53,11 @@ import { Route as DocsClientsProjectsRouteImport } from './routes/docs.clients-p
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$officeId.$roomId'
 
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TimeRoute = TimeRouteImport.update({
   id: '/time',
   path: '/time',
@@ -154,6 +161,11 @@ const ForecastRoute = ForecastRouteImport.update({
 const FocusRoute = FocusRouteImport.update({
   id: '/focus',
   path: '/focus',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedbackRoute = FeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExpensesRoute = ExpensesRouteImport.update({
@@ -266,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/docs': typeof DocsRouteWithChildren
   '/documents': typeof DocumentsRoute
   '/expenses': typeof ExpensesRoute
+  '/feedback': typeof FeedbackRoute
   '/focus': typeof FocusRoute
   '/forecast': typeof ForecastRoute
   '/growth': typeof GrowthRoute
@@ -287,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
+  '/welcome': typeof WelcomeRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
   '/docs/employee-score': typeof DocsEmployeeScoreRoute
@@ -307,6 +321,7 @@ export interface FileRoutesByTo {
   '/developers': typeof DevelopersRoute
   '/documents': typeof DocumentsRoute
   '/expenses': typeof ExpensesRoute
+  '/feedback': typeof FeedbackRoute
   '/focus': typeof FocusRoute
   '/forecast': typeof ForecastRoute
   '/growth': typeof GrowthRoute
@@ -328,6 +343,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
+  '/welcome': typeof WelcomeRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
   '/docs/employee-score': typeof DocsEmployeeScoreRoute
@@ -351,6 +367,7 @@ export interface FileRoutesById {
   '/docs': typeof DocsRouteWithChildren
   '/documents': typeof DocumentsRoute
   '/expenses': typeof ExpensesRoute
+  '/feedback': typeof FeedbackRoute
   '/focus': typeof FocusRoute
   '/forecast': typeof ForecastRoute
   '/growth': typeof GrowthRoute
@@ -372,6 +389,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
+  '/welcome': typeof WelcomeRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
   '/docs/employee-score': typeof DocsEmployeeScoreRoute
@@ -396,6 +414,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/documents'
     | '/expenses'
+    | '/feedback'
     | '/focus'
     | '/forecast'
     | '/growth'
@@ -417,6 +436,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/time'
+    | '/welcome'
     | '/clients/$clientId'
     | '/docs/clients-projects'
     | '/docs/employee-score'
@@ -437,6 +457,7 @@ export interface FileRouteTypes {
     | '/developers'
     | '/documents'
     | '/expenses'
+    | '/feedback'
     | '/focus'
     | '/forecast'
     | '/growth'
@@ -458,6 +479,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/time'
+    | '/welcome'
     | '/clients/$clientId'
     | '/docs/clients-projects'
     | '/docs/employee-score'
@@ -480,6 +502,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/documents'
     | '/expenses'
+    | '/feedback'
     | '/focus'
     | '/forecast'
     | '/growth'
@@ -501,6 +524,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/time'
+    | '/welcome'
     | '/clients/$clientId'
     | '/docs/clients-projects'
     | '/docs/employee-score'
@@ -524,6 +548,7 @@ export interface RootRouteChildren {
   DocsRoute: typeof DocsRouteWithChildren
   DocumentsRoute: typeof DocumentsRoute
   ExpensesRoute: typeof ExpensesRoute
+  FeedbackRoute: typeof FeedbackRoute
   FocusRoute: typeof FocusRoute
   ForecastRoute: typeof ForecastRoute
   GrowthRoute: typeof GrowthRoute
@@ -545,11 +570,19 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   TimeRoute: typeof TimeRoute
+  WelcomeRoute: typeof WelcomeRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/time': {
       id: '/time'
       path: '/time'
@@ -695,6 +728,13 @@ declare module '@tanstack/react-router' {
       path: '/focus'
       fullPath: '/focus'
       preLoaderRoute: typeof FocusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feedback': {
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/expenses': {
@@ -915,6 +955,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocsRoute: DocsRouteWithChildren,
   DocumentsRoute: DocumentsRoute,
   ExpensesRoute: ExpensesRoute,
+  FeedbackRoute: FeedbackRoute,
   FocusRoute: FocusRoute,
   ForecastRoute: ForecastRoute,
   GrowthRoute: GrowthRoute,
@@ -936,6 +977,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   TimeRoute: TimeRoute,
+  WelcomeRoute: WelcomeRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
 }
 export const routeTree = rootRouteImport

@@ -29,7 +29,8 @@ import { SidePanel } from "@/components/app/SidePanel";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
-import { employees as seed, type Employee, departments } from "@/lib/mock-data";
+import { type Employee, departments } from "@/lib/mock-data";
+import { employeesTable, useEmployees } from "@/lib/tables/employees";
 import { useSavedViews } from "@/lib/useSavedViews";
 import { SavedViewsBar } from "@/components/app/SavedViewsBar";
 import { cn } from "@/lib/utils";
@@ -54,7 +55,7 @@ function People() {
   const setDept = (v: string | null) => views.setState({ dept: v ?? "" });
   const setTab = (v: string) => views.setState({ tab: v });
   const [selected, setSelected] = useState<Employee | null>(null);
-  const [list, setList] = useState<Employee[]>(seed);
+  const list = useEmployees();
   const [toDelete, setToDelete] = useState<Employee | null>(null);
   const [loading, setLoading] = useState(true);
   const { open: openAction } = useQuickAction();
@@ -77,13 +78,13 @@ function People() {
   );
 
   const remove = (e: Employee) => {
-    setList(l => l.filter(x => x.id !== e.id));
+    employeesTable.remove(e.id);
     setSelected(s => (s?.id === e.id ? null : s));
     toast(`${e.name} removed`, {
-      description: "Employee archived (mock).",
+      description: "Employee archived.",
       action: {
         label: "Undo",
-        onClick: () => setList(l => [e, ...l]),
+        onClick: () => employeesTable.add(e),
       },
     });
   };

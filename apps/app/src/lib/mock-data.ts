@@ -220,6 +220,14 @@ export const employees: Employee[] = raw.map((e, i) => ({
   birthday: birthdayOverrides[e.id],
 }));
 
+/**
+ * Stable seed for the persistent employees table. `employees` above remains
+ * exported as the static fallback used by lib helpers + downstream seed
+ * computation in this file; `employeesSeed` is the named entry point for the
+ * persistence layer (see lib/tables/employees.ts).
+ */
+export const employeesSeed: Employee[] = employees;
+
 export const employeeById = (id: string) => employees.find((e) => e.id === id);
 
 export const departments = [

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { useSignIn } from "@clerk/react";
+import { useEffect, useState } from "react";
+import { useClerk, useSignIn } from "@clerk/react";
 import { ArrowRight, Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const nav = useNavigate();
+  const clerk = useClerk();
   const { signIn, fetchStatus } = useSignIn();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,14 +23,25 @@ function Login() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    void signIn.reset();
+  }, [signIn]);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
     try {
+      await signIn.reset();
       const { error } = await signIn.password({ identifier: email, password });
       if (error) {
         toast.error("Couldn't sign you in", { description: error.message ?? "Check credentials" });
+        return;
+      }
+      if (signIn.existingSession?.sessionId) {
+        await clerk.setActive({ session: signIn.existingSession.sessionId });
+        toast.success("Welcome back", { description: "Redirecting to dashboard…" });
+        nav({ to: "/" });
         return;
       }
       if (signIn.status === "complete") {
@@ -40,9 +52,9 @@ function Login() {
         }
         toast.success("Welcome back", { description: "Redirecting to dashboard…" });
         nav({ to: "/" });
-      } else {
-        toast("Additional step required", { description: signIn.status ?? "Retry" });
+        return;
       }
+      toast("Additional step required", { description: signIn.status ?? "Retry" });
     } finally {
       setLoading(false);
     }
