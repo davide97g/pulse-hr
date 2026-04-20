@@ -1,0 +1,20 @@
+{
+  "name": "workflows-people",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "bun run --filter '@workflows-people/app' dev",
+    "dev:marketing": "bun run --filter 'pulse-hr-marketing' dev",
+    "build": "bun run --filter '*' build",
+    "build:app": "bun run --filter '@workflows-people/app' build",
+    "build:marketing": "bun run --filter 'pulse-hr-marketing' build",
+    "preview": "bun run --filter '@workflows-people/app' preview",
+    "preview:marketing": "bun run --filter 'pulse-hr-marketing' preview",
+    "lint": "bun run --filter '@workflows-people/app' lint",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.7.3"
+  }
+}

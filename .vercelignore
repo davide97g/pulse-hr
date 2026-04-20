@@ -1,8 +1,8 @@
 .agents
 .claude
+.cursor
 .skills
 skills-lock.json
-dist
-node_modules
-wrangler.jsonc
-.wrangler
+docs
+**/dist
+**/node_modules

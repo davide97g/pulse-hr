@@ -17,6 +17,7 @@
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^6.1.8",
     "lucide-astro": "^0.556.0",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.2.2",
+    "workbox-window": "^7.4.0"
   }
 }

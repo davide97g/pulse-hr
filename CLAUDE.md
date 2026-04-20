@@ -2,26 +2,44 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Monorepo layout
+
+Bun workspaces. Two apps, no shared packages.
+
+```
+workflows-people/
+├── package.json            # workspace root (workspaces: apps/*)
+├── bun.lockb, bunfig.toml, .prettier{rc,ignore}, .gitignore
+├── CLAUDE.md, README.md, docs/
+└── apps/
+    ├── app/                # @workflows-people/app — React + Vite SPA (main product)
+    └── marketing/          # pulse-hr-marketing — Astro marketing site
+```
+
 ## Commands
 
 Bun is the package manager and runtime. `.env` auto-loaded; no dotenv.
 
+Run from repo root:
+
 ```bash
-bun install              # deps
-bun run dev              # vite dev on :5173
-bun run build            # vite build → dist/ (SPA + PWA service worker)
-bun run preview          # serve dist
-bun run lint             # eslint
-bun run format           # prettier write
-bun test                 # bun:test runner (no tests yet)
-bunx <pkg>               # instead of npx
+bun install                 # install all workspace deps
+bun run dev                 # app: vite dev on :5173
+bun run dev:marketing       # marketing: astro dev on :4321
+bun run build               # build both apps (filter '*')
+bun run build:app           # app only
+bun run build:marketing     # marketing only
+bun run lint                # eslint in app
+bun run format              # prettier write across repo
 ```
 
-Icons were rasterized once (SVG → PNG) with `sharp` in a scratch `/tmp` project; `sharp` is NOT a repo dep. Regenerate only if `public/icon.svg` changes — install `sharp` in a scratch dir, do not add it here.
+Or `cd apps/app` / `cd apps/marketing` and run the package's own scripts.
+
+Icons were rasterized once (SVG → PNG) with `sharp` in a scratch `/tmp` project; `sharp` is NOT a repo dep. Regenerate only if `apps/app/public/icon.svg` changes — install `sharp` in a scratch dir, do not add it here.
 
 ## Architecture
 
-Pulse HR mock — TanStack Router SPA (migrated off TanStack Start SSR for Vercel). All state is in-memory; no backend. Every page seeds from `src/lib/mock-data.ts` into local React state and performs CRUD on that state, persisting nothing across reloads.
+Pulse HR mock — TanStack Router SPA under `apps/app/` (migrated off TanStack Start SSR for Vercel). All state is in-memory; no backend. Every page seeds from `apps/app/src/lib/mock-data.ts` into local React state and performs CRUD on that state, persisting nothing across reloads. Paths below are relative to `apps/app/` unless noted.
 
 ### Routing
 
@@ -61,7 +79,11 @@ CRUD pattern on every list route:
 
 ### Deploy
 
-Vercel-first SPA. `vercel.json` sets framework `vite`, build `bun run build`, SPA rewrite `/(.*) → /index.html`, 1-year immutable cache on `/assets/*`. `.vercelignore` strips tooling dirs. `wrangler.jsonc` is leftover from the Cloudflare SSR era and unused.
+Two separate Vercel projects, one per app. Each project sets **Root Directory** to its `apps/<app>` path; Vercel auto-detects the Bun workspace and installs from the monorepo root.
+
+- `apps/app/vercel.json` — framework `vite`, build `bun run build`, SPA rewrite `/(.*) → /index.html`, 1-year immutable cache on `/assets/*`.
+- `apps/marketing/vercel.json` — framework `astro`, build `bun run build`, output `dist`.
+- Root `.vercelignore` strips tooling dirs for both projects.
 
 ### PWA
 
