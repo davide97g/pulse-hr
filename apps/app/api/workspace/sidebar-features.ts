@@ -1,15 +1,15 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { db, schema } from "../_lib/db";
-import { requireUser, isAdmin } from "../_lib/auth";
-import { badRequest, forbidden, json, methodNotAllowed, serverError } from "../_lib/errors";
-import { serve } from "../_lib/serve";
+import { db, schema } from "../_lib/db.js";
+import { requireUser, isAdmin } from "../_lib/auth.js";
+import { badRequest, forbidden, json, methodNotAllowed, serverError } from "../_lib/errors.js";
+import { serve } from "../_lib/serve.js";
 import {
   ALL_SIDEBAR_FEATURE_IDS,
   defaultSidebarFeaturesEnabled,
   mergePartialFeaturesRecord,
-} from "../../src/lib/sidebar-features";
-import type { SidebarFeatureId } from "../../src/lib/sidebar-features";
+} from "../../src/lib/sidebar-features.js";
+import type { SidebarFeatureId } from "../../src/lib/sidebar-features.js";
 
 const workspaceKeyParam = z
   .string()

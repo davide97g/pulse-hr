@@ -1,9 +1,9 @@
 import { and, eq, inArray, isNull } from "drizzle-orm";
-import { db, schema } from "../_lib/db";
-import { requireUser } from "../_lib/auth";
-import { json, methodNotAllowed, serverError } from "../_lib/errors";
-import { serve } from "../_lib/serve";
-import { serializeComment, type ApiComment } from "../_lib/serialize";
+import { db, schema } from "../_lib/db.js";
+import { requireUser } from "../_lib/auth.js";
+import { json, methodNotAllowed, serverError } from "../_lib/errors.js";
+import { serve } from "../_lib/serve.js";
+import { serializeComment, type ApiComment } from "../_lib/serialize.js";
 
 type BoardBuckets = Record<string, ApiComment[]>;
 

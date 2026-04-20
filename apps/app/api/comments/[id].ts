@@ -1,7 +1,7 @@
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
-import { db, schema } from "../_lib/db";
-import { isAdmin, requireUser } from "../_lib/auth";
+import { db, schema } from "../_lib/db.js";
+import { isAdmin, requireUser } from "../_lib/auth.js";
 import {
   badRequest,
   forbidden,
@@ -9,9 +9,9 @@ import {
   methodNotAllowed,
   notFound,
   serverError,
-} from "../_lib/errors";
-import { serializeComment } from "../_lib/serialize";
-import { serve } from "../_lib/serve";
+} from "../_lib/errors.js";
+import { serializeComment } from "../_lib/serialize.js";
+import { serve } from "../_lib/serve.js";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

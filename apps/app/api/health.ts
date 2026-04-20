@@ -1,5 +1,5 @@
-import { json, methodNotAllowed } from "./_lib/errors";
-import { serve } from "./_lib/serve";
+import { json, methodNotAllowed } from "./_lib/errors.js";
+import { serve } from "./_lib/serve.js";
 
 /**
  * Public diagnostics for Vercel/serverless (no secrets returned).

@@ -1,4 +1,4 @@
-import type { DbComment, DbReply } from "../../src/lib/db/schema";
+import type { DbComment, DbReply } from "../../src/lib/db/schema.js";
 
 type MyVoteMap = Record<string, -1 | 0 | 1>;
 

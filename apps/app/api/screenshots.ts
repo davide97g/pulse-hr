@@ -1,7 +1,7 @@
 import { put } from "@vercel/blob";
-import { requireUser } from "./_lib/auth";
-import { err, json, methodNotAllowed, serverError } from "./_lib/errors";
-import { serve } from "./_lib/serve";
+import { requireUser } from "./_lib/auth.js";
+import { err, json, methodNotAllowed, serverError } from "./_lib/errors.js";
+import { serve } from "./_lib/serve.js";
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_BYTES = 3 * 1024 * 1024; // 3 MB
