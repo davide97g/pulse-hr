@@ -2,21 +2,19 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 import { db, schema } from "../_lib/db";
 import { requireUser } from "../_lib/auth";
 import { json, methodNotAllowed, serverError } from "../_lib/errors";
+import { serve } from "../_lib/serve";
 import { serializeComment, type ApiComment } from "../_lib/serialize";
 
 type BoardBuckets = Record<string, ApiComment[]>;
 
-export default async function handler(request: Request): Promise<Response> {
+async function handler(request: Request): Promise<Response> {
   if (request.method !== "GET") return methodNotAllowed(["GET"]);
 
   const user = await requireUser(request);
   if (user instanceof Response) return user;
 
   try {
-    const rows = await db
-      .select()
-      .from(schema.comments)
-      .where(isNull(schema.comments.deletedAt));
+    const rows = await db.select().from(schema.comments).where(isNull(schema.comments.deletedAt));
 
     const ids = rows.map((r) => r.id);
     const replies = ids.length
@@ -60,8 +58,8 @@ export default async function handler(request: Request): Promise<Response> {
       if (buckets[c.status]) buckets[c.status].push(serialized);
     }
     for (const key of Object.keys(buckets)) {
-      buckets[key].sort((a, b) =>
-        b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
+      buckets[key].sort(
+        (a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
       );
     }
 
@@ -70,3 +68,5 @@ export default async function handler(request: Request): Promise<Response> {
     return serverError(error);
   }
 }
+
+export default serve(handler);

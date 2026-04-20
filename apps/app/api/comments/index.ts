@@ -1,16 +1,12 @@
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { db, schema } from "../_lib/db";
 import { requireUser } from "../_lib/auth";
-import {
-  badRequest,
-  json,
-  methodNotAllowed,
-  serverError,
-} from "../_lib/errors";
+import { badRequest, json, methodNotAllowed, serverError } from "../_lib/errors";
 import { ListQuerySchema, NewCommentSchema } from "../_lib/validation";
 import { serializeComment } from "../_lib/serialize";
+import { serve } from "../_lib/serve";
 
-export default async function handler(request: Request): Promise<Response> {
+async function handler(request: Request): Promise<Response> {
   const user = await requireUser(request);
   if (user instanceof Response) return user;
 
@@ -95,3 +91,5 @@ export default async function handler(request: Request): Promise<Response> {
     return serverError(error);
   }
 }
+
+export default serve(handler);

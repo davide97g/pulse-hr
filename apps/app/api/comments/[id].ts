@@ -11,6 +11,7 @@ import {
   serverError,
 } from "../_lib/errors";
 import { serializeComment } from "../_lib/serialize";
+import { serve } from "../_lib/serve";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -24,7 +25,7 @@ function commentIdFrom(request: Request): string | null {
   return match?.[1] ?? null;
 }
 
-export default async function handler(request: Request): Promise<Response> {
+async function handler(request: Request): Promise<Response> {
   if (request.method !== "PATCH" && request.method !== "DELETE") {
     return methodNotAllowed(["PATCH", "DELETE"]);
   }
@@ -119,3 +120,5 @@ export default async function handler(request: Request): Promise<Response> {
     return serverError(error);
   }
 }
+
+export default serve(handler);

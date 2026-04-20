@@ -11,10 +11,11 @@ import {
 } from "../../_lib/errors";
 import { StatusSchema } from "../../_lib/validation";
 import { serializeComment } from "../../_lib/serialize";
+import { serve } from "../../_lib/serve";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export default async function handler(request: Request): Promise<Response> {
+async function handler(request: Request): Promise<Response> {
   if (request.method !== "PATCH") return methodNotAllowed(["PATCH"]);
 
   const user = await requireUser(request);
@@ -52,10 +53,7 @@ export default async function handler(request: Request): Promise<Response> {
       .select()
       .from(schema.commentVotes)
       .where(
-        and(
-          eq(schema.commentVotes.commentId, updated.id),
-          eq(schema.commentVotes.userId, user.id),
-        ),
+        and(eq(schema.commentVotes.commentId, updated.id), eq(schema.commentVotes.userId, user.id)),
       );
     const myVote = votes[0]?.value ?? 0;
 
@@ -64,3 +62,5 @@ export default async function handler(request: Request): Promise<Response> {
     return serverError(error);
   }
 }
+
+export default serve(handler);

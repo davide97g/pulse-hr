@@ -29,7 +29,11 @@ function buildRouteTable(): Route[] {
       if (!entry.endsWith(".ts") && !entry.endsWith(".js")) continue;
       const base = entry.replace(/\.(ts|js)$/, "");
       const urlSegment =
-        base === "index" ? "" : base.startsWith("[") && base.endsWith("]") ? "/([^/]+)" : `/${base}`;
+        base === "index"
+          ? ""
+          : base.startsWith("[") && base.endsWith("]")
+            ? "/([^/]+)"
+            : `/${base}`;
       const url = `${urlPrefix}${urlSegment}`;
       const pattern = new RegExp(`^${url}/?$`);
       out.push({ pattern, file: full });
@@ -113,13 +117,26 @@ export function apiDevServer(): Plugin {
         }
         try {
           const mod = (await server!.ssrLoadModule(match.file)) as {
-            default?: (request: Request) => Promise<Response> | Response;
+            default?:
+              | ((request: Request) => Promise<Response> | Response)
+              | { fetch: (request: Request) => Promise<Response> | Response };
           };
-          if (typeof mod.default !== "function") {
-            throw new Error(`handler has no default export: ${match.file}`);
-          }
           const webReq = await nodeToWebRequest(req);
-          const webRes = await mod.default(webReq);
+          const d = mod.default;
+          let webRes: Response;
+          if (typeof d === "function") {
+            webRes = await d(webReq);
+          } else if (
+            d &&
+            typeof d === "object" &&
+            typeof (d as { fetch?: unknown }).fetch === "function"
+          ) {
+            webRes = await (
+              d as { fetch: (request: Request) => Promise<Response> | Response }
+            ).fetch(webReq);
+          } else {
+            throw new Error(`handler needs default function or { fetch }: ${match.file}`);
+          }
           await sendWebResponse(res, webRes);
         } catch (err) {
           console.error("[api-dev]", pathname, err);

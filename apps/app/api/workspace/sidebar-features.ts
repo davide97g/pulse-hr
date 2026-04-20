@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db, schema } from "../_lib/db";
 import { requireUser, isAdmin } from "../_lib/auth";
 import { badRequest, forbidden, json, methodNotAllowed, serverError } from "../_lib/errors";
+import { serve } from "../_lib/serve";
 import {
   ALL_SIDEBAR_FEATURE_IDS,
   defaultSidebarFeaturesEnabled,
@@ -27,7 +28,7 @@ const putBodySchema = z.object({
     ),
 });
 
-export default async function handler(request: Request): Promise<Response> {
+async function handler(request: Request): Promise<Response> {
   const user = await requireUser(request);
   if (user instanceof Response) return user;
 
@@ -96,3 +97,5 @@ export default async function handler(request: Request): Promise<Response> {
 
   return methodNotAllowed(["GET", "PUT"]);
 }
+
+export default serve(handler);

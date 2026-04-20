@@ -1,11 +1,12 @@
 import { put } from "@vercel/blob";
 import { requireUser } from "./_lib/auth";
 import { err, json, methodNotAllowed, serverError } from "./_lib/errors";
+import { serve } from "./_lib/serve";
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_BYTES = 3 * 1024 * 1024; // 3 MB
 
-export default async function handler(request: Request): Promise<Response> {
+async function handler(request: Request): Promise<Response> {
   if (request.method !== "POST") return methodNotAllowed(["POST"]);
 
   const user = await requireUser(request);
@@ -38,3 +39,5 @@ export default async function handler(request: Request): Promise<Response> {
     return serverError(error);
   }
 }
+
+export default serve(handler);

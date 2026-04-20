@@ -77,11 +77,16 @@ export function SidebarFeaturesProvider({ children }: { children: ReactNode }) {
         const merged = mergePartialFeaturesRecord(data.features);
         setEnabledState(merged);
         writeSidebarFeaturesToStorage(merged);
-      } catch {
-        if (!cancelled) {
+      } catch (e) {
+        if (cancelled) return;
+        const msg =
+          "[pulse] sidebar-features GET failed — check Vercel /api (export default { fetch }), DATABASE_URL, migrations.";
+        if (import.meta.env.DEV) {
           toast("Moduli menu: cache locale", {
             description: "Neon non raggiungibile o tabella assente — esegui le migration.",
           });
+        } else {
+          console.warn(msg, e);
         }
       }
     })();
