@@ -1,0 +1,213 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Cta from "../components/Cta.astro";
+import { Newspaper, Calendar, Github } from "lucide-astro";
+
+const title = "Blog — OSS HR, commessa ops, agent-native workflows";
+const description =
+  "A 6-month publishing schedule. Engineering deep-dives on the open-source HR & payroll stack, commessa-first financial operations for services firms, and agent-native workflows for HR data.";
+const path = "/blog";
+const keywords =
+  "open source HR blog, commessa ops, MCP HR, product-led growth OSS, FSL license explained, self-host HR";
+
+// Four tracks × six months = 24 planned slots. We publish 12 (two per month,
+// tracks rotating) to keep a realistic cadence. Each post is a commitment
+// with a named owner and a concrete takeaway.
+const TRACKS = [
+  { k: "OSS mechanics",       accent: "#b4ff39", d: "How we run Pulse as an open-source business — license design, governance, self-host economics." },
+  { k: "Commessa ops",        accent: "#ffbf4a", d: "Financial ops for services firms: project profitability, utilisation, forecasting, close-the-month playbooks." },
+  { k: "Agent-native HR",     accent: "#6fd8ff", d: "Building Pulse toward MCP + tool schemas so Claude, Copilot and other agents can ground on HR data safely." },
+  { k: "Engineering notes",   accent: "#ff8a7a", d: "TanStack Router, Bun workspaces, Astro marketing + React app monorepo, PWA offline, local intent parser." },
+];
+
+const POSTS = [
+  {
+    d: "2026-05-06",
+    track: "OSS mechanics",
+    t: "Why we picked FSL-1.1-MIT (and not AGPL, BSL, or plain MIT)",
+    s: "A walk through four alternatives, the failure mode each prevents, and why a two-year converting license is the honest compromise for a funded open-source SaaS.",
+  },
+  {
+    d: "2026-05-20",
+    track: "Commessa ops",
+    t: "The commessa primer: why services firms need a project-first data model",
+    s: "Finance sees the company as a stack of commesse (billable project codes). HR tools model it as departments. This is the root cause of every \"is this project profitable?\" argument.",
+  },
+  {
+    d: "2026-06-03",
+    track: "Engineering notes",
+    t: "Migrating off TanStack Start: a Vercel-first SPA in 24 hours",
+    s: "Why we left SSR behind for a vanilla Vite SPA, what broke, what we kept, and the exact vercel.json that ships today.",
+  },
+  {
+    d: "2026-06-17",
+    track: "Agent-native HR",
+    t: "Shipping a read-only MCP server in front of tenant data",
+    s: "What endpoints to expose first, how to scope permissions per tool, and the one security guarantee you cannot skip.",
+  },
+  {
+    d: "2026-07-01",
+    track: "OSS mechanics",
+    t: "The free-for-5 economics: pricing an open-source HR SaaS",
+    s: "A spreadsheet you can fork. How the 5-employee free tier survives CAC, and what it costs us per free team in marginal infra.",
+  },
+  {
+    d: "2026-07-15",
+    track: "Commessa ops",
+    t: "Close the month in an afternoon: the Saturation playbook",
+    s: "Step-by-step from timesheet lock to margin-closed-books, using Saturation insights to catch the three issues that blow most closes.",
+  },
+  {
+    d: "2026-08-05",
+    track: "Engineering notes",
+    t: "A 700-line intent parser beats our first LLM call",
+    s: "The deterministic nlp.ts module behind ⌘J. Six intent kinds, fuzzy matching, confidence scoring, and the benchmarks that convinced us to ship it instead of calling Claude.",
+  },
+  {
+    d: "2026-08-19",
+    track: "Agent-native HR",
+    t: "Letting agents approve expenses — a permission model that doesn't leak",
+    s: "Write-actions via MCP without broad delegation. Per-tool permission scopes, replayable dry-runs, and an audit surface that makes compliance happy.",
+  },
+  {
+    d: "2026-09-02",
+    track: "OSS mechanics",
+    t: "Six months of public issues: what the community actually wants",
+    s: "Every GitHub issue opened in the first six months, clustered by theme, with the three features we'll ship because of them and the two we said no to.",
+  },
+  {
+    d: "2026-09-16",
+    track: "Commessa ops",
+    t: "Scenario planning on your own burn: the Forecast walkthrough",
+    s: "\"What if I add a designer in August?\" Scenario sliders walked through with numbers and the kinds of decisions they actually change.",
+  },
+  {
+    d: "2026-10-07",
+    track: "Engineering notes",
+    t: "Self-hosting Pulse on a €25 Hetzner box",
+    s: "Docker Compose file, step-by-step, runbook for a 50-person team. Benchmarks, backup rota, and the two things you must not skip.",
+  },
+  {
+    d: "2026-10-21",
+    track: "Agent-native HR",
+    t: "From command bar to agent loop: what changes when the user isn't human",
+    s: "The UX and product implications of a tool surface agents call directly. What breaks, what becomes possible, and the new security failure modes to design against.",
+  },
+];
+
+const trackStyle = (k: string) => {
+  const t = TRACKS.find((x) => x.k === k);
+  return t ? t.accent : "#ffffff";
+};
+
+const fmtDate = (iso: string) => {
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+};
+
+const now = new Date("2026-04-20");
+---
+
+<BaseLayout {title} {description} {path} {keywords}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+        <Newspaper class="h-3 w-3" /> Blog
+      </p>
+      <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
+        Two a month.<br />
+        <em class="italic text-[#b4ff39]">Six months</em> committed.
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        A publishing schedule, not a landing page promising "coming soon". Every
+        post below has a date, a track, a working title, and a concrete
+        takeaway. Subscribe by starring the repo — every post ships as a git
+        commit to <code class="font-mono text-[14px] text-[#b4ff39]">apps/marketing/src/pages/blog/</code>.
+      </p>
+      <div class="mt-8 flex items-center gap-3 flex-wrap">
+        <a
+          href="https://github.com/davide97g/workflows-people"
+          class="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] px-5 py-3 rounded-md font-medium press-scale transition-colors"
+        >
+          <Github class="h-4 w-4 text-[#b4ff39]" />
+          Watch the repo
+        </a>
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-10">
+      <h2 class="font-display text-2xl tracking-tight mb-5">Tracks.</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        {TRACKS.map((t) => (
+          <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-5">
+            <span class="font-mono uppercase tracking-[0.2em] text-[11px]" style={`color:${t.accent}`}>{t.k}</span>
+            <p class="text-[13px] text-white/65 leading-relaxed mt-3 m-0">{t.d}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-10">
+      <h2 class="font-display text-2xl tracking-tight mb-5 flex items-center gap-2">
+        <Calendar class="h-5 w-5 text-[#b4ff39]" />
+        Schedule.
+      </h2>
+      <ol class="space-y-2 list-none p-0 m-0">
+        {POSTS.map((p, i) => {
+          const when = new Date(p.d);
+          const past = when < now;
+          return (
+            <li class="rounded-2xl border border-white/10 bg-[#0f0f11] p-5 hover:border-white/20 transition-colors">
+              <div class="flex items-start gap-5">
+                <div class="shrink-0 w-[110px]">
+                  <p class="font-mono text-[11px] uppercase tracking-[0.15em] text-white/40 m-0">#{String(i + 1).padStart(2, "0")}</p>
+                  <p class="font-mono text-[13px] text-white/75 mt-1 m-0">{fmtDate(p.d)}</p>
+                  <span class:list={[
+                    "mt-2 inline-block font-mono uppercase text-[9px] tracking-[0.2em] px-1.5 py-0.5 rounded",
+                    past ? "border border-white/20 text-white/45" : "border border-[#b4ff39]/30 text-[#b4ff39]",
+                  ]}>
+                    {past ? "Publish" : "Planned"}
+                  </span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1 flex-wrap">
+                    <span
+                      class="font-mono uppercase text-[10px] tracking-[0.2em]"
+                      style={`color:${trackStyle(p.track)}`}
+                    >
+                      {p.track}
+                    </span>
+                  </div>
+                  <h3 class="font-display text-lg md:text-xl leading-tight mb-2 m-0">{p.t}</h3>
+                  <p class="text-[13px] text-white/55 leading-relaxed m-0">{p.s}</p>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+
+    <section class="max-w-[960px] mx-auto px-6 py-16">
+      <h2 class="font-display text-3xl md:text-4xl tracking-tight mb-5">
+        Want to write for us?
+      </h2>
+      <p class="text-white/70 leading-relaxed max-w-2xl mb-6">
+        Guest posts welcome — especially from HR ops leads, fractional finance
+        folks running commessa-heavy consultancies, and engineers running their
+        own self-hosted deployment. We pay €400 per published piece (€200 for
+        the draft even if we don't run it) and every guest byline links back to
+        whatever you're building.
+      </p>
+      <a href="mailto:editorial@pulsehr.com" class="inline-flex items-center gap-2 text-[#b4ff39] font-mono hover:gap-3 transition-all">
+        Pitch an idea → editorial@pulsehr.com
+      </a>
+    </section>
+
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>

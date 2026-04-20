@@ -1,10 +1,300 @@
 ---
-import StubLayout from "../../layouts/StubLayout.astro";
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import { Code2, KeyRound, Hash, Clock, AlertOctagon, Webhook } from "lucide-astro";
+
+const title = "API reference — Pulse HR REST v1";
+const description =
+  "REST API for Pulse HR. Bearer auth, cursor pagination, stable schemas, 1k req/min rate limit, webhooks on every resource event. Maintained SDKs for TypeScript, Python and Go — generated from the OpenAPI 3.1 spec.";
+const path = "/docs/api";
+const keywords =
+  "Pulse HR API, HRIS API, open source HR API, HR webhooks, HR OpenAPI, TypeScript HR SDK";
+
+// Resources — partial, but representative.
+const RESOURCES = [
+  {
+    name: "employees",
+    desc: "Active and former people. Includes contractors when expand=contractor.",
+    fields: ["id", "email", "full_name", "role", "employment_type", "department", "manager_id", "start_date", "end_date", "location", "custom_fields"],
+    methods: ["GET /v1/employees", "GET /v1/employees/{id}", "POST /v1/employees", "PATCH /v1/employees/{id}", "DELETE /v1/employees/{id}"],
+    events: ["employee.created", "employee.updated", "employee.offboarded"],
+  },
+  {
+    name: "commesse",
+    desc: "Italian for 'project codes'. Every hour, expense and allocation rolls up to a commessa.",
+    fields: ["id", "code", "name", "client_id", "owner_id", "budget_hours", "budget_amount", "rate_card", "start_date", "end_date", "status"],
+    methods: ["GET /v1/commesse", "GET /v1/commesse/{id}", "POST /v1/commesse", "PATCH /v1/commesse/{id}"],
+    events: ["commessa.created", "commessa.updated", "commessa.closed"],
+  },
+  {
+    name: "timesheets",
+    desc: "Weekly timesheet with commessa-tagged entries. Submission triggers approval workflow.",
+    fields: ["id", "employee_id", "week_start", "status", "total_hours", "billable_hours", "entries[]"],
+    methods: ["GET /v1/timesheets", "GET /v1/timesheets/{id}", "POST /v1/timesheets/{id}:submit", "POST /v1/timesheets/{id}:approve"],
+    events: ["timesheet.submitted", "timesheet.approved", "timesheet.rejected"],
+  },
+  {
+    name: "expenses",
+    desc: "Expense claim with receipt and approval chain. Integrates with QuickBooks / Xero journal push.",
+    fields: ["id", "employee_id", "amount", "currency", "category", "commessa_id", "receipt_url", "status", "approver_id"],
+    methods: ["GET /v1/expenses", "POST /v1/expenses", "POST /v1/expenses/{id}:approve", "POST /v1/expenses/{id}:reject"],
+    events: ["expense.submitted", "expense.approved", "expense.rejected", "expense.posted_to_gl"],
+  },
+  {
+    name: "leave",
+    desc: "Time-off requests. Balance is derived server-side from accrual + policy + taken.",
+    fields: ["id", "employee_id", "kind", "start_date", "end_date", "days", "status", "reason"],
+    methods: ["GET /v1/leave", "GET /v1/leave/balance/{employee_id}", "POST /v1/leave", "POST /v1/leave/{id}:approve"],
+    events: ["leave.requested", "leave.approved", "leave.rejected", "leave.cancelled"],
+  },
+  {
+    name: "payroll_runs",
+    desc: "One run per country/period. Generates payslips once finalised; fires a single payroll.run.completed on success.",
+    fields: ["id", "country", "period_start", "period_end", "status", "total_gross", "total_net", "payslip_ids[]"],
+    methods: ["GET /v1/payroll_runs", "POST /v1/payroll_runs", "POST /v1/payroll_runs/{id}:finalise"],
+    events: ["payroll.run.started", "payroll.run.completed", "payroll.run.failed", "payslip.finalised"],
+  },
+  {
+    name: "kudos",
+    desc: "Peer recognition. Feeds the Employee Score Recognition factor.",
+    fields: ["id", "from_employee_id", "to_employee_id", "coins", "tag", "note", "created_at"],
+    methods: ["GET /v1/kudos", "POST /v1/kudos"],
+    events: ["kudos.awarded"],
+  },
+];
+
+const ERRORS = [
+  { code: 400, k: "invalid_request",      d: "Payload failed schema validation. Response body lists the failing fields." },
+  { code: 401, k: "unauthenticated",      d: "Missing or malformed Bearer token. Check the Authorization header." },
+  { code: 403, k: "permission_denied",    d: "Authenticated, but the API key scope doesn't allow this operation." },
+  { code: 404, k: "not_found",            d: "Resource ID unknown, or scoped to another tenant." },
+  { code: 409, k: "conflict",             d: "Version mismatch on optimistic lock, or duplicate idempotency key." },
+  { code: 422, k: "unprocessable_entity", d: "Semantically invalid — e.g. end_date before start_date." },
+  { code: 429, k: "rate_limited",         d: "1,000 req/min exceeded. Retry-After header tells you when to try again." },
+  { code: 500, k: "internal_error",       d: "Our bug. Every 5xx is paged and we'll email you with the incident ID within 24 h." },
+];
 ---
 
-<StubLayout
-  title="API reference"
-  path="/docs/api"
-  description="REST API, webhooks on every resource, and SDKs for TypeScript, Python and Go. Full reference is being published here — until then, see the Developers tab inside the app."
->
-</StubLayout>
+<DocsLayout {title} {description} {path} {keywords}>
+  <div class="flex items-center gap-3 mb-6">
+    <span class="h-10 w-10 rounded-lg bg-[#b4ff39]/15 text-[#b4ff39] grid place-items-center">
+      <Code2 class="h-5 w-5" />
+    </span>
+    <div>
+      <h1 class="font-display text-4xl md:text-5xl tracking-tight m-0">REST API v1</h1>
+      <p class="text-sm text-white/50 mt-1 m-0">Bearer auth, cursor pagination, webhooks on every event, maintained SDKs.</p>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-5 mb-10">
+    <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-2">Base URL</p>
+    <code class="block font-mono text-[15px] text-[#b4ff39] mb-4">https://api.pulsehr.com/v1</code>
+    <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-2">Self-host override</p>
+    <code class="block font-mono text-[14px] text-white/75">$ export PULSE_API_BASE=https://pulse.internal/v1</code>
+  </div>
+
+  <!-- Auth -->
+  <h2 id="auth" class="font-display text-2xl tracking-tight mb-3 flex items-center gap-2">
+    <KeyRound class="h-5 w-5 text-[#b4ff39]" /> Authentication
+  </h2>
+  <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-5 mb-4 space-y-3 text-white/75 leading-relaxed text-[15px]">
+    <p class="m-0">
+      All requests authenticate with a Bearer token. Mint keys in
+      <code class="font-mono text-[13px] text-[#b4ff39]">/developers</code> inside the app.
+      Keys carry a scope (<code class="font-mono text-[13px]">read:*</code>,
+      <code class="font-mono text-[13px]">write:expenses</code>, …) and an environment
+      (<code class="font-mono text-[13px]">pk_live_*</code> or <code class="font-mono text-[13px]">pk_test_*</code>).
+    </p>
+  </div>
+  <div class="rounded-2xl border border-white/10 bg-[#0b0b0d] p-5 mb-10 overflow-x-auto">
+    <pre class="m-0 font-mono text-[13px] text-white/85">{`$ curl https://api.pulsehr.com/v1/employees \\
+    -H "Authorization: Bearer pk_live_a9f3…" \\
+    -H "Accept: application/json"`}</pre>
+  </div>
+
+  <!-- Pagination -->
+  <h2 id="pagination" class="font-display text-2xl tracking-tight mb-3 flex items-center gap-2">
+    <Hash class="h-5 w-5 text-[#b4ff39]" /> Pagination
+  </h2>
+  <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-5 mb-4 text-white/75 leading-relaxed text-[15px]">
+    <p class="m-0">
+      Every list endpoint returns cursor pagination. Pass <code class="font-mono text-[13px] text-[#b4ff39]">?limit=50&amp;cursor=…</code>.
+      Responses include <code class="font-mono text-[13px]">next_cursor</code> (null if there are no more pages) and
+      <code class="font-mono text-[13px]">total_count</code>.
+    </p>
+  </div>
+  <div class="rounded-2xl border border-white/10 bg-[#0b0b0d] p-5 mb-10 overflow-x-auto">
+    <pre class="m-0 font-mono text-[13px] text-white/85">{`{
+  "data": [ /* 50 employees */ ],
+  "next_cursor": "eyJpZCI6ImVtcF8xOTgifQ==",
+  "total_count": 312
+}`}</pre>
+  </div>
+
+  <!-- Rate limits -->
+  <h2 id="rate-limits" class="font-display text-2xl tracking-tight mb-3 flex items-center gap-2">
+    <Clock class="h-5 w-5 text-[#b4ff39]" /> Rate limits
+  </h2>
+  <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-5 mb-10 text-white/75 leading-relaxed text-[15px] space-y-3">
+    <p class="m-0">
+      1,000 requests per minute per API key on Standard. Self-host has no limit
+      (your Postgres will be the bottleneck before this is). Every response
+      carries three headers:
+    </p>
+    <ul class="space-y-2 list-none p-0 m-0 font-mono text-[13px]">
+      <li><span class="text-[#b4ff39]">X-RateLimit-Limit:</span> 1000</li>
+      <li><span class="text-[#b4ff39]">X-RateLimit-Remaining:</span> 873</li>
+      <li><span class="text-[#b4ff39]">X-RateLimit-Reset:</span> 2026-04-20T12:05:00Z</li>
+    </ul>
+  </div>
+
+  <!-- Errors -->
+  <h2 id="errors" class="font-display text-2xl tracking-tight mb-3 flex items-center gap-2">
+    <AlertOctagon class="h-5 w-5 text-[#b4ff39]" /> Error format
+  </h2>
+  <p class="text-white/65 mb-4 max-w-2xl text-[15px] leading-relaxed">
+    Every error returns the same envelope — an HTTP status, a stable <code class="font-mono text-[13px] text-[#b4ff39]">code</code> string,
+    a human message, and (when relevant) a <code class="font-mono text-[13px]">fields</code> array pinpointing what's wrong.
+  </p>
+  <div class="rounded-2xl border border-white/10 bg-[#0b0b0d] p-5 mb-6 overflow-x-auto">
+    <pre class="m-0 font-mono text-[13px] text-white/85">{`HTTP/1.1 422 Unprocessable Entity
+{
+  "error": {
+    "code": "unprocessable_entity",
+    "message": "end_date must be after start_date",
+    "fields": ["end_date"],
+    "request_id": "req_01HR3…"
+  }
+}`}</pre>
+  </div>
+  <div class="rounded-2xl border border-white/10 bg-[#0f0f11] overflow-hidden mb-10">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-white/10 text-white/60">
+          <th class="text-left px-5 py-3 font-medium w-[80px]">HTTP</th>
+          <th class="text-left px-5 py-3 font-medium w-[200px]">code</th>
+          <th class="text-left px-5 py-3 font-medium">Meaning</th>
+        </tr>
+      </thead>
+      <tbody>
+        {ERRORS.map((e, i) => (
+          <tr class={i % 2 === 0 ? "bg-white/[0.01]" : ""}>
+            <td class="px-5 py-3 font-mono text-white/80 border-r border-white/5">{e.code}</td>
+            <td class="px-5 py-3 font-mono text-[#b4ff39] border-r border-white/5">{e.k}</td>
+            <td class="px-5 py-3 text-white/65">{e.d}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Resources -->
+  <h2 id="resources" class="font-display text-2xl tracking-tight mb-3">Resources</h2>
+  <p class="text-white/65 mb-6 max-w-2xl text-[15px] leading-relaxed">
+    Partial list — the full spec is published as OpenAPI 3.1 at
+    <a href="https://api.pulsehr.com/v1/openapi.json" class="text-[#b4ff39] hover:underline font-mono text-[14px]">api.pulsehr.com/v1/openapi.json</a>.
+    Generated clients for TS / Python / Go drop on every merge.
+  </p>
+  <div class="space-y-4 mb-10">
+    {RESOURCES.map((r) => (
+      <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-5">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="font-mono text-sm text-[#b4ff39]">/v1/{r.name}</span>
+        </div>
+        <p class="text-[13px] text-white/60 leading-relaxed mb-4 m-0">{r.desc}</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-[12px]">
+          <div>
+            <p class="font-mono uppercase tracking-[0.2em] text-[10px] text-white/40 mb-2">Key fields</p>
+            <ul class="space-y-1 list-none p-0 m-0 font-mono text-white/70">
+              {r.fields.map((f) => <li>{f}</li>)}
+            </ul>
+          </div>
+          <div>
+            <p class="font-mono uppercase tracking-[0.2em] text-[10px] text-white/40 mb-2">Methods</p>
+            <ul class="space-y-1 list-none p-0 m-0 font-mono text-white/70">
+              {r.methods.map((m) => <li>{m}</li>)}
+            </ul>
+          </div>
+          <div>
+            <p class="font-mono uppercase tracking-[0.2em] text-[10px] text-white/40 mb-2">Webhook events</p>
+            <ul class="space-y-1 list-none p-0 m-0 font-mono text-[#b4ff39]/80">
+              {r.events.map((e) => <li>{e}</li>)}
+            </ul>
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <!-- Webhooks -->
+  <h2 id="webhooks" class="font-display text-2xl tracking-tight mb-3 flex items-center gap-2">
+    <Webhook class="h-5 w-5 text-[#b4ff39]" /> Webhooks
+  </h2>
+  <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-5 mb-4 text-white/75 leading-relaxed text-[15px]">
+    <p class="m-0">
+      Configure endpoints in <code class="font-mono text-[13px] text-[#b4ff39]">/developers → webhooks</code>.
+      Every delivery is HMAC-SHA256 signed with your endpoint's signing secret —
+      verify via the <code class="font-mono text-[13px]">X-Pulse-Signature</code> header.
+      Failed deliveries retry with exponential backoff for 72 hours; replay any
+      event from the dashboard.
+      See the full event catalogue on <a href="/ecosystem" class="text-[#b4ff39] hover:underline">/ecosystem</a>.
+    </p>
+  </div>
+  <div class="rounded-2xl border border-white/10 bg-[#0b0b0d] p-5 mb-10 overflow-x-auto">
+    <pre class="m-0 font-mono text-[13px] text-white/85">{`POST https://your.app/pulse/hook
+Content-Type: application/json
+X-Pulse-Event: expense.approved
+X-Pulse-Signature: t=1745148720,v1=9f8a…
+X-Pulse-Delivery: del_01HR3…
+
+{
+  "id": "evt_01HR3…",
+  "type": "expense.approved",
+  "created_at": "2026-04-20T10:12:03Z",
+  "data": { /* full expense payload */ }
+}`}</pre>
+  </div>
+
+  <!-- SDK -->
+  <h2 id="sdks" class="font-display text-2xl tracking-tight mb-3">SDKs</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10">
+    {[
+      { lang: "TypeScript", pkg: "@pulsehr/sdk", install: "bun add @pulsehr/sdk" },
+      { lang: "Python",     pkg: "pulsehr",      install: "pip install pulsehr" },
+      { lang: "Go",         pkg: "pulsehr-go",   install: "go get github.com/pulsehr/pulsehr-go" },
+    ].map((s) => (
+      <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-5">
+        <h3 class="font-display text-lg mb-1 m-0">{s.lang}</h3>
+        <p class="font-mono text-[13px] text-[#b4ff39] m-0">{s.pkg}</p>
+        <div class="mt-3 rounded-md bg-[#0b0b0d] border border-white/10 p-3 overflow-x-auto">
+          <code class="font-mono text-[12px] text-white/75">{s.install}</code>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <section class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
+    <h3 class="font-display text-xl mb-2 m-0">Quick start — TypeScript</h3>
+    <div class="mt-4 rounded-md bg-[#0b0b0d] border border-white/10 p-4 overflow-x-auto">
+      <pre class="m-0 font-mono text-[13px] text-white/85">{`import { Pulse } from "@pulsehr/sdk";
+
+const pulse = new Pulse({ apiKey: process.env.PULSE_API_KEY! });
+
+// List employees on commessa ACME-22
+const { data } = await pulse.employees.list({
+  commessa_code: "ACME-22",
+  limit: 100,
+});
+
+// Submit an expense on behalf of an employee
+await pulse.expenses.create({
+  employee_id: "emp_01HR3…",
+  amount: 42.5,
+  currency: "EUR",
+  commessa_id: "com_01HR2…",
+  category: "travel",
+  receipt_url: "s3://pulse-receipts/…",
+});`}</pre>
+    </div>
+  </section>
+</DocsLayout>

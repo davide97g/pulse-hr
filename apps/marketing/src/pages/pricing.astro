@@ -1,10 +1,278 @@
 ---
-import StubLayout from "../layouts/StubLayout.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Cta from "../components/Cta.astro";
+import { Check, ArrowRight, Github, Server, Tag, Info } from "lucide-astro";
+
+const title = "Pricing — Pulse HR is free for the first 5, open source forever";
+const description =
+  "One transparent tier per active employee per month. Free for the first 5, forever, with every feature included. Contractors priced separately. Self-hosted is free under FSL.";
+const path = "/pricing";
+const keywords = "HR pricing, HRIS pricing, per-employee, free HR software, open source HR pricing";
+
+const TIERS = [
+  {
+    id: "free",
+    name: "Free",
+    price: "€0",
+    unit: "up to 5 employees",
+    punch: "For side projects, tiny teams, and anyone evaluating Pulse honestly before committing.",
+    cta: { label: "Start free", href: "https://workflows-people.vercel.app/" },
+    included: [
+      "Up to 5 active employees",
+      "All Money / People / Work modules",
+      "Full API + webhooks (no tier gate)",
+      "SSO via Google / Microsoft",
+      "Commessa-native time tracking",
+      "Command bar (⌘K / ⌘J)",
+      "Community support on GitHub",
+    ],
+    notIncluded: [
+      "Multi-country in-house payroll filing",
+      "SOC 2 report under NDA",
+      "Dedicated onboarding engineer",
+    ],
+    accent: "#ffffff",
+    bg: "bg-[#0f0f11]",
+    border: "border-white/10",
+  },
+  {
+    id: "standard",
+    name: "Standard",
+    price: "€8",
+    unit: "per active employee / month",
+    punch: "Everything in Free, no feature asterisks. One tier for teams from 6 to 500.",
+    cta: { label: "Start free — upgrade later", href: "https://workflows-people.vercel.app/" },
+    featured: true,
+    included: [
+      "Everything in Free, unlimited seats",
+      "Multi-country payroll (US · UK · IT · ES · FR · DE · IE · NL)",
+      "Statutory filings (F24, 941, PAYE, Modelo 111, URSSAF, Lohnsteuer)",
+      "Tax GL + journal export (QuickBooks / Xero / SAP)",
+      "SAML SSO, SCIM provisioning, audit log",
+      "Priority email + Slack Connect support",
+      "SOC 2 Type II report under NDA",
+      "Annual billing: 15% off",
+    ],
+    notIncluded: [],
+    accent: "#b4ff39",
+    bg: "bg-[#141418]",
+    border: "border-[#b4ff39]/40",
+  },
+  {
+    id: "self-host",
+    name: "Self-host",
+    price: "€0",
+    unit: "FSL-1.1-MIT license",
+    punch: "Run the whole platform on your own infra. Source is public, license is self-serve.",
+    cta: { label: "See on GitHub", href: "https://github.com/davide97g/workflows-people" },
+    included: [
+      "Full source code, every module",
+      "Docker Compose reference (single-node)",
+      "Helm chart for Kubernetes",
+      "Terraform modules for AWS / GCP / Hetzner",
+      "Contribute back via PR",
+      "No per-seat fees, no license keys",
+    ],
+    notIncluded: [
+      "Managed payroll filing rails",
+      "Commercial support SLA",
+      "Uptime guarantee",
+    ],
+    accent: "#6fd8ff",
+    bg: "bg-[#0f0f11]",
+    border: "border-white/10",
+  },
+];
+
+const CONTRACTOR = {
+  price: "€4",
+  unit: "per active contractor / month",
+  points: [
+    "Anyone paid outside local payroll — freelancers, consultants, international contractors.",
+    "Full profile, time tracking and expenses; no statutory filing.",
+    "Switch the same person between contractor and employee with no data loss.",
+    "Not counted toward the free-for-5 employee allowance.",
+  ],
+};
+
+const FAQ = [
+  {
+    q: "Why \"per active employee\" and what does active mean?",
+    a: "An employee is active in a calendar month if they had a contract on any day of that month or were paid in that month. You don't pay for offboarded people after their exit date. Contractors don't count toward the employee tier — they have their own €4 line.",
+  },
+  {
+    q: "Is there any feature locked behind an enterprise tier?",
+    a: "No. API, webhooks, SSO/SAML, audit logs, SCIM, the full Labs suite — all included on Free and Standard. The only difference between Free and Standard is the employee cap and the managed payroll filing rails.",
+  },
+  {
+    q: "Can I mix modules? E.g. only People and Work, not Money?",
+    a: "Yes. Money / People / Work are independently toggleable. The per-employee price stays €8 regardless of how many modules you run — we don't charge twice for the same person.",
+  },
+  {
+    q: "Discounts for non-profits, education, open-source maintainers?",
+    a: "50% off for registered non-profits, accredited education institutions, and maintainers of projects with 1k+ GitHub stars. Email sales@pulsehr.com with a one-line proof.",
+  },
+  {
+    q: "What happens if I outgrow 5 employees?",
+    a: "We notify you in-app the month before you cross the threshold. Upgrade with a click; no data migration, no billing sidebar drama. Pay only from the following month onward.",
+  },
+  {
+    q: "Can I get an invoice in my company's entity's country?",
+    a: "Yes. We bill from our Italian entity by default; on request we invoice from our Delaware entity (US) or via EU reverse-charge VAT. Payment via card, SEPA, ACH or wire.",
+  },
+];
 ---
 
-<StubLayout
-  title="Pricing"
-  path="/pricing"
-  description="Per active employee, per month. One transparent tier with every feature — no 'talk to sales for payroll'. Free for the first 5 employees, forever."
->
-</StubLayout>
+<BaseLayout {title} {description} {path} {keywords}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+        <Tag class="h-3 w-3" /> Pricing
+      </p>
+      <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
+        One number.<br />
+        <em class="italic text-[#b4ff39]">No</em> asterisks.
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        Free for your first 5 employees, forever. €8 per active employee per
+        month above that, with every feature on every tier. Or self-host the
+        whole platform from GitHub for €0.
+      </p>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {TIERS.map((t) => (
+          <article class:list={[
+            "rounded-2xl border p-8 flex flex-col",
+            t.bg,
+            t.border,
+            t.featured && "iridescent-border",
+          ]}>
+            <div class="flex items-baseline justify-between mb-5">
+              <h2 class="font-display text-2xl m-0" style={`color:${t.accent}`}>{t.name}</h2>
+              {t.featured && (
+                <span class="font-mono text-[10px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full border border-[#b4ff39]/40 text-[#b4ff39]">
+                  Popular
+                </span>
+              )}
+            </div>
+            <div class="mb-4">
+              <span class="font-display text-5xl" style={`color:${t.accent}`}>{t.price}</span>
+              <span class="text-white/50 text-sm font-mono ml-1">/ {t.unit}</span>
+            </div>
+            <p class="text-white/65 leading-relaxed text-[14px] mb-6 min-h-[3em]">{t.punch}</p>
+
+            <a
+              href={t.cta.href}
+              class:list={[
+                "group inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md font-medium press-scale transition-colors mb-6",
+                t.featured
+                  ? "bg-[#b4ff39] text-[#0b0b0d] hover:bg-[#c6ff5a]"
+                  : "border border-white/15 bg-white/[0.04] hover:bg-white/[0.08]",
+              ]}
+            >
+              {t.id === "self-host" && <Github class="h-4 w-4" />}
+              {t.cta.label}
+              <ArrowRight class="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+            </a>
+
+            <ul class="space-y-2 list-none p-0 m-0 mb-4">
+              {t.included.map((f) => (
+                <li class="flex items-start gap-2 text-sm text-white/80">
+                  <Check class="h-4 w-4 mt-0.5 shrink-0" style={`color:${t.accent}`} />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+
+            {t.notIncluded.length > 0 && (
+              <div class="mt-auto pt-4 border-t border-white/5">
+                <p class="font-mono uppercase tracking-[0.2em] text-[10px] text-white/40 mb-2">Not included</p>
+                <ul class="space-y-1 list-none p-0 m-0">
+                  {t.notIncluded.map((f) => (
+                    <li class="text-[12px] text-white/45">{f}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-10">
+      <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-8 md:p-10 grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-8">
+        <div>
+          <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-[#ffbf4a] mb-3">Contractors</p>
+          <div class="flex items-baseline gap-2 mb-3">
+            <span class="font-display text-5xl text-[#ffbf4a]">{CONTRACTOR.price}</span>
+            <span class="text-white/50 font-mono text-sm">/ {CONTRACTOR.unit}</span>
+          </div>
+          <p class="text-white/65 leading-relaxed max-w-md m-0">
+            A separate line for anyone paid outside your local payroll —
+            freelancers, consultants, international contractors.
+          </p>
+        </div>
+        <ul class="space-y-2 list-none p-0 m-0">
+          {CONTRACTOR.points.map((p) => (
+            <li class="flex items-start gap-2 text-sm text-white/80">
+              <Check class="h-4 w-4 mt-0.5 shrink-0 text-[#ffbf4a]" />
+              <span>{p}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-16">
+      <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-8">
+        <div class="flex items-start gap-4">
+          <Server class="h-6 w-6 text-[#6fd8ff] shrink-0 mt-1" />
+          <div>
+            <h2 class="font-display text-2xl mb-3 m-0">What self-hosting costs you.</h2>
+            <p class="text-white/70 leading-relaxed max-w-3xl mb-3">
+              The software is €0. The infra under it isn't. A Pulse deployment
+              for a 50-person team fits comfortably on a €20–40/month Hetzner
+              box, or about $30–60/month on AWS us-east-1 (RDS + ECS + an S3
+              bucket). Add your own payroll filing rails if you want to skip
+              our managed ones.
+            </p>
+            <p class="text-white/55 text-[13px] font-mono">
+              Reference infra costs at <a href="https://github.com/davide97g/workflows-people/tree/main/docs/self-host" class="text-[#6fd8ff] hover:underline">/docs/self-host</a> in the repo.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-[960px] mx-auto px-6 py-16">
+      <h2 class="font-display text-4xl md:text-5xl tracking-tight mb-10">
+        Pricing FAQ.
+      </h2>
+      <div class="space-y-3">
+        {FAQ.map((f) => (
+          <details class="rounded-xl border border-white/10 bg-[#0f0f11] p-5 group">
+            <summary class="cursor-pointer font-medium text-white list-none group-open:text-[#b4ff39] transition-colors">
+              {f.q}
+            </summary>
+            <p class="mt-3 text-[14px] text-white/70 leading-relaxed m-0">{f.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <div class="mt-10 rounded-2xl border border-white/10 bg-white/[0.02] p-6 flex items-start gap-3">
+        <Info class="h-5 w-5 text-[#b4ff39] shrink-0 mt-0.5" />
+        <p class="text-sm text-white/60 leading-relaxed m-0">
+          Still have pricing questions? Ask in public on <a href="https://github.com/davide97g/workflows-people/discussions" class="text-[#b4ff39] hover:underline">GitHub Discussions</a>, or email <a href="mailto:sales@pulsehr.com" class="text-[#b4ff39] hover:underline">sales@pulsehr.com</a>. Nothing gets routed to a funnel — real humans, real answers.
+        </p>
+      </div>
+    </section>
+
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>

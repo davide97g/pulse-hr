@@ -16,11 +16,6 @@ export default defineConfig({
       // too so crawlers never see a conflicting signal.
       filter: (page) => {
         const STUB_ROUTES = [
-          "/pricing",
-          "/docs/api",
-          "/security",
-          "/contact",
-          "/roadmap",
           "/privacy",
           "/terms",
           "/404",

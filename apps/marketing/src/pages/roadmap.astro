@@ -1,10 +1,211 @@
 ---
-import StubLayout from "../layouts/StubLayout.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Cta from "../components/Cta.astro";
+import { Map, Zap, Clock, Calendar, Github, ExternalLink } from "lucide-astro";
+
+const title = "Roadmap — what's shipping now, next, and later at Pulse HR";
+const description =
+  "A public, honest roadmap. Three lanes — Now (in flight this quarter), Next (scoped for the quarter after), Later (on our radar). Shipped items are in the changelog.";
+const path = "/roadmap";
+
+const NOW = [
+  {
+    t: "MCP server (read-only)",
+    d: "A Model Context Protocol server exposing employees, commesse, timesheets, expenses and payroll runs as resources. Enables Claude/Copilot/Cursor to ground on your tenant data.",
+    tag: "agents",
+  },
+  {
+    t: "Self-host Helm chart v1.0",
+    d: "Production-grade Helm chart with external Postgres, Redis, S3-compatible storage, and sealed-secrets integration. Today it's a reference Compose; v1.0 is what we deploy ourselves.",
+    tag: "self-host",
+  },
+  {
+    t: "OpenAPI 3.1 spec + generated SDKs",
+    d: "The REST API as a single source-of-truth spec. Auto-generated TS, Python and Go clients drop on every merge — no more drift.",
+    tag: "api",
+  },
+  {
+    t: "Webhook delivery service",
+    d: "Dedicated delivery queue with HMAC signing, exponential backoff (72h), replay from dashboard, and partial-failure dead-letter. Replaces the current in-process fan-out.",
+    tag: "ecosystem",
+  },
+];
+
+const NEXT = [
+  {
+    t: "Module standalone billing",
+    d: "Enable just Money, just People or just Work in the product — billing, seat counts and feature flags all module-aware. Back-end scoping already there; UI + Stripe wiring remaining.",
+    tag: "modular",
+  },
+  {
+    t: "Real OAuth for Slack / Google / Okta",
+    d: "Replace the mock OAuth handshake in Settings → Integrations with the actual flows. Tokens stored in a KMS-wrapped vault.",
+    tag: "ecosystem",
+  },
+  {
+    t: "Commessa Forecast v2 with cash-flow projection",
+    d: "Layer cash-in/cash-out on top of the current utilisation forecast. Scenario sliders move payroll, hiring, and collection dates together.",
+    tag: "money",
+  },
+  {
+    t: "Native iOS + Android apps",
+    d: "Native shells around the PWA with biometric unlock and background sync for expense photos. Ships via App Store / Play Store; PWA remains the default.",
+    tag: "mobile",
+  },
+  {
+    t: "Multi-entity + group payroll",
+    d: "Run payroll across multiple legal entities under one workspace. Ops-intensive compliance surface — worth doing right rather than fast.",
+    tag: "money",
+  },
+];
+
+const LATER = [
+  {
+    t: "Agent-native workflows (write actions via MCP)",
+    d: "Once the read-only MCP server has settled, extend to write actions — approve expense, book leave, draft offer letter. Gated behind explicit per-tool permissions.",
+    tag: "agents",
+  },
+  {
+    t: "BYO-LLM for anomaly detection",
+    d: "Optional plug-in: route expense/timesheet anomalies through your own Azure OpenAI or Bedrock tenant. No data leaves your network.",
+    tag: "ai",
+  },
+  {
+    t: "Marketplace SDK for community modules",
+    d: "A packaging format (think VS Code extensions) for third-party modules distributed on GitHub. Each module declares permissions up front.",
+    tag: "ecosystem",
+  },
+  {
+    t: "SCIM for inbound user provisioning",
+    d: "Not just outbound identity federation — let enterprises push employee lifecycle events into Pulse from Okta / Entra ID / JumpCloud.",
+    tag: "enterprise",
+  },
+  {
+    t: "Deeper EU payroll (AT, BE, PT, PL, SE)",
+    d: "We natively cover 8 countries; these five are the most asked about. Roadmap rather than commitment — each one is 6+ months of compliance work.",
+    tag: "money",
+  },
+];
+
+const NOT_DOING = [
+  "Closed-source enterprise edition with extra features. No.",
+  "Per-API-call pricing for the REST API. Included on every tier.",
+  "LLM-generated \"AI Copilot\" in place of the local intent parser. Reliability > marketing.",
+  "50-country in-house payroll — we'll partner with EORs for the long tail instead.",
+];
+
+const LANES = [
+  { key: "now",   title: "Now",   icon: Zap,      sub: "In flight this quarter (Q2 2026)", items: NOW,   accent: "#b4ff39" },
+  { key: "next",  title: "Next",  icon: Clock,    sub: "Scoped for Q3 2026",               items: NEXT,  accent: "#ffbf4a" },
+  { key: "later", title: "Later", icon: Calendar, sub: "On the radar for Q4 2026 and beyond", items: LATER, accent: "#6fd8ff" },
+];
 ---
 
-<StubLayout
-  title="Roadmap"
-  path="/roadmap"
-  description="What we're building next quarter, what we're researching, what we shipped. Live roadmap board is being migrated from Linear to a public surface here."
->
-</StubLayout>
+<BaseLayout {title} {description} {path}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+        <Map class="h-3 w-3" /> Roadmap
+      </p>
+      <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
+        What's shipping<br />
+        <em class="italic text-[#b4ff39]">before</em> we say it is.
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        Most HR vendors publish a roadmap that's really a wish-list that never
+        moves. Ours has three lanes and one rule: anything in
+        <strong class="text-white">Now</strong> has an owner and an ETA; anything
+        in <strong class="text-white">Next</strong> is scoped; anything in
+        <strong class="text-white">Later</strong> is on the radar but not committed.
+      </p>
+
+      <div class="mt-8 flex items-center gap-3 flex-wrap">
+        <a
+          href="/changelog"
+          class="inline-flex items-center gap-2 bg-[#b4ff39] text-[#0b0b0d] px-5 py-3 rounded-md font-medium press-scale hover:bg-[#c6ff5a] transition-colors"
+        >
+          See what already shipped
+        </a>
+        <a
+          href="https://github.com/davide97g/workflows-people/issues"
+          class="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] px-5 py-3 rounded-md font-medium press-scale transition-colors"
+        >
+          <Github class="h-4 w-4 text-[#b4ff39]" />
+          Open an issue
+          <ExternalLink class="h-3.5 w-3.5 text-white/40" />
+        </a>
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-10">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {LANES.map((lane) => (
+          <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6 flex flex-col">
+            <div class="flex items-center gap-2 mb-1">
+              <lane.icon class="h-4 w-4" style={`color:${lane.accent}`} />
+              <h2 class="font-display text-2xl m-0" style={`color:${lane.accent}`}>{lane.title}</h2>
+              <span class="ml-auto font-mono text-[11px] text-white/35 tabular-nums">{lane.items.length}</span>
+            </div>
+            <p class="text-[11px] text-white/40 font-mono uppercase tracking-[0.15em] mb-5">{lane.sub}</p>
+            <ul class="space-y-3 list-none p-0 m-0 flex-1">
+              {lane.items.map((item) => (
+                <li class="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                  <div class="flex items-start justify-between gap-3 mb-1">
+                    <h3 class="font-display text-base m-0 leading-tight">{item.t}</h3>
+                    <span class="font-mono uppercase text-[9px] tracking-[0.15em] text-white/40 whitespace-nowrap">
+                      {item.tag}
+                    </span>
+                  </div>
+                  <p class="text-[12px] text-white/55 leading-relaxed m-0">{item.d}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 py-16">
+      <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-8">
+        <h2 class="font-display text-3xl tracking-tight mb-4 m-0">Things we are deliberately <em class="italic text-white/50">not</em> doing.</h2>
+        <p class="text-white/65 leading-relaxed mb-6 max-w-3xl">
+          Every product becomes what it chooses to say no to. Here are the
+          temptations we've said no to, with reasons you can argue with.
+        </p>
+        <ul class="space-y-3 list-none p-0 m-0 max-w-3xl">
+          {NOT_DOING.map((x) => (
+            <li class="flex items-start gap-3 text-white/80 text-[15px] leading-relaxed">
+              <span class="font-mono text-[#ff8a7a] mt-0.5">✗</span>
+              <span>{x}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="max-w-[960px] mx-auto px-6 py-16">
+      <h2 class="font-display text-3xl md:text-4xl tracking-tight mb-5">
+        Influence the order.
+      </h2>
+      <p class="text-white/70 leading-relaxed max-w-2xl mb-8">
+        The lane ordering inside <strong class="text-white">Next</strong> and
+        <strong class="text-white">Later</strong> is driven by signal — 👍 reactions
+        on GitHub issues, customer meetings, and depth of dependency in the
+        codebase. The loudest way to move something is to open an issue,
+        describe your context, and invite +1s.
+      </p>
+      <a
+        href="https://github.com/davide97g/workflows-people/discussions/categories/ideas"
+        class="inline-flex items-center gap-2 text-[#b4ff39] font-mono hover:gap-3 transition-all"
+      >
+        Propose something on GitHub <ExternalLink class="h-4 w-4" />
+      </a>
+    </section>
+
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>
