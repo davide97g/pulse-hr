@@ -2,6 +2,12 @@ import type { DbComment, DbReply } from "../../src/lib/db/schema";
 
 type MyVoteMap = Record<string, -1 | 0 | 1>;
 
+function toIso(value: unknown): string {
+  if (value instanceof Date) return value.toISOString();
+  const d = new Date(value as string | number);
+  return Number.isNaN(d.getTime()) ? new Date(0).toISOString() : d.toISOString();
+}
+
 export type ApiReply = {
   id: string;
   commentId: string;
@@ -34,16 +40,12 @@ export function serializeReply(r: DbReply): ApiReply {
     commentId: r.commentId,
     body: r.body,
     author: { id: r.authorId, name: r.authorName, avatarUrl: r.authorAvatar ?? null },
-    createdAt: r.createdAt.toISOString(),
-    updatedAt: r.updatedAt.toISOString(),
+    createdAt: toIso(r.createdAt),
+    updatedAt: toIso(r.updatedAt),
   };
 }
 
-export function serializeComment(
-  c: DbComment,
-  replies: DbReply[],
-  myVotes: MyVoteMap,
-): ApiComment {
+export function serializeComment(c: DbComment, replies: DbReply[], myVotes: MyVoteMap): ApiComment {
   return {
     id: c.id,
     route: c.route,
@@ -58,9 +60,9 @@ export function serializeComment(
     myVote: myVotes[c.id] ?? 0,
     replies: replies
       .filter((r) => r.deletedAt == null)
-      .sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1))
+      .sort((a, b) => (toIso(a.createdAt) < toIso(b.createdAt) ? -1 : 1))
       .map(serializeReply),
-    createdAt: c.createdAt.toISOString(),
-    updatedAt: c.updatedAt.toISOString(),
+    createdAt: toIso(c.createdAt),
+    updatedAt: toIso(c.updatedAt),
   };
 }

@@ -52,10 +52,21 @@ export function SidebarFeaturesProvider({ children }: { children: ReactNode }) {
           },
           body: JSON.stringify({ workspaceKey, features: next }),
         });
-        if (!res.ok) throw new Error(String(res.status));
-      } catch {
-        toast.error("Salvataggio su database non riuscito", {
-          description: "Controlla DATABASE_URL / migration Neon e riprova.",
+        const body = (await res.json().catch(() => null)) as {
+          error?: { code?: string; message?: string };
+        } | null;
+        if (!res.ok) {
+          const detail =
+            body?.error?.message ??
+            body?.error?.code ??
+            (res.status === 503
+              ? "Configurazione server (es. Clerk) incompleta."
+              : `HTTP ${res.status}`);
+          toast.error("Salvataggio moduli menu non riuscito", { description: detail });
+        }
+      } catch (e) {
+        toast.error("Salvataggio moduli menu non riuscito", {
+          description: e instanceof Error ? e.message : "Errore di rete",
         });
       }
     },
@@ -79,15 +90,12 @@ export function SidebarFeaturesProvider({ children }: { children: ReactNode }) {
         writeSidebarFeaturesToStorage(merged);
       } catch (e) {
         if (cancelled) return;
-        const msg =
-          "[pulse] sidebar-features GET failed — check Vercel /api (export default { fetch }), DATABASE_URL, migrations.";
-        if (import.meta.env.DEV) {
-          toast("Moduli menu: cache locale", {
-            description: "Neon non raggiungibile o tabella assente — esegui le migration.",
-          });
-        } else {
-          console.warn(msg, e);
-        }
+        // Never toast here: production PWA/cache can serve old bundles and users
+        // should not be interrupted for a background sync failure.
+        console.warn(
+          "[pulse] sidebar-features GET failed — using local cache. Check /api, DATABASE_URL, Neon migrations.",
+          e,
+        );
       }
     })();
     return () => {

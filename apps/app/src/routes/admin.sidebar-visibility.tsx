@@ -103,11 +103,10 @@ function AdminSidebarVisibility() {
         <p className="text-xs text-muted-foreground">
           Le modifiche vengono salvate su Neon (tabella{" "}
           <span className="font-mono">workspace_sidebar_features</span>) e replicate in cache
-          locale. Esegui <span className="font-mono">bun run db:migrate</span> in{" "}
-          <span className="font-mono">apps/app</span> con{" "}
-          <span className="font-mono">DATABASE_URL</span> impostato. Workspace logico: variabile{" "}
-          <span className="font-mono">VITE_WORKSPACE_KEY</span> (default{" "}
-          <span className="font-mono">default</span>).
+          locale. Su Vercel servono <span className="font-mono">DATABASE_URL</span> e{" "}
+          <span className="font-mono">CLERK_SECRET_KEY</span> nelle variabili d&apos;ambiente del
+          progetto (non solo la chiave pubblicabile). Diagnostica:{" "}
+          <span className="font-mono">GET /api/health</span>.
         </p>
       </div>
     </div>

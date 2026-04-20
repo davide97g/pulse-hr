@@ -4,9 +4,7 @@ const secretKey = process.env.CLERK_SECRET_KEY;
 const publishableKey = process.env.CLERK_PUBLISHABLE_KEY ?? process.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!secretKey) {
-  console.warn(
-    "[api/auth] CLERK_SECRET_KEY is not set — /api requests will fail with 401.",
-  );
+  console.warn("[api/auth] CLERK_SECRET_KEY is not set — /api requests will fail with 401.");
 }
 
 const clerk = secretKey ? createClerkClient({ secretKey, publishableKey }) : null;
@@ -22,15 +20,23 @@ export type AuthedUser = {
 export async function requireUser(request: Request): Promise<AuthedUser | Response> {
   if (!secretKey) {
     return new Response(
-      JSON.stringify({ error: { code: "server_misconfigured", message: "Clerk secret key missing" } }),
-      { status: 500, headers: { "content-type": "application/json" } },
+      JSON.stringify({
+        error: {
+          code: "clerk_secret_missing",
+          message:
+            "Set CLERK_SECRET_KEY in Vercel → Project → Settings → Environment Variables (server). The publishable key alone is not enough for /api routes.",
+        },
+      }),
+      { status: 503, headers: { "content-type": "application/json" } },
     );
   }
   const header = request.headers.get("authorization") ?? "";
   const match = header.match(/^Bearer\s+(.+)$/i);
   if (!match) {
     return new Response(
-      JSON.stringify({ error: { code: "no_bearer_token", message: "Authorization header missing or malformed" } }),
+      JSON.stringify({
+        error: { code: "no_bearer_token", message: "Authorization header missing or malformed" },
+      }),
       { status: 401, headers: { "content-type": "application/json" } },
     );
   }
@@ -48,9 +54,8 @@ export async function requireUser(request: Request): Promise<AuthedUser | Respon
     const claimEmail = (payload as Record<string, unknown>).email as string | undefined;
     const claimRole =
       ((payload as Record<string, unknown>).role as string | undefined) ??
-      (((payload as Record<string, unknown>).public_metadata as
-        | Record<string, unknown>
-        | undefined)?.role as string | undefined);
+      (((payload as Record<string, unknown>).public_metadata as Record<string, unknown> | undefined)
+        ?.role as string | undefined);
 
     let name = claimName;
     let avatarUrl = claimAvatar ?? null;
@@ -89,10 +94,10 @@ export async function requireUser(request: Request): Promise<AuthedUser | Respon
     if (process.env.NODE_ENV !== "production") {
       console.warn("[api/auth] verifyToken failed:", message);
     }
-    return new Response(
-      JSON.stringify({ error: { code: "token_verify_failed", message } }),
-      { status: 401, headers: { "content-type": "application/json" } },
-    );
+    return new Response(JSON.stringify({ error: { code: "token_verify_failed", message } }), {
+      status: 401,
+      headers: { "content-type": "application/json" },
+    });
   }
 }
 
