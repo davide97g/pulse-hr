@@ -16,6 +16,8 @@ export function PinLayer() {
     activeCommentId,
     openThread,
     closeThread,
+    author,
+    repositionComment,
   } = useCommentsOverlay();
 
   const [tick, setTick] = useState(0);
@@ -104,16 +106,29 @@ export function PinLayer() {
       }}
       aria-hidden={!placing}
     >
-      {resolvedPins.map(({ comment, x, y }) => (
-        <Pin
-          key={comment.id}
-          comment={comment}
-          x={x}
-          y={y}
-          active={comment.id === activeCommentId}
-          onClick={() => openThread(comment.id)}
-        />
-      ))}
+      {resolvedPins.map(({ comment, x, y }) => {
+        const isOwner = !!author && comment.author.id === author.id;
+        return (
+          <Pin
+            key={comment.id}
+            comment={comment}
+            x={x}
+            y={y}
+            active={comment.id === activeCommentId}
+            draggable={isOwner}
+            onClick={() => openThread(comment.id)}
+            onDragEnd={
+              isOwner
+                ? (cx, cy) => {
+                    repositionComment(comment.id, cx, cy).catch(() => {
+                      // error handling delegated upstream; optimistic rollback via refetch
+                    });
+                  }
+                : undefined
+            }
+          />
+        );
+      })}
 
       {placementPoint && (
         <NewCommentComposer

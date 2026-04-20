@@ -12,12 +12,18 @@ import {
 } from "../_lib/errors.js";
 import { serializeComment } from "../_lib/serialize.js";
 import { serve } from "../_lib/serve.js";
+import { AnchorSchema } from "../_lib/validation.js";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const EditSchema = z.object({
-  body: z.string().trim().min(1).max(4096),
-});
+const EditSchema = z
+  .object({
+    body: z.string().trim().min(1).max(4096).optional(),
+    anchor: AnchorSchema.optional(),
+  })
+  .refine((v) => v.body !== undefined || v.anchor !== undefined, {
+    message: "body or anchor required",
+  });
 
 function commentIdFrom(request: Request): string | null {
   const url = new URL(request.url);
@@ -58,7 +64,10 @@ async function handler(request: Request): Promise<Response> {
     const body = await request.json().catch(() => null);
     const parsed = EditSchema.safeParse(body);
     if (!parsed.success) return badRequest(parsed.error.issues[0]?.message ?? "invalid payload");
-    if (parsed.data.body === existing.body) {
+    const bodyChanged =
+      parsed.data.body !== undefined && parsed.data.body !== existing.body;
+    const anchorChanged = parsed.data.anchor !== undefined;
+    if (!bodyChanged && !anchorChanged) {
       // no-op; just return current state
       const [replies, votes] = await Promise.all([
         db
@@ -84,14 +93,23 @@ async function handler(request: Request): Promise<Response> {
       return json(serializeComment(existing, replies, { [commentId]: myVote }));
     }
 
-    await db.insert(schema.commentRevisions).values({
-      commentId,
-      previousBody: existing.body,
-      editedBy: user.id,
-    });
+    if (bodyChanged) {
+      await db.insert(schema.commentRevisions).values({
+        commentId,
+        previousBody: existing.body,
+        editedBy: user.id,
+      });
+    }
+    const updates: {
+      updatedAt: Date;
+      body?: string;
+      anchor?: typeof parsed.data.anchor;
+    } = { updatedAt: new Date() };
+    if (bodyChanged) updates.body = parsed.data.body;
+    if (anchorChanged) updates.anchor = parsed.data.anchor;
     const [updated] = await db
       .update(schema.comments)
-      .set({ body: parsed.data.body, updatedAt: new Date() })
+      .set(updates)
       .where(eq(schema.comments.id, commentId))
       .returning();
     const [replies, votes] = await Promise.all([

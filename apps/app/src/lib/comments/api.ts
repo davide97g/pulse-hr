@@ -1,4 +1,4 @@
-import type { Comment, NewCommentInput, Reply, CommentStatus } from "./types";
+import type { Anchor, Comment, NewCommentInput, Reply, CommentStatus } from "./types";
 
 type TokenGetter = () => Promise<string | null>;
 
@@ -100,4 +100,11 @@ export async function editComment(commentId: string, body: string): Promise<Comm
 
 export async function deleteComment(commentId: string): Promise<void> {
   await request<void>(`/api/comments/${commentId}`, { method: "DELETE" });
+}
+
+export async function repositionComment(commentId: string, anchor: Anchor): Promise<Comment> {
+  return request<Comment>(`/api/comments/${commentId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ anchor }),
+  });
 }

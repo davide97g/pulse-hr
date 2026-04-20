@@ -30,6 +30,7 @@ type CommentsContextValue = {
   vote: (commentId: string, value: -1 | 0 | 1) => Promise<void>;
   editComment: (commentId: string, body: string) => Promise<void>;
   deleteComment: (commentId: string) => Promise<void>;
+  repositionComment: (commentId: string, clientX: number, clientY: number) => Promise<void>;
 };
 
 const CommentsContext = createContext<CommentsContextValue | null>(null);
@@ -72,6 +73,7 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
     vote: voteApi,
     editComment: editCommentApi,
     deleteComment: deleteCommentApi,
+    repositionComment: repositionCommentApi,
   } = useComments(route, user?.id ?? null);
   const autoOpenedRef = useRef<string | null>(null);
 
@@ -241,6 +243,17 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
     [deleteCommentApi],
   );
 
+  const repositionComment = useCallback(
+    async (commentId: string, clientX: number, clientY: number) => {
+      const target = comments.find((c) => c.id === commentId);
+      if (!target || target.author.id !== author?.id) return;
+      const { captureAnchor } = await import("@/lib/comments/anchor");
+      const anchor = captureAnchor(clientX, clientY);
+      await repositionCommentApi(commentId, anchor);
+    },
+    [comments, author?.id, repositionCommentApi],
+  );
+
   const value: CommentsContextValue = {
     route,
     mode,
@@ -260,6 +273,7 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
     vote,
     editComment,
     deleteComment,
+    repositionComment,
   };
 
   return <CommentsContext.Provider value={value}>{children}</CommentsContext.Provider>;

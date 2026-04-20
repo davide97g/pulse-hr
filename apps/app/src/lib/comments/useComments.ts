@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Author, Comment, NewCommentInput } from "./types";
+import type { Anchor, Author, Comment, NewCommentInput } from "./types";
 import * as api from "./api";
 
 const POLL_MS = 10_000;
@@ -137,5 +137,31 @@ export function useComments(route: string, userId: string | null) {
     setComments((prev) => prev.filter((c) => c.id !== commentId));
   }, []);
 
-  return { comments, loaded, refetch, addComment, addReply, vote, editComment, deleteComment };
+  const repositionComment = useCallback(
+    async (commentId: string, anchor: Anchor) => {
+      // optimistic — pin snaps to new spot immediately, server call reconciles
+      setComments((prev) => prev.map((c) => (c.id === commentId ? { ...c, anchor } : c)));
+      try {
+        const updated = await api.repositionComment(commentId, anchor);
+        setComments((prev) => prev.map((c) => (c.id === commentId ? updated : c)));
+        return updated;
+      } catch (err) {
+        refetch();
+        throw err;
+      }
+    },
+    [refetch],
+  );
+
+  return {
+    comments,
+    loaded,
+    refetch,
+    addComment,
+    addReply,
+    vote,
+    editComment,
+    deleteComment,
+    repositionComment,
+  };
 }
