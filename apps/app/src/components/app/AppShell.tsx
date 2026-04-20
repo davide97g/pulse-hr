@@ -57,10 +57,19 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { isAdminUser } from "@/lib/comments/admin";
+import {
+  OVERRIDE_ROLES,
+  useEffectiveRole,
+  useIsEffectiveAdmin,
+  useIsRealAdmin,
+  useRoleOverride,
+} from "@/lib/role-override";
 import { notifications, managerAsks } from "@/lib/mock-data";
 import { buildSidebarNavGroups } from "@/lib/sidebar-nav-groups";
 import { cn } from "@/lib/utils";
@@ -83,8 +92,7 @@ export function AppShell() {
 function AppShellInner() {
   const location = useLocation();
   const appShellNav = useNavigate();
-  const { user } = useUser();
-  const admin = isAdminUser(user);
+  const admin = useIsEffectiveAdmin();
   const { isFeatureEnabled } = useSidebarFeatures();
   const hasOpenManagerAsks = useMemo(() => managerAsks.some((a) => a.status === "pending"), []);
   const groups = useMemo(() => {
@@ -385,6 +393,13 @@ function Topbar({
     user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
     "Signed in";
   const displayEmail = user?.primaryEmailAddress?.emailAddress ?? "";
+  const effectiveRole = useEffectiveRole();
+  const displayRole = effectiveRole
+    ? effectiveRole.charAt(0).toUpperCase() + effectiveRole.slice(1)
+    : "";
+  const isAdmin = useIsEffectiveAdmin();
+  const isRealAdmin = useIsRealAdmin();
+  const { override, setOverride } = useRoleOverride();
   const initials =
     (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") ||
     displayName.slice(0, 2).toUpperCase();
@@ -556,11 +571,17 @@ function Topbar({
               <img
                 src={user.imageUrl}
                 alt={displayName}
-                className="h-7 w-7 rounded-full object-cover"
+                className={cn(
+                  "h-7 w-7 rounded-full object-cover",
+                  isAdmin && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                )}
               />
             ) : (
               <div
-                className="h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-medium"
+                className={cn(
+                  "h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-medium",
+                  isAdmin && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                )}
                 style={{ backgroundColor: "oklch(0.6 0.16 220)" }}
               >
                 {initials.toUpperCase().slice(0, 2) || "?"}
@@ -569,7 +590,7 @@ function Topbar({
             <div className="hidden md:block text-left max-w-[140px]">
               <div className="text-xs font-medium leading-tight truncate">{displayName}</div>
               <div className="text-[10px] text-muted-foreground leading-tight truncate">
-                {displayEmail || "Pulse HR workspace"}
+                {displayRole || displayEmail || "Pulse HR workspace"}
               </div>
             </div>
           </button>
@@ -579,7 +600,49 @@ function Topbar({
           <DropdownMenuItem asChild>
             <Link to="/profile">Profile</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>Switch role</DropdownMenuItem>
+          {isRealAdmin && (
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <span className="flex-1">Switch role</span>
+                {override && (
+                  <span className="ml-2 text-[10px] uppercase tracking-wide text-muted-foreground">
+                    {override}
+                  </span>
+                )}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="w-44">
+                <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                  View as
+                </DropdownMenuLabel>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setOverride(null);
+                    toast.success("Back to admin view");
+                  }}
+                >
+                  <span className="flex-1">Admin</span>
+                  {!override && <span className="text-xs text-muted-foreground">current</span>}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {OVERRIDE_ROLES.map((r) => (
+                  <DropdownMenuItem
+                    key={r}
+                    onSelect={() => {
+                      setOverride(r);
+                      toast.success(`Viewing as ${r}`, {
+                        description: "You can switch back any time.",
+                      });
+                    }}
+                  >
+                    <span className="flex-1 capitalize">{r}</span>
+                    {override === r && (
+                      <span className="text-xs text-muted-foreground">current</span>
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
         </DropdownMenuContent>

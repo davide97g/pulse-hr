@@ -30,7 +30,7 @@ import {
 } from "@/lib/comments/api";
 import type { BoardBuckets } from "@/lib/comments/api";
 import type { Comment, CommentStatus } from "@/lib/comments/types";
-import { isAdminUser } from "@/lib/comments/admin";
+import { useIsEffectiveAdmin } from "@/lib/role-override";
 
 export const Route = createFileRoute("/feedback")({
   head: () => ({ meta: [{ title: "Feedback — Pulse" }] }),
@@ -62,7 +62,7 @@ function FeedbackBoard() {
   const [query, setQuery] = useState("");
   const [routeFilter, setRouteFilter] = useState<string>("");
   const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
-  const admin = isAdminUser(user);
+  const admin = useIsEffectiveAdmin();
 
   useEffect(() => {
     setTokenGetter(() => getToken());

@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/app/AppShell";
-import { isAdminUser } from "@/lib/comments/admin";
+import { useIsEffectiveAdmin } from "@/lib/role-override";
 import {
   defaultSidebarFeaturesEnabled,
   SIDEBAR_FEATURE_LABELS_IT,
@@ -23,8 +23,8 @@ export const Route = createFileRoute("/admin/sidebar-visibility")({
 });
 
 function AdminSidebarVisibility() {
-  const { user, isLoaded } = useUser();
-  const admin = isAdminUser(user);
+  const { isLoaded } = useUser();
+  const admin = useIsEffectiveAdmin();
   const { enabled, setEnabled, setAll } = useSidebarFeatures();
 
   const hasOpenManagerAsks = useMemo(() => managerAsks.some((a) => a.status === "pending"), []);

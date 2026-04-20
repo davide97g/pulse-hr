@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { getRouter } from "./router";
 import { ThemeProvider } from "./components/app/ThemeProvider";
 import { WorkspaceProvider } from "./components/app/WorkspaceContext";
+import { RoleOverrideProvider } from "./lib/role-override";
 import "./styles.css";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -47,11 +48,13 @@ if (!el) throw new Error("#root not found");
 ReactDOM.createRoot(el).render(
   <React.StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/login">
-      <ThemeProvider>
-        <WorkspaceProvider>
-          <RouterProvider router={router} />
-        </WorkspaceProvider>
-      </ThemeProvider>
+      <RoleOverrideProvider>
+        <ThemeProvider>
+          <WorkspaceProvider>
+            <RouterProvider router={router} />
+          </WorkspaceProvider>
+        </ThemeProvider>
+      </RoleOverrideProvider>
     </ClerkProvider>
   </React.StrictMode>,
 );

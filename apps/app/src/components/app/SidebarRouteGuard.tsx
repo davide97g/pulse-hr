@@ -1,6 +1,6 @@
 import { useUser } from "@clerk/react";
 import { Navigate, useLocation } from "@tanstack/react-router";
-import { isAdminUser } from "@/lib/comments/admin";
+import { useIsEffectiveAdmin } from "@/lib/role-override";
 import {
   ADMIN_SIDEBAR_VISIBILITY_PATH,
   firstEnabledAppPath,
@@ -14,9 +14,9 @@ import { useSidebarFeatures } from "@/components/app/SidebarFeaturesContext";
  */
 export function SidebarRouteGuard({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
-  const { user, isLoaded } = useUser();
+  const { isLoaded } = useUser();
   const { enabled } = useSidebarFeatures();
-  const admin = isAdminUser(user);
+  const admin = useIsEffectiveAdmin();
 
   if (!isLoaded) {
     return (
