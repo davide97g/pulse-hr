@@ -1,0 +1,254 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Cta from "../components/Cta.astro";
+import { Scale, CheckCircle2, XCircle, MinusCircle, AlertTriangle } from "lucide-astro";
+
+const title = "Pulse HR vs Rippling, Deel, BambooHR — honest comparison";
+const description =
+  "Straight comparison of Pulse HR against Rippling, Deel, BambooHR, Gusto and Personio across the four things we think matter most: open source, modularity, ecosystem and keyboard-first UX. Including where we're weaker.";
+const path = "/vs";
+const keywords =
+  "Pulse HR vs Rippling, Pulse HR vs Deel, Pulse HR vs BambooHR, open source HR, HR comparison, HRIS comparison";
+
+// Vendors — us first so the reader frames from our side.
+const VENDORS = [
+  { k: "pulse",    n: "Pulse HR",  self: true  },
+  { k: "rippling", n: "Rippling",  self: false },
+  { k: "deel",     n: "Deel",      self: false },
+  { k: "bamboo",   n: "BambooHR",  self: false },
+  { k: "gusto",    n: "Gusto",     self: false },
+  { k: "personio", n: "Personio",  self: false },
+];
+
+type Cell = "yes" | "partial" | "no";
+
+interface Row {
+  cat: string;
+  q: string;
+  n?: string; // footnote
+  cells: Record<string, Cell>;
+}
+
+const ROWS: Row[] = [
+  // Open source
+  { cat: "Open source", q: "Source code public",
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+  { cat: "Open source", q: "Permissive future license (converts to MIT/Apache)",
+    n: "Pulse is FSL-1.1-MIT — every release becomes plain MIT after 2 years.",
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+  { cat: "Open source", q: "Self-host on your own infra",
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+  { cat: "Open source", q: "Public issue tracker / accept PRs",
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+
+  // Modularity
+  { cat: "Modular", q: "Adopt one module without paying for the suite",
+    n: "Money, People and Work can be enabled independently.",
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "partial", gusto: "no", personio: "partial" } },
+  { cat: "Modular", q: "No forced payroll seat when you only want HR",
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "yes", gusto: "no", personio: "partial" } },
+  { cat: "Modular", q: "Time tracking as a standalone module",
+    cells: { pulse: "yes", rippling: "partial", deel: "no", bamboo: "partial", gusto: "no", personio: "partial" } },
+  { cat: "Modular", q: "Project-first (commessa) hours + margin tracking",
+    n: "Real cost/revenue per commessa, not just \"tag a project\" on a timesheet.",
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+
+  // Ecosystem
+  { cat: "Ecosystem", q: "Public REST API (included on every tier)",
+    cells: { pulse: "yes", rippling: "partial", deel: "partial", bamboo: "partial", gusto: "partial", personio: "yes" } },
+  { cat: "Ecosystem", q: "Webhooks on every resource event",
+    n: "Pulse ships employee/leave/timesheet/expense/payroll/payslip/candidate/commessa events.",
+    cells: { pulse: "yes", rippling: "partial", deel: "partial", bamboo: "partial", gusto: "partial", personio: "partial" } },
+  { cat: "Ecosystem", q: "API access without enterprise upsell",
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "partial", personio: "yes" } },
+  { cat: "Ecosystem", q: "Maintained SDKs (TS / Python / Go)",
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "partial", personio: "no" } },
+  { cat: "Ecosystem", q: "OpenAPI spec published",
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "partial", personio: "yes" } },
+
+  // Keyboard-first
+  { cat: "Keyboard-first", q: "⌘K global fuzzy search",
+    cells: { pulse: "yes", rippling: "partial", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+  { cat: "Keyboard-first", q: "Natural-language command bar (⌘J)",
+    n: "Local deterministic parser — no LLM, works offline.",
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+  { cat: "Keyboard-first", q: "Offline PWA (install + work on a plane)",
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+  { cat: "Keyboard-first", q: "Native voice dictation",
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+
+  // Pricing & access
+  { cat: "Pricing & access", q: "Free tier for small teams",
+    n: "Pulse: free for the first 5 active employees, forever. No feature paywall.",
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "no", personio: "no" } },
+  { cat: "Pricing & access", q: "Published per-seat price (no \"contact sales\")",
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "yes", personio: "no" } },
+  { cat: "Pricing & access", q: "One tier — no enterprise unlock for SSO / API / audit log",
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "partial", personio: "no" } },
+];
+
+// Honest weaknesses — the "where they're stronger" section.
+const WEAKNESSES = [
+  {
+    against: "Rippling",
+    body: "Deeper IT / device management (MDM, app provisioning), broader in-house global payroll (50+ countries natively), bigger compliance team. Pick Rippling if you need device fleet control and a single vendor for IT + HR.",
+  },
+  {
+    against: "Deel",
+    body: "Global contractor payments at scale, embedded EOR in ~150 countries, bigger legal/tax desk. Pick Deel if your primary need is hiring and paying contractors across borders.",
+  },
+  {
+    against: "BambooHR",
+    body: "Largest SMB install base with a mature performance-review module, open-enrolment flows, and a deep integrations marketplace. Pick BambooHR if you want the most battle-tested US-SMB HR experience and don't need an API.",
+  },
+  {
+    against: "Gusto",
+    body: "Best-in-class US-only payroll UX, embedded benefits broker, tax filing depth across all 50 states. Pick Gusto if you are US-only and payroll is your primary need.",
+  },
+  {
+    against: "Personio",
+    body: "Mature EU HR platform with strong DE / AT local compliance, a proven customer success motion in mid-market Europe. Pick Personio if you're a German-speaking mid-market team who values account managers over APIs.",
+  },
+];
+
+const icon = {
+  yes:     { I: CheckCircle2, c: "text-[#b4ff39]" },
+  partial: { I: MinusCircle,  c: "text-[#ffbf4a]" },
+  no:      { I: XCircle,      c: "text-white/30" },
+};
+
+// Build row groups by category preserving order.
+const CATEGORIES = Array.from(new Set(ROWS.map((r) => r.cat)));
+---
+
+<BaseLayout {title} {description} {path} {keywords}>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+        <Scale class="h-3 w-3" /> Honest comparison
+      </p>
+      <h1 class="font-display text-[56px] md:text-[80px] leading-[0.95] tracking-tight max-w-4xl">
+        Pulse HR vs<br />
+        <em class="italic text-[#b4ff39]">everyone else</em>.
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        This isn't a marketing page that picks three cherry-picked checkmarks and
+        calls it a day. It's a real comparison across the four things we believe
+        matter most — open source, modularity, ecosystem, keyboard-first — plus
+        pricing, plus where each competitor is genuinely better than us.
+      </p>
+
+      <div class="mt-8 flex items-center gap-5 flex-wrap text-sm text-white/60">
+        <span class="inline-flex items-center gap-1.5">
+          <CheckCircle2 class="h-4 w-4 text-[#b4ff39]" /> Fully supported
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <MinusCircle class="h-4 w-4 text-[#ffbf4a]" /> Partial / gated behind a tier
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <XCircle class="h-4 w-4 text-white/30" /> Not supported
+        </span>
+      </div>
+
+      <p class="mt-6 text-[11px] text-white/40 font-mono uppercase tracking-[0.15em]">
+        Based on publicly available docs &amp; pricing pages as of 2026-04-20. If anything below is stale, open an issue and we'll fix it.
+      </p>
+    </section>
+
+    {CATEGORIES.map((cat) => {
+      const rows = ROWS.filter((r) => r.cat === cat);
+      return (
+        <section class="max-w-[1280px] mx-auto px-6 py-8">
+          <h2 class="font-display text-3xl tracking-tight mb-4">{cat}</h2>
+          <div class="rounded-2xl border border-white/10 bg-[#0f0f11] overflow-hidden overflow-x-auto scrollbar-thin">
+            <table class="w-full min-w-[860px] text-sm">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th class="text-left px-5 py-3 font-medium text-white/70 w-[38%]">&nbsp;</th>
+                  {VENDORS.map((v) => (
+                    <th class:list={[
+                      "text-center px-3 py-3 font-medium",
+                      v.self ? "text-[#b4ff39] bg-[#b4ff39]/5" : "text-white/70",
+                    ]}>
+                      {v.n}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r, i) => (
+                  <tr class={i % 2 === 0 ? "bg-white/[0.01]" : ""}>
+                    <td class="px-5 py-3 text-white/85 border-r border-white/5">
+                      <div>{r.q}</div>
+                      {r.n && <div class="text-[11px] text-white/40 mt-1 leading-relaxed">{r.n}</div>}
+                    </td>
+                    {VENDORS.map((v) => {
+                      const c = r.cells[v.k];
+                      const I = icon[c].I;
+                      return (
+                        <td class:list={["text-center px-3 py-3", v.self ? "bg-[#b4ff39]/5" : ""]}>
+                          <I class={`h-5 w-5 inline ${icon[c].c}`} />
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      );
+    })}
+
+    <section class="max-w-[1280px] mx-auto px-6 py-16">
+      <div class="max-w-2xl mb-10">
+        <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#ffbf4a] mb-4 inline-flex items-center gap-2">
+          <AlertTriangle class="h-3 w-3" /> Where we're weaker
+        </p>
+        <h2 class="font-display text-4xl md:text-5xl tracking-tight leading-[1.05]">
+          Every vendor<br />does <em class="italic text-[#ffbf4a]">something</em> better.
+        </h2>
+        <p class="mt-6 text-white/70 leading-relaxed">
+          Pulse is opinionated. We traded breadth (50-country in-house payroll,
+          Workday-grade compliance matrices, a 200-strong customer-success team)
+          for depth on the four pillars above. Here's when another vendor is the
+          right call.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {WEAKNESSES.map((w) => (
+          <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
+            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-[#ffbf4a] mb-2">Pick them over us for</p>
+            <h3 class="font-display text-2xl mb-3">{w.against}</h3>
+            <p class="text-white/70 leading-relaxed text-[14px]">{w.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="max-w-[960px] mx-auto px-6 py-20">
+      <h2 class="font-display text-3xl md:text-4xl tracking-tight mb-5">
+        The one-line decision tree.
+      </h2>
+      <ol class="space-y-3 text-white/75 leading-relaxed list-decimal list-inside">
+        <li>If you need <strong>device management + global payroll in one vendor</strong> → Rippling.</li>
+        <li>If your primary need is <strong>paying contractors across borders</strong> → Deel.</li>
+        <li>If you're a <strong>US-SMB prioritising performance reviews</strong> → BambooHR.</li>
+        <li>If you're <strong>US-only and payroll comes first</strong> → Gusto.</li>
+        <li>If you're <strong>German-speaking mid-market Europe</strong> → Personio.</li>
+        <li>
+          If you want <strong>open source, modular adoption, a real API, keyboard-first UX</strong>,
+          and you value being able to read the code that runs your HR data →
+          <a href="/" class="text-[#b4ff39] hover:underline">Pulse HR</a>.
+        </li>
+      </ol>
+    </section>
+
+    <Cta />
+  </main>
+  <Footer />
+</BaseLayout>
