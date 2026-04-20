@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Shared design primitives — single source of truth at packages/tokens.
+   Exposes `--wp-color-*`, `--wp-font-*`, `--wp-radius-*` etc. */
+@import "@workflows-people/tokens/tokens.css";
+
 /* Self-hosted fonts — kill third-party dependency on fonts.googleapis.com.
    Variable axes (wght 100–900) cover every weight used across the site. */
 @import "@fontsource-variable/fraunces/index.css";
@@ -8,15 +12,18 @@
 @import "@fontsource/jetbrains-mono/400.css";
 @import "@fontsource/jetbrains-mono/600.css";
 
+/* Tailwind's @theme block re-exports the shared tokens under the names
+   Tailwind expects (`--font-*`, `--color-*`) so the site's existing
+   class utilities keep working without a class-name migration. */
 @theme {
-  --font-display: "Fraunces Variable", "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
-  --font-sans: "Geist Variable", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: var(--wp-font-display);
+  --font-sans: var(--wp-font-sans);
+  --font-mono: var(--wp-font-mono);
 
-  --color-brand: #b4ff39;
-  --color-brand-hover: #c6ff5a;
-  --color-ink: #0b0b0d;
-  --color-cream: #f2f2ee;
+  --color-brand: var(--wp-color-brand);
+  --color-brand-hover: var(--wp-color-brand-hover);
+  --color-ink: var(--wp-color-ink);
+  --color-cream: var(--wp-color-cream);
 }
 
 @layer base {

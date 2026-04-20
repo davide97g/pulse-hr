@@ -2,7 +2,7 @@
   "name": "workflows-people",
   "private": true,
   "type": "module",
-  "workspaces": ["apps/*"],
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev": "bun run --filter '@workflows-people/app' dev",
     "dev:marketing": "bun run --filter 'pulse-hr-marketing' dev",
