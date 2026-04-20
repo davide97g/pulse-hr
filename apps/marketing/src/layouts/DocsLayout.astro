@@ -1,0 +1,81 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { BookOpen, Sparkles, Gauge, Briefcase, Plug, Users } from "lucide-astro";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  keywords?: string;
+}
+
+const { title, description, path, keywords } = Astro.props;
+
+const TOPICS = [
+  { href: "/docs/employee-score",   label: "Employee Score",     desc: "How the 0–100 signal is derived.", icon: Sparkles,  featured: true },
+  { href: "/docs/saturation",       label: "Saturation",         desc: "Heatmap, margins, value, insights.", icon: Gauge },
+  { href: "/docs/clients-projects", label: "Clients & Projects", desc: "Hierarchy, allocations, Gantt.",    icon: Briefcase },
+  { href: "/docs/integrations",     label: "Jira & Linear",      desc: "Ticket sync + webhook replay.",     icon: Plug },
+  { href: "/docs/kudos",            label: "Kudos & Recognition", desc: "Peer coins and how they score.",   icon: Users },
+] as const;
+
+const current = path.replace(/\/$/, "") || "/";
+---
+
+<BaseLayout {title} {description} {path} keywords={keywords ?? "Pulse HR docs, documentation, employee score, saturation, integrations, kudos"}>
+  <Nav />
+  <main id="main" class="max-w-[1280px] mx-auto px-6 py-12 md:py-16">
+    <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+      <BookOpen class="h-3 w-3" /> Docs
+    </p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-10">
+      <aside class="lg:sticky lg:top-24 self-start">
+        <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-4">Topics</p>
+        <nav class="space-y-1" aria-label="Docs navigation">
+          <a
+            href="/docs"
+            class:list={[
+              "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+              current === "/docs"
+                ? "bg-white/[0.06] text-white"
+                : "text-white/60 hover:text-white hover:bg-white/[0.03]",
+            ]}
+          >
+            <BookOpen class="h-4 w-4 text-[#b4ff39]" />
+            Overview
+          </a>
+          {TOPICS.map((t) => (
+            <a
+              href={t.href}
+              class:list={[
+                "flex items-start gap-3 px-3 py-2 rounded-md transition-colors",
+                current === t.href
+                  ? "bg-white/[0.06] text-white"
+                  : "text-white/60 hover:text-white hover:bg-white/[0.03]",
+              ]}
+            >
+              <span class:list={[
+                "h-6 w-6 rounded-md grid place-items-center shrink-0 mt-0.5",
+                t.featured ? "bg-[#b4ff39]/15 text-[#b4ff39]" : "bg-white/5 text-white/50",
+              ]}>
+                <t.icon class="h-3.5 w-3.5" />
+              </span>
+              <span class="min-w-0">
+                <span class="block text-sm font-medium truncate">{t.label}</span>
+                <span class="block text-[11px] text-white/40 leading-snug line-clamp-2">{t.desc}</span>
+              </span>
+            </a>
+          ))}
+        </nav>
+      </aside>
+
+      <article class="min-w-0 prose-invert max-w-3xl">
+        <slot />
+      </article>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

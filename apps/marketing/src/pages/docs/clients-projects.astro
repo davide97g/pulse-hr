@@ -1,0 +1,60 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import { Briefcase } from "lucide-astro";
+
+const title = "Clients & Projects — Pulse HR docs";
+const description =
+  "Managing the work we sell and who delivers it. Client → Project → Activity hierarchy, team allocations, activity boards, Gantt charts, and external work-item links.";
+const path = "/docs/clients-projects";
+
+const SECTIONS = [
+  {
+    t: "Hierarchy",
+    body: [
+      `Everything rolls up from <strong>Client → Project → Activity</strong>. A client is the billing entity; projects are the engagements under it; activities are the planning units inside a project.`,
+      `Create clients and projects from the Clients &amp; Projects page. Each client has an account owner (an employee); each project has an owner and a default billable rate.`,
+    ],
+  },
+  {
+    t: "Team allocations",
+    body: [
+      `Open a project and use the <strong>Team</strong> tab to add employees. Each allocation has a type (dev / design / pm / qa / ops / consult), a weekly percentage, a date window, and an optional rate override. Percentages feed Saturation and cost/revenue numbers directly.`,
+    ],
+  },
+  {
+    t: "Activities, boards, and Gantt",
+    body: [
+      `Activities live on the <strong>Board</strong> tab as a Kanban (drag between columns). Give them start and end dates and they'll also show up on the <strong>Gantt</strong> tab with dependency arrows. There are three Gantt scopes in total — per project, per client, and per person.`,
+    ],
+  },
+  {
+    t: "External work items",
+    body: [
+      `Connect Jira and Linear in <a href="/docs/integrations" class="text-[#b4ff39] hover:underline">Settings → Integrations</a> to pull issues. Each activity can point at one ticket key for traceability. Ticket keys show as small colour-coded pills throughout.`,
+    ],
+  },
+];
+---
+
+<DocsLayout {title} {description} {path}>
+  <div class="flex items-center gap-3 mb-6">
+    <span class="h-10 w-10 rounded-lg bg-[#ffbf4a]/15 text-[#ffbf4a] grid place-items-center">
+      <Briefcase class="h-5 w-5" />
+    </span>
+    <div>
+      <h1 class="font-display text-4xl md:text-5xl tracking-tight m-0">Clients &amp; Projects</h1>
+      <p class="text-sm text-white/50 mt-1 m-0">Managing the work we sell and who delivers it.</p>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    {SECTIONS.map((s) => (
+      <section class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
+        <h2 class="font-display text-xl tracking-tight mb-3 m-0">{s.t}</h2>
+        <div class="space-y-3 text-white/75 leading-relaxed text-[15px]">
+          {s.body.map((p) => <p set:html={p} class="m-0" />)}
+        </div>
+      </section>
+    ))}
+  </div>
+</DocsLayout>

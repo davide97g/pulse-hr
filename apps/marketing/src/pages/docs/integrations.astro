@@ -1,0 +1,59 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import { Plug } from "lucide-astro";
+
+const title = "Jira & Linear integrations — Pulse HR docs";
+const description =
+  "Pulling external tickets alongside Pulse HR projects. OAuth connect flow, linking tickets to activities, syncing issues into a project, webhook error simulation.";
+const path = "/docs/integrations";
+
+const SECTIONS = [
+  {
+    t: "Connecting",
+    body: [
+      `Open <strong>Settings → Integrations</strong> and click <strong>Connect</strong> on Jira or Linear. We mock the OAuth handshake for now (a fixed workspace is returned), but the flow mirrors what a real integration looks like: connect → see workspace slug → sync on demand → webhook log.`,
+    ],
+  },
+  {
+    t: "Linking tickets to activities",
+    body: [
+      `On any activity, add a link with the provider and issue key (e.g. <code class="font-mono text-[#b4ff39]">ACME-22</code> for Jira or <code class="font-mono text-[#b4ff39]">NOV-11</code> for Linear). The key shows up as a small colour-coded pill on the board, Gantt, and any list of activities.`,
+    ],
+  },
+  {
+    t: "Syncing issues into a project",
+    body: [
+      `On a project's <strong>Integrations</strong> tab, hit Sync to pull issues from connected providers. Synced issues show in a simple table with assignee, status, and a link back to the original system.`,
+    ],
+  },
+  {
+    t: "Disconnecting or simulating errors",
+    body: [
+      `Use <strong>Disconnect</strong> to tear down the connection. Each connected card also has a quiet "simulate webhook error" button for exercising the error UI — connection flips to a red error pill.`,
+    ],
+  },
+];
+---
+
+<DocsLayout {title} {description} {path}>
+  <div class="flex items-center gap-3 mb-6">
+    <span class="h-10 w-10 rounded-lg bg-white/5 text-[#a3a3ff] grid place-items-center">
+      <Plug class="h-5 w-5" />
+    </span>
+    <div>
+      <h1 class="font-display text-4xl md:text-5xl tracking-tight m-0">Jira &amp; Linear</h1>
+      <p class="text-sm text-white/50 mt-1 m-0">Pulling external tickets alongside Pulse HR projects.</p>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    {SECTIONS.map((s) => (
+      <section class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
+        <h2 class="font-display text-xl tracking-tight mb-3 m-0">{s.t}</h2>
+        <div class="space-y-3 text-white/75 leading-relaxed text-[15px]">
+          {s.body.map((p) => <p set:html={p} class="m-0" />)}
+        </div>
+      </section>
+    ))}
+  </div>
+</DocsLayout>

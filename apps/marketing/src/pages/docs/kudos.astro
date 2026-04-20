@@ -1,0 +1,53 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import { Users } from "lucide-astro";
+
+const title = "Kudos & Recognition — Pulse HR docs";
+const description =
+  "Peer coins, tagged by contribution kind. How giving a kudos works, how it feeds the Employee Score's Recognition factor, and how the leaderboard is ordered.";
+const path = "/docs/kudos";
+
+const SECTIONS = [
+  {
+    t: "Giving a kudos",
+    body: [
+      `On the Kudos page, pick a teammate, a coin amount, a tag (teamwork / craft / impact / courage / kindness), and a short note explaining why. The coins are symbolic — it's the note that matters.`,
+    ],
+  },
+  {
+    t: "How it feeds the score",
+    body: [
+      `Kudos received and given in the last 60 days feed the <strong>Recognition</strong> factor of the <a href="/docs/employee-score" class="text-[#b4ff39] hover:underline">Employee Score</a>. Receiving is weighted ~4× more than giving to avoid farming, but giving still counts — pay it forward.`,
+    ],
+  },
+  {
+    t: "Leaderboard",
+    body: [
+      `The built-in leaderboard sorts by coins received this quarter. Treat it as a running thank-you list rather than a competition.`,
+    ],
+  },
+];
+---
+
+<DocsLayout {title} {description} {path}>
+  <div class="flex items-center gap-3 mb-6">
+    <span class="h-10 w-10 rounded-lg bg-[#ff8a7a]/15 text-[#ff8a7a] grid place-items-center">
+      <Users class="h-5 w-5" />
+    </span>
+    <div>
+      <h1 class="font-display text-4xl md:text-5xl tracking-tight m-0">Kudos &amp; Recognition</h1>
+      <p class="text-sm text-white/50 mt-1 m-0">Peer coins, tagged by the kind of contribution.</p>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    {SECTIONS.map((s) => (
+      <section class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
+        <h2 class="font-display text-xl tracking-tight mb-3 m-0">{s.t}</h2>
+        <div class="space-y-3 text-white/75 leading-relaxed text-[15px]">
+          {s.body.map((p) => <p set:html={p} class="m-0" />)}
+        </div>
+      </section>
+    ))}
+  </div>
+</DocsLayout>

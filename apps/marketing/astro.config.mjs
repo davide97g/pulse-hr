@@ -17,7 +17,6 @@ export default defineConfig({
       filter: (page) => {
         const STUB_ROUTES = [
           "/pricing",
-          "/docs",
           "/docs/api",
           "/security",
           "/contact",

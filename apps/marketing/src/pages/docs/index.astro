@@ -1,0 +1,93 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import { ArrowUpRight, Sparkles, Gauge, Briefcase, Plug, Users } from "lucide-astro";
+
+const title = "Docs — Pulse HR";
+const description =
+  "Short, practical explanations of the features you'll use day-to-day — Employee Score, Saturation, Clients & Projects, Jira / Linear integrations, Kudos. Every formula behind every number we surface.";
+const path = "/docs";
+
+const CARDS = [
+  {
+    href: "/docs/employee-score",
+    label: "Employee Score",
+    desc: "0–100 weighted average of delivery, utilisation, value, recognition, focus, and billable ratio. See how each factor is computed and what to do to move it.",
+    icon: Sparkles,
+    featured: true,
+  },
+  {
+    href: "/docs/saturation",
+    label: "Saturation",
+    desc: "Team load heatmap, utilisation trend, project margins, employee value, and the Insights triage surface.",
+    icon: Gauge,
+  },
+  {
+    href: "/docs/clients-projects",
+    label: "Clients & Projects",
+    desc: "Managing clients, projects, team allocations, activity boards, Gantt charts, and owners.",
+    icon: Briefcase,
+  },
+  {
+    href: "/docs/integrations",
+    label: "Jira & Linear",
+    desc: "Connecting external trackers, syncing issues into projects, and linking tickets to activities.",
+    icon: Plug,
+  },
+  {
+    href: "/docs/kudos",
+    label: "Kudos & Recognition",
+    desc: "Peer kudos, coin amounts, leaderboard, and how kudos feed the employee score.",
+    icon: Users,
+  },
+] as const;
+---
+
+<DocsLayout {title} {description} {path}>
+  <h1 class="font-display text-5xl md:text-6xl tracking-tight leading-[1.02] mb-4">
+    Welcome to the docs.
+  </h1>
+  <p class="text-white/70 text-lg leading-relaxed max-w-2xl mb-10">
+    Short, practical explanations of the features you'll use day-to-day. Every
+    topic includes the formulas behind any number we surface — nothing is magic.
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    {CARDS.map((c) => (
+      <a
+        href={c.href}
+        class:list={[
+          "group rounded-2xl border bg-[#0f0f11] p-5 hover:-translate-y-0.5 hover:bg-[#141418] transition-all",
+          c.featured ? "border-[#b4ff39]/40" : "border-white/10 hover:border-white/20",
+        ]}
+      >
+        <div class="flex items-start gap-3">
+          <span class:list={[
+            "h-10 w-10 rounded-lg grid place-items-center shrink-0",
+            c.featured ? "bg-[#b4ff39]/15 text-[#b4ff39]" : "bg-white/5 text-white/60",
+          ]}>
+            <c.icon class="h-5 w-5" />
+          </span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <h3 class="font-display text-lg m-0">{c.label}</h3>
+              <ArrowUpRight class="h-3.5 w-3.5 text-white/40 group-hover:text-[#b4ff39] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+            </div>
+            <p class="text-[13px] text-white/55 mt-1 leading-relaxed">{c.desc}</p>
+          </div>
+        </div>
+      </a>
+    ))}
+  </div>
+
+  <section class="mt-14 rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
+    <h2 class="font-display text-2xl mb-3">Looking for the API reference?</h2>
+    <p class="text-white/65 leading-relaxed mb-4">
+      The REST API and webhook catalogue are documented separately. See the
+      <a href="/ecosystem" class="text-[#b4ff39] hover:underline">Ecosystem page</a>
+      for endpoints, events and SDK downloads.
+    </p>
+    <a href="/docs/api" class="inline-flex items-center gap-2 text-sm font-mono text-white/70 hover:text-white">
+      /docs/api <ArrowUpRight class="h-3.5 w-3.5" />
+    </a>
+  </section>
+</DocsLayout>
