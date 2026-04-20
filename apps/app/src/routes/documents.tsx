@@ -25,6 +25,7 @@ import { PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { docsSeed, type Doc } from "@/lib/mock-data";
+import { useFullName } from "@/lib/current-user";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/documents")({
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/documents")({
 const FOLDERS = ["Contracts", "Policies", "Templates", "Tax forms", "Onboarding"];
 
 function Documents() {
+  const me = useFullName() || "You";
   const [list, setList] = useState<Doc[]>(docsSeed);
   const [folder, setFolder] = useState<string | null>(null);
   const [q, setQ] = useState("");
@@ -185,7 +187,7 @@ function Documents() {
               const d: Doc = {
                 id: `d-${Date.now()}`,
                 name: data.name, folder: data.folder, size: "— KB", updated: "just now",
-                status: "draft", owner: "Alex Carter",
+                status: "draft", owner: me,
               };
               setList(ls => [d, ...ls]);
               toast.success("Uploaded", { description: d.name });

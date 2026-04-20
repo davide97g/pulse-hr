@@ -15,6 +15,7 @@
 import { useSyncExternalStore } from "react";
 
 export const SCHEMA_VERSION = 1;
+export const DEFAULT_WORKSPACE_NAME = "Acme";
 const ROOT = "pulse.ws";
 
 // ── Current user ─────────────────────────────────────────────────────
@@ -82,10 +83,32 @@ export function needsResetForSchema(): boolean {
   return v != null && v !== SCHEMA_VERSION;
 }
 
-export function createWorkspace() {
+export function getWorkspaceName(): string {
+  const k = metaKey("workspaceName");
+  if (!k) return DEFAULT_WORKSPACE_NAME;
+  try {
+    return localStorage.getItem(k) || DEFAULT_WORKSPACE_NAME;
+  } catch {
+    return DEFAULT_WORKSPACE_NAME;
+  }
+}
+
+export function setWorkspaceName(name: string) {
+  const k = metaKey("workspaceName");
+  if (!k) return;
+  try {
+    localStorage.setItem(k, name);
+  } catch (err) {
+    console.warn("setWorkspaceName: write failed", err);
+  }
+  notifyStatus();
+}
+
+export function createWorkspace(name: string = DEFAULT_WORKSPACE_NAME) {
   const readyK = metaKey("workspaceReady");
   const versionK = metaKey("schemaVersion");
-  if (!readyK || !versionK) {
+  const nameK = metaKey("workspaceName");
+  if (!readyK || !versionK || !nameK) {
     console.warn("createWorkspace: no Clerk user yet, ignoring");
     return;
   }
@@ -93,6 +116,7 @@ export function createWorkspace() {
   try {
     localStorage.setItem(readyK, "true");
     localStorage.setItem(versionK, String(SCHEMA_VERSION));
+    localStorage.setItem(nameK, name.trim() || DEFAULT_WORKSPACE_NAME);
   } catch (err) {
     console.warn("createWorkspace: localStorage write failed", err);
   }
@@ -138,6 +162,8 @@ export interface WorkspaceStatus {
   ready: boolean;
   /** Stored schema version differs from code SCHEMA_VERSION. */
   needsReset: boolean;
+  /** User-chosen display name for this demo workspace. */
+  name: string;
 }
 
 function snapshotStatus(): WorkspaceStatus {
@@ -145,6 +171,7 @@ function snapshotStatus(): WorkspaceStatus {
     hasUser: currentUserId != null,
     ready: isWorkspaceReady(),
     needsReset: needsResetForSchema(),
+    name: getWorkspaceName(),
   };
 }
 

@@ -22,6 +22,7 @@ import {
 import { PageHeader, Avatar } from "@/components/app/AppShell";
 import { EmptyState } from "@/components/app/EmptyState";
 import { announcements as seed } from "@/lib/mock-data";
+import { useFullName } from "@/lib/current-user";
 
 export const Route = createFileRoute("/announcements")({
   head: () => ({ meta: [{ title: "Announcements — Pulse HR" }] }),
@@ -34,6 +35,7 @@ type Post = {
 };
 
 function Announcements() {
+  const me = useFullName() || "You";
   const [posts, setPosts] = useState<Post[]>(
     seed.map(a => ({ ...a, reactions: 12, youReacted: false, comments: [] }))
   );
@@ -47,7 +49,7 @@ function Announcements() {
 
   const create = (data: { title: string; body: string; pinned: boolean }) => {
     const p: Post = {
-      id: `p-${Date.now()}`, author: "Alex Carter", title: data.title, body: data.body,
+      id: `p-${Date.now()}`, author: me, title: data.title, body: data.body,
       time: "just now", pinned: data.pinned, reactions: 0, youReacted: false, comments: [],
     };
     setPosts(ps => [p, ...ps]);
@@ -65,7 +67,7 @@ function Announcements() {
   };
   const addComment = (id: string) => {
     if (!commentText.trim()) return;
-    setPosts(ps => ps.map(p => (p.id === id ? { ...p, comments: [...p.comments, { who: "Alex Carter", text: commentText.trim() }] } : p)));
+    setPosts(ps => ps.map(p => (p.id === id ? { ...p, comments: [...p.comments, { who: me, text: commentText.trim() }] } : p)));
     setCommentText("");
     toast.success("Comment posted");
   };

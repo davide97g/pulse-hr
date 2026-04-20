@@ -57,6 +57,7 @@ import {
   Gauge,
   MessageSquare,
   Briefcase as BriefcaseIcon,
+  RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -71,8 +72,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { notifications, managerAsks } from "@/lib/mock-data";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
+import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
 
 type NavItem = {
   to: string;
@@ -186,6 +198,8 @@ function AppShellInner() {
   const [logOpen, setLogOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
+  const workspace = useWorkspaceStatus();
 
   useEffect(() => {
     setMobileNavOpen(false);
@@ -240,25 +254,27 @@ function AppShellInner() {
           {!collapsed && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 text-sm font-semibold hover:bg-sidebar-accent rounded-md px-1.5 py-1 -ml-1">
-                  Acme Inc.
-                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                <button className="flex items-center gap-1.5 text-sm font-semibold hover:bg-sidebar-accent rounded-md px-1.5 py-1 -ml-1 min-w-0">
+                  <span className="truncate">{workspace.name}</span>
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56">
-                <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
-                <DropdownMenuItem>
+                <DropdownMenuLabel>Workspace</DropdownMenuLabel>
+                <DropdownMenuItem disabled>
                   <Building2 className="h-4 w-4 mr-2" />
-                  Acme Inc.
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Building2 className="h-4 w-4 mr-2" />
-                  Acme EU
+                  <span className="truncate">{workspace.name}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Plus className="h-4 w-4 mr-2" />
-                  New workspace
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setConfirmReset(true);
+                  }}
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Reset workspace
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -349,6 +365,33 @@ function AppShellInner() {
       <PinLayer />
       <CommentPill />
 
+      <AlertDialog open={confirmReset} onOpenChange={setConfirmReset}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reset this workspace?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Every employee, project, request, comment, and counter you've touched will be
+              cleared. You'll be returned to the welcome flow to seed a fresh demo. This cannot be
+              undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                resetWorkspace();
+                setConfirmReset(false);
+                toast.success("Workspace reset");
+                appShellNav({ to: "/welcome", replace: true });
+              }}
+            >
+              Reset workspace
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Mobile nav drawer */}
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
         <SheetContent side="left" className="p-0 w-[84%] max-w-[300px] bg-sidebar">
@@ -356,7 +399,7 @@ function AppShellInner() {
             <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center text-primary-foreground">
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="text-sm font-semibold">Acme Inc.</span>
+            <span className="text-sm font-semibold">{workspace.name}</span>
           </div>
           <div className="px-3 py-3 border-b">
             <ThemeSwitcher />
