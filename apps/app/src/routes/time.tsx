@@ -1,9 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Play, Square, MapPin, Smartphone, Wifi, Plus, Pencil, Trash2, Copy,
-  CalendarDays, Briefcase, Timer, CheckCircle2, Send, Circle, Clock,
-  Search, SlidersHorizontal, Users, Wand2, ChevronDown, Zap,
+  Play,
+  Square,
+  MapPin,
+  Smartphone,
+  Wifi,
+  Plus,
+  Pencil,
+  Trash2,
+  Copy,
+  CalendarDays,
+  Briefcase,
+  Timer,
+  CheckCircle2,
+  Send,
+  Circle,
+  Clock,
+  Search,
+  SlidersHorizontal,
+  Users,
+  Wand2,
+  ChevronDown,
+  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -13,14 +32,22 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Tabs, TabsContent, TabsList, TabsTrigger,
-} from "@/components/ui/tabs";
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
@@ -33,10 +60,14 @@ import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/component
 import { useSavedViews } from "@/lib/useSavedViews";
 import { SavedViewsBar } from "@/components/app/SavedViewsBar";
 import {
-  employees, commesse, commessaById,
-  timesheetEntries as seedEntries, type TimesheetEntry,
-  timesheetTemplatesSeed, type TimesheetTemplate,
+  employees,
+  commesse,
+  commessaById,
+  type TimesheetEntry,
+  timesheetTemplatesSeed,
+  type TimesheetTemplate,
 } from "@/lib/mock-data";
+import { timesheetEntriesTable, useTimesheetEntries } from "@/lib/tables/timesheetEntries";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/time")({
@@ -56,40 +87,47 @@ function Time() {
   const setActiveCommessa = workspace.setActiveCommessaId;
   const [loading, setLoading] = useState(true);
 
-  const [entries, setEntries] = useState<TimesheetEntry[]>(seedEntries);
+  const entries = useTimesheetEntries();
   const [templates, setTemplates] = useState<TimesheetTemplate[]>(timesheetTemplatesSeed);
   const [editEntry, setEditEntry] = useState<TimesheetEntry | "new" | null>(null);
   const [toDelete, setToDelete] = useState<TimesheetEntry | null>(null);
-  const [inlineEdit, setInlineEdit] = useState<
-    { id: string; field: "hours" | "description"; draft: string } | null
-  >(null);
+  const [inlineEdit, setInlineEdit] = useState<{
+    id: string;
+    field: "hours" | "description";
+    draft: string;
+  } | null>(null);
   const [smartFillOpen, setSmartFillOpen] = useState(false);
   const acceptAutofill = (rows: Omit<TimesheetEntry, "id" | "status" | "employeeId">[]) => {
     if (rows.length === 0) {
       setSmartFillOpen(false);
       return;
     }
-    const prepared = rows.map(r => ({
+    const prepared = rows.map((r) => ({
       ...r,
       id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       employeeId: ME,
       status: "draft" as const,
     }));
-    setEntries(es => [...prepared, ...es]);
+    for (const p of prepared) timesheetEntriesTable.add(p);
     setSmartFillOpen(false);
     toast.success(`Smart-filled ${prepared.length} entr${prepared.length === 1 ? "y" : "ies"}`, {
       description: "Saved as drafts — review and submit.",
       icon: <Send className="h-4 w-4" />,
       action: {
         label: "Undo",
-        onClick: () => setEntries(es => es.filter(e => !prepared.some(p => p.id === e.id))),
+        onClick: () => {
+          for (const p of prepared) timesheetEntriesTable.remove(p.id);
+        },
       },
     });
   };
-  const timeViews = useSavedViews<{ q: string; filterCommessa: string; filterStatus: string }>("time-timesheet", {
-    defaults: { q: "", filterCommessa: "all", filterStatus: "all" },
-    schema: { q: "string", filterCommessa: "string", filterStatus: "string" },
-  });
+  const timeViews = useSavedViews<{ q: string; filterCommessa: string; filterStatus: string }>(
+    "time-timesheet",
+    {
+      defaults: { q: "", filterCommessa: "all", filterStatus: "all" },
+      schema: { q: "string", filterCommessa: "string", filterStatus: "string" },
+    },
+  );
   const q = timeViews.state.q;
   const filterCommessa = timeViews.state.filterCommessa || "all";
   const filterStatus = timeViews.state.filterStatus || "all";
@@ -104,21 +142,20 @@ function Time() {
 
   useEffect(() => {
     if (!clockedIn) return;
-    const i = setInterval(() => setSeconds(s => s + 1), 1000);
+    const i = setInterval(() => setSeconds((s) => s + 1), 1000);
     return () => clearInterval(i);
   }, [clockedIn]);
 
   const fmt = (s: number) =>
-    `${Math.floor(s / 3600).toString().padStart(2, "0")}:${Math.floor((s % 3600) / 60)
+    `${Math.floor(s / 3600)
+      .toString()
+      .padStart(2, "0")}:${Math.floor((s % 3600) / 60)
       .toString()
       .padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 
-  const myEntries = useMemo(
-    () => entries.filter(e => e.employeeId === ME),
-    [entries]
-  );
+  const myEntries = useMemo(() => entries.filter((e) => e.employeeId === ME), [entries]);
   const filteredEntries = useMemo(() => {
-    return myEntries.filter(e => {
+    return myEntries.filter((e) => {
       if (filterCommessa !== "all" && e.commessaId !== filterCommessa) return false;
       if (filterStatus !== "all" && e.status !== filterStatus) return false;
       if (q && !e.description.toLowerCase().includes(q.toLowerCase())) return false;
@@ -126,16 +163,13 @@ function Time() {
     });
   }, [myEntries, filterCommessa, filterStatus, q]);
 
-  const weekTotal = useMemo(
-    () => myEntries.reduce((acc, e) => acc + e.hours, 0),
-    [myEntries]
-  );
+  const weekTotal = useMemo(() => myEntries.reduce((acc, e) => acc + e.hours, 0), [myEntries]);
   const byCommessa = useMemo(() => {
     const map = new Map<string, number>();
-    myEntries.forEach(e => map.set(e.commessaId, (map.get(e.commessaId) ?? 0) + e.hours));
+    myEntries.forEach((e) => map.set(e.commessaId, (map.get(e.commessaId) ?? 0) + e.hours));
     return [...map.entries()]
       .map(([id, hours]) => ({ commessa: commessaById(id)!, hours }))
-      .filter(x => x.commessa)
+      .filter((x) => x.commessa)
       .sort((a, b) => b.hours - a.hours);
   }, [myEntries]);
 
@@ -158,7 +192,7 @@ function Time() {
       billable: true,
       status: "draft",
     };
-    setEntries(es => [newEntry, ...es]);
+    timesheetEntriesTable.add(newEntry);
     setClockedIn(false);
     setSeconds(0);
     toast.success(`Logged ${hours}h to ${c.code}`, {
@@ -169,9 +203,7 @@ function Time() {
 
   const saveEntry = (data: Omit<TimesheetEntry, "id" | "employeeId" | "status">, id?: string) => {
     if (id) {
-      setEntries(es =>
-        es.map(e => (e.id === id ? { ...e, ...data } : e))
-      );
+      timesheetEntriesTable.update(id, data);
       toast.success("Entry updated");
     } else {
       const newEntry: TimesheetEntry = {
@@ -180,7 +212,7 @@ function Time() {
         employeeId: ME,
         status: "draft",
       };
-      setEntries(es => [newEntry, ...es]);
+      timesheetEntriesTable.add(newEntry);
       toast.success("Entry added", {
         description: `${data.hours}h logged to ${commessaById(data.commessaId)?.code}`,
       });
@@ -188,29 +220,29 @@ function Time() {
   };
 
   const deleteEntry = (id: string) => {
-    setEntries(es => es.filter(e => e.id !== id));
+    const snap = timesheetEntriesTable.getAll().find((e) => e.id === id);
+    timesheetEntriesTable.remove(id);
     toast("Entry deleted", {
       description: "Hours removed from your timesheet.",
       icon: <Trash2 className="h-4 w-4" />,
+      action: snap ? { label: "Undo", onClick: () => timesheetEntriesTable.add(snap) } : undefined,
     });
   };
 
   const duplicate = (e: TimesheetEntry) => {
     const copy = { ...e, id: `t-${Date.now()}`, status: "draft" as const };
-    setEntries(es => [copy, ...es]);
+    timesheetEntriesTable.add(copy);
     toast.success("Entry duplicated");
   };
 
   const submitDrafts = () => {
-    const count = myEntries.filter(e => e.status === "draft").length;
-    if (!count) {
+    const drafts = myEntries.filter((e) => e.status === "draft");
+    if (!drafts.length) {
       toast("No drafts", { description: "Nothing pending submission." });
       return;
     }
-    setEntries(es =>
-      es.map(e => (e.employeeId === ME && e.status === "draft" ? { ...e, status: "submitted" } : e))
-    );
-    toast.success(`Submitted ${count} entr${count > 1 ? "ies" : "y"}`, {
+    for (const d of drafts) timesheetEntriesTable.update(d.id, { status: "submitted" });
+    toast.success(`Submitted ${drafts.length} entr${drafts.length > 1 ? "ies" : "y"}`, {
       description: "Sent to your manager for approval.",
       icon: <Send className="h-4 w-4" />,
     });
@@ -220,7 +252,10 @@ function Time() {
 
   const bulkSubmit = () => {
     const ids = [...bulk.selected];
-    setEntries(es => es.map(e => (ids.includes(e.id) && e.status === "draft" ? { ...e, status: "submitted" } : e)));
+    for (const id of ids) {
+      const e = timesheetEntriesTable.getAll().find((x) => x.id === id);
+      if (e && e.status === "draft") timesheetEntriesTable.update(id, { status: "submitted" });
+    }
     bulk.clear();
     toast.success(`Submitted ${ids.length} entr${ids.length === 1 ? "y" : "ies"}`, {
       description: "Sent to your manager for approval.",
@@ -229,24 +264,34 @@ function Time() {
   };
   const bulkDuplicate = () => {
     const rows = bulk.selectedRows;
-    setEntries(es => [
-      ...rows.map(r => ({ ...r, id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, status: "draft" as const })),
-      ...es,
-    ]);
+    for (const r of rows) {
+      timesheetEntriesTable.add({
+        ...r,
+        id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        status: "draft",
+      });
+    }
     bulk.clear();
     toast.success(`Duplicated ${rows.length} entr${rows.length === 1 ? "y" : "ies"}`);
   };
   const bulkDelete = () => {
     const rows = bulk.selectedRows;
-    setEntries(es => es.filter(e => !bulk.selected.has(e.id)));
+    for (const r of rows) timesheetEntriesTable.remove(r.id);
     bulk.clear();
     toast(`Deleted ${rows.length} entr${rows.length === 1 ? "y" : "ies"}`, {
-      action: { label: "Undo", onClick: () => setEntries(es => [...rows, ...es]) },
+      action: {
+        label: "Undo",
+        onClick: () => {
+          for (const r of rows) timesheetEntriesTable.add(r);
+        },
+      },
     });
   };
 
   // Clear selection whenever filters change the list identity
-  useEffect(() => { bulk.clear(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [filterCommessa, filterStatus, q]);
+  useEffect(() => {
+    bulk.clear(); /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [filterCommessa, filterStatus, q]);
 
   const activeC = commessaById(activeCommessa);
 
@@ -261,14 +306,19 @@ function Time() {
               variant="outline"
               size="sm"
               className={cn("press-scale", logNowOpen && "border-primary text-primary")}
-              onClick={() => setLogNowOpen(o => !o)}
+              onClick={() => setLogNowOpen((o) => !o)}
               aria-expanded={logNowOpen}
             >
               <Zap className="h-4 w-4 mr-1.5" /> Log now
               {clockedIn && (
-                <span className="ml-1.5 h-1.5 w-1.5 rounded-full bg-success pulse-dot" aria-label="clocked in" />
+                <span
+                  className="ml-1.5 h-1.5 w-1.5 rounded-full bg-success pulse-dot"
+                  aria-label="clocked in"
+                />
               )}
-              <ChevronDown className={cn("h-3.5 w-3.5 ml-1 transition-transform", logNowOpen && "rotate-180")} />
+              <ChevronDown
+                className={cn("h-3.5 w-3.5 ml-1 transition-transform", logNowOpen && "rotate-180")}
+              />
             </Button>
             <Button variant="outline" size="sm" className="press-scale" onClick={submitDrafts}>
               <Send className="h-4 w-4 mr-1.5" /> Submit drafts
@@ -284,7 +334,9 @@ function Time() {
       <div
         className={cn(
           "grid grid-cols-1 lg:grid-cols-3 gap-4 overflow-hidden transition-all duration-300 ease-out",
-          logNowOpen ? "max-h-[1200px] opacity-100 mb-4" : "max-h-0 opacity-0 mb-0 pointer-events-none",
+          logNowOpen
+            ? "max-h-[1200px] opacity-100 mb-4"
+            : "max-h-0 opacity-0 mb-0 pointer-events-none",
         )}
         aria-hidden={!logNowOpen}
       >
@@ -293,12 +345,17 @@ function Time() {
             className="absolute inset-0 opacity-[0.08] grid-bg pointer-events-none"
             aria-hidden
           />
-          <div className="absolute -top-12 -right-12 h-40 w-40 rounded-full blur-3xl pointer-events-none"
-               style={{ backgroundColor: activeC?.color, opacity: 0.18 }} aria-hidden />
+          <div
+            className="absolute -top-12 -right-12 h-40 w-40 rounded-full blur-3xl pointer-events-none"
+            style={{ backgroundColor: activeC?.color, opacity: 0.18 }}
+            aria-hidden
+          />
 
           <div className="relative">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Your clock</div>
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">
+                Your clock
+              </div>
               {clockedIn && (
                 <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-success">
                   <span className="h-1.5 w-1.5 rounded-full bg-success pulse-dot" />
@@ -306,29 +363,43 @@ function Time() {
                 </span>
               )}
             </div>
-            <div className="text-[40px] leading-none font-mono font-semibold tabular-nums">{fmt(seconds)}</div>
+            <div className="text-[40px] leading-none font-mono font-semibold tabular-nums">
+              {fmt(seconds)}
+            </div>
             <div className="text-xs text-muted-foreground mt-1">
-              {clockedIn
-                ? <>Working on <span className="font-medium text-foreground">{activeC?.code}</span> · {activeC?.name}</>
-                : "Not clocked in"}
+              {clockedIn ? (
+                <>
+                  Working on <span className="font-medium text-foreground">{activeC?.code}</span> ·{" "}
+                  {activeC?.name}
+                </>
+              ) : (
+                "Not clocked in"
+              )}
             </div>
 
             <div className="mt-4 space-y-2">
-              <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">Active commessa</Label>
+              <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                Active commessa
+              </Label>
               <Select value={activeCommessa} onValueChange={setActiveCommessa}>
                 <SelectTrigger className="h-9">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {commesse.filter(c => c.status === "active").map(c => (
-                    <SelectItem key={c.id} value={c.id}>
-                      <span className="inline-flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full" style={{ backgroundColor: c.color }} />
-                        <span className="font-medium">{c.code}</span>
-                        <span className="text-muted-foreground">· {c.name}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
+                  {commesse
+                    .filter((c) => c.status === "active")
+                    .map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        <span className="inline-flex items-center gap-2">
+                          <span
+                            className="h-2 w-2 rounded-full"
+                            style={{ backgroundColor: c.color }}
+                          />
+                          <span className="font-medium">{c.code}</span>
+                          <span className="text-muted-foreground">· {c.name}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -339,12 +410,18 @@ function Time() {
                 "w-full mt-4 press-scale transition-colors",
                 clockedIn
                   ? "bg-destructive hover:bg-destructive/90 text-white"
-                  : "bg-success hover:bg-success/90 text-white"
+                  : "bg-success hover:bg-success/90 text-white",
               )}
             >
-              {clockedIn
-                ? <><Square className="h-4 w-4 mr-1.5" /> Stop & log hours</>
-                : <><Play className="h-4 w-4 mr-1.5" /> Clock in</>}
+              {clockedIn ? (
+                <>
+                  <Square className="h-4 w-4 mr-1.5" /> Stop & log hours
+                </>
+              ) : (
+                <>
+                  <Play className="h-4 w-4 mr-1.5" /> Clock in
+                </>
+              )}
             </Button>
 
             <div className="grid grid-cols-3 gap-2 mt-4">
@@ -355,7 +432,9 @@ function Time() {
               ].map(({ i: Icon, l }) => (
                 <button
                   key={l}
-                  onClick={() => toast(`${l} check-in ready`, { description: "Point-of-presence verified." })}
+                  onClick={() =>
+                    toast(`${l} check-in ready`, { description: "Point-of-presence verified." })
+                  }
                   className="text-center p-2 rounded-md bg-background border hover:border-primary hover:bg-primary/5 transition-colors press-scale"
                 >
                   <Icon className="h-3.5 w-3.5 mx-auto text-muted-foreground" />
@@ -378,15 +457,19 @@ function Time() {
               const isToday = i === 3;
               return (
                 <div key={d} className="flex flex-col items-center group">
-                  <div className={cn(
-                    "text-[11px] mb-2",
-                    isToday ? "text-foreground font-medium" : "text-muted-foreground"
-                  )}>{d}</div>
+                  <div
+                    className={cn(
+                      "text-[11px] mb-2",
+                      isToday ? "text-foreground font-medium" : "text-muted-foreground",
+                    )}
+                  >
+                    {d}
+                  </div>
                   <div className="h-32 w-full bg-muted/40 rounded-md flex items-end p-1 relative overflow-hidden">
                     <div
                       className={cn(
                         "w-full rounded transition-all duration-500 ease-out",
-                        isToday ? "bg-primary" : "bg-primary/60 group-hover:bg-primary/80"
+                        isToday ? "bg-primary" : "bg-primary/60 group-hover:bg-primary/80",
                       )}
                       style={{ height: hours ? `${(hours / max) * 100}%` : "4px" }}
                     />
@@ -394,27 +477,38 @@ function Time() {
                       <div className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
                     )}
                   </div>
-                  <div className="text-xs font-medium mt-2 tabular-nums">{hours ? `${hours.toFixed(1)}h` : "—"}</div>
+                  <div className="text-xs font-medium mt-2 tabular-nums">
+                    {hours ? `${hours.toFixed(1)}h` : "—"}
+                  </div>
                 </div>
               );
             })}
           </div>
           <div className="mt-4 pt-4 border-t grid grid-cols-3 gap-4">
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Logged</div>
+              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                Logged
+              </div>
               <div className="text-lg font-semibold tabular-nums">{weekTotal.toFixed(1)}h</div>
             </div>
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Target</div>
+              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                Target
+              </div>
               <div className="text-lg font-semibold tabular-nums">40.0h</div>
             </div>
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Variance</div>
-              <div className={cn(
-                "text-lg font-semibold tabular-nums",
-                weekTotal >= 40 ? "text-success" : "text-warning"
-              )}>
-                {weekTotal >= 40 ? "+" : ""}{(weekTotal - 40).toFixed(1)}h
+              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                Variance
+              </div>
+              <div
+                className={cn(
+                  "text-lg font-semibold tabular-nums",
+                  weekTotal >= 40 ? "text-success" : "text-warning",
+                )}
+              >
+                {weekTotal >= 40 ? "+" : ""}
+                {(weekTotal - 40).toFixed(1)}h
               </div>
             </div>
           </div>
@@ -423,46 +517,58 @@ function Time() {
 
       <Tabs defaultValue="calendar">
         <TabsList>
-          <TabsTrigger value="calendar"><CalendarDays className="h-3.5 w-3.5 mr-1.5" />Calendar</TabsTrigger>
-          <TabsTrigger value="timesheet"><Clock className="h-3.5 w-3.5 mr-1.5" />My timesheet</TabsTrigger>
-          <TabsTrigger value="commesse"><Briefcase className="h-3.5 w-3.5 mr-1.5" />By commessa</TabsTrigger>
-          <TabsTrigger value="team"><Users className="h-3.5 w-3.5 mr-1.5" />Team presence</TabsTrigger>
+          <TabsTrigger value="calendar">
+            <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
+            Calendar
+          </TabsTrigger>
+          <TabsTrigger value="timesheet">
+            <Clock className="h-3.5 w-3.5 mr-1.5" />
+            My timesheet
+          </TabsTrigger>
+          <TabsTrigger value="commesse">
+            <Briefcase className="h-3.5 w-3.5 mr-1.5" />
+            By commessa
+          </TabsTrigger>
+          <TabsTrigger value="team">
+            <Users className="h-3.5 w-3.5 mr-1.5" />
+            Team presence
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="calendar" className="mt-4">
           <TimesheetCalendar
             entries={entries}
             templates={templates}
-            onSaveTemplate={t => {
-              setTemplates(ts => [...ts, { ...t, id: `tt-${Date.now()}` }]);
+            onSaveTemplate={(t) => {
+              setTemplates((ts) => [...ts, { ...t, id: `tt-${Date.now()}` }]);
               toast.success(`Template "${t.name}" saved`);
             }}
-            onDeleteTemplate={id => {
-              setTemplates(ts => ts.filter(t => t.id !== id));
+            onDeleteTemplate={(id) => {
+              setTemplates((ts) => ts.filter((t) => t.id !== id));
               toast("Template removed");
             }}
-            onAdd={data => saveEntry(data)}
-            onAddMany={rows => {
-              setEntries(es => [
-                ...rows.map(r => ({
-                  ...r,
-                  id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-                  employeeId: ME,
-                  status: "draft" as const,
-                })),
-                ...es,
-              ]);
+            onAdd={(data) => saveEntry(data)}
+            onAddMany={(rows) => {
+              const prepared = rows.map((r) => ({
+                ...r,
+                id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                employeeId: ME,
+                status: "draft" as const,
+              }));
+              for (const p of prepared) timesheetEntriesTable.add(p);
               toast.success(`Added ${rows.length} entr${rows.length === 1 ? "y" : "ies"}`, {
                 description: "Saved as drafts.",
                 icon: <Send className="h-4 w-4" />,
                 action: {
                   label: "Undo",
-                  onClick: () => setEntries(es => es.slice(rows.length)),
+                  onClick: () => {
+                    for (const p of prepared) timesheetEntriesTable.remove(p.id);
+                  },
                 },
               });
             }}
-            onEdit={e => setEditEntry(e)}
-            onDelete={id => setEntries(es => es.filter(e => e.id !== id))}
+            onEdit={(e) => setEditEntry(e)}
+            onDelete={(id) => timesheetEntriesTable.remove(id)}
           />
         </TabsContent>
 
@@ -486,7 +592,7 @@ function Time() {
               <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={q}
-                onChange={e => setQ(e.target.value)}
+                onChange={(e) => setQ(e.target.value)}
                 placeholder="Search description…"
                 className="pl-8 h-9"
               />
@@ -498,7 +604,7 @@ function Time() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All commesse</SelectItem>
-                {commesse.map(c => (
+                {commesse.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
                     <span className="inline-flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full" style={{ backgroundColor: c.color }} />
@@ -509,7 +615,9 @@ function Time() {
               </SelectContent>
             </Select>
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="h-9 w-[160px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-9 w-[160px]">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All statuses</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
@@ -548,7 +656,11 @@ function Time() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => { setQ(""); setFilterCommessa("all"); setFilterStatus("all"); }}
+                        onClick={() => {
+                          setQ("");
+                          setFilterCommessa("all");
+                          setFilterStatus("all");
+                        }}
                       >
                         Clear filters
                       </Button>
@@ -568,34 +680,46 @@ function Time() {
                     onToggle={() => bulk.toggleAll()}
                   />
                   <div className="text-xs text-muted-foreground">
-                    {bulk.count > 0
-                      ? <>{bulk.count} of {filteredEntries.length} selected</>
-                      : <>{filteredEntries.length} entr{filteredEntries.length === 1 ? "y" : "ies"} ·
-                          <span className="ml-1 font-medium text-foreground tabular-nums">
-                            {filteredEntries.reduce((a, e) => a + e.hours, 0).toFixed(1)}h
-                          </span>
-                        </>
-                    }
+                    {bulk.count > 0 ? (
+                      <>
+                        {bulk.count} of {filteredEntries.length} selected
+                      </>
+                    ) : (
+                      <>
+                        {filteredEntries.length} entr{filteredEntries.length === 1 ? "y" : "ies"} ·
+                        <span className="ml-1 font-medium text-foreground tabular-nums">
+                          {filteredEntries.reduce((a, e) => a + e.hours, 0).toFixed(1)}h
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
                 <ul className="divide-y stagger-in">
-                  {filteredEntries.map(e => {
+                  {filteredEntries.map((e) => {
                     const c = commessaById(e.commessaId)!;
                     const selected = bulk.isSelected(e.id);
                     const isEditingHours = inlineEdit?.id === e.id && inlineEdit.field === "hours";
-                    const isEditingDesc = inlineEdit?.id === e.id && inlineEdit.field === "description";
+                    const isEditingDesc =
+                      inlineEdit?.id === e.id && inlineEdit.field === "description";
                     const commitEdit = () => {
                       if (!inlineEdit || inlineEdit.id !== e.id) return;
                       if (inlineEdit.field === "hours") {
                         const next = Number(inlineEdit.draft);
-                        if (Number.isFinite(next) && next >= 0.25 && next <= 24 && next !== e.hours) {
-                          setEntries(es => es.map(x => (x.id === e.id ? { ...x, hours: next } : x)));
-                          toast.success("Hours updated", { description: `${next.toFixed(1)}h on ${c.code}` });
+                        if (
+                          Number.isFinite(next) &&
+                          next >= 0.25 &&
+                          next <= 24 &&
+                          next !== e.hours
+                        ) {
+                          timesheetEntriesTable.update(e.id, { hours: next });
+                          toast.success("Hours updated", {
+                            description: `${next.toFixed(1)}h on ${c.code}`,
+                          });
                         }
                       } else if (inlineEdit.field === "description") {
                         const next = inlineEdit.draft.trim();
                         if (next && next !== e.description) {
-                          setEntries(es => es.map(x => (x.id === e.id ? { ...x, description: next } : x)));
+                          timesheetEntriesTable.update(e.id, { description: next });
                           toast.success("Description updated");
                         }
                       }
@@ -612,7 +736,10 @@ function Time() {
                           onChange={() => bulk.toggle(e.id)}
                           visibleWhen={bulk.count > 0 ? "always" : "hover-or-selected"}
                         />
-                        <div className="relative h-9 w-1 rounded-full" style={{ backgroundColor: c.color }} />
+                        <div
+                          className="relative h-9 w-1 rounded-full"
+                          style={{ backgroundColor: c.color }}
+                        />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="text-[11px] font-mono tracking-wide px-1.5 py-0.5 rounded border bg-muted/60">
@@ -623,11 +750,18 @@ function Time() {
                                 autoFocus
                                 type="text"
                                 value={inlineEdit.draft}
-                                onChange={(ev) => setInlineEdit({ ...inlineEdit, draft: ev.target.value })}
+                                onChange={(ev) =>
+                                  setInlineEdit({ ...inlineEdit, draft: ev.target.value })
+                                }
                                 onBlur={commitEdit}
                                 onKeyDown={(ev) => {
-                                  if (ev.key === "Enter") { ev.preventDefault(); commitEdit(); }
-                                  else if (ev.key === "Escape") { ev.preventDefault(); cancelEdit(); }
+                                  if (ev.key === "Enter") {
+                                    ev.preventDefault();
+                                    commitEdit();
+                                  } else if (ev.key === "Escape") {
+                                    ev.preventDefault();
+                                    cancelEdit();
+                                  }
                                 }}
                                 className="flex-1 min-w-0 text-sm font-medium bg-background border rounded px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-primary/40"
                               />
@@ -636,7 +770,11 @@ function Time() {
                                 className="text-sm font-medium truncate cursor-text rounded px-0.5 hover:bg-muted/60"
                                 title="Double-click to edit"
                                 onDoubleClick={() =>
-                                  setInlineEdit({ id: e.id, field: "description", draft: e.description })
+                                  setInlineEdit({
+                                    id: e.id,
+                                    field: "description",
+                                    draft: e.description,
+                                  })
                                 }
                               >
                                 {e.description}
@@ -661,11 +799,18 @@ function Time() {
                               min="0.25"
                               max="24"
                               value={inlineEdit.draft}
-                              onChange={(ev) => setInlineEdit({ ...inlineEdit, draft: ev.target.value })}
+                              onChange={(ev) =>
+                                setInlineEdit({ ...inlineEdit, draft: ev.target.value })
+                              }
                               onBlur={commitEdit}
                               onKeyDown={(ev) => {
-                                if (ev.key === "Enter") { ev.preventDefault(); commitEdit(); }
-                                else if (ev.key === "Escape") { ev.preventDefault(); cancelEdit(); }
+                                if (ev.key === "Enter") {
+                                  ev.preventDefault();
+                                  commitEdit();
+                                } else if (ev.key === "Escape") {
+                                  ev.preventDefault();
+                                  cancelEdit();
+                                }
                               }}
                               className="w-16 text-right text-sm font-semibold tabular-nums bg-background border rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-primary/40"
                             />
@@ -673,7 +818,11 @@ function Time() {
                             <button
                               type="button"
                               onDoubleClick={() =>
-                                setInlineEdit({ id: e.id, field: "hours", draft: e.hours.toFixed(2) })
+                                setInlineEdit({
+                                  id: e.id,
+                                  field: "hours",
+                                  draft: e.hours.toFixed(2),
+                                })
                               }
                               title="Double-click to edit hours"
                               className="text-sm font-semibold tabular-nums rounded px-1 hover:bg-muted/60 cursor-text"
@@ -681,17 +830,32 @@ function Time() {
                               {e.hours.toFixed(1)}h
                             </button>
                           )}
-                          <div className="mt-0.5"><StatusBadge status={e.status} /></div>
+                          <div className="mt-0.5">
+                            <StatusBadge status={e.status} />
+                          </div>
                         </div>
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => duplicate(e)} title="Duplicate">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8"
+                            onClick={() => duplicate(e)}
+                            title="Duplicate"
+                          >
                             <Copy className="h-3.5 w-3.5" />
                           </Button>
-                          <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditEntry(e)} title="Edit">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8"
+                            onClick={() => setEditEntry(e)}
+                            title="Edit"
+                          >
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
                           <Button
-                            size="icon" variant="ghost"
+                            size="icon"
+                            variant="ghost"
                             className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
                             onClick={() => setToDelete(e)}
                             title="Delete"
@@ -708,9 +872,24 @@ function Time() {
                   onClear={bulk.clear}
                   noun="entry"
                   actions={[
-                    { label: "Submit drafts", icon: <Send className="h-3.5 w-3.5" />, onClick: bulkSubmit, tone: "success", disabled: bulk.selectedRows.every(r => r.status !== "draft") },
-                    { label: "Duplicate",     icon: <Copy className="h-3.5 w-3.5" />, onClick: bulkDuplicate },
-                    { label: "Delete",        icon: <Trash2 className="h-3.5 w-3.5" />, onClick: bulkDelete, tone: "destructive" },
+                    {
+                      label: "Submit drafts",
+                      icon: <Send className="h-3.5 w-3.5" />,
+                      onClick: bulkSubmit,
+                      tone: "success",
+                      disabled: bulk.selectedRows.every((r) => r.status !== "draft"),
+                    },
+                    {
+                      label: "Duplicate",
+                      icon: <Copy className="h-3.5 w-3.5" />,
+                      onClick: bulkDuplicate,
+                    },
+                    {
+                      label: "Delete",
+                      icon: <Trash2 className="h-3.5 w-3.5" />,
+                      onClick: bulkDelete,
+                      tone: "destructive",
+                    },
                   ]}
                 />
               </>
@@ -735,7 +914,12 @@ function Time() {
               icon={<Briefcase className="h-6 w-6" />}
               title="No hours per commessa yet"
               description="Log your first entry to see commessa roll-ups here."
-              action={<Button size="sm" onClick={() => setEditEntry("new")}><Plus className="h-4 w-4 mr-1.5" />New entry</Button>}
+              action={
+                <Button size="sm" onClick={() => setEditEntry("new")}>
+                  <Plus className="h-4 w-4 mr-1.5" />
+                  New entry
+                </Button>
+              }
             />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 stagger-in">
@@ -747,23 +931,45 @@ function Time() {
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: c.color }} />
+                          <span
+                            className="h-2.5 w-2.5 rounded-full"
+                            style={{ backgroundColor: c.color }}
+                          />
                           <span className="text-[11px] font-mono tracking-wide px-1.5 py-0.5 rounded border bg-muted/60">
                             {c.code}
                           </span>
-                          <StatusBadge status={c.status === "on_hold" ? "pending" : c.status === "closed" ? "rejected" : "active"} />
+                          <StatusBadge
+                            status={
+                              c.status === "on_hold"
+                                ? "pending"
+                                : c.status === "closed"
+                                  ? "rejected"
+                                  : "active"
+                            }
+                          />
                         </div>
                         <div className="font-semibold mt-2 truncate">{c.name}</div>
-                        <div className="text-xs text-muted-foreground">{c.client} · {c.manager}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {c.client} · {c.manager}
+                        </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Yours</div>
-                        <div className="text-lg font-semibold tabular-nums">{hours.toFixed(1)}h</div>
+                        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                          Yours
+                        </div>
+                        <div className="text-lg font-semibold tabular-nums">
+                          {hours.toFixed(1)}h
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
                       <span>Budget burn</span>
-                      <span className={cn("tabular-nums font-medium", over ? "text-destructive" : "text-foreground")}>
+                      <span
+                        className={cn(
+                          "tabular-nums font-medium",
+                          over ? "text-destructive" : "text-foreground",
+                        )}
+                      >
                         {c.burnedHours} / {c.budgetHours}h · {pct}%
                       </span>
                     </div>
@@ -787,7 +993,9 @@ function Time() {
           <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             <div className="px-5 py-4 border-b">
               <div className="font-semibold text-sm">Live attendance</div>
-              <div className="text-xs text-muted-foreground">Real-time presence across the company</div>
+              <div className="text-xs text-muted-foreground">
+                Real-time presence across the company
+              </div>
             </div>
             {loading ? (
               <SkeletonRows rows={6} />
@@ -809,7 +1017,12 @@ function Time() {
                       <tr key={e.id} className="border-t hover:bg-muted/40">
                         <td className="px-4 py-2.5">
                           <div className="flex items-center gap-2.5">
-                            <Avatar initials={e.initials} color={e.avatarColor} size={28} employeeId={e.id} />
+                            <Avatar
+                              initials={e.initials}
+                              color={e.avatarColor}
+                              size={28}
+                              employeeId={e.id}
+                            />
                             <div>
                               <div className="font-medium">{e.name}</div>
                               <div className="text-xs text-muted-foreground">{e.department}</div>
@@ -817,13 +1030,19 @@ function Time() {
                           </div>
                         </td>
                         <td className="px-4 py-2.5 text-muted-foreground">
-                          {status === "on_leave" ? "—" : `0${8 + (i % 2)}:${String(15 + i * 3).padStart(2, "0")}`}
+                          {status === "on_leave"
+                            ? "—"
+                            : `0${8 + (i % 2)}:${String(15 + i * 3).padStart(2, "0")}`}
                         </td>
                         <td className="px-4 py-2.5 font-medium tabular-nums">
                           {status === "on_leave" ? "—" : `${(7 + i * 0.3).toFixed(1)}h`}
                         </td>
-                        <td className="px-4 py-2.5 text-muted-foreground text-xs">{["GPS", "NFC", "Web", "QR"][i % 4]}</td>
-                        <td className="px-4 py-2.5"><StatusBadge status={status} /></td>
+                        <td className="px-4 py-2.5 text-muted-foreground text-xs">
+                          {["GPS", "NFC", "Web", "QR"][i % 4]}
+                        </td>
+                        <td className="px-4 py-2.5">
+                          <StatusBadge status={status} />
+                        </td>
                       </tr>
                     );
                   })}
@@ -852,7 +1071,7 @@ function Time() {
           <EntryForm
             entry={editEntry === "new" ? null : editEntry}
             onCancel={() => setEditEntry(null)}
-            onSave={data => {
+            onSave={(data) => {
               saveEntry(data, editEntry === "new" ? undefined : editEntry.id);
               setEditEntry(null);
             }}
@@ -860,7 +1079,7 @@ function Time() {
         )}
       </SidePanel>
 
-      <AlertDialog open={!!toDelete} onOpenChange={o => !o && setToDelete(null)}>
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete timesheet entry?</AlertDialogTitle>
@@ -868,8 +1087,8 @@ function Time() {
               {toDelete && (
                 <>
                   {toDelete.hours.toFixed(1)}h on{" "}
-                  <span className="font-medium">{commessaById(toDelete.commessaId)?.code}</span>{" "}
-                  ({toDelete.date}) will be permanently removed.
+                  <span className="font-medium">{commessaById(toDelete.commessaId)?.code}</span> (
+                  {toDelete.date}) will be permanently removed.
                 </>
               )}
             </AlertDialogDescription>
@@ -926,16 +1145,20 @@ function EntryForm({
           </div>
           <div className="text-sm">
             <div className="font-medium">Log hours to a commessa</div>
-            <div className="text-xs text-muted-foreground">Drafts can be edited before submission.</div>
+            <div className="text-xs text-muted-foreground">
+              Drafts can be edited before submission.
+            </div>
           </div>
         </div>
 
         <div className="space-y-1.5">
           <Label>Commessa</Label>
           <Select value={commessaId} onValueChange={setCommessaId}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
-              {commesse.map(cm => (
+              {commesse.map((cm) => (
                 <SelectItem key={cm.id} value={cm.id} disabled={cm.status === "closed"}>
                   <span className="inline-flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full" style={{ backgroundColor: cm.color }} />
@@ -948,8 +1171,12 @@ function EntryForm({
           </Select>
           {c && (
             <div className="text-xs text-muted-foreground flex items-center justify-between pt-1">
-              <span>{c.client} · Lead {c.manager}</span>
-              <span className="tabular-nums">{c.burnedHours} / {c.budgetHours}h budget</span>
+              <span>
+                {c.client} · Lead {c.manager}
+              </span>
+              <span className="tabular-nums">
+                {c.burnedHours} / {c.budgetHours}h budget
+              </span>
             </div>
           )}
         </div>
@@ -957,11 +1184,23 @@ function EntryForm({
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Date</Label>
-            <Input ref={firstFieldRef} type="date" value={date} onChange={e => setDate(e.target.value)} />
+            <Input
+              ref={firstFieldRef}
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
           </div>
           <div className="space-y-1.5">
             <Label>Hours</Label>
-            <Input type="number" step="0.25" min="0.25" max="24" value={hours} onChange={e => setHours(e.target.value)} />
+            <Input
+              type="number"
+              step="0.25"
+              min="0.25"
+              max="24"
+              value={hours}
+              onChange={(e) => setHours(e.target.value)}
+            />
           </div>
         </div>
 
@@ -971,20 +1210,22 @@ function EntryForm({
             rows={3}
             placeholder="What did you work on?"
             value={description}
-            onChange={e => setDescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
 
         <div className="flex items-center justify-between rounded-md border p-3">
           <div>
             <div className="text-sm font-medium">Billable time</div>
-            <div className="text-xs text-muted-foreground">Uncheck for internal work not billed to client.</div>
+            <div className="text-xs text-muted-foreground">
+              Uncheck for internal work not billed to client.
+            </div>
           </div>
           <Switch checked={billable} onCheckedChange={setBillable} />
         </div>
 
         <div className="flex gap-2 pt-1">
-          {[1, 2, 4, 8].map(v => (
+          {[1, 2, 4, 8].map((v) => (
             <button
               key={v}
               onClick={() => setHours(String(v))}
@@ -1010,10 +1251,14 @@ function EntryForm({
           )}
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" onClick={onCancel}>Cancel</Button>
+          <Button variant="ghost" onClick={onCancel}>
+            Cancel
+          </Button>
           <Button
             disabled={!valid}
-            onClick={() => onSave({ date, commessaId, hours: h, description: description.trim(), billable })}
+            onClick={() =>
+              onSave({ date, commessaId, hours: h, description: description.trim(), billable })
+            }
           >
             {entry ? "Save changes" : "Add entry"}
           </Button>
