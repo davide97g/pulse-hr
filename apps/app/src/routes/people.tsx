@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   Search, Filter, Download, Plus, MoreHorizontal, Mail, Phone, MapPin,
@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
-import { EditEmployeePanel } from "@/components/people/EditEmployeePanel";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
@@ -56,9 +55,9 @@ function People() {
   const setDept = (v: string | null) => views.setState({ dept: v ?? "" });
   const setTab = (v: string) => views.setState({ tab: v });
   const [selected, setSelected] = useState<Employee | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
   const list = useEmployees();
   const [toDelete, setToDelete] = useState<Employee | null>(null);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const { open: openAction } = useQuickAction();
 
@@ -312,9 +311,11 @@ function People() {
         employee={selected ? (list.find((x) => x.id === selected.id) ?? selected) : null}
         onClose={() => setSelected(null)}
         onDelete={e => setToDelete(e)}
-        onEdit={e => setEditingId(e.id)}
+        onEdit={e => {
+          setSelected(null);
+          navigate({ to: "/people/$employeeId", params: { employeeId: e.id } });
+        }}
       />
-      <EditEmployeePanel employeeId={editingId} onClose={() => setEditingId(null)} />
 
       <AlertDialog open={!!toDelete} onOpenChange={o => !o && setToDelete(null)}>
         <AlertDialogContent>

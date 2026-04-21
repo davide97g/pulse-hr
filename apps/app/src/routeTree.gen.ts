@@ -43,6 +43,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
+import { Route as PeopleEmployeeIdRouteImport } from './routes/people.$employeeId'
 import { Route as OfficesOfficeIdRouteImport } from './routes/offices.$officeId'
 import { Route as LogEmployeeIdRouteImport } from './routes/log.$employeeId'
 import { Route as DocsSaturationRouteImport } from './routes/docs.saturation'
@@ -225,6 +226,11 @@ const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
   path: '/projects/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PeopleEmployeeIdRoute = PeopleEmployeeIdRouteImport.update({
+  id: '/$employeeId',
+  path: '/$employeeId',
+  getParentRoute: () => PeopleRoute,
+} as any)
 const OfficesOfficeIdRoute = OfficesOfficeIdRouteImport.update({
   id: '/$officeId',
   path: '/$officeId',
@@ -304,7 +310,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
-  '/people': typeof PeopleRoute
+  '/people': typeof PeopleRouteWithChildren
   '/profile': typeof ProfileRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
@@ -323,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/docs/saturation': typeof DocsSaturationRoute
   '/log/$employeeId': typeof LogEmployeeIdRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
+  '/people/$employeeId': typeof PeopleEmployeeIdRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/clients/': typeof ClientsIndexRoute
   '/docs/': typeof DocsIndexRoute
@@ -349,7 +356,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
-  '/people': typeof PeopleRoute
+  '/people': typeof PeopleRouteWithChildren
   '/profile': typeof ProfileRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
@@ -368,6 +375,7 @@ export interface FileRoutesByTo {
   '/docs/saturation': typeof DocsSaturationRoute
   '/log/$employeeId': typeof LogEmployeeIdRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
+  '/people/$employeeId': typeof PeopleEmployeeIdRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/clients': typeof ClientsIndexRoute
   '/docs': typeof DocsIndexRoute
@@ -397,7 +405,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/payroll': typeof PayrollRoute
-  '/people': typeof PeopleRoute
+  '/people': typeof PeopleRouteWithChildren
   '/profile': typeof ProfileRoute
   '/recruiting': typeof RecruitingRoute
   '/reports': typeof ReportsRoute
@@ -416,6 +424,7 @@ export interface FileRoutesById {
   '/docs/saturation': typeof DocsSaturationRoute
   '/log/$employeeId': typeof LogEmployeeIdRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
+  '/people/$employeeId': typeof PeopleEmployeeIdRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/clients/': typeof ClientsIndexRoute
   '/docs/': typeof DocsIndexRoute
@@ -465,6 +474,7 @@ export interface FileRouteTypes {
     | '/docs/saturation'
     | '/log/$employeeId'
     | '/offices/$officeId'
+    | '/people/$employeeId'
     | '/projects/$projectId'
     | '/clients/'
     | '/docs/'
@@ -510,6 +520,7 @@ export interface FileRouteTypes {
     | '/docs/saturation'
     | '/log/$employeeId'
     | '/offices/$officeId'
+    | '/people/$employeeId'
     | '/projects/$projectId'
     | '/clients'
     | '/docs'
@@ -557,6 +568,7 @@ export interface FileRouteTypes {
     | '/docs/saturation'
     | '/log/$employeeId'
     | '/offices/$officeId'
+    | '/people/$employeeId'
     | '/projects/$projectId'
     | '/clients/'
     | '/docs/'
@@ -586,7 +598,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   OrgRoute: typeof OrgRoute
   PayrollRoute: typeof PayrollRoute
-  PeopleRoute: typeof PeopleRoute
+  PeopleRoute: typeof PeopleRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   RecruitingRoute: typeof RecruitingRoute
   ReportsRoute: typeof ReportsRoute
@@ -840,6 +852,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/people/$employeeId': {
+      id: '/people/$employeeId'
+      path: '/$employeeId'
+      fullPath: '/people/$employeeId'
+      preLoaderRoute: typeof PeopleEmployeeIdRouteImport
+      parentRoute: typeof PeopleRoute
+    }
     '/offices/$officeId': {
       id: '/offices/$officeId'
       path: '/$officeId'
@@ -986,6 +1005,17 @@ const OfficesRouteChildren: OfficesRouteChildren = {
 const OfficesRouteWithChildren =
   OfficesRoute._addFileChildren(OfficesRouteChildren)
 
+interface PeopleRouteChildren {
+  PeopleEmployeeIdRoute: typeof PeopleEmployeeIdRoute
+}
+
+const PeopleRouteChildren: PeopleRouteChildren = {
+  PeopleEmployeeIdRoute: PeopleEmployeeIdRoute,
+}
+
+const PeopleRouteWithChildren =
+  PeopleRoute._addFileChildren(PeopleRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnnouncementsRoute: AnnouncementsRoute,
@@ -1009,7 +1039,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   OrgRoute: OrgRoute,
   PayrollRoute: PayrollRoute,
-  PeopleRoute: PeopleRoute,
+  PeopleRoute: PeopleRouteWithChildren,
   ProfileRoute: ProfileRoute,
   RecruitingRoute: RecruitingRoute,
   ReportsRoute: ReportsRoute,
