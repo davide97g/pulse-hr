@@ -4,6 +4,37 @@ All notable user-facing changes to Pulse HR. Each `## version — date — "titl
 below becomes a release announcement. An optional fenced ` ```tour ` block embeds an in-app
 tour that the "What's new" prompt can launch.
 
+## 0.4.0 — 2026-04-21 — "Proposals on the feature board"
+
+Comments were great for pinning a bug to a specific screen, but not everything lives on a page. Now you can post a detached **proposal** — bug, idea, or improvement — that lands on the same board, with the same upvotes, replies, and triage columns.
+
+- **New shortcut** — press `⌘⇧O` anywhere in Pulse to open the proposal composer. Also available via `⌘K → New proposal` and the **Propose** button on the Feedback board.
+- **Three categories** — Bug, Idea, Improvement. Each card shows a colored badge in place of the route chip.
+- **Same triage flow** — proposals share the Open / Triaged / Planned / Shipped / Won't do columns with comments. Admins drag between columns, everyone else upvotes and replies.
+- **Just three fields** — title, description, type. No screenshots, no attachments, no tags.
+
+Existing pins and comments are unchanged — they still show their `/route` chip and keep working exactly as before.
+
+```tour
+{
+  "id": "release-0.4.0",
+  "name": "What's new in 0.4.0",
+  "workflow": "Getting started",
+  "duration": "1 min",
+  "steps": [
+    {
+      "title": "Propose anything",
+      "body": "Press ⌘⇧O anywhere in Pulse to open the proposal composer. Pick Bug, Idea, or Improvement, write a title and description, and it lands on the feature board."
+    },
+    {
+      "title": "Same board, two kinds",
+      "body": "Comments keep their page-pinned chip. Proposals show a colored BUG / IDEA / IMPROVEMENT badge. Upvotes, replies, and status drag work identically across both.",
+      "route": "/feedback"
+    }
+  ]
+}
+```
+
 ## 0.3.0 — 2026-04-21 — "Bun backend + brand refresh"
 
 Behind-the-scenes rewiring you mostly won't feel, plus a deliberate visual reset.

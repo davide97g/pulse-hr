@@ -85,6 +85,72 @@ export const commentVotes = pgTable(
   }),
 );
 
+export const proposals = pgTable(
+  "proposals",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    type: text("type").notNull(),
+    authorId: text("author_id").notNull(),
+    authorName: text("author_name").notNull(),
+    authorAvatar: text("author_avatar"),
+    status: text("status").notNull().default("open"),
+    voteScore: integer("vote_score").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  },
+  (t) => ({
+    byStatus: index("proposals_status_idx")
+      .on(t.status)
+      .where(sql`${t.deletedAt} is null`),
+    byVoteScore: index("proposals_vote_score_idx").on(t.voteScore.desc()),
+    statusCheck: check(
+      "proposals_status_chk",
+      sql`${t.status} in ('open','triaged','planned','shipped','wont_do')`,
+    ),
+    typeCheck: check(
+      "proposals_type_chk",
+      sql`${t.type} in ('bug','idea','improvement')`,
+    ),
+  }),
+);
+
+export const proposalReplies = pgTable("proposal_replies", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  proposalId: uuid("proposal_id")
+    .notNull()
+    .references(() => proposals.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  authorId: text("author_id").notNull(),
+  authorName: text("author_name").notNull(),
+  authorAvatar: text("author_avatar"),
+  mentions: text("mentions")
+    .array()
+    .notNull()
+    .default(sql`ARRAY[]::text[]`),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
+});
+
+export const proposalVotes = pgTable(
+  "proposal_votes",
+  {
+    proposalId: uuid("proposal_id")
+      .notNull()
+      .references(() => proposals.id, { onDelete: "cascade" }),
+    userId: text("user_id").notNull(),
+    value: smallint("value").notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.proposalId, t.userId] }),
+    valueCheck: check("proposal_votes_value_chk", sql`${t.value} in (-1, 0, 1)`),
+  }),
+);
+
 export const commentRevisions = pgTable("comment_revisions", {
   id: uuid("id").defaultRandom().primaryKey(),
   commentId: uuid("comment_id"),
@@ -201,3 +267,8 @@ export type DbOutbox = typeof notificationsOutbox.$inferSelect;
 export type DbOutboxInsert = typeof notificationsOutbox.$inferInsert;
 export type DbNotificationPreferences = typeof notificationPreferences.$inferSelect;
 export type DbReleasedVersion = typeof releasedVersions.$inferSelect;
+export type DbProposal = typeof proposals.$inferSelect;
+export type DbProposalInsert = typeof proposals.$inferInsert;
+export type DbProposalReply = typeof proposalReplies.$inferSelect;
+export type DbProposalReplyInsert = typeof proposalReplies.$inferInsert;
+export type DbProposalVote = typeof proposalVotes.$inferSelect;

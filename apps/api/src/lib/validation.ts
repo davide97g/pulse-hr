@@ -44,6 +44,23 @@ export const StatusSchema = z.object({
   status: z.enum(["open", "triaged", "planned", "shipped", "wont_do"]),
 });
 
+export const ProposalTypeSchema = z.enum(["bug", "idea", "improvement"]);
+
+export const NewProposalSchema = z.object({
+  title: z.string().trim().min(1).max(140),
+  body: z.string().trim().min(1).max(4096),
+  type: ProposalTypeSchema,
+});
+
+export const EditProposalSchema = z
+  .object({
+    title: z.string().trim().min(1).max(140).optional(),
+    body: z.string().trim().min(1).max(4096).optional(),
+  })
+  .refine((v) => v.title !== undefined || v.body !== undefined, {
+    message: "title or body required",
+  });
+
 export const ListQuerySchema = z.object({
   route: z
     .string()

@@ -15,6 +15,7 @@ import {
   ArrowRight,
   CheckCircle2,
   PlayCircle,
+  Lightbulb,
 } from "lucide-react";
 import { TOURS } from "@/lib/tours";
 import { useTour } from "./TourProvider";
@@ -24,6 +25,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { employees, commesse } from "@/lib/mock-data";
 import { useQuickAction } from "./QuickActions";
+import { useNewProposal } from "@/components/proposals/ProposalProvider";
 import { NewBadge } from "./NewBadge";
 import { parseCommand, type ParsedIntent } from "@/lib/nlp";
 import { cn } from "@/lib/utils";
@@ -38,6 +40,7 @@ export function CommandPalette({
   const [q, setQ] = useState("");
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
+  const { open: openProposal } = useNewProposal();
   const { start: startTour } = useTour();
 
   useEffect(() => {
@@ -86,6 +89,9 @@ export function CommandPalette({
     { label: "Submit expense", id: "submit-expense" as const, icon: Receipt },
     { label: "Post a job", id: "post-job" as const, icon: Briefcase },
   ].filter((a) => !q || a.label.toLowerCase().includes(q.toLowerCase()));
+
+  const proposalMatches =
+    !q || "new proposal bug idea improvement feedback".includes(qLower);
 
   const intents = useMemo(() => (q.length > 2 ? parseCommand(q).slice(0, 3) : []), [q]);
 
@@ -186,7 +192,7 @@ export function CommandPalette({
               ))}
             </Section>
           )}
-          {actions.length > 0 && (
+          {(actions.length > 0 || proposalMatches) && (
             <Section label="Quick actions">
               {actions.map((a) => {
                 const Icon = a.icon;
@@ -199,6 +205,17 @@ export function CommandPalette({
                   />
                 );
               })}
+              {proposalMatches && (
+                <Item
+                  icon={<Lightbulb className="h-4 w-4" />}
+                  label="New proposal"
+                  desc="Bug, idea, or improvement · ⌘⇧O"
+                  onSelect={() => {
+                    onOpenChange(false);
+                    openProposal();
+                  }}
+                />
+              )}
             </Section>
           )}
           {tourMatches.length > 0 && queryHintsTours && (
