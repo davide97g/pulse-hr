@@ -1,5 +1,6 @@
 import { apiUrl } from "@/lib/api-client";
 import type { Anchor, Comment, NewCommentInput, Reply, CommentStatus } from "./types";
+import type { Proposal } from "../proposals/types";
 
 type TokenGetter = () => Promise<string | null>;
 
@@ -79,7 +80,11 @@ export async function setVote(
   );
 }
 
-export type BoardBuckets = Record<CommentStatus, Comment[]>;
+export type BoardItem =
+  | (Comment & { kind: "comment" })
+  | (Proposal & { kind: "proposal" });
+
+export type BoardBuckets = Record<CommentStatus, BoardItem[]>;
 
 export async function fetchBoard(): Promise<BoardBuckets> {
   return request<BoardBuckets>("/feedback/board");

@@ -9,6 +9,7 @@ import { buildCors } from "./middleware/cors.ts";
 import { errorHandler } from "./middleware/error.ts";
 import { health } from "./routes/health.ts";
 import { comments } from "./routes/comments.ts";
+import { proposals } from "./routes/proposals.ts";
 import { feedback } from "./routes/feedback.ts";
 import { changelog } from "./routes/changelog.ts";
 import { notifications } from "./routes/notifications.ts";
@@ -29,6 +30,7 @@ app.notFound((c) => c.text("not found", 404));
 
 app.route("/health", health);
 app.route("/comments", comments);
+app.route("/proposals", proposals);
 app.route("/feedback", feedback);
 app.route("/changelog", changelog);
 app.route("/notifications", notifications);

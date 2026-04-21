@@ -6,6 +6,7 @@ import { useSidebarFeatures } from "@/components/app/SidebarFeaturesContext";
 import { SidebarRouteGuard } from "@/components/app/SidebarRouteGuard";
 import { CommentPill } from "@/components/comments/CommentPill";
 import { CommentsOverlayProvider } from "@/components/comments/CommentsOverlayProvider";
+import { ProposalProvider, useNewProposal } from "@/components/proposals/ProposalProvider";
 import { PinLayer } from "@/components/comments/PinLayer";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useTrackPageViews } from "@/lib/usage-tracking";
@@ -86,9 +87,11 @@ export function AppShell() {
         <QuickActionProvider>
           <CommentsOverlayProvider>
             <NotificationsProvider>
-              <TourProvider>
-                <AppShellInner />
-              </TourProvider>
+              <ProposalProvider>
+                <TourProvider>
+                  <AppShellInner />
+                </TourProvider>
+              </ProposalProvider>
             </NotificationsProvider>
           </CommentsOverlayProvider>
         </QuickActionProvider>
@@ -129,6 +132,7 @@ function AppShellInner() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const workspace = useWorkspaceStatus();
+  const { open: openProposal } = useNewProposal();
 
   useEffect(() => {
     setMobileNavOpen(false);
@@ -148,6 +152,10 @@ function AppShellInner() {
         e.preventDefault();
         voiceBus.emit({ kind: "toggle" });
       }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "o") {
+        e.preventDefault();
+        openProposal();
+      }
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "m") {
         e.preventDefault();
         appShellNav({ to: "/moments" });
@@ -159,7 +167,7 @@ function AppShellInner() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [openProposal, appShellNav]);
 
   useEffect(() => {
     return voiceBus.on((ev) => {

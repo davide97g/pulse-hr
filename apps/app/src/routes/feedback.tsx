@@ -22,6 +22,10 @@ import {
   ExternalLink,
   PanelRight,
   Send,
+  Plus,
+  Bug,
+  Lightbulb,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -32,8 +36,15 @@ import {
   setTokenGetter,
   createReply,
 } from "@/lib/comments/api";
-import type { BoardBuckets } from "@/lib/comments/api";
-import type { Comment, CommentStatus, Reply } from "@/lib/comments/types";
+import type { BoardBuckets, BoardItem } from "@/lib/comments/api";
+import type { CommentStatus, Reply } from "@/lib/comments/types";
+import {
+  createProposalReply,
+  setProposalStatus,
+  setProposalVote,
+} from "@/lib/proposals/api";
+import type { ProposalReply, ProposalType } from "@/lib/proposals/types";
+import { useNewProposal } from "@/components/proposals/ProposalProvider";
 import { useIsEffectiveAdmin } from "@/lib/role-override";
 import {
   Sheet,
@@ -64,6 +75,10 @@ const EMPTY_BOARD: BoardBuckets = {
   wont_do: [],
 };
 
+function itemText(item: BoardItem): string {
+  return item.kind === "proposal" ? `${item.title}\n${item.body}` : item.body;
+}
+
 function FeedbackBoard() {
   const { user } = useUser();
   const { getToken } = useAuth();
@@ -75,6 +90,7 @@ function FeedbackBoard() {
   const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
   const [threadId, setThreadId] = useState<string | null>(null);
   const admin = useIsEffectiveAdmin();
+  const { open: openProposal } = useNewProposal();
 
   useEffect(() => {
     setTokenGetter(() => getToken());
@@ -104,36 +120,37 @@ function FeedbackBoard() {
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
   );
 
-  const draggingComment = useMemo(() => {
-    if (!draggingId) return null;
+  const findItem = (id: string): { status: CommentStatus; item: BoardItem } | null => {
     for (const status of Object.keys(board) as CommentStatus[]) {
-      const match = board[status].find((c) => c.id === draggingId);
-      if (match) return match;
+      const match = board[status].find((c) => c.id === id);
+      if (match) return { status, item: match };
     }
     return null;
+  };
+
+  const draggingItem = useMemo(() => {
+    if (!draggingId) return null;
+    return findItem(draggingId)?.item ?? null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board, draggingId]);
 
-  const threadComment = useMemo(() => {
+  const threadItem = useMemo(() => {
     if (!threadId) return null;
-    for (const status of Object.keys(board) as CommentStatus[]) {
-      const match = board[status].find((c) => c.id === threadId);
-      if (match) return match;
-    }
-    return null;
+    return findItem(threadId)?.item ?? null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board, threadId]);
 
-  const applyVote = async (commentId: string, value: -1 | 0 | 1) => {
-    // optimistic — update score + reorder column so upvoted card rises immediately
+  const applyVote = async (id: string, kind: BoardItem["kind"], value: -1 | 0 | 1) => {
     setBoard((prev) => {
       const next = { ...prev } as BoardBuckets;
       for (const status of Object.keys(next) as CommentStatus[]) {
-        const touched = next[status].some((c) => c.id === commentId);
+        const touched = next[status].some((c) => c.id === id);
         if (!touched) continue;
         next[status] = next[status]
           .map((c) => {
-            if (c.id !== commentId) return c;
+            if (c.id !== id) return c;
             const delta = value - c.myVote;
-            return { ...c, myVote: value, voteScore: c.voteScore + delta };
+            return { ...c, myVote: value, voteScore: c.voteScore + delta } as BoardItem;
           })
           .sort(
             (a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
@@ -142,14 +159,15 @@ function FeedbackBoard() {
       return next;
     });
     try {
-      const { voteScore, myVote } = await setVote(commentId, value);
+      const { voteScore, myVote } =
+        kind === "proposal" ? await setProposalVote(id, value) : await setVote(id, value);
       setBoard((prev) => {
         const next = { ...prev } as BoardBuckets;
         for (const status of Object.keys(next) as CommentStatus[]) {
-          const touched = next[status].some((c) => c.id === commentId);
+          const touched = next[status].some((c) => c.id === id);
           if (!touched) continue;
           next[status] = next[status]
-            .map((c) => (c.id === commentId ? { ...c, voteScore, myVote } : c))
+            .map((c) => (c.id === id ? ({ ...c, voteScore, myVote } as BoardItem) : c))
             .sort(
               (a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
             );
@@ -162,14 +180,23 @@ function FeedbackBoard() {
     }
   };
 
-  const applyReply = async (commentId: string, body: string): Promise<Reply> => {
-    const reply = await createReply(commentId, body);
+  const applyReply = async (
+    id: string,
+    kind: BoardItem["kind"],
+    body: string,
+  ): Promise<Reply | ProposalReply> => {
+    const reply =
+      kind === "proposal" ? await createProposalReply(id, body) : await createReply(id, body);
     setBoard((prev) => {
       const next = { ...prev } as BoardBuckets;
       for (const status of Object.keys(next) as CommentStatus[]) {
         next[status] = next[status].map((c) =>
-          c.id === commentId
-            ? { ...c, replies: [...c.replies, reply], updatedAt: reply.createdAt }
+          c.id === id
+            ? ({
+                ...c,
+                replies: [...c.replies, reply],
+                updatedAt: reply.createdAt,
+              } as BoardItem)
             : c,
         );
       }
@@ -186,30 +213,28 @@ function FeedbackBoard() {
     const targetStatus = COLUMNS.find((c) => c.status === overId)?.status;
     if (!targetStatus) return;
 
-    let fromStatus: CommentStatus | null = null;
-    let moved: Comment | null = null;
-    for (const status of Object.keys(board) as CommentStatus[]) {
-      const match = board[status].find((c) => c.id === id);
-      if (match) {
-        fromStatus = status;
-        moved = match;
-        break;
-      }
-    }
-    if (!moved || !fromStatus || fromStatus === targetStatus) return;
+    const found = findItem(id);
+    if (!found) return;
+    const { status: fromStatus, item: moved } = found;
+    if (fromStatus === targetStatus) return;
 
     const optimistic: BoardBuckets = {
       ...board,
       [fromStatus]: board[fromStatus].filter((c) => c.id !== id),
-      [targetStatus]: [...board[targetStatus], { ...moved, status: targetStatus }].sort(
-        (a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
-      ),
+      [targetStatus]: [
+        ...board[targetStatus],
+        { ...moved, status: targetStatus } as BoardItem,
+      ].sort((a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1)),
     };
     setBoard(optimistic);
 
     (async () => {
       try {
-        await setStatus(id, targetStatus);
+        if (moved.kind === "proposal") {
+          await setProposalStatus(id, targetStatus);
+        } else {
+          await setStatus(id, targetStatus);
+        }
         toast.success(`Moved to ${labelFor(targetStatus)}`);
       } catch (err) {
         setBoard(board);
@@ -222,32 +247,38 @@ function FeedbackBoard() {
     })();
   };
 
-  const allComments = useMemo(
-    () => ([] as Comment[]).concat(...(Object.values(board) as Comment[][])),
+  const allItems = useMemo(
+    () => ([] as BoardItem[]).concat(...(Object.values(board) as BoardItem[][])),
     [board],
   );
 
   const availableRoutes = useMemo(() => {
     const s = new Set<string>();
-    for (const c of allComments) s.add(c.route);
+    for (const c of allItems) if (c.kind === "comment") s.add(c.route);
     return Array.from(s).sort();
-  }, [allComments]);
+  }, [allItems]);
 
   const availableTags = useMemo(() => {
     const counts = new Map<string, number>();
-    for (const c of allComments) for (const t of c.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
+    for (const c of allItems) {
+      if (c.kind !== "comment") continue;
+      for (const t of c.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
+    }
     return Array.from(counts.entries())
       .sort((a, b) => b[1] - a[1])
       .map(([tag, count]) => ({ tag, count }));
-  }, [allComments]);
+  }, [allItems]);
 
   const filteredBoard = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const passes = (c: Comment) => {
-      if (routeFilter && c.route !== routeFilter) return false;
-      if (activeTags.size > 0 && !c.tags.some((t) => activeTags.has(t))) return false;
+    const passes = (c: BoardItem) => {
+      if (routeFilter && (c.kind !== "comment" || c.route !== routeFilter)) return false;
+      if (activeTags.size > 0) {
+        if (c.kind !== "comment") return false;
+        if (!c.tags.some((t) => activeTags.has(t))) return false;
+      }
       if (q) {
-        const hay = `${c.body}\n${c.author.name}`.toLowerCase();
+        const hay = `${itemText(c)}\n${c.author.name}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -284,13 +315,19 @@ function FeedbackBoard() {
         <div>
           <h1 className="text-2xl font-display tracking-tight">Feature board</h1>
           <p className="text-sm text-muted-foreground mt-1 max-w-[560px]">
-            Every pin dropped across the product, collected here. Upvote what matters, reply to
-            what you recognize.{" "}
+            Every pin and proposal lands here. Upvote what matters, reply to what you recognize.{" "}
             {admin ? (
               <span className="text-foreground">Drag cards between columns to triage.</span>
             ) : (
               <>Admins move cards as they move through triage.</>
-            )}
+            )}{" "}
+            <span className="text-muted-foreground">
+              Press{" "}
+              <kbd className="inline-flex h-4 px-1 items-center rounded border bg-muted text-[10px] font-mono align-[1px]">
+                ⌘⇧O
+              </kbd>{" "}
+              to propose.
+            </span>
           </p>
         </div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -309,13 +346,21 @@ function FeedbackBoard() {
           <span className="inline-flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-success" /> {totals.shipped} shipped
           </span>
+          <button
+            type="button"
+            onClick={openProposal}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium press-scale hover:bg-primary/90"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Propose
+          </button>
         </div>
       </div>
 
       {!loaded ? (
-        <div className="text-sm text-muted-foreground">Loading comments…</div>
+        <div className="text-sm text-muted-foreground">Loading board…</div>
       ) : totalAllUnfiltered === 0 ? (
-        <EmptyState />
+        <EmptyState onPropose={openProposal} />
       ) : (
         <>
           <FilterBar
@@ -343,7 +388,7 @@ function FeedbackBoard() {
           />
           {totalAll === 0 ? (
             <div className="rounded-[var(--radius-md)] border border-dashed bg-background/50 p-8 text-center text-sm text-muted-foreground">
-              No comments match these filters.
+              Nothing matches these filters.
             </div>
           ) : (
             <DndContext
@@ -365,9 +410,9 @@ function FeedbackBoard() {
                 ))}
               </div>
               <DragOverlay>
-                {draggingComment && (
+                {draggingItem && (
                   <FeedbackCard
-                    comment={draggingComment}
+                    item={draggingItem}
                     onVote={() => undefined}
                     onOpenThread={() => undefined}
                     dragHandleProps={null}
@@ -382,7 +427,7 @@ function FeedbackBoard() {
       )}
 
       <ThreadSidebar
-        comment={threadComment}
+        item={threadItem}
         onClose={() => setThreadId(null)}
         onVote={applyVote}
         onReply={applyReply}
@@ -422,22 +467,24 @@ function FilterBar({
           <input
             value={query}
             onChange={(e) => onQuery(e.target.value)}
-            placeholder="Search body or author…"
+            placeholder="Search body, title or author…"
             className="w-full h-9 pl-8 pr-2 rounded-md bg-muted/40 text-sm outline-none placeholder:text-muted-foreground"
           />
         </label>
-        <select
-          value={routeFilter}
-          onChange={(e) => onRouteFilter(e.target.value)}
-          className="h-9 px-2 rounded-md border bg-background text-sm font-mono text-muted-foreground"
-        >
-          <option value="">All routes</option>
-          {routes.map((r) => (
-            <option key={r} value={r}>
-              {r}
-            </option>
-          ))}
-        </select>
+        {routes.length > 0 && (
+          <select
+            value={routeFilter}
+            onChange={(e) => onRouteFilter(e.target.value)}
+            className="h-9 px-2 rounded-md border bg-background text-sm font-mono text-muted-foreground"
+          >
+            <option value="">All routes</option>
+            {routes.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        )}
         {filterActive && (
           <button
             type="button"
@@ -484,9 +531,9 @@ function Column({
   onOpenThread,
 }: {
   column: { status: CommentStatus; label: string; accent: string };
-  items: Comment[];
+  items: BoardItem[];
   admin: boolean;
-  onVote: (id: string, value: -1 | 0 | 1) => Promise<void>;
+  onVote: (id: string, kind: BoardItem["kind"], value: -1 | 0 | 1) => Promise<void>;
   onOpenThread: (id: string) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.status });
@@ -508,7 +555,7 @@ function Column({
         {items.map((c) => (
           <DraggableCard
             key={c.id}
-            comment={c}
+            item={c}
             admin={admin}
             onVote={onVote}
             onOpenThread={onOpenThread}
@@ -523,18 +570,18 @@ function Column({
 }
 
 function DraggableCard({
-  comment,
+  item,
   admin,
   onVote,
   onOpenThread,
 }: {
-  comment: Comment;
+  item: BoardItem;
   admin: boolean;
-  onVote: (id: string, value: -1 | 0 | 1) => Promise<void>;
+  onVote: (id: string, kind: BoardItem["kind"], value: -1 | 0 | 1) => Promise<void>;
   onOpenThread: (id: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: comment.id,
+    id: item.id,
     disabled: !admin,
   });
   const style = transform
@@ -548,9 +595,9 @@ function DraggableCard({
       {...attributes}
     >
       <FeedbackCard
-        comment={comment}
-        onVote={(v) => onVote(comment.id, v)}
-        onOpenThread={() => onOpenThread(comment.id)}
+        item={item}
+        onVote={(v) => onVote(item.id, item.kind, v)}
+        onOpenThread={() => onOpenThread(item.id)}
         dragHandleProps={
           admin ? (listeners as Record<string, (event: unknown) => void> | undefined) : null
         }
@@ -560,15 +607,54 @@ function DraggableCard({
   );
 }
 
+const PROPOSAL_TYPE_META: Record<
+  ProposalType,
+  { label: string; icon: typeof Bug; cls: string }
+> = {
+  bug: {
+    label: "BUG",
+    icon: Bug,
+    cls: "bg-destructive/10 text-destructive border-destructive/30",
+  },
+  idea: {
+    label: "IDEA",
+    icon: Lightbulb,
+    cls: "bg-primary/10 text-primary border-primary/30",
+  },
+  improvement: {
+    label: "IMPROVEMENT",
+    icon: Sparkles,
+    cls: "bg-warning/15 text-warning border-warning/30",
+  },
+};
+
+function TypeBadge({ type, size = "sm" }: { type: ProposalType; size?: "sm" | "md" }) {
+  const meta = PROPOSAL_TYPE_META[type];
+  const Icon = meta.icon;
+  const h = size === "md" ? "h-6 px-2 text-[11px]" : "h-5 px-1.5 text-[10px]";
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full border font-semibold tracking-wider",
+        h,
+        meta.cls,
+      )}
+    >
+      <Icon className="h-3 w-3" />
+      {meta.label}
+    </span>
+  );
+}
+
 function FeedbackCard({
-  comment,
+  item,
   onVote,
   onOpenThread,
   dragHandleProps,
   admin,
   isOverlay,
 }: {
-  comment: Comment;
+  item: BoardItem;
   onVote: (value: -1 | 0 | 1) => void;
   onOpenThread: () => void;
   dragHandleProps: Record<string, (event: unknown) => void> | null | undefined;
@@ -576,13 +662,14 @@ function FeedbackCard({
   isOverlay?: boolean;
 }) {
   const initials =
-    comment.author.name
+    item.author.name
       .split(" ")
       .map((s) => s[0])
       .filter(Boolean)
       .join("")
       .slice(0, 2)
       .toUpperCase() || "?";
+  const isProposal = item.kind === "proposal";
   return (
     <article
       className={cn(
@@ -595,22 +682,22 @@ function FeedbackCard({
         <div className="flex flex-col items-center gap-0.5 shrink-0">
           <button
             type="button"
-            onClick={() => onVote(comment.myVote === 1 ? 0 : 1)}
+            onClick={() => onVote(item.myVote === 1 ? 0 : 1)}
             className={cn(
               "h-6 w-6 rounded hover:bg-muted flex items-center justify-center",
-              comment.myVote === 1 && "text-primary",
+              item.myVote === 1 && "text-primary",
             )}
             aria-label="Upvote"
           >
             <ChevronUp className="h-4 w-4" />
           </button>
-          <span className="text-xs font-semibold tabular-nums">{comment.voteScore}</span>
+          <span className="text-xs font-semibold tabular-nums">{item.voteScore}</span>
           <button
             type="button"
-            onClick={() => onVote(comment.myVote === -1 ? 0 : -1)}
+            onClick={() => onVote(item.myVote === -1 ? 0 : -1)}
             className={cn(
               "h-6 w-6 rounded hover:bg-muted flex items-center justify-center",
-              comment.myVote === -1 && "text-destructive",
+              item.myVote === -1 && "text-destructive",
             )}
             aria-label="Downvote"
           >
@@ -618,24 +705,42 @@ function FeedbackCard({
           </button>
         </div>
         <div className="flex-1 min-w-0">
-          {comment.screenshotUrl && (
+          {item.kind === "comment" && item.screenshotUrl && (
             <img
-              src={comment.screenshotUrl}
+              src={item.screenshotUrl}
               alt=""
               className="w-full h-20 object-cover object-top rounded-sm border mb-2"
             />
           )}
-          <p className="text-sm leading-snug line-clamp-3 break-words">{comment.body}</p>
+          {isProposal && (
+            <p className="text-sm font-semibold leading-snug line-clamp-2 break-words mb-0.5">
+              {(item as BoardItem & { kind: "proposal" }).title}
+            </p>
+          )}
+          <p
+            className={cn(
+              "text-sm leading-snug break-words",
+              isProposal
+                ? "line-clamp-2 text-muted-foreground"
+                : "line-clamp-3",
+            )}
+          >
+            {item.body}
+          </p>
           <div className="mt-2 flex items-center flex-wrap gap-1.5">
-            <Link
-              to={comment.route}
-              search={{ thread: comment.id }}
-              className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
-              title={`Open ${comment.route} with this thread`}
-            >
-              <ExternalLink className="h-3 w-3" />
-              {comment.route}
-            </Link>
+            {item.kind === "comment" ? (
+              <Link
+                to={item.route}
+                search={{ thread: item.id }}
+                className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
+                title={`Open ${item.route} with this thread`}
+              >
+                <ExternalLink className="h-3 w-3" />
+                {item.route}
+              </Link>
+            ) : (
+              <TypeBadge type={(item as BoardItem & { kind: "proposal" }).type} />
+            )}
             <button
               type="button"
               onClick={(e) => {
@@ -644,25 +749,25 @@ function FeedbackCard({
               }}
               className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] text-muted-foreground hover:text-foreground hover:border-primary/50"
               title="Open full thread"
-              {...(isOverlay ? {} : {})}
             >
               <PanelRight className="h-3 w-3" />
               Thread
             </button>
-            {comment.tags.slice(0, 3).map((t) => (
-              <span
-                key={t}
-                className="inline-flex items-center h-5 px-1.5 rounded-full bg-muted text-[10px]"
-              >
-                {t}
-              </span>
-            ))}
+            {item.kind === "comment" &&
+              item.tags.slice(0, 3).map((t) => (
+                <span
+                  key={t}
+                  className="inline-flex items-center h-5 px-1.5 rounded-full bg-muted text-[10px]"
+                >
+                  {t}
+                </span>
+              ))}
           </div>
           <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
             <div className="flex items-center gap-1.5 min-w-0">
-              {comment.author.avatarUrl ? (
+              {item.author.avatarUrl ? (
                 <img
-                  src={comment.author.avatarUrl}
+                  src={item.author.avatarUrl}
                   alt=""
                   className="h-4 w-4 rounded-full object-cover"
                 />
@@ -671,12 +776,12 @@ function FeedbackCard({
                   {initials}
                 </span>
               )}
-              <span className="truncate">{comment.author.name}</span>
+              <span className="truncate">{item.author.name}</span>
             </div>
-            {comment.replies.length > 0 && (
+            {item.replies.length > 0 && (
               <span className="inline-flex items-center gap-1 shrink-0">
                 <MessageSquare className="h-3 w-3" />
-                {comment.replies.length}
+                {item.replies.length}
               </span>
             )}
           </div>
@@ -701,32 +806,35 @@ function FeedbackCard({
 }
 
 function ThreadSidebar({
-  comment,
+  item,
   onClose,
   onVote,
   onReply,
 }: {
-  comment: Comment | null;
+  item: BoardItem | null;
   onClose: () => void;
-  onVote: (id: string, value: -1 | 0 | 1) => Promise<void>;
-  onReply: (id: string, body: string) => Promise<Reply>;
+  onVote: (id: string, kind: BoardItem["kind"], value: -1 | 0 | 1) => Promise<void>;
+  onReply: (
+    id: string,
+    kind: BoardItem["kind"],
+    body: string,
+  ) => Promise<Reply | ProposalReply>;
 }) {
   const [reply, setReply] = useState("");
   const [pending, setPending] = useState(false);
 
-  // Reset reply when switching comments or closing
   useEffect(() => {
     setReply("");
     setPending(false);
-  }, [comment?.id]);
+  }, [item?.id]);
 
   const submit = async () => {
-    if (!comment || pending) return;
+    if (!item || pending) return;
     const trimmed = reply.trim();
     if (!trimmed) return;
     setPending(true);
     try {
-      await onReply(comment.id, trimmed);
+      await onReply(item.id, item.kind, trimmed);
       setReply("");
     } catch {
       toast.error("Reply failed");
@@ -744,42 +852,45 @@ function ThreadSidebar({
       .slice(0, 2)
       .toUpperCase() || "?";
 
+  const headerDescription = item
+    ? item.kind === "proposal"
+      ? `${PROPOSAL_TYPE_META[item.type].label.toLowerCase()} proposal`
+      : `On ${item.route}`
+    : "";
+
   return (
-    <Sheet open={!!comment} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent
-        side="right"
-        className="w-full sm:max-w-md p-0 flex flex-col gap-0"
-      >
+    <Sheet open={!!item} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col gap-0">
         <SheetHeader className="px-4 py-3 border-b space-y-1">
           <SheetTitle className="text-sm font-semibold">Thread</SheetTitle>
           <SheetDescription className="text-xs text-muted-foreground">
-            {comment ? `On ${comment.route}` : ""}
+            {headerDescription}
           </SheetDescription>
         </SheetHeader>
 
-        {comment && (
+        {item && (
           <>
             <div className="flex-1 overflow-y-auto scrollbar-thin p-4 space-y-4">
               <div className="flex items-start gap-3">
                 <div className="flex flex-col items-center gap-0.5 shrink-0">
                   <button
                     type="button"
-                    onClick={() => onVote(comment.id, comment.myVote === 1 ? 0 : 1)}
+                    onClick={() => onVote(item.id, item.kind, item.myVote === 1 ? 0 : 1)}
                     className={cn(
                       "h-7 w-7 rounded hover:bg-muted flex items-center justify-center",
-                      comment.myVote === 1 && "text-primary",
+                      item.myVote === 1 && "text-primary",
                     )}
                     aria-label="Upvote"
                   >
                     <ChevronUp className="h-4 w-4" />
                   </button>
-                  <span className="text-sm font-semibold tabular-nums">{comment.voteScore}</span>
+                  <span className="text-sm font-semibold tabular-nums">{item.voteScore}</span>
                   <button
                     type="button"
-                    onClick={() => onVote(comment.id, comment.myVote === -1 ? 0 : -1)}
+                    onClick={() => onVote(item.id, item.kind, item.myVote === -1 ? 0 : -1)}
                     className={cn(
                       "h-7 w-7 rounded hover:bg-muted flex items-center justify-center",
-                      comment.myVote === -1 && "text-destructive",
+                      item.myVote === -1 && "text-destructive",
                     )}
                     aria-label="Downvote"
                   >
@@ -787,41 +898,45 @@ function ThreadSidebar({
                   </button>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    {comment.author.avatarUrl ? (
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                    {item.author.avatarUrl ? (
                       <img
-                        src={comment.author.avatarUrl}
+                        src={item.author.avatarUrl}
                         alt=""
                         className="h-6 w-6 rounded-full object-cover"
                       />
                     ) : (
                       <span className="h-6 w-6 rounded-full text-[10px] font-semibold flex items-center justify-center text-white bg-gradient-to-br from-[#8b5cf6] via-[#ec4899] to-[#f59e0b]">
-                        {initials(comment.author.name)}
+                        {initials(item.author.name)}
                       </span>
                     )}
-                    <span className="text-sm font-medium truncate">{comment.author.name}</span>
+                    <span className="text-sm font-medium truncate">{item.author.name}</span>
                     <span className="text-[11px] text-muted-foreground">
-                      {relativeTime(comment.createdAt)}
+                      {relativeTime(item.createdAt)}
                     </span>
+                    {item.kind === "proposal" && <TypeBadge type={item.type} size="md" />}
                   </div>
-                  {comment.screenshotUrl && (
+                  {item.kind === "proposal" && (
+                    <h3 className="text-base font-semibold leading-snug mb-1.5">{item.title}</h3>
+                  )}
+                  {item.kind === "comment" && item.screenshotUrl && (
                     <a
-                      href={comment.screenshotUrl}
+                      href={item.screenshotUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="block mb-2 rounded-md overflow-hidden border bg-muted/40"
                     >
                       <img
-                        src={comment.screenshotUrl}
+                        src={item.screenshotUrl}
                         alt=""
                         className="w-full max-h-60 object-cover object-top"
                       />
                     </a>
                   )}
-                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{comment.body}</p>
-                  {comment.tags.length > 0 && (
+                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{item.body}</p>
+                  {item.kind === "comment" && item.tags.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
-                      {comment.tags.map((t) => (
+                      {item.tags.map((t) => (
                         <span
                           key={t}
                           className="inline-flex items-center h-5 px-1.5 rounded-full bg-muted text-[10px] font-medium"
@@ -831,26 +946,28 @@ function ThreadSidebar({
                       ))}
                     </div>
                   )}
-                  <div className="mt-3 flex items-center gap-2">
-                    <Link
-                      to={comment.route}
-                      search={{ thread: comment.id }}
-                      className="inline-flex items-center gap-1 h-7 px-2 rounded-md border bg-background text-[11px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
-                      title={`Open ${comment.route}`}
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                      Open in app
-                    </Link>
-                  </div>
+                  {item.kind === "comment" && (
+                    <div className="mt-3 flex items-center gap-2">
+                      <Link
+                        to={item.route}
+                        search={{ thread: item.id }}
+                        className="inline-flex items-center gap-1 h-7 px-2 rounded-md border bg-background text-[11px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
+                        title={`Open ${item.route}`}
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        Open in app
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {comment.replies.length > 0 && (
+              {item.replies.length > 0 && (
                 <div className="space-y-3 pl-9">
                   <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
-                    {comment.replies.length} {comment.replies.length === 1 ? "reply" : "replies"}
+                    {item.replies.length} {item.replies.length === 1 ? "reply" : "replies"}
                   </div>
-                  {comment.replies.map((r) => (
+                  {item.replies.map((r) => (
                     <div key={r.id} className="border-l-2 border-border pl-3">
                       <div className="flex items-center gap-2 mb-0.5">
                         {r.author.avatarUrl ? (
@@ -927,23 +1044,32 @@ function labelFor(status: CommentStatus): string {
   return COLUMNS.find((c) => c.status === status)?.label ?? status;
 }
 
-function EmptyState() {
+function EmptyState({ onPropose }: { onPropose: () => void }) {
   const navigate = useNavigate();
   return (
     <div className="rounded-[var(--radius-lg)] border border-dashed bg-background/50 p-10 text-center">
       <div className="mx-auto h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
         <MessageSquare className="h-5 w-5" />
       </div>
-      <h2 className="font-display text-lg">No feedback yet</h2>
+      <h2 className="font-display text-lg">Nothing on the board yet</h2>
       <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-        Comments placed anywhere in Pulse land here. Head back and drop a pin to start the board.
+        Drop a comment pin anywhere in Pulse, or post a proposal — bug, idea, improvement.
       </p>
-      <button
-        onClick={() => navigate({ to: "/" })}
-        className="mt-4 inline-flex h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm press-scale"
-      >
-        Back to Pulse
-      </button>
+      <div className="mt-4 flex items-center justify-center gap-2">
+        <button
+          onClick={onPropose}
+          className="inline-flex h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm press-scale"
+        >
+          <Plus className="h-4 w-4 mr-1" />
+          New proposal
+        </button>
+        <button
+          onClick={() => navigate({ to: "/" })}
+          className="inline-flex h-9 px-3 rounded-md border bg-background text-sm press-scale"
+        >
+          Back to Pulse
+        </button>
+      </div>
     </div>
   );
 }
