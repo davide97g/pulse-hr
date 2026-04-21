@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   Building2, Users, ShieldCheck, History, Languages, Plug, Plus, Pencil, Trash2,
-  AlertTriangle, Info, TriangleAlert, Search, Database, RotateCcw,
+  AlertTriangle, Info, TriangleAlert, Search, Database, RotateCcw, Bell,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -25,6 +25,7 @@ import {
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { EmptyState } from "@/components/app/EmptyState";
 import { rolesSeed, auditLogSeed, type Role, type AuditEntry } from "@/lib/mock-data";
+import { useAuth } from "@clerk/react";
 import { IntegrationConnectCard } from "@/components/pm/IntegrationConnectCard";
 import { useIntegrations, updateIntegration } from "@/lib/integrations-store";
 import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
@@ -86,6 +87,7 @@ function Settings() {
           <TabsTrigger value="audit"><History className="h-3.5 w-3.5 mr-1.5" />Audit log</TabsTrigger>
           <TabsTrigger value="locale"><Languages className="h-3.5 w-3.5 mr-1.5" />Localization</TabsTrigger>
           <TabsTrigger value="integrations"><Plug className="h-3.5 w-3.5 mr-1.5" />Integrations</TabsTrigger>
+          <TabsTrigger value="notifications"><Bell className="h-3.5 w-3.5 mr-1.5" />Notifications</TabsTrigger>
           <TabsTrigger value="workspace"><Database className="h-3.5 w-3.5 mr-1.5" />Workspace</TabsTrigger>
         </TabsList>
 
@@ -239,6 +241,10 @@ function Settings() {
           <IntegrationsSection />
         </TabsContent>
 
+        <TabsContent value="notifications" className="mt-4">
+          <NotificationPreferencesSection />
+        </TabsContent>
+
         <TabsContent value="workspace" className="mt-4">
           <Card className="p-6 space-y-5 max-w-2xl">
             <div>
@@ -362,6 +368,117 @@ function IntegrationsSection() {
       {connections.map(c => (
         <IntegrationConnectCard key={c.provider} provider={c.provider} connection={c} onChange={updateIntegration} />
       ))}
+    </div>
+  );
+}
+
+function NotificationPreferencesSection() {
+  const { getToken, isSignedIn } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [prefs, setPrefs] = useState({ releaseEmail: true, mentionEmail: true });
+
+  useEffect(() => {
+    if (!isSignedIn) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const token = await getToken();
+        const res = await fetch("/api/notifications/preferences", {
+          headers: token ? { authorization: `Bearer ${token}` } : undefined,
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const body = (await res.json()) as { releaseEmail: boolean; mentionEmail: boolean };
+        if (cancelled) return;
+        setPrefs({ releaseEmail: body.releaseEmail, mentionEmail: body.mentionEmail });
+      } catch {
+        /* keep defaults */
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isSignedIn, getToken]);
+
+  async function persist(next: { releaseEmail: boolean; mentionEmail: boolean }) {
+    setSaving(true);
+    try {
+      const token = await getToken();
+      const res = await fetch("/api/notifications/preferences", {
+        method: "PUT",
+        headers: {
+          "content-type": "application/json",
+          ...(token ? { authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(next),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      toast.success("Notification preferences saved");
+    } catch {
+      toast.error("Couldn't save notification preferences");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const toggle = (key: "releaseEmail" | "mentionEmail") => {
+    const next = { ...prefs, [key]: !prefs[key] };
+    setPrefs(next);
+    void persist(next);
+  };
+
+  return (
+    <Card className="p-6 space-y-5 max-w-2xl">
+      <div>
+        <div className="text-sm font-semibold">Email notifications</div>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          In-app notifications always land in the bell. Use these switches to control which
+          categories also email you. Free tier is capped at 100 sends per day across the whole
+          workspace.
+        </p>
+      </div>
+      <div className="border-t pt-4 space-y-4">
+        <PrefRow
+          label="Release announcements"
+          description="Recap email whenever Pulse HR ships a new version."
+          checked={prefs.releaseEmail}
+          disabled={loading || saving}
+          onCheckedChange={() => toggle("releaseEmail")}
+        />
+        <PrefRow
+          label="@mentions in replies"
+          description="Someone tags you in a comment thread."
+          checked={prefs.mentionEmail}
+          disabled={loading || saving}
+          onCheckedChange={() => toggle("mentionEmail")}
+        />
+      </div>
+    </Card>
+  );
+}
+
+function PrefRow({
+  label,
+  description,
+  checked,
+  disabled,
+  onCheckedChange,
+}: {
+  label: string;
+  description: string;
+  checked: boolean;
+  disabled?: boolean;
+  onCheckedChange: (v: boolean) => void;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div className="min-w-0">
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-xs text-muted-foreground mt-0.5">{description}</div>
+      </div>
+      <Switch checked={checked} disabled={disabled} onCheckedChange={onCheckedChange} />
     </div>
   );
 }

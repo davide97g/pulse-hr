@@ -9,6 +9,8 @@ type TourCtx = {
   activeTour: Tour | null;
   stepIndex: number;
   start: (tourId: string) => void;
+  /** Launch a tour that isn't registered in TOURS (e.g. a release tour). */
+  startAdHoc: (tour: Tour) => void;
   stop: (opts?: { completed?: boolean }) => void;
   next: () => void;
   prev: () => void;
@@ -31,14 +33,19 @@ const CARD_GAP = 14;
 export function TourProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [adHocTour, setAdHocTour] = useState<Tour | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
-  const activeTour = useMemo(() => (activeId ? (getTour(activeId) ?? null) : null), [activeId]);
+  const activeTour = useMemo(() => {
+    if (adHocTour) return adHocTour;
+    return activeId ? (getTour(activeId) ?? null) : null;
+  }, [activeId, adHocTour]);
   const step: TourStep | null = activeTour?.steps[stepIndex] ?? null;
 
   const start = useCallback(
     (tourId: string) => {
       const t = getTour(tourId);
       if (!t) return;
+      setAdHocTour(null);
       setActiveId(tourId);
       setStepIndex(0);
       if (t.steps[0]?.route) {
@@ -48,10 +55,23 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
     [navigate],
   );
 
+  const startAdHoc = useCallback(
+    (tour: Tour) => {
+      setActiveId(null);
+      setAdHocTour(tour);
+      setStepIndex(0);
+      if (tour.steps[0]?.route) {
+        navigate({ to: tour.steps[0].route });
+      }
+    },
+    [navigate],
+  );
+
   const stop = useCallback(
     (opts?: { completed?: boolean }) => {
       if (opts?.completed && activeId) markTourCompleted(activeId);
       setActiveId(null);
+      setAdHocTour(null);
       setStepIndex(0);
     },
     [activeId],
@@ -96,8 +116,8 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
   }, [activeTour, next, prev, stop]);
 
   const value = useMemo(
-    () => ({ activeTour, stepIndex, start, stop, next, prev }),
-    [activeTour, stepIndex, start, stop, next, prev],
+    () => ({ activeTour, stepIndex, start, startAdHoc, stop, next, prev }),
+    [activeTour, stepIndex, start, startAdHoc, stop, next, prev],
   );
 
   return (

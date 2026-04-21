@@ -7,6 +7,7 @@ import {
   jsonb,
   timestamp,
   smallint,
+  boolean,
   index,
   primaryKey,
   check,
@@ -58,6 +59,11 @@ export const commentReplies = pgTable("comment_replies", {
   authorId: text("author_id").notNull(),
   authorName: text("author_name").notNull(),
   authorAvatar: text("author_avatar"),
+  /** Clerk user ids parsed from `@name` tokens in `body` at save time. */
+  mentions: text("mentions")
+    .array()
+    .notNull()
+    .default(sql`ARRAY[]::text[]`),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -102,6 +108,86 @@ export const workspaceSidebarFeatures = pgTable("workspace_sidebar_features", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/**
+ * Persistent in-app notifications. One row per user per event.
+ * Event kinds:
+ *  - `release`          — new changelog version announced
+ *  - `comment.new`      — new top-level comment (admins only)
+ *  - `comment.reply`    — someone replied to your comment
+ *  - `comment.vote`     — someone voted on your comment
+ *  - `comment.status`   — status transitioned on your comment
+ *  - `mention`          — you were @-mentioned in a reply
+ */
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("user_id").notNull(),
+    kind: text("kind").notNull(),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    link: text("link"),
+    meta: jsonb("meta"),
+    readAt: timestamp("read_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    byUserUnread: index("notifications_user_unread_idx")
+      .on(t.userId, t.createdAt.desc())
+      .where(sql`${t.readAt} is null`),
+    byUser: index("notifications_user_idx").on(t.userId, t.createdAt.desc()),
+    kindCheck: check(
+      "notifications_kind_chk",
+      sql`${t.kind} in ('release','comment.new','comment.reply','comment.vote','comment.status','mention')`,
+    ),
+  }),
+);
+
+/** Email queue. Populated synchronously; drained by /api/cron/send-pending. */
+export const notificationsOutbox = pgTable(
+  "notifications_outbox",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("user_id").notNull(),
+    email: text("email").notNull(),
+    templateKey: text("template_key").notNull(),
+    payload: jsonb("payload").notNull(),
+    status: text("status").notNull().default("queued"),
+    attempts: integer("attempts").notNull().default(0),
+    lastError: text("last_error"),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    byStatus: index("notifications_outbox_status_idx").on(t.status, t.createdAt),
+    statusCheck: check(
+      "notifications_outbox_status_chk",
+      sql`${t.status} in ('queued','sending','sent','failed')`,
+    ),
+    templateCheck: check(
+      "notifications_outbox_template_chk",
+      sql`${t.templateKey} in ('release','mention')`,
+    ),
+  }),
+);
+
+/** Per-user email category toggles. Missing row = defaults (both true). */
+export const notificationPreferences = pgTable("notification_preferences", {
+  userId: text("user_id").primaryKey(),
+  releaseEmail: boolean("release_email").notNull().default(true),
+  mentionEmail: boolean("mention_email").notNull().default(true),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Which changelog versions the announce cron has already fanned out. */
+export const releasedVersions = pgTable("released_versions", {
+  version: text("version").primaryKey(),
+  title: text("title").notNull(),
+  releasedAt: timestamp("released_at", { withTimezone: true }).notNull(),
+  announcedAt: timestamp("announced_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export type DbComment = typeof comments.$inferSelect;
 export type DbCommentInsert = typeof comments.$inferInsert;
 export type DbReply = typeof commentReplies.$inferSelect;
@@ -109,3 +195,9 @@ export type DbReplyInsert = typeof commentReplies.$inferInsert;
 export type DbVote = typeof commentVotes.$inferSelect;
 export type DbWorkspaceSidebarFeatures = typeof workspaceSidebarFeatures.$inferSelect;
 export type DbWorkspaceSidebarFeaturesInsert = typeof workspaceSidebarFeatures.$inferInsert;
+export type DbNotification = typeof notifications.$inferSelect;
+export type DbNotificationInsert = typeof notifications.$inferInsert;
+export type DbOutbox = typeof notificationsOutbox.$inferSelect;
+export type DbOutboxInsert = typeof notificationsOutbox.$inferInsert;
+export type DbNotificationPreferences = typeof notificationPreferences.$inferSelect;
+export type DbReleasedVersion = typeof releasedVersions.$inferSelect;

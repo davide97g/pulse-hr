@@ -5,6 +5,7 @@ import { badRequest, json, methodNotAllowed, serverError } from "../_lib/errors.
 import { ListQuerySchema, NewCommentSchema } from "../_lib/validation.js";
 import { serializeComment } from "../_lib/serialize.js";
 import { serve } from "../_lib/serve.js";
+import { listAdmins, notifyManyUsers } from "../_lib/notifications.js";
 
 async function handler(request: Request): Promise<Response> {
   const user = await requireUser(request);
@@ -83,6 +84,23 @@ async function handler(request: Request): Promise<Response> {
         })
         .returning();
 
+      // Fan out in-app "new comment" notifications to admins (never self).
+      try {
+        const admins = await listAdmins();
+        const targets = admins.map((a) => a.id).filter((id) => id !== user.id);
+        if (targets.length > 0) {
+          await notifyManyUsers(targets, () => ({
+            kind: "comment.new",
+            title: `${user.name} left a comment`,
+            body: snippet(row.body),
+            link: `/feedback?c=${row.id}`,
+            meta: { commentId: row.id, route: row.route },
+          }));
+        }
+      } catch (err) {
+        console.warn("[api/comments] notify admins failed (non-fatal)", err);
+      }
+
       return json(serializeComment(row, [], {}), { status: 201 });
     }
 
@@ -90,6 +108,11 @@ async function handler(request: Request): Promise<Response> {
   } catch (error) {
     return serverError(error);
   }
+}
+
+function snippet(s: string, max = 160): string {
+  const t = s.trim().replace(/\s+/g, " ");
+  return t.length > max ? `${t.slice(0, max - 1)}…` : t;
 }
 
 export default serve(handler);

@@ -12,6 +12,7 @@ import {
 import { StatusSchema } from "../../_lib/validation.js";
 import { serializeComment } from "../../_lib/serialize.js";
 import { serve } from "../../_lib/serve.js";
+import { notifyUser } from "../../_lib/notifications.js";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -32,6 +33,13 @@ async function handler(request: Request): Promise<Response> {
     const parsed = StatusSchema.safeParse(body);
     if (!parsed.success) return badRequest(parsed.error.issues[0]?.message ?? "invalid payload");
 
+    // Read current status first so we only notify on an actual change.
+    const prior = await db
+      .select({ status: schema.comments.status })
+      .from(schema.comments)
+      .where(and(eq(schema.comments.id, commentId), isNull(schema.comments.deletedAt)))
+      .limit(1);
+
     const [updated] = await db
       .update(schema.comments)
       .set({ status: parsed.data.status, updatedAt: new Date() })
@@ -39,6 +47,29 @@ async function handler(request: Request): Promise<Response> {
       .returning();
 
     if (!updated) return notFound("comment not found");
+
+    try {
+      if (
+        updated.authorId &&
+        updated.authorId !== user.id &&
+        prior[0]?.status !== updated.status
+      ) {
+        await notifyUser({
+          userId: updated.authorId,
+          kind: "comment.status",
+          title: `Your comment is now ${STATUS_LABELS[updated.status] ?? updated.status}`,
+          body: snippet(updated.body),
+          link: `/feedback?c=${updated.id}`,
+          meta: {
+            commentId: updated.id,
+            from: prior[0]?.status ?? null,
+            to: updated.status,
+          },
+        });
+      }
+    } catch (err) {
+      console.warn("[api/status] notify failed (non-fatal)", err);
+    }
 
     const replies = await db
       .select()
@@ -61,6 +92,19 @@ async function handler(request: Request): Promise<Response> {
   } catch (error) {
     return serverError(error);
   }
+}
+
+const STATUS_LABELS: Record<string, string> = {
+  open: "open",
+  triaged: "triaged",
+  planned: "planned",
+  shipped: "shipped",
+  wont_do: "declined",
+};
+
+function snippet(s: string, max = 160): string {
+  const t = s.trim().replace(/\s+/g, " ");
+  return t.length > max ? `${t.slice(0, max - 1)}…` : t;
 }
 
 export default serve(handler);

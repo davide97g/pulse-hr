@@ -19,6 +19,7 @@ import { NewBadge } from "./NewBadge";
 import { OfficesStoreProvider } from "./OfficesStoreProvider";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
 import { ShortcutSheet } from "./ShortcutSheet";
+import { ChangelogGate } from "./ChangelogGate";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { TourLauncher } from "./TourLauncher";
 import { TourProvider } from "./TourProvider";
@@ -72,7 +73,8 @@ import {
   useRoleOverride,
 } from "@/lib/role-override";
 import { featuresForRole } from "@/lib/role-features";
-import { notifications, managerAsks } from "@/lib/mock-data";
+import { managerAsks } from "@/lib/mock-data";
+import { NotificationsProvider, useNotifications } from "./NotificationsContext";
 import { buildSidebarNavGroups } from "@/lib/sidebar-nav-groups";
 import { cn } from "@/lib/utils";
 import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
@@ -83,9 +85,11 @@ export function AppShell() {
       <BookingsProvider>
         <QuickActionProvider>
           <CommentsOverlayProvider>
-            <TourProvider>
-              <AppShellInner />
-            </TourProvider>
+            <NotificationsProvider>
+              <TourProvider>
+                <AppShellInner />
+              </TourProvider>
+            </NotificationsProvider>
           </CommentsOverlayProvider>
         </QuickActionProvider>
       </BookingsProvider>
@@ -286,6 +290,7 @@ function AppShellInner() {
       <BookingDialog open={bookingOpen} onClose={() => setBookingOpen(false)} />
       <PinLayer />
       <CommentPill />
+      <ChangelogGate />
 
       <AlertDialog open={confirmReset} onOpenChange={setConfirmReset}>
         <AlertDialogContent>
@@ -385,7 +390,7 @@ function Topbar({
   onOpenMobileNav: () => void;
   showFeedbackLink: boolean;
 }) {
-  const unread = notifications.filter((n) => n.unread).length;
+  const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
   const { pathname } = useLocation();
   const showCommessaPin = ["/focus", "/time", "/forecast"].some(
     (p) => pathname === p || pathname.startsWith(`${p}/`),
@@ -529,47 +534,68 @@ function Topbar({
             className="h-9 w-9 relative"
           >
             <Bell className="h-4 w-4" />
-            {unread > 0 && (
+            {unreadCount > 0 && (
               <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-background" />
             )}
           </Button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-96 p-0">
           <div className="px-4 py-3 border-b flex items-center justify-between">
-            <div className="font-semibold text-sm">Notifications</div>
+            <div className="font-semibold text-sm">
+              Notifications
+              {unreadCount > 0 && (
+                <span className="ml-2 text-[11px] font-normal text-muted-foreground">
+                  {unreadCount} unread
+                </span>
+              )}
+            </div>
             <button
-              onClick={() => toast.success("All notifications marked as read")}
+              onClick={() => {
+                void markAllRead();
+                toast.success("All notifications marked as read");
+              }}
               className="text-xs text-muted-foreground hover:text-foreground"
             >
               Mark all read
             </button>
           </div>
           <div className="max-h-96 overflow-y-auto">
+            {notifications.length === 0 && (
+              <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+                You're all caught up.
+              </div>
+            )}
             {notifications.map((n) => {
-              const target =
-                n.type === "approval" ? "/leave" : n.type === "alert" ? "/expenses" : "/payroll";
+              const unread = !n.readAt;
               return (
                 <button
                   key={n.id}
-                  onClick={() => navigate({ to: target })}
+                  onClick={() => {
+                    void markRead(n.id);
+                    if (n.link) navigate({ to: n.link });
+                  }}
                   className={cn(
                     "w-full text-left px-4 py-3 border-b last:border-0 hover:bg-muted/50",
-                    n.unread && "bg-info/5",
+                    unread && "bg-info/5",
                   )}
                 >
                   <div className="flex items-start gap-3">
                     <div
                       className={cn(
                         "h-2 w-2 mt-1.5 rounded-full shrink-0",
-                        n.type === "approval" && "bg-info",
-                        n.type === "alert" && "bg-destructive",
-                        n.type === "info" && "bg-muted-foreground/40",
+                        n.kind === "release" && "bg-primary",
+                        n.kind === "mention" && "bg-warning",
+                        n.kind.startsWith("comment.") && "bg-info",
                       )}
                     />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium">{n.title}</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">{n.desc}</div>
-                      <div className="text-[11px] text-muted-foreground mt-1">{n.time}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                        {n.body}
+                      </div>
+                      <div className="text-[11px] text-muted-foreground mt-1">
+                        {formatRelativeTime(n.createdAt)}
+                      </div>
                     </div>
                   </div>
                 </button>
@@ -767,4 +793,18 @@ export function Avatar({
   );
   if (!employeeId) return visual;
   return <EmployeeHoverCard employeeId={employeeId}>{visual}</EmployeeHoverCard>;
+}
+
+function formatRelativeTime(iso: string): string {
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "";
+  const diff = Date.now() - then;
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(iso).toLocaleDateString();
 }
