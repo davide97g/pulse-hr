@@ -27,6 +27,7 @@ import {
   Briefcase as BriefcaseIcon,
   Building2,
   PanelLeft,
+  Send,
 } from "lucide-react";
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
 import { ADMIN_SIDEBAR_VISIBILITY_PATH } from "@/lib/sidebar-features";
@@ -170,6 +171,11 @@ export function buildSidebarNavGroups(
           to: ADMIN_SIDEBAR_VISIBILITY_PATH,
           label: "Sidebar visibility",
           icon: PanelLeft,
+        },
+        {
+          to: "/admin/send-email",
+          label: "Send email",
+          icon: Send,
         },
       ];
     }

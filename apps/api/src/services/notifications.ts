@@ -58,7 +58,7 @@ export async function notifyManyUsers(
 export type QueueEmailInput = {
   userId: string;
   email: string;
-  templateKey: "release" | "mention";
+  templateKey: "release" | "mention" | "admin_message";
   payload: Record<string, unknown>;
 };
 

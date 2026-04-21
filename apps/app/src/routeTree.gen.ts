@@ -52,6 +52,7 @@ import { Route as DocsEmployeeScoreRouteImport } from './routes/docs.employee-sc
 import { Route as DocsClientsProjectsRouteImport } from './routes/docs.clients-projects'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as AdminSidebarVisibilityRouteImport } from './routes/admin.sidebar-visibility'
+import { Route as AdminSendEmailRouteImport } from './routes/admin.send-email'
 import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$officeId.$roomId'
 
 const WelcomeRoute = WelcomeRouteImport.update({
@@ -269,6 +270,11 @@ const AdminSidebarVisibilityRoute = AdminSidebarVisibilityRouteImport.update({
   path: '/admin/sidebar-visibility',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSendEmailRoute = AdminSendEmailRouteImport.update({
+  id: '/admin/send-email',
+  path: '/admin/send-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OfficesOfficeIdRoomIdRoute = OfficesOfficeIdRoomIdRouteImport.update({
   id: '/$roomId',
   path: '/$roomId',
@@ -307,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
+  '/admin/send-email': typeof AdminSendEmailRoute
   '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
@@ -351,6 +358,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
+  '/admin/send-email': typeof AdminSendEmailRoute
   '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
@@ -398,6 +406,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
+  '/admin/send-email': typeof AdminSendEmailRoute
   '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
@@ -446,6 +455,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
+    | '/admin/send-email'
     | '/admin/sidebar-visibility'
     | '/clients/$clientId'
     | '/docs/clients-projects'
@@ -490,6 +500,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
+    | '/admin/send-email'
     | '/admin/sidebar-visibility'
     | '/clients/$clientId'
     | '/docs/clients-projects'
@@ -536,6 +547,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
+    | '/admin/send-email'
     | '/admin/sidebar-visibility'
     | '/clients/$clientId'
     | '/docs/clients-projects'
@@ -583,6 +595,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TimeRoute: typeof TimeRoute
   WelcomeRoute: typeof WelcomeRoute
+  AdminSendEmailRoute: typeof AdminSendEmailRoute
   AdminSidebarVisibilityRoute: typeof AdminSidebarVisibilityRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
 }
@@ -890,6 +903,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSidebarVisibilityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/send-email': {
+      id: '/admin/send-email'
+      path: '/admin/send-email'
+      fullPath: '/admin/send-email'
+      preLoaderRoute: typeof AdminSendEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/offices/$officeId/$roomId': {
       id: '/offices/$officeId/$roomId'
       path: '/$roomId'
@@ -998,6 +1018,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TimeRoute: TimeRoute,
   WelcomeRoute: WelcomeRoute,
+  AdminSendEmailRoute: AdminSendEmailRoute,
   AdminSidebarVisibilityRoute: AdminSidebarVisibilityRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
 }

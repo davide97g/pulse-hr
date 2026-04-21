@@ -166,7 +166,7 @@ export const notificationsOutbox = pgTable(
     ),
     templateCheck: check(
       "notifications_outbox_template_chk",
-      sql`${t.templateKey} in ('release','mention')`,
+      sql`${t.templateKey} in ('release','mention','admin_message')`,
     ),
   }),
 );

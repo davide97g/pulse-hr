@@ -21,6 +21,7 @@ import {
   BODY_PLACEHOLDER_TOKEN,
 } from "../emails/ReleaseAnnouncement.tsx";
 import { MentionInReply } from "../emails/MentionInReply.tsx";
+import { AdminMessage } from "../emails/AdminMessage.tsx";
 
 export const cron = new Hono();
 cron.use("*", requireCronSecret);
@@ -210,6 +211,16 @@ async function renderEmail(
       MentionInReply({ mentionerName, commentTitle, replySnippet, link }),
     );
     return { subject: `${mentionerName} mentioned you in Pulse HR`, html };
+  }
+
+  if (row.templateKey === "admin_message") {
+    const senderName = String(p.senderName ?? "An admin");
+    const subject = String(p.subject ?? `A message from ${senderName}`);
+    const body = String(p.body ?? "");
+    const html = await render(
+      AdminMessage({ senderName, subject, body, appUrl: absoluteAppUrl("/") }),
+    );
+    return { subject, html };
   }
 
   throw new Error(`unknown templateKey: ${row.templateKey}`);
