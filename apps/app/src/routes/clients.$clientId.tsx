@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { clientsTable, useClients } from "@/lib/tables/clients";
+import { commesseTable, useCommesse } from "@/lib/tables/commesse";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -32,8 +34,6 @@ import { ClientForm } from "@/components/pm/ClientForm";
 import { ProjectForm } from "@/components/pm/ProjectForm";
 import { ClientProjectsGantt } from "@/components/pm/ClientProjectsGantt";
 import {
-  clients as clientSeed,
-  commesse as projectSeed,
   allocations as allocationSeed,
   employeeById,
   type Client,
@@ -56,8 +56,8 @@ const fmtEUR = new Intl.NumberFormat("en-IE", {
 function ClientDetail() {
   const { clientId } = useParams({ from: "/clients/$clientId" });
   const nav = useNavigate();
-  const [clients, setClients] = useState<Client[]>(clientSeed);
-  const [projects, setProjects] = useState<Commessa[]>(projectSeed);
+  const clients = useClients();
+  const projects = useCommesse();
   const [editOpen, setEditOpen] = useState(false);
   const [projectForm, setProjectForm] = useState(false);
   const [toDelete, setToDelete] = useState(false);
@@ -94,15 +94,33 @@ function ClientDetail() {
     );
   }
 
-  const saveClient = (next: Client) =>
-    setClients((list) => list.map((c) => (c.id === next.id ? next : c)));
-  const saveProject = (next: Commessa) =>
-    setProjects((list) => {
-      const exists = list.some((p) => p.id === next.id);
-      return exists ? list.map((p) => (p.id === next.id ? next : p)) : [next, ...list];
-    });
+  const saveClient = (next: Client) => {
+    clientsTable.update(next.id, next);
+    toast.success(`Client “${next.name}” saved`);
+  };
+  const saveProject = (next: Commessa) => {
+    const exists = commesseTable.getAll().some((p) => p.id === next.id);
+    if (exists) commesseTable.update(next.id, next);
+    else commesseTable.add(next);
+    toast.success(`Project “${next.name}” saved`);
+  };
   const removeClient = () => {
-    toast(`${client.name} removed`);
+    const snapshot = client;
+    const relatedProjects = commesseTable.getAll().filter((p) => p.clientId === snapshot.id);
+    clientsTable.remove(snapshot.id);
+    for (const p of relatedProjects) commesseTable.remove(p.id);
+    toast(`Removed ${snapshot.name}`, {
+      description: relatedProjects.length
+        ? `${relatedProjects.length} project(s) also removed`
+        : undefined,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          clientsTable.add(snapshot);
+          for (const p of relatedProjects) commesseTable.add(p);
+        },
+      },
+    });
     nav({ to: "/clients", search: { section: "clients" } });
   };
 
@@ -197,7 +215,12 @@ function ClientDetail() {
           </div>
           {owner ? (
             <div className="flex items-center gap-3">
-              <Avatar initials={owner.initials} color={owner.avatarColor} size={36} employeeId={owner.id} />
+              <Avatar
+                initials={owner.initials}
+                color={owner.avatarColor}
+                size={36}
+                employeeId={owner.id}
+              />
               <div>
                 <div className="font-medium text-sm">{owner.name}</div>
                 <div className="text-xs text-muted-foreground">{owner.role}</div>

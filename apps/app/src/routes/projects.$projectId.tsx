@@ -28,8 +28,6 @@ import {
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@/components/app/EmptyState";
 import {
-  clients as clientSeed,
-  commesse as projectSeed,
   allocations as allocationSeed,
   activities as activitySeed,
   integrationsSeed,
@@ -39,6 +37,8 @@ import {
   type Commessa,
   type IntegrationConnection,
 } from "@/lib/mock-data";
+import { useClients } from "@/lib/tables/clients";
+import { commesseTable, useCommesse } from "@/lib/tables/commesse";
 import { projectMargin, projectActivities } from "@/lib/projects";
 import { ProjectForm } from "@/components/pm/ProjectForm";
 import { TeamPanel } from "@/components/pm/TeamPanel";
@@ -73,7 +73,8 @@ function ProjectDetail() {
   const search = Route.useSearch();
   const section = search.section ?? "overview";
 
-  const [projects, setProjects] = useState<Commessa[]>(projectSeed);
+  const projects = useCommesse();
+  const clients = useClients();
   const [team, setTeam] = useState<Allocation[]>(allocationSeed);
   const [acts, setActs] = useState<Activity[]>(activitySeed);
   const [connections, setConnections] = useState<IntegrationConnection[]>(integrationsSeed);
@@ -87,7 +88,7 @@ function ProjectDetail() {
   );
   const projectActs = useMemo(() => projectActivities(projectId, acts), [acts, projectId]);
   const margin = useMemo(() => (project ? projectMargin(project) : null), [project, team]);
-  const client = project ? clientSeed.find((c) => c.id === project.clientId) : null;
+  const client = project ? clients.find((c) => c.id === project.clientId) : null;
   const owner = project ? employeeById(project.ownerId) : null;
   const connectedProviders = connections
     .filter((c) => c.status === "connected")
@@ -118,8 +119,10 @@ function ProjectDetail() {
       }),
     });
 
-  const saveProject = (p: Commessa) =>
-    setProjects((list) => list.map((x) => (x.id === p.id ? p : x)));
+  const saveProject = (p: Commessa) => {
+    commesseTable.update(p.id, p);
+    toast.success(`Project “${p.name}” saved`);
+  };
   const updateTeam = (next: Allocation[]) => {
     const others = team.filter((a) => a.projectId !== projectId);
     setTeam([...others, ...next]);
@@ -131,7 +134,11 @@ function ProjectDetail() {
   const updateConnection = (c: IntegrationConnection) =>
     setConnections((list) => list.map((x) => (x.provider === c.provider ? c : x)));
   const removeProject = () => {
-    toast(`${project.name} removed`);
+    const snapshot = project;
+    commesseTable.remove(snapshot.id);
+    toast(`Removed ${snapshot.name}`, {
+      action: { label: "Undo", onClick: () => commesseTable.add(snapshot) },
+    });
     nav({ to: "/clients", search: { section: "projects" } });
   };
 
@@ -269,7 +276,12 @@ function ProjectDetail() {
               <div className="font-semibold text-sm mb-3">Owner</div>
               {owner ? (
                 <div className="flex items-center gap-3">
-                  <Avatar initials={owner.initials} color={owner.avatarColor} size={36} employeeId={owner.id} />
+                  <Avatar
+                    initials={owner.initials}
+                    color={owner.avatarColor}
+                    size={36}
+                    employeeId={owner.id}
+                  />
                   <div>
                     <div className="font-medium text-sm">{owner.name}</div>
                     <div className="text-xs text-muted-foreground">{owner.role}</div>

@@ -37,13 +37,9 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
-import {
-  clients as clientsSeed,
-  commesse as projectsSeed,
-  employeeById,
-  type Client,
-  type Commessa,
-} from "@/lib/mock-data";
+import { employeeById, type Client, type Commessa } from "@/lib/mock-data";
+import { clientsTable, useClients } from "@/lib/tables/clients";
+import { commesseTable, useCommesse } from "@/lib/tables/commesse";
 import { ClientForm } from "@/components/pm/ClientForm";
 import { ProjectForm } from "@/components/pm/ProjectForm";
 import { clientMargin, projectMargin, projectTeam } from "@/lib/projects";
@@ -75,8 +71,8 @@ function ClientsPage() {
   const setSearch = (patch: Partial<ClientsSearch>) =>
     nav({ search: (prev) => ({ ...prev, ...patch }) });
 
-  const [clients, setClients] = useState<Client[]>(clientsSeed);
-  const [projects, setProjects] = useState<Commessa[]>(projectsSeed);
+  const clients = useClients();
+  const projects = useCommesse();
   const [loading, setLoading] = useState(true);
   const [clientForm, setClientForm] = useState<{ open: boolean; initial?: Client | null }>({
     open: false,
@@ -120,16 +116,15 @@ function ClientsPage() {
 
   // ── CRUD ──
   const upsertClient = (c: Client) => {
-    setClients((list) => {
-      const exists = list.some((x) => x.id === c.id);
-      return exists ? list.map((x) => (x.id === c.id ? c : x)) : [c, ...list];
-    });
+    const exists = clientsTable.getAll().some((x) => x.id === c.id);
+    if (exists) clientsTable.update(c.id, c);
+    else clientsTable.add(c);
     toast.success(`Client “${c.name}” saved`);
   };
   const removeClient = (c: Client) => {
-    const relatedProjects = projects.filter((p) => p.clientId === c.id);
-    setClients((list) => list.filter((x) => x.id !== c.id));
-    setProjects((list) => list.filter((p) => p.clientId !== c.id));
+    const relatedProjects = commesseTable.getAll().filter((p) => p.clientId === c.id);
+    clientsTable.remove(c.id);
+    for (const p of relatedProjects) commesseTable.remove(p.id);
     toast(`Removed ${c.name}`, {
       description: relatedProjects.length
         ? `${relatedProjects.length} project(s) also removed`
@@ -137,23 +132,22 @@ function ClientsPage() {
       action: {
         label: "Undo",
         onClick: () => {
-          setClients((list) => [c, ...list]);
-          setProjects((list) => [...relatedProjects, ...list]);
+          clientsTable.add(c);
+          for (const p of relatedProjects) commesseTable.add(p);
         },
       },
     });
   };
   const upsertProject = (p: Commessa) => {
-    setProjects((list) => {
-      const exists = list.some((x) => x.id === p.id);
-      return exists ? list.map((x) => (x.id === p.id ? p : x)) : [p, ...list];
-    });
+    const exists = commesseTable.getAll().some((x) => x.id === p.id);
+    if (exists) commesseTable.update(p.id, p);
+    else commesseTable.add(p);
     toast.success(`Project “${p.name}” saved`);
   };
   const removeProject = (p: Commessa) => {
-    setProjects((list) => list.filter((x) => x.id !== p.id));
+    commesseTable.remove(p.id);
     toast(`Removed ${p.name}`, {
-      action: { label: "Undo", onClick: () => setProjects((list) => [p, ...list]) },
+      action: { label: "Undo", onClick: () => commesseTable.add(p) },
     });
   };
 
