@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "@clerk/react";
 import { AppShell } from "@/components/app/AppShell";
 import { FeedbackShell } from "@/components/feedback/FeedbackShell";
+import { ProposalProvider } from "@/components/proposals/ProposalProvider";
 import { WorkspaceMount } from "@/components/app/WorkspaceMount";
 import { TableStoreProvider } from "@/components/app/TableStoreProvider";
 import { SidebarFeaturesProvider } from "@/components/app/SidebarFeaturesContext";
@@ -167,14 +168,18 @@ function RootComponent() {
         <WorkspaceMount />
         {isPublic ? (
           <Outlet />
-        ) : isFeedback ? (
-          <FeedbackShell>
-            <Outlet />
-          </FeedbackShell>
-        ) : isWelcome || showWelcomeOnly ? (
-          <Outlet />
         ) : (
-          <AppShell />
+          <ProposalProvider>
+            {isFeedback ? (
+              <FeedbackShell>
+                <Outlet />
+              </FeedbackShell>
+            ) : isWelcome || showWelcomeOnly ? (
+              <Outlet />
+            ) : (
+              <AppShell />
+            )}
+          </ProposalProvider>
         )}
         <Toaster position="bottom-right" richColors closeButton />
       </SidebarFeaturesProvider>

@@ -6,7 +6,7 @@ import { useSidebarFeatures } from "@/components/app/SidebarFeaturesContext";
 import { SidebarRouteGuard } from "@/components/app/SidebarRouteGuard";
 import { CommentPill } from "@/components/comments/CommentPill";
 import { CommentsOverlayProvider } from "@/components/comments/CommentsOverlayProvider";
-import { ProposalProvider, useNewProposal } from "@/components/proposals/ProposalProvider";
+import { useNewProposal } from "@/components/proposals/ProposalProvider";
 import { PinLayer } from "@/components/comments/PinLayer";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useTrackPageViews } from "@/lib/usage-tracking";
@@ -87,11 +87,9 @@ export function AppShell() {
         <QuickActionProvider>
           <CommentsOverlayProvider>
             <NotificationsProvider>
-              <ProposalProvider>
-                <TourProvider>
-                  <AppShellInner />
-                </TourProvider>
-              </ProposalProvider>
+              <TourProvider>
+                <AppShellInner />
+              </TourProvider>
             </NotificationsProvider>
           </CommentsOverlayProvider>
         </QuickActionProvider>
