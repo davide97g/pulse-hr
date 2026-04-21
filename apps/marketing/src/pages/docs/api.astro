@@ -72,9 +72,28 @@ const ERRORS = [
   { code: 429, k: "rate_limited",         d: "1,000 req/min exceeded. Retry-After header tells you when to try again." },
   { code: 500, k: "internal_error",       d: "Our bug. Every 5xx is paged and we'll email you with the incident ID within 24 h." },
 ];
+
+const crumb = { name: "API reference", path: "/docs/api" };
+
+const apiDocLd = {
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "@id": "https://pulsehr.it/docs/api#article",
+  headline: "Pulse HR REST API v1",
+  name: title,
+  description,
+  url: "https://pulsehr.it/docs/api",
+  inLanguage: "en",
+  proficiencyLevel: "Expert",
+  about: { "@id": "https://pulsehr.it/#software" },
+  author: { "@id": "https://pulsehr.it/#organization" },
+  publisher: { "@id": "https://pulsehr.it/#organization" },
+};
+
+const extraLd = [apiDocLd];
 ---
 
-<DocsLayout {title} {description} {path} {keywords}>
+<DocsLayout {title} {description} {path} {keywords} {crumb} {extraLd}>
   <div class="flex items-center gap-3 mb-6">
     <span class="h-10 w-10 rounded-lg bg-[#b4ff39]/15 text-[#b4ff39] grid place-items-center">
       <Code2 class="h-5 w-5" />

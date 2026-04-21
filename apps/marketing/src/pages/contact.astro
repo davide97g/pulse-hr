@@ -57,9 +57,33 @@ const OTHER = [
     label: "github.com/davide97g/pulse-hr/discussions",
   },
 ];
+
+const breadcrumbs = [{ name: "Contact", path: "/contact" }];
+
+const contactLd = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "@id": "https://pulsehr.it/contact#page",
+  name: title,
+  url: "https://pulsehr.it/contact",
+  description,
+  about: { "@id": "https://pulsehr.it/#organization" },
+  mainEntity: {
+    "@id": "https://pulsehr.it/#organization",
+    "@type": "Organization",
+    contactPoint: CHANNELS.map((c) => ({
+      "@type": "ContactPoint",
+      contactType: c.k,
+      email: c.email,
+      availableLanguage: ["en"],
+    })),
+  },
+};
+
+const extraLd = [contactLd];
 ---
 
-<BaseLayout {title} {description} {path}>
+<BaseLayout {title} {description} {path} {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main">
     <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">

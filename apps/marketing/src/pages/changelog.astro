@@ -8,9 +8,32 @@ const title = "Pulse HR changelog — product updates & feature shipments";
 const description =
   "Every meaningful update to the Pulse HR platform. Gantt polish, color decluttering, Employee Score, Saturation tabs, Commessa Forecast, Command bar — in reverse chronological order.";
 const path = "/changelog";
+
+const breadcrumbs = [{ name: "Changelog", path: "/changelog" }];
+
+const collectionLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": "https://pulsehr.it/changelog#collection",
+  name: "Pulse HR changelog",
+  url: "https://pulsehr.it/changelog",
+  description,
+  isPartOf: { "@id": "https://pulsehr.it/#software" },
+  mainEntity: {
+    "@type": "ItemList",
+    itemListElement: CHANGELOG.map((c, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: c.t,
+      description: `${c.k} · ${c.d}`,
+    })),
+  },
+};
+
+const extraLd = [collectionLd];
 ---
 
-<BaseLayout {title} {description} {path}>
+<BaseLayout {title} {description} {path} {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main">
     <section class="max-w-[960px] mx-auto px-6 pt-20 pb-10">

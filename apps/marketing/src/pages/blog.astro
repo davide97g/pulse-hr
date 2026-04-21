@@ -108,9 +108,33 @@ const fmtDate = (iso: string) => {
 };
 
 const now = new Date("2026-04-20");
+
+const breadcrumbs = [{ name: "Blog", path: "/blog" }];
+
+const blogLd = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": "https://pulsehr.it/blog#blog",
+  name: "Pulse HR blog",
+  url: "https://pulsehr.it/blog",
+  description,
+  publisher: { "@id": "https://pulsehr.it/#organization" },
+  blogPost: POSTS.map((p) => ({
+    "@type": "BlogPosting",
+    headline: p.t,
+    description: p.s,
+    datePublished: p.d,
+    articleSection: p.track,
+    url: `https://pulsehr.it/blog#${p.d}`,
+    author: { "@id": "https://pulsehr.it/#organization" },
+    publisher: { "@id": "https://pulsehr.it/#organization" },
+  })),
+};
+
+const extraLd = [blogLd];
 ---
 
-<BaseLayout {title} {description} {path} {keywords}>
+<BaseLayout {title} {description} {path} {keywords} {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main">
     <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">

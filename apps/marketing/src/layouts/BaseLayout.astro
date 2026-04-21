@@ -14,6 +14,14 @@ interface Props {
   keywords?: string;
   /** Stub/placeholder pages set this to keep them out of the index until content lands. */
   noIndex?: boolean;
+  /**
+   * Breadcrumb trail (shallowest → deepest). Emitted as BreadcrumbList JSON-LD.
+   * The home item is prepended automatically; pass only the steps after it.
+   * Example on /docs/api: `[{ name: "Docs", path: "/docs" }, { name: "API", path: "/docs/api" }]`.
+   */
+  breadcrumbs?: { name: string; path: string }[];
+  /** Extra JSON-LD blocks specific to this page (Offer, Article, etc.). */
+  extraLd?: Record<string, unknown>[];
 }
 
 const {
@@ -24,6 +32,8 @@ const {
   isHome = false,
   keywords,
   noIndex = false,
+  breadcrumbs,
+  extraLd,
 } = Astro.props;
 
 const canonical = new URL(path, SITE.url).toString();
@@ -91,6 +101,27 @@ const faqLd = {
 
 // Person schema per founder/team member — LinkedIn handle derived deterministically
 // from the display name so rich results can attribute authority back to the org.
+const breadcrumbLd = breadcrumbs && breadcrumbs.length > 0
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: SITE.url,
+        },
+        ...breadcrumbs.map((b, i) => ({
+          "@type": "ListItem",
+          position: i + 2,
+          name: b.name,
+          item: new URL(b.path, SITE.url).toString(),
+        })),
+      ],
+    }
+  : null;
+
 const teamLd = {
   "@context": "https://schema.org",
   "@graph": TEAM.map((m) => ({
@@ -154,6 +185,8 @@ const teamLd = {
     {isHome && <script type="application/ld+json" set:html={JSON.stringify(softwareLd)} />}
     {isHome && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
     {isHome && <script type="application/ld+json" set:html={JSON.stringify(teamLd)} />}
+    {breadcrumbLd && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />}
+    {extraLd?.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
   </head>
   <body class="min-h-screen bg-[#0b0b0d] text-[#f2f2ee] overflow-x-hidden">
     <a

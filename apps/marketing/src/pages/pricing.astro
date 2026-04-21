@@ -97,6 +97,66 @@ const CONTRACTOR = {
   ],
 };
 
+const breadcrumbs = [{ name: "Pricing", path: "/pricing" }];
+
+const offerCatalogLd = {
+  "@context": "https://schema.org",
+  "@type": "OfferCatalog",
+  name: "Pulse HR pricing",
+  url: "https://pulsehr.it/pricing",
+  itemListElement: [
+    {
+      "@type": "Offer",
+      name: "Free",
+      price: "0",
+      priceCurrency: "EUR",
+      eligibleCustomerType: "https://schema.org/BusinessEntityType",
+      description: "Free for the first 5 active employees. Every feature, no seat gate.",
+      availability: "https://schema.org/InStock",
+      url: "https://pulsehr.it/pricing#free",
+    },
+    {
+      "@type": "Offer",
+      name: "Standard",
+      price: "8",
+      priceCurrency: "EUR",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: "8",
+        priceCurrency: "EUR",
+        referenceQuantity: { "@type": "QuantitativeValue", value: "1", unitText: "active employee / month" },
+      },
+      description: "Per active employee, per month. Multi-country payroll, SSO, audit log, SOC 2.",
+      availability: "https://schema.org/InStock",
+      url: "https://pulsehr.it/pricing#standard",
+    },
+    {
+      "@type": "Offer",
+      name: "Self-host",
+      price: "0",
+      priceCurrency: "EUR",
+      description: "Run the full platform on your own infra under the Functional Source License (FSL-1.1-MIT).",
+      availability: "https://schema.org/InStock",
+      url: "https://pulsehr.it/pricing#self-host",
+    },
+    {
+      "@type": "Offer",
+      name: "Contractor",
+      price: "4",
+      priceCurrency: "EUR",
+      description: "Per active contractor, per month. Not counted toward the free-for-5 employee tier.",
+      availability: "https://schema.org/InStock",
+      url: "https://pulsehr.it/pricing#contractor",
+    },
+  ],
+};
+
+const pricingFaqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [] as Array<Record<string, unknown>>,
+};
+
 const FAQ = [
   {
     q: "Why \"per active employee\" and what does active mean?",
@@ -123,9 +183,17 @@ const FAQ = [
     a: "Yes. We bill from our Italian entity by default; on request we invoice from our Delaware entity (US) or via EU reverse-charge VAT. Payment via card, SEPA, ACH or wire.",
   },
 ];
+
+pricingFaqLd.mainEntity = FAQ.map((f) => ({
+  "@type": "Question",
+  name: f.q,
+  acceptedAnswer: { "@type": "Answer", text: f.a },
+}));
+
+const extraLd = [offerCatalogLd, pricingFaqLd];
 ---
 
-<BaseLayout {title} {description} {path} {keywords}>
+<BaseLayout {title} {description} {path} {keywords} {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main">
     <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
