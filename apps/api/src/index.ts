@@ -4,7 +4,7 @@
  * `apps/app/api/*`.
  */
 import { Hono } from "hono";
-import { logger } from "hono/logger";
+import { accessLog } from "./middleware/access-log.ts";
 import { buildCors } from "./middleware/cors.ts";
 import { errorHandler } from "./middleware/error.ts";
 import { health } from "./routes/health.ts";
@@ -18,9 +18,13 @@ import { cron } from "./routes/cron.ts";
 
 const app = new Hono();
 
-app.use("*", logger());
+app.use("*", accessLog());
 app.use("*", buildCors());
 app.onError(errorHandler);
+
+// Keep scanners out of search indexes and give a clean no-fingerprint 404.
+app.get("/robots.txt", (c) => c.text("User-agent: *\nDisallow: /\n"));
+app.notFound((c) => c.text("not found", 404));
 
 app.route("/health", health);
 app.route("/comments", comments);
