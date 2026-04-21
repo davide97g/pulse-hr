@@ -1,8 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  Plus, Star, Calendar, ArrowRight, ArrowLeft, Briefcase, UserPlus, Trash2,
-  MoreHorizontal, Users, MapPin, Ban, PartyPopper,
+  Plus,
+  Star,
+  Calendar,
+  ArrowRight,
+  ArrowLeft,
+  Briefcase,
+  UserPlus,
+  Trash2,
+  MoreHorizontal,
+  Users,
+  MapPin,
+  Ban,
+  PartyPopper,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -11,20 +22,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonCards } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
-import {
-  candidates as candidateSeed, jobPostings as jobSeed,
-  type Candidate, type JobPosting,
-} from "@/lib/mock-data";
+import { type Candidate, type JobPosting } from "@/lib/mock-data";
+import { candidatesTable, useCandidates } from "@/lib/tables/candidates";
+import { jobPostingsTable, useJobPostings } from "@/lib/tables/jobPostings";
 import { SidePanel } from "@/components/app/SidePanel";
 import { cn } from "@/lib/utils";
 
@@ -37,11 +57,15 @@ const stages: Candidate["stage"][] = ["Applied", "Screen", "Interview", "Offer",
 
 function Recruiting() {
   const [loading, setLoading] = useState(true);
-  const [candidates, setCandidates] = useState(candidateSeed);
-  const [jobs, setJobs] = useState<JobPosting[]>(jobSeed);
+  const candidates = useCandidates();
+  const jobs = useJobPostings();
   const [selected, setSelected] = useState<Candidate | null>(null);
   const [selectedJob, setSelectedJob] = useState<JobPosting | "new" | null>(null);
-  const [toDelete, setToDelete] = useState<{ kind: "cand" | "job"; id: string; label: string } | null>(null);
+  const [toDelete, setToDelete] = useState<{
+    kind: "cand" | "job";
+    id: string;
+    label: string;
+  } | null>(null);
   const { open: openAction } = useQuickAction();
 
   useEffect(() => {
@@ -50,27 +74,27 @@ function Recruiting() {
   }, []);
 
   const moveStage = (id: string, dir: 1 | -1) => {
-    setCandidates(arr =>
-      arr.map(c => {
-        if (c.id !== id) return c;
-        const idx = stages.indexOf(c.stage);
-        const next = stages[Math.min(stages.length - 1, Math.max(0, idx + dir))];
-        if (next === "Hired" && c.stage !== "Hired") toast.success(`${c.name} hired! 🎉`);
-        return { ...c, stage: next };
-      })
-    );
+    const c = candidatesTable.getAll().find((x) => x.id === id);
+    if (!c) return;
+    const idx = stages.indexOf(c.stage);
+    const next = stages[Math.min(stages.length - 1, Math.max(0, idx + dir))];
+    if (next === "Hired" && c.stage !== "Hired") toast.success(`${c.name} hired! 🎉`);
+    candidatesTable.update(id, { stage: next });
   };
 
   const rejectCandidate = (c: Candidate) => {
-    setCandidates(arr => arr.filter(x => x.id !== c.id));
+    candidatesTable.remove(c.id);
     toast(`${c.name} rejected`, {
-      action: { label: "Undo", onClick: () => setCandidates(arr => [c, ...arr]) },
+      action: { label: "Undo", onClick: () => candidatesTable.add(c) },
     });
   };
 
-  const saveJob = (data: Omit<JobPosting, "id" | "applicants" | "posted" | "status">, id?: string) => {
+  const saveJob = (
+    data: Omit<JobPosting, "id" | "applicants" | "posted" | "status">,
+    id?: string,
+  ) => {
     if (id) {
-      setJobs(js => js.map(j => (j.id === id ? { ...j, ...data } : j)));
+      jobPostingsTable.update(id, data);
       toast.success("Job updated");
     } else {
       const j: JobPosting = {
@@ -80,29 +104,27 @@ function Recruiting() {
         posted: new Date().toISOString().slice(0, 10),
         status: "draft",
       };
-      setJobs(js => [j, ...js]);
+      jobPostingsTable.add(j);
       toast.success("Job created", { description: "Saved as draft. Publish when ready." });
     }
   };
 
   const toggleJobStatus = (j: JobPosting) => {
-    setJobs(js =>
-      js.map(x => (x.id === j.id ? { ...x, status: x.status === "open" ? "closed" : "open" } : x))
-    );
-    toast.success(
-      `Job ${j.status === "open" ? "closed" : "published"}`,
-      { description: `${j.title} — ${j.status === "open" ? "no longer visible" : "live on careers page"}` }
-    );
-  };
-
-  const removeJob = (j: JobPosting) => {
-    setJobs(js => js.filter(x => x.id !== j.id));
-    toast("Job deleted", {
-      action: { label: "Undo", onClick: () => setJobs(js => [j, ...js]) },
+    const nextStatus: JobPosting["status"] = j.status === "open" ? "closed" : "open";
+    jobPostingsTable.update(j.id, { status: nextStatus });
+    toast.success(`Job ${j.status === "open" ? "closed" : "published"}`, {
+      description: `${j.title} — ${j.status === "open" ? "no longer visible" : "live on careers page"}`,
     });
   };
 
-  const openRoles = jobs.filter(j => j.status === "open").length;
+  const removeJob = (j: JobPosting) => {
+    jobPostingsTable.remove(j.id);
+    toast("Job deleted", {
+      action: { label: "Undo", onClick: () => jobPostingsTable.add(j) },
+    });
+  };
+
+  const openRoles = jobs.filter((j) => j.status === "open").length;
 
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
@@ -111,11 +133,18 @@ function Recruiting() {
         description={`${openRoles} open role${openRoles === 1 ? "" : "s"} · ${candidates.length} candidates in pipeline`}
         actions={
           <>
-            <Button variant="outline" size="sm" className="press-scale" onClick={() => setSelectedJob("new")}>
-              <Briefcase className="h-4 w-4 mr-1.5" />New job
+            <Button
+              variant="outline"
+              size="sm"
+              className="press-scale"
+              onClick={() => setSelectedJob("new")}
+            >
+              <Briefcase className="h-4 w-4 mr-1.5" />
+              New job
             </Button>
             <Button size="sm" className="press-scale" onClick={() => openAction("post-job")}>
-              <Plus className="h-4 w-4 mr-1.5" />Post via quick action
+              <Plus className="h-4 w-4 mr-1.5" />
+              Post via quick action
             </Button>
           </>
         }
@@ -123,82 +152,110 @@ function Recruiting() {
 
       <Tabs defaultValue="pipeline">
         <TabsList>
-          <TabsTrigger value="pipeline"><Users className="h-3.5 w-3.5 mr-1.5" />Pipeline</TabsTrigger>
-          <TabsTrigger value="jobs"><Briefcase className="h-3.5 w-3.5 mr-1.5" />Jobs ({jobs.length})</TabsTrigger>
+          <TabsTrigger value="pipeline">
+            <Users className="h-3.5 w-3.5 mr-1.5" />
+            Pipeline
+          </TabsTrigger>
+          <TabsTrigger value="jobs">
+            <Briefcase className="h-3.5 w-3.5 mr-1.5" />
+            Jobs ({jobs.length})
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="pipeline" className="mt-4">
           {loading ? (
-            <div className="md:overflow-x-visible overflow-x-auto scrollbar-thin -mx-6 px-6 md:-mx-0 md:px-0"><div className="grid grid-cols-5 gap-3 md:min-w-0 min-w-[780px]">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="bg-muted/40 rounded-lg p-2.5 min-h-[400px] space-y-2">
-                  <div className="h-3 w-[50%] shimmer rounded" />
-                  {Array.from({ length: 2 }).map((_, j) => (
-                    <Card key={j} className="p-3 space-y-2">
-                      <div className="h-3 w-[70%] shimmer rounded" />
-                      <div className="h-2.5 w-[50%] shimmer rounded" />
-                    </Card>
-                  ))}
-                </div>
-              ))}
-            </div></div>
+            <div className="md:overflow-x-visible overflow-x-auto scrollbar-thin -mx-6 px-6 md:-mx-0 md:px-0">
+              <div className="grid grid-cols-5 gap-3 md:min-w-0 min-w-[780px]">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="bg-muted/40 rounded-lg p-2.5 min-h-[400px] space-y-2">
+                    <div className="h-3 w-[50%] shimmer rounded" />
+                    {Array.from({ length: 2 }).map((_, j) => (
+                      <Card key={j} className="p-3 space-y-2">
+                        <div className="h-3 w-[70%] shimmer rounded" />
+                        <div className="h-2.5 w-[50%] shimmer rounded" />
+                      </Card>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : candidates.length === 0 ? (
             <EmptyState
               icon={<Users className="h-6 w-6" />}
               title="No candidates in the pipeline"
               description="Post a job to start collecting applicants."
-              action={<Button size="sm" onClick={() => setSelectedJob("new")}><Briefcase className="h-4 w-4 mr-1.5" />Create job</Button>}
+              action={
+                <Button size="sm" onClick={() => setSelectedJob("new")}>
+                  <Briefcase className="h-4 w-4 mr-1.5" />
+                  Create job
+                </Button>
+              }
             />
           ) : (
-            <div className="md:overflow-x-visible overflow-x-auto scrollbar-thin -mx-6 px-6 md:-mx-0 md:px-0"><div className="grid grid-cols-5 gap-3 md:min-w-0 min-w-[780px]">
-              {stages.map(stage => {
-                const items = candidates.filter(c => c.stage === stage);
-                return (
-                  <div key={stage} className="bg-muted/40 rounded-lg p-2.5 min-h-[400px]">
-                    <div className="flex items-center justify-between px-1.5 mb-2">
-                      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{stage}</div>
-                      <div className={cn(
-                        "text-xs rounded px-1.5 py-0.5 min-w-5 text-center font-medium",
-                        stage === "Hired" ? "bg-success/15 text-success" :
-                        stage === "Offer" ? "bg-info/15 text-info" :
-                        "bg-background text-muted-foreground"
-                      )}>{items.length}</div>
+            <div className="md:overflow-x-visible overflow-x-auto scrollbar-thin -mx-6 px-6 md:-mx-0 md:px-0">
+              <div className="grid grid-cols-5 gap-3 md:min-w-0 min-w-[780px]">
+                {stages.map((stage) => {
+                  const items = candidates.filter((c) => c.stage === stage);
+                  return (
+                    <div key={stage} className="bg-muted/40 rounded-lg p-2.5 min-h-[400px]">
+                      <div className="flex items-center justify-between px-1.5 mb-2">
+                        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          {stage}
+                        </div>
+                        <div
+                          className={cn(
+                            "text-xs rounded px-1.5 py-0.5 min-w-5 text-center font-medium",
+                            stage === "Hired"
+                              ? "bg-success/15 text-success"
+                              : stage === "Offer"
+                                ? "bg-info/15 text-info"
+                                : "bg-background text-muted-foreground",
+                          )}
+                        >
+                          {items.length}
+                        </div>
+                      </div>
+                      {items.length === 0 ? (
+                        <div className="text-[11px] text-muted-foreground text-center py-6 border border-dashed rounded-md">
+                          Drop candidates here
+                        </div>
+                      ) : (
+                        <div className="space-y-2 stagger-in">
+                          {items.map((c) => (
+                            <Card
+                              key={c.id}
+                              onClick={() => setSelected(c)}
+                              className="p-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all press-scale"
+                            >
+                              <div className="flex items-center gap-2.5 mb-2">
+                                <Avatar initials={c.initials} color={c.avatarColor} size={28} />
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-sm font-medium truncate">{c.name}</div>
+                                  <div className="text-[11px] text-muted-foreground truncate">
+                                    {c.role}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                                <div className="flex">
+                                  {[1, 2, 3, 4, 5].map((i) => (
+                                    <Star
+                                      key={i}
+                                      className={`h-3 w-3 ${i <= c.rating ? "fill-warning text-warning" : "text-muted-foreground/30"}`}
+                                    />
+                                  ))}
+                                </div>
+                                <span className="tabular-nums">{c.appliedDate.slice(5)}</span>
+                              </div>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    {items.length === 0 ? (
-                      <div className="text-[11px] text-muted-foreground text-center py-6 border border-dashed rounded-md">
-                        Drop candidates here
-                      </div>
-                    ) : (
-                      <div className="space-y-2 stagger-in">
-                        {items.map(c => (
-                          <Card
-                            key={c.id}
-                            onClick={() => setSelected(c)}
-                            className="p-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all press-scale"
-                          >
-                            <div className="flex items-center gap-2.5 mb-2">
-                              <Avatar initials={c.initials} color={c.avatarColor} size={28} />
-                              <div className="min-w-0 flex-1">
-                                <div className="text-sm font-medium truncate">{c.name}</div>
-                                <div className="text-[11px] text-muted-foreground truncate">{c.role}</div>
-                              </div>
-                            </div>
-                            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                              <div className="flex">
-                                {[1, 2, 3, 4, 5].map(i => (
-                                  <Star key={i} className={`h-3 w-3 ${i <= c.rating ? "fill-warning text-warning" : "text-muted-foreground/30"}`} />
-                                ))}
-                              </div>
-                              <span className="tabular-nums">{c.appliedDate.slice(5)}</span>
-                            </div>
-                          </Card>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div></div>
+                  );
+                })}
+              </div>
+            </div>
           )}
         </TabsContent>
 
@@ -210,16 +267,23 @@ function Recruiting() {
               icon={<Briefcase className="h-6 w-6" />}
               title="No jobs posted yet"
               description="Draft your first opening to start sourcing candidates."
-              action={<Button size="sm" onClick={() => setSelectedJob("new")}><Plus className="h-4 w-4 mr-1.5" />New job</Button>}
+              action={
+                <Button size="sm" onClick={() => setSelectedJob("new")}>
+                  <Plus className="h-4 w-4 mr-1.5" />
+                  New job
+                </Button>
+              }
             />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 stagger-in">
-              {jobs.map(j => (
+              {jobs.map((j) => (
                 <Card key={j.id} className="p-5 press-scale hover:shadow-md transition-all">
                   <div className="flex items-start justify-between mb-2">
                     <div className="min-w-0">
                       <div className="font-semibold truncate">{j.title}</div>
-                      <div className="text-xs text-muted-foreground">{j.department} · {j.location}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {j.department} · {j.location}
+                      </div>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -232,24 +296,41 @@ function Recruiting() {
                         <DropdownMenuItem onClick={() => toggleJobStatus(j)}>
                           {j.status === "open" ? "Close job" : "Publish job"}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => toast.success("Share link copied")}>Copy public link</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => toast.success("Share link copied")}>
+                          Copy public link
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive" onClick={() => setToDelete({ kind: "job", id: j.id, label: j.title })}>
-                          <Trash2 className="h-4 w-4 mr-2" />Delete
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => setToDelete({ kind: "job", id: j.id, label: j.title })}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
                   <div className="flex items-center gap-2 text-xs mt-2 flex-wrap">
-                    <StatusBadge status={j.status === "open" ? "active" : j.status === "closed" ? "rejected" : "draft"} />
+                    <StatusBadge
+                      status={
+                        j.status === "open"
+                          ? "active"
+                          : j.status === "closed"
+                            ? "rejected"
+                            : "draft"
+                      }
+                    />
                     <span className="text-muted-foreground">· {j.type}</span>
                     <span className="text-muted-foreground">· {j.salary}</span>
                   </div>
                   <div className="mt-3 pt-3 border-t flex items-center justify-between text-xs">
                     <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-                      <Users className="h-3 w-3" />{j.applicants} applicants
+                      <Users className="h-3 w-3" />
+                      {j.applicants} applicants
                     </span>
-                    <Button size="sm" variant="ghost" onClick={() => setSelectedJob(j)}>View</Button>
+                    <Button size="sm" variant="ghost" onClick={() => setSelectedJob(j)}>
+                      View
+                    </Button>
                   </div>
                 </Card>
               ))}
@@ -258,11 +339,7 @@ function Recruiting() {
         </TabsContent>
       </Tabs>
 
-      <SidePanel
-        open={!!selected}
-        onClose={() => setSelected(null)}
-        title={selected?.name}
-      >
+      <SidePanel open={!!selected} onClose={() => setSelected(null)} title={selected?.name}>
         {selected && (
           <div className="p-5">
             <div className="flex items-center gap-3 mb-4">
@@ -271,8 +348,11 @@ function Recruiting() {
                 <div className="font-semibold">{selected.name}</div>
                 <div className="text-sm text-muted-foreground">{selected.role}</div>
                 <div className="flex mt-1">
-                  {[1, 2, 3, 4, 5].map(i => (
-                    <Star key={i} className={`h-3.5 w-3.5 ${i <= selected.rating ? "fill-warning text-warning" : "text-muted-foreground/30"}`} />
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star
+                      key={i}
+                      className={`h-3.5 w-3.5 ${i <= selected.rating ? "fill-warning text-warning" : "text-muted-foreground/30"}`}
+                    />
                   ))}
                 </div>
               </div>
@@ -283,42 +363,81 @@ function Recruiting() {
             </div>
             <div className="flex gap-2 mb-5">
               <Button
-                size="sm" variant="outline" className="press-scale"
+                size="sm"
+                variant="outline"
+                className="press-scale"
                 disabled={selected.stage === "Applied"}
                 onClick={() => moveStage(selected.id, -1)}
               >
-                <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />Back
+                <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
+                Back
               </Button>
               <Button
-                size="sm" className="flex-1 press-scale"
+                size="sm"
+                className="flex-1 press-scale"
                 onClick={() => moveStage(selected.id, 1)}
                 disabled={selected.stage === "Hired"}
               >
-                {selected.stage === "Offer" ? <><PartyPopper className="h-3.5 w-3.5 mr-1.5" />Mark hired</> : <>Advance stage <ArrowRight className="h-3.5 w-3.5 ml-1" /></>}
+                {selected.stage === "Offer" ? (
+                  <>
+                    <PartyPopper className="h-3.5 w-3.5 mr-1.5" />
+                    Mark hired
+                  </>
+                ) : (
+                  <>
+                    Advance stage <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                  </>
+                )}
               </Button>
               <Button
-                size="sm" variant="outline" className="press-scale text-destructive hover:bg-destructive/10"
-                onClick={() => { rejectCandidate(selected); setSelected(null); }}
+                size="sm"
+                variant="outline"
+                className="press-scale text-destructive hover:bg-destructive/10"
+                onClick={() => {
+                  rejectCandidate(selected);
+                  setSelected(null);
+                }}
                 title="Reject"
               >
                 <Ban className="h-3.5 w-3.5" />
               </Button>
             </div>
             <div className="flex gap-2 mb-5">
-              <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => toast.success("Interview scheduled", { description: `Invite sent to ${selected.name}` })}>
-                <Calendar className="h-3.5 w-3.5 mr-1.5" />Schedule interview
+              <Button
+                size="sm"
+                variant="outline"
+                className="flex-1 press-scale"
+                onClick={() =>
+                  toast.success("Interview scheduled", {
+                    description: `Invite sent to ${selected.name}`,
+                  })
+                }
+              >
+                <Calendar className="h-3.5 w-3.5 mr-1.5" />
+                Schedule interview
               </Button>
-              <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => toast.success("Scorecard saved")}>Add scorecard</Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="flex-1 press-scale"
+                onClick={() => toast.success("Scorecard saved")}
+              >
+                Add scorecard
+              </Button>
             </div>
 
-            <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Timeline</div>
+            <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+              Timeline
+            </div>
             <div className="space-y-3 stagger-in">
-              {["Applied via website", "Screened by Olivia", "Tech interview scheduled"].map((t, i) => (
-                <div key={i} className="flex gap-3 text-sm">
-                  <div className="h-2 w-2 mt-1.5 rounded-full bg-primary shrink-0" />
-                  <div className="flex-1">{t}</div>
-                </div>
-              ))}
+              {["Applied via website", "Screened by Olivia", "Tech interview scheduled"].map(
+                (t, i) => (
+                  <div key={i} className="flex gap-3 text-sm">
+                    <div className="h-2 w-2 mt-1.5 rounded-full bg-primary shrink-0" />
+                    <div className="flex-1">{t}</div>
+                  </div>
+                ),
+              )}
             </div>
           </div>
         )}
@@ -334,7 +453,7 @@ function Recruiting() {
           <JobForm
             job={selectedJob === "new" ? null : selectedJob}
             onCancel={() => setSelectedJob(null)}
-            onSave={data => {
+            onSave={(data) => {
               saveJob(data, selectedJob === "new" ? undefined : selectedJob.id);
               setSelectedJob(null);
             }}
@@ -342,10 +461,12 @@ function Recruiting() {
         )}
       </SidePanel>
 
-      <AlertDialog open={!!toDelete} onOpenChange={o => !o && setToDelete(null)}>
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {toDelete?.kind === "job" ? "job" : "candidate"}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Delete {toDelete?.kind === "job" ? "job" : "candidate"}?
+            </AlertDialogTitle>
             <AlertDialogDescription>{toDelete?.label} will be removed.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -354,12 +475,14 @@ function Recruiting() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => {
                 if (toDelete?.kind === "job") {
-                  const j = jobs.find(x => x.id === toDelete.id);
+                  const j = jobs.find((x) => x.id === toDelete.id);
                   if (j) removeJob(j);
                 }
                 setToDelete(null);
               }}
-            >Delete</AlertDialogAction>
+            >
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -368,7 +491,9 @@ function Recruiting() {
 }
 
 function JobForm({
-  job, onCancel, onSave,
+  job,
+  onCancel,
+  onSave,
 }: {
   job: JobPosting | null;
   onCancel: () => void;
@@ -387,30 +512,78 @@ function JobForm({
     <>
       <div className="p-5 space-y-4">
         <div className="flex items-center gap-3 p-3 rounded-md bg-muted/40">
-          <div className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center"><Briefcase className="h-4 w-4" /></div>
-          <div className="text-sm"><div className="font-medium">{job ? "Edit job posting" : "Create a new job posting"}</div><div className="text-xs text-muted-foreground">Starts as draft — publish when ready.</div></div>
+          <div className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center">
+            <Briefcase className="h-4 w-4" />
+          </div>
+          <div className="text-sm">
+            <div className="font-medium">
+              {job ? "Edit job posting" : "Create a new job posting"}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Starts as draft — publish when ready.
+            </div>
+          </div>
         </div>
-        <div className="space-y-1.5"><Label>Job title</Label><Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Senior Frontend Engineer" /></div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Department</Label><Input value={department} onChange={e => setDepartment(e.target.value)} /></div>
-          <div className="space-y-1.5"><Label><MapPin className="h-3 w-3 inline mr-1" />Location</Label><Input value={location} onChange={e => setLocation(e.target.value)} /></div>
+        <div className="space-y-1.5">
+          <Label>Job title</Label>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Senior Frontend Engineer"
+          />
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Employment</Label>
+          <div className="space-y-1.5">
+            <Label>Department</Label>
+            <Input value={department} onChange={(e) => setDepartment(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>
+              <MapPin className="h-3 w-3 inline mr-1" />
+              Location
+            </Label>
+            <Input value={location} onChange={(e) => setLocation(e.target.value)} />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label>Employment</Label>
             <div className="flex gap-1.5">
-              {(["Full-time","Part-time","Contractor"] as const).map(t => (
-                <button key={t} onClick={() => setType(t)} type="button" className={cn("flex-1 text-xs py-2 rounded-md border press-scale", type === t ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted")}>{t}</button>
+              {(["Full-time", "Part-time", "Contractor"] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setType(t)}
+                  type="button"
+                  className={cn(
+                    "flex-1 text-xs py-2 rounded-md border press-scale",
+                    type === t
+                      ? "border-primary bg-primary/5 text-primary font-medium"
+                      : "hover:bg-muted",
+                  )}
+                >
+                  {t}
+                </button>
               ))}
             </div>
           </div>
-          <div className="space-y-1.5"><Label>Salary</Label><Input value={salary} onChange={e => setSalary(e.target.value)} placeholder="€80k – €110k" /></div>
+          <div className="space-y-1.5">
+            <Label>Salary</Label>
+            <Input
+              value={salary}
+              onChange={(e) => setSalary(e.target.value)}
+              placeholder="€80k – €110k"
+            />
+          </div>
         </div>
-        <div className="space-y-1.5"><Label>Hiring manager</Label><Input value={owner} onChange={e => setOwner(e.target.value)} /></div>
+        <div className="space-y-1.5">
+          <Label>Hiring manager</Label>
+          <Input value={owner} onChange={(e) => setOwner(e.target.value)} />
+        </div>
         <div className="space-y-1.5">
           <Label>Description</Label>
           <textarea
             value={description}
-            onChange={e => setDescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
             rows={5}
             className="w-full rounded-md border bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             placeholder="About the role…"
@@ -418,9 +591,15 @@ function JobForm({
         </div>
       </div>
       <div className="px-5 py-3 border-t flex justify-end gap-2 sticky bottom-0 bg-card">
-        <Button variant="ghost" onClick={onCancel}>Cancel</Button>
-        <Button disabled={!valid} onClick={() => onSave({ title, department, location, type, salary, owner, description })}>
-          <UserPlus className="h-4 w-4 mr-1.5" />{job ? "Save changes" : "Save draft"}
+        <Button variant="ghost" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button
+          disabled={!valid}
+          onClick={() => onSave({ title, department, location, type, salary, owner, description })}
+        >
+          <UserPlus className="h-4 w-4 mr-1.5" />
+          {job ? "Save changes" : "Save draft"}
         </Button>
       </div>
     </>
