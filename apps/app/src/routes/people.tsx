@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
+import { EditEmployeePanel } from "@/components/people/EditEmployeePanel";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
@@ -55,6 +56,7 @@ function People() {
   const setDept = (v: string | null) => views.setState({ dept: v ?? "" });
   const setTab = (v: string) => views.setState({ tab: v });
   const [selected, setSelected] = useState<Employee | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const list = useEmployees();
   const [toDelete, setToDelete] = useState<Employee | null>(null);
   const [loading, setLoading] = useState(true);
@@ -306,7 +308,13 @@ function People() {
         </TabsContent>
       </Tabs>
 
-      <EmployeePanel employee={selected} onClose={() => setSelected(null)} onDelete={e => setToDelete(e)} />
+      <EmployeePanel
+        employee={selected ? (list.find((x) => x.id === selected.id) ?? selected) : null}
+        onClose={() => setSelected(null)}
+        onDelete={e => setToDelete(e)}
+        onEdit={e => setEditingId(e.id)}
+      />
+      <EditEmployeePanel employeeId={editingId} onClose={() => setEditingId(null)} />
 
       <AlertDialog open={!!toDelete} onOpenChange={o => !o && setToDelete(null)}>
         <AlertDialogContent>
@@ -332,8 +340,13 @@ function People() {
 }
 
 function EmployeePanel({
-  employee, onClose, onDelete,
-}: { employee: Employee | null; onClose: () => void; onDelete: (e: Employee) => void }) {
+  employee, onClose, onDelete, onEdit,
+}: {
+  employee: Employee | null;
+  onClose: () => void;
+  onDelete: (e: Employee) => void;
+  onEdit: (e: Employee) => void;
+}) {
   return (
     <SidePanel
       open={!!employee}
@@ -370,7 +383,7 @@ function EmployeePanel({
             <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => toast.success("Calendar opened", { description: `Schedule a meeting with ${employee.name}` })}>
               <Calendar className="h-3.5 w-3.5 mr-1.5" />Schedule
             </Button>
-            <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => toast("Edit mode", { description: "Tap any field to edit inline" })}>Edit</Button>
+            <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => onEdit(employee)}>Edit</Button>
             <Button size="sm" variant="outline" className="press-scale text-destructive hover:bg-destructive/10" onClick={() => onDelete(employee)}>
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
