@@ -232,6 +232,7 @@ function AppShellInner() {
                     <Link
                       key={item.to}
                       to={item.to}
+                      id={item.to === "/focus" ? "nav-focus" : undefined}
                       className={cn(
                         "group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors relative",
                         active
