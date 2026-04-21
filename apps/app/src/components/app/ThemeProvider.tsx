@@ -13,7 +13,8 @@ export const THEMES: { id: Theme; label: string; role?: string; swatch: string; 
 ];
 
 const STORAGE_KEY = "pulse.theme";
-const DEFAULT_THEME: Theme = "light";
+/** Signature lime-on-near-black palette matched to the marketing brand. */
+const DEFAULT_THEME: Theme = "employee";
 
 function readStored(): Theme {
   if (typeof window === "undefined") return DEFAULT_THEME;

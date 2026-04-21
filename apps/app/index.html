@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0b0b0d" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#fafaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0b0d" />
     <meta name="description" content="Pulse HR is a modern HR, payroll and people platform for teams that want one surface instead of six." />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -18,13 +17,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" />
     <title>Pulse HR — Modern HR & Payroll</title>
+    <style>
+      /* Paint the dark canvas before any CSS loads so the PWA splash and
+         initial route don't flash white on first paint. */
+      html, body { background-color: #0b0b0d; color: #f2f2ee; }
+      html[data-theme="light"], html[data-theme="light"] body { background-color: #fafaf7; color: #1a1a1d; }
+    </style>
     <script>
+      // Flash-prevention: set the theme on <html> before React paints. Default
+      // is the signature lime-on-near-black "employee" palette; every theme
+      // except "light" is dark-mode.
       (function () {
         try {
-          var t = localStorage.getItem("pulse.theme") || "light";
-          var darkThemes = ["dark", "employee", "hr", "admin", "manager", "finance"];
+          var t = localStorage.getItem("pulse.theme") || "employee";
           document.documentElement.dataset.theme = t;
-          if (darkThemes.indexOf(t) !== -1) document.documentElement.classList.add("dark");
+          if (t !== "light") document.documentElement.classList.add("dark");
         } catch (e) {}
       })();
     </script>

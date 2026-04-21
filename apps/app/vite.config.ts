@@ -37,8 +37,10 @@ export default defineConfig(({ mode }) => {
           short_name: "Pulse HR",
           description: "Modern HR, payroll and people platform — one surface for your whole team.",
           lang: "en",
-          theme_color: "#0b0b0d",
-          background_color: "#fafaf7",
+          // Signature lime-on-near-black identity. theme_color drives the
+          // Android status bar + title bar; background_color is the splash.
+          theme_color: "#b4ff39",
+          background_color: "#0b0b0d",
           display: "standalone",
           orientation: "any",
           start_url: "/",
