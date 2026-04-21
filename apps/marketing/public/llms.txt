@@ -3,12 +3,12 @@
 > Open-source, modular HR & payroll platform for teams of 5–500. Money, People and Work as three composable products sharing one workspace. Multi-country payroll (US, UK, IT, ES, FR, DE, IE, NL natively), keyboard-first command bar, webhooks on every event, PWA-ready. Source-available under FSL-1.1-MIT. Free for the first 5 employees.
 
 ## Overview
-- [Product tour](https://pulsehr.com/product) — Three independent modules (Money, People, Work) sharing one workspace, one keyboard, one API.
-- [Labs features](https://pulsehr.com/labs) — Team Pulse (sentiment), Commessa Forecast (scenario planning), Kudos (peer recognition), Focus Mode (deep work), Saturation (utilization).
-- [Changelog](https://pulsehr.com/changelog) — Reverse-chronological product updates.
-- [Pricing](https://pulsehr.com/pricing) — One transparent tier per active employee per month. Free up to 5 employees.
-- [Security](https://pulsehr.com/security) — SOC 2 Type II, GDPR-compliant, EU data residency, ISO 27001 in progress.
-- [API reference](https://pulsehr.com/docs/api) — REST API, webhooks on every resource, SDKs for TypeScript, Python, Go.
+- [Product tour](https://pulsehr.it/product) — Three independent modules (Money, People, Work) sharing one workspace, one keyboard, one API.
+- [Labs features](https://pulsehr.it/labs) — Team Pulse (sentiment), Commessa Forecast (scenario planning), Kudos (peer recognition), Focus Mode (deep work), Saturation (utilization).
+- [Changelog](https://pulsehr.it/changelog) — Reverse-chronological product updates.
+- [Pricing](https://pulsehr.it/pricing) — One transparent tier per active employee per month. Free up to 5 employees.
+- [Security](https://pulsehr.it/security) — SOC 2 Type II, GDPR-compliant, EU data residency, ISO 27001 in progress.
+- [API reference](https://pulsehr.it/docs/api) — REST API, webhooks on every resource, SDKs for TypeScript, Python, Go.
 - [Source code](https://github.com/davide97g/workflows-people) — Public repository, FSL-1.1-MIT license.
 
 ## Principles
@@ -24,6 +24,6 @@
 Installs as a PWA on macOS, Windows, iOS, Android. Recent views, timesheets and kudos drafts work offline and sync on reconnect. Payroll runs require a live connection and queue if offline.
 
 ## Contact
-- Email: hello@pulsehr.com · sales@pulsehr.com
-- Status: https://status.pulsehr.com
+- Email: hello@pulsehr.it · sales@pulsehr.it
+- Status: https://status.pulsehr.it
 - GitHub: https://github.com/davide97g/workflows-people

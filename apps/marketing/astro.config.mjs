@@ -4,7 +4,7 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  site: "https://pulsehr.com",
+  site: "https://pulsehr.it",
   trailingSlash: "never",
   build: { inlineStylesheets: "auto" },
   integrations: [

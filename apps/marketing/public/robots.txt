@@ -17,4 +17,4 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
-Sitemap: https://pulsehr.com/sitemap-index.xml
+Sitemap: https://pulsehr.it/sitemap-index.xml

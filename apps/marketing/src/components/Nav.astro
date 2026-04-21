@@ -1,7 +1,7 @@
 ---
 import { Sparkles, ChevronDown, Github } from "lucide-astro";
 
-const GITHUB_REPO = "davide97g/workflows-people";
+const GITHUB_REPO = "davide97g/pulse-hr";
 
 // Fetch star count at build time; fall back silently if rate-limited or offline.
 let stars: number | null = null;
@@ -50,9 +50,9 @@ const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `$
           <span class="font-mono text-[11px] tabular-nums text-white/50">★ {formatStars(stars)}</span>
         )}
       </a>
-      <a href="https://workflows-people.vercel.app/" class="text-sm text-white/70 hover:text-white px-3 py-1.5 rounded-md transition-colors">Sign in</a>
+      <a href="https://app.pulsehr.it/" class="text-sm text-white/70 hover:text-white px-3 py-1.5 rounded-md transition-colors">Sign in</a>
       <a
-        href="https://workflows-people.vercel.app/"
+        href="https://app.pulsehr.it/"
         class="text-sm font-medium bg-[#b4ff39] text-[#0b0b0d] px-4 py-2 rounded-md hover:bg-[#c6ff5a] transition-colors press-scale"
       >
         Start free

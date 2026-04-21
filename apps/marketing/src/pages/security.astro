@@ -27,7 +27,7 @@ const CONTROLS = [
   { icon: Key,        k: "Access control",    d: "SSO via SAML 2.0 (Okta, Entra, Google) or OIDC, included on every tier. SCIM provisioning. Granular role-based permissions with audit on every read and write." },
   { icon: FileSearch, k: "Audit log",         d: "Immutable, append-only log of every state change — who, what, when, from what IP. Exportable via API. Retention 6 years by default." },
   { icon: Shield,     k: "Tenant isolation",  d: "Logical separation at the DB row level with tenant_id in every foreign key. Row-level security policies enforced at Postgres." },
-  { icon: AlertTriangle, k: "Incident playbook", d: "24/7 on-call rotation. P0 SLA: 15 min acknowledge, 2 h workaround. Public status page at status.pulsehr.com with incident post-mortems within 5 business days." },
+  { icon: AlertTriangle, k: "Incident playbook", d: "24/7 on-call rotation. P0 SLA: 15 min acknowledge, 2 h workaround. Public status page at status.pulsehr.it with incident post-mortems within 5 business days." },
 ];
 
 const SUBPROCESSORS = [
@@ -152,7 +152,7 @@ const statusBadge = {
         <ul class="space-y-3 text-sm text-white/75 list-none p-0 m-0">
           <li class="flex items-start gap-3">
             <span class="font-mono text-[#b4ff39] shrink-0 w-[100px]">Contact</span>
-            <a href="mailto:security@pulsehr.com" class="text-[#b4ff39] hover:underline">security@pulsehr.com</a>
+            <a href="mailto:security@pulsehr.it" class="text-[#b4ff39] hover:underline">security@pulsehr.it</a>
           </li>
           <li class="flex items-start gap-3">
             <span class="font-mono text-[#b4ff39] shrink-0 w-[100px]">PGP key</span>
@@ -164,7 +164,7 @@ const statusBadge = {
           </li>
           <li class="flex items-start gap-3">
             <span class="font-mono text-[#b4ff39] shrink-0 w-[100px]">Scope</span>
-            <span>pulsehr.com, workflows-people.vercel.app, the GitHub repo, and any self-hosted deployment you control.</span>
+            <span>pulsehr.it, app.pulsehr.it, the GitHub repo, and any self-hosted deployment you control.</span>
           </li>
           <li class="flex items-start gap-3">
             <span class="font-mono text-[#b4ff39] shrink-0 w-[100px]">Reward</span>

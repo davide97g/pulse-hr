@@ -1,7 +1,7 @@
-Contact: mailto:security@pulsehr.com
+Contact: mailto:security@pulsehr.it
 Expires: 2027-04-20T00:00:00.000Z
 Preferred-Languages: en, it
-Canonical: https://pulsehr.com/.well-known/security.txt
-Policy: https://pulsehr.com/security
-Acknowledgments: https://pulsehr.com/security#responsible-disclosure
-# PGP key hosted at https://pulsehr.com/.well-known/pulse-security.pgp
+Canonical: https://pulsehr.it/.well-known/security.txt
+Policy: https://pulsehr.it/security
+Acknowledgments: https://pulsehr.it/security#responsible-disclosure
+# PGP key hosted at https://pulsehr.it/.well-known/pulse-security.pgp
