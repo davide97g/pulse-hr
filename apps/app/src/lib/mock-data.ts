@@ -617,7 +617,7 @@ export interface ManagerAsk {
   dueAt?: string;
   answeredAt?: string;
   answerSummary?: string; // only summary crosses the boundary
-  status: "pending" | "answered" | "expired";
+  status: "pending" | "answered" | "expired" | "snoozed";
   tone?: "neutral" | "empathetic" | "probing";
 }
 

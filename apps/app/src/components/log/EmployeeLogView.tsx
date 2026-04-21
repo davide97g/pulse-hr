@@ -3,13 +3,13 @@ import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import {
   employees,
-  logMessages as seedMsgs,
-  managerAsks as seedAsks,
   employeeLogHealth,
   type LogMessage,
   type LogTopic,
   type ManagerAsk,
 } from "@/lib/mock-data";
+import { logMessagesTable, useLogMessages } from "@/lib/tables/logMessages";
+import { managerAsksTable, useManagerAsks } from "@/lib/tables/managerAsks";
 import { openerFor, replyTo, streamReply } from "@/lib/log-agent";
 import { LogChatThread } from "./LogChatThread";
 import { LogComposer } from "./LogComposer";
@@ -19,11 +19,12 @@ import { PinnedAskCard } from "./PinnedAskCard";
 const ME_ID = employees[0].id; // demo: first employee is "me"
 
 export function EmployeeLogView() {
-  const [msgs, setMsgs] = useState<LogMessage[]>(() =>
-    seedMsgs.filter((m) => m.employeeId === ME_ID),
-  );
-  const [asks, setAsks] = useState<ManagerAsk[]>(() =>
-    seedAsks.filter((a) => a.employeeId === ME_ID && a.status === "pending"),
+  const allMsgs = useLogMessages();
+  const allAsks = useManagerAsks();
+  const msgs = useMemo(() => allMsgs.filter((m) => m.employeeId === ME_ID), [allMsgs]);
+  const asks = useMemo(
+    () => allAsks.filter((a) => a.employeeId === ME_ID && a.status === "pending"),
+    [allAsks],
   );
   const [streamingId, setStreamingId] = useState<string | undefined>();
   const [pendingTopic, setPendingTopic] = useState<LogTopic | undefined>();
@@ -39,17 +40,14 @@ export function EmployeeLogView() {
   useEffect(() => {
     if (!hasOpenerForToday) {
       const id = `lm-opener-${Date.now()}`;
-      setMsgs((prev) => [
-        ...prev,
-        {
-          id,
-          employeeId: ME_ID,
-          role: "agent",
-          text: dailyOpener,
-          createdAt: new Date().toISOString(),
-          topic: "freeform",
-        },
-      ]);
+      logMessagesTable.add({
+        id,
+        employeeId: ME_ID,
+        role: "agent",
+        text: dailyOpener,
+        createdAt: new Date().toISOString(),
+        topic: "freeform",
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -75,11 +73,12 @@ export function EmployeeLogView() {
       topic: reply.topic,
       sentiment: reply.sentiment,
     };
-    setMsgs((prev) => [...prev, userMsg, agentStub]);
+    logMessagesTable.add(userMsg);
+    logMessagesTable.add(agentStub);
     setStreamingId(agentId);
     setPendingTopic(undefined);
     streamReply(reply.text, (soFar, done) => {
-      setMsgs((prev) => prev.map((m) => (m.id === agentId ? { ...m, text: soFar } : m)));
+      logMessagesTable.update(agentId, { text: soFar });
       if (done) setStreamingId(undefined);
     });
   }
@@ -91,9 +90,12 @@ export function EmployeeLogView() {
     });
   }
   function handleAskLater(ask: ManagerAsk) {
-    setAsks((prev) => prev.filter((a) => a.id !== ask.id));
+    managerAsksTable.update(ask.id, { status: "snoozed" });
     toast("Snoozed — we'll bring it back tomorrow.", {
-      action: { label: "Undo", onClick: () => setAsks((p) => [ask, ...p]) },
+      action: {
+        label: "Undo",
+        onClick: () => managerAsksTable.update(ask.id, { status: "pending" }),
+      },
     });
   }
 

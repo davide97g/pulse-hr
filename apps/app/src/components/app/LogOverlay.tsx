@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { X, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { employees, logMessages as seedMsgs, type LogMessage } from "@/lib/mock-data";
+import { employees } from "@/lib/mock-data";
+import { logMessagesTable, useLogMessages } from "@/lib/tables/logMessages";
 import { replyTo, streamReply } from "@/lib/log-agent";
 import { LogChatThread } from "@/components/log/LogChatThread";
 import { LogComposer } from "@/components/log/LogComposer";
@@ -18,38 +19,34 @@ export function LogOverlay({
   onOpenChange: (o: boolean) => void;
 }) {
   const nav = useNavigate();
-  const [msgs, setMsgs] = useState<LogMessage[]>(() =>
-    seedMsgs.filter((m) => m.employeeId === ME_ID).slice(-8),
-  );
+  const allMsgs = useLogMessages();
+  const msgs = useMemo(() => allMsgs.filter((m) => m.employeeId === ME_ID).slice(-8), [allMsgs]);
   const [streamingId, setStreamingId] = useState<string | undefined>();
 
   function send(text: string, voice: boolean) {
     const userId = `lm-u-${Date.now()}`;
     const agentId = `lm-a-${Date.now() + 1}`;
     const reply = replyTo(text);
-    setMsgs((prev) => [
-      ...prev,
-      {
-        id: userId,
-        employeeId: ME_ID,
-        role: "employee",
-        text,
-        createdAt: new Date().toISOString(),
-        voice,
-      },
-      {
-        id: agentId,
-        employeeId: ME_ID,
-        role: "agent",
-        text: "",
-        createdAt: new Date().toISOString(),
-        topic: reply.topic,
-        sentiment: reply.sentiment,
-      },
-    ]);
+    logMessagesTable.add({
+      id: userId,
+      employeeId: ME_ID,
+      role: "employee",
+      text,
+      createdAt: new Date().toISOString(),
+      voice,
+    });
+    logMessagesTable.add({
+      id: agentId,
+      employeeId: ME_ID,
+      role: "agent",
+      text: "",
+      createdAt: new Date().toISOString(),
+      topic: reply.topic,
+      sentiment: reply.sentiment,
+    });
     setStreamingId(agentId);
     streamReply(reply.text, (soFar, done) => {
-      setMsgs((prev) => prev.map((m) => (m.id === agentId ? { ...m, text: soFar } : m)));
+      logMessagesTable.update(agentId, { text: soFar });
       if (done) setStreamingId(undefined);
     });
   }

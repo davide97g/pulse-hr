@@ -5,18 +5,14 @@ import { ArrowUpRight, ArrowDownRight, Minus, Lock, MessageSquare } from "lucide
 import { Button } from "@/components/ui/button";
 import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
-import {
-  employees,
-  employeeLogHealth,
-  managerAsks as managerAsksSeed,
-  type EmployeeLogHealth,
-} from "@/lib/mock-data";
+import { employees, employeeLogHealth, type EmployeeLogHealth } from "@/lib/mock-data";
+import { managerAsksTable, useManagerAsks } from "@/lib/tables/managerAsks";
 import { AskTopicDialog } from "./AskTopicDialog";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function ManagerLogView() {
-  const [asks, setAsks] = useState(managerAsksSeed);
+  const asks = useManagerAsks();
   const rows = employees.map((e) => ({
     employee: e,
     health: employeeLogHealth.find((h) => h.employeeId === e.id)!,
@@ -87,7 +83,7 @@ export function ManagerLogView() {
             employeeId={askFor}
             open
             onOpenChange={(o) => !o && setAskFor(null)}
-            onCreate={(a) => setAsks((prev) => [...prev, a])}
+            onCreate={(a) => managerAsksTable.add(a)}
           />
         )}
       </div>
