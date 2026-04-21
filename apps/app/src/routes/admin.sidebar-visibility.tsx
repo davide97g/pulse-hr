@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/app/AppShell";
 import { useIsEffectiveAdmin } from "@/lib/role-override";
 import {
   defaultSidebarFeaturesEnabled,
-  SIDEBAR_FEATURE_LABELS_IT,
+  SIDEBAR_FEATURE_LABELS,
   type SidebarFeatureId,
 } from "@/lib/sidebar-features";
 import { buildSidebarNavGroups } from "@/lib/sidebar-nav-groups";
@@ -18,7 +18,7 @@ import { useSidebarFeatures } from "@/components/app/SidebarFeaturesContext";
 import { managerAsks } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/admin/sidebar-visibility")({
-  head: () => ({ meta: [{ title: "Visibilità menu — Pulse HR" }] }),
+  head: () => ({ meta: [{ title: "Sidebar visibility — Pulse HR" }] }),
   component: AdminSidebarVisibility,
 });
 
@@ -59,17 +59,17 @@ function AdminSidebarVisibility() {
 
   const enableAll = () => {
     setAll(defaultSidebarFeaturesEnabled());
-    toast.success("Tutti i moduli sono visibili");
+    toast.success("All modules are visible");
   };
 
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto fade-in">
       <PageHeader
-        title="Visibilità menu laterale"
-        description="Scegli quali sezioni mostrare nel menu ai membri del workspace (i tuoi account admin vedono sempre tutto). Le rotte disattivate non sono raggiungibili."
+        title="Sidebar visibility"
+        description="Choose which sections appear in the sidebar for workspace members (admin accounts always see everything). Disabled routes can't be reached via deep link."
         actions={
           <Button type="button" variant="outline" size="sm" onClick={enableAll}>
-            Attiva tutto
+            Enable all
           </Button>
         }
       />
@@ -90,7 +90,7 @@ function AdminSidebarVisibility() {
                   />
                   <div className="grid gap-0.5 leading-none">
                     <Label htmlFor={`sf-${id}`} className="text-sm font-medium cursor-pointer">
-                      {SIDEBAR_FEATURE_LABELS_IT[id]}
+                      {SIDEBAR_FEATURE_LABELS[id]}
                     </Label>
                     <span className="text-[11px] text-muted-foreground font-mono">{id}</span>
                   </div>
@@ -101,11 +101,11 @@ function AdminSidebarVisibility() {
         ))}
 
         <p className="text-xs text-muted-foreground">
-          Le modifiche vengono salvate su Neon (tabella{" "}
-          <span className="font-mono">workspace_sidebar_features</span>) e replicate in cache
-          locale. Su Vercel servono <span className="font-mono">DATABASE_URL</span> e{" "}
-          <span className="font-mono">CLERK_SECRET_KEY</span> nelle variabili d&apos;ambiente del
-          progetto (non solo la chiave pubblicabile). Diagnostica:{" "}
+          Changes are saved to Neon (table{" "}
+          <span className="font-mono">workspace_sidebar_features</span>) and mirrored to local
+          cache. On Vercel, the project needs <span className="font-mono">DATABASE_URL</span> and{" "}
+          <span className="font-mono">CLERK_SECRET_KEY</span> set in environment variables (not
+          only the publishable key). Diagnostics:{" "}
           <span className="font-mono">GET /api/health</span>.
         </p>
       </div>

@@ -37,7 +37,14 @@ export function methodNotAllowed(allowed: string[]): Response {
 }
 
 export function serverError(error: unknown): Response {
-  const message = error instanceof Error ? error.message : "unknown";
+  const raw = error instanceof Error ? error.message : "unknown";
   console.error("api error:", error);
-  return err(500, "server_error", message);
+  // Drizzle/postgres error messages can include the full failed SQL and
+  // parameter values. That's useful in logs but unsafe to return in an API
+  // response, so redact anything that looks like a query leak.
+  const looksLikeSql = /(^|\s)(select|insert|update|delete|failed query)/i.test(raw);
+  const safe = looksLikeSql
+    ? "Database query failed. Check server logs and that migrations have run."
+    : raw;
+  return err(500, "server_error", safe);
 }

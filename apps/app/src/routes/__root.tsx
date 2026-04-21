@@ -96,7 +96,7 @@ const TITLE_BY_PATH: Record<string, string> = {
   "/focus": "Focus Mode — Pulse HR",
   "/feedback": "Feedback — Pulse",
   "/welcome": "Welcome — Pulse HR",
-  "/admin/sidebar-visibility": "Visibilità menu — Pulse HR",
+  "/admin/sidebar-visibility": "Sidebar visibility — Pulse HR",
 };
 
 function RootComponent() {

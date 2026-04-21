@@ -168,7 +168,7 @@ export function buildSidebarNavGroups(
         ...ws.items,
         {
           to: ADMIN_SIDEBAR_VISIBILITY_PATH,
-          label: "Visibilità menu",
+          label: "Sidebar visibility",
           icon: PanelLeft,
         },
       ];

@@ -20,13 +20,14 @@ import { OfficesStoreProvider } from "./OfficesStoreProvider";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
 import { ShortcutSheet } from "./ShortcutSheet";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { TourLauncher } from "./TourLauncher";
+import { TourProvider } from "./TourProvider";
 import { VoiceDock } from "./VoiceDock";
 import {
   Briefcase,
   Building2,
   Calendar,
   ChevronDown,
-  LifeBuoy,
   Menu,
   MessageSquare,
   Plus,
@@ -82,7 +83,9 @@ export function AppShell() {
       <BookingsProvider>
         <QuickActionProvider>
           <CommentsOverlayProvider>
-            <AppShellInner />
+            <TourProvider>
+              <AppShellInner />
+            </TourProvider>
           </CommentsOverlayProvider>
         </QuickActionProvider>
       </BookingsProvider>
@@ -203,7 +206,7 @@ function AppShellInner() {
           )}
         </div>
 
-        <nav className="flex-1 overflow-y-auto scrollbar-thin py-3 px-2">
+        <nav data-tour="sidebar-nav" className="flex-1 overflow-y-auto scrollbar-thin py-3 px-2">
           {groups.map((group) => (
             <div key={group.label} className="mb-4">
               {!collapsed && (
@@ -257,13 +260,7 @@ function AppShellInner() {
         </nav>
 
         <div className="border-t p-2">
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:bg-sidebar-accent/60"
-          >
-            <LifeBuoy className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>Help & support</span>}
-          </button>
+          <TourLauncher collapsed={collapsed} />
         </div>
       </aside>
 
@@ -295,9 +292,8 @@ function AppShellInner() {
           <AlertDialogHeader>
             <AlertDialogTitle>Reset this workspace?</AlertDialogTitle>
             <AlertDialogDescription>
-              Every employee, project, request, comment, and counter you've touched will be
-              cleared. You'll be returned to the welcome flow to seed a fresh demo. This cannot be
-              undone.
+              Every employee, project, request, comment, and counter you've touched will be cleared.
+              You'll be returned to the welcome flow to seed a fresh demo. This cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -429,6 +425,7 @@ function Topbar({
       </button>
 
       <button
+        data-tour="topbar-search"
         onClick={onOpenPalette}
         className="relative flex-1 max-w-2xl text-left flex items-center h-9 px-3 rounded-md bg-muted/50 hover:bg-muted text-sm text-muted-foreground min-w-0"
       >
@@ -445,7 +442,7 @@ function Topbar({
       <div className="flex-1" />
 
       {showCommessaPin && (
-        <div className="hidden lg:inline-flex">
+        <div data-tour="topbar-commessa-pin" className="hidden lg:inline-flex">
           <ActiveCommessaPin />
         </div>
       )}
@@ -459,7 +456,7 @@ function Topbar({
           <span className="hidden xl:inline font-medium">Feedback</span>
         </Link>
       )}
-      <div className="hidden md:inline-flex">
+      <div data-tour="topbar-status-log" className="hidden md:inline-flex">
         <button
           onClick={onOpenLog}
           className="group relative inline-flex items-center gap-2 h-9 px-3 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale"
@@ -482,7 +479,7 @@ function Topbar({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button size="sm" className="h-9 gap-1.5 px-2.5 md:px-3">
+          <Button data-tour="topbar-new" size="sm" className="h-9 gap-1.5 px-2.5 md:px-3">
             <Plus className="h-4 w-4" />
             <span className="hidden md:inline">New</span>
           </Button>
@@ -525,7 +522,12 @@ function Topbar({
 
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-9 w-9 relative">
+          <Button
+            data-tour="topbar-notifications"
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 relative"
+          >
             <Bell className="h-4 w-4" />
             {unread > 0 && (
               <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-background" />
@@ -674,7 +676,7 @@ export function PageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 mb-6">
+    <div data-tour="page-header" className="flex items-start justify-between gap-4 mb-6">
       <div>
         <h1 className="text-xl font-semibold tracking-tight flex items-center gap-2">{title}</h1>
         {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}

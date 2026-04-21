@@ -1,8 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  Search, User, Calendar, Receipt, Briefcase, FileText, Settings, Users, Clock, CreditCard,
-  Sparkles, Wand2, ArrowRight, CheckCircle2,
+  Search,
+  User,
+  Calendar,
+  Receipt,
+  Briefcase,
+  FileText,
+  Settings,
+  Users,
+  Clock,
+  CreditCard,
+  Sparkles,
+  Wand2,
+  ArrowRight,
+  CheckCircle2,
+  PlayCircle,
 } from "lucide-react";
+import { TOURS } from "@/lib/tours";
+import { useTour } from "./TourProvider";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "@tanstack/react-router";
@@ -13,17 +28,47 @@ import { NewBadge } from "./NewBadge";
 import { parseCommand, type ParsedIntent } from "@/lib/nlp";
 import { cn } from "@/lib/utils";
 
-export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+export function CommandPalette({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}) {
   const [q, setQ] = useState("");
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
+  const { start: startTour } = useTour();
 
-  useEffect(() => { if (!open) setQ(""); }, [open]);
+  useEffect(() => {
+    if (!open) setQ("");
+  }, [open]);
 
-  const go = (to: string) => { onOpenChange(false); navigate({ to }); };
-  const act = (id: Parameters<typeof openAction>[0]) => { onOpenChange(false); openAction(id); };
+  const qLower = q.toLowerCase();
+  const queryHintsTours =
+    !q || ["tour", "guide", "help", "walkthrough"].some((k) => qLower.includes(k));
+  const tourMatches = TOURS.filter(
+    (t) => !q || `${t.name} ${t.summary} ${t.workflow}`.toLowerCase().includes(qLower),
+  ).slice(0, 4);
 
-  const empMatches = q ? employees.filter(e => e.name.toLowerCase().includes(q.toLowerCase()) || e.role.toLowerCase().includes(q.toLowerCase())).slice(0, 5) : [];
+  const go = (to: string) => {
+    onOpenChange(false);
+    navigate({ to });
+  };
+  const act = (id: Parameters<typeof openAction>[0]) => {
+    onOpenChange(false);
+    openAction(id);
+  };
+
+  const empMatches = q
+    ? employees
+        .filter(
+          (e) =>
+            e.name.toLowerCase().includes(q.toLowerCase()) ||
+            e.role.toLowerCase().includes(q.toLowerCase()),
+        )
+        .slice(0, 5)
+    : [];
 
   const navItems = [
     { label: "Dashboard", to: "/", icon: Settings },
@@ -33,21 +78,21 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
     { label: "Payroll", to: "/payroll", icon: CreditCard },
     { label: "Expenses", to: "/expenses", icon: Receipt },
     { label: "Documents", to: "/documents", icon: FileText },
-  ].filter(n => !q || n.label.toLowerCase().includes(q.toLowerCase()));
+  ].filter((n) => !q || n.label.toLowerCase().includes(q.toLowerCase()));
 
   const actions = [
     { label: "Add employee", id: "add-employee" as const, icon: User },
     { label: "Request leave", id: "request-leave" as const, icon: Calendar },
     { label: "Submit expense", id: "submit-expense" as const, icon: Receipt },
     { label: "Post a job", id: "post-job" as const, icon: Briefcase },
-  ].filter(a => !q || a.label.toLowerCase().includes(q.toLowerCase()));
+  ].filter((a) => !q || a.label.toLowerCase().includes(q.toLowerCase()));
 
   const intents = useMemo(() => (q.length > 2 ? parseCommand(q).slice(0, 3) : []), [q]);
 
   const runIntent = (intent: ParsedIntent) => {
     switch (intent.kind) {
       case "log-hours": {
-        const commessa = commesse.find(c => c.id === intent.args.commessaId);
+        const commessa = commesse.find((c) => c.id === intent.args.commessaId);
         toast.success(`${intent.args.hours}h logged to ${commessa?.code}`, {
           description: `${intent.args.date} · ${intent.args.description}`,
           icon: <CheckCircle2 className="h-4 w-4" />,
@@ -59,7 +104,11 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
         act("request-leave");
         return;
       case "approve-expense":
-        toast.success("Expense approved", { description: String(intent.label).replace(/^Approve "/, "").replace(/"$/, "") });
+        toast.success("Expense approved", {
+          description: String(intent.label)
+            .replace(/^Approve "/, "")
+            .replace(/"$/, ""),
+        });
         go("/expenses");
         return;
       case "add-employee":
@@ -67,7 +116,9 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
         return;
       case "fill-missing":
         go("/time");
-        window.dispatchEvent(new CustomEvent("pulse:open-bulk", { detail: { mode: "fill-missing" } }));
+        window.dispatchEvent(
+          new CustomEvent("pulse:open-bulk", { detail: { mode: "fill-missing" } }),
+        );
         return;
       case "open-autofill":
         go("/time");
@@ -90,7 +141,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
             onChange={(e) => setQ(e.target.value)}
             placeholder="Ask or jump to… try ‘4h migration yesterday’"
             className="border-0 focus-visible:ring-0 shadow-none h-12"
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.key === "Enter" && intents[0]) {
                 e.preventDefault();
                 runIntent(intents[0]);
@@ -98,58 +149,117 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
             }}
           />
           <NewBadge />
-          <kbd className="ml-2 text-[10px] font-mono text-muted-foreground border rounded px-1.5 py-0.5">ESC</kbd>
+          <kbd className="ml-2 text-[10px] font-mono text-muted-foreground border rounded px-1.5 py-0.5">
+            ESC
+          </kbd>
         </div>
         <div className="max-h-96 overflow-y-auto p-2">
           {intents.length > 0 && (
             <Section
               label={
                 <span className="flex items-center gap-1.5">
-                  <Wand2 className="h-3 w-3 text-primary" />Natural language
+                  <Wand2 className="h-3 w-3 text-primary" />
+                  Natural language
                 </span>
               }
             >
               {intents.map((intent, i) => (
-                <IntentItem key={i} intent={intent} primary={i === 0} onRun={() => runIntent(intent)} />
+                <IntentItem
+                  key={i}
+                  intent={intent}
+                  primary={i === 0}
+                  onRun={() => runIntent(intent)}
+                />
               ))}
             </Section>
           )}
           {empMatches.length > 0 && (
             <Section label="Employees">
-              {empMatches.map(e => (
-                <Item key={e.id} icon={<User className="h-4 w-4" />} label={e.name} desc={e.role} onSelect={() => go("/people")} />
+              {empMatches.map((e) => (
+                <Item
+                  key={e.id}
+                  icon={<User className="h-4 w-4" />}
+                  label={e.name}
+                  desc={e.role}
+                  onSelect={() => go("/people")}
+                />
               ))}
             </Section>
           )}
           {actions.length > 0 && (
             <Section label="Quick actions">
-              {actions.map(a => {
+              {actions.map((a) => {
                 const Icon = a.icon;
-                return <Item key={a.id} icon={<Icon className="h-4 w-4" />} label={a.label} onSelect={() => act(a.id)} />;
+                return (
+                  <Item
+                    key={a.id}
+                    icon={<Icon className="h-4 w-4" />}
+                    label={a.label}
+                    onSelect={() => act(a.id)}
+                  />
+                );
               })}
+            </Section>
+          )}
+          {tourMatches.length > 0 && queryHintsTours && (
+            <Section label="Take a tour">
+              {tourMatches.map((t) => (
+                <Item
+                  key={t.id}
+                  icon={<PlayCircle className="h-4 w-4 text-primary" />}
+                  label={t.name}
+                  desc={`${t.workflow} · ${t.duration}`}
+                  onSelect={() => {
+                    onOpenChange(false);
+                    startTour(t.id);
+                  }}
+                />
+              ))}
             </Section>
           )}
           {navItems.length > 0 && (
             <Section label="Navigate">
-              {navItems.map(n => {
+              {navItems.map((n) => {
                 const Icon = n.icon;
-                return <Item key={n.to} icon={<Icon className="h-4 w-4" />} label={n.label} onSelect={() => go(n.to)} />;
+                return (
+                  <Item
+                    key={n.to}
+                    icon={<Icon className="h-4 w-4" />}
+                    label={n.label}
+                    onSelect={() => go(n.to)}
+                  />
+                );
               })}
             </Section>
           )}
-          {q && intents.length === 0 && empMatches.length === 0 && actions.length === 0 && navItems.length === 0 && (
-            <div className="py-12 text-center text-sm text-muted-foreground">
-              No results for "{q}". Try "4h migration yesterday", "book friday off" or "approve emma expense".
-            </div>
-          )}
+          {q &&
+            intents.length === 0 &&
+            empMatches.length === 0 &&
+            actions.length === 0 &&
+            navItems.length === 0 && (
+              <div className="py-12 text-center text-sm text-muted-foreground">
+                No results for "{q}". Try "4h migration yesterday", "book friday off" or "approve
+                emma expense".
+              </div>
+            )}
           {!q && (
             <div className="px-3 py-6 text-xs text-muted-foreground">
-              <div className="text-[10px] uppercase tracking-wider font-medium mb-2">Try natural language</div>
+              <div className="text-[10px] uppercase tracking-wider font-medium mb-2">
+                Try natural language
+              </div>
               <ul className="space-y-1">
-                <li>· <span className="font-mono">4h migration yesterday</span></li>
-                <li>· <span className="font-mono">book friday off</span></li>
-                <li>· <span className="font-mono">approve emma expense</span></li>
-                <li>· <span className="font-mono">draft my week</span></li>
+                <li>
+                  · <span className="font-mono">4h migration yesterday</span>
+                </li>
+                <li>
+                  · <span className="font-mono">book friday off</span>
+                </li>
+                <li>
+                  · <span className="font-mono">approve emma expense</span>
+                </li>
+                <li>
+                  · <span className="font-mono">draft my week</span>
+                </li>
               </ul>
             </div>
           )}
@@ -162,13 +272,25 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
 function Section({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="mb-1">
-      <div className="px-2 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">{label}</div>
+      <div className="px-2 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+        {label}
+      </div>
       <div>{children}</div>
     </div>
   );
 }
 
-function Item({ icon, label, desc, onSelect }: { icon: React.ReactNode; label: string; desc?: string; onSelect: () => void }) {
+function Item({
+  icon,
+  label,
+  desc,
+  onSelect,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  desc?: string;
+  onSelect: () => void;
+}) {
   return (
     <button
       onClick={onSelect}
@@ -183,15 +305,21 @@ function Item({ icon, label, desc, onSelect }: { icon: React.ReactNode; label: s
   );
 }
 
-function IntentItem({ intent, primary, onRun }: { intent: ParsedIntent; primary: boolean; onRun: () => void }) {
+function IntentItem({
+  intent,
+  primary,
+  onRun,
+}: {
+  intent: ParsedIntent;
+  primary: boolean;
+  onRun: () => void;
+}) {
   return (
     <button
       onClick={onRun}
       className={cn(
         "w-full flex items-start gap-3 px-2 py-2.5 rounded-md text-left transition-colors press-scale",
-        primary
-          ? "bg-primary/5 hover:bg-primary/10 ring-1 ring-primary/20"
-          : "hover:bg-muted",
+        primary ? "bg-primary/5 hover:bg-primary/10 ring-1 ring-primary/20" : "hover:bg-muted",
       )}
     >
       <div
@@ -204,7 +332,9 @@ function IntentItem({ intent, primary, onRun }: { intent: ParsedIntent; primary:
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] uppercase tracking-wider text-primary font-semibold">{intent.verb}</span>
+          <span className="text-[10px] uppercase tracking-wider text-primary font-semibold">
+            {intent.verb}
+          </span>
           {primary && (
             <span className="text-[10px] text-muted-foreground ml-auto inline-flex items-center gap-1">
               Enter <kbd className="font-mono border rounded px-1 py-0.5">↵</kbd>

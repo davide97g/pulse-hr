@@ -89,17 +89,20 @@ export function SidebarFeaturesProvider({ children }: { children: ReactNode }) {
           error?: { code?: string; message?: string };
         } | null;
         if (!res.ok) {
-          const detail =
-            body?.error?.message ??
-            body?.error?.code ??
-            (res.status === 503
-              ? "Configurazione server (es. Clerk) incompleta."
-              : `HTTP ${res.status}`);
-          toast.error("Salvataggio moduli menu non riuscito", { description: detail });
+          const raw = body?.error?.message ?? body?.error?.code ?? null;
+          // Don't leak raw SQL in a toast; show a generic hint instead.
+          const looksLikeSql = !!raw && /(^|\s)(select|insert|update|delete|failed query)/i.test(raw);
+          const detail = looksLikeSql
+            ? "The server reached the database but the query failed. Check that migrations have run."
+            : (raw ??
+              (res.status === 503
+                ? "Server configuration (e.g. Clerk) is incomplete."
+                : `HTTP ${res.status}`));
+          toast.error("Couldn't save sidebar modules", { description: detail });
         }
       } catch (e) {
-        toast.error("Salvataggio moduli menu non riuscito", {
-          description: e instanceof Error ? e.message : "Errore di rete",
+        toast.error("Couldn't save sidebar modules", {
+          description: e instanceof Error ? e.message : "Network error",
         });
       }
     },
