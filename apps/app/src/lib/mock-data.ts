@@ -2129,7 +2129,17 @@ export let notifications: Notification[] = [
   },
 ];
 
-export type Announcement = { id: string; author: string; title: string; body: string; time: string; pinned: boolean };
+export type Announcement = {
+  id: string;
+  author: string;
+  title: string;
+  body: string;
+  time: string;
+  pinned: boolean;
+  reactions?: number;
+  youReacted?: boolean;
+  comments?: { who: string; text: string }[];
+};
 export let announcements: Announcement[] = [
   {
     id: "a1",
@@ -4061,34 +4071,96 @@ export let gcalEventsSeed: GCalEvent[] = [
 // ── Persistent table setters (auto-generated) ────────────────────────
 // Each __set<Name> reassigns the live binding so table mutations flow
 // back to legacy `import { <name> }` consumers via TableStoreProvider.
-export function __setCandidates(n: Candidate[]) { candidates = n; }
-export function __setPayrollRuns(n: PayrollRun[]) { payrollRuns = n; }
-export function __setPulseEntries(n: PulseEntry[]) { pulseEntries = n; }
-export function __setLogSessions(n: LogSession[]) { logSessions = n; }
-export function __setLogMessages(n: LogMessage[]) { logMessages = n; }
-export function __setManagerAsks(n: ManagerAsk[]) { managerAsks = n; }
-export function __setKudosSeed(n: Kudo[]) { kudosSeed = n; }
-export function __setFocusSessionsSeed(n: FocusSession[]) { focusSessionsSeed = n; }
-export function __setPayslips(n: Payslip[]) { payslips = n; }
-export function __setJobPostings(n: JobPosting[]) { jobPostings = n; }
-export function __setOnboardingWorkflows(n: OnboardingWorkflow[]) { onboardingWorkflows = n; }
-export function __setDocsSeed(n: Doc[]) { docsSeed = n; }
-export function __setApiKeysSeed(n: ApiKey[]) { apiKeysSeed = n; }
-export function __setWebhooksSeed(n: Webhook[]) { webhooksSeed = n; }
-export function __setCustomFieldsSeed(n: CustomField[]) { customFieldsSeed = n; }
-export function __setRolesSeed(n: Role[]) { rolesSeed = n; }
-export function __setAuditLogSeed(n: AuditEntry[]) { auditLogSeed = n; }
-export function __setNotifications(n: Notification[]) { notifications = n; }
-export function __setClients(n: Client[]) { clients = n; }
-export function __setCommesse(n: Commessa[]) { commesse = n; }
-export function __setAllocations(n: Allocation[]) { allocations = n; }
-export function __setActivities(n: Activity[]) { activities = n; }
-export function __setMockCalendarEvents(n: CalendarEvent[]) { mockCalendarEvents = n; }
-export function __setTimesheetEntries(n: TimesheetEntry[]) { timesheetEntries = n; }
-export function __setGoalsSeed(n: Goal[]) { goalsSeed = n; }
-export function __setChallengesSeed(n: Challenge[]) { challengesSeed = n; }
-export function __setOneOnOnesSeed(n: OneOnOne[]) { oneOnOnesSeed = n; }
-export function __setSeasonalChallengesSeed(n: SeasonalChallenge[]) { seasonalChallengesSeed = n; }
-export function __setGrowthNotesSeed(n: GrowthNote[]) { growthNotesSeed = n; }
-export function __setGcalEventsSeed(n: GCalEvent[]) { gcalEventsSeed = n; }
-export function __setAnnouncements(n: Announcement[]) { announcements = n; }
+export function __setCandidates(n: Candidate[]) {
+  candidates = n;
+}
+export function __setPayrollRuns(n: PayrollRun[]) {
+  payrollRuns = n;
+}
+export function __setPulseEntries(n: PulseEntry[]) {
+  pulseEntries = n;
+}
+export function __setLogSessions(n: LogSession[]) {
+  logSessions = n;
+}
+export function __setLogMessages(n: LogMessage[]) {
+  logMessages = n;
+}
+export function __setManagerAsks(n: ManagerAsk[]) {
+  managerAsks = n;
+}
+export function __setKudosSeed(n: Kudo[]) {
+  kudosSeed = n;
+}
+export function __setFocusSessionsSeed(n: FocusSession[]) {
+  focusSessionsSeed = n;
+}
+export function __setPayslips(n: Payslip[]) {
+  payslips = n;
+}
+export function __setJobPostings(n: JobPosting[]) {
+  jobPostings = n;
+}
+export function __setOnboardingWorkflows(n: OnboardingWorkflow[]) {
+  onboardingWorkflows = n;
+}
+export function __setDocsSeed(n: Doc[]) {
+  docsSeed = n;
+}
+export function __setApiKeysSeed(n: ApiKey[]) {
+  apiKeysSeed = n;
+}
+export function __setWebhooksSeed(n: Webhook[]) {
+  webhooksSeed = n;
+}
+export function __setCustomFieldsSeed(n: CustomField[]) {
+  customFieldsSeed = n;
+}
+export function __setRolesSeed(n: Role[]) {
+  rolesSeed = n;
+}
+export function __setAuditLogSeed(n: AuditEntry[]) {
+  auditLogSeed = n;
+}
+export function __setNotifications(n: Notification[]) {
+  notifications = n;
+}
+export function __setClients(n: Client[]) {
+  clients = n;
+}
+export function __setCommesse(n: Commessa[]) {
+  commesse = n;
+}
+export function __setAllocations(n: Allocation[]) {
+  allocations = n;
+}
+export function __setActivities(n: Activity[]) {
+  activities = n;
+}
+export function __setMockCalendarEvents(n: CalendarEvent[]) {
+  mockCalendarEvents = n;
+}
+export function __setTimesheetEntries(n: TimesheetEntry[]) {
+  timesheetEntries = n;
+}
+export function __setGoalsSeed(n: Goal[]) {
+  goalsSeed = n;
+}
+export function __setChallengesSeed(n: Challenge[]) {
+  challengesSeed = n;
+}
+export function __setOneOnOnesSeed(n: OneOnOne[]) {
+  oneOnOnesSeed = n;
+}
+export function __setSeasonalChallengesSeed(n: SeasonalChallenge[]) {
+  seasonalChallengesSeed = n;
+}
+export function __setGrowthNotesSeed(n: GrowthNote[]) {
+  growthNotesSeed = n;
+}
+export function __setGcalEventsSeed(n: GCalEvent[]) {
+  gcalEventsSeed = n;
+}
+export function __setAnnouncements(n: Announcement[]) {
+  announcements = n;
+}
