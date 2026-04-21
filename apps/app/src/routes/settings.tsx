@@ -1,8 +1,22 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  Building2, Users, ShieldCheck, History, Languages, Plug, Plus, Pencil, Trash2,
-  AlertTriangle, Info, TriangleAlert, Search, Database, RotateCcw, Bell,
+  Building2,
+  Users,
+  ShieldCheck,
+  History,
+  Languages,
+  Plug,
+  Plus,
+  Pencil,
+  Trash2,
+  AlertTriangle,
+  Info,
+  TriangleAlert,
+  Search,
+  Database,
+  RotateCcw,
+  Bell,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -13,18 +27,34 @@ import { PageHeader } from "@/components/app/AppShell";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { EmptyState } from "@/components/app/EmptyState";
-import { rolesSeed, auditLogSeed, type Role, type AuditEntry } from "@/lib/mock-data";
+import { auditLogSeed, type AuditEntry } from "@/lib/mock-data";
+import { rolesTable, useRoles, type RolePermission } from "@/lib/tables/roles";
 import { useAuth } from "@clerk/react";
 import { apiFetch } from "@/lib/api-client";
 import { IntegrationConnectCard } from "@/components/pm/IntegrationConnectCard";
@@ -39,14 +69,17 @@ export const Route = createFileRoute("/settings")({
 
 function Settings() {
   const [loading, setLoading] = useState(true);
-  const [roles, setRoles] = useState<Role[]>(rolesSeed);
-  const [editRole, setEditRole] = useState<Role | "new" | null>(null);
-  const [deleteRole, setDeleteRole] = useState<Role | null>(null);
+  const roles = useRoles();
+  const [editRolePermission, setEditRolePermission] = useState<RolePermission | "new" | null>(null);
+  const [deleteRolePermission, setDeleteRolePermission] = useState<RolePermission | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const navigate = useNavigate();
   const workspace = useWorkspaceStatus();
   const [security, setSecurity] = useState({
-    twofa: true, sso: true, sessionTimeout: false, ipAllowlist: false,
+    twofa: true,
+    sso: true,
+    sessionTimeout: false,
+    ipAllowlist: false,
   });
   const [company, setCompany] = useState(() => ({
     name: workspace.name || "Acme",
@@ -58,20 +91,23 @@ function Settings() {
   const [auditQ, setAuditQ] = useState("");
   const [auditFilter, setAuditFilter] = useState<"all" | AuditEntry["severity"]>("all");
 
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 420); return () => clearTimeout(t); }, []);
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 420);
+    return () => clearTimeout(t);
+  }, []);
 
-  const filteredAudit = auditLogSeed.filter(a => {
+  const filteredAudit = auditLogSeed.filter((a) => {
     if (auditFilter !== "all" && a.severity !== auditFilter) return false;
     if (auditQ && !`${a.who} ${a.what}`.toLowerCase().includes(auditQ.toLowerCase())) return false;
     return true;
   });
 
-  const saveRole = (data: Omit<Role, "id" | "color">, id?: string) => {
+  const saveRolePermission = (data: Omit<RolePermission, "id" | "color">, id?: string) => {
     if (id) {
-      setRoles(rs => rs.map(r => (r.id === id ? { ...r, ...data } : r)));
+      rolesTable.update(id, data);
       toast.success("Role updated");
     } else {
-      setRoles(rs => [...rs, { ...data, id: `r-${Date.now()}`, color: "oklch(0.6 0.16 195)" }]);
+      rolesTable.add({ ...data, id: `r-${Date.now()}`, color: "oklch(0.6 0.16 195)" });
       toast.success("Role created");
     }
   };
@@ -82,30 +118,110 @@ function Settings() {
 
       <Tabs defaultValue="company" orientation="horizontal">
         <TabsList>
-          <TabsTrigger value="company"><Building2 className="h-3.5 w-3.5 mr-1.5" />Company</TabsTrigger>
-          <TabsTrigger value="roles"><Users className="h-3.5 w-3.5 mr-1.5" />Roles</TabsTrigger>
-          <TabsTrigger value="security"><ShieldCheck className="h-3.5 w-3.5 mr-1.5" />Security</TabsTrigger>
-          <TabsTrigger value="audit"><History className="h-3.5 w-3.5 mr-1.5" />Audit log</TabsTrigger>
-          <TabsTrigger value="locale"><Languages className="h-3.5 w-3.5 mr-1.5" />Localization</TabsTrigger>
-          <TabsTrigger value="integrations"><Plug className="h-3.5 w-3.5 mr-1.5" />Integrations</TabsTrigger>
-          <TabsTrigger value="notifications"><Bell className="h-3.5 w-3.5 mr-1.5" />Notifications</TabsTrigger>
-          <TabsTrigger value="workspace"><Database className="h-3.5 w-3.5 mr-1.5" />Workspace</TabsTrigger>
+          <TabsTrigger value="company">
+            <Building2 className="h-3.5 w-3.5 mr-1.5" />
+            Company
+          </TabsTrigger>
+          <TabsTrigger value="roles">
+            <Users className="h-3.5 w-3.5 mr-1.5" />
+            Roles
+          </TabsTrigger>
+          <TabsTrigger value="security">
+            <ShieldCheck className="h-3.5 w-3.5 mr-1.5" />
+            Security
+          </TabsTrigger>
+          <TabsTrigger value="audit">
+            <History className="h-3.5 w-3.5 mr-1.5" />
+            Audit log
+          </TabsTrigger>
+          <TabsTrigger value="locale">
+            <Languages className="h-3.5 w-3.5 mr-1.5" />
+            Localization
+          </TabsTrigger>
+          <TabsTrigger value="integrations">
+            <Plug className="h-3.5 w-3.5 mr-1.5" />
+            Integrations
+          </TabsTrigger>
+          <TabsTrigger value="notifications">
+            <Bell className="h-3.5 w-3.5 mr-1.5" />
+            Notifications
+          </TabsTrigger>
+          <TabsTrigger value="workspace">
+            <Database className="h-3.5 w-3.5 mr-1.5" />
+            Workspace
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="company" className="mt-4">
           <Card className="p-6 space-y-4 max-w-2xl">
-            <div className="space-y-1.5"><Label>Company name</Label><Input value={company.name} onChange={e => { setCompany(c => ({ ...c, name: e.target.value })); setDirty(true); }} /></div>
-            <div className="space-y-1.5"><Label>Legal entity</Label><Input value={company.legal} onChange={e => { setCompany(c => ({ ...c, legal: e.target.value })); setDirty(true); }} /></div>
-            <div className="space-y-1.5"><Label>Country</Label><Input value={company.country} onChange={e => { setCompany(c => ({ ...c, country: e.target.value })); setDirty(true); }} /></div>
-            <div className="space-y-1.5"><Label>Default currency</Label>
-              <Select value={company.currency} onValueChange={v => { setCompany(c => ({ ...c, currency: v })); setDirty(true); }}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{["USD","EUR","GBP","JPY","CHF"].map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+            <div className="space-y-1.5">
+              <Label>Company name</Label>
+              <Input
+                value={company.name}
+                onChange={(e) => {
+                  setCompany((c) => ({ ...c, name: e.target.value }));
+                  setDirty(true);
+                }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Legal entity</Label>
+              <Input
+                value={company.legal}
+                onChange={(e) => {
+                  setCompany((c) => ({ ...c, legal: e.target.value }));
+                  setDirty(true);
+                }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Country</Label>
+              <Input
+                value={company.country}
+                onChange={(e) => {
+                  setCompany((c) => ({ ...c, country: e.target.value }));
+                  setDirty(true);
+                }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Default currency</Label>
+              <Select
+                value={company.currency}
+                onValueChange={(v) => {
+                  setCompany((c) => ({ ...c, currency: v }));
+                  setDirty(true);
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["USD", "EUR", "GBP", "JPY", "CHF"].map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
             <div className="flex items-center justify-between pt-2">
-              {dirty && <span className="text-xs text-warning inline-flex items-center gap-1.5"><TriangleAlert className="h-3.5 w-3.5" />Unsaved changes</span>}
-              <Button className="ml-auto press-scale" disabled={!dirty} onClick={() => { toast.success("Company settings saved"); setDirty(false); }}>Save changes</Button>
+              {dirty && (
+                <span className="text-xs text-warning inline-flex items-center gap-1.5">
+                  <TriangleAlert className="h-3.5 w-3.5" />
+                  Unsaved changes
+                </span>
+              )}
+              <Button
+                className="ml-auto press-scale"
+                disabled={!dirty}
+                onClick={() => {
+                  toast.success("Company settings saved");
+                  setDirty(false);
+                }}
+              >
+                Save changes
+              </Button>
             </div>
           </Card>
         </TabsContent>
@@ -114,20 +230,44 @@ function Settings() {
           <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             <div className="px-5 py-4 border-b flex items-center justify-between">
               <div className="font-semibold text-sm">Roles & permissions</div>
-              <Button size="sm" className="press-scale" onClick={() => setEditRole("new")}><Plus className="h-4 w-4 mr-1.5" />New role</Button>
+              <Button
+                size="sm"
+                className="press-scale"
+                onClick={() => setEditRolePermission("new")}
+              >
+                <Plus className="h-4 w-4 mr-1.5" />
+                New role
+              </Button>
             </div>
-            {loading ? <SkeletonRows rows={4} avatar={false} /> : (
+            {loading ? (
+              <SkeletonRows rows={4} avatar={false} />
+            ) : (
               <div className="divide-y stagger-in">
-                {roles.map(r => (
+                {roles.map((r) => (
                   <div key={r.id} className="px-5 py-3.5 flex items-center gap-4 group">
                     <div className="h-8 w-1 rounded-full" style={{ backgroundColor: r.color }} />
                     <div className="flex-1 min-w-0">
                       <div className="font-medium">{r.name}</div>
                       <div className="text-xs text-muted-foreground truncate">{r.desc}</div>
                     </div>
-                    <div className="text-sm text-muted-foreground tabular-nums">{r.count} users</div>
-                    <Button variant="outline" size="sm" className="press-scale" onClick={() => setEditRole(r)}><Pencil className="h-3.5 w-3.5 mr-1" />Edit</Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setDeleteRole(r)}>
+                    <div className="text-sm text-muted-foreground tabular-nums">
+                      {r.count} users
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="press-scale"
+                      onClick={() => setEditRolePermission(r)}
+                    >
+                      <Pencil className="h-3.5 w-3.5 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => setDeleteRolePermission(r)}
+                    >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
@@ -140,19 +280,41 @@ function Settings() {
         <TabsContent value="security" className="mt-4">
           <Card className="p-6 space-y-4 max-w-2xl">
             {[
-              { k: "twofa",          l: "Require 2FA for all users",         d: "Users will be prompted to enroll on next sign-in." },
-              { k: "sso",            l: "Single sign-on (SSO)",               d: "Okta, Google Workspace, Microsoft Entra." },
-              { k: "sessionTimeout", l: "Session timeout after 8h inactivity",d: "Force re-authentication after inactivity." },
-              { k: "ipAllowlist",    l: "IP allowlist",                        d: "Restrict admin actions to approved IP ranges." },
-            ].map(s => (
-              <div key={s.k} className="flex items-center justify-between py-2 border-b last:border-0 gap-4">
+              {
+                k: "twofa",
+                l: "Require 2FA for all users",
+                d: "Users will be prompted to enroll on next sign-in.",
+              },
+              {
+                k: "sso",
+                l: "Single sign-on (SSO)",
+                d: "Okta, Google Workspace, Microsoft Entra.",
+              },
+              {
+                k: "sessionTimeout",
+                l: "Session timeout after 8h inactivity",
+                d: "Force re-authentication after inactivity.",
+              },
+              {
+                k: "ipAllowlist",
+                l: "IP allowlist",
+                d: "Restrict admin actions to approved IP ranges.",
+              },
+            ].map((s) => (
+              <div
+                key={s.k}
+                className="flex items-center justify-between py-2 border-b last:border-0 gap-4"
+              >
                 <div className="flex-1">
                   <div className="text-sm font-medium">{s.l}</div>
                   <div className="text-xs text-muted-foreground">{s.d}</div>
                 </div>
                 <Switch
                   checked={security[s.k as keyof typeof security]}
-                  onCheckedChange={v => { setSecurity(x => ({ ...x, [s.k]: v })); toast.success(`${s.l} ${v ? "enabled" : "disabled"}`); }}
+                  onCheckedChange={(v) => {
+                    setSecurity((x) => ({ ...x, [s.k]: v }));
+                    toast.success(`${s.l} ${v ? "enabled" : "disabled"}`);
+                  }}
                 />
               </div>
             ))}
@@ -166,10 +328,20 @@ function Settings() {
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <Input value={auditQ} onChange={e => setAuditQ(e.target.value)} placeholder="Search…" className="h-8 w-[200px] pl-8" />
+                  <Input
+                    value={auditQ}
+                    onChange={(e) => setAuditQ(e.target.value)}
+                    placeholder="Search…"
+                    className="h-8 w-[200px] pl-8"
+                  />
                 </div>
-                <Select value={auditFilter} onValueChange={v => setAuditFilter(v as "all" | AuditEntry["severity"])}>
-                  <SelectTrigger className="h-8 w-[140px]"><SelectValue /></SelectTrigger>
+                <Select
+                  value={auditFilter}
+                  onValueChange={(v) => setAuditFilter(v as "all" | AuditEntry["severity"])}
+                >
+                  <SelectTrigger className="h-8 w-[140px]">
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All severities</SelectItem>
                     <SelectItem value="info">Info</SelectItem>
@@ -180,20 +352,32 @@ function Settings() {
               </div>
             </div>
             {filteredAudit.length === 0 ? (
-              <EmptyState compact icon={<History className="h-6 w-6" />} title="No activity matches" />
+              <EmptyState
+                compact
+                icon={<History className="h-6 w-6" />}
+                title="No activity matches"
+              />
             ) : (
               <div className="divide-y stagger-in">
-                {filteredAudit.map(l => (
+                {filteredAudit.map((l) => (
                   <div key={l.id} className="px-5 py-3 text-sm flex items-center gap-3">
-                    <span className={cn(
-                      "inline-flex items-center justify-center h-6 w-6 rounded-full shrink-0",
-                      l.severity === "critical" ? "bg-destructive/10 text-destructive" :
-                      l.severity === "warn"     ? "bg-warning/10 text-warning" :
-                                                   "bg-muted text-muted-foreground"
-                    )}>
-                      {l.severity === "critical" ? <AlertTriangle className="h-3.5 w-3.5" /> :
-                       l.severity === "warn"     ? <TriangleAlert className="h-3.5 w-3.5" /> :
-                                                    <Info className="h-3.5 w-3.5" />}
+                    <span
+                      className={cn(
+                        "inline-flex items-center justify-center h-6 w-6 rounded-full shrink-0",
+                        l.severity === "critical"
+                          ? "bg-destructive/10 text-destructive"
+                          : l.severity === "warn"
+                            ? "bg-warning/10 text-warning"
+                            : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      {l.severity === "critical" ? (
+                        <AlertTriangle className="h-3.5 w-3.5" />
+                      ) : l.severity === "warn" ? (
+                        <TriangleAlert className="h-3.5 w-3.5" />
+                      ) : (
+                        <Info className="h-3.5 w-3.5" />
+                      )}
                     </span>
                     <div className="flex-1 min-w-0">
                       <span className="font-medium">{l.who}</span>
@@ -209,25 +393,50 @@ function Settings() {
 
         <TabsContent value="locale" className="mt-4">
           <Card className="p-6 space-y-4 max-w-2xl">
-            <div className="space-y-1.5"><Label>Language</Label>
+            <div className="space-y-1.5">
+              <Label>Language</Label>
               <Select defaultValue="en-US">
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {[
-                    ["en-US", "English (US)"], ["en-GB", "English (UK)"],
-                    ["it-IT", "Italiano"], ["fr-FR", "Français"], ["es-ES", "Español"], ["de-DE", "Deutsch"],
-                  ].map(([v, l]) => <SelectItem key={v} value={v}>{l}</SelectItem>)}
+                    ["en-US", "English (US)"],
+                    ["en-GB", "English (UK)"],
+                    ["it-IT", "Italiano"],
+                    ["fr-FR", "Français"],
+                    ["es-ES", "Español"],
+                    ["de-DE", "Deutsch"],
+                  ].map(([v, l]) => (
+                    <SelectItem key={v} value={v}>
+                      {l}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5"><Label>Timezone</Label><Input defaultValue="America/Los_Angeles" /></div>
-            <div className="space-y-1.5"><Label>Date format</Label>
+            <div className="space-y-1.5">
+              <Label>Timezone</Label>
+              <Input defaultValue="America/Los_Angeles" />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Date format</Label>
               <Select defaultValue="YYYY-MM-DD">
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{["YYYY-MM-DD","DD/MM/YYYY","MM/DD/YYYY","DD MMM YYYY"].map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["YYYY-MM-DD", "DD/MM/YYYY", "MM/DD/YYYY", "DD MMM YYYY"].map((f) => (
+                    <SelectItem key={f} value={f}>
+                      {f}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
-            <Button className="press-scale" onClick={() => toast.success("Locale saved")}>Save</Button>
+            <Button className="press-scale" onClick={() => toast.success("Locale saved")}>
+              Save
+            </Button>
           </Card>
         </TabsContent>
 
@@ -235,9 +444,13 @@ function Settings() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="text-sm font-semibold">Work-item integrations</div>
-              <div className="text-xs text-muted-foreground mt-0.5">Connect Jira and Linear to pull issues into projects and link them to activities.</div>
+              <div className="text-xs text-muted-foreground mt-0.5">
+                Connect Jira and Linear to pull issues into projects and link them to activities.
+              </div>
             </div>
-            <Button variant="outline" asChild><a href="/marketplace">Open Marketplace</a></Button>
+            <Button variant="outline" asChild>
+              <a href="/marketplace">Open Marketplace</a>
+            </Button>
           </div>
           <IntegrationsSection />
         </TabsContent>
@@ -280,17 +493,32 @@ function Settings() {
         </TabsContent>
       </Tabs>
 
-      <Dialog open={editRole !== null} onOpenChange={o => !o && setEditRole(null)}>
+      <Dialog
+        open={editRolePermission !== null}
+        onOpenChange={(o) => !o && setEditRolePermission(null)}
+      >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editRole === "new" ? "New role" : `Edit ${editRole && editRole !== "new" ? editRole.name : ""}`}</DialogTitle>
-            <DialogDescription>Scoped permissions will apply to assigned users immediately.</DialogDescription>
+            <DialogTitle>
+              {editRolePermission === "new"
+                ? "New role"
+                : `Edit ${typeof editRolePermission === "object" && editRolePermission ? editRolePermission.name : ""}`}
+            </DialogTitle>
+            <DialogDescription>
+              Scoped permissions will apply to assigned users immediately.
+            </DialogDescription>
           </DialogHeader>
-          {editRole !== null && (
-            <RoleForm
-              role={editRole === "new" ? null : editRole}
-              onCancel={() => setEditRole(null)}
-              onSave={d => { saveRole(d, editRole === "new" ? undefined : editRole.id); setEditRole(null); }}
+          {editRolePermission !== null && (
+            <RolePermissionForm
+              role={editRolePermission === "new" ? null : editRolePermission}
+              onCancel={() => setEditRolePermission(null)}
+              onSave={(d) => {
+                saveRolePermission(
+                  d,
+                  editRolePermission === "new" ? undefined : editRolePermission.id,
+                );
+                setEditRolePermission(null);
+              }}
             />
           )}
         </DialogContent>
@@ -322,20 +550,35 @@ function Settings() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open={!!deleteRole} onOpenChange={o => !o && setDeleteRole(null)}>
+      <AlertDialog
+        open={!!deleteRolePermission}
+        onOpenChange={(o) => !o && setDeleteRolePermission(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete role?</AlertDialogTitle>
             <AlertDialogDescription>
-              {deleteRole && `${deleteRole.name} has ${deleteRole.count} users. They will lose these permissions.`}
+              {deleteRolePermission &&
+                `${deleteRolePermission.name} has ${deleteRolePermission.count} users. They will lose these permissions.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => { if (deleteRole) { setRoles(rs => rs.filter(x => x.id !== deleteRole.id)); toast("Role deleted"); } setDeleteRole(null); }}
-            >Delete</AlertDialogAction>
+              onClick={() => {
+                if (deleteRolePermission) {
+                  const snap = deleteRolePermission;
+                  rolesTable.remove(snap.id);
+                  toast("Role deleted", {
+                    action: { label: "Undo", onClick: () => rolesTable.add(snap) },
+                  });
+                }
+                setDeleteRolePermission(null);
+              }}
+            >
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -343,20 +586,41 @@ function Settings() {
   );
 }
 
-function RoleForm({ role, onCancel, onSave }: { role: Role | null; onCancel: () => void; onSave: (d: Omit<Role, "id" | "color">) => void }) {
+function RolePermissionForm({
+  role,
+  onCancel,
+  onSave,
+}: {
+  role: RolePermission | null;
+  onCancel: () => void;
+  onSave: (d: Omit<RolePermission, "id" | "color">) => void;
+}) {
   const [name, setName] = useState(role?.name ?? "");
   const [desc, setDesc] = useState(role?.desc ?? "");
   const [count, setCount] = useState(role?.count ?? 0);
   return (
     <>
       <div className="space-y-4">
-        <div className="space-y-1.5"><Label>Name</Label><Input autoFocus value={name} onChange={e => setName(e.target.value)} /></div>
-        <div className="space-y-1.5"><Label>Description</Label><Input value={desc} onChange={e => setDesc(e.target.value)} /></div>
-        <div className="space-y-1.5"><Label>Seat count</Label><Input type="number" value={count} onChange={e => setCount(Number(e.target.value))} /></div>
+        <div className="space-y-1.5">
+          <Label>Name</Label>
+          <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} />
+        </div>
+        <div className="space-y-1.5">
+          <Label>Description</Label>
+          <Input value={desc} onChange={(e) => setDesc(e.target.value)} />
+        </div>
+        <div className="space-y-1.5">
+          <Label>Seat count</Label>
+          <Input type="number" value={count} onChange={(e) => setCount(Number(e.target.value))} />
+        </div>
       </div>
       <DialogFooter>
-        <Button variant="ghost" onClick={onCancel}>Cancel</Button>
-        <Button disabled={!name.trim()} onClick={() => onSave({ name, desc, count })}>{role ? "Save changes" : "Create role"}</Button>
+        <Button variant="ghost" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button disabled={!name.trim()} onClick={() => onSave({ name, desc, count })}>
+          {role ? "Save changes" : "Create role"}
+        </Button>
       </DialogFooter>
     </>
   );
@@ -366,8 +630,13 @@ function IntegrationsSection() {
   const connections = useIntegrations();
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {connections.map(c => (
-        <IntegrationConnectCard key={c.provider} provider={c.provider} connection={c} onChange={updateIntegration} />
+      {connections.map((c) => (
+        <IntegrationConnectCard
+          key={c.provider}
+          provider={c.provider}
+          connection={c}
+          onChange={updateIntegration}
+        />
       ))}
     </div>
   );
