@@ -4,6 +4,50 @@ All notable user-facing changes to Pulse HR. Each `## version — date — "titl
 below becomes a release announcement. An optional fenced ` ```tour ` block embeds an in-app
 tour that the "What's new" prompt can launch.
 
+## 0.5.0 — 2026-04-22 — "Everything you touch sticks"
+
+Until now, most of Pulse remembered a handful of things across reloads (people, leave, expenses) and quietly forgot the rest. Create a project, log a focus session, send kudos, add a webhook, move a candidate through the pipeline — reload and it was gone. Not anymore. This release wires the whole product onto the same local-storage foundation the core HR surfaces were already using, so every edit you make survives a refresh.
+
+- **Clients & Projects** — new clients, new projects, edits, deletes (with Undo) all persist. Removing a client still cascades to its projects, and Undo brings the whole thing back.
+- **Kudos** — the feed persists, balance derives from what you've actually sent this month, and the allowance is a more generous 300. The feed now sorts latest-first and has multi-select tag chips + a search box across message, sender, recipient.
+- **Focus Mode** — completed sessions stick. Your streak, daily total, and history survive reload.
+- **Announcements** — posts, pins, reactions, and comments all persist.
+- **Recruiting & Onboarding** — candidate stage moves, job drafts/open/closed toggles, workflow task ticks — all remembered. Recruiting and onboarding ship together because they reference each other.
+- **Calendar** — events you create or import persist. Disconnecting Google now hides events from view instead of wiping them; reconnecting brings them back.
+- **Time & Payroll** — every timesheet edit (clock-in log, smart-fill, inline edits, duplicate, submit, bulk ops with Undo) persists. Payroll run deletion and mark-completed persist.
+- **Developers** — API keys, webhooks, custom fields all round-trip. Delete actions gain Undo toasts.
+- **Settings → Roles** — role CRUD persists.
+- **Log** — daily thread, agent replies, and manager asks persist. Snoozing an ask survives reload now.
+- **Marketplace** — installed/uninstalled state sticks.
+- **Reports** — "Export CSV" actually downloads a CSV file instead of toasting a fake success.
+
+If you've been treating Pulse as a sketchpad, things will feel noticeably stickier. Workspace reset in **Settings → Workspace** wipes everything back to the original demo seed, as before.
+
+```tour
+{
+  "id": "release-0.5.0",
+  "name": "What's new in 0.5.0",
+  "workflow": "Getting started",
+  "duration": "1 min",
+  "steps": [
+    {
+      "title": "Your edits now stick",
+      "body": "Create a client, draft a job posting, log a focus session, add a webhook — reload and it's all still there. Every surface in Pulse now persists to local storage the same way People, Leave, and Expenses already did."
+    },
+    {
+      "title": "Kudos feed, filtered",
+      "body": "The kudos feed sorts latest-first and has tag chips above it. Click Craft + Impact to see just those, or type into the search box to match message, sender, or recipient.",
+      "route": "/kudos"
+    },
+    {
+      "title": "Workspace reset still works",
+      "body": "If you want to start fresh, Settings → Workspace → Reset wipes everything back to the original demo seed — same as before.",
+      "route": "/settings"
+    }
+  ]
+}
+```
+
 ## 0.4.0 — 2026-04-21 — "Proposals on the feature board"
 
 Comments were great for pinning a bug to a specific screen, but not everything lives on a page. Now you can post a detached **proposal** — bug, idea, or improvement — that lands on the same board, with the same upvotes, replies, and triage columns.
