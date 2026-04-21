@@ -1,11 +1,11 @@
 - [ ] notifications for comments & changelog: email, in-app
 - [ ] create email/youtube/social channels
 - [ ] nice showcase videos of features, workflows
-    - [ ] workspace
-    - [ ] generic app tour
-    - [ ] comments
-    - [ ] log time for employee
-    - [ ] give kudos to employee 
+  - [x] workspace
+  - [x] generic app tour
+  - [ ] comments
+  - [ ] log time for employee
+  - [ ] give kudos to employee
 - [ ] new feature proposal workflow alongside comments
 - [ ] video for "new feature proposal" feature
 - [ ] voting system with fixed recurring limits (voting power)
