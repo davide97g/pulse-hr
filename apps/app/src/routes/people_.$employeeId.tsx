@@ -14,7 +14,7 @@ import { employeesTable, initialsFor, useEmployee } from "@/lib/tables/employees
 import { cn } from "@/lib/utils";
 
 
-export const Route = createFileRoute("/people/$employeeId")({
+export const Route = createFileRoute("/people_/$employeeId")({
   head: ({ params }) => ({ meta: [{ title: `Employee — ${params.employeeId} — Pulse HR` }] }),
   component: EmployeeDetailRoute,
 });

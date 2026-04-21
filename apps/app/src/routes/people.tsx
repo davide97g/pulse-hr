@@ -384,7 +384,7 @@ function EmployeePanel({
             <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => toast.success("Calendar opened", { description: `Schedule a meeting with ${employee.name}` })}>
               <Calendar className="h-3.5 w-3.5 mr-1.5" />Schedule
             </Button>
-            <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => onEdit(employee)}>Edit</Button>
+            <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => onEdit(employee)}>Go to profile</Button>
             <Button size="sm" variant="outline" className="press-scale text-destructive hover:bg-destructive/10" onClick={() => onDelete(employee)}>
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
