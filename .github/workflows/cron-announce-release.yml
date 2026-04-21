@@ -1,0 +1,27 @@
+name: cron - announce release
+# Fires hourly. Calls /cron/announce-release on the Pulse HR backend so any
+# unannounced changelog entries get fanned out to in-app notifications and
+# the email outbox. Safe to run repeatedly (idempotent on released_versions).
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    env:
+      API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      CRON_SECRET: ${{ secrets.CRON_SECRET }}
+    steps:
+      - name: POST /cron/announce-release
+        run: |
+          if [ -z "$API_BASE_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "::error ::API_BASE_URL or CRON_SECRET secret is missing"
+            exit 1
+          fi
+          curl --fail --show-error --silent \
+            -X POST \
+            -H "authorization: Bearer $CRON_SECRET" \
+            "${API_BASE_URL%/}/cron/announce-release"

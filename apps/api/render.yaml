@@ -1,0 +1,51 @@
+# Render blueprint for the Pulse HR backend.
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Deployment notes:
+#   - Root of the repo is the build context (Docker COPYs need relative paths
+#     from the repo root, which this Dockerfile does).
+#   - Free tier sleeps after 15 min idle. Upgrade to Starter ($7/mo) for
+#     always-on if cold starts become user-visible.
+#   - Environment variables below are declared but left empty — set real
+#     values in the Render dashboard (or via `render env set`).
+services:
+  - type: web
+    name: pulse-api
+    runtime: docker
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: CLERK_PUBLISHABLE_KEY
+        sync: false
+      - key: FEEDBACK_ADMIN_EMAILS
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: APP_BASE_URL
+        sync: false
+      - key: CRON_SECRET
+        sync: false
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET
+        sync: false
+      - key: R2_PUBLIC_BASE_URL
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false

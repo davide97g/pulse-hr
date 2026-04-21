@@ -1,4 +1,5 @@
 import { useAuth, useUser } from "@clerk/react";
+import { apiFetch } from "@/lib/api-client";
 import {
   createContext,
   useCallback,
@@ -77,14 +78,15 @@ export function SidebarFeaturesProvider({ children }: { children: ReactNode }) {
       const token = await getToken();
       if (!token) return;
       try {
-        const res = await fetch("/api/workspace/sidebar-features", {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+        const res = await apiFetch(
+          "/workspace/sidebar-features",
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ workspaceKey, ...payload }),
           },
-          body: JSON.stringify({ workspaceKey, ...payload }),
-        });
+          token,
+        );
         const body = (await res.json().catch(() => null)) as {
           error?: { code?: string; message?: string };
         } | null;
@@ -116,8 +118,11 @@ export function SidebarFeaturesProvider({ children }: { children: ReactNode }) {
       try {
         const token = await getToken();
         if (!token || cancelled) return;
-        const url = `/api/workspace/sidebar-features?workspaceKey=${encodeURIComponent(workspaceKey)}`;
-        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await apiFetch(
+          `/workspace/sidebar-features?workspaceKey=${encodeURIComponent(workspaceKey)}`,
+          {},
+          token,
+        );
         if (!res.ok) throw new Error(String(res.status));
         const data = (await res.json()) as {
           features?: unknown;

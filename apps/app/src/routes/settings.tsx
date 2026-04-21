@@ -26,6 +26,7 @@ import { SkeletonRows } from "@/components/app/SkeletonList";
 import { EmptyState } from "@/components/app/EmptyState";
 import { rolesSeed, auditLogSeed, type Role, type AuditEntry } from "@/lib/mock-data";
 import { useAuth } from "@clerk/react";
+import { apiFetch } from "@/lib/api-client";
 import { IntegrationConnectCard } from "@/components/pm/IntegrationConnectCard";
 import { useIntegrations, updateIntegration } from "@/lib/integrations-store";
 import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
@@ -384,9 +385,7 @@ function NotificationPreferencesSection() {
     (async () => {
       try {
         const token = await getToken();
-        const res = await fetch("/api/notifications/preferences", {
-          headers: token ? { authorization: `Bearer ${token}` } : undefined,
-        });
+        const res = await apiFetch("/notifications/preferences", {}, token);
         if (!res.ok) throw new Error(String(res.status));
         const body = (await res.json()) as { releaseEmail: boolean; mentionEmail: boolean };
         if (cancelled) return;
@@ -406,14 +405,15 @@ function NotificationPreferencesSection() {
     setSaving(true);
     try {
       const token = await getToken();
-      const res = await fetch("/api/notifications/preferences", {
-        method: "PUT",
-        headers: {
-          "content-type": "application/json",
-          ...(token ? { authorization: `Bearer ${token}` } : {}),
+      const res = await apiFetch(
+        "/notifications/preferences",
+        {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(next),
         },
-        body: JSON.stringify(next),
-      });
+        token,
+      );
       if (!res.ok) throw new Error(String(res.status));
       toast.success("Notification preferences saved");
     } catch {

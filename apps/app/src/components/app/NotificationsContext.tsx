@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { apiFetch } from "@/lib/api-client";
 
 export type NotificationKind =
   | "release"
@@ -50,11 +51,9 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   const fetchingRef = useRef(false);
 
   const authed = useCallback(
-    async (input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> => {
+    async (path: string, init: RequestInit = {}): Promise<Response> => {
       const token = await getToken();
-      const headers = new Headers(init.headers);
-      if (token) headers.set("authorization", `Bearer ${token}`);
-      return fetch(input, { ...init, headers });
+      return apiFetch(path, init, token);
     },
     [getToken],
   );
@@ -64,7 +63,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     fetchingRef.current = true;
     setLoading(true);
     try {
-      const res = await authed("/api/notifications?limit=40");
+      const res = await authed("/notifications?limit=40");
       if (!res.ok) throw new Error(String(res.status));
       const body = (await res.json()) as { notifications: NotificationRow[] };
       setNotifications(body.notifications ?? []);
@@ -97,7 +96,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         prev.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n)),
       );
       try {
-        await authed("/api/notifications/mark-read", {
+        await authed("/notifications/mark-read", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ ids: [id] }),
@@ -113,7 +112,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     const now = new Date().toISOString();
     setNotifications((prev) => prev.map((n) => (n.readAt ? n : { ...n, readAt: now })));
     try {
-      await authed("/api/notifications/mark-read", {
+      await authed("/notifications/mark-read", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ all: true }),

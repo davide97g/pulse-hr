@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { apiFetch } from "@/lib/api-client";
 import type { Tour } from "@/lib/tours";
 import { useTour } from "./TourProvider";
 
@@ -41,7 +42,7 @@ export function ChangelogGate() {
     fetchedRef.current = true;
     (async () => {
       try {
-        const res = await fetch("/api/changelog/latest");
+        const res = await apiFetch("/changelog/latest");
         if (!res.ok) return;
         const body = (await res.json()) as { release: Release | null };
         if (!body.release) return;

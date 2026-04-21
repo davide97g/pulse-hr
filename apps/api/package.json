@@ -1,0 +1,37 @@
+{
+  "name": "@pulse-hr/api",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "dev": "bun --hot src/index.ts",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "bun ./scripts/db-migrate.ts",
+    "changelog:build": "bun ./scripts/build-changelog.ts",
+    "prebuild": "bun ./scripts/build-changelog.ts",
+    "build": "bun build src/index.ts --target=bun --outdir=dist"
+  },
+  "dependencies": {
+    "@clerk/backend": "^3.2.13",
+    "@hono/zod-validator": "^0.7.0",
+    "@neondatabase/serverless": "^1.1.0",
+    "@pulse-hr/shared": "workspace:*",
+    "@react-email/components": "^1.0.12",
+    "@react-email/render": "^2.0.7",
+    "aws4fetch": "^1.0.20",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.9.0",
+    "marked": "^18.0.2",
+    "react": "^19.2.0",
+    "resend": "^6.12.2",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^19.2.0",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "^5.8.3"
+  }
+}

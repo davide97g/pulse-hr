@@ -39,14 +39,16 @@ export async function uploadScreenshot(
   tokenGetter: () => Promise<string | null>,
 ): Promise<string | null> {
   const token = await tokenGetter();
-  const res = await fetch("/api/screenshots", {
-    method: "POST",
-    headers: {
-      "content-type": blob.type || "image/jpeg",
-      ...(token ? { authorization: `Bearer ${token}` } : {}),
+  const { apiFetch } = await import("@/lib/api-client");
+  const res = await apiFetch(
+    "/screenshots",
+    {
+      method: "POST",
+      headers: { "content-type": blob.type || "image/jpeg" },
+      body: blob,
     },
-    body: blob,
-  });
+    token,
+  );
   if (!res.ok) {
     if (res.status === 501) return null; // storage not configured — silently skip
     return null;

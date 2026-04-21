@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api-client";
 import type { Anchor, Comment, NewCommentInput, Reply, CommentStatus } from "./types";
 
 type TokenGetter = () => Promise<string | null>;
@@ -25,7 +26,7 @@ async function authHeader(): Promise<Record<string, string>> {
 type ApiError = { error: { code: string; message?: string } };
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const res = await fetch(path, {
+  const res = await fetch(apiUrl(path), {
     ...init,
     headers: {
       accept: "application/json",
@@ -51,18 +52,18 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export async function listComments(route: string): Promise<Comment[]> {
-  return request<Comment[]>(`/api/comments?route=${encodeURIComponent(route)}`);
+  return request<Comment[]>(`/comments?route=${encodeURIComponent(route)}`);
 }
 
 export async function createComment(input: NewCommentInput): Promise<Comment> {
-  return request<Comment>("/api/comments", {
+  return request<Comment>("/comments", {
     method: "POST",
     body: JSON.stringify(input),
   });
 }
 
 export async function createReply(commentId: string, body: string): Promise<Reply> {
-  return request<Reply>(`/api/comments/${commentId}/replies`, {
+  return request<Reply>(`/comments/${commentId}/replies`, {
     method: "POST",
     body: JSON.stringify({ body }),
   });
@@ -73,7 +74,7 @@ export async function setVote(
   value: -1 | 0 | 1,
 ): Promise<{ voteScore: number; myVote: -1 | 0 | 1 }> {
   return request<{ voteScore: number; myVote: -1 | 0 | 1 }>(
-    `/api/comments/${commentId}/vote`,
+    `/comments/${commentId}/vote`,
     { method: "POST", body: JSON.stringify({ value }) },
   );
 }
@@ -81,29 +82,29 @@ export async function setVote(
 export type BoardBuckets = Record<CommentStatus, Comment[]>;
 
 export async function fetchBoard(): Promise<BoardBuckets> {
-  return request<BoardBuckets>("/api/feedback/board");
+  return request<BoardBuckets>("/feedback/board");
 }
 
 export async function setStatus(commentId: string, status: CommentStatus): Promise<Comment> {
-  return request<Comment>(`/api/comments/${commentId}/status`, {
+  return request<Comment>(`/comments/${commentId}/status`, {
     method: "PATCH",
     body: JSON.stringify({ status }),
   });
 }
 
 export async function editComment(commentId: string, body: string): Promise<Comment> {
-  return request<Comment>(`/api/comments/${commentId}`, {
+  return request<Comment>(`/comments/${commentId}`, {
     method: "PATCH",
     body: JSON.stringify({ body }),
   });
 }
 
 export async function deleteComment(commentId: string): Promise<void> {
-  await request<void>(`/api/comments/${commentId}`, { method: "DELETE" });
+  await request<void>(`/comments/${commentId}`, { method: "DELETE" });
 }
 
 export async function repositionComment(commentId: string, anchor: Anchor): Promise<Comment> {
-  return request<Comment>(`/api/comments/${commentId}`, {
+  return request<Comment>(`/comments/${commentId}`, {
     method: "PATCH",
     body: JSON.stringify({ anchor }),
   });

@@ -1,31 +1,21 @@
 import { defineConfig, loadEnv } from "vite";
 import path from "node:path";
-import { readFileSync } from "node:fs";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { VitePWA } from "vite-plugin-pwa";
-import { apiDevServer } from "./vite-plugins/api-dev";
-
-const pkgVersion: string = JSON.parse(
-  readFileSync(path.resolve(__dirname, "package.json"), "utf8"),
-).version;
 
 export default defineConfig(({ mode }) => {
-  // Hydrate server-side env (e.g. DATABASE_URL, CLERK_SECRET_KEY) from apps/app/.env
-  // when Bun is launched from the workspace root and skips this package's .env.
+  // Surface VITE_* env vars (e.g. VITE_API_BASE_URL) at build time when Bun
+  // is launched from the workspace root and skips this package's .env.
   const env = loadEnv(mode, process.cwd(), "");
   for (const [key, value] of Object.entries(env)) {
     if (process.env[key] === undefined) process.env[key] = value;
   }
 
   return {
-    define: {
-      "import.meta.env.VITE_APP_VERSION": JSON.stringify(pkgVersion),
-    },
     plugins: [
-      apiDevServer(),
       tsConfigPaths(),
       tailwindcss(),
       tanstackRouter({

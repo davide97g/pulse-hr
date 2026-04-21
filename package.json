@@ -4,15 +4,19 @@
   "type": "module",
   "workspaces": ["apps/*", "apps/app/recordings", "packages/*"],
   "scripts": {
-    "dev": "bun run --filter '@workflows-people/app' dev",
+    "dev": "bun run --filter '@workflows-people/app' --filter '@pulse-hr/api' dev",
+    "dev:app": "bun run --filter '@workflows-people/app' dev",
+    "dev:api": "bun run --filter '@pulse-hr/api' dev",
     "dev:marketing": "bun run --filter 'pulse-hr-marketing' dev",
-    "build": "bun run --filter '*' build",
+    "build": "bun run --filter '@workflows-people/app' --filter '@pulse-hr/api' build",
     "build:app": "bun run --filter '@workflows-people/app' build",
+    "build:api": "bun run --filter '@pulse-hr/api' build",
     "build:marketing": "bun run --filter 'pulse-hr-marketing' build",
     "preview": "bun run --filter '@workflows-people/app' preview",
     "preview:marketing": "bun run --filter 'pulse-hr-marketing' preview",
     "lint": "bun run --filter '@workflows-people/app' lint",
     "format": "prettier --write .",
+    "db:migrate": "bun run --filter '@pulse-hr/api' db:migrate",
     "demo:record": "bun --cwd apps/app/recordings scripts/run.ts"
   },
   "devDependencies": {
