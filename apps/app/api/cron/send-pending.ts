@@ -85,16 +85,15 @@ async function handler(request: Request): Promise<Response> {
           subject,
           html,
         });
-        if ((sent as { error?: unknown }).error) {
-          throw new Error(String((sent as { error?: unknown }).error));
-        }
+        const sendError = (sent as { error?: unknown }).error;
+        if (sendError) throw sendError;
         await db
           .update(schema.notificationsOutbox)
           .set({ status: "sent", sentAt: new Date(), lastError: null })
           .where(eq(schema.notificationsOutbox.id, row.id));
         results.push({ id: row.id, status: "sent" });
       } catch (err) {
-        const msg = err instanceof Error ? err.message : "send failed";
+        const msg = formatError(err);
         await db
           .update(schema.notificationsOutbox)
           .set({ status: "failed", lastError: msg })
@@ -107,6 +106,30 @@ async function handler(request: Request): Promise<Response> {
   } catch (error) {
     return serverError(error);
   }
+}
+
+/**
+ * Resend returns `{ error: { name, message, statusCode } }`; native errors are
+ * Error instances; everything else gets safely JSON-stringified so "failed"
+ * rows show actionable text instead of `[object Object]`.
+ */
+function formatError(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  if (typeof err === "string") return err;
+  if (err && typeof err === "object") {
+    const e = err as { message?: unknown; name?: unknown; statusCode?: unknown };
+    const parts: string[] = [];
+    if (typeof e.name === "string") parts.push(e.name);
+    if (typeof e.statusCode === "number") parts.push(`[${e.statusCode}]`);
+    if (typeof e.message === "string") parts.push(e.message);
+    if (parts.length > 0) return parts.join(" ");
+    try {
+      return JSON.stringify(err);
+    } catch {
+      return "send failed";
+    }
+  }
+  return String(err);
 }
 
 async function renderEmail(
