@@ -50,7 +50,8 @@ import { PageHeader, Avatar } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
-import { gcalEventsSeed, employeeById, commessaById, type GCalEvent } from "@/lib/mock-data";
+import { employeeById, commessaById, type GCalEvent } from "@/lib/mock-data";
+import { gcalEventsTable, useGcalEvents } from "@/lib/tables/gcalEvents";
 import { useIntegration, updateIntegration } from "@/lib/integrations-store";
 import { mockWebhookEvent } from "@/lib/integrations";
 import { cn } from "@/lib/utils";
@@ -66,7 +67,8 @@ function CalendarPage() {
   const syncDirection = gcal.syncDirection ?? "import";
   const twoWay = syncDirection === "two-way";
 
-  const [events, setEvents] = useState<GCalEvent[]>(connected ? gcalEventsSeed : []);
+  const allEvents = useGcalEvents();
+  const events = connected ? allEvents : [];
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<GCalEvent | null>(null);
   const [toDelete, setToDelete] = useState<GCalEvent | null>(null);
@@ -74,16 +76,8 @@ function CalendarPage() {
   const [syncing, setSyncing] = useState(false);
   const [tab, setTab] = useState<"upcoming" | "month">("upcoming");
 
-  // Sync local event list with connection state — disconnecting clears events,
-  // reconnecting restores the seed. Keeps the UI honest.
   useEffect(() => {
-    if (connected && events.length === 0) {
-      setEvents(gcalEventsSeed);
-    } else if (!connected && events.length > 0) {
-      setEvents([]);
-      setSelected(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!connected) setSelected(null);
   }, [connected]);
 
   useEffect(() => {
@@ -114,7 +108,7 @@ function CalendarPage() {
           status: "confirmed",
         },
       ];
-      setEvents((list) => [...fresh, ...list]);
+      for (const ev of fresh) gcalEventsTable.add(ev);
       updateIntegration(
         mockWebhookEvent(gcal, "events.imported", `Imported ${fresh.length} event`),
       );
@@ -124,11 +118,11 @@ function CalendarPage() {
   };
 
   const remove = (e: GCalEvent) => {
-    setEvents((list) => list.filter((x) => x.id !== e.id));
+    gcalEventsTable.remove(e.id);
     setSelected((s) => (s?.id === e.id ? null : s));
     setToDelete(null);
     toast("Event deleted", {
-      action: { label: "Undo", onClick: () => setEvents((list) => [e, ...list]) },
+      action: { label: "Undo", onClick: () => gcalEventsTable.add(e) },
     });
   };
 
@@ -139,7 +133,7 @@ function CalendarPage() {
       status: "confirmed",
       ...draft,
     };
-    setEvents((list) => [ev, ...list]);
+    gcalEventsTable.add(ev);
     setComposing(false);
     toast.success(twoWay ? "Event created — synced to Google" : "Event created locally");
   };
