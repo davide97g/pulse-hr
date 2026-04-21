@@ -133,9 +133,13 @@ function Kudos() {
     }));
   }, [feed]);
 
-  const sent = feed.filter((k) => k.fromId === ME).reduce((a, k) => a + k.amount, 0);
+  const monthKey = new Date().toISOString().slice(0, 7);
+  const sent = feed
+    .filter((k) => k.fromId === ME && k.date.slice(0, 7) === monthKey)
+    .reduce((a, k) => a + k.amount, 0);
   const received = feed.filter((k) => k.toId === ME).reduce((a, k) => a + k.amount, 0);
-  const myBalance = Math.max(0, 200 - sent);
+  const MONTHLY_ALLOWANCE = 300;
+  const myBalance = Math.max(0, MONTHLY_ALLOWANCE - sent);
 
   const send = () => {
     if (!message.trim() || !toId || amount > myBalance) return;
@@ -212,7 +216,7 @@ function Kudos() {
                 <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden mt-1">
                   <div
                     className="h-full rounded-full bg-primary transition-[width] duration-500"
-                    style={{ width: `${(myBalance / 200) * 100}%` }}
+                    style={{ width: `${(myBalance / MONTHLY_ALLOWANCE) * 100}%` }}
                   />
                 </div>
               </div>
