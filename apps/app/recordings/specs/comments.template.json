@@ -1,10 +1,14 @@
 {
   "$schema": "../node_modules/testreel/recording-definition.schema.json",
   "url": "{{BASE_URL}}/login",
-  "viewport": { "width": 1440, "height": 900 },
   "colorScheme": "dark",
-  "chrome": { "title": "Pulse HR — Comments" },
-  "background": { "padding": 48, "borderRadius": 14, "color": "#0a0a0f" },
+  "viewport": { "width": 1280, "height": 720 },
+  "outputSize": { "width": 1920, "height": 1080 },  
+  "chrome": {  "url": true },
+  "background": {
+    "gradient": { "from": "#667eea", "to": "#764ba2" },
+    "borderRadius": 12
+  },
   "cursor": true,
   "localStorage": { "pulse.theme": "employee" },
   "steps": [
@@ -33,7 +37,7 @@
 
     { "action": "zoom", "selector": "#ws-name", "scale": 1.8, "duration": 300 },
     { "action": "fill", "selector": "#ws-name", "text": "" },
-    { "action": "type", "selector": "#ws-name", "text": "Acme", "delay": 32 },
+    { "action": "type", "selector": "#ws-name", "text": "Bitrock", "delay": 32 },
     { "action": "zoom", "scale": 1, "duration": 200 },
     { "action": "click", "selector": "button:has-text('Continue')", "zoom": 2.1 },
     { "action": "wait", "ms": 700 },
