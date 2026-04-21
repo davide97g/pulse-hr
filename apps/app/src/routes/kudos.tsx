@@ -1,7 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Gift, Send, Sparkles, Trophy, Heart, Zap, Users, Rocket, ShieldCheck } from "lucide-react";
+import {
+  Gift,
+  Send,
+  Sparkles,
+  Trophy,
+  Heart,
+  Zap,
+  Users,
+  Rocket,
+  ShieldCheck,
+  Search,
+  X,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +58,8 @@ const tagMeta = (v: Kudo["tag"]) => TAGS.find((t) => t.v === v)!;
 
 function Kudos() {
   const feed = useKudos();
+  const [feedQuery, setFeedQuery] = useState("");
+  const [feedTags, setFeedTags] = useState<Set<Kudo["tag"]>>(new Set());
   const [toId, setToId] = useState<string>("e2");
   const [amount, setAmount] = useState(25);
   const [tag, setTag] = useState<Kudo["tag"]>("craft");
@@ -132,6 +146,20 @@ function Kudos() {
       count: feed.filter((k) => k.tag === t.v).length,
     }));
   }, [feed]);
+
+  const filteredFeed = useMemo(() => {
+    const q = feedQuery.trim().toLowerCase();
+    return [...feed]
+      .filter((k) => {
+        if (feedTags.size > 0 && !feedTags.has(k.tag)) return false;
+        if (!q) return true;
+        const from = employeeById(k.fromId);
+        const to = employeeById(k.toId);
+        const hay = `${k.message} ${from?.name ?? ""} ${to?.name ?? ""} ${k.tag}`.toLowerCase();
+        return hay.includes(q);
+      })
+      .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.id.localeCompare(a.id)));
+  }, [feed, feedQuery, feedTags]);
 
   const monthKey = new Date().toISOString().slice(0, 7);
   const sent = feed
@@ -509,12 +537,82 @@ function Kudos() {
 
       {/* Feed */}
       <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
-        <div className="px-5 py-4 border-b flex items-center justify-between">
+        <div className="px-5 py-4 border-b flex items-center justify-between gap-3 flex-wrap">
           <div className="font-semibold text-sm">Kudos feed</div>
-          <div className="text-xs text-muted-foreground">Visible to everyone in Acme Inc.</div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="relative">
+              <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={feedQuery}
+                onChange={(e) => setFeedQuery(e.target.value)}
+                placeholder="Search messages, names…"
+                className="h-8 w-[220px] pl-8 text-xs"
+              />
+              {feedQuery && (
+                <button
+                  type="button"
+                  onClick={() => setFeedQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label="Clear search"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-1 flex-wrap">
+              {TAGS.map((t) => {
+                const Icon = t.icon;
+                const active = feedTags.has(t.v);
+                return (
+                  <button
+                    key={t.v}
+                    type="button"
+                    onClick={() =>
+                      setFeedTags((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(t.v)) next.delete(t.v);
+                        else next.add(t.v);
+                        return next;
+                      })
+                    }
+                    className={cn(
+                      "inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full border press-scale transition-colors",
+                      active ? "font-medium" : "text-muted-foreground hover:bg-muted",
+                    )}
+                    style={
+                      active
+                        ? {
+                            borderColor: t.color,
+                            color: t.color,
+                            backgroundColor: `${t.color.replace(")", " / 0.08)")}`,
+                          }
+                        : undefined
+                    }
+                  >
+                    <Icon className="h-3 w-3" />
+                    {t.label}
+                  </button>
+                );
+              })}
+              {feedTags.size > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setFeedTags(new Set())}
+                  className="text-[11px] text-muted-foreground hover:text-foreground px-1.5"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
         </div>
         <div className="divide-y stagger-in">
-          {feed.map((k) => {
+          {filteredFeed.length === 0 ? (
+            <div className="px-5 py-10 text-center text-sm text-muted-foreground">
+              No kudos match your filters.
+            </div>
+          ) : null}
+          {filteredFeed.map((k) => {
             const from = employeeById(k.fromId);
             const to = employeeById(k.toId);
             if (!from || !to) return null;
