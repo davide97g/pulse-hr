@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { apiFetch } from "@/lib/api-client";
+import type { Tour } from "@/lib/tours";
+import { cn } from "@/lib/utils";
 import { useAuth } from "@clerk/react";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Sparkles, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { apiFetch } from "@/lib/api-client";
-import type { Tour } from "@/lib/tours";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTour } from "./TourProvider";
 
 type Release = {
@@ -81,7 +81,7 @@ export function ChangelogGate() {
   return (
     <div
       className={cn(
-        "fixed bottom-4 right-4 z-[90] w-[min(92vw,400px)] rounded-xl border bg-popover",
+        "fixed bottom-4 right-4 z-[90] w-[min(92vw,400px)] rounded-xl border bg-popover top-4 h-fit",
         "shadow-pop text-popover-foreground pop-in iridescent-border",
       )}
       role="dialog"
@@ -109,7 +109,7 @@ export function ChangelogGate() {
         <div id="changelog-gate-title" className="font-semibold text-[15px] leading-tight">
           {release.title}
         </div>
-        <div className="mt-2 text-sm text-muted-foreground leading-relaxed max-h-48 overflow-y-auto scrollbar-thin space-y-2">
+        <div className="mt-2 text-sm text-muted-foreground leading-relaxed max-h-[calc(100vh-20rem)] overflow-y-auto scrollbar-thin space-y-2">
           {blocks}
         </div>
       </div>
