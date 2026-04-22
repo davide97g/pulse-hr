@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { Sparkles, Star } from "lucide-react";
+import { Star } from "lucide-react";
+import { BrandMark } from "./BrandMark";
 
 export function AuthLayout({
   title,
@@ -19,9 +20,7 @@ export function AuthLayout({
       <div className="flex flex-col">
         <div className="px-8 lg:px-14 py-6 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-md bg-primary text-primary-foreground grid place-items-center">
-              <Sparkles className="h-4 w-4" strokeWidth={2.5} />
-            </div>
+            <BrandMark size="sm" />
             <span className="font-display text-xl">Pulse HR</span>
           </div>
         </div>

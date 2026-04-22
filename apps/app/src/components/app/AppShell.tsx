@@ -17,6 +17,7 @@ import { BookingsProvider } from "./BookingsContext";
 import { CommandPalette } from "./CommandPalette";
 import { LogOverlay } from "./LogOverlay";
 import { OfflineBanner } from "./OfflineBanner";
+import { BrandMark } from "./BrandMark";
 import { NewBadge } from "./NewBadge";
 import { OfficesStoreProvider } from "./OfficesStoreProvider";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
@@ -184,9 +185,7 @@ function AppShellInner() {
         )}
       >
         <div className="h-14 flex items-center gap-2 px-3 border-b">
-          <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center text-primary-foreground shrink-0">
-            <Sparkles className="h-4 w-4" />
-          </div>
+          <BrandMark size="md" />
           {!collapsed && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -325,9 +324,7 @@ function AppShellInner() {
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
         <SheetContent side="left" className="p-0 w-[84%] max-w-[300px] bg-sidebar">
           <div className="h-14 flex items-center gap-2 px-3 border-b">
-            <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center text-primary-foreground">
-              <Sparkles className="h-4 w-4" />
-            </div>
+            <BrandMark size="md" />
             <span className="text-sm font-semibold">{workspace.name}</span>
           </div>
           <div className="px-3 py-3 border-b">
