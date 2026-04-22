@@ -1988,14 +1988,14 @@ export let customFieldsSeed: CustomField[] = [
   { id: "cf3", name: "Preferred pronouns", type: "Text", required: false },
 ];
 
-export interface Role {
+export interface RoleRecord {
   id: string;
   name: string;
   desc: string;
   count: number;
   color: string;
 }
-export let rolesSeed: Role[] = [
+export let rolesSeed: RoleRecord[] = [
   {
     id: "r1",
     name: "Admin",
@@ -4116,7 +4116,7 @@ export function __setWebhooksSeed(n: Webhook[]) {
 export function __setCustomFieldsSeed(n: CustomField[]) {
   customFieldsSeed = n;
 }
-export function __setRolesSeed(n: Role[]) {
+export function __setRolesSeed(n: RoleRecord[]) {
   rolesSeed = n;
 }
 export function __setAuditLogSeed(n: AuditEntry[]) {
