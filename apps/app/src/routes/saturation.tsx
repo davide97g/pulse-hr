@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { lazy, Suspense, useMemo, useState } from "react";
 import { Gauge } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
+import { NewBadge } from "@/components/app/NewBadge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SaturationKPIs } from "@/components/saturation/SaturationKPIs";
 import { UtilizationHeatmap } from "@/components/saturation/UtilizationHeatmap";
@@ -88,7 +89,7 @@ function Saturation() {
                 <span className="flex items-center gap-2">
                   <Gauge className="h-5 w-5" />
                   Saturation
-                  <span className="new-badge">NEW</span>
+                  <NewBadge />
                 </span>
               }
               description="How busy the org is, who is leaning in, and what each hour returns in €."

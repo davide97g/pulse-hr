@@ -13,10 +13,11 @@ export interface StrengthsRadarProps {
  */
 export function StrengthsRadar({
   points,
-  size = 220,
+  size = 280,
   showLegend = true,
 }: StrengthsRadarProps) {
-  const r = size * (80 / 220);
+  const pad = size * (36 / 220);
+  const r = size * (72 / 220);
   const cx = size / 2;
   const cy = size / 2;
   const angle = (i: number) => (i / points.length) * 2 * Math.PI - Math.PI / 2;
@@ -31,15 +32,15 @@ export function StrengthsRadar({
         return `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
       })
       .join(" ") + " Z";
-  const labelRadius = r + 48;
+  const labelRadius = r + size * (16 / 220);
 
   return (
     <div className="flex items-center gap-5">
       <svg
         width={size}
         height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        className="shrink-0"
+        viewBox={`${-pad} ${-pad} ${size + pad * 2} ${size + pad * 2}`}
+        className="shrink-0 overflow-visible"
         role="img"
         aria-label="Strengths radar"
       >
@@ -99,9 +100,9 @@ export function StrengthsRadar({
       </svg>
 
       {showLegend && (
-        <div className="flex-1 space-y-2">
+        <div className="w-[200px] space-y-2.5">
           {points.map((p) => (
-            <div key={p.tag} className="flex items-center gap-2 text-xs">
+            <div key={p.tag} className="flex items-center gap-2.5 text-sm">
               <span
                 className="h-2 w-2 rounded-full shrink-0"
                 style={{ backgroundColor: STRENGTH_COLORS[p.tag] }}

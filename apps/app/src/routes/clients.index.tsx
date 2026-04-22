@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
+import { NewBadge } from "@/components/app/NewBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -171,7 +172,7 @@ function ClientsPage() {
       <PageHeader
         title={
           <>
-            Clients &amp; Projects <span className="new-badge">NEW</span>
+            Clients &amp; Projects <NewBadge />
           </>
         }
         description="Manage client accounts, their projects, teams, and delivery plans in one place."
