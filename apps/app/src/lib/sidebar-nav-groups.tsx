@@ -72,6 +72,9 @@ export function buildSidebarNavGroups(
           isNew: true,
           unreadDot: hasOpenManagerAsks,
         },
+        { to: "/focus", label: "Focus Mode", icon: Focus, featureId: "focus", isNew: true },
+        { to: "/growth", label: "Growth", icon: Trophy, featureId: "growth", isNew: true },
+        { to: "/kudos", label: "Kudos", icon: Gift, featureId: "kudos", isNew: true },
       ],
     },
     {
@@ -111,21 +114,6 @@ export function buildSidebarNavGroups(
       items: [
         { to: "/payroll", label: "Payroll", icon: CreditCard, featureId: "payroll" },
         { to: "/expenses", label: "Expenses", icon: Receipt, featureId: "expenses" },
-      ],
-    },
-    {
-      label: "Insights",
-      items: [{ to: "/reports", label: "Reports", icon: BarChart3, featureId: "reports" }],
-    },
-    {
-      label: "Growth",
-      accent: true,
-      items: [{ to: "/growth", label: "Growth", icon: Trophy, featureId: "growth", isNew: true }],
-    },
-    {
-      label: "Labs",
-      accent: true,
-      items: [
         {
           to: "/forecast",
           label: "Commessa Forecast",
@@ -133,8 +121,12 @@ export function buildSidebarNavGroups(
           featureId: "forecast",
           isNew: true,
         },
-        { to: "/kudos", label: "Kudos", icon: Gift, featureId: "kudos", isNew: true },
-        { to: "/focus", label: "Focus Mode", icon: Focus, featureId: "focus", isNew: true },
+      ],
+    },
+    {
+      label: "Insights",
+      items: [
+        { to: "/reports", label: "Reports", icon: BarChart3, featureId: "reports" },
         {
           to: "/saturation",
           label: "Saturation",
