@@ -220,11 +220,8 @@ function AppShellInner() {
           {groups.map((group) => (
             <div key={group.label} className="mb-4">
               {!collapsed && (
-                <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground flex items-center gap-1.5">
+                <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
                   {group.label}
-                  {group.accent && (
-                    <span className="inline-block h-1 w-1 rounded-full bg-primary pulse-dot" />
-                  )}
                 </div>
               )}
               <div className="space-y-0.5">
@@ -337,11 +334,8 @@ function AppShellInner() {
           <nav className="overflow-y-auto scrollbar-thin py-3 px-2 h-[calc(100%-6.75rem)]">
             {groups.map((group) => (
               <div key={group.label} className="mb-4">
-                <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground flex items-center gap-1.5">
+                <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
                   {group.label}
-                  {group.accent && (
-                    <span className="inline-block h-1 w-1 rounded-full bg-primary pulse-dot" />
-                  )}
                 </div>
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
@@ -460,7 +454,7 @@ function Topbar({
           className="hidden lg:inline-flex h-9 items-center gap-1.5 px-2.5 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale transition-colors"
           title="Feedback board"
         >
-          <MessageSquare className="h-4 w-4 text-primary" />
+          <MessageSquare className="h-4 w-4 text-muted-foreground" />
           <span className="hidden xl:inline font-medium">Feedback</span>
         </Link>
       )}
@@ -469,7 +463,7 @@ function Topbar({
           onClick={onOpenLog}
           className="group relative inline-flex items-center gap-2 h-9 px-3 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale"
         >
-          <Sparkles className="h-4 w-4 text-primary" />
+          <Sparkles className="h-4 w-4 text-[color:var(--labs)]" />
           <span className="font-medium">Status Log</span>
           <NewBadge />
           <kbd className="hidden md:inline-flex h-5 px-1.5 items-center rounded border bg-muted text-[10px] font-mono">
@@ -482,7 +476,7 @@ function Topbar({
         className="md:hidden h-9 w-9 rounded-md border bg-background/80 hover:bg-muted flex items-center justify-center"
         aria-label="Status Log"
       >
-        <Sparkles className="h-4 w-4 text-primary" />
+        <Sparkles className="h-4 w-4 text-[color:var(--labs)]" />
       </button>
 
       <DropdownMenu>
@@ -586,7 +580,7 @@ function Topbar({
                     <div
                       className={cn(
                         "h-2 w-2 mt-1.5 rounded-full shrink-0",
-                        n.kind === "release" && "bg-primary",
+                        n.kind === "release" && "bg-success",
                         n.kind === "mention" && "bg-warning",
                         n.kind.startsWith("comment.") && "bg-info",
                       )}
@@ -615,16 +609,13 @@ function Topbar({
               <img
                 src={user.imageUrl}
                 alt={displayName}
-                className={cn(
-                  "h-7 w-7 rounded-full object-cover",
-                  isAdmin && "ring-2 ring-primary ring-offset-2 ring-offset-background",
-                )}
+                className={cn("h-7 w-7 rounded-full object-cover", isAdmin && "ring-1 ring-border")}
               />
             ) : (
               <div
                 className={cn(
                   "h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-medium",
-                  isAdmin && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                  isAdmin && "ring-1 ring-border",
                 )}
                 style={{ backgroundColor: "oklch(0.6 0.16 220)" }}
               >

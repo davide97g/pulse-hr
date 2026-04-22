@@ -58,7 +58,7 @@ function Dashboard() {
         <div className="relative flex items-start justify-between gap-4 flex-wrap">
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-primary inline-flex items-center gap-1.5">
+              <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[color:var(--labs)] inline-flex items-center gap-1.5">
                 <SparkIcon className="h-3.5 w-3.5" />
                 What's new in Pulse
               </span>
@@ -93,7 +93,10 @@ function Dashboard() {
           value={pendingLeaves.length + pendingExpenses.length}
           delta={`${pendingLeaves.length} leave • ${pendingExpenses.length} expense`}
           action={
-            <Link to="/leave" className="text-primary text-xs font-medium hover:underline">
+            <Link
+              to="/leave"
+              className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
+            >
               Review now →
             </Link>
           }
@@ -105,7 +108,10 @@ function Dashboard() {
           delta="+2 this month"
           trend="up"
           action={
-            <Link to="/people" className="text-primary text-xs font-medium hover:underline">
+            <Link
+              to="/people"
+              className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
+            >
               View employees →
             </Link>
           }
@@ -118,7 +124,10 @@ function Dashboard() {
           trend="up"
           warn
           action={
-            <Link to="/time" className="text-primary text-xs font-medium hover:underline">
+            <Link
+              to="/time"
+              className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
+            >
               View details →
             </Link>
           }
@@ -129,7 +138,10 @@ function Dashboard() {
           value="$124.5k"
           delta={`${employees.length} employees`}
           action={
-            <Link to="/payroll" className="text-primary text-xs font-medium hover:underline">
+            <Link
+              to="/payroll"
+              className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
+            >
               Review run →
             </Link>
           }
@@ -146,7 +158,10 @@ function Dashboard() {
                 Inline approve or reject — no page reloads
               </div>
             </div>
-            <Link to="/leave" className="text-xs text-primary font-medium hover:underline">
+            <Link
+              to="/leave"
+              className="text-xs text-muted-foreground hover:text-foreground font-medium underline-offset-4 hover:underline"
+            >
               See all
             </Link>
           </div>
@@ -226,7 +241,7 @@ function Dashboard() {
               </div>
             </div>
             <div className="mt-4 h-2 rounded-full bg-muted overflow-hidden flex">
-              <div className="bg-primary/70 h-full" style={{ width: "75%" }} />
+              <div className="bg-success/80 h-full" style={{ width: "75%" }} />
               <div className="bg-muted-foreground/50 h-full" style={{ width: "17%" }} />
               <div className="bg-muted-foreground/25 h-full" style={{ width: "8%" }} />
             </div>
@@ -274,7 +289,10 @@ function Dashboard() {
         <Card className="p-0">
           <div className="px-5 py-4 border-b flex items-center justify-between">
             <div className="font-semibold text-sm">Announcements</div>
-            <Link to="/announcements" className="text-xs text-primary font-medium hover:underline">
+            <Link
+              to="/announcements"
+              className="text-xs text-muted-foreground hover:text-foreground font-medium underline-offset-4 hover:underline"
+            >
               All
             </Link>
           </div>
@@ -316,7 +334,7 @@ function KpiCard({
     <Card className="p-5 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <div
-          className={`h-8 w-8 rounded-md flex items-center justify-center ${warn ? "bg-warning/10 text-warning" : "bg-primary/10 text-primary"}`}
+          className={`h-8 w-8 rounded-md flex items-center justify-center ${warn ? "bg-warning/10 text-warning" : "bg-muted text-muted-foreground"}`}
         >
           {icon}
         </div>
@@ -335,9 +353,11 @@ function LabsChip({ to, icon, label }: { to: string; icon: React.ReactNode; labe
   return (
     <Link
       to={to}
-      className="group inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border bg-background/80 hover:bg-background hover:border-primary/40 transition-colors press-scale text-xs font-medium"
+      className="group inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border bg-background/80 hover:bg-background hover:border-[color:var(--labs)]/40 transition-colors press-scale text-xs font-medium"
     >
-      <span className="text-primary">{icon}</span>
+      <span className="text-muted-foreground group-hover:text-[color:var(--labs)] transition-colors">
+        {icon}
+      </span>
       <span>{label}</span>
       <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
     </Link>
@@ -354,13 +374,13 @@ function MiniChart() {
         <div key={i} className="flex-1 flex flex-col items-center gap-2">
           <div className="flex-1 w-full flex items-end">
             <div
-              className="w-full rounded-t-md bg-primary/15 hover:bg-primary/30 transition-colors relative group"
+              className="w-full rounded-t-md bg-muted hover:bg-muted/70 transition-colors relative group"
               style={{ height: `${(v / max) * 100}%` }}
             >
               <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-foreground text-background text-[10px] px-1.5 py-0.5 rounded">
                 {v}
               </div>
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-md" />
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-foreground/80 rounded-t-md" />
             </div>
           </div>
           <div className="text-[11px] text-muted-foreground">{labels[i]}</div>
