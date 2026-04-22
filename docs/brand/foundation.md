@@ -10,14 +10,18 @@ Written April 2026 by Davide, synthesized from a Cowork session with Claude. Liv
 
 ## 1. One-line positioning
 
-> **Open-source people ops for modern teams.**
-> Built in the open, by the people who use it. HR, time, and projects in one workspace — self-hostable and free to start.
+> **HR software for people who hate HR software.**
+> Open-source. Built in the open. By the people who use it.
 
-The short version: we're building the HR platform two craft-obsessed frontend devs would actually want to use, in public, for people who hate what they're using now. Hosted if you want it, self-hosted if you don't, yours either way. Every feature ships because someone — a maintainer or a contributor — actually needed it.
+The paradox is the point. The hero calls out the reader (everyone hates their HR tool, that's the universal pain) and the subtitle delivers the three-pillar proof in one breath: **open** (source-available, self-hostable, exportable), **transparent** (roadmap, changelog, commits, screw-ups — all public), and **built by the people who use it** (dogfooded by the maintainers, shaped by pull requests from people who live with the product).
 
-*Previously considered and retired:*
-- *"Rippling for services firms — open source"* — over-niched on services firms and anchored us to a category incumbent. The commessa/services-firm angle is a **strong feature story**, not the whole pitch.
-- *"HR you can read, fork, and run"* — too coder-coded for the manager / people-ops audience who are our paying buyers. Kept as a **secondary line** for developer-audience surfaces (repo README, engineering blog, contributor calls).
+The longer story: we're building the HR platform two craft-obsessed frontend devs would actually want to use, in public, for people who hate what they're using now. Hosted if you want it, self-hosted if you don't, yours either way. Every feature ships because someone — a maintainer or a contributor — actually needed it.
+
+_Previously considered and retired:_
+
+- _"Rippling for services firms — open source"_ — over-niched on services firms and anchored us to a category incumbent. The commessa/services-firm angle is a **strong feature story**, not the whole pitch.
+- _"HR you can read, fork, and run"_ — too coder-coded for the manager / people-ops audience who are our paying buyers. Kept as a **secondary line** for developer-audience surfaces (repo README, engineering blog, contributor calls).
+- _"Open-source people ops for modern teams"_ — accurate but flat. Reads like a directory listing, not a headline. Keep as a **descriptor** in SEO meta descriptions, directory submissions, and the product footer — not as a hero.
 
 ---
 
@@ -25,7 +29,7 @@ The short version: we're building the HR platform two craft-obsessed frontend de
 
 **Make HR software that respects you.**
 
-Respects your *data* (you own it, you can leave any time, it lives on your infra if you want). Respects your *time* (keyboard-first, fast, no training needed, no "book a demo" to see the product). Respects your *taste* (beautiful, terse, not another enterprise slog). Respects your *intelligence* (honest docs, honest prices, honest limits, honest about what we're bad at).
+Respects your _data_ (you own it, you can leave any time, it lives on your infra if you want). Respects your _time_ (keyboard-first, fast, no training needed, no "book a demo" to see the product). Respects your _taste_ (beautiful, terse, not another enterprise slog). Respects your _intelligence_ (honest docs, honest prices, honest limits, honest about what we're bad at).
 
 Pulse exists because HR software today does none of these things and everyone just accepts it.
 
@@ -57,7 +61,7 @@ The code is open-source (FSL-1.1-MIT, converting to MIT in two years). The roadm
 
 ### 5.2 Your data, your infra, your exit
 
-Self-host on your own box if you want. Export everything in a clean format, any time, without asking. No proprietary binary formats, no contractual exits, no "we'll help you migrate" stalling. The strongest signal we're doing this right is that *leaving Pulse is easy*. If you still stay, that's real loyalty.
+Self-host on your own box if you want. Export everything in a clean format, any time, without asking. No proprietary binary formats, no contractual exits, no "we'll help you migrate" stalling. The strongest signal we're doing this right is that _leaving Pulse is easy_. If you still stay, that's real loyalty.
 
 ### 5.3 Craft over features
 
@@ -75,7 +79,7 @@ We build with the door open. Commits, docs, roadmap, screw-ups. We write about w
 
 The roadmap is shaped by pull requests, not product managers. Davide and Niccolò use Pulse for their own work every day — if a friction lasts more than a week, it gets fixed. External contributors aren't a distant second class: the codebase, the domain model, and the docs are written so someone outside the core team can land a meaningful change in an afternoon. "Feature request" and "pull request" are two paths to the same roadmap, and both are first-class. When we stop using our own product — or stop taking outside PRs seriously — something has gone wrong.
 
-**Note on AI.** Agent-driven development is *how* we build — it's why two of us can compete. But we don't sell it and we don't say "AI-powered." If a feature uses an LLM, we say what it does and what it costs. If it doesn't, we say "no LLM call." The public language is about craft and openness; AI shows up in engineering posts, not homepage hero copy.
+**Note on AI.** Agent-driven development is _how_ we build — it's why two of us can compete. But we don't sell it and we don't say "AI-powered." If a feature uses an LLM, we say what it does and what it costs. If it doesn't, we say "no LLM call." The public language is about craft and openness; AI shows up in engineering posts, not homepage hero copy.
 
 ---
 
@@ -123,7 +127,7 @@ Three concentric rings. The brand talks to all three, in different registers.
 
 We asked ourselves honestly: what makes this defensible against a well-funded incumbent who decides to copy us?
 
-**The honest answer is that a single-feature moat doesn't exist.** The moat is the *stack* of choices working together:
+**The honest answer is that a single-feature moat doesn't exist.** The moat is the _stack_ of choices working together:
 
 1. **License that cuts off hosted clones for two years** (FSL-1.1-MIT). You can use, fork, and run. You can't spin up "Pulse Cloud" and outcompete us on our own product during the window that matters.
 2. **Data-ownership as a promise, not a feature.** Incumbents can't credibly copy this because their business model is anchored on lock-in. The day BambooHR ships "export everything cleanly and self-host the rest" is the day their unit economics break.
@@ -139,7 +143,7 @@ None of these is bulletproof alone. Together they make Pulse annoying to displac
 
 These are the lines. If we cross them, something has gone wrong and we need to stop and look at it.
 
-- **No "book a demo" gate.** The product is installable or self-servable, full stop. If a prospect asks for a call, great — but they never *had* to ask.
+- **No "book a demo" gate.** The product is installable or self-servable, full stop. If a prospect asks for a call, great — but they never _had_ to ask.
 - **No dark patterns.** No engagement traps, no notification addiction, no growth-at-any-cost metrics driving the roadmap.
 - **No AI-washing.** If a feature doesn't actually use an LLM, it doesn't get an "AI" label. If it does, we say exactly what it does and what it costs.
 - **No user lock-in.** Exports are complete, formats are open, self-host is a first-class path, not a compliance afterthought.
@@ -168,12 +172,14 @@ These are the lines. If we cross them, something has gone wrong and we need to s
 
 **Taglines in rotation** (pick one per asset, don't stack):
 
-- **Primary (homepage, press, landing pages):** "Open-source people ops for modern teams."
-- **Primary subtitle / supporting line:** "Built in the open, by the people who use it."
+- **Primary (homepage hero, press quote, banner):** "HR software for people who hate HR software."
+- **Primary subtitle:** "Open-source. Built in the open. By the people who use it."
+- **Descriptor** (SEO meta, directories, product footer): "Open-source people ops for modern teams."
 - **Secondary, dev-audience surfaces** (repo README, engineering blog, GitHub About, contributor outreach): "HR you can read, fork, and run."
-- **For pricing / comparison pages:** "Open-source people ops, without the sales call."
+- **For pricing / comparison pages:** "HR software without the sales call."
 - **For data-ownership assets:** "Your HR data, on your infra, your way out any time."
 - **For product demos / keyboard-first posts:** "Two keys. Everything."
+- **For /about or manifesto moments:** "Built by the haters. For the haters."
 
 **The three-pillar stamp.** When you need a compact principle line — in a slide footer, a tweet bio, a sticker, a one-pager — use:
 
@@ -192,13 +198,13 @@ These are the three values that carry the most weight in public messaging (§5.1
 **Open core, sustainable.**
 
 - **Free forever:** the full open-source product, self-hosted or run locally. No feature gates. The OSS is the actual product, not a teaser.
-- **Hosted tier (`pulsehr.it`):** pay per active employee per month. Main revenue line. What you're paying for is *convenience and operational burden removed* — uptime, backups, migrations, no infra to run — not locked features.
+- **Hosted tier (`pulsehr.it`):** pay per active employee per month. Main revenue line. What you're paying for is _convenience and operational burden removed_ — uptime, backups, migrations, no infra to run — not locked features.
 - **Support & SLA for self-hosters:** flat tier for companies that self-host but need a phone number. Priority patches, onboarding help, guaranteed response times.
 - **Guest-post payments** (editorial budget, not a revenue line): €400 per published piece, €200 for commissioned drafts we don't run. Invest in content quality from day one.
 
 **Not revenue lines:** paid add-ons, paid modules, consulting, implementation services, custom dev. Each is a distraction or a conflict of interest.
 
-**Why this is sustainable rather than VC-shaped.** We don't need massive scale to be profitable — the team is two, the infra is modest, the customer acquisition cost via OSS is near zero if we do the content well. A few hundred hosted customers paying a reasonable monthly price covers costs and then some. The ceiling is lower than a VC-backed HRIS; the floor is much lower too, and *we own it*.
+**Why this is sustainable rather than VC-shaped.** We don't need massive scale to be profitable — the team is two, the infra is modest, the customer acquisition cost via OSS is near zero if we do the content well. A few hundred hosted customers paying a reasonable monthly price covers costs and then some. The ceiling is lower than a VC-backed HRIS; the floor is much lower too, and _we own it_.
 
 ---
 
@@ -206,9 +212,9 @@ These are the three values that carry the most weight in public messaging (§5.1
 
 Davide's own words: 18 months from today, we're having a beer and we're proud because:
 
-- **There is a community** — not just users, a *community*. Maturing, working on features, sending PRs, arguing about roadmap priorities on the feedback board.
+- **There is a community** — not just users, a _community_. Maturing, working on features, sending PRs, arguing about roadmap priorities on the feedback board.
 - **It's a real product, not a demo.** The mocked local-storage "test drive" still exists as an onboarding on-ramp, but the actual hosted and self-hosted deployments are where people do real work.
-- **The audience is mixed.** Developers contribute code. Managers and people-ops folks who *aren't* developers believe in us enough to request real features for their real use cases. Both registers feel welcome.
+- **The audience is mixed.** Developers contribute code. Managers and people-ops folks who _aren't_ developers believe in us enough to request real features for their real use cases. Both registers feel welcome.
 - **At least 500 GitHub stars on `davide97g/pulse-hr`.** Not a vanity number — a proxy for "we reached escape velocity in the OSS distribution loop."
 - **Hosted + self-hosted both work.** Customers choose their path. Neither is a second-class citizen.
 
@@ -226,7 +232,7 @@ Davide's own words: 18 months from today, we're having a beer and we're proud be
 
 ## 13. Team & founder stance
 
-**Davide Ghiotto** (`@davide97g`) and **Niccolò** — two frontend-fluent developers, independent of any employer (this is not a Bitrock project, though Bitrock's day job informs the design pain-points). Built with intentional use of agent-driven development: Claude Code, Codex, Cowork. AI leverage is the reason two of us can take on a category usually owned by companies of 50+ engineers.
+**Davide Ghiotto** ([GitHub](https://github.com/davide97g) · [LinkedIn](https://www.linkedin.com/in/davide-ghiotto/)) and **Niccolò Naso** ([GitHub](https://github.com/LordNik10/LordNik10) · [LinkedIn](https://www.linkedin.com/in/niccolò-naso-888039178/)) — two frontend-fluent developers, independent of any employer (this is not a Bitrock project, though Bitrock's day job informs the design pain-points). Built with intentional use of agent-driven development: Claude Code, Codex, Cowork. AI leverage is the reason two of us can take on a category usually owned by companies of 50+ engineers.
 
 We don't lead with our names in marketing. We do sign our work in commits, posts, and PRs. The stance is: the product is the main character, the founders are the second cast. When a human voice genuinely helps — a postmortem, a why-we-built-this post, a conference talk — we show up with a byline.
 
@@ -244,7 +250,7 @@ This document is the input for everything that comes next. Concretely:
 - **Contributor conversations** start from §7 (value prop for devs) and §13 (team stance).
 - **Sales conversations** (if any) run from §7 (for buyers) and §11 (pricing is public, lead with it).
 - **Pitches to press / podcasts** use §4 (origin) and §3 (vision) as the narrative arc.
-- **Visual / design execution** defers to [`identity.md`](./identity.md) for color, type, motion, logo; this doc governs the *intent* that identity.md dresses.
+- **Visual / design execution** defers to [`identity.md`](./identity.md) for color, type, motion, logo; this doc governs the _intent_ that identity.md dresses.
 
 ---
 
@@ -257,8 +263,7 @@ Things we deliberately haven't decided yet. Noted here so nobody invents answers
 - **Plugin SDK surface.** The vision says MCP + plugin SDK + API + skill library. Which one is shipped first? Likely API/webhooks already, then MCP, then plugin SDK — but an ADR is needed.
 - **Governance model at scale.** Who has merge rights when we have 20 external contributors? BDFL, maintainer team, RFC process?
 - **Italian payroll.** Do we build it ourselves or integrate (Fattureincloud / Zucchetti APIs)? Affects ICP depth significantly.
-- **Niccolò's last name** for the published version of this doc.
 
 ---
 
-*This document lives at `docs/brand/foundation.md`. Supersedes conceptual portions of `docs/brand/identity.md` (which continues to own visual execution). Keep both in sync when the brand evolves; link changes in commit messages.*
+_This document lives at `docs/brand/foundation.md`. Supersedes conceptual portions of `docs/brand/identity.md` (which continues to own visual execution). Keep both in sync when the brand evolves; link changes in commit messages._
