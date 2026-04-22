@@ -139,6 +139,7 @@ function Announcements() {
         </div>
       ) : sorted.length === 0 ? (
         <EmptyState
+          tone="welcome"
           icon={<Megaphone className="h-6 w-6" />}
           title="No announcements yet"
           description="Share something with the team to kick off the feed."

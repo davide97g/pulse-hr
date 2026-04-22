@@ -2,6 +2,7 @@ import { createRootRoute, Link, Outlet, useLocation, useNavigate } from "@tansta
 import { useEffect } from "react";
 import { useAuth } from "@clerk/react";
 import { AppShell } from "@/components/app/AppShell";
+import { RouteErrorFallback } from "@/components/app/AppErrorBoundary";
 import { FeedbackShell } from "@/components/feedback/FeedbackShell";
 import { ProposalProvider } from "@/components/proposals/ProposalProvider";
 import { WorkspaceMount } from "@/components/app/WorkspaceMount";
@@ -190,4 +191,5 @@ function RootComponent() {
 export const Route = createRootRoute({
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
+  errorComponent: ({ error }) => <RouteErrorFallback error={error} />,
 });

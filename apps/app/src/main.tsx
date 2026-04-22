@@ -8,6 +8,10 @@ import { getRouter } from "./router";
 import { ThemeProvider } from "./components/app/ThemeProvider";
 import { WorkspaceProvider } from "./components/app/WorkspaceContext";
 import { RoleOverrideProvider } from "./lib/role-override";
+import { OfflineModeProvider } from "./lib/offline-mode";
+import { AppErrorBoundary } from "./components/app/AppErrorBoundary";
+import { ServerBoot } from "./components/app/ServerBoot";
+import { WorkspaceLoaderProvider } from "./components/app/WorkspaceLoader";
 import "./styles.css";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -47,14 +51,22 @@ if (!el) throw new Error("#root not found");
 
 ReactDOM.createRoot(el).render(
   <React.StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/login">
-      <RoleOverrideProvider>
-        <ThemeProvider>
-          <WorkspaceProvider>
-            <RouterProvider router={router} />
-          </WorkspaceProvider>
-        </ThemeProvider>
-      </RoleOverrideProvider>
-    </ClerkProvider>
+    <AppErrorBoundary scope="app">
+      <OfflineModeProvider>
+        <ServerBoot>
+          <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/login">
+            <RoleOverrideProvider>
+              <ThemeProvider>
+                <WorkspaceProvider>
+                  <WorkspaceLoaderProvider>
+                    <RouterProvider router={router} />
+                  </WorkspaceLoaderProvider>
+                </WorkspaceProvider>
+              </ThemeProvider>
+            </RoleOverrideProvider>
+          </ClerkProvider>
+        </ServerBoot>
+      </OfflineModeProvider>
+    </AppErrorBoundary>
   </React.StrictMode>,
 );

@@ -16,6 +16,7 @@ import { BookingDialog } from "./BookingDialog";
 import { BookingsProvider } from "./BookingsContext";
 import { CommandPalette } from "./CommandPalette";
 import { LogOverlay } from "./LogOverlay";
+import { OfflineBanner } from "./OfflineBanner";
 import { NewBadge } from "./NewBadge";
 import { OfficesStoreProvider } from "./OfficesStoreProvider";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
@@ -271,6 +272,7 @@ function AppShellInner() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
+        <OfflineBanner />
         <Topbar
           onOpenPalette={() => setPaletteOpen(true)}
           onOpenLog={() => setLogOpen(true)}

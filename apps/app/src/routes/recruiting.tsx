@@ -193,6 +193,7 @@ function Recruiting() {
             </div>
           ) : candidates.length === 0 ? (
             <EmptyState
+              tone="welcome"
               icon={<Users className="h-6 w-6" />}
               title="No candidates in the pipeline"
               description="Post a job to start collecting applicants."
@@ -276,6 +277,7 @@ function Recruiting() {
             <SkeletonCards cards={4} />
           ) : jobs.length === 0 ? (
             <EmptyState
+              tone="welcome"
               icon={<Briefcase className="h-6 w-6" />}
               title="No jobs posted yet"
               description="Draft your first opening to start sourcing candidates."

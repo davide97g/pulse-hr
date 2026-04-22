@@ -263,6 +263,7 @@ function ClientsPage() {
               <SkeletonRows rows={5} />
             ) : filteredClients.length === 0 ? (
               <EmptyState
+                tone="filter"
                 icon={<Building2 className="h-5 w-5" />}
                 title="No clients match"
                 description="Try clearing the search, or add a new client."
@@ -416,6 +417,7 @@ function ClientsPage() {
               <SkeletonRows rows={6} />
             ) : filteredProjects.length === 0 ? (
               <EmptyState
+                tone="welcome"
                 icon={<Briefcase className="h-5 w-5" />}
                 title="No projects"
                 description="Create the first project for this workspace."

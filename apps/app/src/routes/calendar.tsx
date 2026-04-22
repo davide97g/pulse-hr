@@ -213,6 +213,7 @@ function CalendarPage() {
             <SkeletonRows rows={6} />
           ) : sortedUpcoming.length === 0 ? (
             <EmptyState
+              tone="welcome"
               icon={<CalendarClock className="h-6 w-6" />}
               title="No upcoming events"
               description="Hit Sync now to pull the latest from Google."

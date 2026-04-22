@@ -136,6 +136,7 @@ function Marketplace() {
         <SkeletonCards cards={6} />
       ) : filtered.length === 0 ? (
         <EmptyState
+          tone="filter"
           icon={<Search className="h-6 w-6" />}
           title="No apps match"
           action={
