@@ -2,6 +2,9 @@
   "name": "workflows-people",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24.11.1"
+  },
   "workspaces": [
     "apps/*",
     "apps/app/recordings",
