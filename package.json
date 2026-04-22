@@ -21,11 +21,7 @@
     "studio:reel": "bun run --filter '@pulse-hr/reel' studio",
     "render:reel": "bun run --filter '@pulse-hr/reel' render:all",
     "lint": "bun run --filter '@workflows-people/app' lint",
-    "format": "prettier --write .",
     "db:migrate": "bun run --filter '@pulse-hr/api' db:migrate",
     "demo:record": "bun --cwd apps/app/recordings scripts/run.ts"
-  },
-  "devDependencies": {
-    "prettier": "^3.7.3"
   }
 }

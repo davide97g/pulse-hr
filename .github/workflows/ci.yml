@@ -29,9 +29,6 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
 
-      - name: Format check
-        run: bunx prettier --check .
-
       - name: Lint
         run: bun run lint
 
