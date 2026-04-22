@@ -43,7 +43,7 @@ pulse-hr/
 └── docs/              # brand assets, internal docs
 ```
 
-See [`CLAUDE.md`](./CLAUDE.md) for a deeper architecture tour (routing, theme system, domain model, Labs conventions).
+See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the high-level tour, and [`CLAUDE.md`](./CLAUDE.md) for agent-facing conventions (routing, theme system, domain model, Labs patterns).
 
 ## Quick setup
 
@@ -88,32 +88,16 @@ bun run db:migrate        # run API migrations
 
 ## Contributing
 
-Contributions are welcome — this project lives and breathes in the open.
+Contributions are welcome — this project lives in the open.
 
-1. **Find something to work on**
-   - [Open issues](https://github.com/davide97g/pulse-hr/issues) — bugs and small tasks
-   - [GitHub Discussions](https://github.com/davide97g/pulse-hr/discussions) — feature proposals, questions, and the public **feedback board**
-   - [Public roadmap](https://pulsehr.it/roadmap) — what's shipping now / next / later
-2. **Open a discussion first** for anything larger than a bugfix or cosmetic change, so we can align on direction before you invest time.
-3. **Fork & branch** — branch naming is loose, prefer `feat/…`, `fix/…`, `docs/…`.
-4. **Match the house style** — short imperative commit subjects; body explains *why*. Conventional Commits are welcome but not enforced. Run `bun run format` and `bun run lint` before pushing.
-5. **Open a PR** against `main`. Link the issue/discussion. Include screenshots or a short screen-recording for UI changes.
+- Find something to work on: [open issues](https://github.com/davide97g/pulse-hr/issues), [Discussions (feedback board)](https://github.com/davide97g/pulse-hr/discussions), [public roadmap](https://pulsehr.it/roadmap).
+- Read [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the workflow, branching, PR checklist, and code style.
+- Be kind. We follow the [Contributor Covenant](./CODE_OF_CONDUCT.md).
+- Security issues → [`SECURITY.md`](./SECURITY.md) (do **not** open a public issue).
 
-### Reporting bugs
-
-Open a [GitHub issue](https://github.com/davide97g/pulse-hr/issues/new) with:
-
-- What you did, what you expected, what happened
-- Browser / OS / Bun version
-- A minimal reproduction if possible
-
-### Security
-
-Please **do not** file public issues for security vulnerabilities. Email [security@pulsehr.it](mailto:security@pulsehr.it) and we'll coordinate a fix + disclosure.
-
-### Code of conduct
-
-Be kind, be direct, assume good faith. Harassment of any kind gets you removed.
+Also helpful:
+- [`docs/development.md`](./docs/development.md) — first-run guide, scripts, troubleshooting
+- [`docs/self-hosting.md`](./docs/self-hosting.md) — Vercel / Docker / Kubernetes deployment
 
 ## License
 

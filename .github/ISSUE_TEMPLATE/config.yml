@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Feature request / idea / question
+    url: https://github.com/davide97g/pulse-hr/discussions
+    about: Use Discussions for proposals, questions, and the public feedback board.
+  - name: 🔒 Security vulnerability
+    url: https://github.com/davide97g/pulse-hr/security/advisories/new
+    about: Report privately via GitHub Security Advisories (or email security@pulsehr.it).
+  - name: 📣 Product status
+    url: https://status.pulsehr.it
+    about: Check live status before reporting an outage.
