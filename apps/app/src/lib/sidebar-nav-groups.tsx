@@ -38,7 +38,7 @@ export type SidebarNavItem = {
   icon: LucideIcon;
   /** When set, visibility follows workspace toggles (non-admins). */
   featureId?: SidebarFeatureId;
-  isNew?: boolean;
+  /** Render a notification dot (e.g. unread activity). Not for "new feature" marketing. */
   unreadDot?: boolean;
 };
 
@@ -69,12 +69,11 @@ export function buildSidebarNavGroups(
           label: "Status Log",
           icon: MessagesSquare,
           featureId: "log",
-          isNew: true,
           unreadDot: hasOpenManagerAsks,
         },
-        { to: "/focus", label: "Focus Mode", icon: Focus, featureId: "focus", isNew: true },
-        { to: "/growth", label: "Growth", icon: Trophy, featureId: "growth", isNew: true },
-        { to: "/kudos", label: "Kudos", icon: Gift, featureId: "kudos", isNew: true },
+        { to: "/focus", label: "Focus Mode", icon: Focus, featureId: "focus" },
+        { to: "/growth", label: "Growth", icon: Trophy, featureId: "growth" },
+        { to: "/kudos", label: "Kudos", icon: Gift, featureId: "kudos" },
       ],
     },
     {
@@ -94,19 +93,12 @@ export function buildSidebarNavGroups(
           label: "Clients & Projects",
           icon: BriefcaseIcon,
           featureId: "clients",
-          isNew: true,
         },
         { to: "/time", label: "Time & attendance", icon: Clock, featureId: "time" },
-        {
-          to: "/calendar",
-          label: "Calendar",
-          icon: CalendarDays,
-          featureId: "calendar",
-          isNew: true,
-        },
+        { to: "/calendar", label: "Calendar", icon: CalendarDays, featureId: "calendar" },
         { to: "/leave", label: "Leave", icon: Calendar, featureId: "leave" },
         { to: "/documents", label: "Documents", icon: FileText, featureId: "documents" },
-        { to: "/offices", label: "Offices", icon: Building2, featureId: "offices", isNew: true },
+        { to: "/offices", label: "Offices", icon: Building2, featureId: "offices" },
       ],
     },
     {
@@ -119,7 +111,6 @@ export function buildSidebarNavGroups(
           label: "Commessa Forecast",
           icon: TrendingUp,
           featureId: "forecast",
-          isNew: true,
         },
       ],
     },
@@ -132,23 +123,16 @@ export function buildSidebarNavGroups(
           label: "Saturation",
           icon: Gauge,
           featureId: "saturation",
-          isNew: true,
         },
       ],
     },
     {
       label: "Workspace",
       items: [
-        {
-          to: "/feedback",
-          label: "Feedback",
-          icon: MessageSquare,
-          featureId: "feedback",
-          isNew: true,
-        },
+        { to: "/feedback", label: "Feedback", icon: MessageSquare, featureId: "feedback" },
         { to: "/marketplace", label: "Marketplace", icon: Puzzle, featureId: "marketplace" },
         { to: "/developers", label: "Developers", icon: Code2, featureId: "developers" },
-        { to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs", isNew: true },
+        { to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" },
         { to: "/settings", label: "Settings", icon: Settings, featureId: "settings" },
       ],
     },

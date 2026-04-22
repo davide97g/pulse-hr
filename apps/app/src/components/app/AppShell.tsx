@@ -250,16 +250,13 @@ function AppShellInner() {
                     >
                       <Icon className="h-4 w-4 shrink-0" />
                       {!collapsed && <span className="truncate flex-1">{item.label}</span>}
-                      {!collapsed && item.isNew && (
-                        <span className="accent-dot pulse-dot" aria-label="New" />
-                      )}
-                      {!collapsed && item.unreadDot && !item.isNew && (
+                      {!collapsed && item.unreadDot && (
                         <span
                           className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
-                          aria-label="Open asks"
+                          aria-label="Unread"
                         />
                       )}
-                      {collapsed && (item.isNew || item.unreadDot) && (
+                      {collapsed && item.unreadDot && (
                         <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
                       )}
                     </Link>
@@ -366,11 +363,10 @@ function AppShellInner() {
                       >
                         <Icon className="h-4 w-4 shrink-0" />
                         <span className="truncate flex-1">{item.label}</span>
-                        {item.isNew && <span className="accent-dot pulse-dot" aria-label="New" />}
-                        {item.unreadDot && !item.isNew && (
+                        {item.unreadDot && (
                           <span
                             className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
-                            aria-label="Open asks"
+                            aria-label="Unread"
                           />
                         )}
                       </Link>
