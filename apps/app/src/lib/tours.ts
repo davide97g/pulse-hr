@@ -23,7 +23,7 @@ export type Tour = {
   name: string;
   summary: string;
   /** Workflow grouping shown in the launcher. */
-  workflow: "Getting started" | "Work" | "People" | "Money" | "Labs" | "Admin";
+  workflow: "Getting started" | "Work" | "People" | "Money" | "Highlights" | "Admin";
   /** Short estimate like "2 min" — purely informational. */
   duration: string;
   steps: TourStep[];
@@ -45,7 +45,7 @@ export const TOURS: Tour[] = [
       {
         target: "sidebar-nav",
         title: "Sidebar navigation",
-        body: "Every area of the app is grouped here: Overview, People, Work, Money, Insights, Labs, and Workspace. Items with a pulsing dot are new.",
+        body: "Every area of the app is grouped here: Overview, Me, People, Work, Money, Insights, and Workspace. Items with a pulsing dot are new.",
         placement: "right",
       },
       {
@@ -188,15 +188,15 @@ export const TOURS: Tour[] = [
   },
   {
     id: "labs-focus",
-    name: "Labs: Focus, Pulse, Kudos, Forecast",
+    name: "Highlights: Focus, Kudos, Forecast, Saturation",
     summary:
-      "The experimental suite — deep-work timer, vibe heatmap, peer coins, and burn forecasting.",
-    workflow: "Labs",
+      "The newest surfaces — deep-work timer, peer coins, burn forecasting, and team saturation.",
+    workflow: "Highlights",
     duration: "3 min",
     steps: [
       {
-        title: "Labs",
-        body: "Four experimental features live here, all tagged with a pulsing 'new' dot in the sidebar.",
+        title: "Highlights",
+        body: "Four recent features scattered across Me, Money and Insights — all tagged with a pulsing 'new' dot in the sidebar.",
       },
       {
         title: "Focus Mode",
