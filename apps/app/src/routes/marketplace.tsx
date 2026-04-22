@@ -18,9 +18,11 @@ import { SkeletonCards } from "@/components/app/SkeletonList";
 import { EmptyState } from "@/components/app/EmptyState";
 import { plugins as initialPlugins } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/marketplace")({
   head: () => ({ meta: [{ title: "Marketplace — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Marketplace,
 });
 
@@ -54,10 +56,14 @@ function Marketplace() {
     return seeded;
   });
   const plugins = initialPlugins.map((p) => ({ ...p, installed: installed.has(p.id) }));
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState<string | null>(null);
+  const [q, setQ] = useUrlParam("q");
+  const [catRaw, setCatRaw] = useUrlParam("cat");
+  const cat = catRaw || null;
+  const setCat = (v: string | null) => setCatRaw(v);
   const [loading, setLoading] = useState(true);
-  const [configure, setConfigure] = useState<(typeof plugins)[number] | null>(null);
+  const [configureId, setConfigureId] = useUrlParam("configure");
+  const configure = configureId ? (plugins.find((p) => p.id === configureId) ?? null) : null;
+  const setConfigure = (p: (typeof plugins)[number] | null) => setConfigureId(p?.id ?? null);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 440);

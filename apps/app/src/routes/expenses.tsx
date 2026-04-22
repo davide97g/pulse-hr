@@ -19,17 +19,21 @@ import { useQuickAction } from "@/components/app/QuickActions";
 import { type Expense } from "@/lib/mock-data";
 import { expensesTable, useExpenses } from "@/lib/tables/expenses";
 import { employeeById } from "@/lib/tables/employees";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/expenses")({
   head: () => ({ meta: [{ title: "Expenses — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Expenses,
 });
 
 const sym = { USD: "$", EUR: "€", GBP: "£" };
 
 function Expenses() {
-  const [selected, setSelected] = useState<Expense | null>(null);
   const list = useExpenses();
+  const [selId, setSelId] = useUrlParam("sel");
+  const selected = selId ? (list.find((x) => x.id === selId) ?? null) : null;
+  const setSelected = (e: Expense | null) => setSelId(e?.id ?? null);
   const [toDelete, setToDelete] = useState<Expense | null>(null);
   const [loading, setLoading] = useState(true);
   const { open: openAction } = useQuickAction();
@@ -48,7 +52,7 @@ function Expenses() {
   };
   const remove = (e: Expense) => {
     expensesTable.remove(e.id);
-    setSelected(s => (s?.id === e.id ? null : s));
+    if (selId === e.id) setSelId(null);
     toast("Expense deleted", {
       action: { label: "Undo", onClick: () => expensesTable.add(e) },
     });

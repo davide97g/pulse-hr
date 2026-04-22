@@ -46,9 +46,11 @@ import { EmptyState } from "@/components/app/EmptyState";
 import type { Announcement } from "@/lib/mock-data";
 import { announcementsTable, useAnnouncements } from "@/lib/tables/announcements";
 import { useFullName } from "@/lib/current-user";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/announcements")({
   head: () => ({ meta: [{ title: "Announcements — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Announcements,
 });
 
@@ -58,7 +60,9 @@ function Announcements() {
   const [composeOpen, setComposeOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Announcement | null>(null);
   const [loading, setLoading] = useState(true);
-  const [commentFor, setCommentFor] = useState<string | null>(null);
+  const [commentForRaw, setCommentForRaw] = useUrlParam("comment");
+  const commentFor = commentForRaw || null;
+  const setCommentFor = (v: string | null) => setCommentForRaw(v);
   const [commentText, setCommentText] = useState("");
 
   useEffect(() => {

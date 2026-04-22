@@ -24,6 +24,7 @@ import { employeeById } from "@/lib/tables/employees";
 import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
 import { useSavedViews } from "@/lib/useSavedViews";
 import { SavedViewsBar } from "@/components/app/SavedViewsBar";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/leave")({
   head: () => ({ meta: [{ title: "Leave — Pulse HR" }] }),
@@ -32,8 +33,10 @@ export const Route = createFileRoute("/leave")({
 });
 
 function Leave() {
-  const [selected, setSelected] = useState<LeaveRequest | null>(null);
   const list = useLeaveRequests();
+  const [selId, setSelId] = useUrlParam("sel");
+  const selected = selId ? (list.find((l) => l.id === selId) ?? null) : null;
+  const setSelected = (l: LeaveRequest | null) => setSelId(l?.id ?? null);
   const [toDelete, setToDelete] = useState<LeaveRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const { open: openAction } = useQuickAction();
@@ -64,7 +67,7 @@ function Leave() {
 
   const remove = (l: LeaveRequest) => {
     leaveTable.remove(l.id);
-    setSelected(s => (s?.id === l.id ? null : s));
+    if (selId === l.id) setSelId(null);
     toast("Request deleted", {
       action: { label: "Undo", onClick: () => leaveTable.add(l) },
     });

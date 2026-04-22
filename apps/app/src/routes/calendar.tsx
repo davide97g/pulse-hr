@@ -55,9 +55,11 @@ import { gcalEventsTable, useGcalEvents } from "@/lib/tables/gcalEvents";
 import { useIntegration, updateIntegration } from "@/lib/integrations-store";
 import { mockWebhookEvent } from "@/lib/integrations";
 import { cn } from "@/lib/utils";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/calendar")({
   head: () => ({ meta: [{ title: "Calendar — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: CalendarPage,
 });
 
@@ -70,15 +72,19 @@ function CalendarPage() {
   const allEvents = useGcalEvents();
   const events = connected ? allEvents : [];
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<GCalEvent | null>(null);
+  const [selId, setSelId] = useUrlParam("sel");
+  const selected = selId ? (allEvents.find((e) => e.id === selId) ?? null) : null;
+  const setSelected = (e: GCalEvent | null) => setSelId(e?.id ?? null);
   const [toDelete, setToDelete] = useState<GCalEvent | null>(null);
   const [composing, setComposing] = useState(false);
   const [syncing, setSyncing] = useState(false);
-  const [tab, setTab] = useState<"upcoming" | "month">("upcoming");
+  const [tabRaw, setTabRaw] = useUrlParam("tab", "upcoming");
+  const tab = (tabRaw === "month" ? "month" : "upcoming") as "upcoming" | "month";
+  const setTab = (v: "upcoming" | "month") => setTabRaw(v);
 
   useEffect(() => {
-    if (!connected) setSelected(null);
-  }, [connected]);
+    if (!connected && selId) setSelId(null);
+  }, [connected, selId, setSelId]);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 420);
@@ -119,7 +125,7 @@ function CalendarPage() {
 
   const remove = (e: GCalEvent) => {
     gcalEventsTable.remove(e.id);
-    setSelected((s) => (s?.id === e.id ? null : s));
+    if (selId === e.id) setSelId(null);
     setToDelete(null);
     toast("Event deleted", {
       action: { label: "Undo", onClick: () => gcalEventsTable.add(e) },

@@ -53,9 +53,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/feedback")({
   head: () => ({ meta: [{ title: "Feedback — Pulse" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: FeedbackBoard,
 });
 
@@ -88,7 +90,9 @@ function FeedbackBoard() {
   const [query, setQuery] = useState("");
   const [routeFilter, setRouteFilter] = useState<string>("");
   const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
-  const [threadId, setThreadId] = useState<string | null>(null);
+  const [threadRaw, setThreadRaw] = useUrlParam("thread");
+  const threadId = threadRaw || null;
+  const setThreadId = (v: string | null) => setThreadRaw(v);
   const admin = useIsEffectiveAdmin();
   const { open: openProposal } = useNewProposal();
 

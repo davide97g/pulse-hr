@@ -27,9 +27,11 @@ import { SkeletonRows } from "@/components/app/SkeletonList";
 import { docsSeed, type Doc } from "@/lib/mock-data";
 import { useFullName } from "@/lib/current-user";
 import { cn } from "@/lib/utils";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/documents")({
   head: () => ({ meta: [{ title: "Documents — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Documents,
 });
 
@@ -38,8 +40,10 @@ const FOLDERS = ["Contracts", "Policies", "Templates", "Tax forms", "Onboarding"
 function Documents() {
   const me = useFullName() || "You";
   const [list, setList] = useState<Doc[]>(docsSeed);
-  const [folder, setFolder] = useState<string | null>(null);
-  const [q, setQ] = useState("");
+  const [folderRaw, setFolderRaw] = useUrlParam("folder");
+  const folder = folderRaw || null;
+  const setFolder = (v: string | null) => setFolderRaw(v);
+  const [q, setQ] = useUrlParam("q");
   const [uploadOpen, setUploadOpen] = useState(false);
   const [rename, setRename] = useState<Doc | null>(null);
   const [toDelete, setToDelete] = useState<Doc | null>(null);

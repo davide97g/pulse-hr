@@ -30,8 +30,9 @@ import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
 import { type Employee, departments } from "@/lib/mock-data";
-import { employeesTable, useEmployees } from "@/lib/tables/employees";
+import { employeesTable, employeeById, useEmployees } from "@/lib/tables/employees";
 import { useSavedViews } from "@/lib/useSavedViews";
+import { useUrlParam } from "@/lib/useUrlParam";
 import { SavedViewsBar } from "@/components/app/SavedViewsBar";
 import { cn } from "@/lib/utils";
 
@@ -54,8 +55,10 @@ function People() {
   const setQ = (v: string) => views.setState({ q: v });
   const setDept = (v: string | null) => views.setState({ dept: v ?? "" });
   const setTab = (v: string) => views.setState({ tab: v });
-  const [selected, setSelected] = useState<Employee | null>(null);
+  const [selId, setSelId] = useUrlParam("sel");
   const list = useEmployees();
+  const selected = selId ? (list.find((e) => e.id === selId) ?? employeeById(selId) ?? null) : null;
+  const setSelected = (e: Employee | null) => setSelId(e?.id ?? null);
   const [toDelete, setToDelete] = useState<Employee | null>(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -80,7 +83,7 @@ function People() {
 
   const remove = (e: Employee) => {
     employeesTable.remove(e.id);
-    setSelected(s => (s?.id === e.id ? null : s));
+    if (selId === e.id) setSelId(null);
     toast(`${e.name} removed`, {
       description: "Employee archived.",
       action: {
@@ -348,6 +351,7 @@ function EmployeePanel({
   onDelete: (e: Employee) => void;
   onEdit: (e: Employee) => void;
 }) {
+  const [pane, setPane] = useUrlParam("pane", "profile");
   return (
     <SidePanel
       open={!!employee}
@@ -394,7 +398,7 @@ function EmployeePanel({
 
           <GrowthSummaryCard employeeId={employee.id} />
 
-          <Tabs defaultValue="profile">
+          <Tabs value={pane} onValueChange={setPane}>
             <TabsList className="w-full grid grid-cols-4">
               <TabsTrigger value="profile">Profile</TabsTrigger>
               <TabsTrigger value="job">Job</TabsTrigger>

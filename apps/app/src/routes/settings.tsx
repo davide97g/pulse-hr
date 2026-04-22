@@ -61,15 +61,18 @@ import { IntegrationConnectCard } from "@/components/pm/IntegrationConnectCard";
 import { useIntegrations, updateIntegration } from "@/lib/integrations-store";
 import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
 import { cn } from "@/lib/utils";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Settings — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Settings,
 });
 
 function Settings() {
   const [loading, setLoading] = useState(true);
   const roles = useRoles();
+  const [tab, setTab] = useUrlParam("tab", "company");
   const [editRolePermission, setEditRolePermission] = useState<RolePermission | "new" | null>(null);
   const [deleteRolePermission, setDeleteRolePermission] = useState<RolePermission | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
@@ -116,7 +119,7 @@ function Settings() {
     <div className="p-4 md:p-6 max-w-[1100px] mx-auto fade-in">
       <PageHeader title="Settings" description="Company configuration, roles and integrations" />
 
-      <Tabs defaultValue="company" orientation="horizontal">
+      <Tabs value={tab} onValueChange={setTab} orientation="horizontal">
         <TabsList>
           <TabsTrigger value="company">
             <Building2 className="h-3.5 w-3.5 mr-1.5" />

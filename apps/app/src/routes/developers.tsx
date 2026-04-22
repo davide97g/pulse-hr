@@ -52,9 +52,11 @@ import { apiKeysTable, useApiKeys } from "@/lib/tables/apiKeys";
 import { webhooksTable, useWebhooks } from "@/lib/tables/webhooks";
 import { customFieldsTable, useCustomFields } from "@/lib/tables/customFields";
 import { cn } from "@/lib/utils";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/developers")({
   head: () => ({ meta: [{ title: "Developers — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Developers,
 });
 
@@ -68,6 +70,7 @@ function Developers() {
   const [newHookOpen, setNewHookOpen] = useState(false);
   const [newFieldOpen, setNewFieldOpen] = useState(false);
   const [deleteKey, setDeleteKey] = useState<ApiKey | null>(null);
+  const [tab, setTab] = useUrlParam("tab", "keys");
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 420);
@@ -92,7 +95,7 @@ function Developers() {
         }
       />
 
-      <Tabs defaultValue="keys">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="keys">
             <Key className="h-3.5 w-3.5 mr-1.5" />

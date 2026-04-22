@@ -131,12 +131,18 @@ export function useSavedViews<State extends Record<string, unknown>>(
     return [];
   });
 
-  // Sync out → URL + localStorage
+  // Sync out → URL + localStorage. Merge with any non-schema search keys
+  // (e.g. side-panel selection / inner-tab state set by useUrlParam) so they
+  // are not stripped when filters change.
   useEffect(() => {
-    const search = stateToSearch(state, schema);
+    const fromState = stateToSearch(state, schema);
     navigate({
       to: location.pathname,
-      search: search as never,
+      search: (prev) => {
+        const next = { ...(prev as Record<string, unknown>) };
+        for (const k of Object.keys(schema)) delete next[k];
+        return { ...next, ...fromState } as never;
+      },
       replace: true,
     });
     try { localStorage.setItem(lastKey(scope), JSON.stringify(state)); } catch {}

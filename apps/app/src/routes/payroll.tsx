@@ -42,15 +42,20 @@ import { SkeletonRows, SkeletonCards } from "@/components/app/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
 import { payslips as payslipsSeed, employeeById, type PayrollRun } from "@/lib/mock-data";
 import { payrollRunsTable, usePayrollRuns } from "@/lib/tables/payrollRuns";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/payroll")({
   head: () => ({ meta: [{ title: "Payroll — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Payroll,
 });
 
 function Payroll() {
   const runs = usePayrollRuns();
-  const [selectedRun, setSelectedRun] = useState<PayrollRun | null>(null);
+  const [selRunId, setSelRunId] = useUrlParam("sel");
+  const selectedRun = selRunId ? (runs.find((r) => r.id === selRunId) ?? null) : null;
+  const setSelectedRun = (r: PayrollRun | null) => setSelRunId(r?.id ?? null);
+  const [tab, setTab] = useUrlParam("tab", "runs");
   const [toDelete, setToDelete] = useState<PayrollRun | null>(null);
   const [loading, setLoading] = useState(true);
   const { open: openAction } = useQuickAction();
@@ -175,7 +180,7 @@ function Payroll() {
         </Card>
       )}
 
-      <Tabs defaultValue="runs">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="runs">
             <Wallet className="h-3.5 w-3.5 mr-1.5" />

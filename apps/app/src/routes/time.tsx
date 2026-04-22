@@ -59,6 +59,7 @@ import { useWorkspace } from "@/components/app/WorkspaceContext";
 import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
 import { useSavedViews } from "@/lib/useSavedViews";
 import { SavedViewsBar } from "@/components/app/SavedViewsBar";
+import { useUrlParam } from "@/lib/useUrlParam";
 import {
   employees,
   commesse,
@@ -134,6 +135,7 @@ function Time() {
   const setQ = (v: string) => timeViews.setState({ q: v });
   const setFilterCommessa = (v: string) => timeViews.setState({ filterCommessa: v });
   const setFilterStatus = (v: string) => timeViews.setState({ filterStatus: v });
+  const [tab, setTab] = useUrlParam("tab", "calendar");
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 520);
@@ -515,7 +517,7 @@ function Time() {
         </Card>
       </div>
 
-      <Tabs defaultValue="calendar">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="calendar">
             <CalendarDays className="h-3.5 w-3.5 mr-1.5" />

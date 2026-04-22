@@ -47,9 +47,11 @@ import { candidatesTable, useCandidates } from "@/lib/tables/candidates";
 import { jobPostingsTable, useJobPostings } from "@/lib/tables/jobPostings";
 import { SidePanel } from "@/components/app/SidePanel";
 import { cn } from "@/lib/utils";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/recruiting")({
   head: () => ({ meta: [{ title: "Recruiting — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Recruiting,
 });
 
@@ -59,14 +61,24 @@ function Recruiting() {
   const [loading, setLoading] = useState(true);
   const candidates = useCandidates();
   const jobs = useJobPostings();
-  const [selected, setSelected] = useState<Candidate | null>(null);
-  const [selectedJob, setSelectedJob] = useState<JobPosting | "new" | null>(null);
+  const [selId, setSelId] = useUrlParam("sel");
+  const selected = selId ? (candidates.find((c) => c.id === selId) ?? null) : null;
+  const setSelected = (c: Candidate | null) => setSelId(c?.id ?? null);
+  const [jobParam, setJobParam] = useUrlParam("job");
+  const selectedJob: JobPosting | "new" | null =
+    jobParam === "new" ? "new" : jobParam ? (jobs.find((j) => j.id === jobParam) ?? null) : null;
+  const setSelectedJob = (j: JobPosting | "new" | null) => {
+    if (j === null) setJobParam(null);
+    else if (j === "new") setJobParam("new");
+    else setJobParam(j.id);
+  };
   const [toDelete, setToDelete] = useState<{
     kind: "cand" | "job";
     id: string;
     label: string;
   } | null>(null);
   const { open: openAction } = useQuickAction();
+  const [tab, setTab] = useUrlParam("tab", "pipeline");
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 420);
@@ -150,7 +162,7 @@ function Recruiting() {
         }
       />
 
-      <Tabs defaultValue="pipeline">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="pipeline">
             <Users className="h-3.5 w-3.5 mr-1.5" />

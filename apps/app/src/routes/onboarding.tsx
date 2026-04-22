@@ -43,9 +43,11 @@ import { Progress } from "@/components/ui/progress";
 import { type OnboardingWorkflow, type OnboardingTask } from "@/lib/mock-data";
 import { onboardingWorkflowsTable, useOnboardingWorkflows } from "@/lib/tables/onboardingWorkflows";
 import { cn } from "@/lib/utils";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({ meta: [{ title: "Onboarding — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: Onboarding,
 });
 
@@ -58,10 +60,11 @@ const categoryIcon: Record<OnboardingTask["category"], React.ReactNode> = {
 
 function Onboarding() {
   const workflows = useOnboardingWorkflows();
-  const [activeId, setActiveId] = useState<string>("");
+  const [activeId, setActiveId] = useUrlParam("sel");
   useEffect(() => {
     if (!activeId && workflows.length > 0) setActiveId(workflows[0].id);
-  }, [workflows, activeId]);
+  }, [workflows, activeId, setActiveId]);
+  const [tab, setTab] = useUrlParam("tab", "active");
   const [newTaskOpen, setNewTaskOpen] = useState(false);
   const [newWorkflowOpen, setNewWorkflowOpen] = useState(false);
   const [toDelete, setToDelete] = useState<OnboardingWorkflow | null>(null);
@@ -178,7 +181,7 @@ function Onboarding() {
         }
       />
 
-      <Tabs defaultValue="active" className="mb-4">
+      <Tabs value={tab} onValueChange={setTab} className="mb-4">
         <TabsList>
           <TabsTrigger value="active">
             <Sparkles className="h-3.5 w-3.5 mr-1.5" />

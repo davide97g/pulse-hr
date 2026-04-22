@@ -29,6 +29,7 @@ import {
   type Kudo, type SeasonalPeriod, type SeasonalChallenge,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { useUrlParam } from "@/lib/useUrlParam";
 
 const ME = "e1";
 
@@ -36,6 +37,7 @@ interface GrowthSearch {
   employee?: string;
   view?: "team" | "me";
   tab?: "leaderboard" | "team";
+  pane?: string;
 }
 
 export const Route = createFileRoute("/growth")({
@@ -44,6 +46,7 @@ export const Route = createFileRoute("/growth")({
     employee: typeof s.employee === "string" ? s.employee : undefined,
     view: s.view === "me" || s.view === "team" ? s.view : undefined,
     tab: s.tab === "leaderboard" || s.tab === "team" ? s.tab : undefined,
+    pane: typeof s.pane === "string" ? s.pane : undefined,
   }),
   component: Growth,
 });
@@ -544,6 +547,7 @@ function TeamCard({ summary, onPick }: { summary: GrowthSummary; onPick: (id: st
 // ─── Profile view ──────────────────────────────────────────────────────
 function GrowthProfile({ summary }: { summary: GrowthSummary }) {
   const { employee, level, next, progressPct, xp, streak, kudosReceived, goalsActive, challengesOpen, badgesEarned } = summary;
+  const [pane, setPane] = useUrlParam("pane", "goals");
   const radar = useMemo(() => strengthRadarFor(employee.id), [employee.id]);
   const badges = useMemo(() => badgesFor(employee.id), [employee.id]);
   const goals = useMemo(() => goalsFor(employee.id), [employee.id]);
@@ -638,7 +642,7 @@ function GrowthProfile({ summary }: { summary: GrowthSummary }) {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="goals">
+      <Tabs value={pane} onValueChange={setPane}>
         <TabsList>
           <TabsTrigger value="goals"><Target className="h-3.5 w-3.5 mr-1.5" />Goals ({goals.length})</TabsTrigger>
           <TabsTrigger value="challenges"><Trophy className="h-3.5 w-3.5 mr-1.5" />Challenges ({challenges.length})</TabsTrigger>
