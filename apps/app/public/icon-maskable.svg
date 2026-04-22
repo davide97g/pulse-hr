@@ -1,10 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Maskable PWA icon — full-bleed ink, mark sized for 80% safe zone (r≤205).
+       OS will clip to circle/squircle/rounded-rect depending on launcher. -->
   <rect width="512" height="512" fill="#0b0b0d"/>
-  <g fill="#b4ff39" transform="translate(156 176)">
-    <rect x="0"   y="75"  width="32" height="115" rx="8"/>
-    <rect x="66"  y="45"  width="32" height="145" rx="8"/>
-    <rect x="132" y="100" width="32" height="90"  rx="8"/>
-    <rect x="198" y="15"  width="32" height="175" rx="8"/>
-  </g>
-  <circle cx="312" cy="216" r="22" fill="#f2f2ee"/>
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#b4ff39" stroke-width="10" opacity="0.55"/>
+  <circle cx="256" cy="256" r="115" fill="none" stroke="#b4ff39" stroke-width="14"/>
+  <circle cx="256" cy="256" r="38"  fill="#b4ff39"/>
 </svg>

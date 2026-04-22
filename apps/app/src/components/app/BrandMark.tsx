@@ -1,4 +1,3 @@
-import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -12,31 +11,27 @@ const BOX: Record<NonNullable<Props["size"]>, string> = {
   lg: "h-10 w-10",
 };
 
-const ICON: Record<NonNullable<Props["size"]>, string> = {
-  sm: "h-3 w-3",
-  md: "h-4 w-4",
-  lg: "h-5 w-5",
-};
-
 /**
- * Pulse HR brand lockup icon — lime square + black sparkle. Matches the
- * marketing site (`apps/marketing/src/components/Nav.astro`) and the
- * browser favicon (`apps/marketing/public/favicon.svg`).
+ * Pulse HR brand mark — concentric rings + filled lime dot.
  *
- * Use this instead of a role-themed `bg-primary` square so the product
- * identity stays consistent across every theme.
+ * Canonical source: `docs/brand/logo-explorations/mark-final.svg`.
+ * The marketing site (`apps/marketing/src/components/Nav.astro`) and the
+ * browser favicon (`apps/app/public/icon.svg`) use the same geometry.
+ *
+ * Rendered inline (no background square) so the mark sits cleanly on any
+ * themed surface without a lime block clashing with role tints.
  */
 export function BrandMark({ size = "md", className }: Props) {
   return (
-    <span
-      className={cn(
-        "rounded-md bg-[#b4ff39] text-[#0b0b0d] flex items-center justify-center shrink-0",
-        BOX[size],
-        className,
-      )}
+    <svg
+      viewBox="0 0 64 64"
+      className={cn("shrink-0", BOX[size], className)}
       aria-hidden
+      focusable="false"
     >
-      <Sparkles className={ICON[size]} strokeWidth={2.5} />
-    </span>
+      <circle cx="32" cy="32" r="23" fill="none" stroke="#b4ff39" strokeWidth="1.25" opacity="0.55" />
+      <circle cx="32" cy="32" r="15" fill="none" stroke="#b4ff39" strokeWidth="1.75" />
+      <circle cx="32" cy="32" r="5" fill="#b4ff39" />
+    </svg>
   );
 }

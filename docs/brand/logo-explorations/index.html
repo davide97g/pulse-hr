@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Pulse HR — logo (locked)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0b0b0d;
+        --cream: #f2f2ee;
+        --lime: #b4ff39;
+        --muted: #8a8a84;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--cream);
+        font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        -webkit-font-smoothing: antialiased;
+      }
+      header { padding: 48px 48px 24px; border-bottom: 1px solid rgba(242, 242, 238, 0.08); }
+      header h1 {
+        font-family: "Fraunces", ui-serif, Georgia, serif;
+        font-style: italic; font-weight: 900;
+        font-size: clamp(40px, 5vw, 72px);
+        letter-spacing: -0.03em; margin: 0 0 12px;
+      }
+      header h1 .hr { color: var(--lime); }
+      header p {
+        color: var(--muted); margin: 0;
+        max-width: 64ch; line-height: 1.5;
+      }
+      .pill {
+        display: inline-block;
+        padding: 4px 10px;
+        border: 1px solid var(--lime);
+        border-radius: 999px;
+        color: var(--lime);
+        font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-right: 8px;
+      }
+      .legend {
+        display: flex; gap: 16px;
+        margin-top: 20px;
+        font-size: 13px; color: var(--muted);
+      }
+      .legend code {
+        font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+        color: var(--cream);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 2px 6px; border-radius: 4px;
+      }
+      section { padding: 48px; }
+      section + section { border-top: 1px solid rgba(242, 242, 238, 0.08); }
+      section h2 {
+        font-family: "Fraunces", ui-serif, Georgia, serif;
+        font-style: italic; font-weight: 700;
+        font-size: 32px; margin: 0 0 8px;
+        letter-spacing: -0.02em;
+      }
+      section .lede {
+        color: var(--muted); margin: 0 0 28px;
+        max-width: 64ch;
+      }
+      .hero-stage {
+        background: #0b0b0d;
+        border: 1px solid rgba(180, 255, 57, 0.25);
+        border-radius: 20px;
+        padding: 80px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+      }
+      .card {
+        background: color-mix(in oklch, var(--cream) 3%, transparent);
+        border: 1px solid rgba(242, 242, 238, 0.08);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex; flex-direction: column;
+        align-items: center; gap: 16px;
+        transition: border-color 220ms ease;
+      }
+      .card:hover { border-color: rgba(180, 255, 57, 0.3); }
+      .card.selected {
+        border-color: var(--lime);
+        box-shadow: 0 0 0 3px rgba(180, 255, 57, 0.1);
+      }
+      .card-title {
+        font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+        font-size: 11px; color: var(--muted);
+        text-transform: uppercase; letter-spacing: 0.06em;
+        text-align: center;
+      }
+      .card-title strong {
+        display: block; color: var(--cream);
+        font-size: 13px; text-transform: none;
+        letter-spacing: 0; font-family: "Geist", sans-serif;
+        font-weight: 500; margin-bottom: 2px;
+      }
+      .card-title .tag {
+        color: var(--lime);
+        font-size: 10px;
+        margin-top: 4px;
+      }
+      .stage {
+        display: flex; align-items: center; justify-content: center;
+        width: 100%; aspect-ratio: 1;
+        border-radius: 12px;
+      }
+      .stage.ink { background: #0b0b0d; }
+      .stage.cream { background: #f2f2ee; }
+      .size-row {
+        display: flex; gap: 24px;
+        align-items: center; justify-content: center;
+        flex-wrap: wrap; padding: 32px;
+        background: color-mix(in oklch, var(--cream) 3%, transparent);
+        border: 1px solid rgba(242, 242, 238, 0.08);
+        border-radius: 16px;
+      }
+      .size-row img { display: block; }
+      .size-label {
+        font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+        font-size: 10px; color: var(--muted);
+        margin-top: 8px; text-align: center;
+      }
+      .size-cell { text-align: center; }
+      .lockup-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      @media (min-width: 820px) {
+        .lockup-grid { grid-template-columns: 1fr 1fr; }
+      }
+      .lockup-card {
+        background: color-mix(in oklch, var(--cream) 3%, transparent);
+        border: 1px solid rgba(242, 242, 238, 0.08);
+        border-radius: 16px;
+        padding: 32px;
+        display: flex; flex-direction: column; gap: 16px;
+      }
+      .lockup-stage {
+        display: flex; align-items: center; justify-content: center;
+        padding: 32px;
+        border-radius: 12px;
+      }
+      .lockup-stage.ink { background: #0b0b0d; }
+      .lockup-stage.cream { background: #f2f2ee; }
+      .lockup-stage img { max-width: 100%; height: auto; }
+      footer {
+        padding: 32px 48px 64px;
+        color: var(--muted); font-size: 13px;
+        border-top: 1px solid rgba(242, 242, 238, 0.08);
+      }
+      footer code { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+      .type-sample {
+        font-family: "Fraunces", ui-serif, Georgia, serif;
+        font-style: italic; font-weight: 900;
+        font-size: clamp(60px, 10vw, 140px);
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin: 0;
+      }
+      .type-sample .hr { color: var(--lime); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><em>Pulse <span class="hr">HR</span></em> — logo (locked)</h1>
+      <p>
+        <span class="pill">Mark: 08</span> <span class="pill">Type: Fraunces Italic 900</span> <span class="pill">Outlined</span>
+        Concentric mark (two rings + filled dot) as the brand bug. Wordmark in Fraunces italic
+        black, outlined to paths so the lockups are fully self-contained (no font fetch).
+      </p>
+      <div class="legend">
+        <span>Lime <code>#b4ff39</code></span>
+        <span>Ink <code>#0b0b0d</code></span>
+        <span>Cream <code>#f2f2ee</code></span>
+      </div>
+    </header>
+
+    <section>
+      <h2>Primary lockup</h2>
+      <p class="lede">This is the horizontal two-tone. Use it by default everywhere.</p>
+      <div class="hero-stage">
+        <img src="10-lockup-horizontal.svg" width="640" alt="Pulse HR horizontal lockup" />
+      </div>
+    </section>
+
+    <section>
+      <h2>Type specimen</h2>
+      <p class="lede">
+        Fraunces, italic, weight 900, optical size 144. The variable axes are important — opsz=144
+        gets the display-scale optical drawing (higher contrast, sharper ball terminals).
+      </p>
+      <div class="hero-stage">
+        <p class="type-sample">Pulse <span class="hr">HR</span></p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Mark — at scale</h2>
+      <p class="lede">
+        Concentric mark holds from 512px maskable down to ~28px. The production PWA icons
+        (<code>apps/app/public/icon.svg</code>, <code>icon-maskable.svg</code>) are the
+        canonical rendition at every pixel size.
+      </p>
+      <div class="size-row">
+        <div class="size-cell">
+          <img src="mark-final.svg" width="32" height="32" alt="32" />
+          <div class="size-label">32×32</div>
+        </div>
+        <div class="size-cell">
+          <img src="mark-final.svg" width="48" height="48" alt="48" />
+          <div class="size-label">48×48</div>
+        </div>
+        <div class="size-cell">
+          <img src="mark-final.svg" width="64" height="64" alt="64" />
+          <div class="size-label">64×64</div>
+        </div>
+        <div class="size-cell">
+          <img src="mark-final.svg" width="96" height="96" alt="96" />
+          <div class="size-label">96×96</div>
+        </div>
+        <div class="size-cell">
+          <img src="mark-final.svg" width="128" height="128" alt="128" />
+          <div class="size-label">128×128</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Lockup variants</h2>
+      <p class="lede">
+        Three official lockups. Two-tone horizontal is the default; mono cream is for press /
+        photo overlay; stacked is for avatars, footers, social cards.
+      </p>
+      <div class="lockup-grid">
+        <div class="lockup-card">
+          <div class="card-title"><strong>10 — Horizontal (two-tone)</strong>primary / default</div>
+          <div class="lockup-stage ink">
+            <img src="10-lockup-horizontal.svg" alt="horizontal lockup" />
+          </div>
+        </div>
+        <div class="lockup-card">
+          <div class="card-title"><strong>11 — Horizontal (mono cream)</strong>press / photo overlay</div>
+          <div class="lockup-stage ink">
+            <img src="11-lockup-horizontal-mono.svg" alt="horizontal mono lockup" />
+          </div>
+        </div>
+        <div class="lockup-card" style="grid-column: 1 / -1">
+          <div class="card-title"><strong>12 — Stacked</strong>avatars, footers, social cards</div>
+          <div class="lockup-stage ink">
+            <img src="12-lockup-stacked.svg" alt="stacked lockup" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>On cream (light mode)</h2>
+      <p class="lede">
+        Lime fails WCAG on cream. For light-mode surfaces the mark inverts to ink-on-cream with
+        the ring echo dropped (opacity would render grey and break the hierarchy).
+      </p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-title"><strong>Lime-on-cream</strong><span class="tag">reject · low contrast</span></div>
+          <div class="stage cream">
+            <svg viewBox="0 0 64 64" width="140" height="140">
+              <circle cx="32" cy="32" r="23" fill="none" stroke="#b4ff39" stroke-width="1.25" opacity="0.55"/>
+              <circle cx="32" cy="32" r="15" fill="none" stroke="#b4ff39" stroke-width="1.75"/>
+              <circle cx="32" cy="32" r="5" fill="#b4ff39"/>
+            </svg>
+          </div>
+        </div>
+        <div class="card selected">
+          <div class="card-title"><strong>Ink-on-cream</strong><span class="tag">✓ preferred light-mode lockup</span></div>
+          <div class="stage cream">
+            <svg viewBox="0 0 64 64" width="140" height="140">
+              <circle cx="32" cy="32" r="23" fill="none" stroke="#0b0b0d" stroke-width="1.25" opacity="0.45"/>
+              <circle cx="32" cy="32" r="15" fill="none" stroke="#0b0b0d" stroke-width="1.75"/>
+              <circle cx="32" cy="32" r="5" fill="#0b0b0d"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Social cards (OG images, 1200×630)</h2>
+      <p class="lede">
+        Three self-contained templates for sharing. Each renders Fraunces as outlined paths,
+        so rasterization to PNG is deterministic and identical on every platform.
+      </p>
+      <div class="lockup-grid">
+        <div class="lockup-card" style="grid-column: 1 / -1">
+          <div class="card-title"><strong>og-hero</strong>primary default · wired as SITE.ogImage</div>
+          <div class="lockup-stage ink">
+            <img src="og/og-hero.png" alt="og-hero" style="max-width: 100%; height: auto" />
+          </div>
+        </div>
+        <div class="lockup-card">
+          <div class="card-title"><strong>og-brand</strong>stacked lockup + 3-pillar stamp</div>
+          <div class="lockup-stage ink">
+            <img src="og/og-brand.png" alt="og-brand" style="max-width: 100%; height: auto" />
+          </div>
+        </div>
+        <div class="lockup-card">
+          <div class="card-title"><strong>og-callout</strong>medium callout template</div>
+          <div class="lockup-stage ink">
+            <img src="og/og-callout.png" alt="og-callout" style="max-width: 100%; height: auto" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Light-mode horizontal (ink on cream)</h2>
+      <p class="lede">Used wherever the surface is cream / light. Ink-only mark for WCAG contrast.</p>
+      <div class="hero-stage" style="background: #f2f2ee; border-color: rgba(0,0,0,0.1)">
+        <img src="10b-lockup-horizontal-light.svg" width="640" alt="Pulse HR horizontal lockup (light)" />
+      </div>
+    </section>
+
+    <footer>
+      <p>
+        Final lockup files: <code>mark-final.svg</code>, <code>10-lockup-horizontal.svg</code>,
+        <code>10b-lockup-horizontal-light.svg</code>, <code>11-lockup-horizontal-mono.svg</code>,
+        <code>12-lockup-stacked.svg</code>. OG cards: <code>og/og-{brand,hero,callout}.{svg,png}</code>.
+        Production PWA icons live in <code>apps/app/public/icon.svg</code> +
+        <code>icon-maskable.svg</code> (rasterized to PNG siblings). Regenerate the lockups + OG
+        cards with <code>scripts/build_lockups.py</code> and <code>scripts/build_og_cards.py</code>
+        — see <code>scripts/README.md</code>. Typography: Fraunces italic 900, opsz 144. HR color:
+        <code>#b4ff39</code>.
+      </p>
+    </footer>
+  </body>
+</html>
