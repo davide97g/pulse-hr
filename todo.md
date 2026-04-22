@@ -4,8 +4,8 @@
   - [x] workspace
   - [x] generic app tour
   - [ ] comments
-  - [ ] log time for employee
-  - [ ] give kudos to employee
+  - [x] log time for employee
+  - [x] give kudos to employee
 - [ ] new feature proposal workflow alongside comments
 - [ ] video for "new feature proposal" feature
 - [ ] voting system with fixed recurring limits (voting power)
