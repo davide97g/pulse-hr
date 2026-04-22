@@ -28,12 +28,9 @@ export const color = {
 } as const;
 
 export const font = {
-  display:
-    '"Fraunces Variable", "Fraunces", ui-serif, Georgia, "Times New Roman", serif',
-  sans:
-    '"Geist Variable", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-  mono:
-    '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+  display: '"Fraunces Variable", "Fraunces", ui-serif, Georgia, "Times New Roman", serif',
+  sans: '"Geist Variable", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+  mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
 } as const;
 
 export const radius = {

@@ -30,7 +30,8 @@
   :root {
     color-scheme: dark;
   }
-  html, body {
+  html,
+  body {
     background: #0b0b0d;
     color: #f2f2ee;
   }
@@ -44,7 +45,9 @@
     font-optical-sizing: auto;
     letter-spacing: -0.02em;
   }
-  .font-mono, code, kbd {
+  .font-mono,
+  code,
+  kbd {
     font-family: var(--font-mono);
   }
   ::selection {
@@ -65,8 +68,14 @@
     animation: fadeIn 220ms ease-out;
   }
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .pulse-dot {
@@ -82,12 +91,20 @@
     animation: pulseRing 1.6s ease-out infinite;
   }
   @keyframes pulseRing {
-    0%   { transform: scale(0.9); opacity: 0.6; }
-    100% { transform: scale(1.8); opacity: 0; }
+    0% {
+      transform: scale(0.9);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(1.8);
+      opacity: 0;
+    }
   }
 
   @keyframes marquee {
-    to { transform: translateX(-33.333%); }
+    to {
+      transform: translateX(-33.333%);
+    }
   }
   .animate-marquee {
     animation: marquee 40s linear infinite;

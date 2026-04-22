@@ -26,7 +26,10 @@
 
     { "action": "zoom", "selector": "text=Team efficiency", "scale": 1.5, "duration": 600 },
     { "action": "wait", "ms": 300 },
-    { "action": "click", "selector": "text=Team efficiency >> xpath=following::*[@role='slider'][1]" },
+    {
+      "action": "click",
+      "selector": "text=Team efficiency >> xpath=following::*[@role='slider'][1]"
+    },
     { "action": "keyboard", "key": "ArrowRight" },
     { "action": "wait", "ms": 200 },
     { "action": "keyboard", "key": "ArrowRight" },

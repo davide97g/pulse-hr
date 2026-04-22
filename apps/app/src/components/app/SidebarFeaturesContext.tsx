@@ -93,7 +93,8 @@ export function SidebarFeaturesProvider({ children }: { children: ReactNode }) {
         if (!res.ok) {
           const raw = body?.error?.message ?? body?.error?.code ?? null;
           // Don't leak raw SQL in a toast; show a generic hint instead.
-          const looksLikeSql = !!raw && /(^|\s)(select|insert|update|delete|failed query)/i.test(raw);
+          const looksLikeSql =
+            !!raw && /(^|\s)(select|insert|update|delete|failed query)/i.test(raw);
           const detail = looksLikeSql
             ? "The server reached the database but the query failed. Check that migrations have run."
             : (raw ??
@@ -195,8 +196,7 @@ export function SidebarFeaturesProvider({ children }: { children: ReactNode }) {
         } else {
           base[role] = forRole;
         }
-        const next: RoleFeatureOverrides | null =
-          Object.keys(base).length === 0 ? null : base;
+        const next: RoleFeatureOverrides | null = Object.keys(base).length === 0 ? null : base;
         writeRoleFeaturesToStorage(next);
         void persistRemote({ roleFeatures: next });
         return next;
@@ -217,7 +217,15 @@ export function SidebarFeaturesProvider({ children }: { children: ReactNode }) {
       setRoleFeature,
       setRoleFeatures,
     }),
-    [enabled, setEnabled, setAll, isFeatureEnabled, roleFeaturesState, setRoleFeature, setRoleFeatures],
+    [
+      enabled,
+      setEnabled,
+      setAll,
+      isFeatureEnabled,
+      roleFeaturesState,
+      setRoleFeature,
+      setRoleFeatures,
+    ],
   );
 
   return (

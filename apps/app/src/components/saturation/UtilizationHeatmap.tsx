@@ -99,10 +99,17 @@ export function UtilizationHeatmap({
                     >
                       <EmployeeHoverCard employeeId={emp.id}>
                         <div className="flex items-center gap-2 cursor-default">
-                          <Avatar initials={emp.initials} color={emp.avatarColor} size={22} employeeId={emp.id} />
+                          <Avatar
+                            initials={emp.initials}
+                            color={emp.avatarColor}
+                            size={22}
+                            employeeId={emp.id}
+                          />
                           <div>
                             <div className="font-medium text-xs">{emp.name}</div>
-                            <div className="text-[10px] text-muted-foreground">{emp.department}</div>
+                            <div className="text-[10px] text-muted-foreground">
+                              {emp.department}
+                            </div>
                           </div>
                         </div>
                       </EmployeeHoverCard>
@@ -209,10 +216,7 @@ function HeatmapLegend() {
         return (
           <div key={i.pct} className="flex items-center gap-1">
             <span
-              className={cn(
-                "h-3 w-4 rounded-sm border border-border/60",
-                !bg && "bg-muted/40",
-              )}
+              className={cn("h-3 w-4 rounded-sm border border-border/60", !bg && "bg-muted/40")}
               style={bg ? { backgroundColor: bg } : undefined}
             />
             {i.label}

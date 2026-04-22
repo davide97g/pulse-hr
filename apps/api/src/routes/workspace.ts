@@ -25,18 +25,15 @@ const featuresRecord = z
   .record(z.string(), z.boolean())
   .refine(
     (rec) =>
-      Object.keys(rec).every((k) =>
-        (ALL_SIDEBAR_FEATURE_IDS as readonly string[]).includes(k),
-      ),
+      Object.keys(rec).every((k) => (ALL_SIDEBAR_FEATURE_IDS as readonly string[]).includes(k)),
     { message: "features contains unknown keys" },
   );
 
 const roleFeaturesRecord = z
   .record(z.string(), featuresRecord)
-  .refine(
-    (rec) => Object.keys(rec).every((k) => (KNOWN_ROLES as readonly string[]).includes(k)),
-    { message: "roleFeatures contains unknown roles" },
-  );
+  .refine((rec) => Object.keys(rec).every((k) => (KNOWN_ROLES as readonly string[]).includes(k)), {
+    message: "roleFeatures contains unknown roles",
+  });
 
 const putBody = z.object({
   workspaceKey: workspaceKeyParam,
@@ -48,10 +45,7 @@ workspace.use("/sidebar-features", requireUser);
 
 workspace.get(
   "/sidebar-features",
-  zValidator(
-    "query",
-    z.object({ workspaceKey: workspaceKeyParam }),
-  ),
+  zValidator("query", z.object({ workspaceKey: workspaceKeyParam })),
   async (c) => {
     const { workspaceKey } = c.req.valid("query");
     const rows = await db
@@ -60,9 +54,10 @@ workspace.get(
       .where(eq(schema.workspaceSidebarFeatures.workspaceKey, workspaceKey))
       .limit(1);
     const merged = mergePartialFeaturesRecord(rows[0]?.features ?? {});
-    const roleFeatures = (rows[0]?.roleFeatures ?? null) as
-      | Record<string, Record<string, boolean>>
-      | null;
+    const roleFeatures = (rows[0]?.roleFeatures ?? null) as Record<
+      string,
+      Record<string, boolean>
+    > | null;
     return c.json({ workspaceKey, features: merged, roleFeatures });
   },
 );
@@ -74,7 +69,10 @@ workspace.put("/sidebar-features", zValidator("json", putBody), async (c) => {
   }
   const { workspaceKey, features, roleFeatures } = c.req.valid("json");
   if (!features && roleFeatures === undefined) {
-    return c.json({ error: { code: "bad_request", message: "provide features and/or roleFeatures" } }, 400);
+    return c.json(
+      { error: { code: "bad_request", message: "provide features and/or roleFeatures" } },
+      400,
+    );
   }
 
   const existing = await db
@@ -87,7 +85,10 @@ workspace.put("/sidebar-features", zValidator("json", putBody), async (c) => {
   const mergedFeatures = features
     ? ({ ...defaultSidebarFeaturesEnabled(), ...features } as Record<SidebarFeatureId, boolean>)
     : prevFeatures
-      ? ({ ...defaultSidebarFeaturesEnabled(), ...prevFeatures } as Record<SidebarFeatureId, boolean>)
+      ? ({ ...defaultSidebarFeaturesEnabled(), ...prevFeatures } as Record<
+          SidebarFeatureId,
+          boolean
+        >)
       : defaultSidebarFeaturesEnabled();
 
   const nextRoleFeatures =

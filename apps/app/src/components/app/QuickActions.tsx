@@ -14,10 +14,24 @@ import { coverageForRange, computeLeaveDays, type CoverageForDate } from "@/lib/
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import {
-  Calendar, Receipt, UserPlus, Briefcase, Check, CalendarRange, CalendarClock, Users, Sparkles,
+  Calendar,
+  Receipt,
+  UserPlus,
+  Briefcase,
+  Check,
+  CalendarRange,
+  CalendarClock,
+  Users,
+  Sparkles,
 } from "lucide-react";
 
-type ActionId = "add-employee" | "request-leave" | "submit-expense" | "post-job" | "run-payroll" | null;
+type ActionId =
+  | "add-employee"
+  | "request-leave"
+  | "submit-expense"
+  | "post-job"
+  | "run-payroll"
+  | null;
 
 interface Ctx {
   open: (id: ActionId) => void;
@@ -36,10 +50,20 @@ export function QuickActionProvider({ children }: { children: ReactNode }) {
       <SidePanel open={active === "add-employee"} onClose={close} title="Add employee" width={520}>
         <AddEmployeeForm onDone={close} />
       </SidePanel>
-      <SidePanel open={active === "request-leave"} onClose={close} title="Request leave" width={480}>
+      <SidePanel
+        open={active === "request-leave"}
+        onClose={close}
+        title="Request leave"
+        width={480}
+      >
         <RequestLeaveForm onDone={close} />
       </SidePanel>
-      <SidePanel open={active === "submit-expense"} onClose={close} title="Submit expense" width={480}>
+      <SidePanel
+        open={active === "submit-expense"}
+        onClose={close}
+        title="Submit expense"
+        width={480}
+      >
         <SubmitExpenseForm onDone={close} />
       </SidePanel>
       <SidePanel open={active === "post-job"} onClose={close} title="Post a job" width={520}>
@@ -55,10 +79,20 @@ export function QuickActionProvider({ children }: { children: ReactNode }) {
 function FormBody({ children }: { children: ReactNode }) {
   return <div className="p-5 space-y-4">{children}</div>;
 }
-function Footer({ onCancel, onSubmit, label = "Submit" }: { onCancel: () => void; onSubmit: () => void; label?: string }) {
+function Footer({
+  onCancel,
+  onSubmit,
+  label = "Submit",
+}: {
+  onCancel: () => void;
+  onSubmit: () => void;
+  label?: string;
+}) {
   return (
     <div className="px-5 py-3 border-t flex justify-end gap-2 sticky bottom-0 bg-card">
-      <Button variant="ghost" onClick={onCancel}>Cancel</Button>
+      <Button variant="ghost" onClick={onCancel}>
+        Cancel
+      </Button>
       <Button onClick={onSubmit}>{label}</Button>
     </div>
   );
@@ -107,21 +141,64 @@ function AddEmployeeForm({ onDone }: { onDone: () => void }) {
       <FormBody>
         <div className="flex items-center gap-3 p-3 rounded-md bg-muted/40">
           <UserPlus className="h-5 w-5 text-primary" />
-          <div className="text-sm text-muted-foreground">Adds the employee to the directory and every linked view.</div>
+          <div className="text-sm text-muted-foreground">
+            Adds the employee to the directory and every linked view.
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>First name</Label><Input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="Emma" /></div>
-          <div className="space-y-1.5"><Label>Last name</Label><Input value={last} onChange={(e) => setLast(e.target.value)} placeholder="Wilson" /></div>
+          <div className="space-y-1.5">
+            <Label>First name</Label>
+            <Input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="Emma" />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Last name</Label>
+            <Input value={last} onChange={(e) => setLast(e.target.value)} placeholder="Wilson" />
+          </div>
         </div>
-        <div className="space-y-1.5"><Label>Work email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="emma@acme.co" /></div>
-        <div className="space-y-1.5"><Label>Role</Label><Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Senior Engineer" /></div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Department</Label><Input value={department} onChange={(e) => setDepartment(e.target.value)} placeholder="Engineering" /></div>
-          <div className="space-y-1.5"><Label>Manager</Label><Input value={manager} onChange={(e) => setManager(e.target.value)} placeholder="Sarah Chen" /></div>
+        <div className="space-y-1.5">
+          <Label>Work email</Label>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="emma@acme.co"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label>Role</Label>
+          <Input
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            placeholder="Senior Engineer"
+          />
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Start date</Label><Input type="date" value={joinDate} onChange={(e) => setJoinDate(e.target.value)} /></div>
-          <div className="space-y-1.5"><Label>Salary</Label><Input value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="95000" /></div>
+          <div className="space-y-1.5">
+            <Label>Department</Label>
+            <Input
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              placeholder="Engineering"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Manager</Label>
+            <Input
+              value={manager}
+              onChange={(e) => setManager(e.target.value)}
+              placeholder="Sarah Chen"
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label>Start date</Label>
+            <Input type="date" value={joinDate} onChange={(e) => setJoinDate(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Salary</Label>
+            <Input value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="95000" />
+          </div>
         </div>
       </FormBody>
       <Footer onCancel={onDone} onSubmit={submit} label="Add & invite" />
@@ -144,8 +221,12 @@ function RequestLeaveForm({ onDone }: { onDone: () => void }) {
   const days = computeLeaveDays(from, to, granularity);
   const coverage = useMemo(() => {
     try {
-      return coverageForRange(parseISO(from), parseISO(granularity === "half" ? from : to), { excludeEmployeeId: ME_ID });
-    } catch { return []; }
+      return coverageForRange(parseISO(from), parseISO(granularity === "half" ? from : to), {
+        excludeEmployeeId: ME_ID,
+      });
+    } catch {
+      return [];
+    }
   }, [from, to, granularity]);
 
   const worstCoverage = coverage.reduce<CoverageForDate | null>(
@@ -180,8 +261,15 @@ function RequestLeaveForm({ onDone }: { onDone: () => void }) {
         <div className="space-y-1.5">
           <Label>Type</Label>
           <div className="grid grid-cols-4 gap-1.5">
-            {["Vacation","Sick","Personal","Parental"].map(t => (
-              <button key={t} type="button" onClick={() => setType(t)} className={`text-xs py-2 rounded-md border press-scale ${type === t ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}>{t}</button>
+            {["Vacation", "Sick", "Personal", "Parental"].map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setType(t)}
+                className={`text-xs py-2 rounded-md border press-scale ${type === t ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}
+              >
+                {t}
+              </button>
             ))}
           </div>
         </div>
@@ -189,21 +277,25 @@ function RequestLeaveForm({ onDone }: { onDone: () => void }) {
         <div className="space-y-1.5">
           <Label>Duration</Label>
           <div className="grid grid-cols-2 gap-1.5">
-            {(["full", "half"] as const).map(g => (
+            {(["full", "half"] as const).map((g) => (
               <button
                 key={g}
                 type="button"
                 onClick={() => setGranularity(g)}
                 className={`text-xs py-2 rounded-md border press-scale inline-flex items-center justify-center gap-1.5 ${granularity === g ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}
               >
-                {g === "full" ? <CalendarRange className="h-3.5 w-3.5" /> : <CalendarClock className="h-3.5 w-3.5" />}
+                {g === "full" ? (
+                  <CalendarRange className="h-3.5 w-3.5" />
+                ) : (
+                  <CalendarClock className="h-3.5 w-3.5" />
+                )}
                 {g === "full" ? "Full day" : "Half day"}
               </button>
             ))}
           </div>
           {granularity === "half" && (
             <div className="inline-flex rounded-md border p-0.5 bg-muted/30 mt-1 fade-in">
-              {(["AM", "PM"] as const).map(p => (
+              {(["AM", "PM"] as const).map((p) => (
                 <button
                   key={p}
                   type="button"
@@ -220,14 +312,14 @@ function RequestLeaveForm({ onDone }: { onDone: () => void }) {
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>From</Label>
-            <Input type="date" value={from} onChange={e => setFrom(e.target.value)} />
+            <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
           </div>
           <div className="space-y-1.5">
             <Label>To</Label>
             <Input
               type="date"
               value={to}
-              onChange={e => setTo(e.target.value)}
+              onChange={(e) => setTo(e.target.value)}
               disabled={granularity === "half"}
             />
           </div>
@@ -235,16 +327,27 @@ function RequestLeaveForm({ onDone }: { onDone: () => void }) {
 
         <div className="rounded-md bg-info/5 border border-info/20 p-3 text-xs">
           <div className="font-medium text-info">
-            {granularity === "half"
-              ? <>Half day · {halfPeriod} ({days} working day)</>
-              : <>{days} working day{days === 1 ? "" : "s"}</>}
+            {granularity === "half" ? (
+              <>
+                Half day · {halfPeriod} ({days} working day)
+              </>
+            ) : (
+              <>
+                {days} working day{days === 1 ? "" : "s"}
+              </>
+            )}
           </div>
-          <div className="text-muted-foreground mt-0.5">You have <strong>{(13 - days).toFixed(1)} vacation days</strong> remaining after this.</div>
+          <div className="text-muted-foreground mt-0.5">
+            You have <strong>{(13 - days).toFixed(1)} vacation days</strong> remaining after this.
+          </div>
         </div>
 
         <CoveragePreview coverage={coverage} worst={worstCoverage} conflicts={conflictCount} />
 
-        <div className="space-y-1.5"><Label>Reason (optional)</Label><Textarea placeholder="Family trip" rows={3} /></div>
+        <div className="space-y-1.5">
+          <Label>Reason (optional)</Label>
+          <Textarea placeholder="Family trip" rows={3} />
+        </div>
         <div className="space-y-1.5">
           <Label>Approver</Label>
           <div className="flex items-center gap-2 p-2 border rounded-md">
@@ -261,14 +364,18 @@ function RequestLeaveForm({ onDone }: { onDone: () => void }) {
 const ME_ID = "e1";
 
 function CoveragePreview({
-  coverage, worst, conflicts,
-}: { coverage: CoverageForDate[]; worst: CoverageForDate | null; conflicts: number }) {
+  coverage,
+  worst,
+  conflicts,
+}: {
+  coverage: CoverageForDate[];
+  worst: CoverageForDate | null;
+  conflicts: number;
+}) {
   if (coverage.length === 0) return null;
 
   const tone =
-    !worst || worst.coveragePct >= 75 ? "ok"
-    : worst.coveragePct >= 60 ? "warn"
-    : "alert";
+    !worst || worst.coveragePct >= 75 ? "ok" : worst.coveragePct >= 60 ? "warn" : "alert";
 
   return (
     <div
@@ -282,38 +389,55 @@ function CoveragePreview({
       <div className="flex items-center gap-2">
         <Users className="h-3.5 w-3.5" />
         <span className="font-medium">
-          {conflicts === 0
-            ? "No conflicts · team fully covered"
-            : <>{conflicts} teammate{conflicts === 1 ? "" : "s"} already out during this range</>}
+          {conflicts === 0 ? (
+            "No conflicts · team fully covered"
+          ) : (
+            <>
+              {conflicts} teammate{conflicts === 1 ? "" : "s"} already out during this range
+            </>
+          )}
         </span>
         {worst && (
-          <span className={cn(
-            "ml-auto font-mono tabular-nums",
-            tone === "warn" && "text-warning",
-            tone === "alert" && "text-destructive",
-          )}>
+          <span
+            className={cn(
+              "ml-auto font-mono tabular-nums",
+              tone === "warn" && "text-warning",
+              tone === "alert" && "text-destructive",
+            )}
+          >
             min {worst.coveragePct}%
           </span>
         )}
       </div>
       <ul className="space-y-1">
-        {coverage.slice(0, 7).map(d => (
+        {coverage.slice(0, 7).map((d) => (
           <li key={d.date.toISOString()} className="flex items-center gap-2">
             <span className="font-mono text-[10px] tabular-nums text-muted-foreground w-14 shrink-0">
               {format(d.date, "EEE d")}
             </span>
             <div className="flex -space-x-1.5 flex-1 min-w-0">
-              {d.onLeave.slice(0, 6).map(l => {
+              {d.onLeave.slice(0, 6).map((l) => {
                 const emp = employeeById(l.employeeId);
                 if (!emp) return null;
                 return (
-                  <div key={l.id} title={`${emp.name} · ${l.type}`} className="ring-2 ring-background rounded-full">
-                    <Avatar initials={emp.initials} color={emp.avatarColor} size={18} employeeId={emp.id} />
+                  <div
+                    key={l.id}
+                    title={`${emp.name} · ${l.type}`}
+                    className="ring-2 ring-background rounded-full"
+                  >
+                    <Avatar
+                      initials={emp.initials}
+                      color={emp.avatarColor}
+                      size={18}
+                      employeeId={emp.id}
+                    />
                   </div>
                 );
               })}
               {d.onLeave.length > 6 && (
-                <span className="ml-1 text-[10px] text-muted-foreground">+{d.onLeave.length - 6}</span>
+                <span className="ml-1 text-[10px] text-muted-foreground">
+                  +{d.onLeave.length - 6}
+                </span>
               )}
               {d.onLeave.length === 0 && (
                 <span className="text-[10px] text-muted-foreground">clear</span>
@@ -332,11 +456,46 @@ function CoveragePreview({
   );
 }
 
-const OCR_SAMPLES: { description: string; amount: string; currency: string; category: string; date: string; vendor: string }[] = [
-  { description: "Client dinner · Acme Corp",  amount: "184.50", currency: "USD", category: "Meals",     date: "2026-04-17", vendor: "Osteria Milano" },
-  { description: "Figma annual license",        amount: "180.00", currency: "USD", category: "Software",  date: "2026-04-15", vendor: "Figma Inc." },
-  { description: "Standing desk · Jarvis",      amount: "620.00", currency: "USD", category: "Equipment", date: "2026-04-12", vendor: "Fully" },
-  { description: "Flight MXP → SFO",            amount: "1240.00", currency: "USD", category: "Travel",    date: "2026-04-02", vendor: "Delta" },
+const OCR_SAMPLES: {
+  description: string;
+  amount: string;
+  currency: string;
+  category: string;
+  date: string;
+  vendor: string;
+}[] = [
+  {
+    description: "Client dinner · Acme Corp",
+    amount: "184.50",
+    currency: "USD",
+    category: "Meals",
+    date: "2026-04-17",
+    vendor: "Osteria Milano",
+  },
+  {
+    description: "Figma annual license",
+    amount: "180.00",
+    currency: "USD",
+    category: "Software",
+    date: "2026-04-15",
+    vendor: "Figma Inc.",
+  },
+  {
+    description: "Standing desk · Jarvis",
+    amount: "620.00",
+    currency: "USD",
+    category: "Equipment",
+    date: "2026-04-12",
+    vendor: "Fully",
+  },
+  {
+    description: "Flight MXP → SFO",
+    amount: "1240.00",
+    currency: "USD",
+    category: "Travel",
+    date: "2026-04-02",
+    vendor: "Delta",
+  },
 ];
 
 function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
@@ -381,7 +540,10 @@ function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
       date,
       status: "pending",
     });
-    toast.success("Expense submitted", { description: "Sent to manager for review.", icon: <Receipt className="h-4 w-4" /> });
+    toast.success("Expense submitted", {
+      description: "Sent to manager for review.",
+      icon: <Receipt className="h-4 w-4" />,
+    });
     onDone();
   };
 
@@ -403,7 +565,9 @@ function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
               <div className="flex flex-col items-center gap-2 py-2">
                 <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
                 <div className="text-sm font-medium">Scanning receipt…</div>
-                <div className="text-[11px] text-muted-foreground">Extracting vendor, amount, and date</div>
+                <div className="text-[11px] text-muted-foreground">
+                  Extracting vendor, amount, and date
+                </div>
               </div>
             ) : ocr ? (
               <div className="flex flex-col items-center gap-1 py-2">
@@ -423,7 +587,9 @@ function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
                   <Sparkles className="h-3.5 w-3.5 text-primary" />
                   Drop receipt — AI fills the form
                 </div>
-                <div className="text-[11px] text-muted-foreground">PDF, JPG up to 10MB · OCR preview</div>
+                <div className="text-[11px] text-muted-foreground">
+                  PDF, JPG up to 10MB · OCR preview
+                </div>
               </div>
             )}
           </button>
@@ -431,21 +597,45 @@ function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
 
         <div className="space-y-1.5">
           <Label>Description</Label>
-          <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Client dinner" />
+          <Input
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Client dinner"
+          />
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Amount</Label><Input value={amount} onChange={e => setAmount(e.target.value)} placeholder="150.00" /></div>
-          <div className="space-y-1.5"><Label>Currency</Label><Input value={currency} onChange={e => setCurrency(e.target.value)} /></div>
+          <div className="space-y-1.5">
+            <Label>Amount</Label>
+            <Input
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="150.00"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Currency</Label>
+            <Input value={currency} onChange={(e) => setCurrency(e.target.value)} />
+          </div>
         </div>
         <div className="space-y-1.5">
           <Label>Category</Label>
           <div className="grid grid-cols-4 gap-1.5">
-            {["Travel","Meals","Software","Equipment"].map(c => (
-              <button key={c} type="button" onClick={() => setCat(c)} className={`text-xs py-2 rounded-md border press-scale ${cat === c ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}>{c}</button>
+            {["Travel", "Meals", "Software", "Equipment"].map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setCat(c)}
+                className={`text-xs py-2 rounded-md border press-scale ${cat === c ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}
+              >
+                {c}
+              </button>
             ))}
           </div>
         </div>
-        <div className="space-y-1.5"><Label>Date</Label><Input type="date" value={date} onChange={e => setDate(e.target.value)} /></div>
+        <div className="space-y-1.5">
+          <Label>Date</Label>
+          <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        </div>
       </FormBody>
       <Footer onCancel={onDone} onSubmit={submit} label="Submit for approval" />
     </>
@@ -454,22 +644,43 @@ function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
 
 function PostJobForm({ onDone }: { onDone: () => void }) {
   const submit = () => {
-    toast.success("Job posted", { description: "Live on careers page in a few seconds.", icon: <Briefcase className="h-4 w-4" /> });
+    toast.success("Job posted", {
+      description: "Live on careers page in a few seconds.",
+      icon: <Briefcase className="h-4 w-4" />,
+    });
     onDone();
   };
   return (
     <>
       <FormBody>
-        <div className="space-y-1.5"><Label>Job title</Label><Input placeholder="Senior Frontend Engineer" /></div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Department</Label><Input placeholder="Engineering" /></div>
-          <div className="space-y-1.5"><Label>Location</Label><Input placeholder="Remote — EU" /></div>
+        <div className="space-y-1.5">
+          <Label>Job title</Label>
+          <Input placeholder="Senior Frontend Engineer" />
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Employment</Label><Input defaultValue="Full-time" /></div>
-          <div className="space-y-1.5"><Label>Salary range</Label><Input placeholder="$80k – $110k" /></div>
+          <div className="space-y-1.5">
+            <Label>Department</Label>
+            <Input placeholder="Engineering" />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Location</Label>
+            <Input placeholder="Remote — EU" />
+          </div>
         </div>
-        <div className="space-y-1.5"><Label>Description</Label><Textarea rows={5} placeholder="About the role…" /></div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label>Employment</Label>
+            <Input defaultValue="Full-time" />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Salary range</Label>
+            <Input placeholder="$80k – $110k" />
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label>Description</Label>
+          <Textarea rows={5} placeholder="About the role…" />
+        </div>
         <div className="space-y-1.5">
           <Label>Hiring manager</Label>
           <div className="flex items-center gap-2 p-2 border rounded-md">
@@ -500,20 +711,43 @@ function RunPayrollForm({ onDone }: { onDone: () => void }) {
             <div className="text-xs uppercase tracking-wider text-muted-foreground">Period</div>
             <div className="text-lg font-semibold">April 2025</div>
             <div className="grid grid-cols-3 gap-3 mt-3 text-center">
-              <div><div className="text-xl font-semibold">12</div><div className="text-xs text-muted-foreground">Employees</div></div>
-              <div><div className="text-xl font-semibold">$124.5k</div><div className="text-xs text-muted-foreground">Gross</div></div>
-              <div><div className="text-xl font-semibold">$89.2k</div><div className="text-xs text-muted-foreground">Net</div></div>
+              <div>
+                <div className="text-xl font-semibold">12</div>
+                <div className="text-xs text-muted-foreground">Employees</div>
+              </div>
+              <div>
+                <div className="text-xl font-semibold">$124.5k</div>
+                <div className="text-xs text-muted-foreground">Gross</div>
+              </div>
+              <div>
+                <div className="text-xl font-semibold">$89.2k</div>
+                <div className="text-xs text-muted-foreground">Net</div>
+              </div>
             </div>
           </div>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Includes</div>
+          <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+            Includes
+          </div>
           <div className="space-y-1.5 mb-5">
-            {["Withholding tax","Social security","Pension contributions","F24 module (Italy)"].map(s => (
-              <div key={s} className="flex items-center gap-2 text-sm"><Check className="h-3.5 w-3.5 text-success" />{s}</div>
+            {[
+              "Withholding tax",
+              "Social security",
+              "Pension contributions",
+              "F24 module (Italy)",
+            ].map((s) => (
+              <div key={s} className="flex items-center gap-2 text-sm">
+                <Check className="h-3.5 w-3.5 text-success" />
+                {s}
+              </div>
             ))}
           </div>
           <div className="flex gap-2">
-            <Button variant="ghost" className="flex-1" onClick={onDone}>Cancel</Button>
-            <Button className="flex-1" onClick={start}>Run payroll</Button>
+            <Button variant="ghost" className="flex-1" onClick={onDone}>
+              Cancel
+            </Button>
+            <Button className="flex-1" onClick={start}>
+              Run payroll
+            </Button>
           </div>
         </>
       )}
@@ -521,7 +755,9 @@ function RunPayrollForm({ onDone }: { onDone: () => void }) {
         <div className="py-12 text-center">
           <div className="h-12 w-12 mx-auto rounded-full border-4 border-primary border-t-transparent animate-spin mb-4" />
           <div className="font-semibold">Processing payroll…</div>
-          <div className="text-sm text-muted-foreground mt-1">Calculating taxes and net pay for 12 employees</div>
+          <div className="text-sm text-muted-foreground mt-1">
+            Calculating taxes and net pay for 12 employees
+          </div>
         </div>
       )}
       {step === "done" && (
@@ -531,7 +767,9 @@ function RunPayrollForm({ onDone }: { onDone: () => void }) {
           </div>
           <div className="font-semibold text-lg">Payroll completed</div>
           <div className="text-sm text-muted-foreground mt-1">$89,200 paid to 12 employees</div>
-          <Button className="mt-5" onClick={onDone}>Done</Button>
+          <Button className="mt-5" onClick={onDone}>
+            Done
+          </Button>
         </div>
       )}
     </div>

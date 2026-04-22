@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 import { Armchair, Monitor, StretchHorizontal } from "lucide-react";
 import { employeeById } from "@/lib/mock-data";
-import {
-  seatsByOffice, closureFor, type Booking, type Seat,
-} from "@/lib/offices";
+import { seatsByOffice, closureFor, type Booking, type Seat } from "@/lib/offices";
 import { useBookings } from "@/components/app/BookingsContext";
 import { cn } from "@/lib/utils";
 
@@ -30,10 +28,7 @@ export function SeatMap({ officeId, date, onBook }: Props) {
     return all.map((seat) => {
       if (closure) return { seat, status: "closed" };
       const b = bookings.find(
-        (x) =>
-          x.resourceId === seat.id &&
-          x.date === date &&
-          x.status !== "cancelled",
+        (x) => x.resourceId === seat.id && x.date === date && x.status !== "cancelled",
       );
       if (!b) return { seat, status: "free" };
       if (b.userId === ME) return { seat, status: "yours", booking: b };
@@ -59,13 +54,11 @@ export function SeatMap({ officeId, date, onBook }: Props) {
       <div className="flex items-center justify-between text-[11px] text-muted-foreground">
         <span>
           {closure ? (
-            <span className="text-destructive font-medium">
-              Closed — {closure.title}
-            </span>
+            <span className="text-destructive font-medium">Closed — {closure.title}</span>
           ) : (
             <>
-              <span className="font-medium text-foreground tabular-nums">{freeCount}</span>{" "}
-              of {totalCount} seats free
+              <span className="font-medium text-foreground tabular-nums">{freeCount}</span> of{" "}
+              {totalCount} seats free
             </>
           )}
         </span>
@@ -104,8 +97,14 @@ export function SeatMap({ officeId, date, onBook }: Props) {
 }
 
 function SeatTile({
-  tile, onBook, disabled,
-}: { tile: TileState; onBook: (id: string) => void; disabled: boolean }) {
+  tile,
+  onBook,
+  disabled,
+}: {
+  tile: TileState;
+  onBook: (id: string) => void;
+  disabled: boolean;
+}) {
   const { seat, status, booking } = tile;
   const owner = booking ? employeeById(booking.userId) : null;
   return (
@@ -118,7 +117,8 @@ function SeatTile({
         status === "free" && "bg-success/10 border-success/40 hover:bg-success/20 cursor-pointer",
         status === "yours" && "bg-primary/15 border-primary/50 text-primary",
         status === "taken" && "bg-muted border-border text-muted-foreground cursor-default",
-        status === "closed" && "bg-destructive/10 border-destructive/30 text-destructive/70 cursor-not-allowed",
+        status === "closed" &&
+          "bg-destructive/10 border-destructive/30 text-destructive/70 cursor-not-allowed",
       )}
       title={
         status === "free"
@@ -132,7 +132,9 @@ function SeatTile({
     >
       <Armchair className="h-3 w-3 absolute top-1 left-1 opacity-60" />
       {seat.monitor && <Monitor className="h-2.5 w-2.5 absolute top-1 right-1 opacity-60" />}
-      {seat.standing && <StretchHorizontal className="h-2.5 w-2.5 absolute bottom-1 right-1 opacity-60" />}
+      {seat.standing && (
+        <StretchHorizontal className="h-2.5 w-2.5 absolute bottom-1 right-1 opacity-60" />
+      )}
       <span>{seat.label}</span>
     </button>
   );

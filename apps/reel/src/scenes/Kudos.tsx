@@ -46,9 +46,7 @@ export const Kudos: React.FC = () => {
   });
 
   return (
-    <AbsoluteFill
-      style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 24 }}
-    >
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 24 }}>
       <div
         style={{
           fontFamily: fonts.mono,
@@ -137,9 +135,7 @@ export const Kudos: React.FC = () => {
                   border: row.highlight
                     ? `1px solid ${color.brand}66`
                     : "1px solid rgba(255,255,255,0.08)",
-                  background: row.highlight
-                    ? `${color.brand}15`
-                    : "rgba(255,255,255,0.03)",
+                  background: row.highlight ? `${color.brand}15` : "rgba(255,255,255,0.03)",
                   fontFamily: fonts.sans,
                   fontSize: 18,
                   opacity: rowIn,
@@ -162,12 +158,10 @@ export const Kudos: React.FC = () => {
       </div>
 
       {PIECES.map((p, i) => {
-        const t = interpolate(
-          frame,
-          [18 + p.delay, 48 + p.delay],
-          [0, 1],
-          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-        );
+        const t = interpolate(frame, [18 + p.delay, 48 + p.delay], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        });
         return (
           <div
             key={i}

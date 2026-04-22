@@ -11,10 +11,7 @@ import { employeeById } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 export function EmployeeScoreLeaderboard() {
-  const rows = useMemo(
-    () => allEmployeeScores().sort((a, b) => b.score - a.score),
-    [],
-  );
+  const rows = useMemo(() => allEmployeeScores().sort((a, b) => b.score - a.score), []);
   return (
     <Card className="p-5">
       <div className="flex items-center justify-between mb-3">
@@ -34,9 +31,9 @@ export function EmployeeScoreLeaderboard() {
               <PopoverContent align="start" className="w-80 text-xs leading-relaxed space-y-2">
                 <div className="font-semibold text-sm">How this is computed</div>
                 <p>
-                  Weighted average of six factors: delivery (25%), utilization (20%), value
-                  (20%), recognition (15%), focus (10%), billable (10%). Missing data rescales
-                  weights so everyone gets a comparable number.
+                  Weighted average of six factors: delivery (25%), utilization (20%), value (20%),
+                  recognition (15%), focus (10%), billable (10%). Missing data rescales weights so
+                  everyone gets a comparable number.
                 </p>
                 <Link to="/docs/employee-score" className="text-primary hover:underline">
                   Read the full explanation →

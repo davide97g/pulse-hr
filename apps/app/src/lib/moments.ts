@@ -17,7 +17,7 @@ export interface Moment {
 }
 
 function nextOccurrence(monthDay: string, anchor: Date): Date {
-  const [m, d] = monthDay.split("-").map(n => parseInt(n, 10));
+  const [m, d] = monthDay.split("-").map((n) => parseInt(n, 10));
   const year = anchor.getFullYear();
   const thisYear = new Date(year, m - 1, d);
   if (differenceInCalendarDays(thisYear, anchor) < -1) {
@@ -38,10 +38,7 @@ function relativeLabel(daysAway: number): string {
  * Return upcoming birthdays + work anniversaries within `windowDays` before/after
  * `anchor`, sorted nearest-first.
  */
-export function upcomingMoments(
-  anchor: Date = new Date(),
-  windowDays = 14,
-): Moment[] {
+export function upcomingMoments(anchor: Date = new Date(), windowDays = 14): Moment[] {
   const out: Moment[] = [];
 
   for (const emp of employees) {
@@ -87,5 +84,5 @@ export function upcomingMoments(
  * Total count of upcoming moments (used by sidebar dot).
  */
 export function upcomingCount(anchor: Date = new Date(), windowDays = 14): number {
-  return upcomingMoments(anchor, windowDays).filter(m => m.daysAway >= 0).length;
+  return upcomingMoments(anchor, windowDays).filter((m) => m.daysAway >= 0).length;
 }

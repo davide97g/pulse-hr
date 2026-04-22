@@ -104,9 +104,8 @@ function AdminSidebarVisibility() {
           Changes are saved to Neon (table{" "}
           <span className="font-mono">workspace_sidebar_features</span>) and mirrored to local
           cache. On Vercel, the project needs <span className="font-mono">DATABASE_URL</span> and{" "}
-          <span className="font-mono">CLERK_SECRET_KEY</span> set in environment variables (not
-          only the publishable key). Diagnostics:{" "}
-          <span className="font-mono">GET /api/health</span>.
+          <span className="font-mono">CLERK_SECRET_KEY</span> set in environment variables (not only
+          the publishable key). Diagnostics: <span className="font-mono">GET /api/health</span>.
         </p>
       </div>
     </div>

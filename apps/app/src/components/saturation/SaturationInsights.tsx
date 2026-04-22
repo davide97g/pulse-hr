@@ -56,9 +56,24 @@ export function SaturationInsights() {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <CountCard tone="critical" count={critical.length} label="Critical" icon={<Flame className="h-4 w-4" />} />
-        <CountCard tone="warning" count={warnings.length} label="Warnings" icon={<AlertTriangle className="h-4 w-4" />} />
-        <CountCard tone="info" count={info.length} label="Heads-up" icon={<TrendingDown className="h-4 w-4" />} />
+        <CountCard
+          tone="critical"
+          count={critical.length}
+          label="Critical"
+          icon={<Flame className="h-4 w-4" />}
+        />
+        <CountCard
+          tone="warning"
+          count={warnings.length}
+          label="Warnings"
+          icon={<AlertTriangle className="h-4 w-4" />}
+        />
+        <CountCard
+          tone="info"
+          count={info.length}
+          label="Heads-up"
+          icon={<TrendingDown className="h-4 w-4" />}
+        />
       </div>
       <div className="space-y-2">
         {[...critical, ...warnings, ...info].map((i) => (
@@ -173,7 +188,11 @@ function computeInsights(): Insight[] {
         icon: <TrendingDown className="h-4 w-4" />,
         title: `${p.name} is losing money`,
         detail: `Margin ${fmtEUR.format(m.margin)} on ${fmtEUR.format(m.revenue)} revenue YTD — costs exceed billings. Review rates or staffing mix.`,
-        action: { label: "Open project", href: "/projects/$projectId", params: { projectId: p.id } },
+        action: {
+          label: "Open project",
+          href: "/projects/$projectId",
+          params: { projectId: p.id },
+        },
       });
     } else if (m.revenue > 0 && m.marginPct < 15) {
       out.push({
@@ -197,7 +216,11 @@ function computeInsights(): Insight[] {
         icon: <Flame className="h-4 w-4" />,
         title: `${p.name} over budget`,
         detail: `${p.burnedHours}h burned of ${p.budgetHours}h budgeted (${burnPct.toFixed(0)}%). Scope or budget conversation needed.`,
-        action: { label: "Open project", href: "/projects/$projectId", params: { projectId: p.id } },
+        action: {
+          label: "Open project",
+          href: "/projects/$projectId",
+          params: { projectId: p.id },
+        },
       });
     }
   }
@@ -220,7 +243,11 @@ function computeInsights(): Insight[] {
         icon: <Briefcase className="h-4 w-4" />,
         title: `${p.name} on hold`,
         detail: `Project paused — allocated team (${p.manager}) may be freeable for other work.`,
-        action: { label: "Open project", href: "/projects/$projectId", params: { projectId: p.id } },
+        action: {
+          label: "Open project",
+          href: "/projects/$projectId",
+          params: { projectId: p.id },
+        },
       });
     }
   }
@@ -293,4 +320,3 @@ function avg(xs: number[]): number {
   if (!xs.length) return 0;
   return xs.reduce((s, v) => s + v, 0) / xs.length;
 }
-

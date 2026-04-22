@@ -87,10 +87,7 @@ function Kpi({
       )}
     >
       <Card
-        className={cn(
-          "p-4 pop-in h-full",
-          onClick && "hover:border-primary/40 hover:shadow-md",
-        )}
+        className={cn("p-4 pop-in h-full", onClick && "hover:border-primary/40 hover:shadow-md")}
       >
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground uppercase tracking-wide">
           <span
@@ -107,9 +104,7 @@ function Kpi({
           </span>
           {label}
         </div>
-        <div className="text-2xl font-semibold tracking-tight mt-1.5 tabular-nums">
-          {value}
-        </div>
+        <div className="text-2xl font-semibold tracking-tight mt-1.5 tabular-nums">{value}</div>
         <div className="flex items-center justify-between mt-1">
           {hint && <div className="text-[11px] text-muted-foreground">{hint}</div>}
           {onClick && jumpLabel && (

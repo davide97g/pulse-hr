@@ -12,6 +12,7 @@ These are the companies already speaking to our audience. They've done
 the hard work of proving a dark, opinionated brand can scale.
 
 ### 1. Linear — linear.app
+
 **Why:** The reigning benchmark for dev-tool marketing. Ink + single
 brand color (purple in their case; ours is lime). Typographic hero
 animations, tight keyboard focus, zero stock photography. The Linear
@@ -22,6 +23,7 @@ keyboard shortcuts as brand primitives, scroll-triggered typographic
 reveals.
 
 ### 2. Raycast — raycast.com
+
 **Why:** Command-bar product with the exact "keyboard-first" vibe we
 want to convey. Dark UI, hotkey prompts everywhere, mini product
 screens arranged on gradients.
@@ -29,6 +31,7 @@ screens arranged on gradients.
 the way product screens are composed with fake grid backdrops.
 
 ### 3. Vercel — vercel.com
+
 **Why:** Ink background, one accent (white lines on pure black), and
 a typographic hero that keeps reinventing itself. Their component
 library and OG images are a masterclass in consistency.
@@ -36,6 +39,7 @@ library and OG images are a masterclass in consistency.
 subtract.
 
 ### 4. Supabase — supabase.com
+
 **Why:** OSS dev tool with a green-on-dark palette close to ours
 (they're emerald, we're lime — but the structural similarity helps).
 They publish roadmap and pricing honestly. The landing uses
@@ -44,6 +48,7 @@ animated SQL / API snippets as hero content.
 pricing presentation.
 
 ### 5. PostHog — posthog.com
+
 **Why:** Explicitly open-source, MIT (close enough to FSL). Uses
 irreverent voice, hand-drawn marginalia, honest self-deprecation
 ("we're weird, we ship a lot"). Slightly more playful than Pulse wants
@@ -52,6 +57,7 @@ to be — but the honesty-as-brand approach is dead-on for us.
 UI treatment.
 
 ### 6. Arc Browser (The Browser Company) — arc.net
+
 **Why:** Counter-example. Beautiful, cinematic, but also the brand we
 should NOT become — dreamy, aspirational, more vibe than substance.
 Study to understand what to avoid; Arc is "software as lifestyle" and
@@ -65,6 +71,7 @@ Pulse is "software as infrastructure".
 These prove you can sell a real business on "you can read the source".
 
 ### 7. Plausible Analytics — plausible.io
+
 **Why:** Privacy-first, OSS, anti-surveillance. Tone is
 principled-without-preachy. Pricing page is one of the cleanest on the
 open web.
@@ -72,12 +79,14 @@ open web.
 calm, numerical, never whiny.
 
 ### 8. Formbricks — formbricks.com
+
 **Why:** Newer, scrappier, but shows that "AGPL and proud" brands can
 have modern visual polish. Green-on-dark, screenshot-led.
 **Steal:** balance of source-available messaging with conversion-focused
 landing-page structure.
 
 ### 9. Dub.co (Dub) — dub.co
+
 **Why:** MIT-licensed link shortener that turned OSS + modern visual
 language into a growth moat. Steven Tey's landing page is a case study
 in what a founder-led OSS brand looks like in 2025.
@@ -92,6 +101,7 @@ We lean on Fraunces + Geist — these are the best references for doing
 that well.
 
 ### 10. Stripe — stripe.com
+
 **Why:** The typographic discipline Stripe brought to fintech is what
 we want to bring to HR. Gradient accents, monospace in the right
 places, restraint on brand-color area.
@@ -99,6 +109,7 @@ places, restraint on brand-color area.
 transitions.
 
 ### 11. Fraunces showcase (Undercase Type / Google Fonts gallery)
+
 **Why:** Fraunces is our display font. See how designers actually
 handle the SOFT vs. HARD optical axes, the "swash" italics. Avoids
 the default amateur mistakes.
@@ -106,6 +117,7 @@ the default amateur mistakes.
 variable axes actually differentiate.
 
 ### 12. Monocle Magazine covers — monocle.com
+
 **Why:** Print-quality typographic hierarchy applied to digital.
 Editorial, confident, anti-tech-aesthetic. Our "press coverage"
 layouts should feel like this.
@@ -119,12 +131,14 @@ letter-spacing.
 These are specifically for the reel work.
 
 ### 13. Apple product reels (official Apple Instagram — `@apple`)
+
 **Why:** Benchmark for 9:16 product motion. Title cards that hold on
 screen for a generous read, no dialogue, beat-matched cuts.
 **Steal:** opening hook treatment, end-card composition. Ignore their
 warmth; we are colder than Apple.
 
 ### 14. Artem Loenko / Linear dev-videos on YouTube (informal ref)
+
 **Why:** A single engineer shipping high-quality product demos with a
 laptop, a microphone, and no production crew. Proves our reel can be
 DIY if it's tightly edited.
@@ -132,7 +146,9 @@ DIY if it's tightly edited.
 cold-open structure.
 
 ### 15. Juxtaposed code / product cuts — `@cassidoo` and
+
        `@boneskull` on socials
+
 **Why:** Two engineers whose tech-content reels model the "code as
 content" aesthetic for non-tech audiences without dumbing it down.
 Their pacing and text-overlay style ports directly to what we want.

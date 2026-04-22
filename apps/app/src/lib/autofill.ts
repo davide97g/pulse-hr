@@ -1,8 +1,18 @@
 import {
-  addDays, differenceInMinutes, endOfWeek, format, parseISO, startOfWeek, isWeekend,
+  addDays,
+  differenceInMinutes,
+  endOfWeek,
+  format,
+  parseISO,
+  startOfWeek,
+  isWeekend,
 } from "date-fns";
 import {
-  commesse, mockCalendarEvents, focusSessionsSeed, type CalendarEvent, type TimesheetEntry,
+  commesse,
+  mockCalendarEvents,
+  focusSessionsSeed,
+  type CalendarEvent,
+  type TimesheetEntry,
 } from "./mock-data";
 import { getWeekStartsOn } from "./timesheet";
 
@@ -10,14 +20,14 @@ export type AutofillSource = "calendar" | "focus" | "gap";
 
 export interface AutofillDraft {
   tempId: string;
-  date: string;                      // YYYY-MM-DD
+  date: string; // YYYY-MM-DD
   commessaId: string;
   hours: number;
   description: string;
   billable: boolean;
   source: AutofillSource;
-  confidence: number;                // 0..1
-  eventIds?: string[];               // back-reference
+  confidence: number; // 0..1
+  eventIds?: string[]; // back-reference
 }
 
 // Hours attributable per event (duration in hours, rounded to .25)
@@ -31,10 +41,12 @@ function eventHours(ev: CalendarEvent): number {
 // Resolve a commessaHint ("cm1", partial name) to a concrete commessa id.
 function resolveCommessa(hint: string | undefined, fallbackId: string): string {
   if (!hint) return fallbackId;
-  const direct = commesse.find(c => c.id === hint);
+  const direct = commesse.find((c) => c.id === hint);
   if (direct) return direct.id;
   const lower = hint.toLowerCase();
-  const fuzzy = commesse.find(c => c.name.toLowerCase().includes(lower) || c.code.toLowerCase().includes(lower));
+  const fuzzy = commesse.find(
+    (c) => c.name.toLowerCase().includes(lower) || c.code.toLowerCase().includes(lower),
+  );
   return fuzzy?.id ?? fallbackId;
 }
 
@@ -71,12 +83,12 @@ export function generateWeekDraft(
     const iso = format(d, "yyyy-MM-dd");
 
     // Already have entries? Skip — we don't double-book.
-    const already = existing.filter(e => e.employeeId === employeeId && e.date === iso);
+    const already = existing.filter((e) => e.employeeId === employeeId && e.date === iso);
     if (already.length > 0) continue;
 
     // 1) Pull calendar events for the day
     const dayEvents = mockCalendarEvents.filter(
-      e => e.date === iso && (!e.attendees || e.attendees.includes(employeeId)),
+      (e) => e.date === iso && (!e.attendees || e.attendees.includes(employeeId)),
     );
     let booked = 0;
     for (const ev of dayEvents) {
@@ -88,7 +100,7 @@ export function generateWeekDraft(
         commessaId,
         hours: hrs,
         description: ev.title,
-        billable: commessaId !== "cm4",  // internal commessa → non-billable
+        billable: commessaId !== "cm4", // internal commessa → non-billable
         source: "calendar",
         confidence: 0.9,
         eventIds: [ev.id],
@@ -97,7 +109,7 @@ export function generateWeekDraft(
     }
 
     // 2) Pull focus sessions for the day
-    const focus = focusSessionsSeed.filter(f => f.employeeId === employeeId && f.date === iso);
+    const focus = focusSessionsSeed.filter((f) => f.employeeId === employeeId && f.date === iso);
     for (const f of focus) {
       drafts.push({
         tempId: nextId(),

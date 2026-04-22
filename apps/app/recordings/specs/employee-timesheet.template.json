@@ -12,7 +12,12 @@
     { "action": "zoom", "selector": "input[type=email]", "scale": 1.8, "duration": 300 },
     { "action": "type", "selector": "input[type=email]", "text": "{{TEST_EMAIL}}", "delay": 22 },
     { "action": "zoom", "selector": "input[type=password]", "scale": 1.8, "duration": 300 },
-    { "action": "type", "selector": "input[type=password]", "text": "{{TEST_PASSWORD}}", "delay": 22 },
+    {
+      "action": "type",
+      "selector": "input[type=password]",
+      "text": "{{TEST_PASSWORD}}",
+      "delay": 22
+    },
     { "action": "zoom", "scale": 1, "duration": 200 },
     { "action": "click", "selector": "button[type=submit]", "zoom": 2.2 },
     { "action": "wait", "ms": 2000 },
@@ -31,7 +36,11 @@
     { "action": "wait", "ms": 900 },
     { "action": "screenshot", "name": "02-employees" },
 
-    { "action": "click", "selector": ".cursor-pointer:has-text('Marcus Rivera'), [role=row]:has-text('Marcus Rivera')", "zoom": 2 },
+    {
+      "action": "click",
+      "selector": ".cursor-pointer:has-text('Marcus Rivera'), [role=row]:has-text('Marcus Rivera')",
+      "zoom": 2
+    },
     { "action": "wait", "ms": 1000 },
     { "action": "screenshot", "name": "03-employee-panel" },
     { "action": "keyboard", "key": "Escape" },
@@ -48,8 +57,18 @@
     { "action": "click", "selector": "button:has-text('4h')", "zoom": 1.8 },
     { "action": "wait", "ms": 300 },
 
-    { "action": "zoom", "selector": "textarea[placeholder='What did you work on?']", "scale": 1.9, "duration": 350 },
-    { "action": "type", "selector": "textarea[placeholder='What did you work on?']", "text": "Migration cutover + smoke tests", "delay": 28 },
+    {
+      "action": "zoom",
+      "selector": "textarea[placeholder='What did you work on?']",
+      "scale": 1.9,
+      "duration": 350
+    },
+    {
+      "action": "type",
+      "selector": "textarea[placeholder='What did you work on?']",
+      "text": "Migration cutover + smoke tests",
+      "delay": 28
+    },
     { "action": "zoom", "scale": 1, "duration": 250 },
 
     { "action": "click", "selector": "button:has-text('Add entry')", "zoom": 2.2 },

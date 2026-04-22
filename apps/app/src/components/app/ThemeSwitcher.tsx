@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 export function ThemeSwitcher({ compact }: { compact?: boolean }) {
   const { theme, setTheme } = useTheme();
-  const current = THEMES.find(t => t.id === theme)!;
+  const current = THEMES.find((t) => t.id === theme)!;
 
   return (
     <Popover>
@@ -13,14 +13,16 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
         <button
           className={cn(
             "inline-flex items-center gap-2 rounded-md border hover:bg-muted transition-colors press-scale",
-            compact ? "h-9 w-9 justify-center" : "h-9 px-2.5"
+            compact ? "h-9 w-9 justify-center" : "h-9 px-2.5",
           )}
           aria-label="Switch theme"
           title={`Theme: ${current.label}`}
         >
           <span
             className="h-4 w-4 rounded-full ring-2 ring-background shadow-sm"
-            style={{ background: `linear-gradient(135deg, ${current.swatch} 0%, ${current.bg} 100%)` }}
+            style={{
+              background: `linear-gradient(135deg, ${current.swatch} 0%, ${current.bg} 100%)`,
+            }}
           />
           {!compact && <span className="text-sm font-medium">{current.label}</span>}
           {!compact && <Palette className="h-3.5 w-3.5 text-muted-foreground" />}
@@ -29,20 +31,22 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
       <PopoverContent align="end" className="w-[320px] p-0">
         <div className="px-4 py-3 border-b">
           <div className="text-sm font-semibold">Theme</div>
-          <div className="text-xs text-muted-foreground mt-0.5">Baseline modes plus a palette per role.</div>
+          <div className="text-xs text-muted-foreground mt-0.5">
+            Baseline modes plus a palette per role.
+          </div>
         </div>
 
         <div className="p-2">
           <SectionLabel>Baseline</SectionLabel>
           <div className="grid grid-cols-2 gap-1.5">
             <ThemeTile
-              t={THEMES.find(t => t.id === "light")!}
+              t={THEMES.find((t) => t.id === "light")!}
               active={theme === "light"}
               onSelect={setTheme}
               icon={<Sun className="h-3.5 w-3.5" />}
             />
             <ThemeTile
-              t={THEMES.find(t => t.id === "dark")!}
+              t={THEMES.find((t) => t.id === "dark")!}
               active={theme === "dark"}
               onSelect={setTheme}
               icon={<Moon className="h-3.5 w-3.5" />}
@@ -51,11 +55,9 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
 
           <SectionLabel className="mt-3">By role</SectionLabel>
           <div className="grid grid-cols-2 gap-1.5">
-            {(["employee", "hr", "admin", "manager", "finance"] as Theme[]).map(id => {
-              const t = THEMES.find(x => x.id === id)!;
-              return (
-                <ThemeTile key={id} t={t} active={theme === id} onSelect={setTheme} />
-              );
+            {(["employee", "hr", "admin", "manager", "finance"] as Theme[]).map((id) => {
+              const t = THEMES.find((x) => x.id === id)!;
+              return <ThemeTile key={id} t={t} active={theme === id} onSelect={setTheme} />;
             })}
           </div>
         </div>
@@ -70,14 +72,22 @@ export function ThemeSwitcher({ compact }: { compact?: boolean }) {
 
 function SectionLabel({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn("text-[10px] uppercase tracking-[0.18em] font-medium text-muted-foreground px-1.5 mb-1.5", className)}>
+    <div
+      className={cn(
+        "text-[10px] uppercase tracking-[0.18em] font-medium text-muted-foreground px-1.5 mb-1.5",
+        className,
+      )}
+    >
       {children}
     </div>
   );
 }
 
 function ThemeTile({
-  t, active, onSelect, icon,
+  t,
+  active,
+  onSelect,
+  icon,
 }: {
   t: (typeof THEMES)[number];
   active: boolean;
@@ -89,7 +99,7 @@ function ThemeTile({
       onClick={() => onSelect(t.id)}
       className={cn(
         "group relative flex items-start gap-2 p-2 rounded-md border text-left transition-all press-scale",
-        active ? "border-primary ring-2 ring-primary/30 bg-primary/[0.04]" : "hover:bg-muted/60"
+        active ? "border-primary ring-2 ring-primary/30 bg-primary/[0.04]" : "hover:bg-muted/60",
       )}
     >
       <div
@@ -114,7 +124,9 @@ function ThemeTile({
           {active && <Check className="h-3 w-3 ml-auto text-primary" />}
         </div>
         {t.role && (
-          <div className="text-[10px] text-muted-foreground mt-0.5">{t.role} · {t.mode}</div>
+          <div className="text-[10px] text-muted-foreground mt-0.5">
+            {t.role} · {t.mode}
+          </div>
         )}
         {!t.role && (
           <div className="text-[10px] text-muted-foreground mt-0.5 capitalize">{t.mode} mode</div>

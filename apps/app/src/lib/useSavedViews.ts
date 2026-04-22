@@ -38,20 +38,30 @@ const listKey = (scope: string) => `pulse.views.${scope}.list`;
 function encodeValue(v: unknown, type: FieldType): string | null {
   if (v === undefined || v === null) return null;
   switch (type) {
-    case "string":  return typeof v === "string" && v.length > 0 ? v : null;
-    case "number":  return typeof v === "number" && !Number.isNaN(v) ? String(v) : null;
-    case "boolean": return v ? "1" : "0";
-    case "array":   return Array.isArray(v) && v.length > 0 ? (v as unknown[]).map(String).join(",") : null;
+    case "string":
+      return typeof v === "string" && v.length > 0 ? v : null;
+    case "number":
+      return typeof v === "number" && !Number.isNaN(v) ? String(v) : null;
+    case "boolean":
+      return v ? "1" : "0";
+    case "array":
+      return Array.isArray(v) && v.length > 0 ? (v as unknown[]).map(String).join(",") : null;
   }
 }
 
 function decodeValue(raw: string | null | undefined, type: FieldType): unknown {
   if (raw === null || raw === undefined || raw === "") return undefined;
   switch (type) {
-    case "string":  return raw;
-    case "number":  { const n = Number(raw); return Number.isFinite(n) ? n : undefined; }
-    case "boolean": return raw === "1" || raw === "true";
-    case "array":   return raw.split(",").filter(Boolean);
+    case "string":
+      return raw;
+    case "number": {
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : undefined;
+    }
+    case "boolean":
+      return raw === "1" || raw === "true";
+    case "array":
+      return raw.split(",").filter(Boolean);
   }
 }
 
@@ -72,7 +82,10 @@ function searchToState<State>(
   const out = { ...defaults } as State;
   for (const key of Object.keys(schema) as (keyof State)[]) {
     const raw = search[String(key)];
-    const dec = decodeValue(typeof raw === "string" ? raw : raw == null ? null : String(raw), schema[key]);
+    const dec = decodeValue(
+      typeof raw === "string" ? raw : raw == null ? null : String(raw),
+      schema[key],
+    );
     if (dec !== undefined) (out as Record<string, unknown>)[String(key)] = dec as never;
   }
   return out;
@@ -107,7 +120,9 @@ export function useSavedViews<State extends Record<string, unknown>>(
       typeof window !== "undefined" ? window.location.search : "",
     );
     const fromUrl: Record<string, string> = {};
-    searchEntries.forEach((v, k) => { fromUrl[k] = v; });
+    searchEntries.forEach((v, k) => {
+      fromUrl[k] = v;
+    });
     if (Object.keys(fromUrl).length > 0) {
       return searchToState<State>(fromUrl, schema, defaults);
     }
@@ -145,45 +160,61 @@ export function useSavedViews<State extends Record<string, unknown>>(
       },
       replace: true,
     });
-    try { localStorage.setItem(lastKey(scope), JSON.stringify(state)); } catch {}
+    try {
+      localStorage.setItem(lastKey(scope), JSON.stringify(state));
+    } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   const setState = useCallback((patch: Partial<State>) => {
-    setStateInner(prev => ({ ...prev, ...patch }));
+    setStateInner((prev) => ({ ...prev, ...patch }));
   }, []);
 
   const reset = useCallback(() => setStateInner(defaults), [defaults]);
 
   const persistViews = (next: SavedView<State>[]) => {
     setSavedViews(next);
-    try { localStorage.setItem(listKey(scope), JSON.stringify(next)); } catch {}
+    try {
+      localStorage.setItem(listKey(scope), JSON.stringify(next));
+    } catch {}
   };
 
-  const save = useCallback((name: string): SavedView<State> => {
-    const view: SavedView<State> = {
-      id: `v-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-      name,
-      state,
-      createdAt: new Date().toISOString(),
-    };
-    persistViews([view, ...savedViews]);
-    return view;
-  }, [state, savedViews, scope]);
+  const save = useCallback(
+    (name: string): SavedView<State> => {
+      const view: SavedView<State> = {
+        id: `v-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        name,
+        state,
+        createdAt: new Date().toISOString(),
+      };
+      persistViews([view, ...savedViews]);
+      return view;
+    },
+    [state, savedViews, scope],
+  );
 
-  const apply = useCallback((id: string) => {
-    const v = savedViews.find(x => x.id === id);
-    if (!v) return;
-    setStateInner({ ...defaults, ...v.state });
-  }, [savedViews, defaults]);
+  const apply = useCallback(
+    (id: string) => {
+      const v = savedViews.find((x) => x.id === id);
+      if (!v) return;
+      setStateInner({ ...defaults, ...v.state });
+    },
+    [savedViews, defaults],
+  );
 
-  const remove = useCallback((id: string) => {
-    persistViews(savedViews.filter(v => v.id !== id));
-  }, [savedViews, scope]);
+  const remove = useCallback(
+    (id: string) => {
+      persistViews(savedViews.filter((v) => v.id !== id));
+    },
+    [savedViews, scope],
+  );
 
-  const rename = useCallback((id: string, name: string) => {
-    persistViews(savedViews.map(v => (v.id === id ? { ...v, name } : v)));
-  }, [savedViews, scope]);
+  const rename = useCallback(
+    (id: string, name: string) => {
+      persistViews(savedViews.map((v) => (v.id === id ? { ...v, name } : v)));
+    },
+    [savedViews, scope],
+  );
 
   const shareUrl = useMemo(() => {
     if (typeof window === "undefined") return "";
@@ -192,14 +223,23 @@ export function useSavedViews<State extends Record<string, unknown>>(
   }, [state, location.pathname, schema]);
 
   const activeViewId = useMemo(() => {
-    const match = savedViews.find(v => statesEqual(v.state, state, schema));
+    const match = savedViews.find((v) => statesEqual(v.state, state, schema));
     return match?.id ?? null;
   }, [savedViews, state, schema]);
 
-  const isDirty = useMemo(
-    () => !statesEqual(state, defaults, schema),
-    [state, defaults, schema],
-  );
+  const isDirty = useMemo(() => !statesEqual(state, defaults, schema), [state, defaults, schema]);
 
-  return { state, setState, reset, savedViews, save, apply, remove, rename, shareUrl, activeViewId, isDirty };
+  return {
+    state,
+    setState,
+    reset,
+    savedViews,
+    save,
+    apply,
+    remove,
+    rename,
+    shareUrl,
+    activeViewId,
+    isDirty,
+  };
 }

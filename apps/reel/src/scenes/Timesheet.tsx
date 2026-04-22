@@ -22,9 +22,7 @@ export const Timesheet: React.FC = () => {
   });
 
   return (
-    <AbsoluteFill
-      style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 24 }}
-    >
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 24 }}>
       <div
         style={{
           fontFamily: fonts.mono,
@@ -48,16 +46,11 @@ export const Timesheet: React.FC = () => {
         }}
       >
         {DAYS.map((day, i) => {
-          const fill = interpolate(
-            frame,
-            [8 + i * 4, 22 + i * 4],
-            [0, 1],
-            {
-              easing: Easing.bezier(0.16, 1, 0.3, 1),
-              extrapolateLeft: "clamp",
-              extrapolateRight: "clamp",
-            },
-          );
+          const fill = interpolate(frame, [8 + i * 4, 22 + i * 4], [0, 1], {
+            easing: Easing.bezier(0.16, 1, 0.3, 1),
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          });
           return (
             <div
               key={day}

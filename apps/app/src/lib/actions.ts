@@ -9,7 +9,9 @@ import type { NavigateOptions } from "@tanstack/react-router";
  */
 export interface ActionCtx {
   navigate: (opts: NavigateOptions) => void;
-  openQuickAction?: (id: "add-employee" | "request-leave" | "submit-expense" | "post-job" | "run-payroll") => void;
+  openQuickAction?: (
+    id: "add-employee" | "request-leave" | "submit-expense" | "post-job" | "run-payroll",
+  ) => void;
 }
 
 export interface ActionRunnable {
@@ -35,8 +37,11 @@ export function answerFor(prompt: string): CopilotAnswer {
         "I found 2 pending expenses under $200: Client dinner ($184.50) and Figma license ($180). " +
         "Bulk-approving them will notify the owners and move both to reimbursement.",
       actions: [
-        { label: "Approve both", run: () => toast.success("2 expenses approved · $364.50 queued for reimbursement") },
-        { label: "Open expenses", run: ctx => ctx.navigate({ to: "/expenses" }) },
+        {
+          label: "Approve both",
+          run: () => toast.success("2 expenses approved · $364.50 queued for reimbursement"),
+        },
+        { label: "Open expenses", run: (ctx) => ctx.navigate({ to: "/expenses" }) },
       ],
     };
   }
@@ -47,7 +52,7 @@ export function answerFor(prompt: string): CopilotAnswer {
         "Sales team has overlap May 10–17 (David Park + Leo Martin). Engineering is clear. " +
         "I can flag this as a staffing risk on the dashboard.",
       actions: [
-        { label: "Open leave calendar", run: ctx => ctx.navigate({ to: "/leave" }) },
+        { label: "Open leave calendar", run: (ctx) => ctx.navigate({ to: "/leave" }) },
         { label: "Flag as risk", run: () => toast.success("Risk flagged · visible on dashboard") },
       ],
     };
@@ -59,7 +64,7 @@ export function answerFor(prompt: string): CopilotAnswer {
         "April payroll has 1 anomaly: Engineering overtime up 18% week-over-week, concentrated in the " +
         "migration commessa (ACM-2025-01). No over-threshold expenses detected.",
       actions: [
-        { label: "Open time page", run: ctx => ctx.navigate({ to: "/time" }) },
+        { label: "Open time page", run: (ctx) => ctx.navigate({ to: "/time" }) },
         { label: "Notify Sarah Chen", run: () => toast.success("DM drafted to Sarah Chen") },
       ],
     };
@@ -82,7 +87,7 @@ export function answerFor(prompt: string): CopilotAnswer {
       text:
         "Two commesse are over budget this month: LGO-2024-12 Legacy migration (101%) and " +
         "BCO-2025-03 Design system v2 (83%, trending over). I can surface a forecast with scenarios.",
-      actions: [{ label: "Open Forecast", run: ctx => ctx.navigate({ to: "/forecast" }) }],
+      actions: [{ label: "Open Forecast", run: (ctx) => ctx.navigate({ to: "/forecast" }) }],
     };
   }
 
@@ -92,7 +97,7 @@ export function answerFor(prompt: string): CopilotAnswer {
         "Generated Q2 headcount view: 12 → 14 planned (+Emma Wilson Eng, +James Liu Eng). " +
         "Turnover projected 4.2%, cost/employee trending +3% vs Q1.",
       actions: [
-        { label: "Open Reports", run: ctx => ctx.navigate({ to: "/reports" }) },
+        { label: "Open Reports", run: (ctx) => ctx.navigate({ to: "/reports" }) },
         { label: "Export PDF", run: () => toast.success("PDF export started") },
       ],
     };
@@ -106,7 +111,7 @@ export function answerFor(prompt: string): CopilotAnswer {
       actions: [
         {
           label: "Open auto-fill",
-          run: ctx => {
+          run: (ctx) => {
             ctx.navigate({ to: "/time" });
             window.dispatchEvent(new CustomEvent("pulse:open-autofill"));
           },

@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@clerk/backend": "^3.2.13",
-    "@hono/zod-validator": "^0.7.0",
+    "@hono/zod-validator": "^0.7.6",
     "@neondatabase/serverless": "^1.1.0",
     "@pulse-hr/shared": "workspace:*",
     "@react-email/components": "^1.0.12",
@@ -24,14 +24,14 @@
     "drizzle-orm": "^0.45.2",
     "hono": "^4.9.0",
     "marked": "^18.0.2",
-    "react": "^19.2.0",
+    "react": "^19.2.5",
     "resend": "^6.12.2",
-    "zod": "^3.24.2"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/react": "^19.2.0",
+    "@types/react": "^19.2.3",
     "drizzle-kit": "^0.31.10",
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   }
 }

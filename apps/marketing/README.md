@@ -55,6 +55,7 @@ Every content change happens in `src/data/landing.ts`. Sections are presentation
 ## Deploy
 
 Point Vercel (or any static host) at `marketing/` with:
+
 - Build: `bun run build`
 - Output: `dist/`
 - Framework: Astro (auto-detected)

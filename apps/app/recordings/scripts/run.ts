@@ -1,5 +1,12 @@
 #!/usr/bin/env bun
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, renameSync } from "node:fs";
+import {
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  existsSync,
+  readdirSync,
+  renameSync,
+} from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn, spawnSync } from "node:child_process";
@@ -88,20 +95,29 @@ child.on("exit", (code) => {
   const duration = Number((probe.stdout ?? "").trim()) || 0;
   const fadeOutStart = Math.max(0, duration - 2.5);
 
-  console.log(`[recordings] muxing audio: ${audioPath} (video=${duration.toFixed(2)}s, fade@${fadeOutStart.toFixed(2)}s)`);
+  console.log(
+    `[recordings] muxing audio: ${audioPath} (video=${duration.toFixed(2)}s, fade@${fadeOutStart.toFixed(2)}s)`,
+  );
   const ff = spawnSync(
     "ffmpeg",
     [
       "-y",
-      "-i", video,
-      "-i", audioPath,
+      "-i",
+      video,
+      "-i",
+      audioPath,
       "-filter_complex",
       `[1:a]afade=t=in:st=0:d=1.5,afade=t=out:st=${fadeOutStart}:d=2[a]`,
-      "-map", "0:v",
-      "-map", "[a]",
-      "-c:v", "copy",
-      "-c:a", "aac",
-      "-b:a", "192k",
+      "-map",
+      "0:v",
+      "-map",
+      "[a]",
+      "-c:v",
+      "copy",
+      "-c:a",
+      "aac",
+      "-b:a",
+      "192k",
       "-shortest",
       tmp,
     ],

@@ -1,5 +1,9 @@
 import {
-  parseISO, startOfDay, eachDayOfInterval, differenceInCalendarDays, isWeekend,
+  parseISO,
+  startOfDay,
+  eachDayOfInterval,
+  differenceInCalendarDays,
+  isWeekend,
 } from "date-fns";
 import {
   leaveRequests as defaultLeaves,
@@ -10,8 +14,8 @@ import {
 
 export interface CoverageForDate {
   date: Date;
-  onLeave: LeaveRequest[];    // approved requests active that date, excluding the requester
-  coveragePct: number;        // % of team NOT on leave
+  onLeave: LeaveRequest[]; // approved requests active that date, excluding the requester
+  coveragePct: number; // % of team NOT on leave
 }
 
 function leaveCoversDate(leave: LeaveRequest, d: Date): boolean {
@@ -28,10 +32,8 @@ export function leaveOverlapOn(
   excludeEmployeeId?: string,
 ): LeaveRequest[] {
   return leaves.filter(
-    l =>
-      l.status === "approved" &&
-      l.employeeId !== excludeEmployeeId &&
-      leaveCoversDate(l, date),
+    (l) =>
+      l.status === "approved" && l.employeeId !== excludeEmployeeId && leaveCoversDate(l, date),
   );
 }
 
@@ -55,7 +57,7 @@ export function coverageForRange(
   const leaves = opts.leaves ?? defaultLeaves;
   const teamSize = opts.teamSize ?? employees.length;
   if (!from || !to || from > to) return [];
-  return eachDayOfInterval({ start: from, end: to }).map(d => ({
+  return eachDayOfInterval({ start: from, end: to }).map((d) => ({
     date: d,
     onLeave: leaveOverlapOn(d, leaves, opts.excludeEmployeeId),
     coveragePct: teamCoveragePct(d, teamSize, leaves),

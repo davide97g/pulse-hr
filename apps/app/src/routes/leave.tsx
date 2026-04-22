@@ -1,17 +1,42 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Check, X, Calendar, Trash2, CalendarOff, Plane, Thermometer, User, Baby } from "lucide-react";
 import {
-  startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval,
-  isSameMonth, format, parseISO, isWithinInterval, startOfDay,
+  Plus,
+  Check,
+  X,
+  Calendar,
+  Trash2,
+  CalendarOff,
+  Plane,
+  Thermometer,
+  User,
+  Baby,
+} from "lucide-react";
+import {
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameMonth,
+  format,
+  parseISO,
+  isWithinInterval,
+  startOfDay,
 } from "date-fns";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
@@ -53,15 +78,19 @@ function Leave() {
   }, []);
 
   const decide = (id: string, status: "approved" | "rejected") => {
-    const before = leaveTable.getAll().find(l => l.id === id);
+    const before = leaveTable.getAll().find((l) => l.id === id);
     if (!before) return;
     leaveTable.update(id, { status });
     const e = employeeById(before.employeeId);
     const undo = () => leaveTable.update(id, { status: before.status });
     if (status === "approved") {
-      toast.success(`Approved leave for ${e?.name ?? "employee"}`, { action: { label: "Undo", onClick: undo } });
+      toast.success(`Approved leave for ${e?.name ?? "employee"}`, {
+        action: { label: "Undo", onClick: undo },
+      });
     } else {
-      toast.error(`Rejected leave for ${e?.name ?? "employee"}`, { action: { label: "Undo", onClick: undo } });
+      toast.error(`Rejected leave for ${e?.name ?? "employee"}`, {
+        action: { label: "Undo", onClick: undo },
+      });
     }
   };
 
@@ -73,7 +102,7 @@ function Leave() {
     });
   };
 
-  const filtered = (status: string) => list.filter(l => l.status === status);
+  const filtered = (status: string) => list.filter((l) => l.status === status);
 
   const pendingRows = filtered("pending");
   const bulk = useBulkSelect(pendingRows);
@@ -81,27 +110,33 @@ function Leave() {
   const bulkApprove = () => {
     const ids = [...bulk.selected];
     const snapshot = ids
-      .map(id => leaveTable.getAll().find(l => l.id === id))
+      .map((id) => leaveTable.getAll().find((l) => l.id === id))
       .filter((l): l is LeaveRequest => !!l);
     for (const id of ids) leaveTable.update(id, { status: "approved" });
     bulk.clear();
     toast.success(`Approved ${ids.length} request${ids.length === 1 ? "" : "s"}`, {
-      action: { label: "Undo", onClick: () => {
-        for (const l of snapshot) leaveTable.update(l.id, { status: l.status });
-      }},
+      action: {
+        label: "Undo",
+        onClick: () => {
+          for (const l of snapshot) leaveTable.update(l.id, { status: l.status });
+        },
+      },
     });
   };
   const bulkReject = () => {
     const ids = [...bulk.selected];
     const snapshot = ids
-      .map(id => leaveTable.getAll().find(l => l.id === id))
+      .map((id) => leaveTable.getAll().find((l) => l.id === id))
       .filter((l): l is LeaveRequest => !!l);
     for (const id of ids) leaveTable.update(id, { status: "rejected" });
     bulk.clear();
     toast.error(`Rejected ${ids.length} request${ids.length === 1 ? "" : "s"}`, {
-      action: { label: "Undo", onClick: () => {
-        for (const l of snapshot) leaveTable.update(l.id, { status: l.status });
-      }},
+      action: {
+        label: "Undo",
+        onClick: () => {
+          for (const l of snapshot) leaveTable.update(l.id, { status: l.status });
+        },
+      },
     });
   };
   const approveAllVisible = () => {
@@ -140,9 +175,12 @@ function Leave() {
     for (const r of rows) leaveTable.remove(r.id);
     bulk.clear();
     toast(`Deleted ${rows.length} request${rows.length === 1 ? "" : "s"}`, {
-      action: { label: "Undo", onClick: () => {
-        for (const r of rows) leaveTable.add(r);
-      } },
+      action: {
+        label: "Undo",
+        onClick: () => {
+          for (const r of rows) leaveTable.add(r);
+        },
+      },
     });
   };
 
@@ -151,7 +189,12 @@ function Leave() {
       <PageHeader
         title="Leave"
         description="Manage leave requests, balances and the team calendar"
-        actions={<Button size="sm" onClick={() => openAction("request-leave")}><Plus className="h-4 w-4 mr-1.5" />Request leave</Button>}
+        actions={
+          <Button size="sm" onClick={() => openAction("request-leave")}>
+            <Plus className="h-4 w-4 mr-1.5" />
+            Request leave
+          </Button>
+        }
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
@@ -160,9 +203,12 @@ function Leave() {
           { label: "Sick", value: "2 / 10", color: "var(--cal-sick)" },
           { label: "Personal", value: "1 / 5", color: "var(--muted-foreground)" },
           { label: "Carry over", value: "3 days", color: "var(--success)" },
-        ].map(b => (
+        ].map((b) => (
           <Card key={b.label} className="p-4">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground"><div className="h-2 w-2 rounded-full" style={{ backgroundColor: b.color }} />{b.label}</div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: b.color }} />
+              {b.label}
+            </div>
             <div className="text-2xl font-semibold mt-1">{b.value}</div>
           </Card>
         ))}
@@ -186,10 +232,13 @@ function Leave() {
           <TabsTrigger value="pending">Pending ({filtered("pending").length})</TabsTrigger>
           <TabsTrigger value="approved">Approved ({filtered("approved").length})</TabsTrigger>
           <TabsTrigger value="rejected">Rejected ({filtered("rejected").length})</TabsTrigger>
-          <TabsTrigger value="calendar"><Calendar className="h-3.5 w-3.5 mr-1.5" />Calendar</TabsTrigger>
+          <TabsTrigger value="calendar">
+            <Calendar className="h-3.5 w-3.5 mr-1.5" />
+            Calendar
+          </TabsTrigger>
         </TabsList>
 
-        {(["pending","approved","rejected"] as const).map(tab => (
+        {(["pending", "approved", "rejected"] as const).map((tab) => (
           <TabsContent key={tab} value={tab} className="mt-4">
             <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
               {loading ? (
@@ -202,8 +251,13 @@ function Leave() {
                   description={tab === "pending" ? "You're all caught up." : "Nothing here yet."}
                   action={
                     tab === "pending" ? (
-                      <Button size="sm" variant="outline" onClick={() => openAction("request-leave")}>
-                        <Plus className="h-4 w-4 mr-1.5" />Request leave
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openAction("request-leave")}
+                      >
+                        <Plus className="h-4 w-4 mr-1.5" />
+                        Request leave
                       </Button>
                     ) : undefined
                   }
@@ -218,20 +272,23 @@ function Leave() {
                         onToggle={() => bulk.toggleAll()}
                       />
                       <span className="truncate">
-                        {bulk.count > 0
-                          ? <>{bulk.count} of {pendingRows.length} selected</>
-                          : (
-                            <>
-                              <span className="hidden sm:inline">Select rows to approve or reject in bulk</span>
-                              <span className="sm:hidden">Select rows for bulk actions</span>
-                            </>
-                          )
-                        }
+                        {bulk.count > 0 ? (
+                          <>
+                            {bulk.count} of {pendingRows.length} selected
+                          </>
+                        ) : (
+                          <>
+                            <span className="hidden sm:inline">
+                              Select rows to approve or reject in bulk
+                            </span>
+                            <span className="sm:hidden">Select rows for bulk actions</span>
+                          </>
+                        )}
                       </span>
                     </div>
                   )}
                   <div className="divide-y stagger-in">
-                    {filtered(tab).map(l => {
+                    {filtered(tab).map((l) => {
                       const e = employeeById(l.employeeId)!;
                       const selected = tab === "pending" && bulk.isSelected(l.id);
                       return (
@@ -262,7 +319,12 @@ function Leave() {
                               visibleWhen={bulk.count > 0 ? "always" : "hover-or-selected"}
                             />
                           )}
-                          <Avatar initials={e.initials} color={e.avatarColor} size={32} employeeId={e.id} />
+                          <Avatar
+                            initials={e.initials}
+                            color={e.avatarColor}
+                            size={32}
+                            employeeId={e.id}
+                          />
                           <div className="flex-1 min-w-0">
                             <div className="font-medium text-sm flex items-center gap-1.5 min-w-0">
                               <span className="truncate">{e.name}</span>
@@ -273,14 +335,19 @@ function Leave() {
                               )}
                             </div>
                             <div className="text-xs text-muted-foreground truncate">
-                              {l.type} · {l.days}d{l.granularity === "half" ? ` ${l.halfPeriod}` : ""} · {l.from}{l.granularity === "half" ? "" : ` → ${l.to}`}
+                              {l.type} · {l.days}d
+                              {l.granularity === "half" ? ` ${l.halfPeriod}` : ""} · {l.from}
+                              {l.granularity === "half" ? "" : ` → ${l.to}`}
                             </div>
                           </div>
                           <span className="hidden sm:inline-flex shrink-0">
                             <StatusBadge status={l.status} />
                           </span>
                           {tab === "pending" ? (
-                            <div className="flex gap-1 shrink-0" onClick={(ev) => ev.stopPropagation()}>
+                            <div
+                              className="flex gap-1 shrink-0"
+                              onClick={(ev) => ev.stopPropagation()}
+                            >
                               <Button
                                 size="icon"
                                 variant="ghost"
@@ -301,8 +368,16 @@ function Leave() {
                               </Button>
                             </div>
                           ) : (
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0" onClick={ev => ev.stopPropagation()}>
-                              <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => setToDelete(l)}>
+                            <div
+                              className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                              onClick={(ev) => ev.stopPropagation()}
+                            >
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                                onClick={() => setToDelete(l)}
+                              >
                                 <Trash2 className="h-3.5 w-3.5" />
                               </Button>
                             </div>
@@ -317,9 +392,23 @@ function Leave() {
                       onClear={bulk.clear}
                       noun="request"
                       actions={[
-                        { label: "Approve all", icon: <Check className="h-3.5 w-3.5" />, onClick: bulkApprove, tone: "success" },
-                        { label: "Reject all",  icon: <X className="h-3.5 w-3.5" />,     onClick: bulkReject },
-                        { label: "Delete",      icon: <Trash2 className="h-3.5 w-3.5" />, onClick: bulkDelete, tone: "destructive" },
+                        {
+                          label: "Approve all",
+                          icon: <Check className="h-3.5 w-3.5" />,
+                          onClick: bulkApprove,
+                          tone: "success",
+                        },
+                        {
+                          label: "Reject all",
+                          icon: <X className="h-3.5 w-3.5" />,
+                          onClick: bulkReject,
+                        },
+                        {
+                          label: "Delete",
+                          icon: <Trash2 className="h-3.5 w-3.5" />,
+                          onClick: bulkDelete,
+                          tone: "destructive",
+                        },
                       ]}
                     />
                   )}
@@ -331,25 +420,29 @@ function Leave() {
 
         <TabsContent value="calendar" className="mt-4">
           <LeaveCalendar
-            requests={list.filter(l => l.status !== "rejected")}
+            requests={list.filter((l) => l.status !== "rejected")}
             onSelect={setSelected}
           />
         </TabsContent>
       </Tabs>
 
-      <AlertDialog open={!!toDelete} onOpenChange={o => !o && setToDelete(null)}>
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete leave request?</AlertDialogTitle>
             <AlertDialogDescription>
-              {toDelete && `${toDelete.days} day${toDelete.days > 1 ? "s" : ""} of ${toDelete.type} will be removed.`}
+              {toDelete &&
+                `${toDelete.days} day${toDelete.days > 1 ? "s" : ""} of ${toDelete.type} will be removed.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => { if (toDelete) remove(toDelete); setToDelete(null); }}
+              onClick={() => {
+                if (toDelete) remove(toDelete);
+                setToDelete(null);
+              }}
             >
               Delete
             </AlertDialogAction>
@@ -358,45 +451,87 @@ function Leave() {
       </AlertDialog>
 
       <SidePanel open={!!selected} onClose={() => setSelected(null)} title="Leave request">
-        {selected && (() => {
-          const e = employeeById(selected.employeeId)!;
-          return (
-            <div className="p-5">
-              <div className="flex items-center gap-3 mb-4">
-                <Avatar initials={e.initials} color={e.avatarColor} size={48} employeeId={e.id} />
-                <div><div className="font-semibold">{e.name}</div><div className="text-xs text-muted-foreground">{e.role}</div></div>
-              </div>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <Field label="Type" value={selected.type} />
-                <Field label="Days" value={`${selected.days}`} />
-                <Field label="From" value={selected.from} />
-                <Field label="To" value={selected.to} />
-                <Field label="Submitted" value={selected.submittedAt} />
-                <Field label="Status" value={<StatusBadge status={selected.status} />} />
-              </div>
-              <div className="mt-4">
-                <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">Reason</div>
-                <div className="text-sm p-3 rounded-md bg-muted/40">{selected.reason}</div>
-              </div>
-              {selected.status === "pending" && (
-                <div className="flex gap-2 mt-5">
-                  <Button variant="outline" className="flex-1" onClick={() => decide(selected.id, "rejected")}><X className="h-4 w-4 mr-1.5" />Reject</Button>
-                  <Button className="flex-1 bg-success hover:bg-success/90 text-white" onClick={() => decide(selected.id, "approved")}><Check className="h-4 w-4 mr-1.5" />Approve</Button>
+        {selected &&
+          (() => {
+            const e = employeeById(selected.employeeId)!;
+            return (
+              <div className="p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <Avatar initials={e.initials} color={e.avatarColor} size={48} employeeId={e.id} />
+                  <div>
+                    <div className="font-semibold">{e.name}</div>
+                    <div className="text-xs text-muted-foreground">{e.role}</div>
+                  </div>
                 </div>
-              )}
-            </div>
-          );
-        })()}
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <Field label="Type" value={selected.type} />
+                  <Field label="Days" value={`${selected.days}`} />
+                  <Field label="From" value={selected.from} />
+                  <Field label="To" value={selected.to} />
+                  <Field label="Submitted" value={selected.submittedAt} />
+                  <Field label="Status" value={<StatusBadge status={selected.status} />} />
+                </div>
+                <div className="mt-4">
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1.5">
+                    Reason
+                  </div>
+                  <div className="text-sm p-3 rounded-md bg-muted/40">{selected.reason}</div>
+                </div>
+                {selected.status === "pending" && (
+                  <div className="flex gap-2 mt-5">
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => decide(selected.id, "rejected")}
+                    >
+                      <X className="h-4 w-4 mr-1.5" />
+                      Reject
+                    </Button>
+                    <Button
+                      className="flex-1 bg-success hover:bg-success/90 text-white"
+                      onClick={() => decide(selected.id, "approved")}
+                    >
+                      <Check className="h-4 w-4 mr-1.5" />
+                      Approve
+                    </Button>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
       </SidePanel>
     </div>
   );
 }
 
-const LEAVE_STYLE: Record<LeaveRequest["type"], { icon: typeof Plane; bg: string; fg: string; label: string }> = {
-  Vacation: { icon: Plane,       bg: "color-mix(in oklch, var(--cal-vacation) 18%, transparent)", fg: "var(--cal-vacation)", label: "Vacation" },
-  Sick:     { icon: Thermometer, bg: "color-mix(in oklch, var(--destructive) 18%, transparent)",  fg: "var(--destructive)",  label: "Sick" },
-  Personal: { icon: User,        bg: "color-mix(in oklch, var(--muted-foreground) 18%, transparent)", fg: "var(--muted-foreground)", label: "Personal" },
-  Parental: { icon: Baby,        bg: "color-mix(in oklch, var(--success) 18%, transparent)",      fg: "var(--success)",      label: "Parental" },
+const LEAVE_STYLE: Record<
+  LeaveRequest["type"],
+  { icon: typeof Plane; bg: string; fg: string; label: string }
+> = {
+  Vacation: {
+    icon: Plane,
+    bg: "color-mix(in oklch, var(--cal-vacation) 18%, transparent)",
+    fg: "var(--cal-vacation)",
+    label: "Vacation",
+  },
+  Sick: {
+    icon: Thermometer,
+    bg: "color-mix(in oklch, var(--destructive) 18%, transparent)",
+    fg: "var(--destructive)",
+    label: "Sick",
+  },
+  Personal: {
+    icon: User,
+    bg: "color-mix(in oklch, var(--muted-foreground) 18%, transparent)",
+    fg: "var(--muted-foreground)",
+    label: "Personal",
+  },
+  Parental: {
+    icon: Baby,
+    bg: "color-mix(in oklch, var(--success) 18%, transparent)",
+    fg: "var(--success)",
+    label: "Parental",
+  },
 };
 
 function LeaveCalendar({
@@ -414,11 +549,11 @@ function LeaveCalendar({
   const days = eachDayOfInterval({ start: gridStart, end: gridEnd });
 
   const leavesOn = (day: Date) =>
-    requests.filter(l =>
+    requests.filter((l) =>
       isWithinInterval(startOfDay(day), {
         start: startOfDay(parseISO(l.from)),
         end: startOfDay(parseISO(l.to)),
-      })
+      }),
     );
 
   const MAX_VISIBLE = 3;
@@ -428,7 +563,7 @@ function LeaveCalendar({
       <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
         <div className="text-sm font-semibold">{format(today, "MMMM yyyy")}</div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
-          {(Object.keys(LEAVE_STYLE) as LeaveRequest["type"][]).map(t => {
+          {(Object.keys(LEAVE_STYLE) as LeaveRequest["type"][]).map((t) => {
             const s = LEAVE_STYLE[t];
             const Icon = s.icon;
             return (
@@ -447,11 +582,14 @@ function LeaveCalendar({
       </div>
       <div className="grid grid-cols-7 gap-1">
         {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
-          <div key={`${d}-${i}`} className="text-center text-[10px] font-medium text-muted-foreground uppercase tracking-wider py-1.5">
+          <div
+            key={`${d}-${i}`}
+            className="text-center text-[10px] font-medium text-muted-foreground uppercase tracking-wider py-1.5"
+          >
             {d}
           </div>
         ))}
-        {days.map(day => {
+        {days.map((day) => {
           const inMonth = isSameMonth(day, today);
           const isToday = startOfDay(day).getTime() === startOfDay(today).getTime();
           const entries = leavesOn(day);
@@ -464,11 +602,13 @@ function LeaveCalendar({
                 inMonth ? "bg-background" : "bg-muted/20 text-muted-foreground/50"
               } ${isToday ? "ring-1 ring-primary/50" : ""}`}
             >
-              <div className={`text-[11px] leading-none px-1 pt-0.5 pb-1 ${isToday ? "font-semibold text-primary" : ""}`}>
+              <div
+                className={`text-[11px] leading-none px-1 pt-0.5 pb-1 ${isToday ? "font-semibold text-primary" : ""}`}
+              >
                 {format(day, "d")}
               </div>
               <div className="flex flex-col gap-0.5 min-h-0">
-                {visible.map(l => {
+                {visible.map((l) => {
                   const s = LEAVE_STYLE[l.type];
                   const Icon = s.icon;
                   const e = employeeById(l.employeeId);

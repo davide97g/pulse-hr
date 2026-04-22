@@ -58,6 +58,7 @@ Each file holds one responsibility. `LogChatThread` never imports manager compon
 ## Task 1: Data model + mock seeds
 
 **Files:**
+
 - Modify: `src/lib/mock-data.ts`
 
 - [ ] **Step 1.1:** Open `src/lib/mock-data.ts` and append the following type block at the bottom of the existing types section (keep alphabetical grouping loose — the file is long; place this near the `PulseEntry` block for locality):
@@ -71,7 +72,7 @@ export interface LogMessage {
   employeeId: string;
   role: "agent" | "employee";
   text: string;
-  createdAt: string;       // ISO
+  createdAt: string; // ISO
   topic?: LogTopic;
   sentiment?: LogSentiment;
   voice?: boolean;
@@ -81,38 +82,38 @@ export interface LogMessage {
 export interface LogSession {
   id: string;
   employeeId: string;
-  startedAt: string;       // ISO date
-  endedAt?: string;        // undefined = active
-  summary?: string;        // visible to the employee
+  startedAt: string; // ISO date
+  endedAt?: string; // undefined = active
+  summary?: string; // visible to the employee
   managerSummary?: string; // redacted; only summary crosses the boundary
   topics: LogTopic[];
-  healthDelta: number;     // -10..+10
+  healthDelta: number; // -10..+10
 }
 
 export interface ManagerAsk {
   id: string;
   managerId: string;
   employeeId: string;
-  topic: string;           // "Feedback on ACME demo"
-  prompt: string;          // what the agent will ask
+  topic: string; // "Feedback on ACME demo"
+  prompt: string; // what the agent will ask
   createdAt: string;
   dueAt?: string;
   answeredAt?: string;
-  answerSummary?: string;  // only summary crosses the boundary
+  answerSummary?: string; // only summary crosses the boundary
   status: "pending" | "answered" | "expired";
   tone?: "neutral" | "empathetic" | "probing";
 }
 
 export interface EmployeeLogHealth {
   employeeId: string;
-  score: number;           // 0..100
+  score: number; // 0..100
   trend: "up" | "flat" | "down";
   lastLogAt?: string;
   lastSentiment?: LogSentiment;
   openAsks: number;
-  recap: string;           // 1-2 sentence AI mock, manager-safe
+  recap: string; // 1-2 sentence AI mock, manager-safe
   recapUpdatedAt: string;
-  sparkline: number[];     // 14 daily sentiment ticks, -1..+1
+  sparkline: number[]; // 14 daily sentiment ticks, -1..+1
 }
 ```
 
@@ -168,7 +169,10 @@ export const logSessions: LogSession[] = (() => {
         employeeId: e.id,
         startedAt: iso(day, 9),
         endedAt: day === 0 ? undefined : iso(day, 17),
-        summary: day === 0 ? undefined : `Covered ${topics.join(", ")} with ${Math.floor(rand() * 4) + 2} exchanges.`,
+        summary:
+          day === 0
+            ? undefined
+            : `Covered ${topics.join(", ")} with ${Math.floor(rand() * 4) + 2} exchanges.`,
         managerSummary:
           day === 0
             ? undefined
@@ -212,7 +216,8 @@ export const managerAsks: ManagerAsk[] = [
     managerId: employees[0].id,
     employeeId: employees[3].id,
     topic: "Feedback on the ACME demo",
-    prompt: "How did the ACME demo feel from your side? Anything we should change before the follow-up?",
+    prompt:
+      "How did the ACME demo feel from your side? Anything we should change before the follow-up?",
     createdAt: iso(1),
     dueAt: iso(-3),
     status: "pending",
@@ -269,8 +274,8 @@ export const employeeLogHealth: EmployeeLogHealth[] = employees.map((e, i) => {
       score > 78
         ? `${e.name.split(" ")[0]} is shipping consistently and flagging risks early.`
         : score < 60
-        ? `${e.name.split(" ")[0]} is signalling overload — two pain points in the last week.`
-        : `${e.name.split(" ")[0]} is steady; mix of wins and minor blockers.`,
+          ? `${e.name.split(" ")[0]} is signalling overload — two pain points in the last week.`
+          : `${e.name.split(" ")[0]} is steady; mix of wins and minor blockers.`,
     recapUpdatedAt: iso(0, 7),
     sparkline: Array.from({ length: 14 }, () => Math.round((rand() * 2 - 1) * 100) / 100),
   };
@@ -297,6 +302,7 @@ upcoming /log route."
 ## Task 2: Mocked agent utility (`log-agent.ts`)
 
 **Files:**
+
 - Create: `src/lib/log-agent.ts`
 
 - [ ] **Step 2.1:** Create the file with the following contents. This is the single source of mocked AI behavior — prompt selection, streaming, summarization, health scoring. Reuse the streaming cadence from `Copilot.tsx:94-124`.
@@ -316,18 +322,30 @@ const OPENERS_BY_WEEKDAY: Record<number, string[]> = {
   1: ["What are you aiming for this week?", "Any theme you want to carry into the week?"],
   2: ["How's day two feeling — on track?", "Anything already shifting from yesterday?"],
   3: ["Mid-sprint check: anything in the way?", "What would unblock you the fastest right now?"],
-  4: ["Thursday gut-check — energy and momentum?", "What's the one thing you still want to land this week?"],
-  5: ["Wins or struggles worth logging before the weekend?", "If your manager read one line about your week, what should it say?"],
+  4: [
+    "Thursday gut-check — energy and momentum?",
+    "What's the one thing you still want to land this week?",
+  ],
+  5: [
+    "Wins or struggles worth logging before the weekend?",
+    "If your manager read one line about your week, what should it say?",
+  ],
   0: ["A quiet note for the weekend — anything weighing on you?"],
   6: ["A quiet note for the weekend — anything weighing on you?"],
 };
 
 const PROBES: Record<LogTopic, string[]> = {
-  status: ["What's the current state — in a sentence?", "Where are you on the plan vs. where you hoped to be?"],
+  status: [
+    "What's the current state — in a sentence?",
+    "Where are you on the plan vs. where you hoped to be?",
+  ],
   win: ["Nice — want me to log that as a win?", "What made it work?"],
   pain: ["Noted. What would make this less painful?", "Who could help, if anyone?"],
   challenge: ["What's the next move you're weighing?", "Solved, or still in the fight?"],
-  feedback: ["Who is this for, and what's the kindest-but-useful version?", "Want this shared as a summary or kept private?"],
+  feedback: [
+    "Who is this for, and what's the kindest-but-useful version?",
+    "Want this shared as a summary or kept private?",
+  ],
   freeform: ["Tell me more.", "Anything else tugging at you?"],
 };
 
@@ -345,15 +363,21 @@ export function replyTo(text: string, topic?: LogTopic): AgentReply {
     (/won|shipped|landed|great|nailed/i.test(text)
       ? "win"
       : /stuck|blocked|pain|tired|overwhelm/i.test(text)
-      ? "pain"
-      : /challenge|tough|hard|struggl/i.test(text)
-      ? "challenge"
-      : /feedback|thought|opinion/i.test(text)
-      ? "feedback"
-      : "status");
+        ? "pain"
+        : /challenge|tough|hard|struggl/i.test(text)
+          ? "challenge"
+          : /feedback|thought|opinion/i.test(text)
+            ? "feedback"
+            : "status");
   const probe = PROBES[guessed][Math.floor(Math.random() * PROBES[guessed].length)];
   const sentiment: LogSentiment =
-    guessed === "win" ? "positive" : guessed === "pain" ? "negative" : guessed === "challenge" ? "mixed" : "neutral";
+    guessed === "win"
+      ? "positive"
+      : guessed === "pain"
+        ? "negative"
+        : guessed === "challenge"
+          ? "mixed"
+          : "neutral";
   return { text: probe, topic: guessed, sentiment };
 }
 
@@ -390,9 +414,15 @@ export function summarizeForManager(msgs: LogMessage[]): string {
 
 export function healthFromMessages(msgs: LogMessage[]): number {
   if (msgs.length === 0) return 50;
-  const weights: Record<LogSentiment, number> = { positive: 12, neutral: 2, mixed: -2, negative: -10 };
+  const weights: Record<LogSentiment, number> = {
+    positive: 12,
+    neutral: 2,
+    mixed: -2,
+    negative: -10,
+  };
   const base = 60;
-  const delta = msgs.reduce((acc, m) => acc + (m.sentiment ? weights[m.sentiment] : 0), 0) / msgs.length;
+  const delta =
+    msgs.reduce((acc, m) => acc + (m.sentiment ? weights[m.sentiment] : 0), 0) / msgs.length;
   return Math.max(0, Math.min(100, Math.round(base + delta * 3)));
 }
 
@@ -428,6 +458,7 @@ Streaming cadence mirrors Copilot.tsx to keep the UX consistent."
 ## Task 3: Route scaffolds
 
 **Files:**
+
 - Create: `src/routes/log.tsx`
 - Create: `src/routes/log.$employeeId.tsx`
 
@@ -501,7 +532,11 @@ function LogEmployeeRoute() {
   if (!employee || !health) {
     return (
       <div className="p-6">
-        <Link to="/log" search={{ view: "team" }} className="text-sm text-muted-foreground inline-flex items-center gap-1">
+        <Link
+          to="/log"
+          search={{ view: "team" }}
+          className="text-sm text-muted-foreground inline-flex items-center gap-1"
+        >
           <ArrowLeft className="h-4 w-4" /> Back to team
         </Link>
         <p className="mt-6 text-muted-foreground">Report not found.</p>
@@ -518,7 +553,10 @@ function LogEmployeeRoute() {
       >
         <ArrowLeft className="h-4 w-4" /> Back to team
       </Link>
-      <PageHeader title={<span>{employee.name}</span>} subtitle="Summary only — raw log is private." />
+      <PageHeader
+        title={<span>{employee.name}</span>}
+        subtitle="Summary only — raw log is private."
+      />
       <EmployeeRecapCard employee={employee} health={health} asks={asks} sessions={sessions} />
     </div>
   );
@@ -529,20 +567,31 @@ function LogEmployeeRoute() {
 
 ```tsx
 // src/components/log/EmployeeLogView.tsx
-export function EmployeeLogView() { return <div className="p-6 text-muted-foreground">Employee log view — coming up in Task 7.</div>; }
+export function EmployeeLogView() {
+  return <div className="p-6 text-muted-foreground">Employee log view — coming up in Task 7.</div>;
+}
 ```
 
 ```tsx
 // src/components/log/ManagerLogView.tsx
-export function ManagerLogView() { return <div className="p-6 text-muted-foreground">Manager log view — coming up in Task 8.</div>; }
+export function ManagerLogView() {
+  return <div className="p-6 text-muted-foreground">Manager log view — coming up in Task 8.</div>;
+}
 ```
 
 ```tsx
 // src/components/log/EmployeeRecapCard.tsx
 import type { Employee, EmployeeLogHealth, ManagerAsk, LogSession } from "@/lib/mock-data";
 export function EmployeeRecapCard(_: {
-  employee: Employee; health: EmployeeLogHealth; asks: ManagerAsk[]; sessions: LogSession[];
-}) { return <div className="rounded-lg border p-4 text-muted-foreground">Recap — coming up in Task 9.</div>; }
+  employee: Employee;
+  health: EmployeeLogHealth;
+  asks: ManagerAsk[];
+  sessions: LogSession[];
+}) {
+  return (
+    <div className="rounded-lg border p-4 text-muted-foreground">Recap — coming up in Task 9.</div>
+  );
+}
 ```
 
 - [ ] **Step 3.4:** Run `bun run dev`. Navigate to `/log` and `/log/<any-employee-id>`. Expect: page header renders, stub text shows. No console errors.
@@ -562,6 +611,7 @@ Stub components keep the route tree compiling; views land in later tasks."
 ## Task 4: `LogSessionDivider` + `LogChatThread`
 
 **Files:**
+
 - Create: `src/components/log/LogSessionDivider.tsx`
 - Create: `src/components/log/LogChatThread.tsx`
 
@@ -611,7 +661,10 @@ export function LogChatThread({
             {items.map((m) => (
               <li
                 key={m.id}
-                className={cn("flex gap-2 fade-in", m.role === "employee" ? "justify-end" : "justify-start")}
+                className={cn(
+                  "flex gap-2 fade-in",
+                  m.role === "employee" ? "justify-end" : "justify-start",
+                )}
               >
                 {m.role === "agent" && (
                   <span className="h-7 w-7 shrink-0 rounded-full bg-primary/10 text-primary grid place-items-center">
@@ -621,7 +674,9 @@ export function LogChatThread({
                 <div
                   className={cn(
                     "max-w-[72ch] rounded-2xl px-3.5 py-2 text-sm leading-relaxed",
-                    m.role === "employee" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
+                    m.role === "employee"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-foreground",
                   )}
                 >
                   {streamingId === m.id && !m.text ? (
@@ -685,6 +740,7 @@ Reuses typing-dot + fade-in. Bubble styling mirrors the old Copilot
 ## Task 5: `LogComposer` with voice wiring
 
 **Files:**
+
 - Create: `src/components/log/LogComposer.tsx`
 
 - [ ] **Step 5.1:** Create the composer. It must: (a) send on Enter (Shift+Enter for newline), (b) mic button toggles `voiceBus` capture for source `"log"`, (c) auto-append transcripts via `voiceBus.on`. Model on `Copilot.tsx:295-333`.
@@ -696,7 +752,13 @@ import { Button } from "@/components/ui/button";
 import { voiceBus } from "@/lib/voice-bus";
 import { cn } from "@/lib/utils";
 
-export function LogComposer({ onSend, disabled }: { onSend: (text: string, voice: boolean) => void; disabled?: boolean }) {
+export function LogComposer({
+  onSend,
+  disabled,
+}: {
+  onSend: (text: string, voice: boolean) => void;
+  disabled?: boolean;
+}) {
   const [text, setText] = useState("");
   const [listening, setListening] = useState(false);
   const [fromVoice, setFromVoice] = useState(false);
@@ -750,12 +812,20 @@ export function LogComposer({ onSend, disabled }: { onSend: (text: string, voice
         >
           <Mic className={cn("h-4 w-4", listening && "animate-pulse")} />
         </Button>
-        <Button type="button" size="icon" onClick={submit} className="press-scale" disabled={disabled}>
+        <Button
+          type="button"
+          size="icon"
+          onClick={submit}
+          className="press-scale"
+          disabled={disabled}
+        >
           <Send className="h-4 w-4" />
         </Button>
       </div>
       {fromVoice && (
-        <p className="mt-1 text-[11px] text-muted-foreground">Voice draft — review, edit, then send.</p>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          Voice draft — review, edit, then send.
+        </p>
       )}
     </div>
   );
@@ -788,6 +858,7 @@ single capture surface."
 ## Task 6: `PinnedAskCard` + `QuickTopicChips`
 
 **Files:**
+
 - Create: `src/components/log/PinnedAskCard.tsx`
 - Create: `src/components/log/QuickTopicChips.tsx`
 
@@ -799,7 +870,11 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import type { ManagerAsk } from "@/lib/mock-data";
 
-export function PinnedAskCard({ ask, onAnswer, onLater }: {
+export function PinnedAskCard({
+  ask,
+  onAnswer,
+  onLater,
+}: {
   ask: ManagerAsk;
   onAnswer: (ask: ManagerAsk) => void;
   onLater: (ask: ManagerAsk) => void;
@@ -821,8 +896,12 @@ export function PinnedAskCard({ ask, onAnswer, onLater }: {
           </div>
         </div>
         <div className="flex items-center gap-2 pt-1">
-          <Button size="sm" onClick={() => onAnswer(ask)}>Answer now</Button>
-          <Button size="sm" variant="ghost" onClick={() => onLater(ask)}>Later</Button>
+          <Button size="sm" onClick={() => onAnswer(ask)}>
+            Answer now
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => onLater(ask)}>
+            Later
+          </Button>
         </div>
       </div>
     </div>
@@ -880,6 +959,7 @@ employees seed a topic without typing it out."
 ## Task 7: `EmployeeLogView` (full employee surface)
 
 **Files:**
+
 - Modify: `src/components/log/EmployeeLogView.tsx` (replaces stub)
 
 - [ ] **Step 7.1:** Replace the stub with the full view. It wires thread + composer + chips + pinned asks + a right rail with: current day recap, 14-day sparkline, open asks count. Seeds local state from mock data; CRUD in-memory.
@@ -906,8 +986,12 @@ import { PinnedAskCard } from "./PinnedAskCard";
 const ME_ID = employees[0].id; // demo: first employee is "me"
 
 export function EmployeeLogView() {
-  const [msgs, setMsgs] = useState<LogMessage[]>(() => seedMsgs.filter((m) => m.employeeId === ME_ID));
-  const [asks, setAsks] = useState<ManagerAsk[]>(() => seedAsks.filter((a) => a.employeeId === ME_ID && a.status === "pending"));
+  const [msgs, setMsgs] = useState<LogMessage[]>(() =>
+    seedMsgs.filter((m) => m.employeeId === ME_ID),
+  );
+  const [asks, setAsks] = useState<ManagerAsk[]>(() =>
+    seedAsks.filter((a) => a.employeeId === ME_ID && a.status === "pending"),
+  );
   const [streamingId, setStreamingId] = useState<string | undefined>();
   const [pendingTopic, setPendingTopic] = useState<LogTopic | undefined>();
 
@@ -915,14 +999,23 @@ export function EmployeeLogView() {
 
   const dailyOpener = useMemo(() => openerFor(new Date(), asks[0]), [asks]);
 
-  const hasOpenerForToday = msgs.some((m) => m.createdAt.slice(0, 10) === new Date().toISOString().slice(0, 10) && m.role === "agent");
+  const hasOpenerForToday = msgs.some(
+    (m) => m.createdAt.slice(0, 10) === new Date().toISOString().slice(0, 10) && m.role === "agent",
+  );
 
   useMemo(() => {
     if (!hasOpenerForToday) {
       const id = `lm-opener-${Date.now()}`;
       setMsgs((prev) => [
         ...prev,
-        { id, employeeId: ME_ID, role: "agent", text: dailyOpener, createdAt: new Date().toISOString(), topic: "freeform" },
+        {
+          id,
+          employeeId: ME_ID,
+          role: "agent",
+          text: dailyOpener,
+          createdAt: new Date().toISOString(),
+          topic: "freeform",
+        },
       ]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -960,7 +1053,9 @@ export function EmployeeLogView() {
 
   function handleAskAnswer(ask: ManagerAsk) {
     setPendingTopic("feedback");
-    toast("Composer seeded with the ask — add your answer.", { icon: <Sparkles className="h-4 w-4" /> });
+    toast("Composer seeded with the ask — add your answer.", {
+      icon: <Sparkles className="h-4 w-4" />,
+    });
   }
   function handleAskLater(ask: ManagerAsk) {
     setAsks((prev) => prev.filter((a) => a.id !== ask.id));
@@ -979,7 +1074,12 @@ export function EmployeeLogView() {
             asks.length > 0 ? (
               <div className="px-4 md:px-6 pt-2">
                 {asks.map((a) => (
-                  <PinnedAskCard key={a.id} ask={a} onAnswer={handleAskAnswer} onLater={handleAskLater} />
+                  <PinnedAskCard
+                    key={a.id}
+                    ask={a}
+                    onAnswer={handleAskAnswer}
+                    onLater={handleAskLater}
+                  />
                 ))}
               </div>
             ) : null
@@ -996,7 +1096,9 @@ export function EmployeeLogView() {
           <p className="mt-2 text-sm">{health?.recap ?? "Not enough data yet."}</p>
         </div>
         <div className="rounded-xl border bg-card p-4">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">14-day sentiment</div>
+          <div className="text-xs uppercase tracking-wide text-muted-foreground">
+            14-day sentiment
+          </div>
           <Sparkline values={health?.sparkline ?? []} />
         </div>
         <div className="rounded-xl border bg-card p-4 text-sm">
@@ -1011,10 +1113,14 @@ export function EmployeeLogView() {
 
 function Sparkline({ values }: { values: number[] }) {
   if (values.length === 0) return null;
-  const w = 260, h = 44, pad = 3;
+  const w = 260,
+    h = 44,
+    pad = 3;
   const xs = values.map((_, i) => pad + (i * (w - pad * 2)) / (values.length - 1));
-  const ys = values.map((v) => h / 2 - (v * (h / 2 - pad)));
-  const path = xs.map((x, i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(" ");
+  const ys = values.map((v) => h / 2 - v * (h / 2 - pad));
+  const path = xs
+    .map((x, i) => `${i === 0 ? "M" : "L"}${x.toFixed(1)},${ys[i].toFixed(1)}`)
+    .join(" ");
   return (
     <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-11 mt-2">
       <path d={path} fill="none" stroke="currentColor" strokeWidth="1.5" className="text-primary" />
@@ -1024,10 +1130,10 @@ function Sparkline({ values }: { values: number[] }) {
 ```
 
 - [ ] **Step 7.2:** Run `bun run dev`, go to `/log`. As a default theme, the view will detect `theme !== "manager"` and render the employee view. Confirm:
-   - Today's opener is appended at the bottom once.
-   - Sending a message appends user bubble + streaming agent bubble with typing dots.
-   - Pinned ask cards render if seeds provided one for `employees[0].id` (they don't by default — temporarily duplicate `ma-1`'s `employeeId` to `employees[0].id` in seeds to verify, then revert).
-   - Right rail renders recap + sparkline + open asks count.
+  - Today's opener is appended at the bottom once.
+  - Sending a message appends user bubble + streaming agent bubble with typing dots.
+  - Pinned ask cards render if seeds provided one for `employees[0].id` (they don't by default — temporarily duplicate `ma-1`'s `employeeId` to `employees[0].id` in seeds to verify, then revert).
+  - Right rail renders recap + sparkline + open asks count.
 
 - [ ] **Step 7.3:** Commit.
 
@@ -1045,6 +1151,7 @@ persistence, matching the repo's in-memory CRUD pattern."
 ## Task 8: `ManagerLogView` (team dashboard)
 
 **Files:**
+
 - Modify: `src/components/log/ManagerLogView.tsx` (replaces stub)
 
 - [ ] **Step 8.1:** Replace the stub. The dashboard is a responsive grid of report cards. Each card shows avatar + name + `EmployeeScoreBadge` + trend arrow + freshness chip + 1-line recap + `[Ask topic]` button. Reuse `EmployeeHoverCard`.
@@ -1119,11 +1226,7 @@ export function ManagerLogView() {
         ))}
       </div>
       {askFor && (
-        <AskTopicDialog
-          employeeId={askFor}
-          open
-          onOpenChange={(o) => !o && setAskFor(null)}
-        />
+        <AskTopicDialog employeeId={askFor} open onOpenChange={(o) => !o && setAskFor(null)} />
       )}
     </div>
   );
@@ -1151,7 +1254,11 @@ function TrendBadge({ trend }: { trend: EmployeeLogHealth["trend"] }) {
 
 ```tsx
 // src/components/log/AskTopicDialog.tsx — stub
-export function AskTopicDialog(_: { employeeId: string; open: boolean; onOpenChange: (o: boolean) => void }) {
+export function AskTopicDialog(_: {
+  employeeId: string;
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+}) {
   return null;
 }
 ```
@@ -1174,6 +1281,7 @@ only EmployeeLogHealth fields are read."
 ## Task 9: Drilldown + `EmployeeRecapCard` + `AskTopicDialog`
 
 **Files:**
+
 - Modify: `src/components/log/EmployeeRecapCard.tsx`
 - Modify: `src/components/log/AskTopicDialog.tsx`
 
@@ -1210,23 +1318,30 @@ export function EmployeeRecapCard({
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <span className="text-xs uppercase tracking-wide text-muted-foreground">AI recap</span>
+                <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                  AI recap
+                </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
-                  <Lock className="h-3 w-3" /> Summary only — raw log stays with {employee.name.split(" ")[0]}
+                  <Lock className="h-3 w-3" /> Summary only — raw log stays with{" "}
+                  {employee.name.split(" ")[0]}
                 </span>
               </div>
               <p className="mt-2 text-base leading-relaxed">{health.recap}</p>
               <p className="mt-2 text-sm text-muted-foreground">{summarizeForManager([])}</p>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {topics.map((t) => (
-                  <span key={t} className="rounded-full border bg-background px-2 py-0.5 text-[11px] uppercase tracking-wide">
+                  <span
+                    key={t}
+                    className="rounded-full border bg-background px-2 py-0.5 text-[11px] uppercase tracking-wide"
+                  >
                     {t}
                   </span>
                 ))}
               </div>
               {health.lastLogAt && (
                 <p className="mt-3 text-[11px] text-muted-foreground">
-                  Last log {formatDistanceToNow(new Date(health.lastLogAt), { addSuffix: true })} · recap refreshed{" "}
+                  Last log {formatDistanceToNow(new Date(health.lastLogAt), { addSuffix: true })} ·
+                  recap refreshed{" "}
                   {formatDistanceToNow(new Date(health.recapUpdatedAt), { addSuffix: true })}
                 </p>
               )}
@@ -1284,11 +1399,23 @@ Dialog:
 ```tsx
 import { useState } from "react";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { employees, type ManagerAsk } from "@/lib/mock-data";
 
@@ -1325,7 +1452,10 @@ export function AskTopicDialog({
     onCreate?.(ask);
     toast.success(`Sent to ${employee?.name.split(" ")[0] ?? "report"}`);
     onOpenChange(false);
-    setTopic(""); setPrompt(""); setDueAt(""); setTone("neutral");
+    setTopic("");
+    setPrompt("");
+    setDueAt("");
+    setTone("neutral");
   }
 
   return (
@@ -1337,7 +1467,11 @@ export function AskTopicDialog({
         <div className="space-y-3">
           <div className="space-y-1.5">
             <Label>Topic</Label>
-            <Input placeholder="Feedback on ACME demo" value={topic} onChange={(e) => setTopic(e.target.value)} />
+            <Input
+              placeholder="Feedback on ACME demo"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+            />
           </div>
           <div className="space-y-1.5">
             <Label>Prompt</Label>
@@ -1356,7 +1490,9 @@ export function AskTopicDialog({
             <div className="space-y-1.5">
               <Label>Tone</Label>
               <Select value={tone} onValueChange={(v) => setTone(v as ManagerAsk["tone"])}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="neutral">Neutral</SelectItem>
                   <SelectItem value="empathetic">Empathetic</SelectItem>
@@ -1367,7 +1503,9 @@ export function AskTopicDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
           <Button onClick={submit}>Send</Button>
         </DialogFooter>
       </DialogContent>
@@ -1395,6 +1533,7 @@ LogMessage. Dialog creates a ManagerAsk that the grid picks up."
 ## Task 10: `LogOverlay` (⌘J)
 
 **Files:**
+
 - Create: `src/components/app/LogOverlay.tsx`
 
 - [ ] **Step 10.1:** The overlay reuses `LogChatThread` + `LogComposer` inside a right-anchored sheet (mirroring the current Copilot overlay geometry from `Copilot.tsx:53-489`). "Open full log" navigates to `/log`.
@@ -1412,9 +1551,17 @@ import { cn } from "@/lib/utils";
 
 const ME_ID = employees[0].id;
 
-export function LogOverlay({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
+export function LogOverlay({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+}) {
   const nav = useNavigate();
-  const [msgs, setMsgs] = useState<LogMessage[]>(() => seedMsgs.filter((m) => m.employeeId === ME_ID).slice(-8));
+  const [msgs, setMsgs] = useState<LogMessage[]>(() =>
+    seedMsgs.filter((m) => m.employeeId === ME_ID).slice(-8),
+  );
   const [streamingId, setStreamingId] = useState<string | undefined>();
 
   function send(text: string, voice: boolean) {
@@ -1423,8 +1570,23 @@ export function LogOverlay({ open, onOpenChange }: { open: boolean; onOpenChange
     const reply = replyTo(text);
     setMsgs((prev) => [
       ...prev,
-      { id: userId, employeeId: ME_ID, role: "employee", text, createdAt: new Date().toISOString(), voice },
-      { id: agentId, employeeId: ME_ID, role: "agent", text: "", createdAt: new Date().toISOString(), topic: reply.topic, sentiment: reply.sentiment },
+      {
+        id: userId,
+        employeeId: ME_ID,
+        role: "employee",
+        text,
+        createdAt: new Date().toISOString(),
+        voice,
+      },
+      {
+        id: agentId,
+        employeeId: ME_ID,
+        role: "agent",
+        text: "",
+        createdAt: new Date().toISOString(),
+        topic: reply.topic,
+        sentiment: reply.sentiment,
+      },
     ]);
     setStreamingId(agentId);
     streamReply(reply.text, (soFar, done) => {
@@ -1441,7 +1603,10 @@ export function LogOverlay({ open, onOpenChange }: { open: boolean; onOpenChange
       )}
       aria-hidden={!open}
     >
-      <div className="absolute inset-0 bg-background/40 backdrop-blur-sm" onClick={() => onOpenChange(false)} />
+      <div
+        className="absolute inset-0 bg-background/40 backdrop-blur-sm"
+        onClick={() => onOpenChange(false)}
+      />
       <aside className="absolute right-0 top-0 h-full w-full sm:w-[420px] bg-background border-l shadow-2xl flex flex-col">
         <header className="flex items-center justify-between px-4 h-12 border-b">
           <span className="text-sm font-medium">Status Log</span>
@@ -1457,7 +1622,12 @@ export function LogOverlay({ open, onOpenChange }: { open: boolean; onOpenChange
             >
               <Maximize2 className="h-4 w-4" />
             </Button>
-            <Button size="icon" variant="ghost" onClick={() => onOpenChange(false)} aria-label="Close">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+              aria-label="Close"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -1485,6 +1655,7 @@ Reuses LogChatThread + LogComposer so the mini-surface and the full
 ## Task 11: Sidebar + ⌘J wiring in `AppShell`
 
 **Files:**
+
 - Modify: `src/components/app/AppShell.tsx`
 
 - [ ] **Step 11.1:** In the `groups` array (`AppShell.tsx:78-141`):
@@ -1499,8 +1670,8 @@ Reuses LogChatThread + LogComposer so the mini-surface and the full
 },
 ```
 
-  - Remove the `{ to: "/pulse", label: "Team Pulse", … }` entry from the Labs group.
-  - Add `MessagesSquare` to the existing lucide import block.
+- Remove the `{ to: "/pulse", label: "Team Pulse", … }` entry from the Labs group.
+- Add `MessagesSquare` to the existing lucide import block.
 
 - [ ] **Step 11.2:** Replace the `Copilot` imports and usage:
   - Remove: `import { CopilotLauncher, CopilotOverlay } from "./Copilot";`
@@ -1518,8 +1689,10 @@ import { Sparkles } from "lucide-react";
   <Sparkles className="h-4 w-4 text-primary" />
   <span className="font-medium">Status Log</span>
   <NewBadge />
-  <kbd className="hidden md:inline-flex h-5 px-1.5 items-center rounded border bg-muted text-[10px] font-mono">⌘J</kbd>
-</button>
+  <kbd className="hidden md:inline-flex h-5 px-1.5 items-center rounded border bg-muted text-[10px] font-mono">
+    ⌘J
+  </kbd>
+</button>;
 ```
 
 - [ ] **Step 11.3:** Confirm the ⌘J handler at `AppShell.tsx:174-177` still toggles `setCopilotOpen` — no change needed; the state variable is reused to drive `LogOverlay`.
@@ -1529,7 +1702,8 @@ import { Sparkles } from "lucide-react";
 ```tsx
 useEffect(() => {
   return voiceBus.on((ev) => {
-    if (ev.kind === "draftPrompt" && (ev.source === "log" || ev.source === "copilot")) setCopilotOpen(true);
+    if (ev.kind === "draftPrompt" && (ev.source === "log" || ev.source === "copilot"))
+      setCopilotOpen(true);
   });
 }, []);
 ```
@@ -1555,19 +1729,38 @@ and the topbar chip open LogOverlay (same state variable)."
 ## Task 12: Freshness factor in `score.ts`
 
 **Files:**
+
 - Modify: `src/lib/score.ts`
 
 - [ ] **Step 12.1:** Open `src/lib/score.ts`. Current factors (per exploration): delivery 25 / utilization 20 / value 20 / recognition 15 / focus 10 / billable 10. Keep the default behavior intact, but add an **optional** `logFreshness` input that, when provided, rebalances by shaving 5 points off `focus` and 5 off `billable` and giving 10 to `logFreshness`. Gate behind an option flag to stay non-breaking.
 
 ```ts
 // in computeEmployeeScore(...) (or whatever the existing export is named)
-export interface ScoreOptions { includeLogFreshness?: boolean }
+export interface ScoreOptions {
+  includeLogFreshness?: boolean;
+}
 // extend the signature with `opts?: ScoreOptions` and the input with `logFreshness?: number` (0..100)
 
 // inside the function, right before the final weighted sum:
 const weights = opts?.includeLogFreshness
-  ? { delivery: 25, utilization: 20, value: 20, recognition: 15, focus: 5, billable: 5, logFreshness: 10 }
-  : { delivery: 25, utilization: 20, value: 20, recognition: 15, focus: 10, billable: 10, logFreshness: 0 };
+  ? {
+      delivery: 25,
+      utilization: 20,
+      value: 20,
+      recognition: 15,
+      focus: 5,
+      billable: 5,
+      logFreshness: 10,
+    }
+  : {
+      delivery: 25,
+      utilization: 20,
+      value: 20,
+      recognition: 15,
+      focus: 10,
+      billable: 10,
+      logFreshness: 0,
+    };
 ```
 
 Update the weighted sum to include `logFreshness` when the flag is on. Leave every existing call site unchanged (they won't pass `opts`).
@@ -1589,6 +1782,7 @@ want log freshness in the mix pass { includeLogFreshness: true }."
 ## Task 13: Remove old Pulse route + Copilot
 
 **Files:**
+
 - Delete: `src/routes/pulse.tsx`
 - Delete: `src/components/app/Copilot.tsx`
 - Auto-regenerate: `src/routeTree.gen.ts`
@@ -1626,18 +1820,21 @@ automatically."
 ## Task 14: Polish pass
 
 **Files:**
+
 - Touch: `src/components/log/*`
 
 - [ ] **Step 14.1:** **Skeletons.** In `src/routes/log.tsx`, replace the null state before `ready` with skeletons that match the final layout:
 
 ```tsx
-{!ready && (
-  <div className="p-4 md:p-6 space-y-3">
-    {Array.from({ length: 4 }).map((_, i) => (
-      <div key={i} className="h-14 rounded-lg bg-muted animate-pulse" />
-    ))}
-  </div>
-)}
+{
+  !ready && (
+    <div className="p-4 md:p-6 space-y-3">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="h-14 rounded-lg bg-muted animate-pulse" />
+      ))}
+    </div>
+  );
+}
 ```
 
 - [ ] **Step 14.2:** **Empty states.** In `EmployeeLogView`, if `msgs.length === 0` after filtering, show a centered `fade-in` card with the daily opener inline and a "Start logging" CTA that focuses the composer.
@@ -1675,15 +1872,15 @@ Wires the feature into the repo's visual language end-to-end."
 
 - [ ] **Step 15.3:** Run `bun run dev` and walk the full matrix:
 
-| Theme | Route | Expect |
-|---|---|---|
-| employee | `/log` | Chat thread, composer, chips, right rail |
-| employee | ⌘J | Overlay opens, sends, streams |
-| manager | `/log` | Team grid, score rings, "Ask topic" |
-| manager | `/log/$employeeId` | Recap card, no raw messages |
-| manager | after ask | Toast fires, pending ask count +1 |
-| employee | after ask | Pinned ask renders inline |
-| any | `/pulse` | 404 (route removed) |
+| Theme    | Route              | Expect                                   |
+| -------- | ------------------ | ---------------------------------------- |
+| employee | `/log`             | Chat thread, composer, chips, right rail |
+| employee | ⌘J                 | Overlay opens, sends, streams            |
+| manager  | `/log`             | Team grid, score rings, "Ask topic"      |
+| manager  | `/log/$employeeId` | Recap card, no raw messages              |
+| manager  | after ask          | Toast fires, pending ask count +1        |
+| employee | after ask          | Pinned ask renders inline                |
+| any      | `/pulse`           | 404 (route removed)                      |
 
 - [ ] **Step 15.4:** DOM privacy check: in the manager view, open devtools → Elements → search for a known raw message substring (e.g. "Shipped the pricing page"). Expected: zero matches.
 

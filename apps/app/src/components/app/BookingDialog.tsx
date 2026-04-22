@@ -1,23 +1,47 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
-  CalendarDays, Clock, Users as UsersIcon, AlertTriangle, CheckCircle2,
-  Building2, DoorOpen, Armchair, Wand2,
+  CalendarDays,
+  Clock,
+  Users as UsersIcon,
+  AlertTriangle,
+  CheckCircle2,
+  Building2,
+  DoorOpen,
+  Armchair,
+  Wand2,
 } from "lucide-react";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { useBookings } from "@/components/app/BookingsContext";
 import { RoomAmenities, SeatFeatures } from "@/components/app/AmenityIcons";
 import {
-  offices, officeById, roomsByOffice, roomById, seatsByOffice, seatById,
-  closureFor, officeLocalDate, minutesBetween, type Booking,
+  offices,
+  officeById,
+  roomsByOffice,
+  roomById,
+  seatsByOffice,
+  seatById,
+  closureFor,
+  officeLocalDate,
+  minutesBetween,
+  type Booking,
 } from "@/lib/offices";
 import { employees, employeeById } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -72,8 +96,8 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
     setResourceId(
       prefill?.resourceId ??
         (prefill?.resourceKind === "seat"
-          ? seatsByOffice(o)[0]?.id ?? ""
-          : roomsByOffice(o)[0]?.id ?? ""),
+          ? (seatsByOffice(o)[0]?.id ?? "")
+          : (roomsByOffice(o)[0]?.id ?? "")),
     );
     setDate(prefill?.date ?? officeLocalDate(officeById(o)!));
     setStartTime(prefill?.startTime ?? "09:00");
@@ -88,10 +112,12 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
     if (!open) return;
     if (kind === "room") {
       const first = roomsByOffice(officeId)[0];
-      if (first && !roomsByOffice(officeId).some(r => r.id === resourceId)) setResourceId(first.id);
+      if (first && !roomsByOffice(officeId).some((r) => r.id === resourceId))
+        setResourceId(first.id);
     } else {
       const first = seatsByOffice(officeId)[0];
-      if (first && !seatsByOffice(officeId).some(s => s.id === resourceId)) setResourceId(first.id);
+      if (first && !seatsByOffice(officeId).some((s) => s.id === resourceId))
+        setResourceId(first.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [officeId, kind, open]);
@@ -117,8 +143,7 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
 
   const duration = minutesBetween(startTime, endTime);
   const invalidRange = duration <= 0;
-  const canSubmit =
-    !!resourceId && !!office && !invalidRange && !closure && !conflict;
+  const canSubmit = !!resourceId && !!office && !invalidRange && !closure && !conflict;
 
   const submit = () => {
     if (!canSubmit || !office) return;
@@ -130,14 +155,13 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
       date,
       startTime,
       endTime,
-      title: title.trim() || (kind === "room" ? `Meeting · ${office.city}` : `Desk · ${office.city}`),
+      title:
+        title.trim() || (kind === "room" ? `Meeting · ${office.city}` : `Desk · ${office.city}`),
       attendees,
       status: "confirmed",
     });
     const resourceName =
-      kind === "room"
-        ? `${office.name} · ${room?.name}`
-        : `${office.name} · seat ${seat?.label}`;
+      kind === "room" ? `${office.name} · ${room?.name}` : `${office.name} · seat ${seat?.label}`;
     toast.success("Booked", {
       description: `${resourceName} · ${date} · ${booking.startTime}–${booking.endTime}`,
       icon: <CheckCircle2 className="h-4 w-4" />,
@@ -165,7 +189,9 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
             <div className="col-span-2 space-y-1.5">
               <Label className="text-[11px] uppercase tracking-wider">Office</Label>
               <Select value={officeId} onValueChange={setOfficeId}>
-                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {offices.map((o) => (
                     <SelectItem key={o.id} value={o.id}>
@@ -212,15 +238,22 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
                 {kind === "room" ? "Room" : "Seat"}
               </Label>
               <Select value={resourceId} onValueChange={setResourceId}>
-                <SelectTrigger className="h-9"><SelectValue placeholder="Select…" /></SelectTrigger>
+                <SelectTrigger className="h-9">
+                  <SelectValue placeholder="Select…" />
+                </SelectTrigger>
                 <SelectContent>
                   {kind === "room"
                     ? roomsByOffice(officeId).map((r) => (
                         <SelectItem key={r.id} value={r.id}>
                           <span className="inline-flex items-center gap-2 min-w-0">
-                            <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: r.color }} />
+                            <span
+                              className="h-2 w-2 rounded-full shrink-0"
+                              style={{ backgroundColor: r.color }}
+                            />
                             <span className="truncate">{r.name}</span>
-                            <span className="text-[10px] text-muted-foreground shrink-0">· cap {r.capacity}</span>
+                            <span className="text-[10px] text-muted-foreground shrink-0">
+                              · cap {r.capacity}
+                            </span>
                             <RoomAmenities room={r} size="xs" className="ml-1" />
                           </span>
                         </SelectItem>
@@ -229,7 +262,9 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
                         <SelectItem key={s.id} value={s.id}>
                           <span className="inline-flex items-center gap-2 min-w-0">
                             <span className="font-mono text-[11px] shrink-0">{s.label}</span>
-                            <span className="text-[10px] text-muted-foreground shrink-0">· zone {s.zone}</span>
+                            <span className="text-[10px] text-muted-foreground shrink-0">
+                              · zone {s.zone}
+                            </span>
                             <SeatFeatures seat={s} size="xs" className="ml-1" />
                           </span>
                         </SelectItem>
@@ -242,7 +277,12 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
               <Label className="text-[11px] uppercase tracking-wider">Date</Label>
               <div className="relative">
                 <CalendarDays className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="pl-8 h-9" />
+                <Input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="pl-8 h-9"
+                />
               </div>
             </div>
             <div className="space-y-1.5">
@@ -255,18 +295,32 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
             <div className="space-y-1.5">
               <Label className="text-[11px] uppercase tracking-wider">Start</Label>
               <Select value={startTime} onValueChange={setStartTime}>
-                <SelectTrigger className="h-9"><Clock className="h-3.5 w-3.5 mr-1" /><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-9">
+                  <Clock className="h-3.5 w-3.5 mr-1" />
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {HALF_HOURS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                  {HALF_HOURS.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
               <Label className="text-[11px] uppercase tracking-wider">End</Label>
               <Select value={endTime} onValueChange={setEndTime}>
-                <SelectTrigger className="h-9"><Clock className="h-3.5 w-3.5 mr-1" /><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-9">
+                  <Clock className="h-3.5 w-3.5 mr-1" />
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {HALF_HOURS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                  {HALF_HOURS.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -302,9 +356,7 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
                         }
                         className={cn(
                           "inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border press-scale",
-                          checked
-                            ? "border-primary bg-primary/5 text-primary"
-                            : "hover:bg-muted",
+                          checked ? "border-primary bg-primary/5 text-primary" : "hover:bg-muted",
                         )}
                       >
                         <span
@@ -326,7 +378,10 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
                 <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0 mt-0.5" />
                 <div>
                   <div className="font-semibold text-destructive">Closed — {closure.kind}</div>
-                  <div className="text-muted-foreground">{closure.title}{closure.note ? ` · ${closure.note}` : ""}</div>
+                  <div className="text-muted-foreground">
+                    {closure.title}
+                    {closure.note ? ` · ${closure.note}` : ""}
+                  </div>
                 </div>
               </div>
             )}
@@ -335,9 +390,12 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
               <div className="col-span-2 rounded-md border border-destructive/30 bg-destructive/5 p-2.5 text-[11px] flex items-start gap-2">
                 <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-semibold text-destructive">Conflicts with “{conflict.title ?? "existing booking"}”</div>
+                  <div className="font-semibold text-destructive">
+                    Conflicts with “{conflict.title ?? "existing booking"}”
+                  </div>
                   <div className="text-muted-foreground">
-                    {employeeById(conflict.userId)?.name.split(" ")[0] ?? "Someone"} · {conflict.startTime}–{conflict.endTime}
+                    {employeeById(conflict.userId)?.name.split(" ")[0] ?? "Someone"} ·{" "}
+                    {conflict.startTime}–{conflict.endTime}
                   </div>
                 </div>
               </div>
@@ -360,7 +418,9 @@ export function BookingDialog({ open, onClose, prefill }: Props) {
           </div>
 
           <DialogFooter className="mt-5">
-            <Button variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
             <Button onClick={submit} disabled={!canSubmit}>
               {kind === "room" ? "Book room" : "Book seat"}
             </Button>

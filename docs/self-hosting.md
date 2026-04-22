@@ -48,13 +48,13 @@ Terraform modules for AWS + GCP are in `deploy/terraform/` (coming soon).
 
 ## Required infrastructure
 
-| Component       | Purpose                                | Required? |
-| --------------- | -------------------------------------- | --------- |
-| PostgreSQL 15+  | API primary store                      | ✅        |
-| Redis 7+        | rate limiting, queues                  | optional  |
-| SMTP / Resend   | transactional email                    | ✅ (prod) |
-| S3-compatible   | document uploads                       | optional  |
-| OIDC provider   | SSO                                    | optional  |
+| Component      | Purpose               | Required? |
+| -------------- | --------------------- | --------- |
+| PostgreSQL 15+ | API primary store     | ✅        |
+| Redis 7+       | rate limiting, queues | optional  |
+| SMTP / Resend  | transactional email   | ✅ (prod) |
+| S3-compatible  | document uploads      | optional  |
+| OIDC provider  | SSO                   | optional  |
 
 ## Environment variables
 

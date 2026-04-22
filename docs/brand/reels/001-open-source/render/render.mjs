@@ -26,7 +26,7 @@ const OUT_FILE = path.join(OUT_DIR, "reel-001-open-source.mp4");
 // ── Config ──────────────────────────────────────────────────────────────────
 const WIDTH = 1080;
 const HEIGHT = 1920;
-const DURATION = 15.0;   // seconds
+const DURATION = 15.0; // seconds
 const FPS = 30;
 const TOTAL_FRAMES = Math.round(DURATION * FPS);
 
@@ -118,10 +118,10 @@ async function main() {
   const started = Date.now();
 
   for (let i = 0; i < TOTAL_FRAMES; i++) {
-    const t = (i / FPS);
+    const t = i / FPS;
     await page.evaluate((t) => window.__setTime(t), t);
     // One extra tick for React to render synchronously-ish
-    await page.evaluate(() => new Promise(r => requestAnimationFrame(r)));
+    await page.evaluate(() => new Promise((r) => requestAnimationFrame(r)));
     const out = path.join(FRAMES_DIR, `frame-${String(i).padStart(5, "0")}.png`);
     await page.screenshot({
       path: out,
@@ -131,7 +131,9 @@ async function main() {
     });
     if (i % 30 === 0 || i === TOTAL_FRAMES - 1) {
       const elapsed = ((Date.now() - started) / 1000).toFixed(1);
-      console.log(`[render] frame ${i + 1}/${TOTAL_FRAMES} (t=${t.toFixed(2)}s) · ${elapsed}s elapsed`);
+      console.log(
+        `[render] frame ${i + 1}/${TOTAL_FRAMES} (t=${t.toFixed(2)}s) · ${elapsed}s elapsed`,
+      );
     }
   }
 
@@ -144,19 +146,29 @@ async function main() {
     "ffmpeg",
     [
       "-y",
-      "-framerate", String(FPS),
-      "-i", path.join(FRAMES_DIR, "frame-%05d.png"),
-      "-c:v", "libx264",
-      "-pix_fmt", "yuv420p",
-      "-preset", "slow",
-      "-crf", "18",
-      "-movflags", "+faststart",
-      "-profile:v", "high",
-      "-level", "4.1",
-      "-r", String(FPS),
+      "-framerate",
+      String(FPS),
+      "-i",
+      path.join(FRAMES_DIR, "frame-%05d.png"),
+      "-c:v",
+      "libx264",
+      "-pix_fmt",
+      "yuv420p",
+      "-preset",
+      "slow",
+      "-crf",
+      "18",
+      "-movflags",
+      "+faststart",
+      "-profile:v",
+      "high",
+      "-level",
+      "4.1",
+      "-r",
+      String(FPS),
       OUT_FILE,
     ],
-    { stdio: "inherit" }
+    { stdio: "inherit" },
   );
 
   if (ff.status !== 0) {
@@ -165,7 +177,9 @@ async function main() {
   }
 
   const stat = fs.statSync(OUT_FILE);
-  console.log(`[done] ${OUT_FILE} (${(stat.size / 1e6).toFixed(2)} MB, ${DURATION}s, ${FPS}fps, ${WIDTH}×${HEIGHT})`);
+  console.log(
+    `[done] ${OUT_FILE} (${(stat.size / 1e6).toFixed(2)} MB, ${DURATION}s, ${FPS}fps, ${WIDTH}×${HEIGHT})`,
+  );
 }
 
 main().catch((err) => {

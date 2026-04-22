@@ -29,10 +29,10 @@ export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
     else setQ("");
   }, [open]);
 
-  const active = commesse.filter(c => c.status !== "closed");
+  const active = commesse.filter((c) => c.status !== "closed");
   const matches = q
     ? active.filter(
-        c =>
+        (c) =>
           c.code.toLowerCase().includes(q.toLowerCase()) ||
           c.name.toLowerCase().includes(q.toLowerCase()) ||
           c.client.toLowerCase().includes(q.toLowerCase()),
@@ -85,10 +85,10 @@ export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
             <Input
               ref={inputRef}
               value={q}
-              onChange={e => setQ(e.target.value)}
+              onChange={(e) => setQ(e.target.value)}
               placeholder="Search code, name or client"
               className="pl-7 h-8 text-xs"
-              onKeyDown={e => {
+              onKeyDown={(e) => {
                 if (e.key === "Enter" && matches[0]) pick(matches[0].id);
                 if (e.key === "Escape") setOpen(false);
               }}
@@ -118,7 +118,9 @@ export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
                     <div className="flex items-center gap-1.5">
                       <span className="font-mono text-[10px] text-muted-foreground">{c.code}</span>
                       {c.status === "on_hold" && (
-                        <span className="text-[9px] uppercase tracking-wider text-warning font-medium">on hold</span>
+                        <span className="text-[9px] uppercase tracking-wider text-warning font-medium">
+                          on hold
+                        </span>
                       )}
                     </div>
                     <div className="text-xs font-medium truncate">{c.name}</div>
@@ -126,7 +128,8 @@ export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
                   </div>
                   {i < 5 && (
                     <kbd className="hidden md:inline-flex text-[9px] font-mono border rounded px-1 py-0.5 bg-background text-muted-foreground">
-                      <Command className="h-2.5 w-2.5 mr-0.5" />{i + 1}
+                      <Command className="h-2.5 w-2.5 mr-0.5" />
+                      {i + 1}
                     </kbd>
                   )}
                   {isActive && <Check className="h-3.5 w-3.5 text-primary" />}

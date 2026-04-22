@@ -62,9 +62,7 @@ notifications.post(
       await db
         .update(schema.notifications)
         .set({ readAt: now })
-        .where(
-          and(eq(schema.notifications.userId, user.id), isNull(schema.notifications.readAt)),
-        );
+        .where(and(eq(schema.notifications.userId, user.id), isNull(schema.notifications.readAt)));
     } else {
       await db
         .update(schema.notifications)

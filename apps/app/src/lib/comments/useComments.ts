@@ -62,36 +62,33 @@ export function useComments(route: string, userId: string | null) {
     };
   }, [route, userId]);
 
-  const addComment = useCallback(
-    async (input: NewCommentInput, author: Author) => {
-      const optimistic: Comment = {
-        id: `opt-${crypto.randomUUID()}`,
-        route: input.route,
-        anchor: input.anchor,
-        pageMeta: input.pageMeta,
-        body: input.body,
-        author,
-        status: "open",
-        tags: input.tags ?? [],
-        screenshotUrl: input.screenshotUrl ?? null,
-        voteScore: 0,
-        myVote: 0,
-        replies: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      setComments((prev) => [optimistic, ...prev]);
-      try {
-        const created = await api.createComment(input);
-        setComments((prev) => prev.map((c) => (c.id === optimistic.id ? created : c)));
-        return created;
-      } catch (err) {
-        setComments((prev) => prev.filter((c) => c.id !== optimistic.id));
-        throw err;
-      }
-    },
-    [],
-  );
+  const addComment = useCallback(async (input: NewCommentInput, author: Author) => {
+    const optimistic: Comment = {
+      id: `opt-${crypto.randomUUID()}`,
+      route: input.route,
+      anchor: input.anchor,
+      pageMeta: input.pageMeta,
+      body: input.body,
+      author,
+      status: "open",
+      tags: input.tags ?? [],
+      screenshotUrl: input.screenshotUrl ?? null,
+      voteScore: 0,
+      myVote: 0,
+      replies: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    setComments((prev) => [optimistic, ...prev]);
+    try {
+      const created = await api.createComment(input);
+      setComments((prev) => prev.map((c) => (c.id === optimistic.id ? created : c)));
+      return created;
+    } catch (err) {
+      setComments((prev) => prev.filter((c) => c.id !== optimistic.id));
+      throw err;
+    }
+  }, []);
 
   const addReply = useCallback(async (commentId: string, body: string) => {
     const reply = await api.createReply(commentId, body);

@@ -48,10 +48,7 @@ export function EmployeeHoverCard({
         <div className="flex items-start gap-3">
           <Bubble initials={emp.initials} color={emp.avatarColor} size={44} />
           <div className="flex-1 min-w-0">
-            <Link
-              to="/profile"
-              className="font-semibold text-sm hover:underline truncate block"
-            >
+            <Link to="/profile" className="font-semibold text-sm hover:underline truncate block">
               {emp.name}
             </Link>
             <div className="text-xs text-muted-foreground truncate">{emp.role}</div>

@@ -20,9 +20,13 @@ const MAX_OFFSET = 160;
  * Falls back silently on non-touch devices (still renders children).
  */
 export function SwipeRow({
-  children, onApprove, onReject,
-  approveLabel = "Approve", rejectLabel = "Reject",
-  disabled, className,
+  children,
+  onApprove,
+  onReject,
+  approveLabel = "Approve",
+  rejectLabel = "Reject",
+  disabled,
+  className,
 }: Props) {
   const [dx, setDx] = useState(0);
   const [animating, setAnimating] = useState(false);
@@ -46,10 +50,16 @@ export function SwipeRow({
       setAnimating(true);
       if (dx > THRESHOLD && onApprove) {
         setDx(MAX_OFFSET);
-        setTimeout(() => { onApprove(); setDx(0); }, 180);
+        setTimeout(() => {
+          onApprove();
+          setDx(0);
+        }, 180);
       } else if (dx < -THRESHOLD && onReject) {
         setDx(-MAX_OFFSET);
-        setTimeout(() => { onReject(); setDx(0); }, 180);
+        setTimeout(() => {
+          onReject();
+          setDx(0);
+        }, 180);
       } else {
         setDx(0);
       }

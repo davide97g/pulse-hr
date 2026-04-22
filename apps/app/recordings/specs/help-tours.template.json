@@ -40,7 +40,12 @@
       { "action": "zoom", "scale": 1, "duration": 80 },
       { "action": "wait", "ms": 200 },
 
-      { "action": "zoom", "selector": "button:has-text('Hire faster')", "scale": 2, "duration": 180 },
+      {
+        "action": "zoom",
+        "selector": "button:has-text('Hire faster')",
+        "scale": 2,
+        "duration": 180
+      },
       { "action": "click", "selector": "button:has-text('Hire faster')" },
       { "action": "wait", "ms": 120 },
       {
@@ -120,7 +125,12 @@
     { "action": "wait", "ms": 420 },
     { "action": "screenshot", "name": "02-tour-intro-welcome", "pauseAfter": 80 },
 
-    { "action": "zoom", "selector": "[role=dialog] button:has-text('Next')", "scale": 1.85, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "scale": 1.85,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "[role=dialog] button:has-text('Next')",
@@ -130,7 +140,12 @@
     { "action": "wait", "ms": 520 },
     { "action": "screenshot", "name": "03-tour-sidebar-nav", "pauseAfter": 80 },
 
-    { "action": "zoom", "selector": "[role=dialog] button:has-text('Next')", "scale": 1.85, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "scale": 1.85,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "[role=dialog] button:has-text('Next')",
@@ -140,7 +155,12 @@
     { "action": "wait", "ms": 440 },
     { "action": "screenshot", "name": "04-tour-global-search", "pauseAfter": 80 },
 
-    { "action": "zoom", "selector": "[role=dialog] button:has-text('Next')", "scale": 1.85, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "scale": 1.85,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "[role=dialog] button:has-text('Next')",
@@ -150,7 +170,12 @@
     { "action": "wait", "ms": 360 },
     { "action": "screenshot", "name": "05-tour-status-log", "pauseAfter": 80 },
 
-    { "action": "zoom", "selector": "[role=dialog] button:has-text('Next')", "scale": 1.85, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "scale": 1.85,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "[role=dialog] button:has-text('Next')",
@@ -160,7 +185,12 @@
     { "action": "wait", "ms": 300 },
     { "action": "screenshot", "name": "06-tour-quick-actions", "pauseAfter": 80 },
 
-    { "action": "zoom", "selector": "[role=dialog] button:has-text('Next')", "scale": 1.85, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "scale": 1.85,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "[role=dialog] button:has-text('Next')",
@@ -170,7 +200,12 @@
     { "action": "wait", "ms": 240 },
     { "action": "screenshot", "name": "07-tour-notifications", "pauseAfter": 80 },
 
-    { "action": "zoom", "selector": "[role=dialog] button:has-text('Next')", "scale": 1.85, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "scale": 1.85,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "[role=dialog] button:has-text('Next')",
@@ -180,7 +215,12 @@
     { "action": "wait", "ms": 200 },
     { "action": "screenshot", "name": "08-tour-youre-set", "pauseAfter": 80 },
 
-    { "action": "zoom", "selector": "[role=dialog] button:has-text('Finish')", "scale": 1.85, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "[role=dialog] button:has-text('Finish')",
+      "scale": 1.85,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "[role=dialog] button:has-text('Finish')",

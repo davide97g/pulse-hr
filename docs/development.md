@@ -32,20 +32,20 @@ Open <http://localhost:5173>.
 
 ## Scripts reference
 
-| Script                   | What it does                              |
-| ------------------------ | ----------------------------------------- |
-| `bun run dev`            | app (5173) + api together                 |
-| `bun run dev:app`        | app only                                  |
-| `bun run dev:api`        | api only                                  |
-| `bun run dev:marketing`  | marketing site on :4321                   |
-| `bun run build`          | build app + api                           |
-| `bun run build:marketing`| build marketing site                      |
-| `bun run preview`        | preview built app                         |
-| `bun run lint`           | eslint (app)                              |
-| `bun run format`         | prettier write across repo                |
-| `bun run db:migrate`     | run API migrations                        |
-| `bun run studio:reel`    | Remotion studio for demo videos           |
-| `bun run render:reel`    | render all Remotion compositions          |
+| Script                    | What it does                     |
+| ------------------------- | -------------------------------- |
+| `bun run dev`             | app (5173) + api together        |
+| `bun run dev:app`         | app only                         |
+| `bun run dev:api`         | api only                         |
+| `bun run dev:marketing`   | marketing site on :4321          |
+| `bun run build`           | build app + api                  |
+| `bun run build:marketing` | build marketing site             |
+| `bun run preview`         | preview built app                |
+| `bun run lint`            | eslint (app)                     |
+| `bun run format`          | prettier write across repo       |
+| `bun run db:migrate`      | run API migrations               |
+| `bun run studio:reel`     | Remotion studio for demo videos  |
+| `bun run render:reel`     | render all Remotion compositions |
 
 ## Environment variables
 

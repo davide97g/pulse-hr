@@ -31,7 +31,12 @@
     { "action": "wait", "ms": 1100 },
     { "action": "screenshot", "name": "05-raj-offer" },
 
-    { "action": "zoom", "selector": "button:has-text('Mark hired')", "scale": 1.7, "duration": 700 },
+    {
+      "action": "zoom",
+      "selector": "button:has-text('Mark hired')",
+      "scale": 1.7,
+      "duration": 700
+    },
     { "action": "wait", "ms": 600 },
     { "action": "click", "selector": "button:has-text('Mark hired')" },
     { "action": "wait", "ms": 2800 },

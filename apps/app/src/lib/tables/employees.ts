@@ -59,7 +59,9 @@ export function initialsFor(name: string): string {
  * caller passes name/role/department/etc.; we fill the avatar derivations
  * the original seed used.
  */
-export function makeEmployee(input: Omit<Employee, "id" | "initials" | "avatarColor">): Omit<Employee, "id"> {
+export function makeEmployee(
+  input: Omit<Employee, "id" | "initials" | "avatarColor">,
+): Omit<Employee, "id"> {
   return {
     ...input,
     initials: initialsFor(input.name),

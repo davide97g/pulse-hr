@@ -1,9 +1,29 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
-  Search, Filter, Download, Plus, MoreHorizontal, Mail, Phone, MapPin,
-  Calendar, Briefcase, DollarSign, FileText, Building2, Trash2, Send,
-  UserX, Users as UsersIcon, Sparkles, Flame, Trophy, Target, ArrowUpRight, Zap,
+  Search,
+  Filter,
+  Download,
+  Plus,
+  MoreHorizontal,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Briefcase,
+  DollarSign,
+  FileText,
+  Building2,
+  Trash2,
+  Send,
+  UserX,
+  Users as UsersIcon,
+  Sparkles,
+  Flame,
+  Trophy,
+  Target,
+  ArrowUpRight,
+  Zap,
 } from "lucide-react";
 import { growthSummaryFor, strengthRadarFor } from "@/lib/growth";
 import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
@@ -18,11 +38,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@/components/app/SidePanel";
@@ -42,7 +72,11 @@ export const Route = createFileRoute("/people")({
   component: People,
 });
 
-interface PeopleView { q: string; dept: string; tab: string }
+interface PeopleView {
+  q: string;
+  dept: string;
+  tab: string;
+}
 
 function People() {
   const views = useSavedViews<PeopleView>("people", {
@@ -72,13 +106,13 @@ function People() {
   const filtered = useMemo(
     () =>
       list.filter(
-        e =>
+        (e) =>
           (!q ||
             e.name.toLowerCase().includes(q.toLowerCase()) ||
             e.role.toLowerCase().includes(q.toLowerCase())) &&
-          (!dept || e.department === dept)
+          (!dept || e.department === dept),
       ),
-    [q, dept, list]
+    [q, dept, list],
   );
 
   const remove = (e: Employee) => {
@@ -93,7 +127,10 @@ function People() {
     });
   };
 
-  const clearFilters = () => { setQ(""); setDept(null); };
+  const clearFilters = () => {
+    setQ("");
+    setDept(null);
+  };
 
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
@@ -103,13 +140,19 @@ function People() {
         actions={
           <>
             <Button
-              variant="outline" size="sm" className="press-scale"
-              onClick={() => toast.success("Export started", { description: "CSV will download shortly." })}
+              variant="outline"
+              size="sm"
+              className="press-scale"
+              onClick={() =>
+                toast.success("Export started", { description: "CSV will download shortly." })
+              }
             >
-              <Download className="h-4 w-4 mr-1.5" />Export
+              <Download className="h-4 w-4 mr-1.5" />
+              Export
             </Button>
             <Button size="sm" className="press-scale" onClick={() => openAction("add-employee")}>
-              <Plus className="h-4 w-4 mr-1.5" />Add employee
+              <Plus className="h-4 w-4 mr-1.5" />
+              Add employee
             </Button>
           </>
         }
@@ -131,33 +174,43 @@ function People() {
       <Card className="p-3 mb-4 flex items-center gap-2 flex-wrap">
         <div className="relative flex-1 min-w-[240px]">
           <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Search by name or role" className="pl-8 h-9" />
+          <Input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search by name or role"
+            className="pl-8 h-9"
+          />
         </div>
         <div className="flex items-center gap-1.5 flex-wrap">
           <button
             onClick={() => setDept(null)}
             className={cn(
               "h-8 px-3 rounded-md text-sm transition-colors press-scale",
-              !dept ? "bg-foreground text-background" : "hover:bg-muted"
+              !dept ? "bg-foreground text-background" : "hover:bg-muted",
             )}
           >
             All
           </button>
-          {departments.slice(0, 5).map(d => (
+          {departments.slice(0, 5).map((d) => (
             <button
               key={d.name}
               onClick={() => setDept(d.name)}
               className={cn(
                 "h-8 px-3 rounded-md text-sm transition-colors press-scale",
-                dept === d.name ? "bg-foreground text-background" : "hover:bg-muted"
+                dept === d.name ? "bg-foreground text-background" : "hover:bg-muted",
               )}
             >
               {d.name}
             </button>
           ))}
         </div>
-        <Button variant="outline" size="sm" onClick={() => toast("Filters", { description: "Open advanced filter builder" })}>
-          <Filter className="h-4 w-4 mr-1.5" />More filters
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => toast("Filters", { description: "Open advanced filter builder" })}
+        >
+          <Filter className="h-4 w-4 mr-1.5" />
+          More filters
         </Button>
       </Card>
 
@@ -173,7 +226,9 @@ function People() {
               <SkeletonRows rows={8} />
             ) : filtered.length === 0 ? (
               <EmptyState
-                icon={list.length === 0 ? <UserX className="h-6 w-6" /> : <Search className="h-6 w-6" />}
+                icon={
+                  list.length === 0 ? <UserX className="h-6 w-6" /> : <Search className="h-6 w-6" />
+                }
                 title={list.length === 0 ? "No employees yet" : "No matches found"}
                 description={
                   list.length === 0
@@ -183,10 +238,13 @@ function People() {
                 action={
                   list.length === 0 ? (
                     <Button size="sm" onClick={() => openAction("add-employee")}>
-                      <Plus className="h-4 w-4 mr-1.5" />Add employee
+                      <Plus className="h-4 w-4 mr-1.5" />
+                      Add employee
                     </Button>
                   ) : (
-                    <Button size="sm" variant="outline" onClick={clearFilters}>Clear filters</Button>
+                    <Button size="sm" variant="outline" onClick={clearFilters}>
+                      Clear filters
+                    </Button>
                   )
                 }
               />
@@ -203,7 +261,7 @@ function People() {
                   </tr>
                 </thead>
                 <tbody className="stagger-in">
-                  {filtered.map(e => (
+                  {filtered.map((e) => (
                     <tr
                       key={e.id}
                       onClick={() => setSelected(e)}
@@ -225,9 +283,11 @@ function People() {
                       </td>
                       <td className="px-4 py-2.5 text-muted-foreground">{e.department}</td>
                       <td className="px-4 py-2.5 text-muted-foreground">{e.location}</td>
-                      <td className="px-4 py-2.5"><StatusBadge status={e.status} /></td>
+                      <td className="px-4 py-2.5">
+                        <StatusBadge status={e.status} />
+                      </td>
                       <td className="px-4 py-2.5 text-muted-foreground text-xs">{e.joinDate}</td>
-                      <td className="px-2" onClick={ev => ev.stopPropagation()}>
+                      <td className="px-2" onClick={(ev) => ev.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -235,16 +295,27 @@ function People() {
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setSelected(e)}>View profile</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => toast.success(`Email drafted to ${e.name}`)}>
-                              <Send className="h-4 w-4 mr-2" />Send message
+                            <DropdownMenuItem onClick={() => setSelected(e)}>
+                              View profile
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => toast.success(`Started offboarding for ${e.name}`)}>
+                            <DropdownMenuItem
+                              onClick={() => toast.success(`Email drafted to ${e.name}`)}
+                            >
+                              <Send className="h-4 w-4 mr-2" />
+                              Send message
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => toast.success(`Started offboarding for ${e.name}`)}
+                            >
                               Start offboarding
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive" onClick={() => setToDelete(e)}>
-                              <Trash2 className="h-4 w-4 mr-2" />Remove
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => setToDelete(e)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Remove
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -276,11 +347,15 @@ function People() {
             <EmptyState
               icon={<UsersIcon className="h-6 w-6" />}
               title="No employees match"
-              action={<Button size="sm" variant="outline" onClick={clearFilters}>Clear filters</Button>}
+              action={
+                <Button size="sm" variant="outline" onClick={clearFilters}>
+                  Clear filters
+                </Button>
+              }
             />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 stagger-in">
-              {filtered.map(e => (
+              {filtered.map((e) => (
                 <Card
                   key={e.id}
                   onClick={() => setSelected(e)}
@@ -296,12 +371,20 @@ function People() {
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold truncate">{e.name}</div>
                       <div className="text-xs text-muted-foreground truncate">{e.role}</div>
-                      <div className="mt-2"><StatusBadge status={e.status} /></div>
+                      <div className="mt-2">
+                        <StatusBadge status={e.status} />
+                      </div>
                     </div>
                   </div>
                   <div className="mt-3 pt-3 border-t grid grid-cols-2 text-xs text-muted-foreground gap-2">
-                    <div className="flex items-center gap-1.5"><Building2 className="h-3 w-3" />{e.department}</div>
-                    <div className="flex items-center gap-1.5 truncate"><MapPin className="h-3 w-3" />{e.location}</div>
+                    <div className="flex items-center gap-1.5">
+                      <Building2 className="h-3 w-3" />
+                      {e.department}
+                    </div>
+                    <div className="flex items-center gap-1.5 truncate">
+                      <MapPin className="h-3 w-3" />
+                      {e.location}
+                    </div>
                   </div>
                 </Card>
               ))}
@@ -313,26 +396,30 @@ function People() {
       <EmployeePanel
         employee={selected ? (list.find((x) => x.id === selected.id) ?? selected) : null}
         onClose={() => setSelected(null)}
-        onDelete={e => setToDelete(e)}
-        onEdit={e => {
+        onDelete={(e) => setToDelete(e)}
+        onEdit={(e) => {
           setSelected(null);
           navigate({ to: "/people/$employeeId", params: { employeeId: e.id } });
         }}
       />
 
-      <AlertDialog open={!!toDelete} onOpenChange={o => !o && setToDelete(null)}>
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Remove {toDelete?.name}?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will archive their profile. You can undo this action from the toast for a few seconds.
+              This will archive their profile. You can undo this action from the toast for a few
+              seconds.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => { if (toDelete) remove(toDelete); setToDelete(null); }}
+              onClick={() => {
+                if (toDelete) remove(toDelete);
+                setToDelete(null);
+              }}
             >
               Remove
             </AlertDialogAction>
@@ -344,7 +431,10 @@ function People() {
 }
 
 function EmployeePanel({
-  employee, onClose, onDelete, onEdit,
+  employee,
+  onClose,
+  onDelete,
+  onEdit,
 }: {
   employee: Employee | null;
   onClose: () => void;
@@ -360,7 +450,12 @@ function EmployeePanel({
       title={
         employee && (
           <div className="flex items-center gap-2.5">
-            <Avatar initials={employee.initials} color={employee.avatarColor} size={28} employeeId={employee.id} />
+            <Avatar
+              initials={employee.initials}
+              color={employee.avatarColor}
+              size={28}
+              employeeId={employee.id}
+            />
             <span>{employee.name}</span>
           </div>
         )
@@ -378,18 +473,48 @@ function EmployeePanel({
             <div className="flex-1">
               <div className="text-lg font-semibold">{employee.name}</div>
               <div className="text-sm text-muted-foreground">{employee.role}</div>
-              <div className="mt-2"><StatusBadge status={employee.status} /></div>
+              <div className="mt-2">
+                <StatusBadge status={employee.status} />
+              </div>
             </div>
           </div>
           <div className="flex gap-2 mb-5">
-            <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => toast.success(`Email drafted to ${employee.name}`)}>
-              <Mail className="h-3.5 w-3.5 mr-1.5" />Email
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1 press-scale"
+              onClick={() => toast.success(`Email drafted to ${employee.name}`)}
+            >
+              <Mail className="h-3.5 w-3.5 mr-1.5" />
+              Email
             </Button>
-            <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => toast.success("Calendar opened", { description: `Schedule a meeting with ${employee.name}` })}>
-              <Calendar className="h-3.5 w-3.5 mr-1.5" />Schedule
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1 press-scale"
+              onClick={() =>
+                toast.success("Calendar opened", {
+                  description: `Schedule a meeting with ${employee.name}`,
+                })
+              }
+            >
+              <Calendar className="h-3.5 w-3.5 mr-1.5" />
+              Schedule
             </Button>
-            <Button size="sm" variant="outline" className="flex-1 press-scale" onClick={() => onEdit(employee)}>Go to profile</Button>
-            <Button size="sm" variant="outline" className="press-scale text-destructive hover:bg-destructive/10" onClick={() => onDelete(employee)}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1 press-scale"
+              onClick={() => onEdit(employee)}
+            >
+              Go to profile
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="press-scale text-destructive hover:bg-destructive/10"
+              onClick={() => onDelete(employee)}
+            >
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
           </div>
@@ -407,23 +532,59 @@ function EmployeePanel({
             </TabsList>
             <TabsContent value="profile" className="mt-4 space-y-3">
               <Field icon={<Mail className="h-3.5 w-3.5" />} label="Email" value={employee.email} />
-              <Field icon={<Phone className="h-3.5 w-3.5" />} label="Phone" value={employee.phone} />
-              <Field icon={<MapPin className="h-3.5 w-3.5" />} label="Location" value={employee.location} />
-              <Field icon={<Calendar className="h-3.5 w-3.5" />} label="Joined" value={employee.joinDate} />
+              <Field
+                icon={<Phone className="h-3.5 w-3.5" />}
+                label="Phone"
+                value={employee.phone}
+              />
+              <Field
+                icon={<MapPin className="h-3.5 w-3.5" />}
+                label="Location"
+                value={employee.location}
+              />
+              <Field
+                icon={<Calendar className="h-3.5 w-3.5" />}
+                label="Joined"
+                value={employee.joinDate}
+              />
             </TabsContent>
             <TabsContent value="job" className="mt-4 space-y-3">
-              <Field icon={<Briefcase className="h-3.5 w-3.5" />} label="Role" value={employee.role} />
-              <Field icon={<Building2 className="h-3.5 w-3.5" />} label="Department" value={employee.department} />
-              <Field icon={<Briefcase className="h-3.5 w-3.5" />} label="Employment" value={employee.employmentType} />
-              <Field icon={<DollarSign className="h-3.5 w-3.5" />} label="Salary" value={`$${employee.salary.toLocaleString()} / year`} />
-              {employee.manager && <Field icon={<Briefcase className="h-3.5 w-3.5" />} label="Manager" value={employee.manager} />}
+              <Field
+                icon={<Briefcase className="h-3.5 w-3.5" />}
+                label="Role"
+                value={employee.role}
+              />
+              <Field
+                icon={<Building2 className="h-3.5 w-3.5" />}
+                label="Department"
+                value={employee.department}
+              />
+              <Field
+                icon={<Briefcase className="h-3.5 w-3.5" />}
+                label="Employment"
+                value={employee.employmentType}
+              />
+              <Field
+                icon={<DollarSign className="h-3.5 w-3.5" />}
+                label="Salary"
+                value={`$${employee.salary.toLocaleString()} / year`}
+              />
+              {employee.manager && (
+                <Field
+                  icon={<Briefcase className="h-3.5 w-3.5" />}
+                  label="Manager"
+                  value={employee.manager}
+                />
+              )}
             </TabsContent>
             <TabsContent value="docs" className="mt-4">
               <div className="space-y-2 stagger-in">
-                {["Employment contract", "NDA", "Tax form W-9", "Equipment policy"].map(d => (
+                {["Employment contract", "NDA", "Tax form W-9", "Equipment policy"].map((d) => (
                   <button
                     key={d}
-                    onClick={() => toast.success(`Opening ${d}`, { description: "Document preview" })}
+                    onClick={() =>
+                      toast.success(`Opening ${d}`, { description: "Document preview" })
+                    }
                     className="w-full flex items-center gap-3 p-2.5 rounded-md border hover:bg-muted/40 hover:border-primary/40 text-left transition-colors press-scale"
                   >
                     <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center">
@@ -458,18 +619,30 @@ function EmployeePanel({
 function Field({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-4 py-2 border-b last:border-0">
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">{icon}{label}</div>
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        {icon}
+        {label}
+      </div>
       <div className="text-sm font-medium text-right">{value}</div>
     </div>
   );
 }
 
-
 function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
   const summary = useMemo(() => growthSummaryFor(employeeId), [employeeId]);
   const radar = useMemo(() => strengthRadarFor(employeeId), [employeeId]);
   if (!summary) return null;
-  const { level, next, progressPct, xp, streak, kudosReceived, goalsActive, challengesOpen, badgesEarned } = summary;
+  const {
+    level,
+    next,
+    progressPct,
+    xp,
+    streak,
+    kudosReceived,
+    goalsActive,
+    challengesOpen,
+    badgesEarned,
+  } = summary;
   const topStrength = [...radar].sort((a, b) => b.value - a.value)[0];
 
   return (
@@ -482,10 +655,15 @@ function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
       <div className="relative">
         <div className="flex items-center gap-2 mb-2.5">
           <Sparkles className="h-3.5 w-3.5 text-primary" />
-          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Growth</div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Growth
+          </div>
           <span
             className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded"
-            style={{ background: `${level.color.replace(")", " / 0.15)").replace("oklch(", "oklch(")}`, color: level.color }}
+            style={{
+              background: `${level.color.replace(")", " / 0.15)").replace("oklch(", "oklch(")}`,
+              color: level.color,
+            }}
           >
             L{level.tier} · {level.name}
           </span>
@@ -498,7 +676,9 @@ function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
 
         <div className="flex items-center justify-between text-[11px] mb-1">
           <span className="text-muted-foreground">XP</span>
-          <span className="font-mono tabular-nums">{xp.total.toLocaleString()} · {progressPct}%</span>
+          <span className="font-mono tabular-nums">
+            {xp.total.toLocaleString()} · {progressPct}%
+          </span>
         </div>
         <div className="h-1.5 rounded-full bg-muted overflow-hidden">
           <div
@@ -521,13 +701,17 @@ function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
 
         {topStrength && topStrength.value > 0 && (
           <div className="mt-3 pt-3 border-t flex items-center gap-2">
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Top strength</div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+              Top strength
+            </div>
             <span
               className="h-2 w-2 rounded-full"
               style={{ backgroundColor: STRENGTH_COLORS[topStrength.tag] }}
             />
             <span className="text-xs font-medium capitalize">{topStrength.tag}</span>
-            <span className="font-mono text-[11px] tabular-nums text-muted-foreground ml-auto">{topStrength.value}/100</span>
+            <span className="font-mono text-[11px] tabular-nums text-muted-foreground ml-auto">
+              {topStrength.value}/100
+            </span>
           </div>
         )}
 
@@ -543,7 +727,6 @@ function GrowthSummaryCard({ employeeId }: { employeeId: string }) {
     </Card>
   );
 }
-
 
 function ScoreStrip({ employeeId }: { employeeId: string }) {
   const { score, grade } = computeEmployeeScore(employeeId);

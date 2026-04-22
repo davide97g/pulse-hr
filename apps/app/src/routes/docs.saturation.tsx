@@ -26,14 +26,14 @@ function SaturationDoc() {
 
       <Section title="Team load">
         <p>
-          The <b>utilisation heatmap</b> shows one row per person, one column per upcoming week,
-          and each cell is the sum of their allocation percentages in that week. Green is healthy,
-          amber means over, red means burnout territory. Blank = bench.
+          The <b>utilisation heatmap</b> shows one row per person, one column per upcoming week, and
+          each cell is the sum of their allocation percentages in that week. Green is healthy, amber
+          means over, red means burnout territory. Blank = bench.
         </p>
         <p>
           Next to it, the <b>trend chart</b> draws a line per employee using their avatar colour.
-          Hover any row, line or legend item and the rest dim — good for isolating a single
-          person across the team.
+          Hover any row, line or legend item and the rest dim — good for isolating a single person
+          across the team.
         </p>
       </Section>
 
@@ -41,7 +41,11 @@ function SaturationDoc() {
         <p>
           Revenue − cost, summed per project year-to-date. Bars in the project's own colour are
           net-positive; red bars are net-negative. Feed projects into this view by adding
-          allocations with rates in the <Link to="/clients" className="text-primary hover:underline">Clients &amp; Projects</Link> area.
+          allocations with rates in the{" "}
+          <Link to="/clients" className="text-primary hover:underline">
+            Clients &amp; Projects
+          </Link>{" "}
+          area.
         </p>
         <p className="text-xs text-muted-foreground">
           Cost = employee salary ÷ 1,800h baseline. Revenue = allocation % × rate × hours.
@@ -59,9 +63,9 @@ function SaturationDoc() {
       <Section title="Insights">
         <p>
           A triage surface showing only the problems worth acting on today: losing projects,
-          over-budget burn, at-risk and on-hold flags, people on the bench or overbooked,
-          declining forward load, and low-health clients. Each row is severity-coded and
-          deep-links to the relevant project where applicable.
+          over-budget burn, at-risk and on-hold flags, people on the bench or overbooked, declining
+          forward load, and low-health clients. Each row is severity-coded and deep-links to the
+          relevant project where applicable.
         </p>
       </Section>
     </div>

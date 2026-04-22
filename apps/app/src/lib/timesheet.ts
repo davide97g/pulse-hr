@@ -1,13 +1,28 @@
 import {
-  startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval,
-  isWeekend, isAfter, isSameDay, parseISO, format, startOfDay,
-  subWeeks, addDays, differenceInCalendarDays,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isWeekend,
+  isAfter,
+  isSameDay,
+  parseISO,
+  format,
+  startOfDay,
+  subWeeks,
+  addDays,
+  differenceInCalendarDays,
 } from "date-fns";
 import type { Locale } from "date-fns";
 import { enUS, enGB, it, fr, es, de, ptBR, ja, zhCN } from "date-fns/locale";
 import {
-  holidaysSeed, leaveRequests as leaveSeed, commessaById,
-  type TimesheetEntry, type LeaveRequest, type Holiday,
+  holidaysSeed,
+  leaveRequests as leaveSeed,
+  commessaById,
+  type TimesheetEntry,
+  type LeaveRequest,
+  type Holiday,
 } from "./mock-data";
 
 export type DayStatus =
@@ -37,14 +52,23 @@ export const TARGET_HOURS_PER_DAY = 8;
 
 // ── locale helpers ──────────────────────────────────────────────────────
 const LOCALE_MAP: Record<string, Locale> = {
-  "en-US": enUS, "en-GB": enGB, "en": enUS,
-  "it-IT": it, "it": it,
-  "fr-FR": fr, "fr": fr,
-  "es-ES": es, "es": es,
-  "de-DE": de, "de": de,
-  "pt-BR": ptBR, "pt": ptBR,
-  "ja-JP": ja, "ja": ja,
-  "zh-CN": zhCN, "zh": zhCN,
+  "en-US": enUS,
+  "en-GB": enGB,
+  en: enUS,
+  "it-IT": it,
+  it: it,
+  "fr-FR": fr,
+  fr: fr,
+  "es-ES": es,
+  es: es,
+  "de-DE": de,
+  de: de,
+  "pt-BR": ptBR,
+  pt: ptBR,
+  "ja-JP": ja,
+  ja: ja,
+  "zh-CN": zhCN,
+  zh: zhCN,
 };
 
 export function getLocale(): Locale {
@@ -62,7 +86,7 @@ export function getWeekStartsOn(): 0 | 1 | 2 | 3 | 4 | 5 | 6 {
 export function weekdayLabels(): string[] {
   const start = startOfWeek(new Date(), { weekStartsOn: getWeekStartsOn() });
   return Array.from({ length: 7 }).map((_, i) =>
-    format(addDays(start, i), "EEEEEE", { locale: getLocale() })
+    format(addDays(start, i), "EEEEEE", { locale: getLocale() }),
   );
 }
 
@@ -94,13 +118,14 @@ export function getDayInfo(
   const today = opts.today ?? new Date();
 
   const iso = format(date, "yyyy-MM-dd");
-  const inMonth = date.getMonth() === month.getMonth() && date.getFullYear() === month.getFullYear();
-  const dayEntries = entries.filter(e => e.employeeId === employeeId && e.date === iso);
+  const inMonth =
+    date.getMonth() === month.getMonth() && date.getFullYear() === month.getFullYear();
+  const dayEntries = entries.filter((e) => e.employeeId === employeeId && e.date === iso);
   const hours = dayEntries.reduce((acc, e) => acc + e.hours, 0);
 
-  const holiday = holidays.find(h => h.date === iso);
+  const holiday = holidays.find((h) => h.date === iso);
   const leave = leaves.find(
-    l => l.employeeId === employeeId && l.status === "approved" && leaveCoversDate(l, date)
+    (l) => l.employeeId === employeeId && l.status === "approved" && leaveCoversDate(l, date),
   );
 
   let status: DayStatus;
@@ -149,16 +174,30 @@ export function getMonthStats(
   const monthEnd = endOfMonth(month);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  let workdays = 0, filledDays = 0, partialDays = 0, missingDays = 0, leaveDays = 0, holidayDays = 0;
+  let workdays = 0,
+    filledDays = 0,
+    partialDays = 0,
+    missingDays = 0,
+    leaveDays = 0,
+    holidayDays = 0;
   const hoursByCommessa = new Map<string, number>();
 
   for (const d of days) {
     const info = getDayInfo(d, employeeId, entries, month, opts);
     if (info.status === "holiday") holidayDays++;
     if (["sick", "vacation", "personal", "parental"].includes(info.status)) leaveDays++;
-    if (info.status === "filled") { workdays++; filledDays++; }
-    if (info.status === "partial") { workdays++; partialDays++; }
-    if (info.status === "missing") { workdays++; missingDays++; }
+    if (info.status === "filled") {
+      workdays++;
+      filledDays++;
+    }
+    if (info.status === "partial") {
+      workdays++;
+      partialDays++;
+    }
+    if (info.status === "missing") {
+      workdays++;
+      missingDays++;
+    }
     if (info.status === "future" && !isWeekend(d)) workdays++;
     for (const e of info.entries) {
       hoursByCommessa.set(e.commessaId, (hoursByCommessa.get(e.commessaId) ?? 0) + e.hours);
@@ -178,9 +217,17 @@ export function getMonthStats(
     .sort((a, b) => b.hours - a.hours);
 
   return {
-    logged, target, variance, workdays,
-    filledDays, partialDays, missingDays, leaveDays, holidayDays,
-    fillPct, byCommessa,
+    logged,
+    target,
+    variance,
+    workdays,
+    filledDays,
+    partialDays,
+    missingDays,
+    leaveDays,
+    holidayDays,
+    fillPct,
+    byCommessa,
   };
 }
 
@@ -192,14 +239,16 @@ export function datesBetween(a: Date, b: Date): Date[] {
 }
 
 export function prevWeekEntries(
-  month: Date, employeeId: string, entries: TimesheetEntry[],
+  month: Date,
+  employeeId: string,
+  entries: TimesheetEntry[],
 ): { from: string; to: string; rows: TimesheetEntry[] } {
   const wso = getWeekStartsOn();
   const now = new Date();
   const thisWeekStart = startOfWeek(now, { weekStartsOn: wso });
   const lastWeekStart = subWeeks(thisWeekStart, 1);
   const lastWeekEnd = endOfWeek(lastWeekStart, { weekStartsOn: wso });
-  const rows = entries.filter(e => {
+  const rows = entries.filter((e) => {
     if (e.employeeId !== employeeId) return false;
     const d = parseISO(e.date);
     return d >= lastWeekStart && d <= lastWeekEnd;
@@ -208,10 +257,14 @@ export function prevWeekEntries(
 }
 
 export function missingWorkdaysInRange(
-  from: Date, to: Date, employeeId: string, entries: TimesheetEntry[],
-  month: Date, opts: { leaves?: LeaveRequest[]; holidays?: Holiday[]; today?: Date } = {},
+  from: Date,
+  to: Date,
+  employeeId: string,
+  entries: TimesheetEntry[],
+  month: Date,
+  opts: { leaves?: LeaveRequest[]; holidays?: Holiday[]; today?: Date } = {},
 ): Date[] {
-  return eachDayOfInterval({ start: from, end: to }).filter(d => {
+  return eachDayOfInterval({ start: from, end: to }).filter((d) => {
     const info = getDayInfo(d, employeeId, entries, month, opts);
     return info.status === "missing";
   });
@@ -239,7 +292,7 @@ export function synthesizeTeamEntries(employeeIds: string[], month: Date): Times
       if (isWeekend(d)) continue;
       // Seeded pseudorandom: some days missing, some partial, most filled
       const seed = (parseInt(eid.replace(/\D/g, ""), 10) * 13 + d.getDate() * 7) % 10;
-      if (seed < 1) continue;                  // missing
+      if (seed < 1) continue; // missing
       const c = commesse[(idx + d.getDate()) % commesse.length];
       const hours = seed < 3 ? 4 : seed < 5 ? 6 : 8;
       out.push({

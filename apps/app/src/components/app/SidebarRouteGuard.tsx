@@ -43,8 +43,7 @@ export function SidebarRouteGuard({ children }: { children: React.ReactNode }) {
     if (fid && (blockedByRole || blockedByWorkspace)) {
       const dest = firstEnabledAppPath(enabled);
       const destFid = pathToSidebarFeatureId(dest);
-      const destOk =
-        !destFid || (roleAllowed.has(destFid) && enabled[destFid] !== false);
+      const destOk = !destFid || (roleAllowed.has(destFid) && enabled[destFid] !== false);
       return <Navigate to={destOk ? dest : "/profile"} replace />;
     }
   }

@@ -11,11 +11,7 @@ export interface StrengthsRadarProps {
  * SVG radar chart for the 5 strength tags. Extracted from growth.tsx so
  * /people panel, /profile, and anywhere else can reuse the same look.
  */
-export function StrengthsRadar({
-  points,
-  size = 280,
-  showLegend = true,
-}: StrengthsRadarProps) {
+export function StrengthsRadar({ points, size = 280, showLegend = true }: StrengthsRadarProps) {
   const pad = size * (36 / 220);
   const r = size * (72 / 220);
   const cx = size / 2;
@@ -77,9 +73,7 @@ export function StrengthsRadar({
         />
         {points.map((p, i) => {
           const [x, y] = pt(i, p.value);
-          return (
-            <circle key={p.tag} cx={x} cy={y} r="3" fill={STRENGTH_COLORS[p.tag]} />
-          );
+          return <circle key={p.tag} cx={x} cy={y} r="3" fill={STRENGTH_COLORS[p.tag]} />;
         })}
         {points.map((p, i) => {
           const [x, y] = pt(i, (labelRadius / r) * 100);
@@ -108,9 +102,7 @@ export function StrengthsRadar({
                 style={{ backgroundColor: STRENGTH_COLORS[p.tag] }}
               />
               <span className="capitalize flex-1">{p.tag}</span>
-              <span className="font-mono tabular-nums text-muted-foreground">
-                {p.value}
-              </span>
+              <span className="font-mono tabular-nums text-muted-foreground">{p.value}</span>
             </div>
           ))}
         </div>

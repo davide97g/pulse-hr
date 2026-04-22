@@ -20,13 +20,7 @@ export type TourStep = {
   placement?: TourPlacement;
 };
 
-export type TourWorkflow =
-  | "Getting started"
-  | "Work"
-  | "People"
-  | "Money"
-  | "Labs"
-  | "Admin";
+export type TourWorkflow = "Getting started" | "Work" | "People" | "Money" | "Labs" | "Admin";
 
 export type Tour = {
   id: string;

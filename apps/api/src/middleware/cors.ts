@@ -50,9 +50,7 @@ function toMatcher(pattern: string): (origin: string) => boolean {
     return (o) => o === pattern;
   }
   const re = new RegExp(
-    "^" +
-      pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") +
-      "$",
+    "^" + pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$",
   );
   return (o) => re.test(o);
 }

@@ -1,8 +1,6 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import {
-  ArrowLeft, Clock, DoorOpen, Plus, Phone, Repeat, Wand2,
-} from "lucide-react";
+import { ArrowLeft, Clock, DoorOpen, Plus, Phone, Repeat, Wand2 } from "lucide-react";
 import { AMENITY_META } from "@/components/app/AmenityIcons";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,8 +9,15 @@ import { EmptyState } from "@/components/app/EmptyState";
 import { BookingDialog, type BookingDialogPrefill } from "@/components/app/BookingDialog";
 import { useBookings } from "@/components/app/BookingsContext";
 import {
-  roomById, officeById, closureFor, dateRange, bookingsFor,
-  utilizationBucket, BUCKET_COLOR, minutesBetween, type Room,
+  roomById,
+  officeById,
+  closureFor,
+  dateRange,
+  bookingsFor,
+  utilizationBucket,
+  BUCKET_COLOR,
+  minutesBetween,
+  type Room,
 } from "@/lib/offices";
 import { employeeById } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -59,7 +64,11 @@ function RoomDrilldown() {
           icon={<DoorOpen className="h-6 w-6" />}
           title="Room not found"
           description="This room is no longer available."
-          action={<Link to="/offices"><Button>Back to overview</Button></Link>}
+          action={
+            <Link to="/offices">
+              <Button>Back to overview</Button>
+            </Link>
+          }
         />
       </div>
     );
@@ -109,16 +118,24 @@ function RoomDrilldown() {
         description={
           <span className="inline-flex items-center gap-2 flex-wrap text-xs">
             <span className="capitalize">{room.kind}</span> · capacity {room.capacity}
-            <span className="ml-1 inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {office.openingHours.open}–{office.openingHours.close} ({office.timezone})</span>
+            <span className="ml-1 inline-flex items-center gap-1">
+              <Clock className="h-3 w-3" /> {office.openingHours.open}–{office.openingHours.close} (
+              {office.timezone})
+            </span>
           </span>
         }
         actions={
-          <Button size="sm" onClick={() => setPrefill({
-            officeId: office.id,
-            resourceKind: "room",
-            resourceId: room.id,
-            date: anchor,
-          })}>
+          <Button
+            size="sm"
+            onClick={() =>
+              setPrefill({
+                officeId: office.id,
+                resourceKind: "room",
+                resourceId: room.id,
+                date: anchor,
+              })
+            }
+          >
             <Plus className="h-4 w-4 mr-1.5" /> Book this room
           </Button>
         }
@@ -132,16 +149,28 @@ function RoomDrilldown() {
         <div className="flex items-center gap-2 flex-wrap mb-3">
           <Wand2 className="h-4 w-4 text-primary" />
           <div className="text-sm font-semibold">Week heatmap · {weekStart}</div>
-          <span className="text-[11px] text-muted-foreground">Click any half-hour slot to prefill the booking form.</span>
+          <span className="text-[11px] text-muted-foreground">
+            Click any half-hour slot to prefill the booking form.
+          </span>
           <div className="ml-auto inline-flex items-center gap-1">
-            <button onClick={() => shiftWeek(-7)} className="h-8 px-3 rounded-md border hover:bg-muted press-scale text-xs">← Prev</button>
+            <button
+              onClick={() => shiftWeek(-7)}
+              className="h-8 px-3 rounded-md border hover:bg-muted press-scale text-xs"
+            >
+              ← Prev
+            </button>
             <button
               onClick={() => nav({ search: (p) => ({ ...p, date: undefined }) })}
               className="h-8 px-3 rounded-md border hover:bg-muted press-scale text-xs"
             >
               Today
             </button>
-            <button onClick={() => shiftWeek(7)} className="h-8 px-3 rounded-md border hover:bg-muted press-scale text-xs">Next →</button>
+            <button
+              onClick={() => shiftWeek(7)}
+              className="h-8 px-3 rounded-md border hover:bg-muted press-scale text-xs"
+            >
+              Next →
+            </button>
           </div>
         </div>
 
@@ -165,7 +194,9 @@ function RoomDrilldown() {
                     today ? "text-primary font-semibold" : "text-muted-foreground",
                   )}
                 >
-                  <div className="font-medium uppercase">{date.toLocaleDateString(undefined, { weekday: "short" })}</div>
+                  <div className="font-medium uppercase">
+                    {date.toLocaleDateString(undefined, { weekday: "short" })}
+                  </div>
                   <div className="opacity-70">{date.getDate()}</div>
                 </div>
               );
@@ -190,13 +221,8 @@ function RoomDrilldown() {
                       return slotStartMin < e && s < slotEndMin;
                     });
                     const closed =
-                      closureFor("office", office.id, date) ||
-                      closureFor("room", room.id, date);
-                    const ratio = match
-                      ? 1
-                      : closed
-                        ? null
-                        : 0;
+                      closureFor("office", office.id, date) || closureFor("room", room.id, date);
+                    const ratio = match ? 1 : closed ? null : 0;
                     const bucket = utilizationBucket(ratio);
                     return (
                       <button
@@ -226,7 +252,11 @@ function RoomDrilldown() {
                         }
                         className={cn(
                           "h-4 rounded-[3px] border border-transparent",
-                          closed ? "cursor-not-allowed" : match ? "cursor-not-allowed" : "hover:ring-2 hover:ring-primary/40 cursor-pointer",
+                          closed
+                            ? "cursor-not-allowed"
+                            : match
+                              ? "cursor-not-allowed"
+                              : "hover:ring-2 hover:ring-primary/40 cursor-pointer",
                         )}
                         style={{
                           backgroundColor: BUCKET_COLOR[bucket],
@@ -249,7 +279,9 @@ function RoomDrilldown() {
           <div className="flex items-center gap-2 mb-3">
             <Clock className="h-4 w-4 text-primary" />
             <div className="font-semibold text-sm">This week's schedule</div>
-            <span className="ml-auto text-[11px] text-muted-foreground">{allWeekBookings.length} bookings</span>
+            <span className="ml-auto text-[11px] text-muted-foreground">
+              {allWeekBookings.length} bookings
+            </span>
           </div>
           {allWeekBookings.length === 0 ? (
             <div className="text-sm text-muted-foreground py-6 text-center">
@@ -264,7 +296,12 @@ function RoomDrilldown() {
                   return (
                     <li key={b.id} className="py-2.5 flex items-center gap-3">
                       {owner && (
-                        <Avatar initials={owner.initials} color={owner.avatarColor} size={28} employeeId={owner.id} />
+                        <Avatar
+                          initials={owner.initials}
+                          color={owner.avatarColor}
+                          size={28}
+                          employeeId={owner.id}
+                        />
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium truncate flex items-center gap-1.5">
@@ -301,7 +338,9 @@ function RoomDrilldown() {
                     <span className="h-1.5 w-1.5 rounded-full bg-primary/60 shrink-0" />
                     <span className="font-medium">{owner?.name.split(" ")[0] ?? "—"}</span>
                     <span className="text-muted-foreground truncate">{b.title ?? "booked"}</span>
-                    <span className="ml-auto font-mono tabular-nums text-muted-foreground">{b.date}</span>
+                    <span className="ml-auto font-mono tabular-nums text-muted-foreground">
+                      {b.date}
+                    </span>
                   </li>
                 );
               })}

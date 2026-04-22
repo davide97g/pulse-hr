@@ -58,7 +58,8 @@ export function ActiveThreadPopover({
       // Don't close when the click is inside a portal'd overlay (dropdowns,
       // dialogs, tooltips) — otherwise the Delete AlertDialog and similar
       // unmount along with the popover before their handlers can fire.
-      if (target && target.closest("[role='dialog'], [role='menu'], [data-comments-ignore]")) return;
+      if (target && target.closest("[role='dialog'], [role='menu'], [data-comments-ignore]"))
+        return;
       onClose();
     };
     window.addEventListener("keydown", onKey);

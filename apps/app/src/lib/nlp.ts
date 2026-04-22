@@ -13,10 +13,10 @@ export type IntentKind =
 export interface ParsedIntent {
   kind: IntentKind;
   verb: string;
-  label: string;              // headline rendered in the palette
-  detail: string;             // one-line explanation
+  label: string; // headline rendered in the palette
+  detail: string; // one-line explanation
   args: Record<string, string | number | boolean>;
-  confidence: number;         // 0..1
+  confidence: number; // 0..1
 }
 
 const WORKDAYS = [1, 2, 3, 4, 5]; // Mon..Fri
@@ -40,7 +40,13 @@ function resolveDate(raw: string, today = new Date()): Date | null {
   if (nextDay[s]) return nextDay[s](today);
 
   const weekdayMap: Record<string, number> = {
-    sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6,
+    sunday: 0,
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
   };
   if (weekdayMap[s] !== undefined) {
     const target = weekdayMap[s];
@@ -50,7 +56,11 @@ function resolveDate(raw: string, today = new Date()): Date | null {
 
   // ISO date fallback
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-    try { return parseISO(s); } catch { return null; }
+    try {
+      return parseISO(s);
+    } catch {
+      return null;
+    }
   }
   return null;
 }
@@ -85,7 +95,7 @@ function bestCommessa(q: string) {
       continue;
     }
     const tokens = s.split(/\s+/).filter(Boolean);
-    const hits = tokens.filter(t => haystack.includes(t)).length;
+    const hits = tokens.filter((t) => haystack.includes(t)).length;
     if (hits > 0) {
       const score = (hits / tokens.length) * 0.6;
       if (!best || score > best.score) best = { id: c.id, score };
@@ -122,8 +132,19 @@ export function parseCommand(input: string, opts: { today?: Date } = {}): Parsed
   // log-hours: "4h migration yesterday", "log 6h acm today"
   const hours = parseHours(s);
   if (hours && hours > 0 && hours <= 24) {
-    const dateTokens = ["today", "yesterday", "tomorrow", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-    const hitDate = dateTokens.find(t => s.includes(t));
+    const dateTokens = [
+      "today",
+      "yesterday",
+      "tomorrow",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday",
+    ];
+    const hitDate = dateTokens.find((t) => s.includes(t));
     const date = hitDate ? resolveDate(hitDate, today) : today;
     const rest = s
       .replace(/\d+(?:\.\d+)?\s*h(\s*\d+\s*m)?/g, "")
@@ -135,7 +156,7 @@ export function parseCommand(input: string, opts: { today?: Date } = {}): Parsed
     out.push({
       kind: "log-hours",
       verb: "Log hours",
-      label: `Log ${hours}h to ${match ? commesse.find(c => c.id === match.id)!.code : commesse[0].code}`,
+      label: `Log ${hours}h to ${match ? commesse.find((c) => c.id === match.id)!.code : commesse[0].code}`,
       detail: `${date ? format(date, "EEE, MMM d") : "today"} · ${rest || "draft description"}`,
       args: {
         hours,
@@ -148,15 +169,33 @@ export function parseCommand(input: string, opts: { today?: Date } = {}): Parsed
   }
 
   // book-leave: "book friday off", "vacation 3 days next monday"
-  if (/\b(book|take|request)\b.*\b(off|leave|vacation|sick|personal)\b/.test(s) || /\b(off|leave)\b/.test(s)) {
-    const dateTokens = ["today", "tomorrow", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "next monday", "next friday"];
-    const hit = dateTokens.find(t => s.includes(t));
+  if (
+    /\b(book|take|request)\b.*\b(off|leave|vacation|sick|personal)\b/.test(s) ||
+    /\b(off|leave)\b/.test(s)
+  ) {
+    const dateTokens = [
+      "today",
+      "tomorrow",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday",
+      "next monday",
+      "next friday",
+    ];
+    const hit = dateTokens.find((t) => s.includes(t));
     const date = hit ? resolveDate(hit, today) : today;
     const days = parseDayCount(s) ?? 1;
-    const type = /\bsick\b/.test(s) ? "Sick"
-      : /\bpersonal\b/.test(s) ? "Personal"
-      : /\bparental\b/.test(s) ? "Parental"
-      : "Vacation";
+    const type = /\bsick\b/.test(s)
+      ? "Sick"
+      : /\bpersonal\b/.test(s)
+        ? "Personal"
+        : /\bparental\b/.test(s)
+          ? "Parental"
+          : "Vacation";
     out.push({
       kind: "book-leave",
       verb: "Book leave",
@@ -174,13 +213,19 @@ export function parseCommand(input: string, opts: { today?: Date } = {}): Parsed
   // approve-expense: "approve emma expense", "approve 184"
   if (/\bapprove\b/.test(s)) {
     const money = s.match(/\$?(\d+(?:\.\d+)?)/);
-    const target = s.replace(/\bapprove\b/, "").replace(/\bexpense[s]?\b/, "").replace(/\$?\d+(?:\.\d+)?/, "").trim();
+    const target = s
+      .replace(/\bapprove\b/, "")
+      .replace(/\bexpense[s]?\b/, "")
+      .replace(/\$?\d+(?:\.\d+)?/, "")
+      .trim();
     const emp = target ? bestEmployee(target) : null;
     const match = emp
-      ? expenses.find(x => x.employeeId === emp.id && x.status === "pending")
+      ? expenses.find((x) => x.employeeId === emp.id && x.status === "pending")
       : money
-        ? expenses.find(x => x.status === "pending" && Math.abs(x.amount - parseFloat(money[1])) < 1)
-        : expenses.find(x => x.status === "pending");
+        ? expenses.find(
+            (x) => x.status === "pending" && Math.abs(x.amount - parseFloat(money[1])) < 1,
+          )
+        : expenses.find((x) => x.status === "pending");
     if (match) {
       out.push({
         kind: "approve-expense",
@@ -237,10 +282,10 @@ export function parseCommand(input: string, opts: { today?: Date } = {}): Parsed
 
 // ── formatting helpers exposed to the UI ───────────────────────────────
 export function formatCommessaRef(id: string): string {
-  const c = commesse.find(x => x.id === id);
+  const c = commesse.find((x) => x.id === id);
   return c ? `${c.code} · ${c.name}` : id;
 }
 
 export function pendingLeaveForDate(_: string): boolean {
-  return leaveRequests.some(l => l.status === "approved");
+  return leaveRequests.some((l) => l.status === "approved");
 }

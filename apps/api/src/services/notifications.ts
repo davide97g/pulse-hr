@@ -122,10 +122,7 @@ export async function listWorkspaceMembers(): Promise<MemberLite[]> {
       members.push({
         id: u.id,
         name:
-          u.fullName ||
-          u.firstName ||
-          u.emailAddresses[0]?.emailAddress.split("@")[0] ||
-          "Someone",
+          u.fullName || u.firstName || u.emailAddresses[0]?.emailAddress.split("@")[0] || "Someone",
         email: u.emailAddresses[0]?.emailAddress ?? null,
         role:
           ((u.publicMetadata as Record<string, unknown> | undefined)?.role as string | null) ??

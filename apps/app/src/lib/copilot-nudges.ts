@@ -1,11 +1,19 @@
 import {
-  employees, kudosSeed, oneOnOnesSeed, expenses as expensesSeed,
-  leaveRequests, employeeById,
+  employees,
+  kudosSeed,
+  oneOnOnesSeed,
+  expenses as expensesSeed,
+  leaveRequests,
+  employeeById,
 } from "./mock-data";
 import { isBirthday } from "./birthday";
 import {
-  offices, roomsByOffice, bookings as bookingsSeed, officeLocalNow,
-  officeLocalDate, closureFor,
+  offices,
+  roomsByOffice,
+  bookings as bookingsSeed,
+  officeLocalNow,
+  officeLocalDate,
+  closureFor,
 } from "./offices";
 
 export interface Nudge {
@@ -31,9 +39,7 @@ export function buildNudges(now: Date = new Date()): Nudge[] {
   const nudges: Nudge[] = [];
 
   // 1) Birthday nudge — highest priority when someone is celebrating.
-  const birthdayPerson = employees.find(
-    e => e.id !== ME && isBirthday(e, now),
-  );
+  const birthdayPerson = employees.find((e) => e.id !== ME && isBirthday(e, now));
   if (birthdayPerson) {
     nudges.push({
       id: "birthday",
@@ -51,9 +57,9 @@ export function buildNudges(now: Date = new Date()): Nudge[] {
     const prev = onesByEmployee.get(o.employeeId);
     if (!prev || d > prev) onesByEmployee.set(o.employeeId, d);
   }
-  const candidates = employees.filter(e => e.manager && e.id !== ME);
+  const candidates = employees.filter((e) => e.manager && e.id !== ME);
   const stale = candidates
-    .map(e => {
+    .map((e) => {
       const last = onesByEmployee.get(e.id);
       const days = last ? daysBetween(now, last) : 180;
       return { e, days };
@@ -71,12 +77,8 @@ export function buildNudges(now: Date = new Date()): Nudge[] {
   }
 
   // 3) Pending approvals — expenses under $100 or leaves awaiting decision.
-  const smallExpenses = expensesSeed.filter(
-    x => x.status === "pending" && x.amount < 100,
-  ).length;
-  const totalSmall = expensesSeed.filter(
-    x => x.status === "pending",
-  ).length;
+  const smallExpenses = expensesSeed.filter((x) => x.status === "pending" && x.amount < 100).length;
+  const totalSmall = expensesSeed.filter((x) => x.status === "pending").length;
   if (smallExpenses > 0) {
     nudges.push({
       id: "small-expenses",
@@ -120,7 +122,7 @@ export function buildNudges(now: Date = new Date()): Nudge[] {
   }
 
   // 5) Pending leave approvals (as HR persona).
-  const pendingLeaves = leaveRequests.filter(l => l.status === "pending").length;
+  const pendingLeaves = leaveRequests.filter((l) => l.status === "pending").length;
   if (pendingLeaves > 0) {
     nudges.push({
       id: "leaves",
@@ -169,7 +171,5 @@ export function buildNudges(now: Date = new Date()): Nudge[] {
   }
 
   // Sort and keep top 3, deduping by headline.
-  return nudges
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
+  return nudges.sort((a, b) => b.score - a.score).slice(0, 3);
 }

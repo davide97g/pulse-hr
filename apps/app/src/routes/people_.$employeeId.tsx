@@ -13,7 +13,6 @@ import { type Employee, type EmployeeStatus, departments } from "@/lib/mock-data
 import { employeesTable, initialsFor, useEmployee } from "@/lib/tables/employees";
 import { cn } from "@/lib/utils";
 
-
 export const Route = createFileRoute("/people_/$employeeId")({
   head: ({ params }) => ({ meta: [{ title: `Employee — ${params.employeeId} — Pulse HR` }] }),
   component: EmployeeDetailRoute,
@@ -413,9 +412,7 @@ function SegmentedRow<T extends string>({
             onClick={() => onChange(v)}
             className={cn(
               "text-xs py-2 rounded-md border press-scale transition-colors",
-              on
-                ? "border-primary bg-primary/5 text-primary font-medium"
-                : "hover:bg-muted",
+              on ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted",
             )}
           >
             {labels?.[i] ?? v}
@@ -425,4 +422,3 @@ function SegmentedRow<T extends string>({
     </div>
   );
 }
-

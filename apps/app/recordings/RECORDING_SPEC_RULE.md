@@ -4,13 +4,13 @@ Usa questo documento quando crei o modifichi JSON di recording in `apps/app/reco
 
 ## Tooling e file
 
-| Cosa | Dove |
-|------|------|
-| Template in input | `apps/app/recordings/specs/<nome>.template.json` |
-| Compilazione + run | `bun --cwd apps/app/recordings scripts/run.ts <nome>` oppure dalla root `bun run demo:record -- <nome>` |
-| Output video | `apps/app/recordings/output/<nome>/` |
-| Credenziali | `apps/app/test.credentials.json` (`email`, `password`) — sostituiti in compile come `{{TEST_EMAIL}}` / `{{TEST_PASSWORD}}` |
-| Base URL app | `{{BASE_URL}}` (default `http://localhost:5173`; override con env `BASE_URL`) |
+| Cosa               | Dove                                                                                                                       |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Template in input  | `apps/app/recordings/specs/<nome>.template.json`                                                                           |
+| Compilazione + run | `bun --cwd apps/app/recordings scripts/run.ts <nome>` oppure dalla root `bun run demo:record -- <nome>`                    |
+| Output video       | `apps/app/recordings/output/<nome>/`                                                                                       |
+| Credenziali        | `apps/app/test.credentials.json` (`email`, `password`) — sostituiti in compile come `{{TEST_EMAIL}}` / `{{TEST_PASSWORD}}` |
+| Base URL app       | `{{BASE_URL}}` (default `http://localhost:5173`; override con env `BASE_URL`)                                              |
 
 Il nome dello spec (`focus`, `kudos-copilot`, …) deve coincidere con il file `specs/<nome>.template.json`.
 
@@ -46,22 +46,22 @@ Altri campi ammessi dallo schema: `waitForSelector`, `speed`, `outputFormat`, `s
 
 Ogni step è un oggetto con `"action"` e campi specifici. Tutti gli step possono usare opzionalmente: `timeout` (ms, default spesso ~5000), `pauseAfter`, `speed`, `waitFor` (selettore Playwright o condizione).
 
-| `action` | Uso | Note |
-|----------|-----|------|
-| `wait` | Pausa | `{ "action": "wait", "ms": 600 }` |
-| `navigate` | `goto` URL | `{ "action": "navigate", "url": "{{BASE_URL}}/people" }` — utile anche con hash per scrollare a un `id` (es. `{{BASE_URL}}/#nav-focus`). |
-| `zoom` | Ingrandimento compositing | Con `selector`: centra l’elemento. Con solo `scale: 1`: reset zoom. `duration` in ms. |
-| `click` | Click | Preferisci `zoom` dedicato prima oppure `click` con `"zoom": 1.7` se supportato. |
-| `type` | Digitazione | `delay` tra tasti (ms). Opzione `clear`. |
-| `fill` | Valore istantaneo | Utile per svuotare (`"text": ""`) prima di `type`. |
-| `clear` | Svuota campo | |
-| `select` | `<select>` | |
-| `scroll` | Scroll finestra | Delta `x` / `y` sulla **pagina** (non scrolla container interni tipo `aside nav` overflow). |
-| `hover` | Hover | |
-| `keyboard` | Tasto | Es. `"Enter"`, `"Escape"`, atajo palette `"Meta+k"`. |
-| `screenshot` | Fotogramma named | `"name": "01-feature-idle"` → file PNG in output. |
-| `waitForNetwork` | Attesa response | `urlPattern` substring. |
-| `hideCursor` / `showCursor` | Cursore | |
+| `action`                    | Uso                       | Note                                                                                                                                     |
+| --------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `wait`                      | Pausa                     | `{ "action": "wait", "ms": 600 }`                                                                                                        |
+| `navigate`                  | `goto` URL                | `{ "action": "navigate", "url": "{{BASE_URL}}/people" }` — utile anche con hash per scrollare a un `id` (es. `{{BASE_URL}}/#nav-focus`). |
+| `zoom`                      | Ingrandimento compositing | Con `selector`: centra l’elemento. Con solo `scale: 1`: reset zoom. `duration` in ms.                                                    |
+| `click`                     | Click                     | Preferisci `zoom` dedicato prima oppure `click` con `"zoom": 1.7` se supportato.                                                         |
+| `type`                      | Digitazione               | `delay` tra tasti (ms). Opzione `clear`.                                                                                                 |
+| `fill`                      | Valore istantaneo         | Utile per svuotare (`"text": ""`) prima di `type`.                                                                                       |
+| `clear`                     | Svuota campo              |                                                                                                                                          |
+| `select`                    | `<select>`                |                                                                                                                                          |
+| `scroll`                    | Scroll finestra           | Delta `x` / `y` sulla **pagina** (non scrolla container interni tipo `aside nav` overflow).                                              |
+| `hover`                     | Hover                     |                                                                                                                                          |
+| `keyboard`                  | Tasto                     | Es. `"Enter"`, `"Escape"`, atajo palette `"Meta+k"`.                                                                                     |
+| `screenshot`                | Fotogramma named          | `"name": "01-feature-idle"` → file PNG in output.                                                                                        |
+| `waitForNetwork`            | Attesa response           | `urlPattern` substring.                                                                                                                  |
+| `hideCursor` / `showCursor` | Cursore                   |                                                                                                                                          |
 
 Ordine consigliato per interazioni leggibili nel video:
 

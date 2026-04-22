@@ -1,17 +1,18 @@
 <div align="center">
   <img src="apps/app/public/icon.svg" alt="Pulse HR logo" width="96" height="96" />
 
-  # Pulse HR
+# Pulse HR
 
-  **An opinionated, open-source HR platform for modern teams.**
+**An opinionated, open-source HR platform for modern teams.**
 
-  People, time, payroll, recruiting, and a few Labs experiments (Pulse, Forecast, Kudos, Focus, Copilot) — all in one place.
+People, time, payroll, recruiting, and a few Labs experiments (Pulse, Forecast, Kudos, Focus, Copilot) — all in one place.
 
-  [Live app](https://app.pulsehr.it) · [Marketing site](https://pulsehr.it) · [Roadmap](https://pulsehr.it/roadmap) · [Changelog](https://pulsehr.it/changelog) · [Status](https://status.pulsehr.it)
+[Live app](https://app.pulsehr.it) · [Marketing site](https://pulsehr.it) · [Roadmap](https://pulsehr.it/roadmap) · [Changelog](https://pulsehr.it/changelog) · [Status](https://status.pulsehr.it)
 
-  [![License: FSL-1.1-MIT](https://img.shields.io/badge/license-FSL--1.1--MIT-black)](./LICENSE)
-  [![Built with Bun](https://img.shields.io/badge/built%20with-Bun-f9f1e1)](https://bun.com)
-  [![Made with TanStack Router](https://img.shields.io/badge/TanStack-Router-ef4444)](https://tanstack.com/router)
+[![License: FSL-1.1-MIT](https://img.shields.io/badge/license-FSL--1.1--MIT-black)](./LICENSE)
+[![Built with Bun](https://img.shields.io/badge/built%20with-Bun-f9f1e1)](https://bun.com)
+[![Made with TanStack Router](https://img.shields.io/badge/TanStack-Router-ef4444)](https://tanstack.com/router)
+
 </div>
 
 ---
@@ -96,6 +97,7 @@ Contributions are welcome — this project lives in the open.
 - Security issues → [`SECURITY.md`](./SECURITY.md) (do **not** open a public issue).
 
 Also helpful:
+
 - [`docs/development.md`](./docs/development.md) — first-run guide, scripts, troubleshooting
 - [`docs/self-hosting.md`](./docs/self-hosting.md) — Vercel / Docker / Kubernetes deployment
 

@@ -38,9 +38,11 @@ function ClientsProjectsDoc() {
         </p>
         <p>
           Create clients and projects from the{" "}
-          <Link to="/clients" className="text-primary hover:underline">Clients &amp; Projects</Link> page.
-          Each client has an account owner (an employee); each project has an owner and a default
-          billable rate.
+          <Link to="/clients" className="text-primary hover:underline">
+            Clients &amp; Projects
+          </Link>{" "}
+          page. Each client has an account owner (an employee); each project has an owner and a
+          default billable rate.
         </p>
       </Section>
 
@@ -62,8 +64,12 @@ function ClientsProjectsDoc() {
 
       <Section title="External work items">
         <p>
-          Connect Jira and Linear in <Link to="/settings" className="text-primary hover:underline">Settings → Integrations</Link> to pull issues. Each activity can point at one ticket key
-          for traceability. Ticket keys show as small colour-coded pills throughout.
+          Connect Jira and Linear in{" "}
+          <Link to="/settings" className="text-primary hover:underline">
+            Settings → Integrations
+          </Link>{" "}
+          to pull issues. Each activity can point at one ticket key for traceability. Ticket keys
+          show as small colour-coded pills throughout.
         </p>
       </Section>
     </div>

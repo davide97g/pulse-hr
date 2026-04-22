@@ -29,10 +29,7 @@ export function PinLayer() {
     scrollRoot?.addEventListener("scroll", bump, { passive: true });
     window.addEventListener("resize", bump);
     window.addEventListener("scroll", bump, { passive: true });
-    const ro =
-      typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(bump)
-        : null;
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(bump) : null;
     if (ro && scrollRoot) ro.observe(scrollRoot);
     return () => {
       scrollRoot?.removeEventListener("scroll", bump);
@@ -67,7 +64,9 @@ export function PinLayer() {
           if (!pos) return null;
           return { comment: c, x: pos.x, y: pos.y };
         })
-        .filter((p): p is { comment: (typeof comments)[number]; x: number; y: number } => p !== null),
+        .filter(
+          (p): p is { comment: (typeof comments)[number]; x: number; y: number } => p !== null,
+        ),
     // tick forces recompute on scroll/resize
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [comments, tick],

@@ -1,11 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { TrendingUp, AlertTriangle, Sliders, UserPlus, Sparkles, Calendar, DollarSign } from "lucide-react";
+import {
+  TrendingUp,
+  AlertTriangle,
+  Sliders,
+  UserPlus,
+  Sparkles,
+  Calendar,
+  DollarSign,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { NewBadge } from "@/components/app/NewBadge";
 import { commesse, type Commessa } from "@/lib/mock-data";
@@ -59,11 +73,13 @@ function Forecast() {
   const [activeId, setActiveId] = useState<string>(workspace.activeCommessaId);
 
   const summaries = useMemo(
-    () => commesse.map(c => ({ c, f: forecastCommessa(c, headcount, efficiency) })),
-    [headcount, efficiency]
+    () => commesse.map((c) => ({ c, f: forecastCommessa(c, headcount, efficiency) })),
+    [headcount, efficiency],
   );
-  const active = summaries.find(s => s.c.id === activeId) ?? summaries[0];
-  const atRisk = summaries.filter(s => s.f.weeksToBudget < 6 && !s.f.overBudget).length + summaries.filter(s => s.f.overBudget).length;
+  const active = summaries.find((s) => s.c.id === activeId) ?? summaries[0];
+  const atRisk =
+    summaries.filter((s) => s.f.weeksToBudget < 6 && !s.f.overBudget).length +
+    summaries.filter((s) => s.f.overBudget).length;
   const totalSaved = summaries.reduce((acc, s) => {
     const base = forecastCommessa(s.c, 0, 100);
     return acc + Math.max(0, base.adjBurn - s.f.adjBurn) * 4;
@@ -72,10 +88,21 @@ function Forecast() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title={<><span>Commessa Forecast</span><NewBadge /></>}
+        title={
+          <>
+            <span>Commessa Forecast</span>
+            <NewBadge />
+          </>
+        }
         description="Project-level burn projections with scenario modelling. See overruns before they happen."
         actions={
-          <Button size="sm" className="press-scale" onClick={() => toast.success("Forecast exported", { description: "PDF sent to your downloads." })}>
+          <Button
+            size="sm"
+            className="press-scale"
+            onClick={() =>
+              toast.success("Forecast exported", { description: "PDF sent to your downloads." })
+            }
+          >
             Export forecast
           </Button>
         }
@@ -83,23 +110,33 @@ function Forecast() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4 stagger-in">
         <Card className="p-5">
-          <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Active commesse</div>
-          <div className="text-3xl font-display mt-1 tabular-nums">{commesse.filter(c => c.status === "active").length}</div>
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            Active commesse
+          </div>
+          <div className="text-3xl font-display mt-1 tabular-nums">
+            {commesse.filter((c) => c.status === "active").length}
+          </div>
         </Card>
         <Card className="p-5">
-          <div className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1"><AlertTriangle className="h-3 w-3 text-warning" />At risk</div>
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+            <AlertTriangle className="h-3 w-3 text-warning" />
+            At risk
+          </div>
           <div className="text-3xl font-display mt-1 tabular-nums text-warning">{atRisk}</div>
           <div className="text-xs text-muted-foreground mt-1">under current scenario</div>
         </Card>
         <Card className="p-5">
-          <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Hours to budget (Σ)</div>
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            Hours to budget (Σ)
+          </div>
           <div className="text-3xl font-display mt-1 tabular-nums">
             {summaries.reduce((a, s) => a + Math.max(0, s.f.remaining), 0)}h
           </div>
         </Card>
         <Card className="p-5">
           <div className="text-[11px] uppercase tracking-wider text-primary font-semibold flex items-center gap-1">
-            <Sparkles className="h-3 w-3" />AI forecast
+            <Sparkles className="h-3 w-3" />
+            AI forecast
           </div>
           <div className="text-3xl font-display mt-1 tabular-nums">
             {totalSaved > 0 ? `+${Math.round(totalSaved)}h` : `${Math.round(totalSaved)}h`}
@@ -117,8 +154,14 @@ function Forecast() {
             <div className="font-semibold text-sm">What-if scenario</div>
             <NewBadge label="AI" />
             <Button
-              size="sm" variant="ghost" className="ml-auto"
-              onClick={() => { setHeadcount(0); setEfficiency(100); toast("Reset to baseline"); }}
+              size="sm"
+              variant="ghost"
+              className="ml-auto"
+              onClick={() => {
+                setHeadcount(0);
+                setEfficiency(100);
+                toast("Reset to baseline");
+              }}
             >
               Reset
             </Button>
@@ -126,19 +169,46 @@ function Forecast() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <div className="flex items-center justify-between mb-3">
-                <div className="text-sm font-medium inline-flex items-center gap-1.5"><UserPlus className="h-3.5 w-3.5" />Add headcount</div>
-                <div className="font-mono text-sm tabular-nums">+{headcount} {headcount === 1 ? "person" : "people"}</div>
+                <div className="text-sm font-medium inline-flex items-center gap-1.5">
+                  <UserPlus className="h-3.5 w-3.5" />
+                  Add headcount
+                </div>
+                <div className="font-mono text-sm tabular-nums">
+                  +{headcount} {headcount === 1 ? "person" : "people"}
+                </div>
               </div>
-              <Slider value={[headcount]} onValueChange={([v]) => setHeadcount(v)} min={0} max={4} step={1} />
-              <div className="flex justify-between text-[11px] text-muted-foreground mt-2"><span>baseline</span><span>+1</span><span>+2</span><span>+3</span><span>+4</span></div>
+              <Slider
+                value={[headcount]}
+                onValueChange={([v]) => setHeadcount(v)}
+                min={0}
+                max={4}
+                step={1}
+              />
+              <div className="flex justify-between text-[11px] text-muted-foreground mt-2">
+                <span>baseline</span>
+                <span>+1</span>
+                <span>+2</span>
+                <span>+3</span>
+                <span>+4</span>
+              </div>
             </div>
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div className="text-sm font-medium">Team efficiency</div>
                 <div className="font-mono text-sm tabular-nums">{efficiency}%</div>
               </div>
-              <Slider value={[efficiency]} onValueChange={([v]) => setEfficiency(v)} min={60} max={130} step={5} />
-              <div className="flex justify-between text-[11px] text-muted-foreground mt-2"><span>60%</span><span>baseline</span><span>130%</span></div>
+              <Slider
+                value={[efficiency]}
+                onValueChange={([v]) => setEfficiency(v)}
+                min={60}
+                max={130}
+                step={5}
+              />
+              <div className="flex justify-between text-[11px] text-muted-foreground mt-2">
+                <span>60%</span>
+                <span>baseline</span>
+                <span>130%</span>
+              </div>
             </div>
           </div>
         </div>
@@ -157,14 +227,25 @@ function Forecast() {
                 onClick={() => setActiveId(c.id)}
                 className={cn(
                   "w-full text-left p-3 rounded-lg border transition-all press-scale",
-                  isActive ? "border-primary bg-primary/[0.04] shadow-sm" : "hover:bg-muted/40"
+                  isActive ? "border-primary bg-primary/[0.04] shadow-sm" : "hover:bg-muted/40",
                 )}
               >
                 <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: tone }} />
+                  <span
+                    className="h-2 w-2 rounded-full shrink-0"
+                    style={{ backgroundColor: tone }}
+                  />
                   <span className="text-[11px] font-mono">{c.code}</span>
-                  {f.overBudget && <span className="text-[10px] px-1 rounded bg-destructive/10 text-destructive font-medium">over</span>}
-                  {!f.overBudget && f.weeksToBudget < 4 && <span className="text-[10px] px-1 rounded bg-warning/10 text-warning font-medium">risk</span>}
+                  {f.overBudget && (
+                    <span className="text-[10px] px-1 rounded bg-destructive/10 text-destructive font-medium">
+                      over
+                    </span>
+                  )}
+                  {!f.overBudget && f.weeksToBudget < 4 && (
+                    <span className="text-[10px] px-1 rounded bg-warning/10 text-warning font-medium">
+                      risk
+                    </span>
+                  )}
                 </div>
                 <div className="text-sm font-medium mt-1 truncate">{c.name}</div>
                 <div className="h-1.5 rounded-full bg-muted mt-2 overflow-hidden">
@@ -174,8 +255,16 @@ function Forecast() {
                   />
                 </div>
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground mt-1.5 tabular-nums">
-                  <span>{c.burnedHours}/{c.budgetHours}h</span>
-                  <span>{f.overBudget ? "over budget" : f.weeksToBudget === Infinity ? "∞" : `${f.weeksToBudget.toFixed(1)}w left`}</span>
+                  <span>
+                    {c.burnedHours}/{c.budgetHours}h
+                  </span>
+                  <span>
+                    {f.overBudget
+                      ? "over budget"
+                      : f.weeksToBudget === Infinity
+                        ? "∞"
+                        : `${f.weeksToBudget.toFixed(1)}w left`}
+                  </span>
                 </div>
               </button>
             );
@@ -187,19 +276,42 @@ function Forecast() {
             <div className="flex items-start justify-between mb-5 gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="h-3 w-3 rounded-full" style={{ backgroundColor: statusColor(active.f.overBudget, active.f.weeksToBudget) }} />
+                  <span
+                    className="h-3 w-3 rounded-full"
+                    style={{
+                      backgroundColor: statusColor(active.f.overBudget, active.f.weeksToBudget),
+                    }}
+                  />
                   <span className="font-mono text-xs">{active.c.code}</span>
-                  <StatusBadge status={active.c.status === "active" ? "active" : active.c.status === "on_hold" ? "pending" : "rejected"} />
+                  <StatusBadge
+                    status={
+                      active.c.status === "active"
+                        ? "active"
+                        : active.c.status === "on_hold"
+                          ? "pending"
+                          : "rejected"
+                    }
+                  />
                 </div>
                 <h2 className="font-display text-3xl">{active.c.name}</h2>
-                <div className="text-sm text-muted-foreground">{active.c.client} · Lead {active.c.manager}</div>
+                <div className="text-sm text-muted-foreground">
+                  {active.c.client} · Lead {active.c.manager}
+                </div>
               </div>
               <div className="text-right">
-                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Projected overrun</div>
-                <div className={cn("text-xl font-semibold tabular-nums inline-flex items-center gap-1.5",
-                  active.f.overBudget ? "text-destructive" :
-                  active.f.weeksToBudget < 4 ? "text-warning" : "text-success"
-                )}>
+                <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                  Projected overrun
+                </div>
+                <div
+                  className={cn(
+                    "text-xl font-semibold tabular-nums inline-flex items-center gap-1.5",
+                    active.f.overBudget
+                      ? "text-destructive"
+                      : active.f.weeksToBudget < 4
+                        ? "text-warning"
+                        : "text-success",
+                  )}
+                >
                   <Calendar className="h-4 w-4" />
                   {active.f.overBudget
                     ? "Already over"
@@ -213,28 +325,73 @@ function Forecast() {
             <div className="grid grid-cols-3 gap-3 mb-6">
               <Stat label="Budget" value={`${active.c.budgetHours}h`} />
               <Stat label="Burned" value={`${active.c.burnedHours}h`} />
-              <Stat label="Burn rate" value={`${active.f.adjBurn.toFixed(1)}h/w`} delta={active.f.adjBurn - active.f.baseBurn} />
+              <Stat
+                label="Burn rate"
+                value={`${active.f.adjBurn.toFixed(1)}h/w`}
+                delta={active.f.adjBurn - active.f.baseBurn}
+              />
             </div>
 
             {/* Projection chart */}
-            <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2">12-week projection</div>
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
+              12-week projection
+            </div>
             <div className="relative h-56 border rounded-md p-4 bg-muted/20 overflow-hidden">
               <svg className="w-full h-full" viewBox="0 0 600 200" preserveAspectRatio="none">
                 {/* budget line */}
-                <line x1="0" x2="600" y1={200 - (active.c.budgetHours / (active.c.budgetHours * 1.4)) * 200} y2={200 - (active.c.budgetHours / (active.c.budgetHours * 1.4)) * 200} stroke="var(--color-destructive)" strokeDasharray="4 4" strokeWidth="1" opacity="0.5" />
-                <text x="600" y={200 - (active.c.budgetHours / (active.c.budgetHours * 1.4)) * 200 - 4} textAnchor="end" className="fill-destructive" style={{ fontSize: 10 }}>budget</text>
+                <line
+                  x1="0"
+                  x2="600"
+                  y1={200 - (active.c.budgetHours / (active.c.budgetHours * 1.4)) * 200}
+                  y2={200 - (active.c.budgetHours / (active.c.budgetHours * 1.4)) * 200}
+                  stroke="var(--color-destructive)"
+                  strokeDasharray="4 4"
+                  strokeWidth="1"
+                  opacity="0.5"
+                />
+                <text
+                  x="600"
+                  y={200 - (active.c.budgetHours / (active.c.budgetHours * 1.4)) * 200 - 4}
+                  textAnchor="end"
+                  className="fill-destructive"
+                  style={{ fontSize: 10 }}
+                >
+                  budget
+                </text>
                 {/* baseline */}
                 {(() => {
                   const base = forecastCommessa(active.c, 0, 100).projection;
-                  const path = base.map((p, i) => `${i === 0 ? "M" : "L"} ${(i / 11) * 600} ${200 - (p.burned / (active.c.budgetHours * 1.4)) * 200}`).join(" ");
-                  return <path d={path} fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.3" strokeDasharray="3 3" />;
+                  const path = base
+                    .map(
+                      (p, i) =>
+                        `${i === 0 ? "M" : "L"} ${(i / 11) * 600} ${200 - (p.burned / (active.c.budgetHours * 1.4)) * 200}`,
+                    )
+                    .join(" ");
+                  return (
+                    <path
+                      d={path}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      opacity="0.3"
+                      strokeDasharray="3 3"
+                    />
+                  );
                 })()}
                 {/* current scenario */}
                 {(() => {
-                  const path = active.f.projection.map((p, i) => `${i === 0 ? "M" : "L"} ${(i / 11) * 600} ${200 - (p.burned / (active.c.budgetHours * 1.4)) * 200}`).join(" ");
+                  const path = active.f.projection
+                    .map(
+                      (p, i) =>
+                        `${i === 0 ? "M" : "L"} ${(i / 11) * 600} ${200 - (p.burned / (active.c.budgetHours * 1.4)) * 200}`,
+                    )
+                    .join(" ");
                   return (
                     <>
-                      <path d={`${path} L 600 200 L 0 200 Z`} fill="color-mix(in oklch, var(--primary) 12%, transparent)" />
+                      <path
+                        d={`${path} L 600 200 L 0 200 Z`}
+                        fill="color-mix(in oklch, var(--primary) 12%, transparent)"
+                      />
                       <path d={path} fill="none" stroke="var(--primary)" strokeWidth="2.5" />
                     </>
                   );
@@ -243,9 +400,18 @@ function Forecast() {
               <div className="absolute bottom-1 left-4 text-[10px] text-muted-foreground">W1</div>
               <div className="absolute bottom-1 right-4 text-[10px] text-muted-foreground">W12</div>
               <div className="absolute top-2 left-4 flex gap-3 text-[10px]">
-                <span className="inline-flex items-center gap-1.5"><span className="h-0.5 w-4 bg-primary" />Scenario</span>
-                <span className="inline-flex items-center gap-1.5 text-muted-foreground"><span className="h-0.5 w-4 border-t border-dashed border-current" />Baseline</span>
-                <span className="inline-flex items-center gap-1.5 text-destructive"><span className="h-0.5 w-4 border-t border-dashed border-current" />Budget ceiling</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-0.5 w-4 bg-primary" />
+                  Scenario
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                  <span className="h-0.5 w-4 border-t border-dashed border-current" />
+                  Baseline
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-destructive">
+                  <span className="h-0.5 w-4 border-t border-dashed border-current" />
+                  Budget ceiling
+                </span>
               </div>
             </div>
 
@@ -253,7 +419,9 @@ function Forecast() {
             <div className="mt-5 rounded-lg border p-4 bg-gradient-to-br from-primary/[0.06] via-transparent to-transparent">
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <div className="text-xs uppercase tracking-wider text-primary font-semibold">Forecast narrative</div>
+                <div className="text-xs uppercase tracking-wider text-primary font-semibold">
+                  Forecast narrative
+                </div>
               </div>
               <p className="text-sm leading-relaxed">
                 {active.f.overBudget
@@ -263,8 +431,22 @@ function Forecast() {
                     : `${active.c.code} is on track under the current scenario. You have ~${active.f.weeksToBudget.toFixed(1)} weeks of runway at ${active.f.adjBurn.toFixed(1)}h/week.`}
               </p>
               <div className="flex gap-2 mt-4">
-                <Button size="sm" variant="outline" className="press-scale" onClick={() => toast.success("Change request drafted")}>Draft change request</Button>
-                <Button size="sm" variant="ghost" className="press-scale" onClick={() => toast("Shared with Finance")}>Share with Finance</Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="press-scale"
+                  onClick={() => toast.success("Change request drafted")}
+                >
+                  Draft change request
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="press-scale"
+                  onClick={() => toast("Shared with Finance")}
+                >
+                  Share with Finance
+                </Button>
               </div>
             </div>
           </Card>
@@ -280,7 +462,12 @@ function Stat({ label, value, delta }: { label: string; value: string; delta?: n
       <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="text-xl font-semibold mt-0.5 tabular-nums">{value}</div>
       {delta !== undefined && (
-        <div className={cn("text-[11px] tabular-nums mt-0.5", delta > 0 ? "text-destructive" : delta < 0 ? "text-success" : "text-muted-foreground")}>
+        <div
+          className={cn(
+            "text-[11px] tabular-nums mt-0.5",
+            delta > 0 ? "text-destructive" : delta < 0 ? "text-success" : "text-muted-foreground",
+          )}
+        >
           {delta > 0 ? "▲" : delta < 0 ? "▼" : ""} {Math.abs(delta).toFixed(1)} vs baseline
         </div>
       )}

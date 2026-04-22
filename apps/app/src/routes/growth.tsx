@@ -1,15 +1,31 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
-  TrendingUp, User, Users, Flame, Trophy, Target, Zap, Award, Sparkles,
-  MessageCircle, StickyNote, CheckCircle2, XCircle, Circle, Clock,
-  Gift, Crown, Medal, CalendarDays, CalendarRange, Calendar as CalendarIcon,
+  TrendingUp,
+  User,
+  Users,
+  Flame,
+  Trophy,
+  Target,
+  Zap,
+  Award,
+  Sparkles,
+  MessageCircle,
+  StickyNote,
+  CheckCircle2,
+  XCircle,
+  Circle,
+  Clock,
+  Gift,
+  Crown,
+  Medal,
+  CalendarDays,
+  CalendarRange,
+  Calendar as CalendarIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
@@ -19,14 +35,30 @@ import { StatTile, MiniStat } from "@/components/app/StatTiles";
 import { BirthdayHalo } from "@/components/app/BirthdayHalo";
 import { isBirthday } from "@/lib/birthday";
 import {
-  allGrowthSummaries, growthSummaryFor, badgesFor, strengthRadarFor,
-  goalsFor, challengesFor, oneOnOnesFor, notesFor,
-  leaderboard, seasonalChallengesFor,
-  type GrowthSummary, type StrengthTag, type LeaderboardEntry,
+  allGrowthSummaries,
+  growthSummaryFor,
+  badgesFor,
+  strengthRadarFor,
+  goalsFor,
+  challengesFor,
+  oneOnOnesFor,
+  notesFor,
+  leaderboard,
+  seasonalChallengesFor,
+  type GrowthSummary,
+  type StrengthTag,
+  type LeaderboardEntry,
 } from "@/lib/growth";
 import {
-  employeeById, kudosSeed, type Goal, type Challenge, type OneOnOne, type GrowthNote,
-  type Kudo, type SeasonalPeriod, type SeasonalChallenge,
+  employeeById,
+  kudosSeed,
+  type Goal,
+  type Challenge,
+  type OneOnOne,
+  type GrowthNote,
+  type Kudo,
+  type SeasonalPeriod,
+  type SeasonalChallenge,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { useUrlParam } from "@/lib/useUrlParam";
@@ -73,24 +105,39 @@ function Growth() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title={<><span>Growth</span><NewBadge /></>}
+        title={
+          <>
+            <span>Growth</span>
+            <NewBadge />
+          </>
+        }
         description="Track progress, goals, challenges and 1:1s. Kudos and focus sessions roll up into XP and badges."
         actions={
           <div className="inline-flex rounded-md border p-0.5 bg-background">
             <button
-              onClick={() => { setView("team"); setFocusEmployee(null); }}
+              onClick={() => {
+                setView("team");
+                setFocusEmployee(null);
+              }}
               className={cn(
                 "px-3 h-8 text-xs rounded-sm inline-flex items-center gap-1.5 press-scale",
-                view === "team" ? "bg-primary text-primary-foreground font-medium" : "text-muted-foreground hover:text-foreground",
+                view === "team"
+                  ? "bg-primary text-primary-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               <Users className="h-3.5 w-3.5" /> Team
             </button>
             <button
-              onClick={() => { setView("me"); setFocusEmployee(null); }}
+              onClick={() => {
+                setView("me");
+                setFocusEmployee(null);
+              }}
               className={cn(
                 "px-3 h-8 text-xs rounded-sm inline-flex items-center gap-1.5 press-scale",
-                view === "me" ? "bg-primary text-primary-foreground font-medium" : "text-muted-foreground hover:text-foreground",
+                view === "me"
+                  ? "bg-primary text-primary-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               <User className="h-3.5 w-3.5" /> Me
@@ -114,7 +161,7 @@ function Growth() {
       ) : (
         <TeamGrid
           summaries={summaries}
-          onPick={id => setFocusEmployee(id)}
+          onPick={(id) => setFocusEmployee(id)}
           tab={teamTab}
           onTabChange={setTeamTab}
         />
@@ -135,20 +182,40 @@ function TeamGrid({
   tab: "leaderboard" | "team";
   onTabChange: (v: string) => void;
 }) {
-  const totals = useMemo(() => ({
-    xp: summaries.reduce((a, s) => a + s.xp.total, 0),
-    activeGoals: summaries.reduce((a, s) => a + s.goalsActive, 0),
-    openChallenges: summaries.reduce((a, s) => a + s.challengesOpen, 0),
-    kudos: summaries.reduce((a, s) => a + s.kudosReceived, 0),
-  }), [summaries]);
+  const totals = useMemo(
+    () => ({
+      xp: summaries.reduce((a, s) => a + s.xp.total, 0),
+      activeGoals: summaries.reduce((a, s) => a + s.goalsActive, 0),
+      openChallenges: summaries.reduce((a, s) => a + s.challengesOpen, 0),
+      kudos: summaries.reduce((a, s) => a + s.kudosReceived, 0),
+    }),
+    [summaries],
+  );
 
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 stagger-in">
-        <StatTile icon={<Zap className="h-4 w-4" />} label="Total XP this quarter" value={totals.xp.toLocaleString()} accent />
-        <StatTile icon={<Target className="h-4 w-4" />} label="Active goals" value={`${totals.activeGoals}`} />
-        <StatTile icon={<Trophy className="h-4 w-4" />} label="Open challenges" value={`${totals.openChallenges}`} />
-        <StatTile icon={<Gift className="h-4 w-4" />} label="Kudos received" value={`${totals.kudos}`} />
+        <StatTile
+          icon={<Zap className="h-4 w-4" />}
+          label="Total XP this quarter"
+          value={totals.xp.toLocaleString()}
+          accent
+        />
+        <StatTile
+          icon={<Target className="h-4 w-4" />}
+          label="Active goals"
+          value={`${totals.activeGoals}`}
+        />
+        <StatTile
+          icon={<Trophy className="h-4 w-4" />}
+          label="Open challenges"
+          value={`${totals.openChallenges}`}
+        />
+        <StatTile
+          icon={<Gift className="h-4 w-4" />}
+          label="Kudos received"
+          value={`${totals.kudos}`}
+        />
       </div>
 
       <Tabs value={tab} onValueChange={onTabChange}>
@@ -168,7 +235,9 @@ function TeamGrid({
             <Users className="h-3 w-3" /> Click a card for full profile
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 stagger-in">
-            {summaries.map(s => <TeamCard key={s.employee.id} summary={s} onPick={onPick} />)}
+            {summaries.map((s) => (
+              <TeamCard key={s.employee.id} summary={s} onPick={onPick} />
+            ))}
           </div>
         </TabsContent>
       </Tabs>
@@ -186,19 +255,61 @@ interface Prize {
 }
 const PRIZES: Record<SeasonalPeriod, [Prize, Prize, Prize]> = {
   weekly: [
-    { xp: 500,  reward: "Shipping Sprint trophy + feature on all-hands",           emoji: "🏆", tint: "oklch(0.82 0.17 85)",  label: "Gold" },
-    { xp: 250,  reward: "Runner-up badge + coffee on the house",                   emoji: "🥈", tint: "oklch(0.78 0.03 250)", label: "Silver" },
-    { xp: 100,  reward: "Podium badge",                                             emoji: "🥉", tint: "oklch(0.68 0.14 50)",  label: "Bronze" },
+    {
+      xp: 500,
+      reward: "Shipping Sprint trophy + feature on all-hands",
+      emoji: "🏆",
+      tint: "oklch(0.82 0.17 85)",
+      label: "Gold",
+    },
+    {
+      xp: 250,
+      reward: "Runner-up badge + coffee on the house",
+      emoji: "🥈",
+      tint: "oklch(0.78 0.03 250)",
+      label: "Silver",
+    },
+    { xp: 100, reward: "Podium badge", emoji: "🥉", tint: "oklch(0.68 0.14 50)", label: "Bronze" },
   ],
   monthly: [
-    { xp: 2000, reward: "$100 gift card · Legend badge · half-day off",             emoji: "👑", tint: "oklch(0.82 0.17 85)",  label: "Gold" },
-    { xp: 1000, reward: "$50 gift card · Silver streak badge",                      emoji: "🥈", tint: "oklch(0.78 0.03 250)", label: "Silver" },
-    { xp: 500,  reward: "$25 gift card",                                            emoji: "🥉", tint: "oklch(0.68 0.14 50)",  label: "Bronze" },
+    {
+      xp: 2000,
+      reward: "$100 gift card · Legend badge · half-day off",
+      emoji: "👑",
+      tint: "oklch(0.82 0.17 85)",
+      label: "Gold",
+    },
+    {
+      xp: 1000,
+      reward: "$50 gift card · Silver streak badge",
+      emoji: "🥈",
+      tint: "oklch(0.78 0.03 250)",
+      label: "Silver",
+    },
+    { xp: 500, reward: "$25 gift card", emoji: "🥉", tint: "oklch(0.68 0.14 50)", label: "Bronze" },
   ],
   yearly: [
-    { xp: 10000, reward: "$500 · engraved trophy · extra day off · Hall of Fame",  emoji: "🏆", tint: "oklch(0.82 0.17 85)",  label: "Champion" },
-    { xp: 5000,  reward: "$250 · Silver laurel · off-site seat",                   emoji: "🥈", tint: "oklch(0.78 0.03 250)", label: "Silver" },
-    { xp: 2500,  reward: "$100 · Bronze laurel",                                    emoji: "🥉", tint: "oklch(0.68 0.14 50)",  label: "Bronze" },
+    {
+      xp: 10000,
+      reward: "$500 · engraved trophy · extra day off · Hall of Fame",
+      emoji: "🏆",
+      tint: "oklch(0.82 0.17 85)",
+      label: "Champion",
+    },
+    {
+      xp: 5000,
+      reward: "$250 · Silver laurel · off-site seat",
+      emoji: "🥈",
+      tint: "oklch(0.78 0.03 250)",
+      label: "Silver",
+    },
+    {
+      xp: 2500,
+      reward: "$100 · Bronze laurel",
+      emoji: "🥉",
+      tint: "oklch(0.68 0.14 50)",
+      label: "Bronze",
+    },
   ],
 };
 
@@ -206,13 +317,15 @@ function Leaderboard() {
   const [period, setPeriod] = useState<SeasonalPeriod>("weekly");
   const entries = useMemo(() => leaderboard(period), [period]);
   const challenges = useMemo(() => seasonalChallengesFor(period), [period]);
-  const scored = entries.filter(e => e.xp > 0);
+  const scored = entries.filter((e) => e.xp > 0);
   const podium = scored.slice(0, 3);
   const rest = scored.slice(3, 10);
   const prizes = PRIZES[period];
 
-  const label = period === "weekly" ? "this week" : period === "monthly" ? "this month" : "this year";
-  const windowEnds = period === "weekly" ? "Sunday 23:59" : period === "monthly" ? "end of month" : "Dec 31";
+  const label =
+    period === "weekly" ? "this week" : period === "monthly" ? "this month" : "this year";
+  const windowEnds =
+    period === "weekly" ? "Sunday 23:59" : period === "monthly" ? "end of month" : "Dec 31";
 
   return (
     <Card className="p-5 overflow-hidden relative">
@@ -222,14 +335,18 @@ function Leaderboard() {
         </div>
         <div>
           <div className="font-display text-base leading-tight">Leaderboard</div>
-          <div className="text-[11px] text-muted-foreground">Compete on XP earned {label} · resets {windowEnds}</div>
+          <div className="text-[11px] text-muted-foreground">
+            Compete on XP earned {label} · resets {windowEnds}
+          </div>
         </div>
         <div className="ml-auto inline-flex rounded-md border p-0.5 bg-background">
-          {([
-            ["weekly",  "Week",   CalendarDays],
-            ["monthly", "Month",  CalendarRange],
-            ["yearly",  "Year",   CalendarIcon],
-          ] as const).map(([p, lbl, Icon]) => (
+          {(
+            [
+              ["weekly", "Week", CalendarDays],
+              ["monthly", "Month", CalendarRange],
+              ["yearly", "Year", CalendarIcon],
+            ] as const
+          ).map(([p, lbl, Icon]) => (
             <button
               key={p}
               onClick={() => setPeriod(p)}
@@ -247,9 +364,7 @@ function Leaderboard() {
       </div>
 
       {/* Podium */}
-      {podium.length > 0 && (
-        <Podium podium={podium} prizes={prizes} />
-      )}
+      {podium.length > 0 && <Podium podium={podium} prizes={prizes} />}
 
       <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-5 mt-5">
         <div>
@@ -266,7 +381,7 @@ function Leaderboard() {
             </div>
           ) : (
             <ol className="space-y-1.5 stagger-in">
-              {rest.map(row => (
+              {rest.map((row) => (
                 <LeaderboardRow key={row.employee.id} row={row} maxXp={podium[0].xp} />
               ))}
             </ol>
@@ -291,10 +406,16 @@ function Leaderboard() {
                   />
                   <div className="relative flex items-center gap-1.5">
                     <span className="text-base leading-none">{p.emoji}</span>
-                    <span className="text-[10px] uppercase tracking-wider font-bold" style={{ color: p.tint }}>
-                      {i + 1}{i === 0 ? "st" : i === 1 ? "nd" : "rd"} · {p.label}
+                    <span
+                      className="text-[10px] uppercase tracking-wider font-bold"
+                      style={{ color: p.tint }}
+                    >
+                      {i + 1}
+                      {i === 0 ? "st" : i === 1 ? "nd" : "rd"} · {p.label}
                     </span>
-                    <span className="ml-auto font-mono text-[11px] tabular-nums text-primary">+{p.xp.toLocaleString()} XP</span>
+                    <span className="ml-auto font-mono text-[11px] tabular-nums text-primary">
+                      +{p.xp.toLocaleString()} XP
+                    </span>
                   </div>
                   <div className="relative text-[11px] text-muted-foreground mt-1 leading-snug">
                     {p.reward}
@@ -314,7 +435,9 @@ function Leaderboard() {
               <div className="text-xs text-muted-foreground p-4 text-center border rounded-md">
                 No {period} challenges live.
               </div>
-            ) : challenges.map(c => <SeasonalChallengeCard key={c.id} challenge={c} />)}
+            ) : (
+              challenges.map((c) => <SeasonalChallengeCard key={c.id} challenge={c} />)
+            )}
           </div>
         </div>
       </div>
@@ -325,14 +448,14 @@ function Leaderboard() {
 function Podium({ podium, prizes }: { podium: LeaderboardEntry[]; prizes: [Prize, Prize, Prize] }) {
   // Layout: silver (2nd) | gold (1st) | bronze (3rd). Missing ranks collapse.
   const byRank: Record<1 | 2 | 3, LeaderboardEntry | undefined> = {
-    1: podium.find(p => p.rank === 1),
-    2: podium.find(p => p.rank === 2),
-    3: podium.find(p => p.rank === 3),
+    1: podium.find((p) => p.rank === 1),
+    2: podium.find((p) => p.rank === 2),
+    3: podium.find((p) => p.rank === 3),
   };
   const order: (1 | 2 | 3)[] = [2, 1, 3];
   return (
     <div className="relative grid grid-cols-3 gap-3 items-end">
-      {order.map(rank => {
+      {order.map((rank) => {
         const entry = byRank[rank];
         const prize = prizes[rank - 1];
         if (!entry) return <div key={rank} aria-hidden />;
@@ -342,7 +465,15 @@ function Podium({ podium, prizes }: { podium: LeaderboardEntry[]; prizes: [Prize
   );
 }
 
-function PodiumStep({ entry, prize, rank }: { entry: LeaderboardEntry; prize: Prize; rank: 1 | 2 | 3 }) {
+function PodiumStep({
+  entry,
+  prize,
+  rank,
+}: {
+  entry: LeaderboardEntry;
+  prize: Prize;
+  rank: 1 | 2 | 3;
+}) {
   const height = rank === 1 ? "h-[110px]" : rank === 2 ? "h-[82px]" : "h-[62px]";
   const avatarSize = rank === 1 ? 56 : 44;
   return (
@@ -353,7 +484,12 @@ function PodiumStep({ entry, prize, rank }: { entry: LeaderboardEntry; prize: Pr
         </div>
       )}
       <div className="relative">
-        <Avatar initials={entry.employee.initials} color={entry.employee.avatarColor} size={avatarSize} employeeId={entry.employee.id} />
+        <Avatar
+          initials={entry.employee.initials}
+          color={entry.employee.avatarColor}
+          size={avatarSize}
+          employeeId={entry.employee.id}
+        />
         <div
           className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full grid place-items-center text-base shadow-sm border-2 border-card bg-card"
           aria-label={`rank ${rank}`}
@@ -381,13 +517,18 @@ function PodiumStep({ entry, prize, rank }: { entry: LeaderboardEntry; prize: Pr
           style={{ background: prize.tint, opacity: 0.7 }}
           aria-hidden
         />
-        <div className="text-[9px] uppercase tracking-wider font-bold" style={{ color: prize.tint }}>
+        <div
+          className="text-[9px] uppercase tracking-wider font-bold"
+          style={{ color: prize.tint }}
+        >
           {prize.label}
         </div>
         <div className="font-mono text-sm tabular-nums font-bold">+{entry.xp.toLocaleString()}</div>
         <div className="text-[9px] uppercase tracking-wider text-muted-foreground -mt-0.5">XP</div>
         <div className="mt-1 text-[10px] text-center leading-tight line-clamp-2">
-          <span className="font-mono tabular-nums text-primary">+{prize.xp.toLocaleString()} XP</span>
+          <span className="font-mono tabular-nums text-primary">
+            +{prize.xp.toLocaleString()} XP
+          </span>
           <span className="text-muted-foreground"> · {prize.reward.split(" · ")[0]}</span>
         </div>
       </div>
@@ -402,11 +543,18 @@ function LeaderboardRow({ row, maxXp }: { row: LeaderboardEntry; maxXp: number }
       <div className="w-7 h-7 rounded-md grid place-items-center text-xs font-bold tabular-nums shrink-0 bg-muted text-muted-foreground">
         {row.rank}
       </div>
-      <Avatar initials={row.employee.initials} color={row.employee.avatarColor} size={28} employeeId={row.employee.id} />
+      <Avatar
+        initials={row.employee.initials}
+        color={row.employee.avatarColor}
+        size={28}
+        employeeId={row.employee.id}
+      />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <div className="text-sm font-medium truncate">{row.employee.name}</div>
-          <div className="ml-auto font-mono text-xs tabular-nums text-primary">+{row.xp.toLocaleString()} XP</div>
+          <div className="ml-auto font-mono text-xs tabular-nums text-primary">
+            +{row.xp.toLocaleString()} XP
+          </div>
         </div>
         <div className="mt-1 h-1.5 rounded-full bg-muted overflow-hidden">
           <div
@@ -415,8 +563,14 @@ function LeaderboardRow({ row, maxXp }: { row: LeaderboardEntry; maxXp: number }
           />
         </div>
         <div className="flex items-center gap-3 mt-1 text-[10px] text-muted-foreground tabular-nums">
-          <span className="inline-flex items-center gap-1"><Gift className="h-3 w-3" />{row.kudos} kudos</span>
-          <span className="inline-flex items-center gap-1"><Zap className="h-3 w-3" />{row.focusSessions} focus</span>
+          <span className="inline-flex items-center gap-1">
+            <Gift className="h-3 w-3" />
+            {row.kudos} kudos
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Zap className="h-3 w-3" />
+            {row.focusSessions} focus
+          </span>
         </div>
       </div>
     </li>
@@ -433,9 +587,13 @@ function SeasonalChallengeCard({ challenge }: { challenge: SeasonalChallenge }) 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <div className="text-sm font-medium truncate">{challenge.title}</div>
-            <span className="font-mono text-[10px] tabular-nums text-primary ml-auto shrink-0">+{challenge.xpReward} XP</span>
+            <span className="font-mono text-[10px] tabular-nums text-primary ml-auto shrink-0">
+              +{challenge.xpReward} XP
+            </span>
           </div>
-          <div className="text-[11px] text-muted-foreground leading-snug mt-0.5">{challenge.description}</div>
+          <div className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+            {challenge.description}
+          </div>
         </div>
       </div>
       <div className="space-y-1 mt-2">
@@ -446,13 +604,15 @@ function SeasonalChallengeCard({ challenge }: { challenge: SeasonalChallenge }) 
           return (
             <div key={p.employeeId} className="flex items-center gap-2 text-[11px]">
               <span className="w-3 text-muted-foreground tabular-nums">{i + 1}</span>
-              <Avatar initials={emp.initials} color={emp.avatarColor} size={18} employeeId={emp.id} />
+              <Avatar
+                initials={emp.initials}
+                color={emp.avatarColor}
+                size={18}
+                employeeId={emp.id}
+              />
               <span className="flex-1 truncate">{emp.name}</span>
               <div className="w-16 h-1 rounded-full bg-muted overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-primary"
-                  style={{ width: `${pct}%` }}
-                />
+                <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
               </div>
               <span className="font-mono tabular-nums text-muted-foreground w-8 text-right">
                 {p.progress}
@@ -466,7 +626,18 @@ function SeasonalChallengeCard({ challenge }: { challenge: SeasonalChallenge }) 
 }
 
 function TeamCard({ summary, onPick }: { summary: GrowthSummary; onPick: (id: string) => void }) {
-  const { employee, level, next, progressPct, xp, streak, kudosReceived, goalsActive, challengesOpen, badgesEarned } = summary;
+  const {
+    employee,
+    level,
+    next,
+    progressPct,
+    xp,
+    streak,
+    kudosReceived,
+    goalsActive,
+    challengesOpen,
+    badgesEarned,
+  } = summary;
   return (
     <Card
       className="p-5 press-scale hover:shadow-md transition-all cursor-pointer relative overflow-hidden"
@@ -510,9 +681,13 @@ function TeamCard({ summary, onPick }: { summary: GrowthSummary; onPick: (id: st
         <div className="flex items-center gap-2 mb-1.5">
           <span
             className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded"
-            style={{ background: `${level.color.replace(")", " / 0.15)").replace("oklch(", "oklch(")}`, color: level.color }}
+            style={{
+              background: `${level.color.replace(")", " / 0.15)").replace("oklch(", "oklch(")}`,
+              color: level.color,
+            }}
           >
-            <Sparkles className="h-3 w-3" />{level.name}
+            <Sparkles className="h-3 w-3" />
+            {level.name}
           </span>
           <span className="font-mono text-[11px] text-muted-foreground ml-auto tabular-nums">
             {xp.total.toLocaleString()} XP
@@ -527,7 +702,9 @@ function TeamCard({ summary, onPick }: { summary: GrowthSummary; onPick: (id: st
         {next && (
           <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1.5 tabular-nums">
             <span>{progressPct}%</span>
-            <span>next · {next.name} at {next.xpMin}</span>
+            <span>
+              next · {next.name} at {next.xpMin}
+            </span>
           </div>
         )}
 
@@ -543,10 +720,20 @@ function TeamCard({ summary, onPick }: { summary: GrowthSummary; onPick: (id: st
   );
 }
 
-
 // ─── Profile view ──────────────────────────────────────────────────────
 function GrowthProfile({ summary }: { summary: GrowthSummary }) {
-  const { employee, level, next, progressPct, xp, streak, kudosReceived, goalsActive, challengesOpen, badgesEarned } = summary;
+  const {
+    employee,
+    level,
+    next,
+    progressPct,
+    xp,
+    streak,
+    kudosReceived,
+    goalsActive,
+    challengesOpen,
+    badgesEarned,
+  } = summary;
   const [pane, setPane] = useUrlParam("pane", "goals");
   const radar = useMemo(() => strengthRadarFor(employee.id), [employee.id]);
   const badges = useMemo(() => badgesFor(employee.id), [employee.id]);
@@ -554,7 +741,10 @@ function GrowthProfile({ summary }: { summary: GrowthSummary }) {
   const challenges = useMemo(() => challengesFor(employee.id), [employee.id]);
   const oneOnOnes = useMemo(() => oneOnOnesFor(employee.id), [employee.id]);
   const notes = useMemo(() => notesFor(employee.id), [employee.id]);
-  const kudos = useMemo(() => kudosSeed.filter(k => k.toId === employee.id).slice(0, 6), [employee.id]);
+  const kudos = useMemo(
+    () => kudosSeed.filter((k) => k.toId === employee.id).slice(0, 6),
+    [employee.id],
+  );
 
   return (
     <div className="space-y-4">
@@ -575,11 +765,16 @@ function GrowthProfile({ summary }: { summary: GrowthSummary }) {
           />
           <div className="min-w-0">
             <div className="font-display text-3xl leading-tight">{employee.name}</div>
-            <div className="text-sm text-muted-foreground">{employee.role} · {employee.department}</div>
+            <div className="text-sm text-muted-foreground">
+              {employee.role} · {employee.department}
+            </div>
             <div className="flex items-center gap-2 mt-3 flex-wrap">
               <span
                 className="inline-flex items-center gap-1 text-xs uppercase tracking-wider font-semibold px-2 py-0.5 rounded"
-                style={{ background: `${level.color.replace(")", " / 0.15)").replace("oklch(", "oklch(")}`, color: level.color }}
+                style={{
+                  background: `${level.color.replace(")", " / 0.15)").replace("oklch(", "oklch(")}`,
+                  color: level.color,
+                }}
               >
                 <Sparkles className="h-3 w-3" /> Level {level.tier} · {level.name}
               </span>
@@ -593,7 +788,9 @@ function GrowthProfile({ summary }: { summary: GrowthSummary }) {
           <div className="w-full md:w-[260px]">
             <div className="flex items-center justify-between text-[11px] mb-1.5">
               <span className="text-muted-foreground">XP</span>
-              <span className="font-mono tabular-nums">{xp.total.toLocaleString()} · {progressPct}%</span>
+              <span className="font-mono tabular-nums">
+                {xp.total.toLocaleString()} · {progressPct}%
+              </span>
             </div>
             <div className="h-2 rounded-full bg-muted overflow-hidden">
               <div
@@ -603,7 +800,8 @@ function GrowthProfile({ summary }: { summary: GrowthSummary }) {
             </div>
             {next && (
               <div className="text-[10px] text-muted-foreground mt-1.5 tabular-nums">
-                Next: <span className="font-medium text-foreground">{next.name}</span> at {next.xpMin.toLocaleString()} XP
+                Next: <span className="font-medium text-foreground">{next.name}</span> at{" "}
+                {next.xpMin.toLocaleString()} XP
                 {" · "}
                 {(next.xpMin - xp.total).toLocaleString()} to go
               </div>
@@ -613,11 +811,14 @@ function GrowthProfile({ summary }: { summary: GrowthSummary }) {
 
         {/* Stats */}
         <div className="relative grid grid-cols-2 md:grid-cols-5 gap-3 mt-5 pt-5 border-t">
-          <Stat label="Kudos received"     value={kudosReceived} />
-          <Stat label="Goals (active/hit)" value={`${goalsActive} / ${goals.filter(g => g.status === "hit").length}`} />
-          <Stat label="Challenges open"    value={challengesOpen} />
-          <Stat label="Badges earned"      value={`${badgesEarned} / ${badges.length}`} />
-          <Stat label="1:1s logged"        value={oneOnOnes.length} />
+          <Stat label="Kudos received" value={kudosReceived} />
+          <Stat
+            label="Goals (active/hit)"
+            value={`${goalsActive} / ${goals.filter((g) => g.status === "hit").length}`}
+          />
+          <Stat label="Challenges open" value={challengesOpen} />
+          <Stat label="Badges earned" value={`${badgesEarned} / ${badges.length}`} />
+          <Stat label="1:1s logged" value={oneOnOnes.length} />
         </div>
       </Card>
 
@@ -644,20 +845,50 @@ function GrowthProfile({ summary }: { summary: GrowthSummary }) {
       {/* Tabs */}
       <Tabs value={pane} onValueChange={setPane}>
         <TabsList>
-          <TabsTrigger value="goals"><Target className="h-3.5 w-3.5 mr-1.5" />Goals ({goals.length})</TabsTrigger>
-          <TabsTrigger value="challenges"><Trophy className="h-3.5 w-3.5 mr-1.5" />Challenges ({challenges.length})</TabsTrigger>
-          <TabsTrigger value="ones"><MessageCircle className="h-3.5 w-3.5 mr-1.5" />1:1s ({oneOnOnes.length})</TabsTrigger>
-          <TabsTrigger value="notes"><StickyNote className="h-3.5 w-3.5 mr-1.5" />Notes ({notes.length})</TabsTrigger>
-          <TabsTrigger value="badges"><Award className="h-3.5 w-3.5 mr-1.5" />Badges ({badges.filter(b => b.earned).length}/{badges.length})</TabsTrigger>
-          <TabsTrigger value="kudos"><Gift className="h-3.5 w-3.5 mr-1.5" />Kudos ({kudos.length})</TabsTrigger>
+          <TabsTrigger value="goals">
+            <Target className="h-3.5 w-3.5 mr-1.5" />
+            Goals ({goals.length})
+          </TabsTrigger>
+          <TabsTrigger value="challenges">
+            <Trophy className="h-3.5 w-3.5 mr-1.5" />
+            Challenges ({challenges.length})
+          </TabsTrigger>
+          <TabsTrigger value="ones">
+            <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+            1:1s ({oneOnOnes.length})
+          </TabsTrigger>
+          <TabsTrigger value="notes">
+            <StickyNote className="h-3.5 w-3.5 mr-1.5" />
+            Notes ({notes.length})
+          </TabsTrigger>
+          <TabsTrigger value="badges">
+            <Award className="h-3.5 w-3.5 mr-1.5" />
+            Badges ({badges.filter((b) => b.earned).length}/{badges.length})
+          </TabsTrigger>
+          <TabsTrigger value="kudos">
+            <Gift className="h-3.5 w-3.5 mr-1.5" />
+            Kudos ({kudos.length})
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="goals" className="mt-4"><GoalsView goals={goals} /></TabsContent>
-        <TabsContent value="challenges" className="mt-4"><ChallengesView challenges={challenges} /></TabsContent>
-        <TabsContent value="ones" className="mt-4"><OneOnOnesView rows={oneOnOnes} /></TabsContent>
-        <TabsContent value="notes" className="mt-4"><NotesView notes={notes} /></TabsContent>
-        <TabsContent value="badges" className="mt-4"><BadgesGrid badges={badges} /></TabsContent>
-        <TabsContent value="kudos" className="mt-4"><KudosList rows={kudos} /></TabsContent>
+        <TabsContent value="goals" className="mt-4">
+          <GoalsView goals={goals} />
+        </TabsContent>
+        <TabsContent value="challenges" className="mt-4">
+          <ChallengesView challenges={challenges} />
+        </TabsContent>
+        <TabsContent value="ones" className="mt-4">
+          <OneOnOnesView rows={oneOnOnes} />
+        </TabsContent>
+        <TabsContent value="notes" className="mt-4">
+          <NotesView notes={notes} />
+        </TabsContent>
+        <TabsContent value="badges" className="mt-4">
+          <BadgesGrid badges={badges} />
+        </TabsContent>
+        <TabsContent value="kudos" className="mt-4">
+          <KudosList rows={kudos} />
+        </TabsContent>
       </Tabs>
     </div>
   );
@@ -666,28 +897,66 @@ function GrowthProfile({ summary }: { summary: GrowthSummary }) {
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{label}</div>
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+        {label}
+      </div>
       <div className="font-mono text-xl tabular-nums mt-0.5">{value}</div>
     </div>
   );
 }
 
-
-function XpBreakdownChart({ xp }: { xp: { kudos: number; focus: number; goals: number; challenges: number; oneOnOnes: number; total: number } }) {
+function XpBreakdownChart({
+  xp,
+}: {
+  xp: {
+    kudos: number;
+    focus: number;
+    goals: number;
+    challenges: number;
+    oneOnOnes: number;
+    total: number;
+  };
+}) {
   const rows = [
-    { label: "Kudos",      value: xp.kudos,      color: "oklch(0.65 0.18 340)", icon: <Gift className="h-3 w-3" /> },
-    { label: "Focus",      value: xp.focus,      color: "oklch(0.78 0.18 130)", icon: <Zap  className="h-3 w-3" /> },
-    { label: "Goals",      value: xp.goals,      color: "oklch(0.6 0.16 220)",  icon: <Target className="h-3 w-3" /> },
-    { label: "Challenges", value: xp.challenges, color: "oklch(0.75 0.15 75)",  icon: <Trophy className="h-3 w-3" /> },
-    { label: "1:1s",       value: xp.oneOnOnes,  color: "oklch(0.65 0.15 155)", icon: <MessageCircle className="h-3 w-3" /> },
+    {
+      label: "Kudos",
+      value: xp.kudos,
+      color: "oklch(0.65 0.18 340)",
+      icon: <Gift className="h-3 w-3" />,
+    },
+    {
+      label: "Focus",
+      value: xp.focus,
+      color: "oklch(0.78 0.18 130)",
+      icon: <Zap className="h-3 w-3" />,
+    },
+    {
+      label: "Goals",
+      value: xp.goals,
+      color: "oklch(0.6 0.16 220)",
+      icon: <Target className="h-3 w-3" />,
+    },
+    {
+      label: "Challenges",
+      value: xp.challenges,
+      color: "oklch(0.75 0.15 75)",
+      icon: <Trophy className="h-3 w-3" />,
+    },
+    {
+      label: "1:1s",
+      value: xp.oneOnOnes,
+      color: "oklch(0.65 0.15 155)",
+      icon: <MessageCircle className="h-3 w-3" />,
+    },
   ];
-  const max = Math.max(1, ...rows.map(r => r.value));
+  const max = Math.max(1, ...rows.map((r) => r.value));
   return (
     <div className="space-y-2">
-      {rows.map(r => (
+      {rows.map((r) => (
         <div key={r.label} className="grid grid-cols-[90px_1fr_60px] items-center gap-2 text-xs">
           <div className="flex items-center gap-1.5 text-muted-foreground">
-            {r.icon}{r.label}
+            {r.icon}
+            {r.label}
           </div>
           <div className="h-1.5 rounded-full bg-muted overflow-hidden">
             <div
@@ -706,48 +975,70 @@ function XpBreakdownChart({ xp }: { xp: { kudos: number; focus: number; goals: n
 function GoalsView({ goals }: { goals: Goal[] }) {
   if (goals.length === 0) return <Empty label="No goals yet." />;
   const grouped = {
-    active: goals.filter(g => g.status === "active"),
-    hit:    goals.filter(g => g.status === "hit"),
-    missed: goals.filter(g => g.status === "missed"),
+    active: goals.filter((g) => g.status === "active"),
+    hit: goals.filter((g) => g.status === "hit"),
+    missed: goals.filter((g) => g.status === "missed"),
   };
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-      <GoalColumn title="Active" tone="primary"      rows={grouped.active} />
-      <GoalColumn title="Hit"    tone="success"      rows={grouped.hit} />
-      <GoalColumn title="Missed" tone="destructive"  rows={grouped.missed} />
+      <GoalColumn title="Active" tone="primary" rows={grouped.active} />
+      <GoalColumn title="Hit" tone="success" rows={grouped.hit} />
+      <GoalColumn title="Missed" tone="destructive" rows={grouped.missed} />
     </div>
   );
 }
-function GoalColumn({ title, tone, rows }: { title: string; tone: "primary" | "success" | "destructive"; rows: Goal[] }) {
+function GoalColumn({
+  title,
+  tone,
+  rows,
+}: {
+  title: string;
+  tone: "primary" | "success" | "destructive";
+  rows: Goal[];
+}) {
   return (
     <Card className="p-3">
       <div className="flex items-center justify-between mb-2">
-        <div className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">{title}</div>
+        <div className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+          {title}
+        </div>
         <div className="text-xs tabular-nums font-mono text-muted-foreground">{rows.length}</div>
       </div>
-      {rows.length === 0 ? <div className="text-[11px] text-muted-foreground py-3 text-center">—</div> : (
+      {rows.length === 0 ? (
+        <div className="text-[11px] text-muted-foreground py-3 text-center">—</div>
+      ) : (
         <div className="space-y-2 stagger-in">
-          {rows.map(g => (
-            <div key={g.id} className={cn(
-              "p-3 rounded-md border",
-              tone === "success" && "bg-success/5 border-success/20",
-              tone === "destructive" && "bg-destructive/5 border-destructive/20",
-              tone === "primary" && "bg-muted/30",
-            )}>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">{g.quarter}</div>
+          {rows.map((g) => (
+            <div
+              key={g.id}
+              className={cn(
+                "p-3 rounded-md border",
+                tone === "success" && "bg-success/5 border-success/20",
+                tone === "destructive" && "bg-destructive/5 border-destructive/20",
+                tone === "primary" && "bg-muted/30",
+              )}
+            >
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">
+                {g.quarter}
+              </div>
               <div className="text-sm font-medium mt-0.5">{g.title}</div>
-              <div className="text-[11px] text-muted-foreground">{g.metric} · target {g.target}</div>
+              <div className="text-[11px] text-muted-foreground">
+                {g.metric} · target {g.target}
+              </div>
               <div className="flex items-center justify-between mt-2 text-[11px]">
                 <span className="tabular-nums">{g.progress}%</span>
                 <span className="text-muted-foreground">due {g.dueAt}</span>
               </div>
               <div className="h-1.5 rounded-full bg-muted mt-1 overflow-hidden">
-                <div className={cn(
-                  "h-full rounded-full transition-[width] duration-700",
-                  tone === "success" && "bg-success",
-                  tone === "destructive" && "bg-destructive",
-                  tone === "primary" && "bg-primary",
-                )} style={{ width: `${g.progress}%` }} />
+                <div
+                  className={cn(
+                    "h-full rounded-full transition-[width] duration-700",
+                    tone === "success" && "bg-success",
+                    tone === "destructive" && "bg-destructive",
+                    tone === "primary" && "bg-primary",
+                  )}
+                  style={{ width: `${g.progress}%` }}
+                />
               </div>
             </div>
           ))}
@@ -763,16 +1054,21 @@ function ChallengesView({ challenges }: { challenges: Challenge[] }) {
   return (
     <Card className="p-0 overflow-hidden">
       <ul className="divide-y stagger-in">
-        {challenges.map(c => {
+        {challenges.map((c) => {
           const assigner = employeeById(c.assignedBy);
           return (
-            <li key={c.id} className="px-5 py-3.5 flex items-start gap-3 hover:bg-muted/20 transition-colors">
+            <li
+              key={c.id}
+              className="px-5 py-3.5 flex items-start gap-3 hover:bg-muted/20 transition-colors"
+            >
               <ChallengeIcon status={c.status} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <div className="text-sm font-medium">{c.title}</div>
                   <DifficultyPill d={c.difficulty} />
-                  <span className="ml-auto font-mono text-[11px] tabular-nums text-primary">+{c.xpReward} XP</span>
+                  <span className="ml-auto font-mono text-[11px] tabular-nums text-primary">
+                    +{c.xpReward} XP
+                  </span>
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">{c.description}</div>
                 <div className="text-[11px] text-muted-foreground mt-1.5 flex items-center gap-2">
@@ -780,10 +1076,15 @@ function ChallengesView({ challenges }: { challenges: Challenge[] }) {
                   {assigner && <span>· Assigned by {assigner.name}</span>}
                 </div>
               </div>
-              <StatusBadge status={
-                c.status === "succeeded" ? "approved" :
-                c.status === "failed"    ? "rejected" : "pending"
-              } />
+              <StatusBadge
+                status={
+                  c.status === "succeeded"
+                    ? "approved"
+                    : c.status === "failed"
+                      ? "rejected"
+                      : "pending"
+                }
+              />
             </li>
           );
         })}
@@ -792,15 +1093,23 @@ function ChallengesView({ challenges }: { challenges: Challenge[] }) {
   );
 }
 function ChallengeIcon({ status }: { status: Challenge["status"] }) {
-  if (status === "succeeded") return <CheckCircle2 className="h-5 w-5 text-success mt-0.5 shrink-0" />;
-  if (status === "failed")    return <XCircle      className="h-5 w-5 text-destructive mt-0.5 shrink-0" />;
-  return                            <Circle       className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />;
+  if (status === "succeeded")
+    return <CheckCircle2 className="h-5 w-5 text-success mt-0.5 shrink-0" />;
+  if (status === "failed") return <XCircle className="h-5 w-5 text-destructive mt-0.5 shrink-0" />;
+  return <Circle className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />;
 }
 function DifficultyPill({ d }: { d: 1 | 2 | 3 }) {
   const label = d === 1 ? "easy" : d === 2 ? "medium" : "hard";
-  const cls = d === 1 ? "bg-muted/60" : d === 2 ? "bg-warning/15 text-warning" : "bg-destructive/15 text-destructive";
+  const cls =
+    d === 1
+      ? "bg-muted/60"
+      : d === 2
+        ? "bg-warning/15 text-warning"
+        : "bg-destructive/15 text-destructive";
   return (
-    <span className={cn("text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded", cls)}>
+    <span
+      className={cn("text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded", cls)}
+    >
       {label}
     </span>
   );
@@ -811,9 +1120,9 @@ function OneOnOnesView({ rows }: { rows: OneOnOne[] }) {
   if (rows.length === 0) return <Empty label="No 1:1s logged." />;
   return (
     <ol className="relative border-l pl-5 space-y-5 ml-2 stagger-in">
-      {rows.map(o => {
+      {rows.map((o) => {
         const manager = employeeById(o.managerId);
-        const done = o.actionItems.filter(a => a.done).length;
+        const done = o.actionItems.filter((a) => a.done).length;
         return (
           <li key={o.id} className="relative">
             <span className="absolute -left-[26px] top-1 h-3 w-3 rounded-full bg-primary ring-2 ring-background" />
@@ -821,13 +1130,19 @@ function OneOnOnesView({ rows }: { rows: OneOnOne[] }) {
               <div className="flex items-center gap-2 mb-2">
                 <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                 <span className="font-mono text-xs tabular-nums">{o.date}</span>
-                {manager && <span className="text-[11px] text-muted-foreground">· with {manager.name}</span>}
-                <span className="ml-auto text-[11px] text-muted-foreground">{done}/{o.actionItems.length} actions</span>
+                {manager && (
+                  <span className="text-[11px] text-muted-foreground">· with {manager.name}</span>
+                )}
+                <span className="ml-auto text-[11px] text-muted-foreground">
+                  {done}/{o.actionItems.length} actions
+                </span>
               </div>
               {o.agenda.length > 0 && (
                 <div className="flex gap-1 flex-wrap mb-2">
                   {o.agenda.map((a, i) => (
-                    <span key={i} className="text-[10px] px-1.5 py-0.5 rounded border bg-muted/40">{a}</span>
+                    <span key={i} className="text-[10px] px-1.5 py-0.5 rounded border bg-muted/40">
+                      {a}
+                    </span>
                   ))}
                 </div>
               )}
@@ -836,10 +1151,14 @@ function OneOnOnesView({ rows }: { rows: OneOnOne[] }) {
                 <ul className="mt-3 pt-3 border-t space-y-1.5">
                   {o.actionItems.map((a, i) => (
                     <li key={i} className="flex items-center gap-2 text-xs">
-                      {a.done
-                        ? <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
-                        : <Circle       className="h-3.5 w-3.5 text-muted-foreground shrink-0" />}
-                      <span className={cn(a.done && "line-through text-muted-foreground")}>{a.text}</span>
+                      {a.done ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
+                      ) : (
+                        <Circle className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      )}
+                      <span className={cn(a.done && "line-through text-muted-foreground")}>
+                        {a.text}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -854,22 +1173,24 @@ function OneOnOnesView({ rows }: { rows: OneOnOne[] }) {
 
 // ─── Notes ─────────────────────────────────────────────────────────────
 const NOTE_TONE: Record<GrowthNote["tone"], string> = {
-  praise:      "border-success/30 bg-success/[0.05]",
+  praise: "border-success/30 bg-success/[0.05]",
   observation: "border-info/30    bg-info/[0.05]",
-  concern:     "border-destructive/30 bg-destructive/[0.05]",
+  concern: "border-destructive/30 bg-destructive/[0.05]",
 };
 function NotesView({ notes }: { notes: GrowthNote[] }) {
   if (notes.length === 0) return <Empty label="No notes yet." />;
   return (
     <div className="space-y-2 stagger-in">
-      {notes.map(n => {
+      {notes.map((n) => {
         const author = employeeById(n.authorId);
         return (
           <Card key={n.id} className={cn("p-4 border", NOTE_TONE[n.tone])}>
             <div className="flex items-center gap-2 mb-1.5 text-[11px]">
               <span className="font-medium capitalize">{n.tone}</span>
               {author && <span className="text-muted-foreground">· {author.name}</span>}
-              <span className="ml-auto text-muted-foreground font-mono tabular-nums">{n.createdAt}</span>
+              <span className="ml-auto text-muted-foreground font-mono tabular-nums">
+                {n.createdAt}
+              </span>
             </div>
             <div className="text-sm leading-snug">{n.body}</div>
           </Card>
@@ -884,10 +1205,12 @@ function BadgesGrid({ badges }: { badges: ReturnType<typeof badgesFor> }) {
   return (
     <TooltipProvider delayDuration={150}>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 stagger-in">
-        {badges.map(b => (
+        {badges.map((b) => (
           <Tooltip key={b.id}>
             <TooltipTrigger asChild>
-              <Card className={cn("p-4 text-center press-scale cursor-help", !b.earned && "opacity-55")}>
+              <Card
+                className={cn("p-4 text-center press-scale cursor-help", !b.earned && "opacity-55")}
+              >
                 <div className={cn("text-3xl mb-1.5", !b.earned && "grayscale")}>{b.emoji}</div>
                 <div className="text-sm font-medium">{b.name}</div>
                 {b.progress && (
@@ -924,22 +1247,33 @@ function BadgesGrid({ badges }: { badges: ReturnType<typeof badgesFor> }) {
 
 // ─── Kudos ─────────────────────────────────────────────────────────────
 function KudosList({ rows }: { rows: Kudo[] }) {
-  if (rows.length === 0) return <Empty label="No kudos yet — send some love from the Kudos page." />;
+  if (rows.length === 0)
+    return <Empty label="No kudos yet — send some love from the Kudos page." />;
   return (
     <div className="space-y-2 stagger-in">
-      {rows.map(k => {
+      {rows.map((k) => {
         const from = employeeById(k.fromId);
         if (!from) return null;
         return (
           <Card key={k.id} className="p-4">
             <div className="flex items-center gap-2.5">
-              <Avatar initials={from.initials} color={from.avatarColor} size={28} employeeId={from.id} />
+              <Avatar
+                initials={from.initials}
+                color={from.avatarColor}
+                size={28}
+                employeeId={from.id}
+              />
               <div className="flex-1 min-w-0">
                 <div className="text-sm">
                   <span className="font-medium">{from.name}</span>
-                  <span className="text-muted-foreground"> · {k.tag} · {k.amount} 🪙</span>
+                  <span className="text-muted-foreground">
+                    {" "}
+                    · {k.tag} · {k.amount} 🪙
+                  </span>
                 </div>
-                <div className="text-[11px] text-muted-foreground font-mono tabular-nums">{k.date}</div>
+                <div className="text-[11px] text-muted-foreground font-mono tabular-nums">
+                  {k.date}
+                </div>
               </div>
             </div>
             <div className="text-sm mt-2">"{k.message}"</div>
@@ -951,7 +1285,5 @@ function KudosList({ rows }: { rows: Kudo[] }) {
 }
 
 function Empty({ label }: { label: string }) {
-  return (
-    <Card className="py-12 text-center text-sm text-muted-foreground">{label}</Card>
-  );
+  return <Card className="py-12 text-center text-sm text-muted-foreground">{label}</Card>;
 }

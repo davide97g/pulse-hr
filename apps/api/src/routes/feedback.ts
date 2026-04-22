@@ -13,9 +13,7 @@ export const feedback = new Hono();
 
 feedback.use("*", requireUser);
 
-export type BoardItem =
-  | (ApiComment & { kind: "comment" })
-  | (ApiProposal & { kind: "proposal" });
+export type BoardItem = (ApiComment & { kind: "comment" }) | (ApiProposal & { kind: "proposal" });
 
 type BoardBuckets = Record<string, BoardItem[]>;
 
@@ -96,11 +94,7 @@ feedback.get("/board", async (c) => {
   };
   for (const row of commentRows) {
     if (!buckets[row.status]) continue;
-    const serialized = serializeComment(
-      row,
-      commentRepliesByParent[row.id] ?? [],
-      commentVoteMap,
-    );
+    const serialized = serializeComment(row, commentRepliesByParent[row.id] ?? [], commentVoteMap);
     buckets[row.status].push({ ...serialized, kind: "comment" });
   }
   for (const row of proposalRows) {
@@ -113,9 +107,7 @@ feedback.get("/board", async (c) => {
     buckets[row.status].push({ ...serialized, kind: "proposal" });
   }
   for (const key of Object.keys(buckets)) {
-    buckets[key].sort(
-      (a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
-    );
+    buckets[key].sort((a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1));
   }
 
   return c.json(buckets);

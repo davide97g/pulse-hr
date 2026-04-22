@@ -15,7 +15,7 @@ export function CommentPill() {
         "rounded-full border bg-background/95 backdrop-blur text-sm font-medium whitespace-nowrap",
         "shadow-[0_12px_32px_rgba(0,0,0,0.14)] transition-all press-scale",
         "hover:-translate-y-[1px] hover:shadow-[0_16px_40px_rgba(0,0,0,0.18)]",
-        active ? "border-primary text-primary" : "iridescent-border"
+        active ? "border-primary text-primary" : "iridescent-border",
       )}
       style={{
         position: "absolute",

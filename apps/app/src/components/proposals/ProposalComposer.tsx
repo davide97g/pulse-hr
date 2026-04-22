@@ -75,8 +75,8 @@ export function ProposalComposer({
         <DialogHeader>
           <DialogTitle>New proposal</DialogTitle>
           <DialogDescription>
-            Report a bug, share an idea, or suggest an improvement. Posts to the feature board
-            with upvotes and replies.
+            Report a bug, share an idea, or suggest an improvement. Posts to the feature board with
+            upvotes and replies.
           </DialogDescription>
         </DialogHeader>
 

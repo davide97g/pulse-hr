@@ -16,10 +16,7 @@ import {
   queueEmail,
 } from "../services/notifications.ts";
 import { resend, EMAIL_FROM, absoluteAppUrl } from "../services/email.ts";
-import {
-  ReleaseAnnouncement,
-  BODY_PLACEHOLDER_TOKEN,
-} from "../emails/ReleaseAnnouncement.tsx";
+import { ReleaseAnnouncement, BODY_PLACEHOLDER_TOKEN } from "../emails/ReleaseAnnouncement.tsx";
 import { MentionInReply } from "../emails/MentionInReply.tsx";
 import { AdminMessage } from "../emails/AdminMessage.tsx";
 
@@ -207,9 +204,7 @@ async function renderEmail(
     const commentTitle = String(p.commentTitle ?? "a comment");
     const replySnippet = String(p.replySnippet ?? "");
     const link = String(p.link ?? absoluteAppUrl("/feedback"));
-    const html = await render(
-      MentionInReply({ mentionerName, commentTitle, replySnippet, link }),
-    );
+    const html = await render(MentionInReply({ mentionerName, commentTitle, replySnippet, link }));
     return { subject: `${mentionerName} mentioned you in Pulse HR`, html };
   }
 

@@ -343,11 +343,7 @@ proposals.patch(
     if (!updated) return c.json({ error: { code: "not_found" } }, 404);
 
     try {
-      if (
-        updated.authorId &&
-        updated.authorId !== user.id &&
-        prior[0]?.status !== updated.status
-      ) {
+      if (updated.authorId && updated.authorId !== user.id && prior[0]?.status !== updated.status) {
         await notifyUser({
           userId: updated.authorId,
           kind: "comment.status",

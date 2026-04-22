@@ -12,11 +12,11 @@ change is a PR anyone can see and argue with.
 
 ## What lives here
 
-| File                         | What it is                                                                              |
-|------------------------------|-----------------------------------------------------------------------------------------|
-| `identity.md`                | Core brand identity — logo, colors, fonts, voice, motion, imagery, do / don't          |
-| `instagram-reel.md`          | Brief for a 15-second Instagram Reel ad + ready-to-paste Claude Design prompt          |
-| `design-references.md`       | Annotated moodboard of 15 brand references the creative work should draw from         |
+| File                   | What it is                                                                    |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| `identity.md`          | Core brand identity — logo, colors, fonts, voice, motion, imagery, do / don't |
+| `instagram-reel.md`    | Brief for a 15-second Instagram Reel ad + ready-to-paste Claude Design prompt |
+| `design-references.md` | Annotated moodboard of 15 brand references the creative work should draw from |
 
 The design tokens themselves (hex codes, font stacks, radii) live as
 actual code at [`packages/tokens/`](../../packages/tokens/) — this
@@ -45,6 +45,7 @@ references than a pitch deck.
 
 For any creative: what is the **one** thing this asset must land?
 Options for Pulse HR right now:
+
 - **Open source** — "HR you can read, fork, and run"
 - **Modular** — "Money, People, Work. Pick any."
 - **Keyboard-first** — "Two keys. Everything."

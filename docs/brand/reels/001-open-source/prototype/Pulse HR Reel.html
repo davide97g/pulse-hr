@@ -1,222 +1,254 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pulse HR · Reel 001 — Open source</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pulse HR · Reel 001 — Open source</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
-  rel="stylesheet"
-/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-<style>
-  html, body {
-    margin: 0; padding: 0;
-    background: #0a0a0a;
-    color: #f2f2ee;
-    font-family: 'Inter', system-ui, sans-serif;
-    overflow: hidden;
-    height: 100%;
-  }
-  #root { position: fixed; inset: 0; }
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #0a0a0a;
+        color: #f2f2ee;
+        font-family: "Inter", system-ui, sans-serif;
+        overflow: hidden;
+        height: 100%;
+      }
+      #root {
+        position: fixed;
+        inset: 0;
+      }
 
-  /* Substitution note (Geist fallback → Inter) */
-  .font-note {
-    position: fixed;
-    left: 12px; bottom: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; color: rgba(242,242,238,0.35);
-    letter-spacing: 0.05em;
-    z-index: 100;
-    pointer-events: none;
-  }
+      /* Substitution note (Geist fallback → Inter) */
+      .font-note {
+        position: fixed;
+        left: 12px;
+        bottom: 8px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: rgba(242, 242, 238, 0.35);
+        letter-spacing: 0.05em;
+        z-index: 100;
+        pointer-events: none;
+      }
 
-  /* Tweaks panel */
-  .tweaks {
-    position: fixed;
-    right: 20px; top: 20px;
-    width: 280px;
-    background: rgba(15,15,18,0.95);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 16px;
-    z-index: 200;
-    font-family: 'Inter', system-ui, sans-serif;
-    color: #f2f2ee;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-  }
-  .tweaks h3 {
-    margin: 0 0 12px 0;
-    font-family: 'Fraunces', serif;
-    font-size: 18px;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-  .tweaks label {
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 12px; color: rgba(242,242,238,0.7);
-    padding: 8px 0;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    cursor: pointer;
-  }
-  .tweaks label:first-of-type { border-top: 0; }
-  .tweaks select, .tweaks input[type="checkbox"] {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #f2f2ee;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 6px;
-  }
-  .tweaks .hint {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: rgba(242,242,238,0.35);
-    margin-top: 10px;
-    line-height: 1.5;
-    letter-spacing: 0.03em;
-  }
-</style>
-</head>
-<body>
-  <div id="root"></div>
-  <div class="font-note">fraunces + inter (geist substitute) + jetbrains mono</div>
+      /* Tweaks panel */
+      .tweaks {
+        position: fixed;
+        right: 20px;
+        top: 20px;
+        width: 280px;
+        background: rgba(15, 15, 18, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 16px;
+        z-index: 200;
+        font-family: "Inter", system-ui, sans-serif;
+        color: #f2f2ee;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      }
+      .tweaks h3 {
+        margin: 0 0 12px 0;
+        font-family: "Fraunces", serif;
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+      .tweaks label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        color: rgba(242, 242, 238, 0.7);
+        padding: 8px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        cursor: pointer;
+      }
+      .tweaks label:first-of-type {
+        border-top: 0;
+      }
+      .tweaks select,
+      .tweaks input[type="checkbox"] {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #f2f2ee;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 6px;
+      }
+      .tweaks .hint {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: rgba(242, 242, 238, 0.35);
+        margin-top: 10px;
+        line-height: 1.5;
+        letter-spacing: 0.03em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div class="font-note">fraunces + inter (geist substitute) + jetbrains mono</div>
 
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+    <script
+      src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+      integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+      integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+      integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+      crossorigin="anonymous"
+    ></script>
 
-  <script type="text/babel" src="lib/animations.jsx"></script>
-  <script type="text/babel" src="scenes.jsx"></script>
+    <script type="text/babel" src="lib/animations.jsx"></script>
+    <script type="text/babel" src="scenes.jsx"></script>
 
-  <script type="text/babel">
-    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-      "jumpTo": "all",
-      "showSafeArea": false,
-      "loop": true
-    }/*EDITMODE-END*/;
+    <script type="text/babel">
+      const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/ {
+        jumpTo: "all",
+        showSafeArea: false,
+        loop: true,
+      }; /*EDITMODE-END*/
 
-    const FRAME_STARTS = {
-      all: 0,
-      frame1: 0.0,
-      frame2: 2.0,
-      frame3: 4.5,
-      frame4: 7.0,
-      frame5: 10.0,
-      frame6: 12.5,
-    };
-
-    function App() {
-      const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
-      const [editMode, setEditMode] = React.useState(false);
-
-      // Edit-mode integration
-      React.useEffect(() => {
-        const onMsg = (e) => {
-          const d = e.data;
-          if (!d || typeof d !== 'object') return;
-          if (d.type === '__activate_edit_mode') setEditMode(true);
-          if (d.type === '__deactivate_edit_mode') setEditMode(false);
-        };
-        window.addEventListener('message', onMsg);
-        window.parent.postMessage({ type: '__edit_mode_available' }, '*');
-        return () => window.removeEventListener('message', onMsg);
-      }, []);
-
-      const updateTweak = (key, value) => {
-        const next = { ...tweaks, [key]: value };
-        setTweaks(next);
-        window.parent.postMessage({
-          type: '__edit_mode_set_keys',
-          edits: { [key]: value },
-        }, '*');
+      const FRAME_STARTS = {
+        all: 0,
+        frame1: 0.0,
+        frame2: 2.0,
+        frame3: 4.5,
+        frame4: 7.0,
+        frame5: 10.0,
+        frame6: 12.5,
       };
 
-      // Safe-area overlay flag
-      React.useEffect(() => {
-        window.__SHOW_SAFE_AREA = tweaks.showSafeArea;
-      }, [tweaks.showSafeArea]);
+      function App() {
+        const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
+        const [editMode, setEditMode] = React.useState(false);
 
-      // Jump playhead when user picks a frame
-      React.useEffect(() => {
-        const t = FRAME_STARTS[tweaks.jumpTo];
-        if (typeof t === 'number') {
-          try { localStorage.setItem('pulsereel:t', String(t + 0.01)); } catch {}
-          // Stage reads on mount — remount by bumping key
-          setStageKey(k => k + 1);
-        }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [tweaks.jumpTo]);
+        // Edit-mode integration
+        React.useEffect(() => {
+          const onMsg = (e) => {
+            const d = e.data;
+            if (!d || typeof d !== "object") return;
+            if (d.type === "__activate_edit_mode") setEditMode(true);
+            if (d.type === "__deactivate_edit_mode") setEditMode(false);
+          };
+          window.addEventListener("message", onMsg);
+          window.parent.postMessage({ type: "__edit_mode_available" }, "*");
+          return () => window.removeEventListener("message", onMsg);
+        }, []);
 
-      const [stageKey, setStageKey] = React.useState(0);
+        const updateTweak = (key, value) => {
+          const next = { ...tweaks, [key]: value };
+          setTweaks(next);
+          window.parent.postMessage(
+            {
+              type: "__edit_mode_set_keys",
+              edits: { [key]: value },
+            },
+            "*",
+          );
+        };
 
-      return (
-        <>
-          <Stage
-            key={stageKey}
-            width={1080}
-            height={1920}
-            duration={15}
-            background="#0b0b0d"
-            fps={60}
-            loop={tweaks.loop}
-            persistKey="pulsereel"
-          >
-            <ReelScene />
-          </Stage>
+        // Safe-area overlay flag
+        React.useEffect(() => {
+          window.__SHOW_SAFE_AREA = tweaks.showSafeArea;
+        }, [tweaks.showSafeArea]);
 
-          {editMode && (
-            <div className="tweaks">
-              <h3>Tweaks</h3>
-              <label>
-                <span>Jump to frame</span>
-                <select
-                  value={tweaks.jumpTo}
-                  onChange={(e) => updateTweak('jumpTo', e.target.value)}
-                >
-                  <option value="all">Play all (00.0s)</option>
-                  <option value="frame1">1 · Terminal (0.0s)</option>
-                  <option value="frame2">2 · Promise (2.0s)</option>
-                  <option value="frame3">3 · Modular (4.5s)</option>
-                  <option value="frame4">4 · Keyboard (7.0s)</option>
-                  <option value="frame5">5 · Contrast (10.0s)</option>
-                  <option value="frame6">6 · End card (12.5s)</option>
-                </select>
-              </label>
-              <label>
-                <span>Show IG safe-area guides</span>
-                <input
-                  type="checkbox"
-                  checked={tweaks.showSafeArea}
-                  onChange={(e) => updateTweak('showSafeArea', e.target.checked)}
-                />
-              </label>
-              <label>
-                <span>Loop playback</span>
-                <input
-                  type="checkbox"
-                  checked={tweaks.loop}
-                  onChange={(e) => updateTweak('loop', e.target.checked)}
-                />
-              </label>
-              <div className="hint">
-                SPACE = play/pause<br/>
-                ← → = ±0.1s · ⇧ ± 1s<br/>
-                0 / Home = return to start
+        // Jump playhead when user picks a frame
+        React.useEffect(() => {
+          const t = FRAME_STARTS[tweaks.jumpTo];
+          if (typeof t === "number") {
+            try {
+              localStorage.setItem("pulsereel:t", String(t + 0.01));
+            } catch {}
+            // Stage reads on mount — remount by bumping key
+            setStageKey((k) => k + 1);
+          }
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [tweaks.jumpTo]);
+
+        const [stageKey, setStageKey] = React.useState(0);
+
+        return (
+          <>
+            <Stage
+              key={stageKey}
+              width={1080}
+              height={1920}
+              duration={15}
+              background="#0b0b0d"
+              fps={60}
+              loop={tweaks.loop}
+              persistKey="pulsereel"
+            >
+              <ReelScene />
+            </Stage>
+
+            {editMode && (
+              <div className="tweaks">
+                <h3>Tweaks</h3>
+                <label>
+                  <span>Jump to frame</span>
+                  <select
+                    value={tweaks.jumpTo}
+                    onChange={(e) => updateTweak("jumpTo", e.target.value)}
+                  >
+                    <option value="all">Play all (00.0s)</option>
+                    <option value="frame1">1 · Terminal (0.0s)</option>
+                    <option value="frame2">2 · Promise (2.0s)</option>
+                    <option value="frame3">3 · Modular (4.5s)</option>
+                    <option value="frame4">4 · Keyboard (7.0s)</option>
+                    <option value="frame5">5 · Contrast (10.0s)</option>
+                    <option value="frame6">6 · End card (12.5s)</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Show IG safe-area guides</span>
+                  <input
+                    type="checkbox"
+                    checked={tweaks.showSafeArea}
+                    onChange={(e) => updateTweak("showSafeArea", e.target.checked)}
+                  />
+                </label>
+                <label>
+                  <span>Loop playback</span>
+                  <input
+                    type="checkbox"
+                    checked={tweaks.loop}
+                    onChange={(e) => updateTweak("loop", e.target.checked)}
+                  />
+                </label>
+                <div className="hint">
+                  SPACE = play/pause
+                  <br />
+                  ← → = ±0.1s · ⇧ ± 1s
+                  <br />0 / Home = return to start
+                </div>
               </div>
-            </div>
-          )}
-        </>
-      );
-    }
+            )}
+          </>
+        );
+      }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
-</body>
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
 </html>

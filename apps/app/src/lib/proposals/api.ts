@@ -79,10 +79,10 @@ export async function setProposalVote(
   proposalId: string,
   value: -1 | 0 | 1,
 ): Promise<{ voteScore: number; myVote: -1 | 0 | 1 }> {
-  return request<{ voteScore: number; myVote: -1 | 0 | 1 }>(
-    `/proposals/${proposalId}/vote`,
-    { method: "POST", body: JSON.stringify({ value }) },
-  );
+  return request<{ voteScore: number; myVote: -1 | 0 | 1 }>(`/proposals/${proposalId}/vote`, {
+    method: "POST",
+    body: JSON.stringify({ value }),
+  });
 }
 
 export async function setProposalStatus(

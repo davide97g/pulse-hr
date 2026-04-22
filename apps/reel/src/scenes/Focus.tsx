@@ -12,10 +12,12 @@ export const Focus: React.FC = () => {
   });
 
   const totalSeconds = 25 * 60;
-  const tick = Math.floor(interpolate(frame, [8, 48], [0, 80], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  }));
+  const tick = Math.floor(
+    interpolate(frame, [8, 48], [0, 80], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }),
+  );
   const remaining = totalSeconds - tick;
   const mm = String(Math.floor(remaining / 60)).padStart(2, "0");
   const ss = String(remaining % 60).padStart(2, "0");
@@ -29,9 +31,7 @@ export const Focus: React.FC = () => {
   });
 
   return (
-    <AbsoluteFill
-      style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 24 }}
-    >
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 24 }}>
       <div
         style={{
           fontFamily: fonts.mono,

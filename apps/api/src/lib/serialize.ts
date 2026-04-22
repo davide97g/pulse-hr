@@ -106,11 +106,7 @@ export function serializeProposal(
   };
 }
 
-export function serializeComment(
-  c: DbComment,
-  replies: DbReply[],
-  myVotes: MyVoteMap,
-): ApiComment {
+export function serializeComment(c: DbComment, replies: DbReply[], myVotes: MyVoteMap): ApiComment {
   return {
     id: c.id,
     route: c.route,

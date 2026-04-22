@@ -1,7 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import {
-  Pencil, Trash2, Plus, CheckCircle2, Copy, CalendarDays, Bookmark, Save,
+  Pencil,
+  Trash2,
+  Plus,
+  CheckCircle2,
+  Copy,
+  CalendarDays,
+  Bookmark,
+  Save,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverAnchor } from "@/components/ui/popover";
@@ -9,10 +16,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { StatusBadge } from "./AppShell";
-import { commesse, commessaById, type TimesheetEntry, type TimesheetTemplate } from "@/lib/mock-data";
+import {
+  commesse,
+  commessaById,
+  type TimesheetEntry,
+  type TimesheetTemplate,
+} from "@/lib/mock-data";
 import type { DayInfo } from "@/lib/timesheet";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +39,13 @@ interface Props {
   prevDayEntries: TimesheetEntry[];
   templates?: TimesheetTemplate[];
   onClose: () => void;
-  onAdd: (data: { commessaId: string; hours: number; description: string; billable: boolean; date: string }) => void;
+  onAdd: (data: {
+    commessaId: string;
+    hours: number;
+    description: string;
+    billable: boolean;
+    date: string;
+  }) => void;
   onEdit: (e: TimesheetEntry) => void;
   onDelete: (id: string) => void;
   onCopyFromPrev: () => void;
@@ -31,8 +53,17 @@ interface Props {
 }
 
 export function DayPeekPopover({
-  open, anchor, info, prevDayEntries, templates = [],
-  onClose, onAdd, onEdit, onDelete, onCopyFromPrev, onSaveTemplate,
+  open,
+  anchor,
+  info,
+  prevDayEntries,
+  templates = [],
+  onClose,
+  onAdd,
+  onEdit,
+  onDelete,
+  onCopyFromPrev,
+  onSaveTemplate,
 }: Props) {
   const [commessaId, setCommessaId] = useState(commesse[0].id);
   const [hours, setHours] = useState("4");
@@ -94,16 +125,14 @@ export function DayPeekPopover({
   };
 
   return (
-    <Popover open={open} onOpenChange={o => !o && onClose()}>
-      {anchor && (
-        <PopoverAnchor virtualRef={{ current: anchor }} />
-      )}
+    <Popover open={open} onOpenChange={(o) => !o && onClose()}>
+      {anchor && <PopoverAnchor virtualRef={{ current: anchor }} />}
       <PopoverContent
         align="center"
         side="bottom"
         sideOffset={6}
         className="w-[360px] p-0 overflow-hidden"
-        onOpenAutoFocus={e => e.preventDefault()}
+        onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {/* Header */}
         <div className="px-4 py-3 border-b flex items-center gap-2">
@@ -113,7 +142,8 @@ export function DayPeekPopover({
           <div className="flex-1 min-w-0">
             <div className="text-sm font-semibold">{format(info.date, "EEEE, MMM d")}</div>
             <div className="text-[11px] text-muted-foreground">
-              {info.hours.toFixed(1)}h logged · {info.entries.length} entry{info.entries.length === 1 ? "" : "s"}
+              {info.hours.toFixed(1)}h logged · {info.entries.length} entry
+              {info.entries.length === 1 ? "" : "s"}
             </div>
           </div>
           <StatusBadge status={info.status} />
@@ -123,7 +153,9 @@ export function DayPeekPopover({
         {info.leave && (
           <div className="px-4 py-2.5 border-b bg-info/5 text-xs">
             <span className="font-medium">{info.leave.type}</span>
-            {info.leave.reason && <span className="text-muted-foreground"> · {info.leave.reason}</span>}
+            {info.leave.reason && (
+              <span className="text-muted-foreground"> · {info.leave.reason}</span>
+            )}
           </div>
         )}
         {info.holiday && (
@@ -136,11 +168,17 @@ export function DayPeekPopover({
         {/* Entries list */}
         {info.entries.length > 0 && (
           <div className="divide-y max-h-[180px] overflow-y-auto scrollbar-thin">
-            {info.entries.map(e => {
+            {info.entries.map((e) => {
               const c = commessaById(e.commessaId);
               return (
-                <div key={e.id} className="group px-4 py-2.5 flex items-center gap-2 hover:bg-muted/40">
-                  <span className="h-8 w-0.5 rounded-full shrink-0" style={{ backgroundColor: c?.color }} />
+                <div
+                  key={e.id}
+                  className="group px-4 py-2.5 flex items-center gap-2 hover:bg-muted/40"
+                >
+                  <span
+                    className="h-8 w-0.5 rounded-full shrink-0"
+                    style={{ backgroundColor: c?.color }}
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium truncate">{e.description}</div>
                     <div className="text-[11px] text-muted-foreground truncate">
@@ -174,8 +212,12 @@ export function DayPeekPopover({
           <div className="px-3 py-2 border-t bg-muted/20">
             <div className="flex items-center gap-1.5 mb-1.5">
               <Bookmark className="h-3 w-3 text-muted-foreground" />
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">Templates</span>
-              <span className="text-[10px] text-muted-foreground ml-auto">press 1-{Math.min(9, templates.length)}</span>
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+                Templates
+              </span>
+              <span className="text-[10px] text-muted-foreground ml-auto">
+                press 1-{Math.min(9, templates.length)}
+              </span>
             </div>
             <div className="flex gap-1 flex-wrap">
               {templates.slice(0, 9).map((t, i) => {
@@ -188,10 +230,15 @@ export function DayPeekPopover({
                     className="inline-flex items-center gap-1.5 h-7 px-2 rounded-md border text-[11px] hover:bg-muted press-scale transition-colors"
                     title={`${t.name} · ${t.hours}h · ${c?.code ?? ""}`}
                   >
-                    <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: c?.color }} />
+                    <span
+                      className="h-1.5 w-1.5 rounded-full shrink-0"
+                      style={{ backgroundColor: c?.color }}
+                    />
                     {t.icon && <span>{t.icon}</span>}
                     <span className="truncate max-w-[110px]">{t.name}</span>
-                    <kbd className="font-mono text-[9px] text-muted-foreground border rounded px-1 py-px bg-background">{i + 1}</kbd>
+                    <kbd className="font-mono text-[9px] text-muted-foreground border rounded px-1 py-px bg-background">
+                      {i + 1}
+                    </kbd>
                   </button>
                 );
               })}
@@ -202,33 +249,48 @@ export function DayPeekPopover({
         {/* Quick add */}
         {!blocked && (
           <form
-            onSubmit={ev => { ev.preventDefault(); submit(); }}
+            onSubmit={(ev) => {
+              ev.preventDefault();
+              submit();
+            }}
             className="p-3 border-t bg-muted/20 space-y-2"
           >
             <div className="grid grid-cols-[1fr_72px] gap-2">
               <Select value={commessaId} onValueChange={setCommessaId}>
-                <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {commesse.filter(c => c.status === "active").map(c => (
-                    <SelectItem key={c.id} value={c.id}>
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: c.color }} />
-                        <span className="font-mono text-[10px]">{c.code}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
+                  {commesse
+                    .filter((c) => c.status === "active")
+                    .map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span
+                            className="h-1.5 w-1.5 rounded-full"
+                            style={{ backgroundColor: c.color }}
+                          />
+                          <span className="font-mono text-[10px]">{c.code}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
               <Input
-                type="number" step="0.25" min="0.25" max="24"
-                value={hours} onChange={e => setHours(e.target.value)}
+                type="number"
+                step="0.25"
+                min="0.25"
+                max="24"
+                value={hours}
+                onChange={(e) => setHours(e.target.value)}
                 className="h-8 text-xs text-right font-mono tabular-nums"
                 aria-label="Hours"
               />
             </div>
             <Input
               ref={firstRef as never}
-              value={description} onChange={e => setDescription(e.target.value)}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="What did you work on?"
               className="h-8 text-xs"
             />
@@ -237,7 +299,7 @@ export function DayPeekPopover({
                 <input
                   type="checkbox"
                   checked={billable}
-                  onChange={e => setBillable(e.target.checked)}
+                  onChange={(e) => setBillable(e.target.checked)}
                   className="h-3 w-3 rounded border-border"
                 />
                 Billable
@@ -245,7 +307,9 @@ export function DayPeekPopover({
               <div className="flex gap-1">
                 {onSaveTemplate && valid && (
                   <Button
-                    type="button" variant="outline" size="sm"
+                    type="button"
+                    variant="outline"
+                    size="sm"
                     className="h-7 px-2 text-[11px] press-scale"
                     onClick={() => {
                       const name = window.prompt(
@@ -263,26 +327,37 @@ export function DayPeekPopover({
                     }}
                     title="Save current values as a template"
                   >
-                    <Save className="h-3 w-3 mr-1" />Save as template
+                    <Save className="h-3 w-3 mr-1" />
+                    Save as template
                   </Button>
                 )}
                 {prevDayEntries.length > 0 && (
                   <Button
-                    type="button" variant="outline" size="sm"
+                    type="button"
+                    variant="outline"
+                    size="sm"
                     className="h-7 px-2 text-[11px] press-scale"
                     onClick={onCopyFromPrev}
                     title="Copy from previous workday"
                   >
-                    <Copy className="h-3 w-3 mr-1" />Copy prev
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copy prev
                   </Button>
                 )}
                 <Button
                   type="submit"
                   size="sm"
                   disabled={!valid}
-                  className={cn("h-7 px-2.5 text-[11px] press-scale", valid ? "bg-primary text-primary-foreground" : "")}
+                  className={cn(
+                    "h-7 px-2.5 text-[11px] press-scale",
+                    valid ? "bg-primary text-primary-foreground" : "",
+                  )}
                 >
-                  {valid ? <CheckCircle2 className="h-3 w-3 mr-1" /> : <Plus className="h-3 w-3 mr-1" />}
+                  {valid ? (
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                  ) : (
+                    <Plus className="h-3 w-3 mr-1" />
+                  )}
                   Add
                 </Button>
               </div>

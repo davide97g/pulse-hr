@@ -25,12 +25,12 @@ work of ten sales reps.
 Four tracks rotate on a two-per-month cadence. See
 `apps/marketing/src/pages/blog.astro` for the live schedule and owners.
 
-| Track              | Angle                                                                 | Reader                                |
-|--------------------|-----------------------------------------------------------------------|---------------------------------------|
-| **OSS mechanics**  | How we run Pulse as an open-source business                           | Founders, OSS devs, infra engineers   |
-| **Commessa ops**   | Financial ops for services firms                                      | COOs, agency finance leads, CFOs      |
-| **Agent-native HR**| Building toward MCP + agent-accessible tool schemas                   | Platform teams, AI engineers          |
-| **Engineering notes** | Technical deep-dives on the actual stack                           | Developers evaluating self-host       |
+| Track                 | Angle                                               | Reader                              |
+| --------------------- | --------------------------------------------------- | ----------------------------------- |
+| **OSS mechanics**     | How we run Pulse as an open-source business         | Founders, OSS devs, infra engineers |
+| **Commessa ops**      | Financial ops for services firms                    | COOs, agency finance leads, CFOs    |
+| **Agent-native HR**   | Building toward MCP + agent-accessible tool schemas | Platform teams, AI engineers        |
+| **Engineering notes** | Technical deep-dives on the actual stack            | Developers evaluating self-host     |
 
 ## Publishing discipline
 

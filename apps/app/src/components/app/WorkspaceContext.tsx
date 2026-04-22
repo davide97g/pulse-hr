@@ -19,7 +19,7 @@ function readStored(): string {
   if (typeof window === "undefined") return commesse[0].id;
   try {
     const v = localStorage.getItem(STORAGE_KEY);
-    if (v && commesse.some(c => c.id === v)) return v;
+    if (v && commesse.some((c) => c.id === v)) return v;
   } catch {}
   return commesse[0].id;
 }
@@ -28,14 +28,19 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [activeCommessaId, setActiveCommessaId] = useState(() => readStored());
 
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, activeCommessaId); } catch {}
+    try {
+      localStorage.setItem(STORAGE_KEY, activeCommessaId);
+    } catch {}
   }, [activeCommessaId]);
 
-  const value = useMemo<WorkspaceCtx>(() => ({
-    activeCommessaId,
-    setActiveCommessaId,
-    activeCommessa: commessaById(activeCommessaId),
-  }), [activeCommessaId]);
+  const value = useMemo<WorkspaceCtx>(
+    () => ({
+      activeCommessaId,
+      setActiveCommessaId,
+      activeCommessa: commessaById(activeCommessaId),
+    }),
+    [activeCommessaId],
+  );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

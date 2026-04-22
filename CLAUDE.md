@@ -50,6 +50,7 @@ File-based via `@tanstack/router-plugin/vite` with `autoCodeSplitting`. Routes l
 ### App shell
 
 `src/components/app/AppShell.tsx` owns:
+
 - Desktop sidebar (`hidden lg:flex`) with grouped nav (`Overview`/`People`/`Work`/`Money`/`Insights`/`Labs`/`Workspace`). Mobile uses a `<Sheet>` drawer triggered by a hamburger, auto-closes on route change.
 - Topbar: ⌘K opens `CommandPalette`, ⌘J opens `CopilotOverlay`. Both overlays are global.
 - Exports `PageHeader`, `Avatar`, `StatusBadge` — used by every route. `title` accepts `ReactNode` so role themes + NEW badges can inline.
@@ -58,11 +59,11 @@ File-based via `@tanstack/router-plugin/vite` with `autoCodeSplitting`. Routes l
 
 Five "NEW"-badged features live together in a Labs sidebar group and share a visual language (iridescent border, pulse-dot, new-badge utilities in `styles.css`):
 
-- `/pulse`    — anonymous vibe check + heatmap
+- `/pulse` — anonymous vibe check + heatmap
 - `/forecast` — commessa burn projection with scenario sliders
-- `/kudos`    — peer coins, leaderboard, confetti (`.confetti-piece`)
-- `/focus`    — deep-work timer with auto-decline
-- Copilot    — global ⌘J overlay (`src/components/app/Copilot.tsx`), streaming fake answers + runnable actions that toast and/or navigate.
+- `/kudos` — peer coins, leaderboard, confetti (`.confetti-piece`)
+- `/focus` — deep-work timer with auto-decline
+- Copilot — global ⌘J overlay (`src/components/app/Copilot.tsx`), streaming fake answers + runnable actions that toast and/or navigate.
 
 ### Theme system
 
@@ -73,6 +74,7 @@ Five "NEW"-badged features live together in a Labs sidebar group and share a vis
 Types + seeds all in `src/lib/mock-data.ts`: employees, commesse (projects), timesheets, leave, expenses, payroll runs + payslips, candidates + job postings, onboarding workflows, docs, api keys/webhooks/custom fields, roles, audit log, copilot suggestions, pulse entries, kudos, focus sessions, announcements, plugins. The `commessa` concept (Italian for project code) is central — Time, Forecast, and Focus all pivot on `commessaId`.
 
 CRUD pattern on every list route:
+
 1. `useState(seed)` from mock-data.
 2. `setTimeout(…, ~420ms)` loading simulation → `<SkeletonRows>` / `<SkeletonCards>` → `<EmptyState>` → staggered list (`.stagger-in` CSS, nth-child animation-delay).
 3. Edits via side panel or `<Dialog>` form; delete via `<AlertDialog>` confirm + toast with `action: { label: "Undo", onClick: … }` that prepends the removed item back.

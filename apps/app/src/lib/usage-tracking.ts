@@ -46,7 +46,12 @@ export function useTrackPageViews() {
 }
 
 export function trackAction(name: string, meta?: Record<string, unknown>) {
-  const anyWin = typeof window !== "undefined" ? (window as unknown as { Clerk?: { user?: { id: string; primaryEmailAddress?: { emailAddress: string } } } }) : undefined;
+  const anyWin =
+    typeof window !== "undefined"
+      ? (window as unknown as {
+          Clerk?: { user?: { id: string; primaryEmailAddress?: { emailAddress: string } } };
+        })
+      : undefined;
   const u = anyWin?.Clerk?.user;
   push({
     at: new Date().toISOString(),

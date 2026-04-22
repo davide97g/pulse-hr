@@ -393,7 +393,12 @@ function ReservationRow({
 
       {showOwner && owner && (
         <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-          <Avatar initials={owner.initials} color={owner.avatarColor} size={22} employeeId={owner.id} />
+          <Avatar
+            initials={owner.initials}
+            color={owner.avatarColor}
+            size={22}
+            employeeId={owner.id}
+          />
           <span className="text-xs text-muted-foreground">{owner.name.split(" ")[0]}</span>
         </div>
       )}

@@ -32,9 +32,13 @@ function KudosDoc() {
 
       <Section title="Giving a kudos">
         <p>
-          On the <Link to="/kudos" className="text-primary hover:underline">Kudos</Link> page, pick
-          a teammate, a coin amount, a tag (teamwork / craft / impact / courage / kindness), and a
-          short note explaining why. The coins are symbolic — it's the note that matters.
+          On the{" "}
+          <Link to="/kudos" className="text-primary hover:underline">
+            Kudos
+          </Link>{" "}
+          page, pick a teammate, a coin amount, a tag (teamwork / craft / impact / courage /
+          kindness), and a short note explaining why. The coins are symbolic — it's the note that
+          matters.
         </p>
       </Section>
 

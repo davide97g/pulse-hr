@@ -174,9 +174,7 @@ export function Gantt({
                           )}
                         </button>
                         {/* Rich hover card — full data, no truncation */}
-                        <div
-                          className="pointer-events-none absolute left-0 bottom-full mb-2 min-w-[220px] max-w-[320px] rounded-md border bg-popover text-popover-foreground shadow-pop px-3 py-2 text-xs opacity-0 translate-y-1 transition group-hover:opacity-100 group-hover:translate-y-0 z-[3]"
-                        >
+                        <div className="pointer-events-none absolute left-0 bottom-full mb-2 min-w-[220px] max-w-[320px] rounded-md border bg-popover text-popover-foreground shadow-pop px-3 py-2 text-xs opacity-0 translate-y-1 transition group-hover:opacity-100 group-hover:translate-y-0 z-[3]">
                           <div className="font-semibold mb-0.5 break-words">{bar.label}</div>
                           {bar.subtitle && (
                             <div className="text-muted-foreground mb-1 break-words">

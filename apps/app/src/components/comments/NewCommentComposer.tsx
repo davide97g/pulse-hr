@@ -16,8 +16,7 @@ export function NewCommentComposer({
   y: number;
   onDismiss: () => void;
 }) {
-  const { submitNew, author, pendingScreenshotUrl, screenshotStatus } =
-    useCommentsOverlay();
+  const { submitNew, author, pendingScreenshotUrl, screenshotStatus } = useCommentsOverlay();
   const [body, setBody] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [showTags, setShowTags] = useState(false);
@@ -129,7 +128,7 @@ export function NewCommentComposer({
           </IconButton>
           <span className="mx-0.5 h-4 w-px bg-border" />
           <IconButton
-            onClick={() => setShowTags((s) => !s || tags.length === 0 ? !s : s)}
+            onClick={() => setShowTags((s) => (!s || tags.length === 0 ? !s : s))}
             title={showTags ? "Hide tags" : "Add tags"}
             active={showTags || tags.length > 0}
           >

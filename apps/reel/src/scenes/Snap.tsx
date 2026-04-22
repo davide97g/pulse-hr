@@ -36,9 +36,7 @@ export const Snap: React.FC = () => {
   });
 
   return (
-    <AbsoluteFill
-      style={{ justifyContent: "center", alignItems: "center" }}
-    >
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "center" }}>
       <div
         style={{
           display: "flex",
@@ -104,8 +102,8 @@ export const Snap: React.FC = () => {
           textAlign: "center",
         }}
       >
-        HR you can <em style={{ color: color.brand, fontStyle: "italic" }}>read</em>,
-        fork, and run<span style={{ color: color.brand }}>.</span>
+        HR you can <em style={{ color: color.brand, fontStyle: "italic" }}>read</em>, fork, and run
+        <span style={{ color: color.brand }}>.</span>
       </div>
 
       <div

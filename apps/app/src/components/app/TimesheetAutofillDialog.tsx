@@ -1,20 +1,42 @@
 import { useEffect, useMemo, useState } from "react";
 import { addDays, subDays, format } from "date-fns";
 import {
-  Sparkles, CalendarDays, ChevronLeft, ChevronRight, Check, X, Wand2, Focus, CalendarRange,
+  Sparkles,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Check,
+  X,
+  Wand2,
+  Focus,
+  CalendarRange,
 } from "lucide-react";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { NewBadge } from "./NewBadge";
 import { useWorkspace } from "./WorkspaceContext";
 import { commesse, commessaById, type TimesheetEntry } from "@/lib/mock-data";
-import { generateWeekDraft, weekLabel, type AutofillDraft, type AutofillSource } from "@/lib/autofill";
+import {
+  generateWeekDraft,
+  weekLabel,
+  type AutofillDraft,
+  type AutofillSource,
+} from "@/lib/autofill";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -27,7 +49,12 @@ interface Props {
 }
 
 export function TimesheetAutofillDialog({
-  open, onClose, entries, employeeId, onAccept, initialAnchor,
+  open,
+  onClose,
+  entries,
+  employeeId,
+  onAccept,
+  initialAnchor,
 }: Props) {
   const workspace = useWorkspace();
   const [anchor, setAnchor] = useState(() => initialAnchor ?? new Date());
@@ -40,7 +67,7 @@ export function TimesheetAutofillDialog({
       existingEntries: entries,
     });
     setDrafts(rows);
-    setSelected(new Set(rows.filter(r => r.source !== "gap").map(r => r.tempId)));
+    setSelected(new Set(rows.filter((r) => r.source !== "gap").map((r) => r.tempId)));
   };
 
   useEffect(() => {
@@ -57,14 +84,14 @@ export function TimesheetAutofillDialog({
     return [...m.entries()].sort(([a], [b]) => a.localeCompare(b));
   }, [drafts]);
 
-  const selectedRows = drafts.filter(d => selected.has(d.tempId));
+  const selectedRows = drafts.filter((d) => selected.has(d.tempId));
   const totalHours = selectedRows.reduce((a, d) => a + d.hours, 0);
 
   const updateDraft = (tempId: string, patch: Partial<AutofillDraft>) => {
-    setDrafts(ds => ds.map(d => (d.tempId === tempId ? { ...d, ...patch } : d)));
+    setDrafts((ds) => ds.map((d) => (d.tempId === tempId ? { ...d, ...patch } : d)));
   };
   const toggle = (tempId: string) => {
-    setSelected(s => {
+    setSelected((s) => {
       const next = new Set(s);
       if (next.has(tempId)) next.delete(tempId);
       else next.add(tempId);
@@ -72,16 +99,18 @@ export function TimesheetAutofillDialog({
     });
   };
   const deselectGuesses = () => {
-    setSelected(s => {
+    setSelected((s) => {
       const next = new Set(s);
-      drafts.forEach(d => { if (d.source === "gap") next.delete(d.tempId); });
+      drafts.forEach((d) => {
+        if (d.source === "gap") next.delete(d.tempId);
+      });
       return next;
     });
   };
-  const selectAll = () => setSelected(new Set(drafts.map(d => d.tempId)));
+  const selectAll = () => setSelected(new Set(drafts.map((d) => d.tempId)));
 
   const accept = () => {
-    const rows = selectedRows.map(d => ({
+    const rows = selectedRows.map((d) => ({
       commessaId: d.commessaId,
       date: d.date,
       hours: d.hours,
@@ -93,7 +122,7 @@ export function TimesheetAutofillDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={o => !o && onClose()}>
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-[720px] p-0 overflow-hidden">
         <DialogHeader className="px-6 pt-5 pb-3 border-b">
           <DialogTitle className="flex items-center gap-2">
@@ -104,20 +133,36 @@ export function TimesheetAutofillDialog({
             <NewBadge />
           </DialogTitle>
           <DialogDescription>
-            Generated from your calendar and focus sessions. Review each row, then accept the ones you want to log.
+            Generated from your calendar and focus sessions. Review each row, then accept the ones
+            you want to log.
           </DialogDescription>
         </DialogHeader>
 
         {/* Week nav + summary */}
         <div className="px-6 py-3 border-b flex items-center gap-2 flex-wrap bg-muted/20">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setAnchor(subDays(anchor, 7))}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setAnchor(subDays(anchor, 7))}
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <div className="font-mono text-sm">{weekLabel(anchor)}</div>
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setAnchor(addDays(anchor, 7))}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setAnchor(addDays(anchor, 7))}
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" className="h-8 ml-1 press-scale" onClick={() => setAnchor(new Date())}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 ml-1 press-scale"
+            onClick={() => setAnchor(new Date())}
+          >
             This week
           </Button>
           <div className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
@@ -134,7 +179,8 @@ export function TimesheetAutofillDialog({
               <Wand2 className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
               <div className="text-sm font-medium">Nothing to draft</div>
               <div className="text-xs text-muted-foreground mt-1">
-                Every workday in this week is either already logged, a weekend, or outside your calendar.
+                Every workday in this week is either already logged, a weekend, or outside your
+                calendar.
               </div>
             </div>
           ) : (
@@ -144,18 +190,22 @@ export function TimesheetAutofillDialog({
                 <div key={date} className="border-b last:border-0">
                   <div className="px-6 py-2 flex items-center gap-2 bg-muted/10 sticky top-0">
                     <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
-                    <div className="text-sm font-semibold">{format(new Date(date), "EEEE, MMM d")}</div>
+                    <div className="text-sm font-semibold">
+                      {format(new Date(date), "EEEE, MMM d")}
+                    </div>
                     <div className="text-xs text-muted-foreground ml-2">{rows.length} rows</div>
-                    <div className="ml-auto font-mono text-xs tabular-nums">{total.toFixed(1)}h</div>
+                    <div className="ml-auto font-mono text-xs tabular-nums">
+                      {total.toFixed(1)}h
+                    </div>
                   </div>
                   <div className="divide-y">
-                    {rows.map(d => (
+                    {rows.map((d) => (
                       <DraftRow
                         key={d.tempId}
                         draft={d}
                         selected={selected.has(d.tempId)}
                         onToggle={() => toggle(d.tempId)}
-                        onChange={patch => updateDraft(d.tempId, patch)}
+                        onChange={(patch) => updateDraft(d.tempId, patch)}
                       />
                     ))}
                   </div>
@@ -176,7 +226,8 @@ export function TimesheetAutofillDialog({
           </div>
           <div className="flex gap-2">
             <Button variant="ghost" onClick={onClose}>
-              <X className="h-4 w-4 mr-1.5" />Cancel
+              <X className="h-4 w-4 mr-1.5" />
+              Cancel
             </Button>
             <Button onClick={accept} disabled={selectedRows.length === 0} className="press-scale">
               <Check className="h-4 w-4 mr-1.5" />
@@ -190,7 +241,10 @@ export function TimesheetAutofillDialog({
 }
 
 function DraftRow({
-  draft, selected, onToggle, onChange,
+  draft,
+  selected,
+  onToggle,
+  onChange,
 }: {
   draft: AutofillDraft;
   selected: boolean;
@@ -219,20 +273,23 @@ function DraftRow({
       <div className="flex-1 min-w-0 space-y-1.5">
         <Input
           value={draft.description}
-          onChange={e => onChange({ description: e.target.value })}
+          onChange={(e) => onChange({ description: e.target.value })}
           className="h-8 text-sm border-transparent hover:border-border focus-visible:border-input bg-transparent px-2 -mx-2"
         />
         <div className="flex items-center gap-2 flex-wrap">
           <SourceBadge source={draft.source} confidence={draft.confidence} />
-          <Select value={draft.commessaId} onValueChange={v => onChange({ commessaId: v })}>
+          <Select value={draft.commessaId} onValueChange={(v) => onChange({ commessaId: v })}>
             <SelectTrigger className="h-7 w-[180px] text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {commesse.map(cm => (
+              {commesse.map((cm) => (
                 <SelectItem key={cm.id} value={cm.id}>
                   <span className="inline-flex items-center gap-1.5 text-xs">
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: cm.color }} />
+                    <span
+                      className="h-1.5 w-1.5 rounded-full"
+                      style={{ backgroundColor: cm.color }}
+                    />
                     <span className="font-mono text-[10px]">{cm.code}</span>
                     <span className="text-muted-foreground">{cm.name}</span>
                   </span>
@@ -241,9 +298,12 @@ function DraftRow({
             </SelectContent>
           </Select>
           <Input
-            type="number" step="0.25" min="0.25" max="24"
+            type="number"
+            step="0.25"
+            min="0.25"
+            max="24"
             value={draft.hours}
-            onChange={e => onChange({ hours: Number(e.target.value) })}
+            onChange={(e) => onChange({ hours: Number(e.target.value) })}
             className="h-7 w-[72px] text-xs text-right font-mono tabular-nums"
             aria-label="Hours"
           />
@@ -255,14 +315,32 @@ function DraftRow({
 
 function SourceBadge({ source, confidence }: { source: AutofillSource; confidence: number }) {
   const cfg: Record<AutofillSource, { label: string; cls: string; icon: React.ReactNode }> = {
-    calendar: { label: "Calendar", cls: "bg-info/10 text-info border-info/30",             icon: <CalendarDays className="h-3 w-3" /> },
-    focus:    { label: "Focus",    cls: "bg-success/10 text-success border-success/30",    icon: <Focus className="h-3 w-3" /> },
-    gap:      { label: "AI guess", cls: "bg-warning/10 text-warning border-warning/30",    icon: <Sparkles className="h-3 w-3" /> },
+    calendar: {
+      label: "Calendar",
+      cls: "bg-info/10 text-info border-info/30",
+      icon: <CalendarDays className="h-3 w-3" />,
+    },
+    focus: {
+      label: "Focus",
+      cls: "bg-success/10 text-success border-success/30",
+      icon: <Focus className="h-3 w-3" />,
+    },
+    gap: {
+      label: "AI guess",
+      cls: "bg-warning/10 text-warning border-warning/30",
+      icon: <Sparkles className="h-3 w-3" />,
+    },
   };
   const m = cfg[source];
   return (
-    <span className={cn("inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[10px] font-medium", m.cls)}>
-      {m.icon}{m.label}
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[10px] font-medium",
+        m.cls,
+      )}
+    >
+      {m.icon}
+      {m.label}
       <span className="text-muted-foreground">· {Math.round(confidence * 100)}%</span>
     </span>
   );

@@ -25,12 +25,15 @@ A single source of truth lets us:
 Two exports, pick the one that fits the context:
 
 - **CSS** (Tailwind v4 CSS-first, marketing and app):
+
   ```css
   @import "@workflows-people/tokens/tokens.css";
   ```
+
   Use the `--wp-color-*`, `--wp-font-*`, `--wp-radius-*` etc. variables.
 
 - **TypeScript** (app code, OG image generation, chart palettes):
+
   ```ts
   import { color, font, radius } from "@workflows-people/tokens";
 

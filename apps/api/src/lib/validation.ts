@@ -17,11 +17,7 @@ export const PageMetaSchema = z.object({
 });
 
 export const NewCommentSchema = z.object({
-  route: z
-    .string()
-    .min(1)
-    .max(512)
-    .regex(/^\//, "route must start with /"),
+  route: z.string().min(1).max(512).regex(/^\//, "route must start with /"),
   anchor: AnchorSchema,
   pageMeta: PageMetaSchema,
   body: z.string().trim().min(1).max(4096),
@@ -62,9 +58,5 @@ export const EditProposalSchema = z
   });
 
 export const ListQuerySchema = z.object({
-  route: z
-    .string()
-    .min(1)
-    .max(512)
-    .regex(/^\//, "route must start with /"),
+  route: z.string().min(1).max(512).regex(/^\//, "route must start with /"),
 });

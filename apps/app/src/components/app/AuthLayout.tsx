@@ -44,15 +44,16 @@ export function AuthLayout({
           }}
           aria-hidden
         />
-        <div className="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-[#b4ff39]/20 blur-3xl pointer-events-none" aria-hidden />
+        <div
+          className="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-[#b4ff39]/20 blur-3xl pointer-events-none"
+          aria-hidden
+        />
         <div className="relative h-full flex flex-col p-14">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/70 w-fit">
             <span className="h-1.5 w-1.5 rounded-full bg-[#b4ff39]" />
             Trusted by 4,800+ teams
           </div>
-          <div className="mt-auto">
-            {side ?? <DefaultSide />}
-          </div>
+          <div className="mt-auto">{side ?? <DefaultSide />}</div>
         </div>
       </div>
     </div>
@@ -63,13 +64,18 @@ function DefaultSide() {
   return (
     <div>
       <div className="flex gap-0.5 mb-6">
-        {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-4 w-4 fill-[#b4ff39] text-[#b4ff39]" />)}
+        {[1, 2, 3, 4, 5].map((i) => (
+          <Star key={i} className="h-4 w-4 fill-[#b4ff39] text-[#b4ff39]" />
+        ))}
       </div>
       <blockquote className="font-display text-3xl leading-snug max-w-lg">
-        "We replaced four tools with Pulse. Payroll that used to take a week now closes in an afternoon — and the team <em className="italic">enjoys</em> onboarding."
+        "We replaced four tools with Pulse. Payroll that used to take a week now closes in an
+        afternoon — and the team <em className="italic">enjoys</em> onboarding."
       </blockquote>
       <div className="mt-8 flex items-center gap-3">
-        <div className="h-10 w-10 rounded-full bg-white/10 grid place-items-center text-sm font-medium">AP</div>
+        <div className="h-10 w-10 rounded-full bg-white/10 grid place-items-center text-sm font-medium">
+          AP
+        </div>
         <div>
           <div className="text-sm font-medium">Aisha Patel</div>
           <div className="text-xs text-white/50">Head of People, Nova Retail</div>
@@ -77,10 +83,10 @@ function DefaultSide() {
       </div>
       <div className="mt-14 grid grid-cols-3 gap-5 max-w-sm">
         {[
-          { v: "$1.2B",  l: "Processed" },
-          { v: "47",     l: "Countries" },
+          { v: "$1.2B", l: "Processed" },
+          { v: "47", l: "Countries" },
           { v: "99.99%", l: "Uptime" },
-        ].map(s => (
+        ].map((s) => (
           <div key={s.l}>
             <div className="font-display text-2xl text-[#b4ff39]">{s.v}</div>
             <div className="text-[11px] text-white/50 mt-0.5">{s.l}</div>

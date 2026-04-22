@@ -29,20 +29,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import {
-  fetchBoard,
-  setVote,
-  setStatus,
-  setTokenGetter,
-  createReply,
-} from "@/lib/comments/api";
+import { fetchBoard, setVote, setStatus, setTokenGetter, createReply } from "@/lib/comments/api";
 import type { BoardBuckets, BoardItem } from "@/lib/comments/api";
 import type { CommentStatus, Reply } from "@/lib/comments/types";
-import {
-  createProposalReply,
-  setProposalStatus,
-  setProposalVote,
-} from "@/lib/proposals/api";
+import { createProposalReply, setProposalStatus, setProposalVote } from "@/lib/proposals/api";
 import type { ProposalReply, ProposalType } from "@/lib/proposals/types";
 import { useNewProposal } from "@/components/proposals/ProposalProvider";
 import { useIsEffectiveAdmin } from "@/lib/role-override";
@@ -120,9 +110,7 @@ function FeedbackBoard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
-  );
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
 
   const findItem = (id: string): { status: CommentStatus; item: BoardItem } | null => {
     for (const status of Object.keys(board) as CommentStatus[]) {
@@ -156,9 +144,7 @@ function FeedbackBoard() {
             const delta = value - c.myVote;
             return { ...c, myVote: value, voteScore: c.voteScore + delta } as BoardItem;
           })
-          .sort(
-            (a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
-          );
+          .sort((a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1));
       }
       return next;
     });
@@ -172,9 +158,7 @@ function FeedbackBoard() {
           if (!touched) continue;
           next[status] = next[status]
             .map((c) => (c.id === id ? ({ ...c, voteScore, myVote } as BoardItem) : c))
-            .sort(
-              (a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1),
-            );
+            .sort((a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1));
         }
         return next;
       });
@@ -592,12 +576,7 @@ function DraggableCard({
     ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
     : undefined;
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={cn(isDragging && "opacity-40")}
-      {...attributes}
-    >
+    <div ref={setNodeRef} style={style} className={cn(isDragging && "opacity-40")} {...attributes}>
       <FeedbackCard
         item={item}
         onVote={(v) => onVote(item.id, item.kind, v)}
@@ -611,10 +590,7 @@ function DraggableCard({
   );
 }
 
-const PROPOSAL_TYPE_META: Record<
-  ProposalType,
-  { label: string; icon: typeof Bug; cls: string }
-> = {
+const PROPOSAL_TYPE_META: Record<ProposalType, { label: string; icon: typeof Bug; cls: string }> = {
   bug: {
     label: "BUG",
     icon: Bug,
@@ -724,9 +700,7 @@ function FeedbackCard({
           <p
             className={cn(
               "text-sm leading-snug break-words",
-              isProposal
-                ? "line-clamp-2 text-muted-foreground"
-                : "line-clamp-3",
+              isProposal ? "line-clamp-2 text-muted-foreground" : "line-clamp-3",
             )}
           >
             {item.body}
@@ -818,11 +792,7 @@ function ThreadSidebar({
   item: BoardItem | null;
   onClose: () => void;
   onVote: (id: string, kind: BoardItem["kind"], value: -1 | 0 | 1) => Promise<void>;
-  onReply: (
-    id: string,
-    kind: BoardItem["kind"],
-    body: string,
-  ) => Promise<Reply | ProposalReply>;
+  onReply: (id: string, kind: BoardItem["kind"], body: string) => Promise<Reply | ProposalReply>;
 }) {
   const [reply, setReply] = useState("");
   const [pending, setPending] = useState(false);

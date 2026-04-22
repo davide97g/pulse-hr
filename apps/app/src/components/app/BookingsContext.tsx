@@ -1,9 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
-import {
-  bookings as seedBookings,
-  type Booking,
-  findConflict,
-} from "@/lib/offices";
+import { bookings as seedBookings, type Booking, findConflict } from "@/lib/offices";
 
 interface Ctx {
   bookings: Booking[];
@@ -26,8 +22,18 @@ export function BookingsProvider({ children }: { children: React.ReactNode }) {
 
   const addBooking: Ctx["addBooking"] = useCallback(
     (b) => {
-      const conflict = findConflict(b.resourceId, b.date, b.startTime, b.endTime, undefined, bookings);
-      const booking: Booking = { ...b, id: `bk-${Date.now()}-${Math.random().toString(36).slice(2, 6)}` };
+      const conflict = findConflict(
+        b.resourceId,
+        b.date,
+        b.startTime,
+        b.endTime,
+        undefined,
+        bookings,
+      );
+      const booking: Booking = {
+        ...b,
+        id: `bk-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      };
       setBookings((bs) => [booking, ...bs]);
       return { booking, conflict };
     },

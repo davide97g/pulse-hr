@@ -37,7 +37,12 @@
       { "action": "zoom", "scale": 1, "duration": 80 },
       { "action": "wait", "ms": 200 },
 
-      { "action": "zoom", "selector": "button:has-text('Hire faster')", "scale": 2, "duration": 180 },
+      {
+        "action": "zoom",
+        "selector": "button:has-text('Hire faster')",
+        "scale": 2,
+        "duration": 180
+      },
       { "action": "click", "selector": "button:has-text('Hire faster')" },
       { "action": "wait", "ms": 120 },
       {
@@ -92,14 +97,24 @@
   "steps": [
     { "action": "wait", "ms": 300, "waitFor": "main", "timeout": 10000 },
 
-    { "action": "zoom", "selector": "button[aria-label='Leave a comment']", "scale": 2, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "button[aria-label='Leave a comment']",
+      "scale": 2,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "button[aria-label='Leave a comment']",
       "timeout": 8000,
       "pauseAfter": 120
     },
-    { "action": "zoom", "selector": "[data-tour=\"page-header\"] h1", "scale": 1.9, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "[data-tour=\"page-header\"] h1",
+      "scale": 1.9,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "[data-tour=\"page-header\"] h1",
@@ -107,7 +122,12 @@
       "pauseAfter": 120
     },
     { "action": "wait", "ms": 200 },
-    { "action": "zoom", "selector": "input[placeholder='Leave a comment…']", "scale": 1.8, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "input[placeholder='Leave a comment…']",
+      "scale": 1.8,
+      "duration": 130
+    },
     {
       "action": "type",
       "selector": "input[placeholder='Leave a comment…']",
@@ -115,7 +135,12 @@
       "delay": 18
     },
     { "action": "wait", "ms": 200 },
-    { "action": "zoom", "selector": "button[aria-label='Post comment']", "scale": 2, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "button[aria-label='Post comment']",
+      "scale": 2,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "button[aria-label='Post comment']",
@@ -198,14 +223,24 @@
     { "action": "wait", "ms": 900, "waitFor": "main", "timeout": 10000 },
     { "action": "screenshot", "name": "04-people", "pauseAfter": 80 },
 
-    { "action": "zoom", "selector": "button[aria-label='Leave a comment']", "scale": 2, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "button[aria-label='Leave a comment']",
+      "scale": 2,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "button[aria-label='Leave a comment']",
       "timeout": 8000,
       "pauseAfter": 120
     },
-    { "action": "zoom", "selector": "main tr:has-text('Marcus Rivera')", "scale": 1.7, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "main tr:has-text('Marcus Rivera')",
+      "scale": 1.7,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "main tr:has-text('Marcus Rivera')",
@@ -213,7 +248,12 @@
       "pauseAfter": 120
     },
     { "action": "wait", "ms": 250 },
-    { "action": "zoom", "selector": "input[placeholder='Leave a comment…']", "scale": 1.8, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "input[placeholder='Leave a comment…']",
+      "scale": 1.8,
+      "duration": 130
+    },
     {
       "action": "type",
       "selector": "input[placeholder='Leave a comment…']",
@@ -221,7 +261,12 @@
       "delay": 18
     },
     { "action": "wait", "ms": 200 },
-    { "action": "zoom", "selector": "button[aria-label='Post comment']", "scale": 2, "duration": 130 },
+    {
+      "action": "zoom",
+      "selector": "button[aria-label='Post comment']",
+      "scale": 2,
+      "duration": 130
+    },
     {
       "action": "click",
       "selector": "button[aria-label='Post comment']",

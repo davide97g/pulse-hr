@@ -53,8 +53,7 @@ export default AdminMessage;
 
 const bodyStyle = {
   backgroundColor: "#f6f7f9",
-  fontFamily:
-    "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",
+  fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif",
 };
 const container = {
   maxWidth: "560px",

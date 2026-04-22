@@ -38,9 +38,7 @@ export const Copilot: React.FC = () => {
   const caretOn = frame % 16 < 8;
 
   return (
-    <AbsoluteFill
-      style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 24 }}
-    >
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 24 }}>
       <div
         style={{
           fontFamily: fonts.mono,

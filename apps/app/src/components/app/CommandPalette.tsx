@@ -90,8 +90,7 @@ export function CommandPalette({
     { label: "Post a job", id: "post-job" as const, icon: Briefcase },
   ].filter((a) => !q || a.label.toLowerCase().includes(q.toLowerCase()));
 
-  const proposalMatches =
-    !q || "new proposal bug idea improvement feedback".includes(qLower);
+  const proposalMatches = !q || "new proposal bug idea improvement feedback".includes(qLower);
 
   const intents = useMemo(() => (q.length > 2 ? parseCommand(q).slice(0, 3) : []), [q]);
 

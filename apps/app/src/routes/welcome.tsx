@@ -35,7 +35,12 @@ export const Route = createFileRoute("/welcome")({
 
 type OnboardingRole = "admin" | "hr" | "manager" | "finance" | "employee";
 
-const ROLES: { id: OnboardingRole; label: string; desc: string; icon: React.ComponentType<{ className?: string }> }[] = [
+const ROLES: {
+  id: OnboardingRole;
+  label: string;
+  desc: string;
+  icon: React.ComponentType<{ className?: string }>;
+}[] = [
   { id: "admin", label: "Admin", desc: "Workspace owner, full access", icon: Shield },
   { id: "hr", label: "HR / People ops", desc: "Hiring, onboarding, growth", icon: UsersRound },
   { id: "manager", label: "Manager", desc: "Team, time, projects", icon: Briefcase },
@@ -194,7 +199,7 @@ function Welcome() {
               type="button"
               className="press-scale"
               disabled={!canNext}
-              onClick={() => setStep((s) => ((s + 1) as Step))}
+              onClick={() => setStep((s) => (s + 1) as Step)}
             >
               Continue <ArrowRight className="h-4 w-4 ml-1.5" />
             </Button>
@@ -240,9 +245,7 @@ function Stepper({ step }: { step: Step }) {
           >
             {n < step ? <Check className="h-3 w-3" /> : n + 1}
           </div>
-          {n !== 3 && (
-            <div className={cn("h-px flex-1", n < step ? "bg-success" : "bg-border")} />
-          )}
+          {n !== 3 && <div className={cn("h-px flex-1", n < step ? "bg-success" : "bg-border")} />}
         </div>
       ))}
     </div>
@@ -271,7 +274,9 @@ function RoleStep({
               active ? "border-primary bg-primary/5" : "hover:bg-muted/40",
             )}
           >
-            <Icon className={cn("h-5 w-5 mt-0.5", active ? "text-primary" : "text-muted-foreground")} />
+            <Icon
+              className={cn("h-5 w-5 mt-0.5", active ? "text-primary" : "text-muted-foreground")}
+            />
             <div>
               <div className="text-sm font-medium">{r.label}</div>
               <div className="text-xs text-muted-foreground mt-0.5">{r.desc}</div>
@@ -308,7 +313,10 @@ function GoalsStep({
               )}
             >
               <Icon
-                className={cn("h-4 w-4 shrink-0", active ? "text-primary" : "text-muted-foreground")}
+                className={cn(
+                  "h-4 w-4 shrink-0",
+                  active ? "text-primary" : "text-muted-foreground",
+                )}
               />
               <div className="text-sm flex-1">{g.label}</div>
               <div

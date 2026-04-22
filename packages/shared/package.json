@@ -9,5 +9,7 @@
     "./tours": "./src/tours.ts",
     "./changelog": "./src/changelog.ts"
   },
-  "files": ["src"]
+  "files": [
+    "src"
+  ]
 }

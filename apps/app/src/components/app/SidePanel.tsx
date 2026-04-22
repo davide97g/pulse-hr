@@ -3,7 +3,11 @@ import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 
 export function SidePanel({
-  open, onClose, title, children, width = 480,
+  open,
+  onClose,
+  title,
+  children,
+  width = 480,
 }: {
   open: boolean;
   onClose: () => void;
@@ -22,14 +26,14 @@ export function SidePanel({
       <div
         className={cn(
           "fixed inset-0 bg-foreground/10 z-40 transition-opacity duration-200",
-          open ? "opacity-100" : "opacity-0 pointer-events-none"
+          open ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
         onClick={onClose}
       />
       <aside
         className={cn(
           "fixed top-0 right-0 h-full max-w-[100vw] bg-card border-l z-50 flex flex-col transition-transform duration-250 ease-out",
-          open ? "translate-x-0" : "translate-x-full"
+          open ? "translate-x-0" : "translate-x-full",
         )}
         style={{ width: `min(${width}px, 100vw)`, boxShadow: "var(--shadow-panel)" }}
       >

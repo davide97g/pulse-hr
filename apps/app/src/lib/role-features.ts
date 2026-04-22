@@ -71,7 +71,9 @@ const ALLOW: Record<Exclude<Role, "admin">, SidebarFeatureId[]> = {
   ],
 };
 
-export type RoleFeatureOverrides = Partial<Record<Role, Partial<Record<SidebarFeatureId, boolean>>>>;
+export type RoleFeatureOverrides = Partial<
+  Record<Role, Partial<Record<SidebarFeatureId, boolean>>>
+>;
 
 /**
  * Resolve the visible feature set for a role. Starts from the hardcoded
@@ -85,9 +87,7 @@ export function featuresForRole(
   const base =
     role === "admin" || !role
       ? new Set<SidebarFeatureId>(ALL_SIDEBAR_FEATURE_IDS)
-      : new Set<SidebarFeatureId>(
-          ALLOW[role as Exclude<Role, "admin">] ?? ALL_SIDEBAR_FEATURE_IDS,
-        );
+      : new Set<SidebarFeatureId>(ALLOW[role as Exclude<Role, "admin">] ?? ALL_SIDEBAR_FEATURE_IDS);
   const override = overrides?.[role as Role];
   if (override) {
     for (const id of ALL_SIDEBAR_FEATURE_IDS) {

@@ -14,6 +14,7 @@ Build self-serve acquisition and expansion motions. But first, figure out if PLG
 ## When to Use
 
 **Triggers:**
+
 - "Should we build PLG or sales-led?"
 - "How do we drive self-serve adoption?"
 - "Freemium to paid conversion isn't working"
@@ -22,6 +23,7 @@ Build self-serve acquisition and expansion motions. But first, figure out if PLG
 - "How do I know if PLG will work?"
 
 **Context:**
+
 - Developer tools and platforms
 - B2B SaaS with self-serve potential
 - Products where value is obvious without demo
@@ -45,6 +47,7 @@ PLG: High volume, low ACV (~$5K), fast time-to-revenue, higher churn. Sales-led:
 **Why:** Product complexity + buyer seniority = sales-led wins. The product required integration with existing infrastructure, change management across teams, and multi-stakeholder alignment. Developers loved self-serve. But they weren't the economic buyer.
 
 **PLG works when:**
+
 - Value is obvious in first 5 minutes
 - Implementation is trivial
 - Individual user gets value without team buy-in
@@ -52,6 +55,7 @@ PLG: High volume, low ACV (~$5K), fast time-to-revenue, higher churn. Sales-led:
 - Buyer = user
 
 **Sales-led works when:**
+
 - Product requires integration/setup
 - Multiple stakeholders need alignment
 - Buyer ≠ user
@@ -102,6 +106,7 @@ Guessing at conversion rates without testing. Assuming all users from the same c
 Every channel has economics. Without tracking them, you over-invest in losers and under-invest in winners.
 
 **Track Per Channel:**
+
 1. **CAC:** Total spend / new users
 2. **Conversion rate:** Signups → paying
 3. **Retention:** 30-day, 90-day by source
@@ -202,23 +207,27 @@ Forecasts are always wrong. Plans are still valuable because they force thinking
 **Model Three Scenarios:**
 
 **Baseline (current trajectory continues):**
+
 - Organic search: 35% growth → 40K new users
 - Paid: Flat → 2K new users
 - Community: 10% growth → 400 new users
 - Total: 42.4K
 
 **Upside (if all growth initiatives execute):**
+
 - Organic: 50% growth (3x content) → 48K
 - Paid: 2x spend, same efficiency → 4K
 - New initiative (partnerships): ramp → 3K
 - Total: 55K
 
 **Downside (if key channels fail):**
+
 - Organic: 0% growth → 26K
 - Paid: CPA doubles → 1K
 - Total: 27K
 
 **Use This For:**
+
 - Setting baseline targets (baseline scenario)
 - Stretch goals (upside scenario)
 - Escalation triggers (if you hit downside, something needs to change)
@@ -336,4 +345,4 @@ Document every successful experiment as a playbook.
 
 ---
 
-*Based on experience across multiple platform companies — leading a growth team building PLG and sales-led motions from scratch, and operating inside successful PLG + sales-led machines at hypergrowth companies. The combination taught both sides: what it takes to establish these motions early (when resources are thin and every bet matters) and what the mature version looks like at scale (growth equations, channel economics systems, freemium pricing gates, and systematic A/B testing that documents every win and loss into executable playbooks). Not theory — lessons from building the machine and operating inside ones that worked.*
+_Based on experience across multiple platform companies — leading a growth team building PLG and sales-led motions from scratch, and operating inside successful PLG + sales-led machines at hypergrowth companies. The combination taught both sides: what it takes to establish these motions early (when resources are thin and every bet matters) and what the mature version looks like at scale (growth equations, channel economics systems, freemium pricing gates, and systematic A/B testing that documents every win and loss into executable playbooks). Not theory — lessons from building the machine and operating inside ones that worked._

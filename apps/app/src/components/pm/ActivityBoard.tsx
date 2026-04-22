@@ -253,7 +253,12 @@ function Card({
       <div className="flex items-center gap-2 mt-2 flex-wrap">
         {assignee ? (
           <span className="inline-flex items-center gap-1 text-[10px]">
-            <Avatar initials={assignee.initials} color={assignee.avatarColor} size={18} employeeId={assignee.id} />
+            <Avatar
+              initials={assignee.initials}
+              color={assignee.avatarColor}
+              size={18}
+              employeeId={assignee.id}
+            />
             {assignee.name.split(" ")[0]}
           </span>
         ) : (

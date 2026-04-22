@@ -108,9 +108,12 @@ function AdminSendEmail() {
         },
         token,
       );
-      const data = (await res.json().catch(() => null)) as
-        | { ok?: boolean; queued?: number; skipped?: { userId: string; reason: string }[]; error?: { message?: string } }
-        | null;
+      const data = (await res.json().catch(() => null)) as {
+        ok?: boolean;
+        queued?: number;
+        skipped?: { userId: string; reason: string }[];
+        error?: { message?: string };
+      } | null;
       if (!res.ok || !data?.ok) {
         const msg = data?.error?.message ?? `HTTP ${res.status}`;
         throw new Error(msg);
@@ -143,8 +146,7 @@ function AdminSendEmail() {
       return next;
     });
 
-  const allFilteredSelected =
-    filtered.length > 0 && filtered.every((m) => selected.has(m.id));
+  const allFilteredSelected = filtered.length > 0 && filtered.every((m) => selected.has(m.id));
   const toggleAllFiltered = () =>
     setSelected((prev) => {
       const next = new Set(prev);
@@ -285,7 +287,9 @@ function AdminSendEmail() {
           </div>
           <div className="rounded-md border border-dashed p-3 text-xs text-muted-foreground leading-relaxed">
             <div className="font-medium text-foreground mb-0.5">How delivery works</div>
-            Each recipient gets one row in <span className="font-mono">notifications_outbox</span>{" "}
+            Each recipient gets one row in <span className="font-mono">
+              notifications_outbox
+            </span>{" "}
             with <span className="font-mono">template_key = 'admin_message'</span>. The{" "}
             <span className="font-mono">send-pending</span> cron picks it up on its next tick and
             calls Resend. Per-user preferences don't apply — admin messages always send.

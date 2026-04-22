@@ -36,52 +36,45 @@ const idParam = z.object({ id: z.string().regex(UUID_RE, "invalid comment id") }
 comments.use("*", requireUser);
 
 // GET / — list comments for a route.
-comments.get(
-  "/",
-  zValidator("query", ListQuerySchema),
-  async (c) => {
-    const user = c.get("user");
-    const { route } = c.req.valid("query");
+comments.get("/", zValidator("query", ListQuerySchema), async (c) => {
+  const user = c.get("user");
+  const { route } = c.req.valid("query");
 
-    const rows = await db
-      .select()
-      .from(schema.comments)
-      .where(and(eq(schema.comments.route, route), isNull(schema.comments.deletedAt)));
+  const rows = await db
+    .select()
+    .from(schema.comments)
+    .where(and(eq(schema.comments.route, route), isNull(schema.comments.deletedAt)));
 
-    const ids = rows.map((r) => r.id);
-    const replies = ids.length
-      ? await db
-          .select()
-          .from(schema.commentReplies)
-          .where(
-            and(
-              inArray(schema.commentReplies.commentId, ids),
-              isNull(schema.commentReplies.deletedAt),
-            ),
-          )
-      : [];
-    const myVotes = ids.length
-      ? await db
-          .select()
-          .from(schema.commentVotes)
-          .where(
-            and(
-              inArray(schema.commentVotes.commentId, ids),
-              eq(schema.commentVotes.userId, user.id),
-            ),
-          )
-      : [];
-    const voteMap: Record<string, -1 | 0 | 1> = {};
-    for (const v of myVotes) voteMap[v.commentId] = v.value as -1 | 0 | 1;
-    const byComment: Record<string, typeof replies> = {};
-    for (const r of replies) (byComment[r.commentId] ||= []).push(r);
+  const ids = rows.map((r) => r.id);
+  const replies = ids.length
+    ? await db
+        .select()
+        .from(schema.commentReplies)
+        .where(
+          and(
+            inArray(schema.commentReplies.commentId, ids),
+            isNull(schema.commentReplies.deletedAt),
+          ),
+        )
+    : [];
+  const myVotes = ids.length
+    ? await db
+        .select()
+        .from(schema.commentVotes)
+        .where(
+          and(inArray(schema.commentVotes.commentId, ids), eq(schema.commentVotes.userId, user.id)),
+        )
+    : [];
+  const voteMap: Record<string, -1 | 0 | 1> = {};
+  for (const v of myVotes) voteMap[v.commentId] = v.value as -1 | 0 | 1;
+  const byComment: Record<string, typeof replies> = {};
+  for (const r of replies) (byComment[r.commentId] ||= []).push(r);
 
-    const result = rows
-      .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-      .map((cc) => serializeComment(cc, byComment[cc.id] ?? [], voteMap));
-    return c.json(result);
-  },
-);
+  const result = rows
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+    .map((cc) => serializeComment(cc, byComment[cc.id] ?? [], voteMap));
+  return c.json(result);
+});
 
 // POST / — new comment; notifies admins in-app.
 comments.post("/", zValidator("json", NewCommentSchema), async (c) => {
@@ -145,7 +138,10 @@ comments.patch("/:id", zValidator("param", idParam), async (c) => {
   const body = await c.req.json().catch(() => null);
   const parsed = EditSchema.safeParse(body);
   if (!parsed.success) {
-    return c.json({ error: { code: "bad_request", message: parsed.error.issues[0]?.message } }, 400);
+    return c.json(
+      { error: { code: "bad_request", message: parsed.error.issues[0]?.message } },
+      400,
+    );
   }
 
   const bodyChanged = parsed.data.body !== undefined && parsed.data.body !== existing.body;
@@ -362,9 +358,7 @@ comments.post(
           userId: parent.authorId,
           kind: "comment.vote",
           title:
-            value > 0
-              ? `${user.name} upvoted your comment`
-              : `${user.name} downvoted your comment`,
+            value > 0 ? `${user.name} upvoted your comment` : `${user.name} downvoted your comment`,
           body: snippet(parent.body),
           link: `/feedback?c=${commentId}`,
           meta: { commentId, value },
@@ -404,11 +398,7 @@ comments.patch(
     if (!updated) return c.json({ error: { code: "not_found" } }, 404);
 
     try {
-      if (
-        updated.authorId &&
-        updated.authorId !== user.id &&
-        prior[0]?.status !== updated.status
-      ) {
+      if (updated.authorId && updated.authorId !== user.id && prior[0]?.status !== updated.status) {
         await notifyUser({
           userId: updated.authorId,
           kind: "comment.status",

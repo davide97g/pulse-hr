@@ -2,8 +2,18 @@ import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-r
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
-  Building2, ChevronLeft, ChevronRight, ArrowLeft, Clock, Armchair,
-  DoorOpen, Wrench, MapPin, CalendarDays, Plus, Users,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+  Clock,
+  Armchair,
+  DoorOpen,
+  Wrench,
+  MapPin,
+  CalendarDays,
+  Plus,
+  Users,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,8 +25,13 @@ import { SeatMap } from "@/components/app/SeatMap";
 import { BookingDialog, type BookingDialogPrefill } from "@/components/app/BookingDialog";
 import { useBookings } from "@/components/app/BookingsContext";
 import {
-  officeById, roomsByOffice, seatsByOffice, closures, closureFor,
-  officeLocalNow, officeUtilization,
+  officeById,
+  roomsByOffice,
+  seatsByOffice,
+  closures,
+  closureFor,
+  officeLocalNow,
+  officeUtilization,
 } from "@/lib/offices";
 import { cn } from "@/lib/utils";
 
@@ -56,9 +71,8 @@ function OfficeDetail() {
 
   const dayBookingCount = useMemo(
     () =>
-      bookings.filter(
-        (b) => b.officeId === officeId && b.date === date && b.status !== "cancelled",
-      ).length,
+      bookings.filter((b) => b.officeId === officeId && b.date === date && b.status !== "cancelled")
+        .length,
     [bookings, officeId, date],
   );
 
@@ -75,7 +89,11 @@ function OfficeDetail() {
           icon={<Building2 className="h-6 w-6" />}
           title="Office not found"
           description="The workspace you're looking for doesn't exist."
-          action={<Link to="/offices"><Button>Back to overview</Button></Link>}
+          action={
+            <Link to="/offices">
+              <Button>Back to overview</Button>
+            </Link>
+          }
         />
       </div>
     );
@@ -100,7 +118,12 @@ function OfficeDetail() {
         <ArrowLeft className="h-3 w-3" /> All offices
       </Link>
       <PageHeader
-        title={<span className="inline-flex items-center gap-2"><span>{office.emoji}</span>{office.name}</span>}
+        title={
+          <span className="inline-flex items-center gap-2">
+            <span>{office.emoji}</span>
+            {office.name}
+          </span>
+        }
         description={
           <span className="inline-flex items-center gap-2 flex-wrap">
             <MapPin className="h-3.5 w-3.5" />
@@ -111,7 +134,10 @@ function OfficeDetail() {
           </span>
         }
         actions={
-          <Button size="sm" onClick={() => openBook({ officeId: office.id, resourceKind: "room", date })}>
+          <Button
+            size="sm"
+            onClick={() => openBook({ officeId: office.id, resourceKind: "room", date })}
+          >
             <Plus className="h-4 w-4 mr-1.5" /> Book a room
           </Button>
         }
@@ -122,7 +148,9 @@ function OfficeDetail() {
           <CalendarDays className="h-4 w-4 text-muted-foreground" />
           <div className="text-sm font-semibold">
             {new Date(date + "T12:00:00").toLocaleDateString(undefined, {
-              weekday: "long", month: "long", day: "numeric",
+              weekday: "long",
+              month: "long",
+              day: "numeric",
             })}
           </div>
           <span className="text-[11px] text-muted-foreground">{date}</span>
@@ -157,7 +185,9 @@ function OfficeDetail() {
               <div className="font-semibold text-destructive">
                 Office closed today — {dayClosure.title}
               </div>
-              <div className="text-xs text-muted-foreground">{dayClosure.note ?? "Bookings disabled."}</div>
+              <div className="text-xs text-muted-foreground">
+                {dayClosure.note ?? "Bookings disabled."}
+              </div>
             </div>
           </div>
         )}
@@ -172,10 +202,21 @@ function OfficeDetail() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-3">
         <Card className="p-4">
-          <Tabs value={tab} onValueChange={(v) => nav({ search: (p) => ({ ...p, tab: v === "rooms" ? undefined : "seats" }) })}>
+          <Tabs
+            value={tab}
+            onValueChange={(v) =>
+              nav({ search: (p) => ({ ...p, tab: v === "rooms" ? undefined : "seats" }) })
+            }
+          >
             <TabsList>
-              <TabsTrigger value="rooms"><DoorOpen className="h-3 w-3 mr-1.5" />Rooms ({roomsByOffice(office.id).length})</TabsTrigger>
-              <TabsTrigger value="seats"><Armchair className="h-3 w-3 mr-1.5" />Seats ({seatsByOffice(office.id).length})</TabsTrigger>
+              <TabsTrigger value="rooms">
+                <DoorOpen className="h-3 w-3 mr-1.5" />
+                Rooms ({roomsByOffice(office.id).length})
+              </TabsTrigger>
+              <TabsTrigger value="seats">
+                <Armchair className="h-3 w-3 mr-1.5" />
+                Seats ({seatsByOffice(office.id).length})
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="rooms" className="mt-4">
               <RoomGantt
@@ -222,21 +263,29 @@ function OfficeDetail() {
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">People on site</span>
                 <span className="font-mono tabular-nums font-medium">
-                  {bookings.filter(b => b.officeId === office.id && b.date === date && b.resourceKind === "seat").length}
+                  {
+                    bookings.filter(
+                      (b) =>
+                        b.officeId === office.id && b.date === date && b.resourceKind === "seat",
+                    ).length
+                  }
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Room hours booked</span>
                 <span className="font-mono tabular-nums font-medium">
-                  {(
-                    bookings
-                      .filter(b => b.officeId === office.id && b.date === date && b.resourceKind === "room")
-                      .reduce((a, b) => {
-                        const [sh, sm] = b.startTime.split(":").map(Number);
-                        const [eh, em] = b.endTime.split(":").map(Number);
-                        return a + ((eh * 60 + em) - (sh * 60 + sm)) / 60;
-                      }, 0)
-                  ).toFixed(1)}h
+                  {bookings
+                    .filter(
+                      (b) =>
+                        b.officeId === office.id && b.date === date && b.resourceKind === "room",
+                    )
+                    .reduce((a, b) => {
+                      const [sh, sm] = b.startTime.split(":").map(Number);
+                      const [eh, em] = b.endTime.split(":").map(Number);
+                      return a + (eh * 60 + em - (sh * 60 + sm)) / 60;
+                    }, 0)
+                    .toFixed(1)}
+                  h
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -260,16 +309,19 @@ function OfficeDetail() {
                 {upcoming.map((c) => (
                   <li key={c.id} className="rounded-md border p-2 text-[12px]">
                     <div className="flex items-center gap-2">
-                      <span className={cn(
-                        "px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-semibold",
-                        c.kind === "maintenance" && "bg-warning/15 text-warning",
-                        c.kind === "holiday" && "bg-info/15 text-info",
-                        c.kind === "event" && "bg-primary/15 text-primary",
-                      )}>
+                      <span
+                        className={cn(
+                          "px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-semibold",
+                          c.kind === "maintenance" && "bg-warning/15 text-warning",
+                          c.kind === "holiday" && "bg-info/15 text-info",
+                          c.kind === "event" && "bg-primary/15 text-primary",
+                        )}
+                      >
                         {c.kind}
                       </span>
                       <span className="ml-auto font-mono tabular-nums text-muted-foreground">
-                        {c.from}{c.from !== c.to ? ` → ${c.to}` : ""}
+                        {c.from}
+                        {c.from !== c.to ? ` → ${c.to}` : ""}
                       </span>
                     </div>
                     <div className="mt-1 font-medium">{c.title}</div>
@@ -293,9 +345,14 @@ function OfficeDetail() {
                     search={{ date }}
                     className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-muted press-scale text-xs"
                   >
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: r.color }} />
+                    <span
+                      className="h-1.5 w-1.5 rounded-full"
+                      style={{ backgroundColor: r.color }}
+                    />
                     <span className="font-medium">{r.name}</span>
-                    <span className="text-muted-foreground">· {r.kind} · cap {r.capacity}</span>
+                    <span className="text-muted-foreground">
+                      · {r.kind} · cap {r.capacity}
+                    </span>
                   </Link>
                 </li>
               ))}
@@ -304,11 +361,7 @@ function OfficeDetail() {
         </div>
       </div>
 
-      <BookingDialog
-        open={!!prefill}
-        onClose={closeBook}
-        prefill={prefill ?? undefined}
-      />
+      <BookingDialog open={!!prefill} onClose={closeBook} prefill={prefill ?? undefined} />
     </div>
   );
 }
@@ -316,7 +369,9 @@ function OfficeDetail() {
 function MiniMetric({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className={cn("rounded-md border p-2.5", accent && "border-primary/40")}>
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">{label}</div>
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+        {label}
+      </div>
       <div className="text-lg font-display tabular-nums mt-0.5">{value}</div>
     </div>
   );

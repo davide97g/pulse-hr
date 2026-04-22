@@ -1,9 +1,17 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Bookmark, BookmarkPlus, Check, Link2, Pencil, Trash2, X, RotateCcw, MoreHorizontal } from "lucide-react";
 import {
-  Popover, PopoverContent, PopoverTrigger,
-} from "@/components/ui/popover";
+  Bookmark,
+  BookmarkPlus,
+  Check,
+  Link2,
+  Pencil,
+  Trash2,
+  X,
+  RotateCcw,
+  MoreHorizontal,
+} from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -23,8 +31,16 @@ interface Props<State> {
 }
 
 export function SavedViewsBar<State>({
-  savedViews, activeViewId, isDirty, shareUrl,
-  onApply, onSave, onRemove, onRename, onReset, placeholder,
+  savedViews,
+  activeViewId,
+  isDirty,
+  shareUrl,
+  onApply,
+  onSave,
+  onRemove,
+  onRename,
+  onReset,
+  placeholder,
 }: Props<State>) {
   const [saveOpen, setSaveOpen] = useState(false);
   const [newName, setNewName] = useState("");
@@ -51,7 +67,7 @@ export function SavedViewsBar<State>({
   return (
     <div className="mb-3 flex items-center gap-1.5 flex-wrap">
       <Bookmark className="h-3.5 w-3.5 text-muted-foreground" />
-      {savedViews.map(v => {
+      {savedViews.map((v) => {
         const active = v.id === activeViewId;
         return (
           <div key={v.id} className="inline-flex items-stretch">
@@ -59,9 +75,7 @@ export function SavedViewsBar<State>({
               onClick={() => onApply(v.id)}
               className={cn(
                 "h-8 pl-2.5 pr-1 rounded-l-md border border-r-0 text-xs inline-flex items-center gap-1.5 transition-colors press-scale",
-                active
-                  ? "bg-primary/10 border-primary/40 text-foreground"
-                  : "hover:bg-muted",
+                active ? "bg-primary/10 border-primary/40 text-foreground" : "hover:bg-muted",
               )}
             >
               {active && <Check className="h-3 w-3 text-primary" />}
@@ -82,7 +96,7 @@ export function SavedViewsBar<State>({
               <PopoverContent align="end" className="w-[220px] p-1">
                 {editing === v.id ? (
                   <form
-                    onSubmit={e => {
+                    onSubmit={(e) => {
                       e.preventDefault();
                       if (editName.trim()) onRename(v.id, editName.trim());
                       setEditing(null);
@@ -92,7 +106,7 @@ export function SavedViewsBar<State>({
                     <Input
                       autoFocus
                       value={editName}
-                      onChange={e => setEditName(e.target.value)}
+                      onChange={(e) => setEditName(e.target.value)}
                       className="h-8 text-xs"
                     />
                     <Button size="sm" className="h-8 press-scale" type="submit">
@@ -102,13 +116,19 @@ export function SavedViewsBar<State>({
                 ) : (
                   <>
                     <button
-                      onClick={() => { setEditing(v.id); setEditName(v.name); }}
+                      onClick={() => {
+                        setEditing(v.id);
+                        setEditName(v.name);
+                      }}
                       className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs hover:bg-muted"
                     >
                       <Pencil className="h-3 w-3" /> Rename
                     </button>
                     <button
-                      onClick={() => { onApply(v.id); copyLink(); }}
+                      onClick={() => {
+                        onApply(v.id);
+                        copyLink();
+                      }}
                       className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs hover:bg-muted"
                     >
                       <Link2 className="h-3 w-3" /> Copy share link
@@ -144,7 +164,7 @@ export function SavedViewsBar<State>({
         </PopoverTrigger>
         <PopoverContent align="start" className="w-[240px] p-3">
           <form
-            onSubmit={e => {
+            onSubmit={(e) => {
               e.preventDefault();
               if (!newName.trim()) return;
               onSave(newName.trim());
@@ -154,12 +174,34 @@ export function SavedViewsBar<State>({
             }}
             className="space-y-2"
           >
-            <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">Name this view</div>
-            <Input autoFocus value={newName} onChange={e => setNewName(e.target.value)} placeholder="Eng · Active only" className="h-8 text-xs" />
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+              Name this view
+            </div>
+            <Input
+              autoFocus
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Eng · Active only"
+              className="h-8 text-xs"
+            />
             <div className="flex justify-end gap-1.5">
-              <Button type="button" size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setSaveOpen(false)}>Cancel</Button>
-              <Button type="submit" size="sm" className="h-7 text-xs press-scale" disabled={!newName.trim()}>
-                <Check className="h-3 w-3 mr-1" />Save
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="h-7 text-xs"
+                onClick={() => setSaveOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                className="h-7 text-xs press-scale"
+                disabled={!newName.trim()}
+              >
+                <Check className="h-3 w-3 mr-1" />
+                Save
               </Button>
             </div>
           </form>
@@ -168,11 +210,25 @@ export function SavedViewsBar<State>({
 
       {isDirty && (
         <>
-          <Button size="sm" variant="ghost" className="h-8 px-2 text-xs press-scale" onClick={onReset} title="Reset filters">
-            <RotateCcw className="h-3 w-3 mr-1" />Reset
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 px-2 text-xs press-scale"
+            onClick={onReset}
+            title="Reset filters"
+          >
+            <RotateCcw className="h-3 w-3 mr-1" />
+            Reset
           </Button>
-          <Button size="sm" variant="ghost" className="h-8 px-2 text-xs press-scale" onClick={copyLink} title="Copy shareable link">
-            <Link2 className="h-3 w-3 mr-1" />Share
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 px-2 text-xs press-scale"
+            onClick={copyLink}
+            title="Copy shareable link"
+          >
+            <Link2 className="h-3 w-3 mr-1" />
+            Share
           </Button>
         </>
       )}

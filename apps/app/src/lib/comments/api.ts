@@ -74,15 +74,13 @@ export async function setVote(
   commentId: string,
   value: -1 | 0 | 1,
 ): Promise<{ voteScore: number; myVote: -1 | 0 | 1 }> {
-  return request<{ voteScore: number; myVote: -1 | 0 | 1 }>(
-    `/comments/${commentId}/vote`,
-    { method: "POST", body: JSON.stringify({ value }) },
-  );
+  return request<{ voteScore: number; myVote: -1 | 0 | 1 }>(`/comments/${commentId}/vote`, {
+    method: "POST",
+    body: JSON.stringify({ value }),
+  });
 }
 
-export type BoardItem =
-  | (Comment & { kind: "comment" })
-  | (Proposal & { kind: "proposal" });
+export type BoardItem = (Comment & { kind: "comment" }) | (Proposal & { kind: "proposal" });
 
 export type BoardBuckets = Record<CommentStatus, BoardItem[]>;
 

@@ -32,9 +32,13 @@ function IntegrationsDoc() {
 
       <Section title="Connecting">
         <p>
-          Open <Link to="/settings" className="text-primary hover:underline">Settings → Integrations</Link> and click <b>Connect</b> on Jira or Linear. We mock the OAuth
-          handshake for now (a fixed workspace is returned), but the flow mirrors what a real
-          integration looks like: connect → see workspace slug → sync on demand → webhook log.
+          Open{" "}
+          <Link to="/settings" className="text-primary hover:underline">
+            Settings → Integrations
+          </Link>{" "}
+          and click <b>Connect</b> on Jira or Linear. We mock the OAuth handshake for now (a fixed
+          workspace is returned), but the flow mirrors what a real integration looks like: connect →
+          see workspace slug → sync on demand → webhook log.
         </p>
       </Section>
 

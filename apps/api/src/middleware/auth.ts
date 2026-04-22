@@ -17,8 +17,7 @@ declare module "hono" {
 }
 
 const secretKey = process.env.CLERK_SECRET_KEY;
-const publishableKey =
-  process.env.CLERK_PUBLISHABLE_KEY ?? process.env.VITE_CLERK_PUBLISHABLE_KEY;
+const publishableKey = process.env.CLERK_PUBLISHABLE_KEY ?? process.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!secretKey) {
   console.warn("[api/auth] CLERK_SECRET_KEY is not set — /api requests will fail with 401.");
@@ -35,8 +34,7 @@ export const requireUser: MiddlewareHandler = async (c, next) => {
     throw new HTTPException(503, {
       res: jsonError(503, {
         code: "clerk_secret_missing",
-        message:
-          "Set CLERK_SECRET_KEY on the server. The publishable key alone is not enough.",
+        message: "Set CLERK_SECRET_KEY on the server. The publishable key alone is not enough.",
       }),
     });
   }

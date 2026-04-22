@@ -40,7 +40,7 @@ If you touched the marketing site: `bun run build:marketing`.
 - [ ] `bun run lint` passes
 - [ ] `bun run build` passes
 - [ ] Screenshots / screen-recording for UI changes
-- [ ] Docs updated (`README.md`, `docs/*`, inline comments where the *why* is non-obvious)
+- [ ] Docs updated (`README.md`, `docs/*`, inline comments where the _why_ is non-obvious)
 - [ ] No secrets, `.env`, or generated files committed
 
 ## Code style
@@ -48,7 +48,7 @@ If you touched the marketing site: `bun run build:marketing`.
 - TypeScript strict. Prefer narrow, domain-shaped types over `any`.
 - Follow [`CLAUDE.md`](./CLAUDE.md) for architecture conventions (routing, theme tokens, CRUD pattern, toasts, responsive rules).
 - Do not re-skin `src/components/ui/*` — theme via tokens in `styles.css`.
-- Keep comments sparse; explain non-obvious *why*.
+- Keep comments sparse; explain non-obvious _why_.
 
 ## License of contributions
 

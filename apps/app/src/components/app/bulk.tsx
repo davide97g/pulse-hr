@@ -21,8 +21,8 @@ export function useBulkSelect<T extends { id: string }>(rows: T[]): BulkSelectAp
 
   // Drop ids that no longer exist (rows filtered out, list changed)
   useEffect(() => {
-    setSelected(prev => {
-      const ids = new Set(rows.map(r => r.id));
+    setSelected((prev) => {
+      const ids = new Set(rows.map((r) => r.id));
       const next = new Set<string>();
       for (const id of prev) if (ids.has(id)) next.add(id);
       return next.size === prev.size ? prev : next;
@@ -30,7 +30,7 @@ export function useBulkSelect<T extends { id: string }>(rows: T[]): BulkSelectAp
   }, [rows]);
 
   const toggle = useCallback((id: string) => {
-    setSelected(prev => {
+    setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -38,31 +38,44 @@ export function useBulkSelect<T extends { id: string }>(rows: T[]): BulkSelectAp
     });
   }, []);
 
-  const toggleAll = useCallback((subset?: T[]) => {
-    setSelected(prev => {
-      const source = subset ?? rows;
-      if (source.length === 0) return prev;
-      const allIn = source.every(r => prev.has(r.id));
-      if (allIn) {
+  const toggleAll = useCallback(
+    (subset?: T[]) => {
+      setSelected((prev) => {
+        const source = subset ?? rows;
+        if (source.length === 0) return prev;
+        const allIn = source.every((r) => prev.has(r.id));
+        if (allIn) {
+          const next = new Set(prev);
+          for (const r of source) next.delete(r.id);
+          return next;
+        }
         const next = new Set(prev);
-        for (const r of source) next.delete(r.id);
+        for (const r of source) next.add(r.id);
         return next;
-      }
-      const next = new Set(prev);
-      for (const r of source) next.add(r.id);
-      return next;
-    });
-  }, [rows]);
+      });
+    },
+    [rows],
+  );
 
   const clear = useCallback(() => setSelected(new Set()), []);
   const isSelected = useCallback((id: string) => selected.has(id), [selected]);
 
-  const selectedRows = useMemo(() => rows.filter(r => selected.has(r.id)), [rows, selected]);
+  const selectedRows = useMemo(() => rows.filter((r) => selected.has(r.id)), [rows, selected]);
   const count = selected.size;
-  const allSelected = rows.length > 0 && rows.every(r => selected.has(r.id));
+  const allSelected = rows.length > 0 && rows.every((r) => selected.has(r.id));
   const someSelected = count > 0 && !allSelected;
 
-  return { selected, count, isSelected, toggle, toggleAll, clear, allSelected, someSelected, selectedRows };
+  return {
+    selected,
+    count,
+    isSelected,
+    toggle,
+    toggleAll,
+    clear,
+    allSelected,
+    someSelected,
+    selectedRows,
+  };
 }
 
 export interface BulkAction {
@@ -97,28 +110,39 @@ export function BulkBar({ count, onClear, actions, noun = "item", className }: B
           {count}
         </span>
         <span className="font-medium">
-          {count} {noun}{count === 1 ? "" : "s"} selected
+          {count} {noun}
+          {count === 1 ? "" : "s"} selected
         </span>
       </div>
       <div className="ml-auto flex items-center gap-1.5 flex-wrap">
-        {actions.map(a => (
+        {actions.map((a) => (
           <Button
             key={a.label}
             size="sm"
-            variant={a.tone === "destructive" ? "outline" : a.tone === "success" ? "default" : "outline"}
+            variant={
+              a.tone === "destructive" ? "outline" : a.tone === "success" ? "default" : "outline"
+            }
             disabled={a.disabled}
             onClick={a.onClick}
             className={cn(
               "h-8 press-scale",
-              a.tone === "destructive" && "text-destructive hover:bg-destructive/10 border-destructive/30",
-              a.tone === "success" && "bg-success text-success-foreground hover:bg-success/90 border-success",
+              a.tone === "destructive" &&
+                "text-destructive hover:bg-destructive/10 border-destructive/30",
+              a.tone === "success" &&
+                "bg-success text-success-foreground hover:bg-success/90 border-success",
             )}
           >
             {a.icon}
             <span className="hidden sm:inline ml-1.5">{a.label}</span>
           </Button>
         ))}
-        <Button size="sm" variant="ghost" className="h-8 press-scale" onClick={onClear} title="Clear selection">
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-8 press-scale"
+          onClick={onClear}
+          title="Clear selection"
+        >
           <X className="h-3.5 w-3.5" />
         </Button>
       </div>
@@ -136,22 +160,24 @@ interface RowCheckboxProps {
 
 /** Thin wrapper for per-row selection. Prevents click-bubble to the row. */
 export function RowCheckbox({
-  checked, onChange, label = "Select row", className, visibleWhen = "hover-or-selected",
+  checked,
+  onChange,
+  label = "Select row",
+  className,
+  visibleWhen = "hover-or-selected",
 }: RowCheckboxProps) {
   return (
     <span
-      onClick={e => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
       className={cn(
         "inline-flex items-center justify-center",
-        visibleWhen === "hover-or-selected" && !checked && "opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity",
+        visibleWhen === "hover-or-selected" &&
+          !checked &&
+          "opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity",
         className,
       )}
     >
-      <Checkbox
-        checked={checked}
-        onCheckedChange={onChange}
-        aria-label={label}
-      />
+      <Checkbox checked={checked} onCheckedChange={onChange} aria-label={label} />
     </span>
   );
 }
@@ -164,7 +190,12 @@ interface HeaderCheckboxProps {
 }
 
 /** Tri-state header checkbox: blank / minus / check. */
-export function HeaderCheckbox({ allSelected, someSelected, onToggle, label = "Select all" }: HeaderCheckboxProps) {
+export function HeaderCheckbox({
+  allSelected,
+  someSelected,
+  onToggle,
+  label = "Select all",
+}: HeaderCheckboxProps) {
   return (
     <button
       type="button"
@@ -179,7 +210,11 @@ export function HeaderCheckbox({ allSelected, someSelected, onToggle, label = "S
           : "border-input bg-background hover:bg-muted",
       )}
     >
-      {allSelected ? <Check className="h-3 w-3" /> : someSelected ? <Minus className="h-3 w-3" /> : null}
+      {allSelected ? (
+        <Check className="h-3 w-3" />
+      ) : someSelected ? (
+        <Minus className="h-3 w-3" />
+      ) : null}
     </button>
   );
 }

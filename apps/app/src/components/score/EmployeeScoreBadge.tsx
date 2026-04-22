@@ -60,10 +60,7 @@ export function EmployeeScoreBadge({
             strokeLinecap="round"
           />
         </svg>
-        <span
-          className="absolute tabular-nums font-semibold"
-          style={{ fontSize, color }}
-        >
+        <span className="absolute tabular-nums font-semibold" style={{ fontSize, color }}>
           {score}
         </span>
       </span>
@@ -103,7 +100,10 @@ export function ScoreFormulaContent({ employeeId }: { employeeId: string }) {
       </div>
       <div className="space-y-1.5">
         {factors.map((f) => (
-          <div key={f.key} className="grid grid-cols-[68px_1fr_42px] gap-2 items-center text-[11px]">
+          <div
+            key={f.key}
+            className="grid grid-cols-[68px_1fr_42px] gap-2 items-center text-[11px]"
+          >
             <div className={cn("font-medium truncate", f.missing && "text-muted-foreground")}>
               {FACTOR_LABELS[f.key]}
             </div>
@@ -119,10 +119,7 @@ export function ScoreFormulaContent({ employeeId }: { employeeId: string }) {
           </div>
         ))}
       </div>
-      <Link
-        to="/docs/employee-score"
-        className="inline-block text-xs text-primary hover:underline"
-      >
+      <Link to="/docs/employee-score" className="inline-block text-xs text-primary hover:underline">
         See how it's computed →
       </Link>
     </div>

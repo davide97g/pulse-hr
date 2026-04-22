@@ -35,21 +35,14 @@ export interface MiniStatProps {
 }
 
 /** Compact 4-up stat used in team/profile panels. */
-export function MiniStat({
-  icon,
-  value,
-  label,
-  variant = "bare",
-}: MiniStatProps) {
+export function MiniStat({ icon, value, label, variant = "bare" }: MiniStatProps) {
   return (
     <div className={cn("text-center", variant === "card" && "border rounded-md py-2")}>
       <div className="text-sm font-semibold tabular-nums flex items-center justify-center gap-1">
         <span className="text-muted-foreground">{icon}</span>
         {value}
       </div>
-      <div className="text-[9px] uppercase tracking-wider text-muted-foreground">
-        {label}
-      </div>
+      <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</div>
     </div>
   );
 }

@@ -15,14 +15,14 @@ brand rules every frame had to respect.
 
 ## The six frames
 
-| # | Window       | Beat                                                          |
-|---|--------------|---------------------------------------------------------------|
-| 1 | 0.0 – 2.0s   | Terminal hook: `$ git clone github.com/davide97g/workflows-people` typing live |
-| 2 | 2.0 – 4.5s   | Promise: "HR you can *read*, fork, and run." over a blurred mock product screen |
-| 3 | 4.5 – 7.0s   | Modular proof: Money / People / Work cards stack, pull apart, snap into headline "Modular. Pick any." |
-| 4 | 7.0 – 10.0s  | Keyboard-first: `⌘J` command bar resolves `log 4h on ACME-22` → `intent=log-hours · 0.94` |
-| 5 | 10.0 – 12.5s | The contrast: three generic closed HR platforms with strikethrough vs. our public repo URL |
-| 6 | 12.5 – 15.0s | End card: stacked H1 in Fraunces italic, module pill row, `Star on GitHub ★` CTA pill |
+| #   | Window       | Beat                                                                                                  |
+| --- | ------------ | ----------------------------------------------------------------------------------------------------- |
+| 1   | 0.0 – 2.0s   | Terminal hook: `$ git clone github.com/davide97g/workflows-people` typing live                        |
+| 2   | 2.0 – 4.5s   | Promise: "HR you can _read_, fork, and run." over a blurred mock product screen                       |
+| 3   | 4.5 – 7.0s   | Modular proof: Money / People / Work cards stack, pull apart, snap into headline "Modular. Pick any." |
+| 4   | 7.0 – 10.0s  | Keyboard-first: `⌘J` command bar resolves `log 4h on ACME-22` → `intent=log-hours · 0.94`             |
+| 5   | 10.0 – 12.5s | The contrast: three generic closed HR platforms with strikethrough vs. our public repo URL            |
+| 6   | 12.5 – 15.0s | End card: stacked H1 in Fraunces italic, module pill row, `Star on GitHub ★` CTA pill                 |
 
 Every frame runs on the tokens in `packages/tokens` — lime `#b4ff39`
 on ink `#0b0b0d`, Fraunces display, Geist body, JetBrains Mono for
@@ -58,14 +58,14 @@ Output lands at `out/reel-001-open-source.mp4`.
 
 ### What gets committed vs. ignored
 
-| Path                                | Committed? | Why                                                 |
-|-------------------------------------|-----------|-----------------------------------------------------|
-| `prototype/**`                      | yes       | Source of truth from Claude Design                   |
-| `render/render.html`, `render.mjs`  | yes       | The reproducible pipeline                            |
-| `render/package.json`               | yes       | Pinned Playwright version                            |
-| `render/node_modules/`              | no        | Reinstalled on demand                                |
-| `render/frames/`                    | no        | Regenerated every run                                |
-| `out/reel-001-open-source.mp4`      | yes       | The actual shippable artifact                        |
+| Path                               | Committed? | Why                                |
+| ---------------------------------- | ---------- | ---------------------------------- |
+| `prototype/**`                     | yes        | Source of truth from Claude Design |
+| `render/render.html`, `render.mjs` | yes        | The reproducible pipeline          |
+| `render/package.json`              | yes        | Pinned Playwright version          |
+| `render/node_modules/`             | no         | Reinstalled on demand              |
+| `render/frames/`                   | no         | Regenerated every run              |
+| `out/reel-001-open-source.mp4`     | yes        | The actual shippable artifact      |
 
 The final MP4 is committed deliberately — downstream (social
 schedulers, Instagram upload, the Pulse site itself) needs a

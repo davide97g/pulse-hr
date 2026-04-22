@@ -32,10 +32,7 @@ export function BirthdayHalo({
       title={title}
     >
       <div className="absolute inset-0 rounded-full birthday-halo" aria-hidden />
-      <div
-        className="absolute rounded-full bg-card"
-        style={{ inset: ringPad }}
-      />
+      <div className="absolute rounded-full bg-card" style={{ inset: ringPad }} />
       <div className="absolute" style={{ inset: ringPad }}>
         <Avatar initials={initials} color={color} size={size} />
       </div>

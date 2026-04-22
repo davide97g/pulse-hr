@@ -82,9 +82,7 @@ function DocsHome() {
                     <div className="font-semibold">{c.label}</div>
                     <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground" />
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                    {c.desc}
-                  </div>
+                  <div className="text-xs text-muted-foreground mt-1 leading-relaxed">{c.desc}</div>
                 </div>
               </div>
             </Card>

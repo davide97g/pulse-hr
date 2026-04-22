@@ -18,16 +18,11 @@ export const Forecast: React.FC = () => {
   });
 
   const bars = Array.from({ length: 12 }, (_, i) => {
-    const grow = interpolate(
-      frame,
-      [6 + i * 2, 22 + i * 2],
-      [0, 1],
-      {
-        easing: Easing.bezier(0.16, 1, 0.3, 1),
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      },
-    );
+    const grow = interpolate(frame, [6 + i * 2, 22 + i * 2], [0, 1], {
+      easing: Easing.bezier(0.16, 1, 0.3, 1),
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
     const h = 20 + Math.sin(i * 0.6) * 26 + i * 6;
     return { grow, h };
   });
@@ -39,9 +34,7 @@ export const Forecast: React.FC = () => {
   });
 
   return (
-    <AbsoluteFill
-      style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 24 }}
-    >
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 24 }}>
       <div
         style={{
           fontFamily: fonts.mono,
@@ -77,10 +70,7 @@ export const Forecast: React.FC = () => {
                   i < 8
                     ? `linear-gradient(180deg, ${color.brand} 0%, ${color.brand}66 100%)`
                     : `linear-gradient(180deg, ${color.role.hr} 0%, ${color.role.hr}55 100%)`,
-                boxShadow:
-                  i === 11
-                    ? `0 0 18px ${color.role.hr}aa`
-                    : "none",
+                boxShadow: i === 11 ? `0 0 18px ${color.role.hr}aa` : "none",
               }}
             />
           ))}

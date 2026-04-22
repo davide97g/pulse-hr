@@ -1,6 +1,15 @@
 import {
-  Tv, Presentation, PhoneCall, Monitor, Fan, Users, Projector, Video,
-  Wifi, Armchair, StretchHorizontal,
+  Tv,
+  Presentation,
+  PhoneCall,
+  Monitor,
+  Fan,
+  Users,
+  Projector,
+  Video,
+  Wifi,
+  Armchair,
+  StretchHorizontal,
 } from "lucide-react";
 import type { Amenity, Room, Seat } from "@/lib/offices";
 import { cn } from "@/lib/utils";
@@ -57,7 +66,15 @@ export function AmenityIcons({ amenities, size = "sm", className }: AmenityIcons
   );
 }
 
-export function RoomAmenities({ room, size = "sm", className }: { room: Room; size?: AmenityIconsProps["size"]; className?: string }) {
+export function RoomAmenities({
+  room,
+  size = "sm",
+  className,
+}: {
+  room: Room;
+  size?: AmenityIconsProps["size"];
+  className?: string;
+}) {
   return <AmenityIcons amenities={room.amenities} size={size} className={className} />;
 }
 

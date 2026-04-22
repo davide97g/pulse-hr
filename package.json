@@ -2,7 +2,11 @@
   "name": "workflows-people",
   "private": true,
   "type": "module",
-  "workspaces": ["apps/*", "apps/app/recordings", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "apps/app/recordings",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "bun run --filter '@workflows-people/app' --filter '@pulse-hr/api' dev",
     "dev:app": "bun run --filter '@workflows-people/app' dev",

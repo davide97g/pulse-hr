@@ -31,7 +31,9 @@ export function MomentsCard() {
       tag: m.kind === "birthday" ? "kindness" : "impact",
       amount: m.kind === "anniversary" && m.years >= 5 ? 50 : 25,
     };
-    try { localStorage.setItem(KUDOS_DRAFT_KEY, JSON.stringify(payload)); } catch {}
+    try {
+      localStorage.setItem(KUDOS_DRAFT_KEY, JSON.stringify(payload));
+    } catch {}
     toast.success(`Kudos drafted for ${m.employee.name}`, {
       description: "Opening Kudos to review and send.",
       icon: <Sparkles className="h-4 w-4" />,
@@ -65,19 +67,30 @@ export function MomentsCard() {
                 isToday && "bg-primary/[0.03]",
               )}
             >
-              <Avatar initials={m.employee.initials} color={m.employee.avatarColor} size={32} employeeId={m.employee.id} />
+              <Avatar
+                initials={m.employee.initials}
+                color={m.employee.avatarColor}
+                size={32}
+                employeeId={m.employee.id}
+              />
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium flex items-center gap-1.5">
                   <Icon className={cn("h-3.5 w-3.5", tone)} />
                   {m.employee.name}
                   {isToday && (
-                    <span className="text-[9px] uppercase tracking-wider font-semibold text-primary">Today</span>
+                    <span className="text-[9px] uppercase tracking-wider font-semibold text-primary">
+                      Today
+                    </span>
                   )}
                 </div>
                 <div className="text-[11px] text-muted-foreground">
-                  {m.kind === "birthday"
-                    ? <>Birthday · {m.relative}</>
-                    : <>{m.years}-year work anniversary · {m.relative}</>}
+                  {m.kind === "birthday" ? (
+                    <>Birthday · {m.relative}</>
+                  ) : (
+                    <>
+                      {m.years}-year work anniversary · {m.relative}
+                    </>
+                  )}
                 </div>
               </div>
               <button

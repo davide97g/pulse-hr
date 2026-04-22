@@ -18,16 +18,16 @@ first, unless you want to waste one iteration cycle re-learning voice.
 
 ### Format
 
-| Spec           | Value                                                         |
-|----------------|---------------------------------------------------------------|
-| Aspect ratio   | 9:16 (vertical)                                                |
-| Resolution     | 1080 × 1920 px                                                 |
-| Duration       | 15 s (hard cap — Instagram cuts discovery at 15s thumbnail)    |
-| Frame rate     | 30 fps                                                         |
-| Safe area      | 84px top, 220px bottom (avoid Instagram UI overlays)           |
-| Audio          | Required; Reels with silent clips are down-ranked              |
-| Captions       | Burned-in, not just auto-captions (auto-captions often wrong)  |
-| File export    | MP4, H.264, 10–15 Mb/s bitrate, AAC 192 kbps audio             |
+| Spec         | Value                                                         |
+| ------------ | ------------------------------------------------------------- |
+| Aspect ratio | 9:16 (vertical)                                               |
+| Resolution   | 1080 × 1920 px                                                |
+| Duration     | 15 s (hard cap — Instagram cuts discovery at 15s thumbnail)   |
+| Frame rate   | 30 fps                                                        |
+| Safe area    | 84px top, 220px bottom (avoid Instagram UI overlays)          |
+| Audio        | Required; Reels with silent clips are down-ranked             |
+| Captions     | Burned-in, not just auto-captions (auto-captions often wrong) |
+| File export  | MP4, H.264, 10–15 Mb/s bitrate, AAC 192 kbps audio            |
 
 ### Angle (pick ONE before prompting)
 
@@ -35,6 +35,7 @@ Default for this first reel: **Open source.** Strongest differentiator,
 most contrarian for the HR category, easiest hook.
 
 Alternatives if the open-source reel has already run:
+
 - **Keyboard-first** — hero shot is the ⌘J command bar resolving an intent
 - **Anti-suite (vs.)** — "HR without the suite" narrative, crossfade a
   Rippling screenshot replaced by Pulse
@@ -69,14 +70,14 @@ It's distinctive, on-brand, and no other HR brand would dream of it.
 
 Six frames. Each duration is a guide, not a gospel; align to the beat.
 
-| #   | Time       | Visual                                                                 | Copy on screen                                      | Audio                        |
-|-----|------------|------------------------------------------------------------------------|------------------------------------------------------|------------------------------|
-| 1   | 0.0–2.0s   | Ink full-bleed. Terminal window center. Caret typing in JetBrains Mono: `$ git clone github.com/davide97g/workflows-people` | Typing text only                                     | Soft keystroke SFX + pad-tone start |
-| 2   | 2.0–4.5s   | Terminal output dissolves into a product screen of the Pulse app (time tracker). Brand lime pulse-dot on the clock icon. Subtle grid overlay. | `HR you can *read*.` — Fraunces, italic on *read*, lime dot | Beat 1 drops (low-end kick)  |
-| 3   | 4.5–7.0s   | Cut. Three stacked module cards (Money, People, Work) in a vertical stack, role accents: violet / coral / lime. They snap into separation with a subtle click. | `Modular. Pick any.`                                  | Tight click SFX              |
-| 4   | 7.0–10.0s  | Cut. Dark UI with a ⌘J command bar modal. Type `log 4h on ACME-22` resolves to a green pill: `intent=log-hours · 0.94`. | `Keyboard-first. No LLM.`                             | Two short keypress SFX       |
-| 5   | 10.0–12.5s | Cut. Split screen: left, a stylized "Rippling / Deel / BambooHR" wordmark row with strikethrough; right, `github.com/davide97g/workflows-people`. Lime highlight swipes across the URL. | `Every other HR platform is closed.`                  | Swipe SFX                    |
-| 6   | 12.5–15.0s | End card. Pulse wordmark + Sparkles bug top-left. Giant centered: `HR you can read,` on line 1; `fork, and run.` on line 2, italic on `read`. Bottom-anchored CTA pill in brand lime: `Star on GitHub ★`. | As visible                                            | Music resolves + one "ping"  |
+| #   | Time       | Visual                                                                                                                                                                                                    | Copy on screen                                              | Audio                               |
+| --- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------- |
+| 1   | 0.0–2.0s   | Ink full-bleed. Terminal window center. Caret typing in JetBrains Mono: `$ git clone github.com/davide97g/workflows-people`                                                                               | Typing text only                                            | Soft keystroke SFX + pad-tone start |
+| 2   | 2.0–4.5s   | Terminal output dissolves into a product screen of the Pulse app (time tracker). Brand lime pulse-dot on the clock icon. Subtle grid overlay.                                                             | `HR you can *read*.` — Fraunces, italic on _read_, lime dot | Beat 1 drops (low-end kick)         |
+| 3   | 4.5–7.0s   | Cut. Three stacked module cards (Money, People, Work) in a vertical stack, role accents: violet / coral / lime. They snap into separation with a subtle click.                                            | `Modular. Pick any.`                                        | Tight click SFX                     |
+| 4   | 7.0–10.0s  | Cut. Dark UI with a ⌘J command bar modal. Type `log 4h on ACME-22` resolves to a green pill: `intent=log-hours · 0.94`.                                                                                   | `Keyboard-first. No LLM.`                                   | Two short keypress SFX              |
+| 5   | 10.0–12.5s | Cut. Split screen: left, a stylized "Rippling / Deel / BambooHR" wordmark row with strikethrough; right, `github.com/davide97g/workflows-people`. Lime highlight swipes across the URL.                   | `Every other HR platform is closed.`                        | Swipe SFX                           |
+| 6   | 12.5–15.0s | End card. Pulse wordmark + Sparkles bug top-left. Giant centered: `HR you can read,` on line 1; `fork, and run.` on line 2, italic on `read`. Bottom-anchored CTA pill in brand lime: `Star on GitHub ★`. | As visible                                                  | Music resolves + one "ping"         |
 
 ### Typography motion reference (frame 2)
 
@@ -102,9 +103,9 @@ the second iteration if the silent version underperforms.
 - Genre: minimal techno / ambient IDM. BPM around 90–110.
 - No lyrics. No "upbeat corporate". No tropical-house build.
 - Reference tracks (direction only, licensed replacements in production):
-  - Tim Hecker — *Black Refraction* (atmosphere)
-  - Jon Hopkins — *Open Eye Signal* (motion)
-  - Rival Consoles — *Recovery* (tension)
+  - Tim Hecker — _Black Refraction_ (atmosphere)
+  - Jon Hopkins — _Open Eye Signal_ (motion)
+  - Rival Consoles — _Recovery_ (tension)
 - Licensed source: **Epidemic Sound** or **Musicbed** — search
   tags `minimal techno + dark + no vocals + 90-110 BPM`.
 - Mix target: −14 LUFS integrated.
@@ -133,7 +134,7 @@ fixing.
 
 ### Prompt — paste this
 
-````markdown
+```markdown
 You are acting as a senior art director for Pulse HR, an open-source,
 modular HR & payroll platform for services-first teams. You have
 already read the brand identity at docs/brand/identity.md (treat its
@@ -144,10 +145,12 @@ the file wins.
 I need a 15-second Instagram Reel ad at **1080×1920 (9:16)**.
 
 ## Angle (pick ONE — the rest of the prompt assumes this)
+
 **Open source** — "HR you can read, fork, and run." No other HR
 platform ships its source code. We do.
 
 ## Product truths (don't invent beyond these)
+
 - Source is public at github.com/davide97g/workflows-people under
   FSL-1.1-MIT. Converts to MIT after 2 years.
 - Three modules: Money, People, Work — adopted independently.
@@ -158,6 +161,7 @@ platform ships its source code. We do.
 - Competitors referenced: Rippling, Deel, BambooHR — all closed source.
 
 ## Brand system (from docs/brand/identity.md)
+
 - Background: ink `#0b0b0d`. Text: cream `#f2f2ee`. Accent: brand
   lime `#b4ff39`. Hover / pulse state: `#c6ff5a`.
 - Role accents (frame 3 only): Money=violet `#c48fff`,
@@ -186,12 +190,13 @@ after a 200ms delay.
 
 **Frame 3 · 4.5–7.0s — Modular proof**
 Cut to three stacked module cards, centered, 9:16 friendly:
+
 - Top: **Money** (violet `#c48fff` icon + label)
 - Middle: **People** (coral `#ff8a7a`)
 - Bottom: **Work** (lime `#b4ff39`)
-They start touching, then snap apart by ~20px with a tight click.
-Overlay (Fraunces, ~80pt): `Modular.` on line 1; `Pick any.` on
-line 2 (Geist, 40pt, 0.5 opacity).
+  They start touching, then snap apart by ~20px with a tight click.
+  Overlay (Fraunces, ~80pt): `Modular.` on line 1; `Pick any.` on
+  line 2 (Geist, 40pt, 0.5 opacity).
 
 **Frame 4 · 7.0–10.0s — Keyboard-first proof**
 Cut to a dark UI card — a command palette open on top of a blurred
@@ -203,12 +208,13 @@ JetBrains Mono for "no LLM"): `No LLM call.`
 
 **Frame 5 · 10.0–12.5s — The contrast**
 Split the 9:16 frame horizontally at the midpoint.
+
 - Top half: the wordmarks `Rippling · Deel · BambooHR` set in a muted
   grey, all with a diagonal strikethrough line in coral `#ff8a7a`.
 - Bottom half: `github.com/davide97g/workflows-people` in monospace
   lime, with a lime highlight bar swiping across the URL
   left-to-right in 400ms.
-Overlay (Geist, 44pt, top): `Every other HR platform is closed.`
+  Overlay (Geist, 44pt, top): `Every other HR platform is closed.`
 
 **Frame 6 · 12.5–15.0s — End card**
 Pulse wordmark (Fraunces, italic R) with Sparkles bug in the top-left
@@ -221,6 +227,7 @@ end. Bottom-anchored CTA pill: brand lime background, ink text,
 mono below it at 50% opacity.
 
 ## Motion, universally
+
 - Every cut is on the beat. Assume 100 BPM: frames land on beats
   0 / 4 / 9 / 14 / 20 / 25 / 30 (the final beat).
 - Text reveals: 120–220ms, ease-out, never bounce.
@@ -231,10 +238,12 @@ mono below it at 50% opacity.
   content (Instagram UI overlays land there).
 
 ## Deliverables
+
 Produce, in one pass:
+
 1. A visual storyboard grid: 6 frames rendered side-by-side at
    1080×1920 each, with the exact type treatment and motion state at
-   the *midpoint* of each frame.
+   the _midpoint_ of each frame.
 2. A per-frame motion note (2–3 sentences) describing how the frame
    enters and exits — enough for a motion designer to execute in
    CapCut / After Effects without guessing.
@@ -242,6 +251,7 @@ Produce, in one pass:
    only) for static cross-posting.
 
 ## Constraints
+
 - No stock photography. No people. No illustrated characters, 3D
   blobs, or isometric scenes.
 - No emoji except the single ★ in the CTA.
@@ -254,15 +264,16 @@ Produce, in one pass:
   something else.
 
 ## Reference frames (I paste 3 labelled screenshots here)
+
 1. [Linear 2024 homepage hero at 00:02 — for type-reveal cadence]
 2. [Raycast pricing page scroll mid-section — for dark product card
    framing with keyboard prompts]
 3. [Apple Instagram reel end-card from the iPhone Pro campaign — for
    closing-frame composition]
-````
+```
 
-*(Replace the three bracketed lines at the bottom with real
-screenshots before you run the prompt.)*
+_(Replace the three bracketed lines at the bottom with real
+screenshots before you run the prompt.)_
 
 ### Per-frame variant
 
@@ -312,17 +323,20 @@ happens in CapCut / Premiere / After Effects. Checklist:
 Ready-to-paste one-liners for when "Open source" has run its course:
 
 ### Keyboard-first seed
+
 Frame 1 hook: Black screen. A single monospace `⌘J` pulses into view,
 then the caret types `log 4h on ACME-22`. Frame 2: intent pill
 resolves in green. Headline: `Two keys. Everything.`
 
 ### Modular seed
+
 Frame 1 hook: Three stacked cards lit one at a time (Money, People,
 Work) with role accents. Frame 2: the stack splits into three
 independent standalone cards drifting apart. Headline:
 `Pick one. Skip the rest.`
 
 ### Anti-suite / vs seed
+
 Frame 1 hook: Logos of Rippling / Deel / BambooHR crossfade with a
 strikethrough. Frame 2: Pulse logo snaps in, lime pulse. Headline:
 `The open alternative.` Ends on `/vs` URL card.

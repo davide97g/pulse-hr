@@ -3428,7 +3428,7 @@ export interface Holiday {
   name: string;
   country: "IT" | "US" | "UK" | "DE" | "all";
 }
-export let holidaysSeed: Holiday[] = [
+export const holidaysSeed: Holiday[] = [
   { date: "2026-01-01", name: "New Year's Day", country: "all" },
   { date: "2026-01-06", name: "Epiphany", country: "IT" },
   { date: "2026-04-06", name: "Easter Monday", country: "IT" },

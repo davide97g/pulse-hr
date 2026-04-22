@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useLocation } from "@tanstack/react-router";
 import { useAuth, useUser } from "@clerk/react";
 import { useComments } from "@/lib/comments/useComments";
@@ -164,7 +172,10 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
       const scrollRoot = getScrollRoot();
       const rootTop = scrollRoot?.getBoundingClientRect().top ?? 0;
       const targetTop = pos.y - rootTop - 120;
-      scrollRoot?.scrollTo({ top: Math.max(0, scrollRoot.scrollTop + targetTop), behavior: "smooth" });
+      scrollRoot?.scrollTo({
+        top: Math.max(0, scrollRoot.scrollTop + targetTop),
+        behavior: "smooth",
+      });
     }
     params.delete("thread");
     const qs = params.toString();

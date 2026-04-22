@@ -2,9 +2,7 @@ import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { DoorOpen, Repeat } from "lucide-react";
 import { employeeById } from "@/lib/mock-data";
-import {
-  roomsByOffice, officeById, closureFor, type Booking,
-} from "@/lib/offices";
+import { roomsByOffice, officeById, closureFor, type Booking } from "@/lib/offices";
 import { useBookings } from "@/components/app/BookingsContext";
 import { RoomAmenities } from "@/components/app/AmenityIcons";
 import { cn } from "@/lib/utils";
@@ -61,12 +59,7 @@ export function RoomGantt({ officeId, date, onBook }: Props) {
         {rms.map((room) => {
           const roomClosure = officeClosure ?? closureFor("room", room.id, date);
           const dayBookings: Booking[] = bookings
-            .filter(
-              (b) =>
-                b.resourceId === room.id &&
-                b.date === date &&
-                b.status !== "cancelled",
-            )
+            .filter((b) => b.resourceId === room.id && b.date === date && b.status !== "cancelled")
             .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
           return (
@@ -78,9 +71,14 @@ export function RoomGantt({ officeId, date, onBook }: Props) {
                 className="flex items-center gap-2 pr-3 min-w-0 hover:underline-offset-2 hover:underline press-scale"
                 title={`Open ${room.name}`}
               >
-                <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: room.color }} />
+                <span
+                  className="h-1.5 w-1.5 rounded-full shrink-0"
+                  style={{ backgroundColor: room.color }}
+                />
                 <span className="text-sm font-medium truncate">{room.name}</span>
-                <span className="text-[10px] text-muted-foreground shrink-0">· {room.capacity}</span>
+                <span className="text-[10px] text-muted-foreground shrink-0">
+                  · {room.capacity}
+                </span>
                 <RoomAmenities room={room} size="xs" className="ml-1 shrink-0" />
               </Link>
 
@@ -154,7 +152,9 @@ export function RoomGantt({ officeId, date, onBook }: Props) {
                         <span className="font-semibold truncate" style={{ color: room.color }}>
                           {b.title ?? "Busy"}
                         </span>
-                        {b.recurring && <Repeat className="h-2.5 w-2.5 text-muted-foreground shrink-0" />}
+                        {b.recurring && (
+                          <Repeat className="h-2.5 w-2.5 text-muted-foreground shrink-0" />
+                        )}
                         <span className="text-muted-foreground tabular-nums shrink-0 ml-auto">
                           {b.startTime}–{b.endTime}
                         </span>

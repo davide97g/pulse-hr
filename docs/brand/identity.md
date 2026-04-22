@@ -70,12 +70,12 @@ pick a different angle.
 
 ### Do / don't — logo
 
-| Do                                                       | Don't                                                           |
-|----------------------------------------------------------|-----------------------------------------------------------------|
-| Use the bug alone on icons ≤40px                         | Rotate, skew, or recolor the wordmark for "theming"             |
-| Set the wordmark in Fraunces Variable only               | Swap Fraunces for any serif that "looks similar"                |
-| Keep 8–16px of clear space around the lockup             | Place the lockup inside a circle / pill / chip                  |
-| On photo backgrounds, set the lockup on an ink card      | Place the lockup directly on a photo without a background card  |
+| Do                                                  | Don't                                                          |
+| --------------------------------------------------- | -------------------------------------------------------------- |
+| Use the bug alone on icons ≤40px                    | Rotate, skew, or recolor the wordmark for "theming"            |
+| Set the wordmark in Fraunces Variable only          | Swap Fraunces for any serif that "looks similar"               |
+| Keep 8–16px of clear space around the lockup        | Place the lockup inside a circle / pill / chip                 |
+| On photo backgrounds, set the lockup on an ink card | Place the lockup directly on a photo without a background card |
 
 ---
 
@@ -85,31 +85,31 @@ From [`packages/tokens/src/tokens.css`](../../packages/tokens/src/tokens.css).
 
 ### Primary pair
 
-| Name       | Hex       | Role                                      |
-|------------|-----------|-------------------------------------------|
-| Brand lime | `#b4ff39` | Primary accent. Buttons, emphasis, pulse  |
-| Brand hover| `#c6ff5a` | Only on interactive states of the brand   |
-| Ink        | `#0b0b0d` | Default background and body text on light |
-| Cream      | `#f2f2ee` | Default body text on ink, light surface   |
+| Name        | Hex       | Role                                      |
+| ----------- | --------- | ----------------------------------------- |
+| Brand lime  | `#b4ff39` | Primary accent. Buttons, emphasis, pulse  |
+| Brand hover | `#c6ff5a` | Only on interactive states of the brand   |
+| Ink         | `#0b0b0d` | Default background and body text on light |
+| Cream       | `#f2f2ee` | Default body text on ink, light surface   |
 
 ### Role accents (product surfaces and marketing role strip)
 
-| Role      | Hex       | Feel                    |
-|-----------|-----------|-------------------------|
-| Employee  | `#b4ff39` | Lime (same as brand)    |
-| Manager   | `#ffbf4a` | Amber / warmth          |
-| HR        | `#ff8a7a` | Coral                   |
-| Admin     | `#6fd8ff` | Electric cyan           |
-| Finance   | `#c48fff` | Violet                  |
+| Role     | Hex       | Feel                 |
+| -------- | --------- | -------------------- |
+| Employee | `#b4ff39` | Lime (same as brand) |
+| Manager  | `#ffbf4a` | Amber / warmth       |
+| HR       | `#ff8a7a` | Coral                |
+| Admin    | `#6fd8ff` | Electric cyan        |
+| Finance  | `#c48fff` | Violet               |
 
 ### Status accents
 
-| Name    | Hex       | Use                                 |
-|---------|-----------|-------------------------------------|
-| Success | `#b4ff39` | Confirmations (same as brand)       |
-| Warning | `#ffbf4a` | Partial states, "beta", "in progress"|
-| Danger  | `#ff8a7a` | Destructive, errors, "not doing"    |
-| Info    | `#6fd8ff` | Neutral pointers, roadmap items     |
+| Name    | Hex       | Use                                   |
+| ------- | --------- | ------------------------------------- |
+| Success | `#b4ff39` | Confirmations (same as brand)         |
+| Warning | `#ffbf4a` | Partial states, "beta", "in progress" |
+| Danger  | `#ff8a7a` | Destructive, errors, "not doing"      |
+| Info    | `#6fd8ff` | Neutral pointers, roadmap items       |
 
 ### Usage rules
 
@@ -120,7 +120,7 @@ From [`packages/tokens/src/tokens.css`](../../packages/tokens/src/tokens.css).
   a white page — reserve for the thing you want the eye to land on.
   A slide that's 40% lime has lost the hierarchy.
 - **Never mix role accents in the same composition** unless you are
-  *literally* demonstrating the role-theming feature. Mixed accents
+  _literally_ demonstrating the role-theming feature. Mixed accents
   look like a stock icon set; a single accent + lime looks like Pulse.
 - **Gradients:** one gradient direction allowed — `lime → brand-hover`
   at 135°. No sunset gradients, no lime/cyan mixes.
@@ -131,17 +131,17 @@ From [`packages/tokens/src/tokens.css`](../../packages/tokens/src/tokens.css).
 
 ### The three stacks
 
-| Family            | Used for                                              |
-|-------------------|-------------------------------------------------------|
+| Family            | Used for                                                                   |
+| ----------------- | -------------------------------------------------------------------------- |
 | Fraunces Variable | Display only (H1, H2, big pull quotes, the wordmark). Italic for emphasis. |
-| Geist Variable    | All body UI / marketing text. 400 / 500 / 600 weights. |
-| JetBrains Mono    | Code, `kbd`, timestamps, ID strings, feature tags.    |
+| Geist Variable    | All body UI / marketing text. 400 / 500 / 600 weights.                     |
+| JetBrains Mono    | Code, `kbd`, timestamps, ID strings, feature tags.                         |
 
 ### Rules
 
 - **Italic means something.** Only use Fraunces italic to mark the
-  *one* word per headline that carries the emotional weight ("HR you
-  can *read*, fork, and run"). Italicizing two words in one headline
+  _one_ word per headline that carries the emotional weight ("HR you
+  can _read_, fork, and run"). Italicizing two words in one headline
   dilutes both.
 - **Tracking:** wide-tracked uppercase (`0.25em`) is reserved for
   eyebrow labels like `DOCS`, `PRICING`, `NOW IN PUBLIC BETA`.
@@ -174,16 +174,16 @@ precise, unadorned, willing to say what we're bad at.
 
 ### Voice rules
 
-| Do                                                      | Don't                                                     |
-|---------------------------------------------------------|-----------------------------------------------------------|
-| "No LLM call. Works offline."                           | "AI-powered intelligent assistant."                       |
-| "Free for the first 5 employees, forever."              | "Revolutionary free tier for growing teams!"              |
-| "We are deliberately not doing X."                      | Silence about competitive weaknesses.                     |
-| Name specific competitors in comparisons.                | Vague "legacy HRIS" references.                           |
-| Show the code path — `apps/app/src/lib/nlp.ts:115`.     | "Our proprietary algorithm…"                              |
-| Use Italian finance word `commessa` on purpose.         | Apologize for or avoid technical vocabulary.              |
-| Include prices, rate limits, SLA numbers inline.        | Hide them behind "Contact sales".                         |
-| Admit where we're weaker (see `/vs`).                   | Invent advantages we don't have.                          |
+| Do                                                  | Don't                                        |
+| --------------------------------------------------- | -------------------------------------------- |
+| "No LLM call. Works offline."                       | "AI-powered intelligent assistant."          |
+| "Free for the first 5 employees, forever."          | "Revolutionary free tier for growing teams!" |
+| "We are deliberately not doing X."                  | Silence about competitive weaknesses.        |
+| Name specific competitors in comparisons.           | Vague "legacy HRIS" references.              |
+| Show the code path — `apps/app/src/lib/nlp.ts:115`. | "Our proprietary algorithm…"                 |
+| Use Italian finance word `commessa` on purpose.     | Apologize for or avoid technical vocabulary. |
+| Include prices, rate limits, SLA numbers inline.    | Hide them behind "Contact sales".            |
+| Admit where we're weaker (see `/vs`).               | Invent advantages we don't have.             |
 
 ### Banned phrases
 
@@ -282,14 +282,14 @@ We don't have a sonic brand yet. Interim rules:
 
 ## 10. The do / don't lookbook
 
-| This feels like Pulse                                                                 | This doesn't                                                          |
-|----------------------------------------------------------------------------------------|----------------------------------------------------------------------|
-| One italicized word + one lime dot + ink background                                    | A rainbow role-accent grid on every slide                             |
-| A 15-second reel that shows the command bar and ends on a GitHub URL                   | A 60-second testimonial montage with music swelling over B-roll       |
-| A feature tag that says "no LLM call"                                                  | A feature tag that says "AI-powered"                                  |
-| "See the honest comparison" as a CTA on the /vs page                                   | "Request a personalized demo"                                         |
-| A code snippet showing `X-RateLimit-Remaining: 873` verbatim                           | A rendered illustration of "an API"                                   |
-| `Money · People · Work` lockup in monospace                                            | "The all-in-one HR suite" lockup in a Montserrat-lookalike            |
+| This feels like Pulse                                                | This doesn't                                                    |
+| -------------------------------------------------------------------- | --------------------------------------------------------------- |
+| One italicized word + one lime dot + ink background                  | A rainbow role-accent grid on every slide                       |
+| A 15-second reel that shows the command bar and ends on a GitHub URL | A 60-second testimonial montage with music swelling over B-roll |
+| A feature tag that says "no LLM call"                                | A feature tag that says "AI-powered"                            |
+| "See the honest comparison" as a CTA on the /vs page                 | "Request a personalized demo"                                   |
+| A code snippet showing `X-RateLimit-Remaining: 873` verbatim         | A rendered illustration of "an API"                             |
+| `Money · People · Work` lockup in monospace                          | "The all-in-one HR suite" lockup in a Montserrat-lookalike      |
 
 ---
 

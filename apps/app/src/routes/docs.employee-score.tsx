@@ -126,9 +126,9 @@ grade  85–100 → exceptional
         <div className="text-sm font-semibold mb-2">Where the score shows up</div>
         <Card className="p-5 text-xs leading-relaxed space-y-2">
           <p>
-            You'll see it wherever employee context matters — in the Saturation overview,
-            hovering on any avatar, the Growth page header, the People list, and each employee's
-            profile page.
+            You'll see it wherever employee context matters — in the Saturation overview, hovering
+            on any avatar, the Growth page header, the People list, and each employee's profile
+            page.
           </p>
           <p>
             The small info button next to a score opens a quick breakdown of the current factor
@@ -151,8 +151,8 @@ grade  85–100 → exceptional
           </Faq>
           <Faq q="Can I boost my score without doing the work?">
             Not really. The factors are deliberately hard to game individually, and gaming one
-            usually hurts another (logging hours you didn't work trashes Value; bombarding
-            coworkers with kudos dilutes your own Recognition ranking). Just do the work.
+            usually hurts another (logging hours you didn't work trashes Value; bombarding coworkers
+            with kudos dilutes your own Recognition ranking). Just do the work.
           </Faq>
         </div>
       </section>

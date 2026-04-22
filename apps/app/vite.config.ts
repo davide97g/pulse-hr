@@ -27,11 +27,7 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: "autoUpdate",
-        includeAssets: [
-          "favicon-32.png",
-          "apple-touch-icon.png",
-          "icon.svg",
-        ],
+        includeAssets: ["favicon-32.png", "apple-touch-icon.png", "icon.svg"],
         manifest: {
           name: "Pulse HR",
           short_name: "Pulse HR",
@@ -47,16 +43,29 @@ export default defineConfig(({ mode }) => {
           scope: "/",
           categories: ["business", "productivity"],
           icons: [
-            { src: "/icon-192.png",           sizes: "192x192", type: "image/png", purpose: "any" },
-            { src: "/icon-512.png",           sizes: "512x512", type: "image/png", purpose: "any" },
-            { src: "/icon-maskable-512.png",  sizes: "512x512", type: "image/png", purpose: "maskable" },
-            { src: "/icon.svg",               sizes: "any",     type: "image/svg+xml", purpose: "any" },
+            { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+            { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+            {
+              src: "/icon-maskable-512.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "maskable",
+            },
+            { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
           ],
           shortcuts: [
-            { name: "Dashboard",  url: "/",       icons: [{ src: "/icon-192.png", sizes: "192x192" }] },
-            { name: "Timesheet",  url: "/time",   icons: [{ src: "/icon-192.png", sizes: "192x192" }] },
-            { name: "Kudos",      url: "/kudos",  icons: [{ src: "/icon-192.png", sizes: "192x192" }] },
-            { name: "Focus Mode", url: "/focus",  icons: [{ src: "/icon-192.png", sizes: "192x192" }] },
+            { name: "Dashboard", url: "/", icons: [{ src: "/icon-192.png", sizes: "192x192" }] },
+            {
+              name: "Timesheet",
+              url: "/time",
+              icons: [{ src: "/icon-192.png", sizes: "192x192" }],
+            },
+            { name: "Kudos", url: "/kudos", icons: [{ src: "/icon-192.png", sizes: "192x192" }] },
+            {
+              name: "Focus Mode",
+              url: "/focus",
+              icons: [{ src: "/icon-192.png", sizes: "192x192" }],
+            },
           ],
         },
         workbox: {
@@ -100,12 +109,15 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id) {
             if (!id.includes("node_modules")) return;
-            if (id.includes("/react/") || id.includes("/react-dom/") || id.includes("/scheduler/")) return "react";
+            if (id.includes("/react/") || id.includes("/react-dom/") || id.includes("/scheduler/"))
+              return "react";
             if (id.includes("@tanstack/")) return "tanstack";
-            if (id.includes("recharts") || id.includes("d3-") || id.includes("victory-vendor")) return "recharts";
+            if (id.includes("recharts") || id.includes("d3-") || id.includes("victory-vendor"))
+              return "recharts";
             if (id.includes("@radix-ui/")) return "radix";
             if (id.includes("@dnd-kit/")) return "dnd-kit";
-            if (id.includes("react-hook-form") || id.includes("@hookform/") || id.includes("/zod/")) return "forms";
+            if (id.includes("react-hook-form") || id.includes("@hookform/") || id.includes("/zod/"))
+              return "forms";
             if (id.includes("date-fns") || id.includes("react-day-picker")) return "date";
             if (id.includes("lucide-react")) return "icons";
             if (

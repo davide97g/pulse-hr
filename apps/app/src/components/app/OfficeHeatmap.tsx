@@ -1,8 +1,16 @@
 import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import {
-  offices, dateRange, officeUtilization, roomUtilization, seatUtilization,
-  utilizationBucket, BUCKET_COLOR, closureFor, seatsByOffice, roomsByOffice,
+  offices,
+  dateRange,
+  officeUtilization,
+  roomUtilization,
+  seatUtilization,
+  utilizationBucket,
+  BUCKET_COLOR,
+  closureFor,
+  seatsByOffice,
+  roomsByOffice,
   isWeekend,
 } from "@/lib/offices";
 import { cn } from "@/lib/utils";
@@ -30,7 +38,7 @@ interface Cell {
 export function OfficeHeatmap({ from, days, mode, officeIds, onCellClick }: OfficeHeatmapProps) {
   const cols = useMemo(() => dateRange(from, days), [from, days]);
   const rows = useMemo(
-    () => (officeIds ? offices.filter(o => officeIds.includes(o.id)) : offices),
+    () => (officeIds ? offices.filter((o) => officeIds.includes(o.id)) : offices),
     [officeIds],
   );
 
@@ -69,7 +77,9 @@ export function OfficeHeatmap({ from, days, mode, officeIds, onCellClick }: Offi
               >
                 {showMonth ? monthLabel : "."}
               </div>
-              <div className="font-medium">{date.toLocaleDateString(undefined, { weekday: "short" })[0]}</div>
+              <div className="font-medium">
+                {date.toLocaleDateString(undefined, { weekday: "short" })[0]}
+              </div>
               <div className="opacity-70">{date.getDate()}</div>
             </div>
           );
@@ -94,20 +104,13 @@ export function OfficeHeatmap({ from, days, mode, officeIds, onCellClick }: Offi
                 : 0;
             } else {
               const ss = seatsByOffice(office.id);
-              const booked = ss.filter(
-                (s) => seatUtilization(s.id, date) === 1,
-              ).length;
+              const booked = ss.filter((s) => seatUtilization(s.id, date) === 1).length;
               u = ss.length ? booked / ss.length : 0;
             }
             return { date, u, bucket: utilizationBucket(u) };
           });
           return (
-            <RowFragment
-              key={office.id}
-              office={office}
-              cells={cells}
-              onCellClick={onCellClick}
-            />
+            <RowFragment key={office.id} office={office} cells={cells} onCellClick={onCellClick} />
           );
         })}
       </div>
@@ -118,7 +121,9 @@ export function OfficeHeatmap({ from, days, mode, officeIds, onCellClick }: Offi
 }
 
 function RowFragment({
-  office, cells, onCellClick,
+  office,
+  cells,
+  onCellClick,
 }: {
   office: (typeof offices)[number];
   cells: Cell[];
@@ -130,35 +135,29 @@ function RowFragment({
         <span className="text-base leading-none">{office.emoji}</span>
         <div className="min-w-0">
           <div className="text-sm font-medium truncate">{office.name}</div>
-          <div className="text-[10px] text-muted-foreground truncate">{office.city} · {office.timezone.split("/").pop()}</div>
+          <div className="text-[10px] text-muted-foreground truncate">
+            {office.city} · {office.timezone.split("/").pop()}
+          </div>
         </div>
       </div>
       {cells.map((cell) => (
-        <HeatCell
-          key={cell.date}
-          officeId={office.id}
-          cell={cell}
-          onCellClick={onCellClick}
-        />
+        <HeatCell key={cell.date} officeId={office.id} cell={cell} onCellClick={onCellClick} />
       ))}
     </>
   );
 }
 
 function HeatCell({
-  officeId, cell, onCellClick,
+  officeId,
+  cell,
+  onCellClick,
 }: {
   officeId: string;
   cell: Cell;
   onCellClick?: (officeId: string, date: string) => void;
 }) {
   const pct = cell.u === null ? null : Math.round(cell.u * 100);
-  const label =
-    cell.note
-      ? cell.note
-      : pct !== null
-        ? `${pct}%`
-        : "";
+  const label = cell.note ? cell.note : pct !== null ? `${pct}%` : "";
   const today = cell.date === new Date().toISOString().slice(0, 10);
   const isClosed = cell.bucket === "closed";
   const clickable = !!onCellClick && !isClosed;
@@ -218,11 +217,11 @@ function HeatCell({
 
 function Legend() {
   const items: { label: string; bucket: keyof typeof BUCKET_COLOR }[] = [
-    { label: "< 40%",   bucket: "low" },
-    { label: "40–75%",  bucket: "medium" },
-    { label: "75–99%",  bucket: "high" },
-    { label: "Full",    bucket: "full" },
-    { label: "Closed",  bucket: "closed" },
+    { label: "< 40%", bucket: "low" },
+    { label: "40–75%", bucket: "medium" },
+    { label: "75–99%", bucket: "high" },
+    { label: "Full", bucket: "full" },
+    { label: "Closed", bucket: "closed" },
   ];
   return (
     <div className="flex items-center gap-3 mt-3 flex-wrap text-[11px] text-muted-foreground">

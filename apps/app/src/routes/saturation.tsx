@@ -10,16 +10,22 @@ import { SaturationInsights } from "@/components/saturation/SaturationInsights";
 import { EmployeeScoreLeaderboard } from "@/components/saturation/EmployeeScoreLeaderboard";
 
 const UtilizationTrendChart = lazy(() =>
-  import("@/components/saturation/UtilizationTrendChart").then((m) => ({ default: m.UtilizationTrendChart })),
+  import("@/components/saturation/UtilizationTrendChart").then((m) => ({
+    default: m.UtilizationTrendChart,
+  })),
 );
 const MarginByProjectChart = lazy(() =>
-  import("@/components/saturation/MarginByProjectChart").then((m) => ({ default: m.MarginByProjectChart })),
+  import("@/components/saturation/MarginByProjectChart").then((m) => ({
+    default: m.MarginByProjectChart,
+  })),
 );
 const CostValueScatter = lazy(() =>
   import("@/components/saturation/CostValueScatter").then((m) => ({ default: m.CostValueScatter })),
 );
 const BillableSplitDonut = lazy(() =>
-  import("@/components/saturation/BillableSplitDonut").then((m) => ({ default: m.BillableSplitDonut })),
+  import("@/components/saturation/BillableSplitDonut").then((m) => ({
+    default: m.BillableSplitDonut,
+  })),
 );
 
 function ChartFallback({ className = "h-64" }: { className?: string }) {
@@ -44,7 +50,9 @@ function Saturation() {
   const search = Route.useSearch();
   const section = search.section ?? "load";
   const setSection = (v: string) =>
-    nav({ search: (prev) => ({ ...prev, section: v === "load" ? undefined : (v as SaturationSection) }) });
+    nav({
+      search: (prev) => ({ ...prev, section: v === "load" ? undefined : (v as SaturationSection) }),
+    });
 
   const [startWeek] = useState(() => new Date());
   const [hoveredEmployeeId, setHoveredEmployeeId] = useState<string | null>(null);
@@ -73,12 +81,16 @@ function Saturation() {
       <div
         aria-hidden
         className="pointer-events-none absolute -top-24 -left-24 h-80 w-80 rounded-full blur-3xl opacity-60"
-        style={{ background: "radial-gradient(closest-side, oklch(0.75 0.18 260 / .35), transparent)" }}
+        style={{
+          background: "radial-gradient(closest-side, oklch(0.75 0.18 260 / .35), transparent)",
+        }}
       />
       <div
         aria-hidden
         className="pointer-events-none absolute -top-16 right-0 h-72 w-72 rounded-full blur-3xl opacity-50"
-        style={{ background: "radial-gradient(closest-side, oklch(0.75 0.18 320 / .35), transparent)" }}
+        style={{
+          background: "radial-gradient(closest-side, oklch(0.75 0.18 320 / .35), transparent)",
+        }}
       />
 
       <div className="relative">
@@ -149,12 +161,15 @@ function Saturation() {
                   <div className="text-sm font-semibold mb-3">How to read this</div>
                   <ul className="text-xs text-muted-foreground space-y-2 list-disc pl-5">
                     <li>
-                      <span className="text-foreground font-medium">Bars in the project's own color</span> are
-                      making money. Bars in red are net losses YTD.
+                      <span className="text-foreground font-medium">
+                        Bars in the project's own color
+                      </span>{" "}
+                      are making money. Bars in red are net losses YTD.
                     </li>
                     <li>
-                      <span className="text-foreground font-medium">Billable share</span> is fed from timesheets —
-                      a low number means internal work is crowding out client delivery.
+                      <span className="text-foreground font-medium">Billable share</span> is fed
+                      from timesheets — a low number means internal work is crowding out client
+                      delivery.
                     </li>
                     <li className="text-[10px]">
                       Cost = salary / 1,800h baseline · Revenue = allocation % × rate × hours.
@@ -176,20 +191,20 @@ function Saturation() {
                 <div className="text-sm font-semibold mb-2">Quadrant guide</div>
                 <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
                   <div>
-                    <span className="text-success font-medium">↗ Upper right</span> — high cost, high revenue.
-                    Profitable senior talent.
+                    <span className="text-success font-medium">↗ Upper right</span> — high cost,
+                    high revenue. Profitable senior talent.
                   </div>
                   <div>
-                    <span className="text-foreground font-medium">↖ Upper left</span> — cheap to run, strong
-                    revenue. Leverage points — keep them happy.
+                    <span className="text-foreground font-medium">↖ Upper left</span> — cheap to
+                    run, strong revenue. Leverage points — keep them happy.
                   </div>
                   <div>
-                    <span className="text-destructive font-medium">↘ Lower right</span> — expensive, low return.
-                    Re-deploy to higher-leverage work.
+                    <span className="text-destructive font-medium">↘ Lower right</span> — expensive,
+                    low return. Re-deploy to higher-leverage work.
                   </div>
                   <div>
-                    <span className="text-foreground font-medium">↙ Lower left</span> — low cost, low revenue.
-                    Bench or training — fine until it isn't.
+                    <span className="text-foreground font-medium">↙ Lower left</span> — low cost,
+                    low revenue. Bench or training — fine until it isn't.
                   </div>
                 </div>
               </div>
