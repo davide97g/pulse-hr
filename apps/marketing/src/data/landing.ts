@@ -6,7 +6,9 @@ export const SITE = {
   tagline: "Open, modular HR & payroll that doesn't lock you in.",
   keywords:
     "open source HR, open source payroll, HRIS, modular HR, HR API, webhooks, time tracking, multi-country payroll, commessa, project hours, keyboard-first, PWA",
-  ogImage: "/og/landing.svg",
+  // Hero tagline card — generated from docs/brand/logo-explorations/og/og-hero.svg.
+  // PNG format (not SVG) because some social crawlers reject SVG og:images.
+  ogImage: "/og/og-hero.png",
   twitter: "@pulsehr",
 };
 
