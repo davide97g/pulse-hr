@@ -17,6 +17,7 @@ import { screenshots } from "./routes/screenshots.ts";
 import { workspace } from "./routes/workspace.ts";
 import { cron } from "./routes/cron.ts";
 import { admin } from "./routes/admin.ts";
+import { userProfile } from "./routes/user-profile.ts";
 
 const app = new Hono();
 
@@ -38,6 +39,7 @@ app.route("/screenshots", screenshots);
 app.route("/workspace", workspace);
 app.route("/cron", cron);
 app.route("/admin", admin);
+app.route("/user-profile", userProfile);
 
 app.get("/", (c) => c.json({ ok: true, service: "@pulse-hr/api" }));
 

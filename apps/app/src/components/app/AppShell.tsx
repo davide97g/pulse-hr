@@ -27,6 +27,7 @@ import { ThemeSwitcher } from "./ThemeSwitcher";
 import { TourLauncher } from "./TourLauncher";
 import { TourProvider } from "./TourProvider";
 import { VoiceDock } from "./VoiceDock";
+import { VotingPowerChip } from "./VotingPowerChip";
 import {
   Briefcase,
   Building2,
@@ -457,6 +458,7 @@ function Topbar({
           <span className="hidden xl:inline font-medium">Feedback</span>
         </Link>
       )}
+      <VotingPowerChip />
       <div data-tour="topbar-status-log" className="hidden md:inline-flex">
         <button
           onClick={onOpenLog}

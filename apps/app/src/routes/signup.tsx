@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/components/app/AuthLayout";
+import { CompanyProfileForm } from "@/components/app/CompanyProfileForm";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/signup")({
@@ -30,7 +31,7 @@ const SIZE_OPTIONS = ["1–10", "11–50", "51–200", "201–500", "500+"] as c
 function Signup() {
   const nav = useNavigate();
   const { signUp, fetchStatus } = useSignUp();
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [verifying, setVerifying] = useState(false);
   const [code, setCode] = useState("");
   const [account, setAccount] = useState({ name: "", email: "", password: "", show: false });
@@ -118,8 +119,12 @@ function Signup() {
         description: `Welcome to ${company.name || "Pulse HR"}!`,
       });
       setLoading(false);
-      nav({ to: "/" });
+      setStep(4);
     }, 900);
+  };
+
+  const finishAfterQuestionnaire = () => {
+    nav({ to: "/" });
   };
 
   const sidePanel = <SignupSide step={step} />;
@@ -133,7 +138,9 @@ function Signup() {
             ? "Start free."
             : step === 2
               ? "Tell us about your team."
-              : "Pick your flavor."
+              : step === 3
+                ? "Pick your flavor."
+                : "One last thing."
       }
       subtitle={
         verifying
@@ -142,7 +149,9 @@ function Signup() {
             ? "Create a Pulse HR workspace in under a minute. No credit card required."
             : step === 2
               ? "We'll set sensible defaults based on your region and team size."
-              : "We'll pre-configure the workspace for how you'll use it."
+              : step === 3
+                ? "We'll pre-configure the workspace for how you'll use it."
+                : "Help us understand your company — earn double voting power if you do."
       }
       side={sidePanel}
       footer={
@@ -157,7 +166,7 @@ function Signup() {
       }
     >
       <div className="flex items-center gap-2 mb-7">
-        {[1, 2, 3].map((n) => (
+        {[1, 2, 3, 4].map((n) => (
           <div key={n} className="flex items-center gap-2 flex-1">
             <div
               className={cn(
@@ -171,7 +180,9 @@ function Signup() {
             >
               {n < step ? <Check className="h-3.5 w-3.5" /> : n}
             </div>
-            {n !== 3 && <div className={cn("h-px flex-1", n < step ? "bg-success" : "bg-border")} />}
+            {n !== 4 && (
+              <div className={cn("h-px flex-1", n < step ? "bg-success" : "bg-border")} />
+            )}
           </div>
         ))}
       </div>
@@ -389,8 +400,8 @@ function Signup() {
           </div>
 
           <div className="rounded-md border p-4 bg-info/5 border-info/20 text-xs text-muted-foreground">
-            We'll create a sample workspace with mock employees and commesse so you can explore every
-            flow instantly. Import your real data anytime from Settings.
+            We'll create a sample workspace with mock employees and commesse so you can explore
+            every flow instantly. Import your real data anytime from Settings.
           </div>
 
           <div className="flex gap-2 pt-2">
@@ -421,6 +432,16 @@ function Signup() {
               )}
             </Button>
           </div>
+        </div>
+      )}
+
+      {step === 4 && (
+        <div className="space-y-4">
+          <CompanyProfileForm
+            onSubmitted={finishAfterQuestionnaire}
+            onSkipped={finishAfterQuestionnaire}
+            submitLabel="Submit & enter workspace"
+          />
         </div>
       )}
     </AuthLayout>
@@ -466,7 +487,7 @@ function PasswordStrength({ value }: { value: string }) {
   );
 }
 
-function SignupSide({ step }: { step: 1 | 2 | 3 }) {
+function SignupSide({ step }: { step: 1 | 2 | 3 | 4 }) {
   const steps = [
     {
       k: "Create account",
@@ -479,6 +500,10 @@ function SignupSide({ step }: { step: 1 | 2 | 3 }) {
     {
       k: "Pick your flavor",
       d: "We tune the default dashboards and workflows for how your role uses Pulse.",
+    },
+    {
+      k: "Earn voting power",
+      d: "Answer a few company questions to double your baseline voting power. Skippable.",
     },
   ];
   return (
@@ -493,7 +518,7 @@ function SignupSide({ step }: { step: 1 | 2 | 3 }) {
       </h2>
       <div className="mt-10 space-y-5 max-w-md">
         {steps.map((s, i) => {
-          const n = (i + 1) as 1 | 2 | 3;
+          const n = (i + 1) as 1 | 2 | 3 | 4;
           const active = n === step;
           const done = n < step;
           return (

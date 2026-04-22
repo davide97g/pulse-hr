@@ -21,6 +21,7 @@ import { NewBadge } from "@/components/app/NewBadge";
 import { Heart, Gift, Focus as FocusIcon, Sparkles as SparkIcon } from "lucide-react";
 import { MomentsCard } from "@/components/app/MomentsCard";
 import { SwipeRow } from "@/components/app/SwipeRow";
+import { CompanyProfileBanner } from "@/components/app/CompanyProfileBanner";
 import { announcements } from "@/lib/mock-data";
 import { useEmployees, employeeById } from "@/lib/tables/employees";
 import { useLeaveRequests, leaveTable } from "@/lib/tables/leave";
@@ -51,6 +52,8 @@ function Dashboard() {
           </Button>
         }
       />
+
+      <CompanyProfileBanner />
 
       {/* Labs spotlight */}
       <div className="mb-6 relative rounded-xl iridescent-border bg-gradient-to-br from-primary/[0.05] via-transparent to-transparent p-5 overflow-hidden">

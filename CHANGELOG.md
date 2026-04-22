@@ -4,6 +4,19 @@ All notable user-facing changes to Pulse HR. Each `## version — date — "titl
 below becomes a release announcement. An optional fenced ` ```tour ` block embeds an in-app
 tour that the "What's new" prompt can launch.
 
+## 0.6.0 — 2026-04-22 — "Tell us about your company, double your voting power"
+
+Pulse now asks new accounts a few short questions about their company — name, website, size, industry — and rewards a complete, honest answer with double the baseline voting power. Voting power is a new Labs primitive that will weigh future in-product decisions, so getting it seeded early matters.
+
+- **Signup step 4** — a new final step after role selection. Skippable. A valid submission doubles voting power from 100 to 200.
+- **Dashboard banner** — users who skipped see a dismissible banner on the dashboard with a one-click "Complete profile" dialog.
+- **Topbar chip** — shows your current voting power next to the Status Log button. Click it to open the new page.
+- **/voting-power** — new Labs page under **Me**. Shows current vs baseline, the multiplier, "how to earn", and a running history of grant events.
+- **Persistence** — answers and voting power are stored in the database, not just in memory. Four new tables prepare for future surveys: `user_profiles` (normalized, with placeholders for intentions, desires, origin, pain point, source, and UTM fields), `questionnaire_responses` (append-only JSON log so questionnaires can evolve without migrations), `voting_power`, and `voting_power_events` (an audit ledger).
+- **API** — new `/user-profile/*` endpoints (`GET /me`, `POST /company-profile`, `POST /skip`), all Clerk-authenticated.
+
+UTM source capture is scaffolded in the schema but not yet wired to the signup flow — that ships next.
+
 ## 0.5.0 — 2026-04-22 — "Everything you touch sticks"
 
 Until now, most of Pulse remembered a handful of things across reloads (people, leave, expenses) and quietly forgot the rest. Create a project, log a focus session, send kudos, add a webhook, move a candidate through the pipeline — reload and it was gone. Not anymore. This release wires the whole product onto the same local-storage foundation the core HR surfaces were already using, so every edit you make survives a refresh.

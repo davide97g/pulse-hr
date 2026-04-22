@@ -22,6 +22,7 @@ import {
   Gift,
   Focus,
   Trophy,
+  Coins,
   Gauge,
   MessageSquare,
   Briefcase as BriefcaseIcon,
@@ -74,6 +75,7 @@ export function buildSidebarNavGroups(
         { to: "/focus", label: "Focus Mode", icon: Focus, featureId: "focus" },
         { to: "/growth", label: "Growth", icon: Trophy, featureId: "growth" },
         { to: "/kudos", label: "Kudos", icon: Gift, featureId: "kudos" },
+        { to: "/voting-power", label: "Voting Power", icon: Coins },
       ],
     },
     {

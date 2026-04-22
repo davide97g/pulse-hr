@@ -110,10 +110,7 @@ export const proposals = pgTable(
       "proposals_status_chk",
       sql`${t.status} in ('open','triaged','planned','shipped','wont_do')`,
     ),
-    typeCheck: check(
-      "proposals_type_chk",
-      sql`${t.type} in ('bug','idea','improvement')`,
-    ),
+    typeCheck: check("proposals_type_chk", sql`${t.type} in ('bug','idea','improvement')`),
   }),
 );
 
@@ -253,6 +250,91 @@ export const releasedVersions = pgTable("released_versions", {
   announcedAt: timestamp("announced_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * Per-user profile keyed by Clerk userId. Holds the normalized answers
+ * from the onboarding questionnaire(s). New fields (intentions, desires,
+ * origin, pain_point, source) start nullable so questionnaires can
+ * populate them over time. UTM columns are prepared for the deferred
+ * utm-source tracking work.
+ */
+export const userProfiles = pgTable("user_profiles", {
+  userId: text("user_id").primaryKey(),
+  companyName: text("company_name"),
+  companyWebsite: text("company_website"),
+  companySize: text("company_size"),
+  companyIndustry: text("company_industry"),
+  intentions: text("intentions"),
+  desires: text("desires"),
+  origin: text("origin"),
+  painPoint: text("pain_point"),
+  source: text("source"),
+  utmSource: text("utm_source"),
+  utmMedium: text("utm_medium"),
+  utmCampaign: text("utm_campaign"),
+  utmTerm: text("utm_term"),
+  utmContent: text("utm_content"),
+  fullyAnswered: boolean("fully_answered").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/**
+ * Append-only log of every questionnaire submission. `answers` is raw
+ * JSON so each questionnaire can evolve its shape without a migration.
+ * `questionnaire_key` namespaces different surveys (e.g. "company_profile",
+ * "pain_points", "origin_survey"), `version` tracks shape revisions.
+ */
+export const questionnaireResponses = pgTable(
+  "questionnaire_responses",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("user_id").notNull(),
+    questionnaireKey: text("questionnaire_key").notNull(),
+    version: integer("version").notNull().default(1),
+    answers: jsonb("answers").notNull(),
+    fullyAnswered: boolean("fully_answered").notNull().default(false),
+    submittedAt: timestamp("submitted_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    byUser: index("questionnaire_responses_user_idx").on(t.userId, t.submittedAt.desc()),
+    byKey: index("questionnaire_responses_key_idx").on(t.questionnaireKey),
+  }),
+);
+
+/** Current voting power per user. One row per Clerk userId. */
+export const votingPower = pgTable("voting_power", {
+  userId: text("user_id").primaryKey(),
+  power: integer("power").notNull().default(100),
+  baseline: integer("baseline").notNull().default(100),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Append-only ledger of power grants/decrements for auditability. */
+export const votingPowerEvents = pgTable(
+  "voting_power_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: text("user_id").notNull(),
+    delta: integer("delta").notNull(),
+    reason: text("reason").notNull(),
+    /** Origin of the event, e.g. "questionnaire:company_profile". */
+    sourceKey: text("source_key"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    byUser: index("voting_power_events_user_idx").on(t.userId, t.createdAt.desc()),
+  }),
+);
+
+export type DbUserProfile = typeof userProfiles.$inferSelect;
+export type DbUserProfileInsert = typeof userProfiles.$inferInsert;
+export type DbQuestionnaireResponse = typeof questionnaireResponses.$inferSelect;
+export type DbQuestionnaireResponseInsert = typeof questionnaireResponses.$inferInsert;
+export type DbVotingPower = typeof votingPower.$inferSelect;
+export type DbVotingPowerInsert = typeof votingPower.$inferInsert;
+export type DbVotingPowerEvent = typeof votingPowerEvents.$inferSelect;
+export type DbVotingPowerEventInsert = typeof votingPowerEvents.$inferInsert;
 
 export type DbComment = typeof comments.$inferSelect;
 export type DbCommentInsert = typeof comments.$inferInsert;

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as VotingPowerRouteImport } from './routes/voting-power'
 import { Route as TimeRouteImport } from './routes/time'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -59,6 +60,11 @@ import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$off
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VotingPowerRoute = VotingPowerRouteImport.update({
+  id: '/voting-power',
+  path: '/voting-power',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TimeRoute = TimeRouteImport.update({
@@ -318,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
+  '/voting-power': typeof VotingPowerRoute
   '/welcome': typeof WelcomeRoute
   '/admin/send-email': typeof AdminSendEmailRoute
   '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
@@ -364,6 +371,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
+  '/voting-power': typeof VotingPowerRoute
   '/welcome': typeof WelcomeRoute
   '/admin/send-email': typeof AdminSendEmailRoute
   '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
@@ -413,6 +421,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
+  '/voting-power': typeof VotingPowerRoute
   '/welcome': typeof WelcomeRoute
   '/admin/send-email': typeof AdminSendEmailRoute
   '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
@@ -463,6 +472,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/time'
+    | '/voting-power'
     | '/welcome'
     | '/admin/send-email'
     | '/admin/sidebar-visibility'
@@ -509,6 +519,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/time'
+    | '/voting-power'
     | '/welcome'
     | '/admin/send-email'
     | '/admin/sidebar-visibility'
@@ -557,6 +568,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/time'
+    | '/voting-power'
     | '/welcome'
     | '/admin/send-email'
     | '/admin/sidebar-visibility'
@@ -606,6 +618,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   TimeRoute: typeof TimeRoute
+  VotingPowerRoute: typeof VotingPowerRoute
   WelcomeRoute: typeof WelcomeRoute
   AdminSendEmailRoute: typeof AdminSendEmailRoute
   AdminSidebarVisibilityRoute: typeof AdminSidebarVisibilityRoute
@@ -620,6 +633,13 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/voting-power': {
+      id: '/voting-power'
+      path: '/voting-power'
+      fullPath: '/voting-power'
+      preLoaderRoute: typeof VotingPowerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/time': {
@@ -1037,6 +1057,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   TimeRoute: TimeRoute,
+  VotingPowerRoute: VotingPowerRoute,
   WelcomeRoute: WelcomeRoute,
   AdminSendEmailRoute: AdminSendEmailRoute,
   AdminSidebarVisibilityRoute: AdminSidebarVisibilityRoute,

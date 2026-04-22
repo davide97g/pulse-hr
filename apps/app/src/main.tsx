@@ -12,6 +12,7 @@ import { OfflineModeProvider } from "./lib/offline-mode";
 import { AppErrorBoundary } from "./components/app/AppErrorBoundary";
 import { ServerBoot } from "./components/app/ServerBoot";
 import { WorkspaceLoaderProvider } from "./components/app/WorkspaceLoader";
+import { CompanyProfileProvider } from "./components/app/CompanyProfileStore";
 import "./styles.css";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -59,7 +60,9 @@ ReactDOM.createRoot(el).render(
               <ThemeProvider>
                 <WorkspaceProvider>
                   <WorkspaceLoaderProvider>
-                    <RouterProvider router={router} />
+                    <CompanyProfileProvider>
+                      <RouterProvider router={router} />
+                    </CompanyProfileProvider>
                   </WorkspaceLoaderProvider>
                 </WorkspaceProvider>
               </ThemeProvider>
