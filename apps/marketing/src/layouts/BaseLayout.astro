@@ -187,6 +187,60 @@ const teamLd = {
     {isHome && <script type="application/ld+json" set:html={JSON.stringify(teamLd)} />}
     {breadcrumbLd && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />}
     {extraLd?.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
+
+    <!-- Agent discovery: advertise key routes for LLM crawlers + WebMCP-capable browsers. -->
+    <link rel="api-catalog" href="/.well-known/api-catalog" type="application/linkset+json" />
+    <link rel="agent-skills" href="/.well-known/agent-skills/index.json" type="application/json" />
+    <link rel="mcp-server-card" href="/.well-known/mcp/server-card.json" type="application/json" />
+
+    <!-- WebMCP: expose site actions to AI agents via navigator.modelContext. -->
+    <script>
+      if (typeof navigator !== "undefined" && "modelContext" in navigator) {
+        try {
+          navigator.modelContext.provideContext({
+            tools: [
+              {
+                name: "view_pricing",
+                description: "Navigate to the Pulse HR pricing page.",
+                inputSchema: { type: "object", properties: {} },
+                execute: () => { window.location.href = "/pricing"; },
+              },
+              {
+                name: "request_demo",
+                description: "Open the Pulse HR contact / demo request form.",
+                inputSchema: { type: "object", properties: {} },
+                execute: () => { window.location.href = "/contact"; },
+              },
+              {
+                name: "browse_docs",
+                description: "Navigate to the Pulse HR product documentation.",
+                inputSchema: {
+                  type: "object",
+                  properties: { topic: { type: "string", description: "Optional topic slug" } },
+                },
+                execute: ({ topic }) => {
+                  window.location.href = topic ? `/docs/${encodeURIComponent(topic)}` : "/docs";
+                },
+              },
+              {
+                name: "open_changelog",
+                description: "Navigate to the Pulse HR changelog.",
+                inputSchema: { type: "object", properties: {} },
+                execute: () => { window.location.href = "/changelog"; },
+              },
+              {
+                name: "open_sandbox",
+                description: "Open the product sandbox sign-up at app.pulsehr.it.",
+                inputSchema: { type: "object", properties: {} },
+                execute: () => { window.location.href = "https://app.pulsehr.it/signup"; },
+              },
+            ],
+          });
+        } catch (err) {
+          console.warn("WebMCP registration failed", err);
+        }
+      }
+    </script>
   </head>
   <body class="min-h-screen bg-[#0b0b0d] text-[#f2f2ee] overflow-x-hidden">
     <a

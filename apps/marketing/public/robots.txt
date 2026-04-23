@@ -1,6 +1,10 @@
 User-agent: *
 Allow: /
 
+# Content usage signals — let agents know what's ok
+# https://contentsignals.org · draft spec, declarative best-effort
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
 # AI crawlers — allowed, we want to show up in AI answers
 User-agent: GPTBot
 Allow: /

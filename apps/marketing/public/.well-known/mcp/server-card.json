@@ -1,0 +1,28 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schema/server-card/v1.json",
+  "serverInfo": {
+    "name": "pulse-hr",
+    "version": "0.1.0",
+    "title": "Pulse HR",
+    "vendor": "Pulse HR",
+    "homepage": "https://pulsehr.it"
+  },
+  "transport": {
+    "type": "streamable-http",
+    "url": "https://api.pulsehr.it/mcp"
+  },
+  "auth": {
+    "type": "oauth",
+    "protectedResource": "https://pulsehr.it/.well-known/oauth-protected-resource"
+  },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    },
+    "resources": {
+      "subscribe": false,
+      "listChanged": false
+    }
+  },
+  "status": "preview"
+}

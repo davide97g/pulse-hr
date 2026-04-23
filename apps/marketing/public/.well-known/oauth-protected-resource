@@ -1,0 +1,17 @@
+{
+  "resource": "https://api.pulsehr.it",
+  "authorization_servers": [
+    "https://clerk.pulsehr.it"
+  ],
+  "scopes_supported": [
+    "read:employees",
+    "write:employees",
+    "read:timesheets",
+    "write:timesheets",
+    "read:payroll",
+    "read:docs"
+  ],
+  "bearer_methods_supported": ["header"],
+  "resource_documentation": "https://pulsehr.it/docs/api",
+  "resource_name": "Pulse HR API"
+}

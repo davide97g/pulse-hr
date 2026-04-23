@@ -1,0 +1,40 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://pulsehr.it/",
+      "service-desc": [
+        {
+          "href": "https://pulsehr.it/docs/api",
+          "type": "text/html",
+          "title": "Pulse HR REST API reference"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://pulsehr.it/docs",
+          "type": "text/html",
+          "title": "Pulse HR documentation"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://status.pulsehr.it",
+          "type": "text/html",
+          "title": "Pulse HR status page"
+        }
+      ],
+      "terms-of-service": [
+        {
+          "href": "https://pulsehr.it/terms",
+          "type": "text/html"
+        }
+      ],
+      "privacy-policy": [
+        {
+          "href": "https://pulsehr.it/privacy",
+          "type": "text/html"
+        }
+      ]
+    }
+  ]
+}
