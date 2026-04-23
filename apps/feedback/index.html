@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b0d" />
+    <meta
+      name="description"
+      content="Pulse Feedback — share ideas, upvote what matters, track proposals."
+    />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    />
+    <title>Pulse · Feedback</title>
+    <style>
+      html,
+      body {
+        background-color: #0b0b0d;
+        color: #f2f2ee;
+      }
+      html[data-theme="light"],
+      html[data-theme="light"] body {
+        background-color: #fafaf7;
+        color: #1a1a1d;
+      }
+    </style>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("pulse.theme") || "employee";
+          document.documentElement.dataset.theme = t;
+          if (t !== "light") document.documentElement.classList.add("dark");
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

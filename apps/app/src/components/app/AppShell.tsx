@@ -439,7 +439,7 @@ function Topbar({
     displayName.slice(0, 2).toUpperCase();
   const handleSignOut = async () => {
     await signOut();
-    navigate({ to: "/login", replace: true });
+    navigate({ to: "/login", search: {}, replace: true });
   };
   return (
     <header className="h-14 border-b bg-background/80 backdrop-blur flex items-center px-3 md:px-4 gap-2 md:gap-3 shrink-0">

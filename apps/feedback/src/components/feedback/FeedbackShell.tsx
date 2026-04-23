@@ -1,13 +1,12 @@
-import { Link, useNavigate } from "@tanstack/react-router";
 import { useUser, useClerk } from "@clerk/react";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SidebarRouteGuard } from "@/components/app/SidebarRouteGuard";
+
+const APP_URL = import.meta.env.VITE_APP_URL ?? "https://app.pulsehr.it";
 
 export function FeedbackShell({ children }: { children: React.ReactNode }) {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
-  const navigate = useNavigate();
   const displayName =
     user?.fullName || user?.firstName || user?.primaryEmailAddress?.emailAddress || "Signed in";
   const initials =
@@ -23,14 +22,14 @@ export function FeedbackShell({ children }: { children: React.ReactNode }) {
       }}
     >
       <header className="h-14 border-b bg-background/70 backdrop-blur flex items-center px-4 md:px-6 gap-3 shrink-0">
-        <Link
-          to="/"
+        <a
+          href={APP_URL}
           className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground press-scale"
           title="Back to Pulse"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Back to Pulse</span>
-        </Link>
+        </a>
         <div className="mx-2 h-5 w-px bg-border" />
         <div className="flex items-baseline gap-2 min-w-0">
           <span className="font-display text-lg tracking-tight leading-none">Pulse</span>
@@ -65,7 +64,7 @@ export function FeedbackShell({ children }: { children: React.ReactNode }) {
             <button
               onClick={async () => {
                 await signOut();
-                navigate({ to: "/login", search: {}, replace: true });
+                window.location.assign(`${APP_URL}/login`);
               }}
               className={cn(
                 "h-9 w-9 md:w-auto md:px-2.5 inline-flex items-center justify-center gap-1.5 rounded-md",
@@ -81,7 +80,13 @@ export function FeedbackShell({ children }: { children: React.ReactNode }) {
         )}
       </header>
       <main className="flex-1 overflow-y-auto scrollbar-thin">
-        <SidebarRouteGuard>{children}</SidebarRouteGuard>
+        {isLoaded ? (
+          children
+        ) : (
+          <div className="flex flex-1 items-center justify-center min-h-[40vh]">
+            <div className="h-6 w-6 rounded-full border-2 border-muted-foreground/30 border-t-foreground animate-spin" />
+          </div>
+        )}
       </main>
     </div>
   );

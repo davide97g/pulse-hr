@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useAuth } from "@clerk/react";
 import { AppShell } from "@/components/app/AppShell";
 import { RouteErrorFallback } from "@/components/app/AppErrorBoundary";
-import { FeedbackShell } from "@/components/feedback/FeedbackShell";
 import { ProposalProvider } from "@/components/proposals/ProposalProvider";
 import { WorkspaceMount } from "@/components/app/WorkspaceMount";
 import { TableStoreProvider } from "@/components/app/TableStoreProvider";
@@ -121,7 +120,7 @@ function RootComponent() {
   useEffect(() => {
     if (!isLoaded) return;
     if (!isSignedIn && !isPublic) {
-      navigate({ to: "/login", replace: true });
+      navigate({ to: "/login", search: {}, replace: true });
       return;
     }
     if (!isSignedIn) return;
@@ -171,15 +170,7 @@ function RootComponent() {
           <Outlet />
         ) : (
           <ProposalProvider>
-            {isFeedback ? (
-              <FeedbackShell>
-                <Outlet />
-              </FeedbackShell>
-            ) : isWelcome || showWelcomeOnly ? (
-              <Outlet />
-            ) : (
-              <AppShell />
-            )}
+            {isFeedback || isWelcome || showWelcomeOnly ? <Outlet /> : <AppShell />}
           </ProposalProvider>
         )}
         <Toaster position="bottom-right" richColors closeButton />

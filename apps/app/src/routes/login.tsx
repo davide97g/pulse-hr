@@ -10,18 +10,46 @@ import { AuthLayout } from "@/components/app/AuthLayout";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Pulse HR" }] }),
+  validateSearch: (s: Record<string, unknown>): { redirect_url?: string } => {
+    const v = typeof s.redirect_url === "string" ? s.redirect_url : undefined;
+    return v !== undefined ? { redirect_url: v } : {};
+  },
   component: Login,
 });
+
+const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
+
+function safeRedirectUrl(raw: string | undefined): string | null {
+  if (!raw) return null;
+  try {
+    const target = new URL(raw);
+    const allowed = new URL(FEEDBACK_URL);
+    if (target.origin === allowed.origin) return target.toString();
+  } catch {
+    return null;
+  }
+  return null;
+}
 
 function Login() {
   const nav = useNavigate();
   const clerk = useClerk();
   const { signIn, fetchStatus } = useSignIn();
+  const search = Route.useSearch();
+  const redirectUrl = safeRedirectUrl(search.redirect_url);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const goPostLogin = () => {
+    if (redirectUrl) {
+      window.location.assign(redirectUrl);
+    } else {
+      nav({ to: "/" });
+    }
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +64,8 @@ function Login() {
       }
       if (signIn.existingSession?.sessionId) {
         await clerk.setActive({ session: signIn.existingSession.sessionId });
-        toast.success("Welcome back", { description: "Redirecting to dashboard…" });
-        nav({ to: "/" });
+        toast.success("Welcome back", { description: "Redirecting…" });
+        goPostLogin();
         return;
       }
       if (signIn.status === "complete") {
@@ -46,8 +74,8 @@ function Login() {
           toast.error("Couldn't activate session", { description: fin.error.message });
           return;
         }
-        toast.success("Welcome back", { description: "Redirecting to dashboard…" });
-        nav({ to: "/" });
+        toast.success("Welcome back", { description: "Redirecting…" });
+        goPostLogin();
         return;
       }
       toast("Additional step required", { description: signIn.status ?? "Retry" });
