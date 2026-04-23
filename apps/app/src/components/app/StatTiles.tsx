@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { cn } from "@/lib/utils";
 
 export interface StatTileProps {

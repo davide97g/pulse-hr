@@ -27,17 +27,17 @@ import {
   Line,
   Cell,
 } from "recharts";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@pulse-hr/ui/primitives/select";
 import { PageHeader } from "@/components/app/AppShell";
-import { SkeletonCards } from "@/components/app/SkeletonList";
+import { SkeletonCards } from "@pulse-hr/ui/atoms/SkeletonList";
 import { departments } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 

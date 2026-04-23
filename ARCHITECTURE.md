@@ -14,7 +14,7 @@ apps/
   reel/       # @pulse-hr/reel           — Remotion demo videos
 packages/
   shared/     # @pulse-hr/shared         — types, utils, zod schemas
-  tokens/     # @workflows-people/tokens — design tokens shared by app + marketing
+  tokens/     # @pulse-hr/tokens — design tokens shared by app + marketing
 ```
 
 Each app owns its own `vercel.json` / deploy pipeline. Only the product + API are coupled at runtime.

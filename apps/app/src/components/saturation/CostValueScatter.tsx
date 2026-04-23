@@ -11,7 +11,7 @@ import {
   ReferenceLine,
   Cell,
 } from "recharts";
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { personValue } from "@/lib/projects";
 const fmt = (n: number) => {
   const abs = Math.abs(n);

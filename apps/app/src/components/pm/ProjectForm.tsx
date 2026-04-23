@@ -5,17 +5,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+} from "@pulse-hr/ui/primitives/dialog";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Label } from "@pulse-hr/ui/primitives/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@pulse-hr/ui/primitives/select";
 import type { Commessa, ProjectStatus } from "@/lib/mock-data";
 import { clients as clientSeed, employees, employeeById } from "@/lib/mock-data";
 

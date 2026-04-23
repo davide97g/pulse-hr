@@ -1,0 +1,72 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Foundations/Color" />
+
+# Color
+
+All Pulse surfaces run on the same semantic token set. The active theme (chosen via the 🎨 toolbar above) swaps the values behind these tokens at runtime — components never hard-code hex.
+
+## Intent
+
+| Token | Usage |
+|-------|-------|
+| `--background` / `--foreground` | Page chrome. Body text on page canvas. |
+| `--card` / `--card-foreground` | Resting surfaces (cards, modals, sheets). |
+| `--popover` / `--popover-foreground` | Floating surfaces (popovers, dropdowns, tooltips). |
+| `--primary` / `--primary-foreground` | Primary CTAs. The theme's identity color. |
+| `--secondary` / `--secondary-foreground` | Muted actions, chips, tags. |
+| `--muted` / `--muted-foreground` | Low-emphasis surfaces and text. |
+| `--accent` / `--accent-foreground` | Hover states, subtle highlights. |
+| `--destructive` / `--destructive-foreground` | Irreversible actions, errors. |
+| `--success`, `--warning`, `--info` | Status semantics only — never decoration. |
+
+## Signature
+
+| Token | Usage |
+|-------|-------|
+| `--labs` / `--labs-foreground` | Signature lime (`#b4ff39` → `oklch(0.86 0.22 135)` on dark). Reserved for "NEW"/experimental/labs features. Deliberately detached from `--primary` so CTAs stay distinct. |
+
+## Structural
+
+| Token | Usage |
+|-------|-------|
+| `--border` | Every border. 8% opaque white on dark, 92% gray on light. |
+| `--input` | Input-specific border + bg. Tracks `--border` by default. |
+| `--ring` | Focus-visible outline. Matches `--primary`. |
+
+## Sidebar
+
+Kept separate so the sidebar can have its own surface tone without reshading the whole page.
+
+| Token | Usage |
+|-------|-------|
+| `--sidebar` | Sidebar background. |
+| `--sidebar-foreground` | Sidebar body text. |
+| `--sidebar-accent` | Selected nav item background. |
+| `--sidebar-accent-foreground` | Selected nav item text. |
+| `--sidebar-border` | Sidebar divider color. |
+
+## Calendar
+
+Theme-independent so day semantics never shift under a role-theme swap.
+
+| Token | Usage |
+|-------|-------|
+| `--cal-vacation` | PTO days. Tracks `--primary`. |
+| `--cal-sick` | Sick leave. 60% `--destructive`. |
+| `--cal-personal` / `--cal-parental` | Non-PTO time. Muted. |
+| `--cal-holiday` | Public holiday. Amber, always visible. |
+
+## Elevation
+
+| Token | Usage |
+|-------|-------|
+| `--shadow-card` | Default card lift (1–2px blur). |
+| `--shadow-panel` | Side panel / drawer shadow (lateral). |
+| `--shadow-pop` | Popovers / menus (larger, softer). |
+
+Rules:
+
+1. **Don't hard-code hex in components.** Use tokens. One exception: marketing site brand accent when explicitly targeting pre-signin users.
+2. **Semantic, not chromatic.** Use `--destructive`, not "red-600". The theme decides the hue.
+3. **Labs is not primary.** Don't swap `--labs` for CTA copy — it's reserved for experimental surface.

@@ -16,17 +16,17 @@ import {
   X,
   Repeat,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@pulse-hr/ui/primitives/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,9 +36,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@pulse-hr/ui/primitives/alert-dialog";
 import { Avatar } from "@/components/app/AppShell";
-import { EmptyState } from "@/components/app/EmptyState";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { BookingDialog, type BookingDialogPrefill } from "@/components/app/BookingDialog";
 import { useBookings } from "@/components/app/BookingsContext";
 import {

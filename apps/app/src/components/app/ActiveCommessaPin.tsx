@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Command, ChevronDown, Check, Search, Briefcase } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
+import { Input } from "@pulse-hr/ui/primitives/input";
 import { useWorkspace } from "./WorkspaceContext";
 import { commesse } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";

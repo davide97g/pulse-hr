@@ -10,18 +10,18 @@ import {
   Calendar,
   DollarSign,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Slider } from "@pulse-hr/ui/primitives/slider";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@pulse-hr/ui/primitives/select";
 import { PageHeader, StatusBadge } from "@/components/app/AppShell";
-import { NewBadge } from "@/components/app/NewBadge";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { commesse, type Commessa } from "@/lib/mock-data";
 import { useWorkspace } from "@/components/app/WorkspaceContext";
 import { cn } from "@/lib/utils";

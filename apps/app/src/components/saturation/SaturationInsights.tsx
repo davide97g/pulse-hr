@@ -9,8 +9,8 @@ import {
   ArrowUpRight,
   CheckCircle2,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Badge } from "@pulse-hr/ui/primitives/badge";
 import { commesse, employees, clients, employeeById } from "@/lib/mock-data";
 import { projectMargin, personWeeklyLoad, weekRange } from "@/lib/projects";
 import { cn } from "@/lib/utils";

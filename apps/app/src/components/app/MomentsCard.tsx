@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Cake, PartyPopper, Gift, Sparkles } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { Avatar } from "./AppShell";
 import { upcomingMoments, type Moment } from "@/lib/moments";
 import { cn } from "@/lib/utils";

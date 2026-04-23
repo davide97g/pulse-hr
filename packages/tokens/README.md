@@ -1,4 +1,4 @@
-# @workflows-people/tokens
+# @pulse-hr/tokens
 
 Shared design primitives (colors, typography, radii, motion, elevation) for
 every surface of the product — the React SPA at `apps/app`, the Astro
@@ -27,7 +27,7 @@ Two exports, pick the one that fits the context:
 - **CSS** (Tailwind v4 CSS-first, marketing and app):
 
   ```css
-  @import "@workflows-people/tokens/tokens.css";
+  @import "@pulse-hr/tokens/tokens.css";
   ```
 
   Use the `--wp-color-*`, `--wp-font-*`, `--wp-radius-*` etc. variables.
@@ -35,7 +35,7 @@ Two exports, pick the one that fits the context:
 - **TypeScript** (app code, OG image generation, chart palettes):
 
   ```ts
-  import { color, font, radius } from "@workflows-people/tokens";
+  import { color, font, radius } from "@pulse-hr/tokens";
 
   const barFill = color.role.finance;
   ```

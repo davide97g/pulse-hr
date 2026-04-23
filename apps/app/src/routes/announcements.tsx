@@ -11,18 +11,18 @@ import {
   Send,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Label } from "@pulse-hr/ui/primitives/label";
+import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from "@pulse-hr/ui/primitives/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +30,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@pulse-hr/ui/primitives/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,9 +40,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@pulse-hr/ui/primitives/alert-dialog";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
-import { EmptyState } from "@/components/app/EmptyState";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import type { Announcement } from "@/lib/mock-data";
 import { announcementsTable, useAnnouncements } from "@/lib/tables/announcements";
 import { useFullName } from "@/lib/current-user";

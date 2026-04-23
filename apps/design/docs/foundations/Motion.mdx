@@ -1,0 +1,56 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Foundations/Motion" />
+
+# Motion
+
+Three roles, twelve utilities. Everything else is decoration and gets cut.
+
+## Role 1 — Entrance
+
+Content showing up for the first time.
+
+| Utility | Duration | Use |
+|---------|----------|-----|
+| `.fade-in` | 180ms ease-out | Any panel / card / tab content. The default. |
+| `.pop-in` | 260ms `cubic-bezier(0.22, 1.2, 0.36, 1)` | Toasts, kudos confetti targets, small modals. |
+| `.stagger-in > *` | 320ms cascading | List items. `nth-child` delays 20–320ms across 10 children. |
+| `.panel-enter` | 220ms | SidePanel slide from right. |
+
+## Role 2 — Feedback
+
+User-triggered response.
+
+| Utility | Duration | Use |
+|---------|----------|-----|
+| `.press-scale` | 120ms ease-out | Buttons, icon buttons, clickable rows. Active state shrinks to 0.97. |
+| `.pulse-dot` | 1.6s infinite | Unread/new indicator. A circular pseudo-element expanding out. Reserve for genuine unread state. |
+
+## Role 3 — Loading
+
+Data in flight.
+
+| Utility | Duration | Use |
+|---------|----------|-----|
+| `.shimmer` | 1.4s linear infinite | Skeleton shimmer. Baked into the Skeleton primitive. |
+| `.typing-dot` | 1s ease-in-out infinite | Three-dot typing indicator (copilot, comments being authored). |
+
+## Signature utilities (use sparingly)
+
+| Utility | Use |
+|---------|-----|
+| `.iridescent-border` | Only on the "labs" surfaces (voting-power card, NEW-badged banners). Animates a lime→cyan→magenta gradient along the border. |
+| `.new-badge` | The animated version of the NEW badge. Only for genuinely new features (< 30 days). |
+| `.new-badge-quiet` | Muted version. Use once users have seen the full-color variant a few times. |
+| `.confetti-piece` | Kudos celebration. Gated behind user action. |
+| `.birthday-halo` | Employee birthdays. Respects `prefers-reduced-motion`. |
+
+## Reduced motion
+
+All motion utilities respect `@media (prefers-reduced-motion: reduce)` implicitly via `tw-animate-css` and explicitly on `.birthday-halo`.
+
+## Rules
+
+1. **Motion tells the story; don't duplicate it.** If a button already does `press-scale`, don't also fade it.
+2. **No hero-of-the-screen motion by default.** Reserve `iridescent-border` / `new-badge` for surfaces where "NEW" IS the point.
+3. **Exit is optional.** Most components skip exit animations. If you add one, keep it under 120ms.

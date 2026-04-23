@@ -42,7 +42,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from "@pulse-hr/ui/primitives/sheet";
 import { useUrlParam } from "@/lib/useUrlParam";
 import {
   KindBadge,

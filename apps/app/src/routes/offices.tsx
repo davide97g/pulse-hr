@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { Building2, CalendarClock, ShieldCheck } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
 import { PageHeader } from "@/components/app/AppShell";
-import { NewBadge } from "@/components/app/NewBadge";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { OfficesOverviewPanel } from "@/components/app/OfficesOverviewPanel";
 import { OfficesReservationsPanel } from "@/components/app/OfficesReservationsPanel";
 import { OfficesManagePanel } from "@/components/app/OfficesManagePanel";

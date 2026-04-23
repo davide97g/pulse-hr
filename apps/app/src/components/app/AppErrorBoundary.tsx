@@ -1,7 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { AlertTriangle, Copy, RefreshCw, RotateCcw, Github } from "lucide-react";
-import { ParticleField } from "./ParticleField";
-import { Button } from "@/components/ui/button";
+import { ParticleField } from "@pulse-hr/ui/atoms/ParticleField";
+import { Button } from "@pulse-hr/ui/primitives/button";
 
 type Props = { children: ReactNode; scope?: "app" | "route" };
 type State = { error: Error | null };

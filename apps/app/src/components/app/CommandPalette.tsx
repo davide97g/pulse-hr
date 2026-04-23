@@ -19,14 +19,14 @@ import {
 } from "lucide-react";
 import { TOURS } from "@/lib/tours";
 import { useTour } from "./TourProvider";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent } from "@pulse-hr/ui/primitives/dialog";
+import { Input } from "@pulse-hr/ui/primitives/input";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { employees, commesse } from "@/lib/mock-data";
 import { useQuickAction } from "./QuickActions";
 import { useNewProposal } from "@/components/proposals/ProposalProvider";
-import { NewBadge } from "./NewBadge";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { parseCommand, type ParsedIntent } from "@/lib/nlp";
 import { cn } from "@/lib/utils";
 

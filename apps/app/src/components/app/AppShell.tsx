@@ -11,7 +11,7 @@ import {
 } from "@/components/comments/CommentsOverlayProvider";
 import { useNewProposal } from "@/components/proposals/ProposalProvider";
 import { PinLayer } from "@/components/comments/PinLayer";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@pulse-hr/ui/primitives/sheet";
 import { useTrackPageViews } from "@/lib/usage-tracking";
 import { voiceBus } from "@/lib/voice-bus";
 import { ActiveCommessaPin } from "./ActiveCommessaPin";
@@ -20,8 +20,8 @@ import { BookingsProvider } from "./BookingsContext";
 import { CommandPalette } from "./CommandPalette";
 import { LogOverlay } from "./LogOverlay";
 import { OfflineBanner } from "./OfflineBanner";
-import { BrandMark } from "./BrandMark";
-import { NewBadge } from "./NewBadge";
+import { BrandMark } from "@pulse-hr/ui/atoms/BrandMark";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { OfficesStoreProvider } from "./OfficesStoreProvider";
 import { QuickActionProvider, useQuickAction } from "./QuickActions";
 import { ShortcutSheet } from "./ShortcutSheet";
@@ -59,9 +59,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+} from "@pulse-hr/ui/primitives/alert-dialog";
+import { Badge } from "@pulse-hr/ui/primitives/badge";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,8 +72,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+} from "@pulse-hr/ui/primitives/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
 import {
   OVERRIDE_ROLES,
   useEffectiveRole,
@@ -713,25 +713,9 @@ function Topbar({
   );
 }
 
-export function PageHeader({
-  title,
-  description,
-  actions,
-}: {
-  title: React.ReactNode;
-  description?: React.ReactNode;
-  actions?: React.ReactNode;
-}) {
-  return (
-    <div data-tour="page-header" className="flex items-start justify-between gap-4 mb-6">
-      <div>
-        <h1 className="text-xl font-semibold tracking-tight flex items-center gap-2">{title}</h1>
-        {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
-      </div>
-      {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
-    </div>
-  );
-}
+// PageHeader moved to @pulse-hr/ui/atoms/PageHeader. Re-exported from AppShell
+// for back-compat with in-flight branches that still import from here.
+export { PageHeader } from "@pulse-hr/ui/atoms/PageHeader";
 
 export function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {

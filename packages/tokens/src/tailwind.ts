@@ -1,24 +1,24 @@
 /**
- * Optional helper: if we ever move back to a JS-based Tailwind config,
- * `colors` and `fontFamily` here can be spread into `theme.extend`.
- * Tailwind v4 (CSS-first) consumers should import tokens.css directly.
+ * Tailwind JS-config helper. Tailwind v4 CSS-first consumers should prefer
+ * `@import "@pulse-hr/tokens/index.css";` — this helper only exists for
+ * JS-config contexts (older Tailwind, Storybook addons, etc.).
  */
-import { color, font } from "./index";
+import { hex, font } from "./index";
 
 export const tailwindColors = {
-  brand: color.brand,
-  "brand-hover": color.brandHover,
-  ink: color.ink,
-  cream: color.cream,
-  employee: color.role.employee,
-  manager: color.role.manager,
-  hr: color.role.hr,
-  admin: color.role.admin,
-  finance: color.role.finance,
-  success: color.status.success,
-  warning: color.status.warning,
-  danger: color.status.danger,
-  info: color.status.info,
+  labs: hex.labs,
+  "labs-hover": hex.labsHover,
+  ink: hex.ink,
+  cream: hex.cream,
+  "role-employee": hex.roleEmployee,
+  "role-manager": hex.roleManager,
+  "role-hr": hex.roleHr,
+  "role-admin": hex.roleAdmin,
+  "role-finance": hex.roleFinance,
+  success: hex.success,
+  warning: hex.warning,
+  danger: hex.danger,
+  info: hex.info,
 } as const;
 
 export const tailwindFontFamily = {

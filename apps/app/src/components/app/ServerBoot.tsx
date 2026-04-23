@@ -2,8 +2,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import confetti from "canvas-confetti";
 import { startHealthPolling, hasBooted, markBootComplete } from "@/lib/server-wake";
 import { useOfflineMode } from "@/lib/offline-mode";
-import { ParticleField } from "./ParticleField";
-import { Button } from "@/components/ui/button";
+import { ParticleField } from "@pulse-hr/ui/atoms/ParticleField";
+import { Button } from "@pulse-hr/ui/primitives/button";
 
 type Phase = "warm" | "waking" | "error";
 

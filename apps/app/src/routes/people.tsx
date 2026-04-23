@@ -30,20 +30,20 @@ import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
 import { computeEmployeeScore, scoreColor } from "@/lib/score";
 import { STRENGTH_COLORS } from "@/lib/colors";
 import { MiniStat } from "@/components/app/StatTiles";
-import { BirthdayHalo } from "@/components/app/BirthdayHalo";
+import { BirthdayHalo } from "@pulse-hr/ui/atoms/BirthdayHalo";
 import { isBirthday } from "@/lib/birthday";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from "@pulse-hr/ui/primitives/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,11 +53,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@pulse-hr/ui/primitives/alert-dialog";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
-import { SidePanel } from "@/components/app/SidePanel";
-import { EmptyState } from "@/components/app/EmptyState";
-import { SkeletonRows } from "@/components/app/SkeletonList";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
+import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
 import { type Employee, departments } from "@/lib/mock-data";
 import { employeesTable, employeeById, useEmployees } from "@/lib/tables/employees";

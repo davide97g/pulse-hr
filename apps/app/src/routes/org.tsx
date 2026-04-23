@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
 import { departments } from "@/lib/mock-data";
 import { useEmployees } from "@/lib/tables/employees";

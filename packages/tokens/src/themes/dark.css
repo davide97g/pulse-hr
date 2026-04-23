@@ -1,0 +1,6 @@
+/* Neutral dark — indigo accent, close to the light theme's identity. */
+html[data-theme="dark"] {
+  --primary: oklch(0.72 0.17 258);
+  --primary-foreground: oklch(0.14 0.006 280);
+  --ring: oklch(0.72 0.17 258);
+}

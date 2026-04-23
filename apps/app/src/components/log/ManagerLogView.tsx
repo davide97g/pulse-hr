@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { ArrowUpRight, ArrowDownRight, Minus, Lock, MessageSquare } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 import { employees, employeeLogHealth, type EmployeeLogHealth } from "@/lib/mock-data";
 import { managerAsksTable, useManagerAsks } from "@/lib/tables/managerAsks";
 import { AskTopicDialog } from "./AskTopicDialog";
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@pulse-hr/ui/primitives/tooltip";
 
 export function ManagerLogView() {
   const asks = useManagerAsks();

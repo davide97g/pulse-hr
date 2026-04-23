@@ -1,0 +1,32 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Introduction/Welcome" />
+
+# Pulse HR Design System
+
+The single source of truth for how Pulse looks and feels across every surface — the product app (`app.pulsehr.it`), the feedback board (`feedback.pulsehr.it`), the marketing site (`pulsehr.it`), and anything else we ship under the Pulse brand.
+
+This site hosts:
+
+- **Principles** — the opinions that drive every design decision.
+- **Foundations** — color, typography, spacing, radii, elevation, motion.
+- **Primitives** — 46 shadcn-based UI primitives rebuilt against Pulse tokens.
+- **Atoms** — design atoms extracted from the product (PageHeader, EmptyState, SidePanel, BrandMark, Skeletons, …).
+- **Patterns** — composition recipes for Cards, Side Panels, Skeletons, Toasts, Empty States, Status Badges.
+
+Long-form rationale lives in `docs/brand/` in the repo — this site links out to those files whenever useful.
+
+## Structure
+
+| Package | What's inside | Who consumes it |
+|---|---|---|
+| `@pulse-hr/tokens` | CSS vars, themes, motion utilities, TS token exports | every app (zero React dep) |
+| `@pulse-hr/ui` | Primitives, atoms, ThemeProvider, `cn` | apps/app, apps/feedback, apps/design |
+
+## Who is this for
+
+- **Product engineers** — import primitives + atoms, don't reinvent them.
+- **Designers** — spec against these tokens; propose changes via PR.
+- **Reviewers** — use this as the reference when auditing PRs that touch visual code.
+
+Press the 🎨 in the toolbar to cycle through all 7 themes on any story.

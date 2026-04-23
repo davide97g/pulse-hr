@@ -2,10 +2,10 @@ import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-r
 import { useMemo, useState } from "react";
 import { ArrowLeft, Clock, DoorOpen, Plus, Phone, Repeat, Wand2 } from "lucide-react";
 import { AMENITY_META } from "@/components/app/AmenityIcons";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
-import { EmptyState } from "@/components/app/EmptyState";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { BookingDialog, type BookingDialogPrefill } from "@/components/app/BookingDialog";
 import { useBookings } from "@/components/app/BookingsContext";
 import {

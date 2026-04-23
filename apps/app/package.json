@@ -18,6 +18,8 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@hookform/resolvers": "^5.2.2",
     "@pulse-hr/shared": "workspace:*",
+    "@pulse-hr/tokens": "workspace:*",
+    "@pulse-hr/ui": "workspace:*",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-aspect-ratio": "^1.1.8",

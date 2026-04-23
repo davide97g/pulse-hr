@@ -25,9 +25,9 @@ import {
   startOfDay,
 } from "date-fns";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,11 +37,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@pulse-hr/ui/primitives/alert-dialog";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
-import { SidePanel } from "@/components/app/SidePanel";
-import { EmptyState } from "@/components/app/EmptyState";
-import { SkeletonRows } from "@/components/app/SkeletonList";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
+import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
 import { type LeaveRequest } from "@/lib/mock-data";
 import { leaveTable, useLeaveRequests } from "@/lib/tables/leave";

@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { Avatar } from "@/components/app/AppShell";
 import { employees } from "@/lib/mock-data";
 import { personWeeklyLoad, weekRange } from "@/lib/projects";

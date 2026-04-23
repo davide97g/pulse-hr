@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { Gauge, AlertTriangle, Wallet, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 

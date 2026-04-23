@@ -1,6 +1,6 @@
 import { Pin } from "lucide-react";
 import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import type { ManagerAsk } from "@/lib/mock-data";
 
 export function PinnedAskCard({

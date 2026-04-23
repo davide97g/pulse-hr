@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Search, Check, Settings2, Star, Shield } from "lucide-react";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
 import {
   Dialog,
   DialogContent,
@@ -12,10 +12,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@pulse-hr/ui/primitives/dialog";
 import { PageHeader } from "@/components/app/AppShell";
-import { SkeletonCards } from "@/components/app/SkeletonList";
-import { EmptyState } from "@/components/app/EmptyState";
+import { SkeletonCards } from "@pulse-hr/ui/atoms/SkeletonList";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { plugins as initialPlugins } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { useUrlParam } from "@/lib/useUrlParam";

@@ -1,20 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Coins, Sparkles, TrendingUp } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { PageHeader } from "@/components/app/PageHeader";
-import { NewBadge } from "@/components/app/NewBadge";
+} from "@pulse-hr/ui/primitives/dialog";
+import { PageHeader } from "@pulse-hr/ui/atoms/PageHeader";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { CompanyProfileForm } from "@/components/app/CompanyProfileForm";
 import { useCompanyProfileStore } from "@/components/app/CompanyProfileStore";
-import { EmptyState } from "@/components/app/EmptyState";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/voting-power")({

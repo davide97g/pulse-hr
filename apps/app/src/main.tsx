@@ -5,7 +5,7 @@ import { ClerkProvider } from "@clerk/react";
 import { registerSW } from "virtual:pwa-register";
 import { toast } from "sonner";
 import { getRouter } from "./router";
-import { ThemeProvider } from "./components/app/ThemeProvider";
+import { ThemeProvider } from "@pulse-hr/ui/theme";
 import { WorkspaceProvider } from "./components/app/WorkspaceContext";
 import { RoleOverrideProvider } from "./lib/role-override";
 import { OfflineModeProvider } from "./lib/offline-mode";

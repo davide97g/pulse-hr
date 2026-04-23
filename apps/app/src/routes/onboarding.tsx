@@ -14,18 +14,18 @@ import {
   Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Label } from "@pulse-hr/ui/primitives/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+} from "@pulse-hr/ui/primitives/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,11 +35,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@pulse-hr/ui/primitives/alert-dialog";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
-import { SidePanel } from "@/components/app/SidePanel";
-import { EmptyState } from "@/components/app/EmptyState";
-import { Progress } from "@/components/ui/progress";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
+import { Progress } from "@pulse-hr/ui/primitives/progress";
 import { type OnboardingWorkflow, type OnboardingTask } from "@/lib/mock-data";
 import { onboardingWorkflowsTable, useOnboardingWorkflows } from "@/lib/tables/onboardingWorkflows";
 import { cn } from "@/lib/utils";

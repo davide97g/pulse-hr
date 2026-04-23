@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, Briefcase } from "lucide-react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@pulse-hr/ui/primitives/hover-card";
 import { employeeById } from "@/lib/mock-data";
 import { computeEmployeeScore, scoreColor } from "@/lib/score";
 import { cn } from "@/lib/utils";

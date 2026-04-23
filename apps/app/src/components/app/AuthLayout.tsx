@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Star } from "lucide-react";
-import { BrandMark } from "./BrandMark";
+import { BrandMark } from "@pulse-hr/ui/atoms/BrandMark";
 
 export function AuthLayout({
   title,

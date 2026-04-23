@@ -10,9 +10,9 @@ import {
   Armchair,
   Clock,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
 import { StatTile } from "@/components/app/StatTiles";
 import { OfficeHeatmap, type HeatmapMode } from "@/components/app/OfficeHeatmap";
 import { BookingDialog, type BookingDialogPrefill } from "@/components/app/BookingDialog";

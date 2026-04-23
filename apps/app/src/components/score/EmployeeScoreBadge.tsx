@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Info } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
 import { computeEmployeeScore, scoreColor, SCORE_WEIGHTS, FACTOR_LABELS } from "@/lib/score";
 import { cn } from "@/lib/utils";
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Check, ChevronRight, Loader2 } from "lucide-react";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@pulse-hr/ui/primitives/dialog";
 import type { IntegrationConnection, SyncDirection } from "@/lib/mock-data";
 
 type Step = "account" | "scopes" | "connecting" | "done";

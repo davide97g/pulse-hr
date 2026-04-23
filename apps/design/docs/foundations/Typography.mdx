@@ -1,0 +1,48 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+Three families, strict roles.
+
+| Family | Variable | Use for |
+|--------|----------|---------|
+| **Fraunces** | `--font-display`, class `.font-display` | Display headlines only. Page titles, hero type, KPI tiles. Never body. |
+| **Geist** | body default | Everything else: paragraphs, UI chrome, labels, buttons. |
+| **JetBrains Mono** | class `.font-mono`, `code`, `kbd` | Numbers you can scan (table columns), identifiers, keyboard shortcuts, code snippets. |
+
+## Fraunces settings
+
+- `font-optical-sizing: auto` — glyphs adapt to size automatically.
+- `letter-spacing: -0.02em` — tight, editorial.
+- Weights used: 400, 600, 700, 900.
+- Italic is available (wght-italic import in marketing); use sparingly, never in UI labels.
+
+## Geist settings
+
+- OpenType features: `"cv02", "cv03", "cv04", "cv11"` — enables the stylistic alternates that match our tone (one-story "g", straight-leg "l", etc.).
+- `-webkit-font-smoothing: antialiased` — applied via base layer.
+- Weights used: 300, 400, 500, 600, 700.
+
+## Scale
+
+Using Tailwind's default scale for v1 — not a custom fluid ramp.
+
+| Token | px | Use |
+|-------|----|-----|
+| `text-xs` | 12 | Captions, timestamps, table meta. |
+| `text-sm` | 14 | Body UI copy, button labels. |
+| `text-base` | 16 | Paragraph defaults (marketing). |
+| `text-lg` | 18 | Section leads. |
+| `text-xl` | 20 | Page titles (`PageHeader`). |
+| `text-2xl` | 24 | Detail-view titles. |
+| `text-3xl` | 30 | Marketing H2. |
+| `text-4xl` | 36 | Marketing H1. |
+| `text-5xl`–`text-7xl` | 48–72 | Hero display type, KPI counters. |
+
+Rules:
+
+1. **Never mix families mid-sentence.** Fraunces next to Geist in the same line is a smell — exception: a display number in JetBrains inside a Geist label.
+2. **Leading tracks weight.** Display (Fraunces) goes tight (`leading-none` or `leading-tight`). Body (Geist) goes `leading-relaxed` on paragraphs of prose, `leading-tight` in dense UI.
+3. **Don't italicize Geist.** Geist Italic isn't loaded; the browser fakes it poorly. Use Fraunces Italic where italic is needed.

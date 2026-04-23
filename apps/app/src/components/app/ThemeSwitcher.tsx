@@ -1,6 +1,6 @@
 import { Check, Palette, Sun, Moon } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { THEMES, useTheme, type Theme } from "./ThemeProvider";
+import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
+import { THEMES, useTheme, type Theme } from "@pulse-hr/ui/theme";
 import { cn } from "@/lib/utils";
 
 export function ThemeSwitcher({ compact }: { compact?: boolean }) {

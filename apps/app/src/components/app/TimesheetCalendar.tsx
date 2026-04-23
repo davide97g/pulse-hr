@@ -23,9 +23,9 @@ import {
   User,
   Info,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@pulse-hr/ui/primitives/tooltip";
 import { PageHeader, Avatar } from "./AppShell";
 import { DayCell } from "./DayCell";
 import { DayPeekPopover } from "./DayPeekPopover";

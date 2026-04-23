@@ -1,0 +1,10 @@
+/* HR — warm coral/rose, people-first. */
+html[data-theme="hr"] {
+  --background: oklch(0.15 0.012 15);
+  --sidebar: oklch(0.13 0.014 15);
+  --primary: oklch(0.78 0.19 10);
+  --primary-foreground: oklch(0.15 0.012 15);
+  --ring: oklch(0.78 0.19 10);
+  --accent: oklch(0.3 0.07 15);
+  --accent-foreground: oklch(0.96 0.012 95);
+}

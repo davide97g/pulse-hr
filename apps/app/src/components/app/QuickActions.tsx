@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { format, parseISO } from "date-fns";
-import { SidePanel } from "@/components/app/SidePanel";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Label } from "@pulse-hr/ui/primitives/label";
+import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import { Avatar } from "@/components/app/AppShell";
 import { employees, employeeById } from "@/lib/mock-data";
 import { employeesTable, makeEmployee } from "@/lib/tables/employees";

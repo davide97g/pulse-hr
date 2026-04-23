@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { Avatar } from "@/components/app/AppShell";
-import { SidePanel } from "@/components/app/SidePanel";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { employees, allocations, commesse, employeeById } from "@/lib/mock-data";
 import { personWeeklyLoad, weekRange } from "@/lib/projects";
 import { cn } from "@/lib/utils";

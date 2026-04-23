@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MessagesSquare } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
-import { useTheme } from "@/components/app/ThemeProvider";
+import { useTheme } from "@pulse-hr/ui/theme";
 import { EmployeeLogView } from "@/components/log/EmployeeLogView";
 import { ManagerLogView } from "@/components/log/ManagerLogView";
 

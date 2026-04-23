@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Mic, Send } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { voiceBus } from "@/lib/voice-bus";
 import { cn } from "@/lib/utils";
 

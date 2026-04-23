@@ -11,9 +11,9 @@ import {
   RotateCcw,
   MoreHorizontal,
 } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { cn } from "@/lib/utils";
 import type { SavedView } from "@/lib/useSavedViews";
 

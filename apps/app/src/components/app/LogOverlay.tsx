@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { X, Maximize2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { employees } from "@/lib/mock-data";
 import { logMessagesTable, useLogMessages } from "@/lib/tables/logMessages";
 import { replyTo, streamReply } from "@/lib/log-agent";
