@@ -65,10 +65,18 @@ import {
   commesse,
   commessaById,
   type TimesheetEntry,
-  timesheetTemplatesSeed,
-  type TimesheetTemplate,
 } from "@/lib/mock-data";
 import { timesheetEntriesTable, useTimesheetEntries } from "@/lib/tables/timesheetEntries";
+import {
+  timesheetTemplatesTable,
+  useTimesheetTemplates,
+} from "@/lib/tables/timesheetTemplates";
+import {
+  clearActiveClock,
+  elapsedSeconds,
+  startActiveClock,
+  useActiveClock,
+} from "@/lib/active-clock";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/time")({
@@ -80,8 +88,10 @@ export const Route = createFileRoute("/time")({
 const ME = "e1";
 
 function Time() {
-  const [clockedIn, setClockedIn] = useState(false);
-  const [seconds, setSeconds] = useState(0);
+  const activeClock = useActiveClock();
+  const clockedIn = !!activeClock;
+  const [nowTick, setNowTick] = useState(() => Date.now());
+  const seconds = elapsedSeconds(activeClock, nowTick);
   const [logNowOpen, setLogNowOpen] = useState(false);
   const workspace = useWorkspace();
   const activeCommessa = workspace.activeCommessaId;
@@ -89,7 +99,7 @@ function Time() {
   const [loading, setLoading] = useState(true);
 
   const entries = useTimesheetEntries();
-  const [templates, setTemplates] = useState<TimesheetTemplate[]>(timesheetTemplatesSeed);
+  const templates = useTimesheetTemplates();
   const [editEntry, setEditEntry] = useState<TimesheetEntry | "new" | null>(null);
   const [toDelete, setToDelete] = useState<TimesheetEntry | null>(null);
   const [inlineEdit, setInlineEdit] = useState<{
@@ -144,7 +154,7 @@ function Time() {
 
   useEffect(() => {
     if (!clockedIn) return;
-    const i = setInterval(() => setSeconds((s) => s + 1), 1000);
+    const i = setInterval(() => setNowTick(Date.now()), 1000);
     return () => clearInterval(i);
   }, [clockedIn]);
 
@@ -176,18 +186,18 @@ function Time() {
   }, [myEntries]);
 
   const stopClockAndLog = () => {
+    const clockCommessa = activeClock?.commessaId ?? activeCommessa;
     if (seconds < 30) {
-      setClockedIn(false);
-      setSeconds(0);
+      clearActiveClock();
       toast("Clock stopped", { description: "Session too short to save." });
       return;
     }
     const hours = Math.max(0.1, Math.round((seconds / 3600) * 100) / 100);
-    const c = commessaById(activeCommessa)!;
+    const c = commessaById(clockCommessa)!;
     const newEntry: TimesheetEntry = {
       id: `t-${Date.now()}`,
       employeeId: ME,
-      commessaId: activeCommessa,
+      commessaId: clockCommessa,
       date: new Date().toISOString().slice(0, 10),
       hours,
       description: `Tracked time on ${c.name}`,
@@ -195,8 +205,7 @@ function Time() {
       status: "draft",
     };
     timesheetEntriesTable.add(newEntry);
-    setClockedIn(false);
-    setSeconds(0);
+    clearActiveClock();
     toast.success(`Logged ${hours}h to ${c.code}`, {
       description: "Saved as draft in your timesheet.",
       icon: <Timer className="h-4 w-4" />,
@@ -295,7 +304,7 @@ function Time() {
     bulk.clear(); /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [filterCommessa, filterStatus, q]);
 
-  const activeC = commessaById(activeCommessa);
+  const activeC = commessaById(activeClock?.commessaId ?? activeCommessa);
 
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
@@ -407,7 +416,7 @@ function Time() {
             </div>
 
             <Button
-              onClick={() => (clockedIn ? stopClockAndLog() : setClockedIn(true))}
+              onClick={() => (clockedIn ? stopClockAndLog() : startActiveClock(activeCommessa))}
               className={cn(
                 "w-full mt-4 press-scale transition-colors",
                 clockedIn
@@ -542,11 +551,11 @@ function Time() {
             entries={entries}
             templates={templates}
             onSaveTemplate={(t) => {
-              setTemplates((ts) => [...ts, { ...t, id: `tt-${Date.now()}` }]);
+              timesheetTemplatesTable.add(t);
               toast.success(`Template "${t.name}" saved`);
             }}
             onDeleteTemplate={(id) => {
-              setTemplates((ts) => ts.filter((t) => t.id !== id));
+              timesheetTemplatesTable.remove(id);
               toast("Template removed");
             }}
             onAdd={(data) => saveEntry(data)}

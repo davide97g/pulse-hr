@@ -28,6 +28,7 @@ import { PageHeader } from "@/components/app/AppShell";
 import { NewBadge } from "@/components/app/NewBadge";
 import { commesse, commessaById, type FocusSession } from "@/lib/mock-data";
 import { focusSessionsTable, useFocusSessions } from "@/lib/tables/focusSessions";
+import { updateFocusPrefs, useFocusPrefs } from "@/lib/focus-prefs";
 import { useWorkspace } from "@/components/app/WorkspaceContext";
 import { cn } from "@/lib/utils";
 
@@ -50,12 +51,15 @@ function FocusPage() {
   useEffect(() => {
     setCommessaId(workspace.activeCommessaId);
   }, [workspace.activeCommessaId]);
-  const [duration, setDuration] = useState(50);
+  const prefs = useFocusPrefs();
+  const { duration, declineMeetings, muteSlack, soundscape } = prefs;
+  const setDuration = (m: number) => updateFocusPrefs({ duration: m });
+  const setDeclineMeetings = (v: boolean) => updateFocusPrefs({ declineMeetings: v });
+  const setMuteSlack = (v: boolean) => updateFocusPrefs({ muteSlack: v });
+  const setSoundscape = (v: "lofi" | "rain" | "brown" | "off") =>
+    updateFocusPrefs({ soundscape: v });
   const [running, setRunning] = useState(false);
-  const [remaining, setRemaining] = useState(50 * 60);
-  const [declineMeetings, setDeclineMeetings] = useState(true);
-  const [muteSlack, setMuteSlack] = useState(true);
-  const [soundscape, setSoundscape] = useState<"lofi" | "rain" | "brown" | "off">("lofi");
+  const [remaining, setRemaining] = useState(duration * 60);
   const tickRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {

@@ -51,7 +51,8 @@ import {
 import { PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@/components/app/EmptyState";
 import { SkeletonRows } from "@/components/app/SkeletonList";
-import { docsSeed, type Doc } from "@/lib/mock-data";
+import { type Doc } from "@/lib/mock-data";
+import { docsTable, useDocs } from "@/lib/tables/docs";
 import { useFullName } from "@/lib/current-user";
 import { cn } from "@/lib/utils";
 import { useUrlParam } from "@/lib/useUrlParam";
@@ -66,7 +67,7 @@ const FOLDERS = ["Contracts", "Policies", "Templates", "Tax forms", "Onboarding"
 
 function Documents() {
   const me = useFullName() || "You";
-  const [list, setList] = useState<Doc[]>(docsSeed);
+  const list = useDocs();
   const [folderRaw, setFolderRaw] = useUrlParam("folder");
   const folder = folderRaw || null;
   const setFolder = (v: string | null) => setFolderRaw(v);
@@ -93,9 +94,9 @@ function Documents() {
   );
 
   const remove = (d: Doc) => {
-    setList((ls) => ls.filter((x) => x.id !== d.id));
+    docsTable.remove(d.id);
     toast("Document deleted", {
-      action: { label: "Undo", onClick: () => setList((ls) => [d, ...ls]) },
+      action: { label: "Undo", onClick: () => docsTable.add(d) },
     });
   };
 
@@ -110,6 +111,7 @@ function Documents() {
               variant="outline"
               size="sm"
               className="press-scale"
+              // mock: no backing data — folders are a hard-coded set.
               onClick={() => toast("Folder creator opened")}
             >
               <FolderPlus className="h-4 w-4 mr-1.5" />
@@ -213,6 +215,7 @@ function Documents() {
                 <tr
                   key={d.id}
                   className="border-t hover:bg-muted/40 cursor-pointer group transition-colors"
+                  // mock: preview/viewer not implemented.
                   onClick={() => toast.success(`Opening ${d.name}`)}
                 >
                   <td className="px-4 py-2.5">
@@ -236,6 +239,7 @@ function Documents() {
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        {/* mock: no real file to stream. */}
                         <DropdownMenuItem onClick={() => toast.success("Download started")}>
                           <Download className="h-4 w-4 mr-2" />
                           Download
@@ -244,6 +248,7 @@ function Documents() {
                           <Pencil className="h-4 w-4 mr-2" />
                           Rename
                         </DropdownMenuItem>
+                        {/* mock: e-sign provider integration not wired. */}
                         <DropdownMenuItem onClick={() => toast.success("Signature request sent")}>
                           Request e-sign
                         </DropdownMenuItem>
@@ -273,16 +278,14 @@ function Documents() {
           </DialogHeader>
           <UploadForm
             onSave={(data) => {
-              const d: Doc = {
-                id: `d-${Date.now()}`,
+              const d = docsTable.add({
                 name: data.name,
                 folder: data.folder,
                 size: "— KB",
                 updated: "just now",
                 status: "draft",
                 owner: me,
-              };
-              setList((ls) => [d, ...ls]);
+              });
               toast.success("Uploaded", { description: d.name });
               setUploadOpen(false);
             }}
@@ -300,9 +303,7 @@ function Documents() {
             <RenameForm
               doc={rename}
               onSave={(name) => {
-                setList((ls) =>
-                  ls.map((x) => (x.id === rename.id ? { ...x, name, updated: "just now" } : x)),
-                );
+                docsTable.update(rename.id, { name, updated: "just now" });
                 toast.success("Renamed");
                 setRename(null);
               }}

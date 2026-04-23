@@ -59,7 +59,12 @@ import { useAuth } from "@clerk/react";
 import { apiFetch } from "@/lib/api-client";
 import { IntegrationConnectCard } from "@/components/pm/IntegrationConnectCard";
 import { useIntegrations, updateIntegration } from "@/lib/integrations-store";
-import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
+import { resetWorkspace, setWorkspaceName, useWorkspaceStatus } from "@/lib/workspace";
+import {
+  updateCompanySettings,
+  updateSecurity,
+  useCompanySettings,
+} from "@/lib/company-settings";
 import { cn } from "@/lib/utils";
 import { useUrlParam } from "@/lib/useUrlParam";
 
@@ -78,17 +83,13 @@ function Settings() {
   const [confirmReset, setConfirmReset] = useState(false);
   const navigate = useNavigate();
   const workspace = useWorkspaceStatus();
-  const [security, setSecurity] = useState({
-    twofa: true,
-    sso: true,
-    sessionTimeout: false,
-    ipAllowlist: false,
-  });
+  const persisted = useCompanySettings();
+  const security = persisted.security;
   const [company, setCompany] = useState(() => ({
     name: workspace.name || "Acme",
-    legal: `${workspace.name || "Acme"} Holdings LLC`,
-    country: "United States",
-    currency: "USD",
+    legal: persisted.legal || `${workspace.name || "Acme"} Holdings LLC`,
+    country: persisted.country,
+    currency: persisted.currency,
   }));
   const [dirty, setDirty] = useState(false);
   const [auditQ, setAuditQ] = useState("");
@@ -219,6 +220,12 @@ function Settings() {
                 className="ml-auto press-scale"
                 disabled={!dirty}
                 onClick={() => {
+                  setWorkspaceName(company.name);
+                  updateCompanySettings({
+                    legal: company.legal,
+                    country: company.country,
+                    currency: company.currency,
+                  });
                   toast.success("Company settings saved");
                   setDirty(false);
                 }}
@@ -315,7 +322,7 @@ function Settings() {
                 <Switch
                   checked={security[s.k as keyof typeof security]}
                   onCheckedChange={(v) => {
-                    setSecurity((x) => ({ ...x, [s.k]: v }));
+                    updateSecurity({ [s.k]: v } as Partial<typeof security>);
                     toast.success(`${s.l} ${v ? "enabled" : "disabled"}`);
                   }}
                 />
@@ -437,6 +444,7 @@ function Settings() {
                 </SelectContent>
               </Select>
             </div>
+            {/* mock: locale form is uncontrolled (defaultValue only) — nothing to persist yet. */}
             <Button className="press-scale" onClick={() => toast.success("Locale saved")}>
               Save
             </Button>
