@@ -1,0 +1,48 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Introduction/Principles" />
+
+# Principles
+
+From `docs/brand/aesthetic.md`. These are the commitments every surface is graded against.
+
+### 1. Lightweight
+
+> No design that weighs the page down. Prefer white space to ornament, borders to blocks, structure to surface.
+
+### 2. Translucent
+
+> Surfaces breathe. Float, not stack. Glass panels where depth adds meaning; plain cards where it doesn't.
+
+### 3. Quiet by default
+
+> We don't dance for the user. Motion is purposeful; color is reserved for signal. Loud is a tool, not a default.
+
+### 4. Editorial
+
+> Fraunces for display, Geist for body, JetBrains for code. Tight leading, wide tracking on labels, plenty of white space between sections.
+
+### 5. Purposeful motion
+
+> Three kinds only: entrance (`fade-in`, `pop-in`, `stagger-in`), feedback (`press-scale`, `pulse-dot`), loading (`shimmer`, `typing-dot`). Everything else is decoration and gets cut.
+
+### 6. Two rooms, one world
+
+> The product app and the marketing site are two rooms in the same building. Same palette, same type scale, same motion curves — different furniture.
+
+## Voice
+
+From `docs/brand/foundation.md` §10: **honest, terse, technical-without-bravado**.
+
+- Use a period at the end of UI microcopy.
+- "Workspace" not "organization". "Commessa" not "project code".
+- No emoji in product UI. They're fine in marketing.
+- Error copy states what happened, not what's wrong. "Couldn't sign you in" beats "Error 403".
+
+## Anti-patterns
+
+These exist in the codebase today and are scheduled for removal (see `docs/brand/aesthetic.md` §2 — "Seven concrete moves").
+
+- 7 role themes collapsing to 2 (light + dark). The role tint becomes an accent token per user.
+- Loud entrance animations (scale from 0.5, bounce-back). Kept: the `fade-in` / `pop-in` pair. Retired: everything more theatrical.
+- Over-saturated "NEW" / "Labs" badges in dense surfaces. Quiet variants preferred unless the badge is the hero of its screen.

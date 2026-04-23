@@ -1,0 +1,13 @@
+@import "tailwindcss" source(none);
+@source "../../../packages/ui/src";
+@source "../docs";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@import "@pulse-hr/tokens/index.css";
+
+/* Storybook-specific polish */
+.sb-story {
+  padding: 1.5rem;
+}
