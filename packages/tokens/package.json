@@ -1,15 +1,23 @@
 {
-  "name": "@workflows-people/tokens",
+  "name": "@pulse-hr/tokens",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
-  "description": "Shared design tokens (colors, fonts, radii, motion) consumed by both apps/app and apps/marketing.",
+  "description": "Shared design tokens (color, font, radius, motion, shadow, themes) consumed by apps/app, apps/feedback, apps/marketing, apps/reel, and apps/design.",
   "exports": {
     ".": "./src/index.ts",
+    "./index.css": "./src/index.css",
     "./tokens.css": "./src/tokens.css",
+    "./motion.css": "./src/motion.css",
+    "./base.css": "./src/base.css",
+    "./wp-aliases.css": "./src/wp-aliases.css",
     "./tailwind": "./src/tailwind.ts"
   },
   "files": [
     "src"
+  ],
+  "sideEffects": [
+    "src/*.css",
+    "src/themes/*.css"
   ]
 }

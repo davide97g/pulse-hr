@@ -40,7 +40,7 @@ pulse-hr/
 │   └── reel/          # @pulse-hr/reel — Remotion demo videos
 ├── packages/
 │   ├── shared/        # @pulse-hr/shared — shared types & utils
-│   └── tokens/        # @workflows-people/tokens — design tokens shared across apps
+│   └── tokens/        # @pulse-hr/tokens — design tokens shared across apps
 └── docs/              # brand assets, internal docs
 ```
 

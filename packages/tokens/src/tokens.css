@@ -1,57 +1,93 @@
 /*
- * @workflows-people/tokens — single source of truth for design primitives
- * shared by the product app (apps/app) and the marketing site (apps/marketing).
+ * @pulse-hr/tokens — canonical token layer.
  *
- * Import this file from each consumer's root stylesheet *before* Tailwind's
- * @theme block so the `--color-*` and `--font-*` CSS variables land first and
- * Tailwind can pick them up via its v4 CSS-first config.
+ * Structure:
+ *   1. @theme inline — maps Tailwind v4 `--color-*` / `--radius-*` / `--shadow-*`
+ *      utility sources to the semantic custom properties below. Keep this in sync
+ *      with the semantic names in themes/*.css.
+ *   2. Calendar day-status — theme-independent, so day semantics never shift
+ *      when the user flips a role theme.
+ *   3. Theme palettes — one file per theme under ./themes, imported at the end.
+ *
+ * Consumers should import `@pulse-hr/tokens/index.css` (aggregator with base +
+ * motion) rather than this file directly.
  */
 
-:root {
-  /* ---------- Brand & neutrals ---------- */
-  --wp-color-brand: #b4ff39;
-  --wp-color-brand-hover: #c6ff5a;
-  --wp-color-ink: #0b0b0d;
-  --wp-color-cream: #f2f2ee;
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 
-  /* ---------- Role accents (used by app themes + marketing role strip) ---------- */
-  --wp-color-employee: #b4ff39; /* lime */
-  --wp-color-manager: #ffbf4a; /* amber */
-  --wp-color-hr: #ff8a7a; /* coral */
-  --wp-color-admin: #6fd8ff; /* electric cyan */
-  --wp-color-finance: #c48fff; /* violet */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-labs: var(--labs);
+  --color-labs-foreground: var(--labs-foreground);
 
-  /* ---------- Semantic status accents ---------- */
-  --wp-color-success: #b4ff39;
-  --wp-color-warning: #ffbf4a;
-  --wp-color-danger: #ff8a7a;
-  --wp-color-info: #6fd8ff;
+  --shadow-card: var(--shadow-card);
+  --shadow-panel: var(--shadow-panel);
+  --shadow-pop: var(--shadow-pop);
 
-  /* ---------- Typography ---------- */
-  --wp-font-display: "Fraunces Variable", "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
-  --wp-font-sans:
-    "Geist Variable", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    sans-serif;
-  --wp-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --color-cal-vacation: var(--cal-vacation);
+  --color-cal-sick: var(--cal-sick);
+  --color-cal-personal: var(--cal-personal);
+  --color-cal-parental: var(--cal-parental);
+  --color-cal-holiday: var(--cal-holiday);
+}
 
-  /* ---------- Radii ---------- */
-  --wp-radius-xs: 4px;
-  --wp-radius-sm: 6px;
-  --wp-radius-md: 8px;
-  --wp-radius-lg: 12px;
-  --wp-radius-xl: 16px;
-  --wp-radius-2xl: 20px;
-  --wp-radius-full: 9999px;
+:root,
+html[data-theme] {
+  --cal-vacation: var(--primary);
+  --cal-sick: color-mix(in oklch, var(--destructive) 60%, transparent);
+  --cal-personal: var(--muted-foreground);
+  --cal-parental: var(--muted-foreground);
+  --cal-holiday: oklch(0.82 0.17 85);
+}
 
-  /* ---------- Motion ---------- */
-  --wp-duration-fast: 120ms;
-  --wp-duration-normal: 220ms;
-  --wp-duration-slow: 420ms;
-  --wp-ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --wp-ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+@import "./themes/light.css";
+@import "./themes/_base-dark.css";
+@import "./themes/dark.css";
+@import "./themes/employee.css";
+@import "./themes/hr.css";
+@import "./themes/admin.css";
+@import "./themes/manager.css";
+@import "./themes/finance.css";
 
-  /* ---------- Elevation (dark-theme shadow stops) ---------- */
-  --wp-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --wp-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.45);
-  --wp-shadow-3: 0 30px 80px -30px rgba(0, 0, 0, 0.8);
+/* Selection uses the active theme's primary colour. */
+html[data-theme="dark"] ::selection,
+html[data-theme="employee"] ::selection,
+html[data-theme="hr"] ::selection,
+html[data-theme="admin"] ::selection,
+html[data-theme="manager"] ::selection,
+html[data-theme="finance"] ::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
 }

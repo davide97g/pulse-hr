@@ -1,0 +1,19 @@
+/*
+ * @pulse-hr/tokens — single entry point for apps.
+ *
+ * Consumer pattern:
+ *   apps/app/src/styles.css:
+ *     @import "tailwindcss" source(none);
+ *     @source "../src";
+ *     @import "tw-animate-css";
+ *     @import "@pulse-hr/tokens/index.css";
+ *     @custom-variant dark (&:is(.dark *));
+ *
+ * Note: this file does NOT import Tailwind itself — each consumer owns its
+ * Tailwind setup (plugin flavours, @source patterns) and just pulls in the
+ * token + base + motion layers here.
+ */
+
+@import "./base.css";
+@import "./tokens.css";
+@import "./motion.css";

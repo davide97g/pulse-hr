@@ -1,0 +1,47 @@
+/*
+ * DEPRECATED compatibility shim — maps legacy `--wp-*` tokens to the canonical
+ * semantic tokens. Kept temporarily so apps/marketing and apps/reel keep
+ * working through the extraction rollout. Remove after Phase 5 (marketing +
+ * reel migrated to semantic names).
+ */
+:root {
+  --wp-color-brand: var(--labs);
+  --wp-color-brand-hover: oklch(0.88 0.22 130);
+  --wp-color-ink: #0b0b0d;
+  --wp-color-cream: #f2f2ee;
+
+  --wp-color-employee: #b4ff39;
+  --wp-color-manager: #ffbf4a;
+  --wp-color-hr: #ff8a7a;
+  --wp-color-admin: #6fd8ff;
+  --wp-color-finance: #c48fff;
+
+  --wp-color-success: #b4ff39;
+  --wp-color-warning: #ffbf4a;
+  --wp-color-danger: #ff8a7a;
+  --wp-color-info: #6fd8ff;
+
+  --wp-font-display: "Fraunces Variable", "Fraunces", ui-serif, Georgia, serif;
+  --wp-font-sans:
+    "Geist Variable", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+  --wp-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --wp-radius-xs: 4px;
+  --wp-radius-sm: 6px;
+  --wp-radius-md: 8px;
+  --wp-radius-lg: 12px;
+  --wp-radius-xl: 16px;
+  --wp-radius-2xl: 20px;
+  --wp-radius-full: 9999px;
+
+  --wp-duration-fast: 120ms;
+  --wp-duration-normal: 220ms;
+  --wp-duration-slow: 420ms;
+  --wp-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --wp-ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+
+  --wp-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --wp-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --wp-shadow-3: 0 30px 80px -30px rgba(0, 0, 0, 0.8);
+}
