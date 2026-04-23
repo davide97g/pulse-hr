@@ -24,6 +24,7 @@ import {
   Plus,
   Lightbulb,
   Sparkles,
+  MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -57,6 +58,36 @@ const COLUMNS: { status: CommentStatus; label: string; accent: string }[] = [
   { status: "wont_do", label: "Won't do", accent: "bg-muted-foreground" },
 ];
 
+type BoardItemKind = "comment" | "idea" | "improvement";
+
+function itemKind(item: BoardItem): BoardItemKind {
+  return item.kind === "comment" ? "comment" : item.type;
+}
+
+const KIND_META: Record<
+  BoardItemKind,
+  { label: string; plural: string; icon: typeof Lightbulb; cls: string }
+> = {
+  comment: {
+    label: "COMMENT",
+    plural: "Comments",
+    icon: MessageCircle,
+    cls: "bg-info/10 text-info border-info/30",
+  },
+  idea: {
+    label: "IDEA",
+    plural: "Ideas",
+    icon: Lightbulb,
+    cls: "bg-primary/10 text-primary border-primary/30",
+  },
+  improvement: {
+    label: "IMPROVEMENT",
+    plural: "Improvements",
+    icon: Sparkles,
+    cls: "bg-warning/15 text-warning border-warning/30",
+  },
+};
+
 const EMPTY_BOARD: BoardBuckets = {
   open: [],
   triaged: [],
@@ -78,6 +109,7 @@ function FeedbackBoard() {
   const [query, setQuery] = useState("");
   const [routeFilter, setRouteFilter] = useState<string>("");
   const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
+  const [activeKinds, setActiveKinds] = useState<Set<BoardItemKind>>(new Set());
   const [threadRaw, setThreadRaw] = useUrlParam("thread");
   const threadId = threadRaw || null;
   const setThreadId = (v: string | null) => setThreadRaw(v);
@@ -255,9 +287,16 @@ function FeedbackBoard() {
       .map(([tag, count]) => ({ tag, count }));
   }, [allItems]);
 
+  const kindCounts = useMemo(() => {
+    const c: Record<BoardItemKind, number> = { comment: 0, idea: 0, improvement: 0 };
+    for (const it of allItems) c[itemKind(it)] += 1;
+    return c;
+  }, [allItems]);
+
   const filteredBoard = useMemo(() => {
     const q = query.trim().toLowerCase();
     const passes = (c: BoardItem) => {
+      if (activeKinds.size > 0 && !activeKinds.has(itemKind(c))) return false;
       if (routeFilter && (c.kind !== "comment" || c.route !== routeFilter)) return false;
       if (activeTags.size > 0) {
         if (c.kind !== "comment") return false;
@@ -277,7 +316,7 @@ function FeedbackBoard() {
       wont_do: board.wont_do.filter(passes),
     };
     return next;
-  }, [board, query, routeFilter, activeTags]);
+  }, [board, query, routeFilter, activeTags, activeKinds]);
 
   const totals = {
     open: filteredBoard.open.length,
@@ -293,7 +332,8 @@ function FeedbackBoard() {
     board.planned.length +
     board.shipped.length +
     board.wont_do.length;
-  const filterActive = query !== "" || routeFilter !== "" || activeTags.size > 0;
+  const filterActive =
+    query !== "" || routeFilter !== "" || activeTags.size > 0 || activeKinds.size > 0;
 
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto w-full">
@@ -365,10 +405,21 @@ function FeedbackBoard() {
                 return next;
               });
             }}
+            kindCounts={kindCounts}
+            activeKinds={activeKinds}
+            onToggleKind={(k) => {
+              setActiveKinds((prev) => {
+                const next = new Set(prev);
+                if (next.has(k)) next.delete(k);
+                else next.add(k);
+                return next;
+              });
+            }}
             onReset={() => {
               setQuery("");
               setRouteFilter("");
               setActiveTags(new Set());
+              setActiveKinds(new Set());
             }}
             filterActive={filterActive}
           />
@@ -431,6 +482,9 @@ function FilterBar({
   tags,
   activeTags,
   onToggleTag,
+  kindCounts,
+  activeKinds,
+  onToggleKind,
   onReset,
   filterActive,
 }: {
@@ -442,11 +496,46 @@ function FilterBar({
   tags: { tag: string; count: number }[];
   activeTags: Set<string>;
   onToggleTag: (tag: string) => void;
+  kindCounts: Record<BoardItemKind, number>;
+  activeKinds: Set<BoardItemKind>;
+  onToggleKind: (kind: BoardItemKind) => void;
   onReset: () => void;
   filterActive: boolean;
 }) {
+  const KINDS: BoardItemKind[] = ["comment", "idea", "improvement"];
   return (
     <div className="mb-4 rounded-[var(--radius-md)] border bg-background p-3 space-y-2">
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {KINDS.map((k) => {
+          const meta = KIND_META[k];
+          const Icon = meta.icon;
+          const active = activeKinds.has(k);
+          const count = kindCounts[k];
+          return (
+            <button
+              key={k}
+              type="button"
+              onClick={() => onToggleKind(k)}
+              aria-pressed={active}
+              className={cn(
+                "inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full border text-xs font-medium transition-colors press-scale",
+                active ? meta.cls : "bg-background hover:bg-muted text-muted-foreground",
+              )}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {meta.plural}
+              <span
+                className={cn(
+                  "ml-0.5 tabular-nums",
+                  active ? "opacity-80" : "opacity-60",
+                )}
+              >
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
       <div className="flex items-center gap-2 flex-wrap">
         <label className="relative flex items-center h-9 flex-1 min-w-[220px]">
           <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
@@ -588,24 +677,8 @@ function DraggableCard({
   );
 }
 
-const PROPOSAL_TYPE_META: Record<
-  ProposalType,
-  { label: string; icon: typeof Lightbulb; cls: string }
-> = {
-  improvement: {
-    label: "IMPROVEMENT",
-    icon: Sparkles,
-    cls: "bg-warning/15 text-warning border-warning/30",
-  },
-  idea: {
-    label: "IDEA",
-    icon: Lightbulb,
-    cls: "bg-primary/10 text-primary border-primary/30",
-  },
-};
-
-function TypeBadge({ type, size = "sm" }: { type: ProposalType; size?: "sm" | "md" }) {
-  const meta = PROPOSAL_TYPE_META[type];
+function KindBadge({ kind, size = "sm" }: { kind: BoardItemKind; size?: "sm" | "md" }) {
+  const meta = KIND_META[kind];
   const Icon = meta.icon;
   const h = size === "md" ? "h-6 px-2 text-[11px]" : "h-5 px-1.5 text-[10px]";
   return (
@@ -620,6 +693,10 @@ function TypeBadge({ type, size = "sm" }: { type: ProposalType; size?: "sm" | "m
       {meta.label}
     </span>
   );
+}
+
+function TypeBadge({ type, size = "sm" }: { type: ProposalType; size?: "sm" | "md" }) {
+  return <KindBadge kind={type} size={size} />;
 }
 
 function FeedbackCard({
@@ -724,7 +801,8 @@ function FeedbackCard({
             {item.body}
           </p>
           <div className="mt-2 flex items-center flex-wrap gap-1.5">
-            {item.kind === "comment" ? (
+            <KindBadge kind={itemKind(item)} />
+            {item.kind === "comment" && (
               <Link
                 data-card-stop
                 to={item.route}
@@ -736,8 +814,6 @@ function FeedbackCard({
                 <ExternalLink className="h-3 w-3" />
                 {item.route}
               </Link>
-            ) : (
-              <TypeBadge type={(item as BoardItem & { kind: "proposal" }).type} />
             )}
             <span
               className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] text-muted-foreground"
@@ -850,7 +926,7 @@ function ThreadSidebar({
 
   const headerDescription = item
     ? item.kind === "proposal"
-      ? `${PROPOSAL_TYPE_META[item.type].label.toLowerCase()} proposal`
+      ? `${KIND_META[item.type].label.toLowerCase()} proposal`
       : `On ${item.route}`
     : "";
 
