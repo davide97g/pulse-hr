@@ -43,6 +43,7 @@ import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
+import { Route as ProposalIdRouteImport } from './routes/proposal.$id'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
 import { Route as PeopleEmployeeIdRouteImport } from './routes/people_.$employeeId'
 import { Route as OfficesOfficeIdRouteImport } from './routes/offices.$officeId'
@@ -52,6 +53,7 @@ import { Route as DocsKudosRouteImport } from './routes/docs.kudos'
 import { Route as DocsIntegrationsRouteImport } from './routes/docs.integrations'
 import { Route as DocsEmployeeScoreRouteImport } from './routes/docs.employee-score'
 import { Route as DocsClientsProjectsRouteImport } from './routes/docs.clients-projects'
+import { Route as CommentIdRouteImport } from './routes/comment.$id'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as AdminSidebarVisibilityRouteImport } from './routes/admin.sidebar-visibility'
 import { Route as AdminSendEmailRouteImport } from './routes/admin.send-email'
@@ -227,6 +229,11 @@ const ClientsIndexRoute = ClientsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ClientsRoute,
 } as any)
+const ProposalIdRoute = ProposalIdRouteImport.update({
+  id: '/proposal/$id',
+  path: '/proposal/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
   id: '/projects/$projectId',
   path: '/projects/$projectId',
@@ -271,6 +278,11 @@ const DocsClientsProjectsRoute = DocsClientsProjectsRouteImport.update({
   id: '/clients-projects',
   path: '/clients-projects',
   getParentRoute: () => DocsRoute,
+} as any)
+const CommentIdRoute = CommentIdRouteImport.update({
+  id: '/comment/$id',
+  path: '/comment/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ClientsClientIdRoute = ClientsClientIdRouteImport.update({
   id: '/$clientId',
@@ -329,6 +341,7 @@ export interface FileRoutesByFullPath {
   '/admin/send-email': typeof AdminSendEmailRoute
   '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
+  '/comment/$id': typeof CommentIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
   '/docs/employee-score': typeof DocsEmployeeScoreRoute
   '/docs/integrations': typeof DocsIntegrationsRoute
@@ -338,6 +351,7 @@ export interface FileRoutesByFullPath {
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/people/$employeeId': typeof PeopleEmployeeIdRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/proposal/$id': typeof ProposalIdRoute
   '/clients/': typeof ClientsIndexRoute
   '/docs/': typeof DocsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
@@ -376,6 +390,7 @@ export interface FileRoutesByTo {
   '/admin/send-email': typeof AdminSendEmailRoute
   '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
+  '/comment/$id': typeof CommentIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
   '/docs/employee-score': typeof DocsEmployeeScoreRoute
   '/docs/integrations': typeof DocsIntegrationsRoute
@@ -385,6 +400,7 @@ export interface FileRoutesByTo {
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/people/$employeeId': typeof PeopleEmployeeIdRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/proposal/$id': typeof ProposalIdRoute
   '/clients': typeof ClientsIndexRoute
   '/docs': typeof DocsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
@@ -426,6 +442,7 @@ export interface FileRoutesById {
   '/admin/send-email': typeof AdminSendEmailRoute
   '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
+  '/comment/$id': typeof CommentIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
   '/docs/employee-score': typeof DocsEmployeeScoreRoute
   '/docs/integrations': typeof DocsIntegrationsRoute
@@ -435,6 +452,7 @@ export interface FileRoutesById {
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/people_/$employeeId': typeof PeopleEmployeeIdRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/proposal/$id': typeof ProposalIdRoute
   '/clients/': typeof ClientsIndexRoute
   '/docs/': typeof DocsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
@@ -477,6 +495,7 @@ export interface FileRouteTypes {
     | '/admin/send-email'
     | '/admin/sidebar-visibility'
     | '/clients/$clientId'
+    | '/comment/$id'
     | '/docs/clients-projects'
     | '/docs/employee-score'
     | '/docs/integrations'
@@ -486,6 +505,7 @@ export interface FileRouteTypes {
     | '/offices/$officeId'
     | '/people/$employeeId'
     | '/projects/$projectId'
+    | '/proposal/$id'
     | '/clients/'
     | '/docs/'
     | '/offices/$officeId/$roomId'
@@ -524,6 +544,7 @@ export interface FileRouteTypes {
     | '/admin/send-email'
     | '/admin/sidebar-visibility'
     | '/clients/$clientId'
+    | '/comment/$id'
     | '/docs/clients-projects'
     | '/docs/employee-score'
     | '/docs/integrations'
@@ -533,6 +554,7 @@ export interface FileRouteTypes {
     | '/offices/$officeId'
     | '/people/$employeeId'
     | '/projects/$projectId'
+    | '/proposal/$id'
     | '/clients'
     | '/docs'
     | '/offices/$officeId/$roomId'
@@ -573,6 +595,7 @@ export interface FileRouteTypes {
     | '/admin/send-email'
     | '/admin/sidebar-visibility'
     | '/clients/$clientId'
+    | '/comment/$id'
     | '/docs/clients-projects'
     | '/docs/employee-score'
     | '/docs/integrations'
@@ -582,6 +605,7 @@ export interface FileRouteTypes {
     | '/offices/$officeId'
     | '/people_/$employeeId'
     | '/projects/$projectId'
+    | '/proposal/$id'
     | '/clients/'
     | '/docs/'
     | '/offices/$officeId/$roomId'
@@ -622,8 +646,10 @@ export interface RootRouteChildren {
   WelcomeRoute: typeof WelcomeRoute
   AdminSendEmailRoute: typeof AdminSendEmailRoute
   AdminSidebarVisibilityRoute: typeof AdminSidebarVisibilityRoute
+  CommentIdRoute: typeof CommentIdRoute
   PeopleEmployeeIdRoute: typeof PeopleEmployeeIdRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
+  ProposalIdRoute: typeof ProposalIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -866,6 +892,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClientsIndexRouteImport
       parentRoute: typeof ClientsRoute
     }
+    '/proposal/$id': {
+      id: '/proposal/$id'
+      path: '/proposal/$id'
+      fullPath: '/proposal/$id'
+      preLoaderRoute: typeof ProposalIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/$projectId': {
       id: '/projects/$projectId'
       path: '/projects/$projectId'
@@ -928,6 +961,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/docs/clients-projects'
       preLoaderRoute: typeof DocsClientsProjectsRouteImport
       parentRoute: typeof DocsRoute
+    }
+    '/comment/$id': {
+      id: '/comment/$id'
+      path: '/comment/$id'
+      fullPath: '/comment/$id'
+      preLoaderRoute: typeof CommentIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/clients/$clientId': {
       id: '/clients/$clientId'
@@ -1061,8 +1101,10 @@ const rootRouteChildren: RootRouteChildren = {
   WelcomeRoute: WelcomeRoute,
   AdminSendEmailRoute: AdminSendEmailRoute,
   AdminSidebarVisibilityRoute: AdminSidebarVisibilityRoute,
+  CommentIdRoute: CommentIdRoute,
   PeopleEmployeeIdRoute: PeopleEmployeeIdRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
+  ProposalIdRoute: ProposalIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

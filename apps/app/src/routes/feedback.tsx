@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ChevronRight, Trophy, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   DndContext,
@@ -43,6 +44,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useUrlParam } from "@/lib/useUrlParam";
+import {
+  KindBadge,
+  KIND_META,
+  itemKind,
+  type BoardItemKind as SharedBoardItemKind,
+} from "@/components/feedback/shared";
 
 export const Route = createFileRoute("/feedback")({
   head: () => ({ meta: [{ title: "Feedback — Pulse" }] }),
@@ -58,35 +65,7 @@ const COLUMNS: { status: CommentStatus; label: string; accent: string }[] = [
   { status: "wont_do", label: "Won't do", accent: "bg-muted-foreground" },
 ];
 
-type BoardItemKind = "comment" | "idea" | "improvement";
-
-function itemKind(item: BoardItem): BoardItemKind {
-  return item.kind === "comment" ? "comment" : item.type;
-}
-
-const KIND_META: Record<
-  BoardItemKind,
-  { label: string; plural: string; icon: typeof Lightbulb; cls: string }
-> = {
-  comment: {
-    label: "COMMENT",
-    plural: "Comments",
-    icon: MessageCircle,
-    cls: "bg-info/10 text-info border-info/30",
-  },
-  idea: {
-    label: "IDEA",
-    plural: "Ideas",
-    icon: Lightbulb,
-    cls: "bg-primary/10 text-primary border-primary/30",
-  },
-  improvement: {
-    label: "IMPROVEMENT",
-    plural: "Improvements",
-    icon: Sparkles,
-    cls: "bg-warning/15 text-warning border-warning/30",
-  },
-};
+type BoardItemKind = SharedBoardItemKind;
 
 const EMPTY_BOARD: BoardBuckets = {
   open: [],
@@ -110,6 +89,11 @@ function FeedbackBoard() {
   const [routeFilter, setRouteFilter] = useState<string>("");
   const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
   const [activeKinds, setActiveKinds] = useState<Set<BoardItemKind>>(new Set());
+  const [tabRaw, setTabRaw] = useUrlParam("tab");
+  const tab: "comments" | "proposals" | "contributors" =
+    tabRaw === "proposals" || tabRaw === "contributors" ? tabRaw : "comments";
+  const setTab = (v: "comments" | "proposals" | "contributors") =>
+    setTabRaw(v === "comments" ? null : v);
   const [threadRaw, setThreadRaw] = useUrlParam("thread");
   const threadId = threadRaw || null;
   const setThreadId = (v: string | null) => setThreadRaw(v);
@@ -296,6 +280,8 @@ function FeedbackBoard() {
   const filteredBoard = useMemo(() => {
     const q = query.trim().toLowerCase();
     const passes = (c: BoardItem) => {
+      if (tab === "comments" && c.kind !== "comment") return false;
+      if (tab === "proposals" && c.kind !== "proposal") return false;
       if (activeKinds.size > 0 && !activeKinds.has(itemKind(c))) return false;
       if (routeFilter && (c.kind !== "comment" || c.route !== routeFilter)) return false;
       if (activeTags.size > 0) {
@@ -316,7 +302,7 @@ function FeedbackBoard() {
       wont_do: board.wont_do.filter(passes),
     };
     return next;
-  }, [board, query, routeFilter, activeTags, activeKinds]);
+  }, [board, query, routeFilter, activeTags, activeKinds, tab]);
 
   const totals = {
     open: filteredBoard.open.length,
@@ -339,7 +325,7 @@ function FeedbackBoard() {
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto w-full">
       <div className="mb-5 flex items-end justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-display tracking-tight">Feature board</h1>
+          <h1 className="text-2xl font-display tracking-tight">Feedback</h1>
           <p className="text-sm text-muted-foreground mt-1 max-w-[560px]">
             Every pin and proposal lands here. Upvote what matters, reply to what you recognize.{" "}
             {admin ? (
@@ -383,7 +369,18 @@ function FeedbackBoard() {
         </div>
       </div>
 
-      {!loaded ? (
+      <TabBar
+        tab={tab}
+        onTab={setTab}
+        counts={{
+          comments: allItems.filter((i) => i.kind === "comment").length,
+          proposals: allItems.filter((i) => i.kind === "proposal").length,
+        }}
+      />
+
+      {tab === "contributors" ? (
+        <ContributorsPanel items={allItems} loaded={loaded} currentUserId={user?.id ?? null} />
+      ) : !loaded ? (
         <div className="text-sm text-muted-foreground">Loading board…</div>
       ) : totalAllUnfiltered === 0 ? (
         <EmptyState onPropose={openProposal} />
@@ -406,6 +403,9 @@ function FeedbackBoard() {
               });
             }}
             kindCounts={kindCounts}
+            kinds={
+              tab === "proposals" ? (["idea", "improvement"] as BoardItemKind[]) : []
+            }
             activeKinds={activeKinds}
             onToggleKind={(k) => {
               setActiveKinds((prev) => {
@@ -483,6 +483,7 @@ function FilterBar({
   activeTags,
   onToggleTag,
   kindCounts,
+  kinds,
   activeKinds,
   onToggleKind,
   onReset,
@@ -497,16 +498,17 @@ function FilterBar({
   activeTags: Set<string>;
   onToggleTag: (tag: string) => void;
   kindCounts: Record<BoardItemKind, number>;
+  kinds: BoardItemKind[];
   activeKinds: Set<BoardItemKind>;
   onToggleKind: (kind: BoardItemKind) => void;
   onReset: () => void;
   filterActive: boolean;
 }) {
-  const KINDS: BoardItemKind[] = ["comment", "idea", "improvement"];
   return (
     <div className="mb-4 rounded-[var(--radius-md)] border bg-background p-3 space-y-2">
+      {kinds.length > 0 && (
       <div className="flex items-center gap-1.5 flex-wrap">
-        {KINDS.map((k) => {
+        {kinds.map((k) => {
           const meta = KIND_META[k];
           const Icon = meta.icon;
           const active = activeKinds.has(k);
@@ -536,6 +538,7 @@ function FilterBar({
           );
         })}
       </div>
+      )}
       <div className="flex items-center gap-2 flex-wrap">
         <label className="relative flex items-center h-9 flex-1 min-w-[220px]">
           <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
@@ -674,24 +677,6 @@ function DraggableCard({
         admin={admin}
       />
     </div>
-  );
-}
-
-function KindBadge({ kind, size = "sm" }: { kind: BoardItemKind; size?: "sm" | "md" }) {
-  const meta = KIND_META[kind];
-  const Icon = meta.icon;
-  const h = size === "md" ? "h-6 px-2 text-[11px]" : "h-5 px-1.5 text-[10px]";
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 rounded-full border font-semibold tracking-wider",
-        h,
-        meta.cls,
-      )}
-    >
-      <Icon className="h-3 w-3" />
-      {meta.label}
-    </span>
   );
 }
 
@@ -1018,19 +1003,27 @@ function ThreadSidebar({
                       ))}
                     </div>
                   )}
-                  {item.kind === "comment" && (
-                    <div className="mt-3 flex items-center gap-2">
+                  <div className="mt-3 flex items-center flex-wrap gap-2">
+                    {item.kind === "comment" && (
                       <Link
                         to={item.route}
                         search={{ thread: item.id }}
-                        className="inline-flex items-center gap-1 h-7 px-2 rounded-md border bg-background text-[11px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
-                        title={`Open ${item.route}`}
+                        className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-md border bg-background text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary/50 press-scale"
+                        title={`Open ${item.route} with this thread`}
                       >
-                        <ExternalLink className="h-3 w-3" />
+                        <ExternalLink className="h-3.5 w-3.5" />
                         Open in app
                       </Link>
-                    </div>
-                  )}
+                    )}
+                    <Link
+                      to={item.kind === "comment" ? "/comment/$id" : "/proposal/$id"}
+                      params={{ id: item.id }}
+                      className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 press-scale"
+                    >
+                      Open details
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
                 </div>
               </div>
 
@@ -1114,6 +1107,381 @@ function relativeTime(iso: string): string {
 
 function labelFor(status: CommentStatus): string {
   return COLUMNS.find((c) => c.status === status)?.label ?? status;
+}
+
+function TabBar({
+  tab,
+  onTab,
+  counts,
+}: {
+  tab: "comments" | "proposals" | "contributors";
+  onTab: (v: "comments" | "proposals" | "contributors") => void;
+  counts: { comments: number; proposals: number };
+}) {
+  const TABS: {
+    value: "comments" | "proposals" | "contributors";
+    label: string;
+    icon: typeof MessageSquare;
+    count?: number;
+  }[] = [
+    { value: "comments", label: "Comments", icon: MessageCircle, count: counts.comments },
+    { value: "proposals", label: "Proposals", icon: Lightbulb, count: counts.proposals },
+    { value: "contributors", label: "Contributors", icon: Trophy },
+  ];
+  return (
+    <div className="mb-4 flex items-center gap-1 border-b">
+      {TABS.map((t) => {
+        const Icon = t.icon;
+        const active = tab === t.value;
+        return (
+          <button
+            key={t.value}
+            type="button"
+            onClick={() => onTab(t.value)}
+            aria-pressed={active}
+            className={cn(
+              "relative inline-flex items-center gap-2 h-10 px-3 text-sm font-medium transition-colors",
+              active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <Icon className="h-4 w-4" />
+            {t.label}
+            {typeof t.count === "number" && (
+              <span
+                className={cn(
+                  "ml-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full px-1 text-[10px] font-semibold tabular-nums",
+                  active ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground",
+                )}
+              >
+                {t.count}
+              </span>
+            )}
+            {active && (
+              <span className="absolute left-2 right-2 -bottom-px h-[2px] rounded-t bg-primary" />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+type Contributor = {
+  author: ApiAuthor;
+  comments: number;
+  proposals: number;
+  replies: number;
+  votesReceived: number;
+  score: number;
+  items: BoardItem[];
+};
+
+type ApiAuthor = BoardItem["author"];
+
+function buildContributors(items: BoardItem[], currentUserId: string | null): Contributor[] {
+  const map = new Map<string, Contributor>();
+  const upsert = (author: ApiAuthor) => {
+    let c = map.get(author.id);
+    if (!c) {
+      c = {
+        author,
+        comments: 0,
+        proposals: 0,
+        replies: 0,
+        votesReceived: 0,
+        score: 0,
+        items: [],
+      };
+      map.set(author.id, c);
+    }
+    return c;
+  };
+  for (const it of items) {
+    const c = upsert(it.author);
+    if (it.kind === "comment") c.comments += 1;
+    else c.proposals += 1;
+    c.votesReceived += Math.max(0, it.voteScore);
+    c.items.push(it);
+    for (const r of it.replies) {
+      const rc = upsert(r.author);
+      rc.replies += 1;
+    }
+  }
+  for (const c of map.values()) {
+    c.score = c.comments + c.proposals + c.replies + Math.floor(c.votesReceived / 2);
+    c.items.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  }
+  return Array.from(map.values()).sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    const aMe = currentUserId && a.author.id === currentUserId ? 1 : 0;
+    const bMe = currentUserId && b.author.id === currentUserId ? 1 : 0;
+    if (aMe !== bMe) return bMe - aMe;
+    return a.author.name.localeCompare(b.author.name);
+  });
+}
+
+const CONTRIBUTORS_PER_PAGE = 10;
+
+function ContributorsPanel({
+  items,
+  loaded,
+  currentUserId,
+}: {
+  items: BoardItem[];
+  loaded: boolean;
+  currentUserId: string | null;
+}) {
+  const contributors = useMemo(
+    () => buildContributors(items, currentUserId),
+    [items, currentUserId],
+  );
+  const [page, setPage] = useState(1);
+  const [openUserId, setOpenUserId] = useState<string | null>(null);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+
+  const totalPages = Math.max(1, Math.ceil(contributors.length / CONTRIBUTORS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * CONTRIBUTORS_PER_PAGE;
+  const pageRows = contributors.slice(start, start + CONTRIBUTORS_PER_PAGE);
+
+  const myIndex = useMemo(
+    () => (currentUserId ? contributors.findIndex((c) => c.author.id === currentUserId) : -1),
+    [contributors, currentUserId],
+  );
+  const myRank = myIndex >= 0 ? myIndex + 1 : null;
+
+  const showMe = () => {
+    if (myIndex < 0) return;
+    const targetPage = Math.floor(myIndex / CONTRIBUTORS_PER_PAGE) + 1;
+    setPage(targetPage);
+    setHighlightId(currentUserId);
+    window.setTimeout(() => setHighlightId(null), 2400);
+  };
+
+  const openContributor = contributors.find((c) => c.author.id === openUserId) ?? null;
+
+  if (!loaded) {
+    return <div className="text-sm text-muted-foreground">Loading leaderboard…</div>;
+  }
+  if (contributors.length === 0) {
+    return (
+      <div className="rounded-[var(--radius-md)] border border-dashed bg-background/50 p-8 text-center text-sm text-muted-foreground">
+        No contributors yet. Be the first to drop a comment or post a proposal.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Users className="h-3.5 w-3.5" />
+          <span>
+            {contributors.length} contributor{contributors.length === 1 ? "" : "s"}
+          </span>
+          {myRank && (
+            <span className="ml-2 inline-flex items-center h-5 px-1.5 rounded-full bg-primary/10 text-primary font-medium">
+              You're #{myRank}
+            </span>
+          )}
+        </div>
+        {myIndex >= 0 && (
+          <button
+            type="button"
+            onClick={showMe}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md border bg-background text-xs font-medium hover:bg-muted press-scale"
+          >
+            <Trophy className="h-3.5 w-3.5 text-primary" />
+            Show me
+          </button>
+        )}
+      </div>
+
+      <div className="rounded-[var(--radius-md)] border bg-background overflow-hidden">
+        <div className="grid grid-cols-[40px_1fr_80px_80px_80px_80px_auto] items-center gap-3 px-3 py-2 text-[11px] uppercase tracking-wider text-muted-foreground border-b bg-muted/30">
+          <span>#</span>
+          <span>Person</span>
+          <span className="text-right">Comments</span>
+          <span className="text-right">Proposals</span>
+          <span className="text-right">Replies</span>
+          <span className="text-right">Score</span>
+          <span />
+        </div>
+        {pageRows.map((c, idx) => {
+          const rank = start + idx + 1;
+          const isMe = currentUserId && c.author.id === currentUserId;
+          const isHighlighted = highlightId && c.author.id === highlightId;
+          return (
+            <button
+              key={c.author.id}
+              type="button"
+              onClick={() => setOpenUserId(c.author.id)}
+              className={cn(
+                "w-full grid grid-cols-[40px_1fr_80px_80px_80px_80px_auto] items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors border-b last:border-b-0 hover:bg-muted/60",
+                isMe && "bg-primary/5",
+                isHighlighted && "ring-2 ring-primary/60 ring-inset bg-primary/10",
+              )}
+            >
+              <span
+                className={cn(
+                  "font-semibold tabular-nums text-xs",
+                  rank === 1 && "text-primary",
+                  rank === 2 && "text-foreground/80",
+                  rank === 3 && "text-warning",
+                  rank > 3 && "text-muted-foreground",
+                )}
+              >
+                {rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `#${rank}`}
+              </span>
+              <span className="flex items-center gap-2 min-w-0">
+                {c.author.avatarUrl ? (
+                  <img
+                    src={c.author.avatarUrl}
+                    alt=""
+                    className="h-7 w-7 rounded-full object-cover shrink-0"
+                  />
+                ) : (
+                  <span className="h-7 w-7 rounded-full text-[10px] font-semibold flex items-center justify-center text-white shrink-0 bg-gradient-to-br from-[#8b5cf6] via-[#ec4899] to-[#f59e0b]">
+                    {c.author.name
+                      .split(" ")
+                      .map((s) => s[0])
+                      .filter(Boolean)
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase() || "?"}
+                  </span>
+                )}
+                <span className="min-w-0 truncate font-medium">
+                  {c.author.name}
+                  {isMe && (
+                    <span className="ml-1.5 text-[10px] font-normal text-primary">(you)</span>
+                  )}
+                </span>
+              </span>
+              <span className="text-right tabular-nums">{c.comments}</span>
+              <span className="text-right tabular-nums">{c.proposals}</span>
+              <span className="text-right tabular-nums">{c.replies}</span>
+              <span className="text-right tabular-nums font-semibold">{c.score}</span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </button>
+          );
+        })}
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-1">
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="h-8 px-3 rounded-md border bg-background text-xs disabled:opacity-50 hover:bg-muted press-scale"
+          >
+            Prev
+          </button>
+          <span className="h-8 inline-flex items-center px-3 text-xs text-muted-foreground tabular-nums">
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="h-8 px-3 rounded-md border bg-background text-xs disabled:opacity-50 hover:bg-muted press-scale"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
+      <ContributorSheet contributor={openContributor} onClose={() => setOpenUserId(null)} />
+    </div>
+  );
+}
+
+function ContributorSheet({
+  contributor,
+  onClose,
+}: {
+  contributor: Contributor | null;
+  onClose: () => void;
+}) {
+  return (
+    <Sheet open={!!contributor} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col gap-0">
+        <SheetHeader className="px-4 py-3 border-b space-y-1">
+          <SheetTitle className="text-sm font-semibold">Contributions</SheetTitle>
+          {contributor && (
+            <SheetDescription className="text-xs text-muted-foreground">
+              {contributor.author.name} — {contributor.items.length} posted,{" "}
+              {contributor.replies} repl{contributor.replies === 1 ? "y" : "ies"},{" "}
+              {contributor.votesReceived} net upvotes
+            </SheetDescription>
+          )}
+        </SheetHeader>
+        {contributor && (
+          <div className="flex-1 overflow-y-auto scrollbar-thin p-3 space-y-2">
+            {contributor.items.length === 0 ? (
+              <div className="text-xs text-muted-foreground italic px-1">
+                No posted items yet (only replies).
+              </div>
+            ) : (
+              contributor.items.map((item) => {
+                const kind = itemKind(item);
+                const href =
+                  item.kind === "comment" ? `/comment/${item.id}` : `/proposal/${item.id}`;
+                return (
+                  <Link
+                    key={item.id}
+                    to={href}
+                    onClick={onClose}
+                    className="block rounded-[var(--radius-md)] border bg-card p-3 hover:border-primary/50 hover:shadow-[0_4px_14px_rgba(0,0,0,0.06)] transition-all"
+                  >
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <KindBadge kind={kind} />
+                      <span className="text-[10px] text-muted-foreground ml-auto tabular-nums">
+                        {relativeTime(item.createdAt)}
+                      </span>
+                    </div>
+                    {item.kind === "proposal" && (
+                      <p className="text-sm font-semibold leading-snug line-clamp-2 break-words mb-0.5">
+                        {item.title}
+                      </p>
+                    )}
+                    <p
+                      className={cn(
+                        "text-sm leading-snug break-words",
+                        item.kind === "proposal"
+                          ? "line-clamp-2 text-muted-foreground"
+                          : "line-clamp-3",
+                      )}
+                    >
+                      {item.body}
+                    </p>
+                    <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
+                      <span className="inline-flex items-center gap-1">
+                        <ChevronUp className="h-3 w-3" />
+                        {item.voteScore}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <MessageSquare className="h-3 w-3" />
+                        {item.replies.length}
+                      </span>
+                      {item.kind === "comment" && (
+                        <span className="font-mono truncate">{item.route}</span>
+                      )}
+                      <span className="ml-auto inline-flex items-center gap-0.5 text-primary">
+                        Open
+                        <ChevronRight className="h-3 w-3" />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })
+            )}
+          </div>
+        )}
+      </SheetContent>
+    </Sheet>
+  );
 }
 
 function EmptyState({ onPropose }: { onPropose: () => void }) {

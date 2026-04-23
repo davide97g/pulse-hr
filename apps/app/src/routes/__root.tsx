@@ -49,7 +49,7 @@ import "@/lib/tables/timesheetEntries";
 import "@/lib/tables/webhooks";
 
 const PUBLIC_PREFIXES = ["/login", "/signup"];
-const FEEDBACK_PREFIXES = ["/feedback"];
+const FEEDBACK_PREFIXES = ["/feedback", "/comment", "/proposal"];
 const WELCOME_PATH = "/welcome";
 
 function NotFoundComponent() {
