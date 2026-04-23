@@ -175,6 +175,16 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
 
   const closeThread = useCallback(() => setActiveCommentId(null), []);
 
+  // Any in-flight placement or open thread belongs to the route we just left.
+  // Clear them so we don't render a stale popover/composer over a new page.
+  useEffect(() => {
+    setMode("idle");
+    setPlacementPointState(null);
+    setActiveCommentId(null);
+    resetScreenshot();
+    autoOpenedRef.current = null;
+  }, [route, resetScreenshot]);
+
   // Deep link: /{route}?thread=<id> auto-opens that pin once comments load and
   // scrolls it into view. Runs once per route visit.
   useEffect(() => {

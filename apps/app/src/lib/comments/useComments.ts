@@ -20,6 +20,10 @@ export function useComments(route: string, userId: string | null) {
   }, [route, userId]);
 
   useEffect(() => {
+    // Drop the previous route's comments immediately so pins from another
+    // page never leak onto this one while the new fetch is in flight.
+    setComments([]);
+    setLoaded(false);
     if (!userId) return;
     let cancelled = false;
     let timer: number | null = null;
