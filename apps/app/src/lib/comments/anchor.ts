@@ -53,8 +53,19 @@ function clamp(n: number): number {
  * (clientX/Y). The fallback is stored in the scroll container's content space
  * so it survives scrolling even if the selector can't be resolved later.
  */
+function elementUnderPoint(clientX: number, clientY: number): Element | null {
+  // Skip the comments overlay layer/pins/composer/popover — they cover the
+  // viewport during placement and would otherwise be returned by
+  // elementFromPoint, making every pin anchor to the overlay itself.
+  const candidates = document.elementsFromPoint(clientX, clientY);
+  for (const c of candidates) {
+    if (!c.closest("[data-comments-ignore]")) return c;
+  }
+  return null;
+}
+
 export function captureAnchor(clientX: number, clientY: number): Anchor {
-  const el = document.elementFromPoint(clientX, clientY);
+  const el = elementUnderPoint(clientX, clientY);
   const scrollRoot = getScrollRoot();
   const scrollX = scrollRoot?.scrollLeft ?? window.scrollX;
   const scrollY = scrollRoot?.scrollTop ?? window.scrollY;
