@@ -4,15 +4,12 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import LabsSection from "../components/LabsSection.astro";
 import Cta from "../components/Cta.astro";
-import { SITE, LABS } from "../data/landing";
+import { SITE, getLanding } from "../data/landing";
+import { useI18n } from "../i18n";
 
-const title = "Pulse Labs — forecasting, kudos, focus & pulse tools";
-const description =
-  "Five Labs features shipping now: Team Pulse sentiment, Commessa Forecast scenario planning, Kudos peer recognition, Focus Mode deep work, and Saturation utilization. Included on every plan.";
-const path = "/labs";
+const { locale, t } = useI18n(Astro);
+const { LABS } = getLanding(locale);
 
-// Labs landing is an `ItemList` — each feature is a SoftwareFeature node
-// linked back to the main product by @id.
 const labsLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
@@ -31,22 +28,19 @@ const labsLd = {
 };
 ---
 
-<BaseLayout {title} {description} {path}>
+<BaseLayout title={t.labsPage.title} description={t.labsPage.description} path="/labs">
   <Nav />
   <main id="main">
     <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
       <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">
-        Labs · shipping now · free on every plan
+        {t.labsPage.eyebrow}
       </p>
       <h1 class="font-display text-[56px] md:text-[80px] leading-[0.95] tracking-tight max-w-4xl">
-        The five Pulse features<br />
-        <em class="italic text-[#b4ff39]">reinventing</em> HR software.
+        {t.labsPage.titleLine1}<br />
+        <em class="italic text-[#b4ff39]">{t.labsPage.titleItalic}</em>{t.labsPage.titleAfter}
       </h1>
       <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
-        Labs is where we ship experimental capabilities first — AI forecasting,
-        sentiment heatmaps, peer recognition, deep-work automation and live
-        utilization insights. No waiting lists, no upsells, no enterprise-tier
-        paywall.
+        {t.labsPage.body}
       </p>
     </section>
     <LabsSection />

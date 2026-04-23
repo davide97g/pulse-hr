@@ -1,50 +1,23 @@
 ---
 import { Code2, Package, Plug, Keyboard, ArrowRight } from "lucide-astro";
+import { useI18n } from "../i18n";
 
+const { t, href } = useI18n(Astro);
 const GITHUB_REPO = "davide97g/pulse-hr";
 
-const values = [
-  {
-    icon: Code2,
-    k: "Open source",
-    p: "The full source is on GitHub under FSL-1.1-MIT. Read every line, run it on your own hardware, fork it if we ever let you down.",
-    href: "/open-source",
-    cta: "LICENSE · self-host · contribute",
-  },
-  {
-    icon: Package,
-    k: "Modular",
-    p: "Money, People and Work are three independent products. Roll out one, skip the others, swap any of them later. No all-or-nothing migration.",
-    href: "/modules",
-    cta: "Three modules, one workspace",
-  },
-  {
-    icon: Plug,
-    k: "Ecosystem-first",
-    p: "Webhooks on every resource event, a public REST API, SDKs for TypeScript / Python / Go. Anything we don't ship, the community can add.",
-    href: "/ecosystem",
-    cta: "Webhooks · REST · integrations",
-  },
-  {
-    icon: Keyboard,
-    k: "Keyboard-first",
-    p: "⌘K finds anything, ⌘J runs anything. Local intent parser, voice dictation, 40+ shortcuts, offline PWA. No mouse required, no LLM call.",
-    href: "/keyboard",
-    cta: "⌘K · ⌘J · voice · offline",
-  },
-];
+const icons = [Code2, Package, Plug, Keyboard];
+const hrefs = [href("/open-source"), href("/modules"), href("/ecosystem"), href("/keyboard")];
+const values = t.whyPulse.values.map((v, i) => ({ ...v, icon: icons[i], href: hrefs[i] }));
 ---
 
 <section id="why" class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="why-title">
   <div class="max-w-2xl mb-14">
-    <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">Why Pulse</p>
+    <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">{t.whyPulse.eyebrow}</p>
     <h2 id="why-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
-      No other HR vendor<br />matches <em class="italic">all four</em>.
+      {t.whyPulse.title.before}<br />{t.whyPulse.title.after}<em class="italic">{t.whyPulse.title.italic}</em>{t.whyPulse.title.end}
     </h2>
     <p class="mt-6 text-white/70 leading-relaxed">
-      Rippling is closed. Deel is contractors-only. BambooHR has no API to speak of.
-      Pulse is the only platform where every one of these four principles is non-negotiable —
-      <a href="/vs" class="text-[#b4ff39] hover:underline">see the honest comparison</a>.
+      {t.whyPulse.subtitle.before}<a href={href("/vs")} class="text-[#b4ff39] hover:underline">{t.whyPulse.subtitle.link}</a>{t.whyPulse.subtitle.after}
     </p>
   </div>
 
@@ -70,7 +43,7 @@ const values = [
   </div>
 
   <div class="mt-10 flex items-center gap-3 flex-wrap text-xs text-white/40">
-    <span class="font-mono uppercase tracking-[0.2em]">Source</span>
+    <span class="font-mono uppercase tracking-[0.2em]">{t.whyPulse.source}</span>
     <a href={`https://github.com/${GITHUB_REPO}`} class="text-white/60 hover:text-white font-mono">github.com/{GITHUB_REPO}</a>
   </div>
 </section>

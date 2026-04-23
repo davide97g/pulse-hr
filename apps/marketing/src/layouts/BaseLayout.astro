@@ -1,11 +1,13 @@
 ---
 import "../styles/global.css";
-import { SITE, FAQ, TESTIMONIALS, TEAM } from "../data/landing";
+import { SITE, getLanding } from "../data/landing";
+import { useI18n, HTML_LANG, OG_LOCALE, localizePath, LOCALES, DEFAULT_LOCALE } from "../i18n";
 
 interface Props {
   title?: string;
   description?: string;
-  /** Path relative to site root, e.g. "/", "/pricing". Used for canonical + OG URL. */
+  /** Path relative to site root, e.g. "/", "/pricing". Used for canonical + OG URL.
+   *  Pass the locale-agnostic path — this layout prefixes it per current locale. */
   path?: string;
   ogImage?: string;
   /** Set true on the landing page so we emit extra JSON-LD (Organization + SoftwareApplication + FAQPage). */
@@ -17,16 +19,18 @@ interface Props {
   /**
    * Breadcrumb trail (shallowest → deepest). Emitted as BreadcrumbList JSON-LD.
    * The home item is prepended automatically; pass only the steps after it.
-   * Example on /docs/api: `[{ name: "Docs", path: "/docs" }, { name: "API", path: "/docs/api" }]`.
    */
   breadcrumbs?: { name: string; path: string }[];
   /** Extra JSON-LD blocks specific to this page (Offer, Article, etc.). */
   extraLd?: Record<string, unknown>[];
 }
 
+const { locale, t } = useI18n(Astro);
+const landing = getLanding(locale);
+
 const {
-  title = `${SITE.tagline} — ${SITE.name}`,
-  description = SITE.description,
+  title = `${landing.site.tagline} — ${SITE.name}`,
+  description = landing.site.description,
   path = "/",
   ogImage = SITE.ogImage,
   isHome = false,
@@ -36,11 +40,11 @@ const {
   extraLd,
 } = Astro.props;
 
-const canonical = new URL(path, SITE.url).toString();
+const localePath = localizePath(path, locale);
+const canonical = new URL(localePath, SITE.url).toString();
 const absoluteOg = new URL(ogImage, SITE.url).toString();
-const allKeywords = keywords ? `${SITE.keywords}, ${keywords}` : SITE.keywords;
+const allKeywords = keywords ? `${landing.site.keywords}, ${keywords}` : landing.site.keywords;
 
-// JSON-LD — Organization + SoftwareApplication + FAQPage
 const orgLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -68,21 +72,22 @@ const softwareLd = {
     "@type": "Offer",
     price: "0",
     priceCurrency: "USD",
-    description: "Free for the first 5 employees, forever.",
+    description:
+      locale === "it"
+        ? "Gratis per i primi 5 dipendenti, per sempre."
+        : "Free for the first 5 employees, forever.",
   },
   aggregateRating: {
     "@type": "AggregateRating",
     ratingValue: "4.8",
     reviewCount: "312",
   },
-  review: TESTIMONIALS.map((t) => ({
+  review: landing.TESTIMONIALS.map((tt) => ({
     "@type": "Review",
-    reviewBody: t.body,
+    reviewBody: tt.body,
     reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
-    author: { "@type": "Person", name: t.who, jobTitle: t.role },
+    author: { "@type": "Person", name: tt.who, jobTitle: tt.role },
   })),
-  // Voice-assistant snippet target: picks the hero headline + each FAQ question
-  // as the quotable parts for Google Assistant / Bing Read Aloud.
   speakable: {
     "@type": "SpeakableSpecification",
     cssSelector: ["#hero-title", "#faq summary h3"],
@@ -92,15 +97,13 @@ const softwareLd = {
 const faqLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: FAQ.map((f) => ({
+  mainEntity: landing.FAQ.map((f) => ({
     "@type": "Question",
     name: f.q,
     acceptedAnswer: { "@type": "Answer", text: f.a },
   })),
 };
 
-// Person schema per founder/team member — LinkedIn handle derived deterministically
-// from the display name so rich results can attribute authority back to the org.
 const breadcrumbLd = breadcrumbs && breadcrumbs.length > 0
   ? {
       "@context": "https://schema.org",
@@ -110,13 +113,13 @@ const breadcrumbLd = breadcrumbs && breadcrumbs.length > 0
           "@type": "ListItem",
           position: 1,
           name: "Home",
-          item: SITE.url,
+          item: new URL(localizePath("/", locale), SITE.url).toString(),
         },
         ...breadcrumbs.map((b, i) => ({
           "@type": "ListItem",
           position: i + 2,
           name: b.name,
-          item: new URL(b.path, SITE.url).toString(),
+          item: new URL(localizePath(b.path, locale), SITE.url).toString(),
         })),
       ],
     }
@@ -124,7 +127,7 @@ const breadcrumbLd = breadcrumbs && breadcrumbs.length > 0
 
 const teamLd = {
   "@context": "https://schema.org",
-  "@graph": TEAM.map((m) => ({
+  "@graph": landing.TEAM.map((m) => ({
     "@type": "Person",
     name: m.n,
     jobTitle: m.r,
@@ -135,10 +138,16 @@ const teamLd = {
     ],
   })),
 };
+
+// hreflang alternates for SEO — every page exposes all locales.
+const alternates = LOCALES.map((l) => ({
+  lang: HTML_LANG[l],
+  href: new URL(localizePath(path, l), SITE.url).toString(),
+}));
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={HTML_LANG[locale]}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -148,6 +157,10 @@ const teamLd = {
     <meta name="description" content={description} />
     <meta name="keywords" content={allKeywords} />
     <link rel="canonical" href={canonical} />
+    {alternates.map((a) => (
+      <link rel="alternate" hreflang={a.lang} href={a.href} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={new URL(localizePath(path, DEFAULT_LOCALE), SITE.url).toString()} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
@@ -161,7 +174,10 @@ const teamLd = {
     <meta property="og:image" content={absoluteOg} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={OG_LOCALE[locale]} />
+    {LOCALES.filter((l) => l !== locale).map((l) => (
+      <meta property="og:locale:alternate" content={OG_LOCALE[l]} />
+    ))}
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -169,9 +185,6 @@ const teamLd = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteOg} />
-
-    <!-- Fonts are self-hosted via @fontsource, imported from global.css.
-         No render-blocking Google Fonts request, no third-party DNS hop. -->
 
     <!-- Robots -->
     {noIndex ? (
@@ -188,10 +201,54 @@ const teamLd = {
     {breadcrumbLd && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />}
     {extraLd?.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
 
-    <!-- Agent discovery: advertise key routes for LLM crawlers + WebMCP-capable browsers. -->
+    <!-- Agent discovery -->
     <link rel="api-catalog" href="/.well-known/api-catalog" type="application/linkset+json" />
     <link rel="agent-skills" href="/.well-known/agent-skills/index.json" type="application/json" />
     <link rel="mcp-server-card" href="/.well-known/mcp/server-card.json" type="application/json" />
+
+    <!-- Browser locale auto-detect.
+         Stored preference (from LangSwitcher) always wins. Otherwise on first visit
+         we pick a locale from navigator.languages and redirect once. -->
+    <script is:inline define:vars={{ currentLocale: locale }}>
+      (function () {
+        try {
+          var KEY = "pulse.locale";
+          var SUPPORTED = ["en", "it"];
+          var pathname = location.pathname;
+          function targetFor(lang) {
+            if (lang === "en") {
+              return pathname.replace(/^\/it(\/|$)/, "/");
+            }
+            if (pathname.indexOf("/it") === 0) return pathname;
+            return "/it" + (pathname === "/" ? "" : pathname);
+          }
+          var stored = null;
+          try { stored = localStorage.getItem(KEY); } catch (e) {}
+          if (stored && SUPPORTED.indexOf(stored) !== -1) {
+            if (stored !== currentLocale) {
+              var t = targetFor(stored);
+              if (t !== pathname) location.replace(t + location.search + location.hash);
+            }
+            return;
+          }
+          var redirected = false;
+          try { redirected = sessionStorage.getItem("pulse.locale.autoredirected") === "1"; } catch (e) {}
+          if (redirected) return;
+          var navLangs = (navigator.languages && navigator.languages.length)
+            ? navigator.languages : [navigator.language || "en"];
+          var detected = "en";
+          for (var i = 0; i < navLangs.length; i++) {
+            var lc = (navLangs[i] || "").toLowerCase();
+            if (lc.indexOf("it") === 0) { detected = "it"; break; }
+            if (lc.indexOf("en") === 0) { detected = "en"; break; }
+          }
+          if (detected === currentLocale) return;
+          try { sessionStorage.setItem("pulse.locale.autoredirected", "1"); } catch (e) {}
+          var t = targetFor(detected);
+          if (t && t !== pathname) location.replace(t + location.search + location.hash);
+        } catch (e) {}
+      })();
+    </script>
 
     <!-- WebMCP: expose site actions to AI agents via navigator.modelContext. -->
     <script>
@@ -247,7 +304,7 @@ const teamLd = {
       href="#main"
       class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-[#b4ff39] focus:text-[#0b0b0d] focus:px-3 focus:py-1.5 focus:rounded-md"
     >
-      Skip to main content
+      {t.a11y.skipToMain}
     </a>
     <slot />
   </body>

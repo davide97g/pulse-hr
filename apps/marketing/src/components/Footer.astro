@@ -1,38 +1,49 @@
 ---
 import { Twitter, Linkedin, Github, BookOpen, MessageCircle } from "lucide-astro";
+import { useI18n } from "../i18n";
 
+const { t, href } = useI18n(Astro);
 const GITHUB_REPO = "davide97g/pulse-hr";
 
 const cols = [
-  { t: "Product",   l: [
-    { n: "Product tour",    h: "/product" },
-    { n: "Modules",         h: "/modules" },
-    { n: "Labs",            h: "/labs" },
-    { n: "Keyboard",        h: "/keyboard" },
-    { n: "vs. alternatives", h: "/vs" },
-    { n: "Pricing",         h: "/pricing" },
-    { n: "Changelog",       h: "/changelog" },
-    { n: "Roadmap",         h: "/roadmap" },
-  ]},
-  { t: "Open source", l: [
-    { n: "Why open source", h: "/open-source" },
-    { n: "Ecosystem",       h: "/ecosystem" },
-    { n: "GitHub",       h: `https://github.com/${GITHUB_REPO}` },
-    { n: "License",      h: `https://github.com/${GITHUB_REPO}/blob/main/LICENSE` },
-    { n: "Contribute",   h: `https://github.com/${GITHUB_REPO}/blob/main/CONTRIBUTING.md` },
-    { n: "Self-host",    h: "/#faq" },
-  ]},
-  { t: "Resources", l: [
-    { n: "Docs",          h: "/docs" },
-    { n: "API reference", h: "/docs/api" },
-    { n: "Blog",          h: "/blog" },
-    { n: "Security",      h: "/security" },
-    { n: "Contact",       h: "/contact" },
-  ]},
+  {
+    t: t.footer.colProduct,
+    l: [
+      { n: t.footer.productTour,   h: href("/product") },
+      { n: t.footer.modules,       h: href("/modules") },
+      { n: t.footer.labs,          h: href("/labs") },
+      { n: t.footer.keyboard,      h: href("/keyboard") },
+      { n: t.footer.vsAlternatives, h: href("/vs") },
+      { n: t.footer.pricing,       h: href("/pricing") },
+      { n: t.footer.changelog,     h: href("/changelog") },
+      { n: t.footer.roadmap,       h: href("/roadmap") },
+    ],
+  },
+  {
+    t: t.footer.colOpenSource,
+    l: [
+      { n: t.footer.whyOpenSource, h: href("/open-source") },
+      { n: t.footer.ecosystem,     h: href("/ecosystem") },
+      { n: t.footer.github,        h: `https://github.com/${GITHUB_REPO}` },
+      { n: t.footer.license,       h: `https://github.com/${GITHUB_REPO}/blob/main/LICENSE` },
+      { n: t.footer.contribute,    h: `https://github.com/${GITHUB_REPO}/blob/main/CONTRIBUTING.md` },
+      { n: t.footer.selfHost,      h: `${href("/")}#faq` },
+    ],
+  },
+  {
+    t: t.footer.colResources,
+    l: [
+      { n: t.footer.docs,          h: href("/docs") },
+      { n: t.footer.apiReference,  h: href("/docs/api") },
+      { n: t.footer.blog,          h: href("/blog") },
+      { n: t.footer.security,      h: href("/security") },
+      { n: t.footer.contact,       h: href("/contact") },
+    ],
+  },
 ];
 ---
 
-<footer class="border-t border-white/5 mt-12" aria-label="Footer">
+<footer class="border-t border-white/5 mt-12" aria-label={t.a11y.footer}>
   <div class="max-w-[1280px] mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-5 gap-8">
     <div class="col-span-2">
       <div class="flex items-center gap-2.5 mb-4">
@@ -45,7 +56,7 @@ const cols = [
           Pulse <span class="text-[#b4ff39]">HR</span>
         </span>
       </div>
-      <p class="text-sm text-white/50 max-w-xs">The people platform for modern teams. Made in Milan, Berlin and San Francisco.</p>
+      <p class="text-sm text-white/50 max-w-xs">{t.footer.tagline}</p>
       <ul class="flex gap-3 mt-5 text-white/50 list-none p-0">
         <li><a href="https://twitter.com/pulsehr" class="hover:text-white transition-colors" aria-label="Twitter"><Twitter class="h-4 w-4" /></a></li>
         <li><a href="https://www.linkedin.com/company/pulse-hr" class="hover:text-white transition-colors" aria-label="LinkedIn"><Linkedin class="h-4 w-4" /></a></li>
@@ -65,13 +76,13 @@ const cols = [
   </div>
   <div class="border-t border-white/5">
     <div class="max-w-[1280px] mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/40">
-      <p class="m-0">© {new Date().getFullYear()} Pulse HR · All rights reserved</p>
+      <p class="m-0">© {new Date().getFullYear()} Pulse HR · {t.footer.rights}</p>
       <div class="flex items-center gap-5">
-        <a href="/privacy" class="hover:text-white">Privacy</a>
-        <a href="/terms" class="hover:text-white">Terms</a>
-        <a href="/security" class="hover:text-white">Security</a>
-        <a href="/docs" class="hover:text-white inline-flex items-center gap-1"><BookOpen class="h-3 w-3" />Docs</a>
-        <a href="https://status.pulsehr.it" class="hover:text-white inline-flex items-center gap-1"><MessageCircle class="h-3 w-3" />Status</a>
+        <a href={href("/privacy")} class="hover:text-white">{t.footer.privacy}</a>
+        <a href={href("/terms")} class="hover:text-white">{t.footer.terms}</a>
+        <a href={href("/security")} class="hover:text-white">{t.footer.security}</a>
+        <a href={href("/docs")} class="hover:text-white inline-flex items-center gap-1"><BookOpen class="h-3 w-3" />{t.footer.docs}</a>
+        <a href="https://status.pulsehr.it" class="hover:text-white inline-flex items-center gap-1"><MessageCircle class="h-3 w-3" />{t.footer.status}</a>
       </div>
     </div>
   </div>

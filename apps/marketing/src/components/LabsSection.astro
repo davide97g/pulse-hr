@@ -1,6 +1,10 @@
 ---
 import { Heart, TrendingUp, Gift, Target, Gauge } from "lucide-astro";
-import { LABS } from "../data/landing";
+import { useI18n } from "../i18n";
+import { getLanding } from "../data/landing";
+
+const { locale, t } = useI18n(Astro);
+const { LABS } = getLanding(locale);
 
 const ICONS: Record<string, any> = { Heart, TrendingUp, Gift, Target, Gauge };
 ---
@@ -15,14 +19,14 @@ const ICONS: Record<string, any> = { Heart, TrendingUp, Gift, Target, Gauge };
     <div class="max-w-2xl">
       <p class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">
         <span class="h-1.5 w-1.5 rounded-full bg-[#b4ff39] pulse-dot"></span>
-        Labs · shipping now
+        {t.labs.eyebrow}
       </p>
       <h2 id="labs-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
-        Five bets that landed.
+        {t.labs.title}
       </h2>
     </div>
     <p class="text-white/60 max-w-md text-sm leading-relaxed">
-      Labs is where we ship the experimental stuff. Every team on Pulse gets it by default — no waiting lists, no upsells, no "enterprise tier" paywall.
+      {t.labs.subtitle}
     </p>
   </div>
   <div class="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -42,7 +46,7 @@ const ICONS: Record<string, any> = { Heart, TrendingUp, Gift, Target, Gauge };
             </div>
             <div class="flex-1 min-w-0">
               <p class="flex items-center gap-2 text-[10px] font-mono tracking-[0.18em] uppercase">
-                <span class="text-[#b4ff39]">NEW</span>
+                <span class="text-[#b4ff39]">{t.labs.badgeNew}</span>
                 <span class="text-white/30">·</span>
                 <span class="text-white/60">{lab.tag}</span>
               </p>

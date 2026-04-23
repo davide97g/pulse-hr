@@ -3,7 +3,11 @@ import {
   Clock, Wallet, Users, Briefcase, BarChart3, Plug,
   Gauge, Sparkles, Trophy,
 } from "lucide-astro";
-import { FEATURES } from "../data/landing";
+import { useI18n } from "../i18n";
+import { getLanding } from "../data/landing";
+
+const { locale, t } = useI18n(Astro);
+const { FEATURES } = getLanding(locale);
 
 const ICONS: Record<string, any> = {
   Clock, Wallet, Users, Briefcase, BarChart3, Plug, Gauge, Sparkles, Trophy,
@@ -13,13 +17,13 @@ const ICONS: Record<string, any> = {
 <section id="features" class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="features-title">
   <div class="flex items-end justify-between gap-8 mb-16 flex-wrap">
     <div class="max-w-2xl">
-      <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">Everything in one place</p>
+      <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">{t.features.eyebrow}</p>
       <h2 id="features-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
-        Nine products that feel like one.
+        {t.features.title}
       </h2>
     </div>
     <p class="text-white/60 max-w-md text-sm leading-relaxed">
-      Each module is deep enough to replace a standalone tool, but they share one profile, one search, one audit log. You'll stop switching tabs — we promise.
+      {t.features.subtitle}
     </p>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -1,12 +1,16 @@
 ---
 import { ChevronDown } from "lucide-astro";
-import { FAQ } from "../data/landing";
+import { useI18n } from "../i18n";
+import { getLanding } from "../data/landing";
+
+const { locale, t } = useI18n(Astro);
+const { FAQ } = getLanding(locale);
 ---
 
 <section id="faq" class="max-w-[1024px] mx-auto px-6 py-24" aria-labelledby="faq-title">
-  <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">Questions we get a lot</p>
+  <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">{t.faq.eyebrow}</p>
   <h2 id="faq-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight mb-14">
-    Questions, <em class="italic">answered</em>.
+    {t.faq.titleBefore} <em class="italic">{t.faq.titleItalic}</em>{t.faq.titleAfter}
   </h2>
   <div class="divide-y divide-white/10 border-y border-white/10">
     {FAQ.map((f, i) => (

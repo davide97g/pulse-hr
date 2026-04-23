@@ -1,49 +1,49 @@
 ---
 import { ArrowRight, Check } from "lucide-astro";
-
-const tabs = [
-  { k: "dashboard", l: "Dashboard",       body: "Approvals, alerts, presence and trends. The one pane your HR team opens at 9am." },
-  { k: "time",      l: "Time & commesse", body: "Log hours against any commessa. Budget burn, per-client profitability, exports to CSV." },
-  { k: "payroll",   l: "Payroll",         body: "Preview payslips before running, split employees/contractors, file F24 with one click." },
-];
+import { useI18n } from "../i18n";
+const { t } = useI18n(Astro);
+const tabs = t.productPreview.tabs;
+const dash = t.productPreview.mockDashboard;
+const time = t.productPreview.mockTime;
+const pay = t.productPreview.mockPayroll;
 ---
 
 <section id="product" class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="product-title">
   <div class="flex items-end justify-between gap-8 mb-10 flex-wrap">
     <h2 id="product-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight max-w-xl">
-      See it <em class="italic">moving</em>.
+      {t.productPreview.title.before} <em class="italic">{t.productPreview.title.italic}</em>{t.productPreview.title.after}
     </h2>
     <a href="https://app.pulsehr.it/" class="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white border-b border-white/20 hover:border-[#b4ff39] pb-1 transition-colors">
-      Open the full app <ArrowRight class="h-4 w-4" />
+      {t.productPreview.openApp} <ArrowRight class="h-4 w-4" />
     </a>
   </div>
 
   <div data-product-preview>
     <div class="flex gap-2 mb-5 flex-wrap" role="tablist">
-      {tabs.map((t, i) => (
+      {tabs.map((tab, i) => (
         <button
           type="button"
           role="tab"
-          data-tab={t.k}
+          data-tab={tab.k}
           aria-selected={i === 0 ? "true" : "false"}
           class={`px-4 py-2 rounded-full text-sm transition-colors press-scale ${i === 0 ? "bg-[#b4ff39] text-[#0b0b0d] font-medium" : "border border-white/10 text-white/70 hover:bg-white/5"}`}
         >
-          {t.l}
+          {tab.l}
         </button>
       ))}
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-6 items-stretch">
       <div class="rounded-xl border border-white/10 bg-white/[0.02] p-7">
-        {tabs.map((t, i) => (
-          <div data-tab-copy={t.k} class={i === 0 ? "" : "hidden"}>
-            <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-3">{t.l}</p>
-            <p class="text-white/70 leading-relaxed">{t.body}</p>
+        {tabs.map((tab, i) => (
+          <div data-tab-copy={tab.k} class={i === 0 ? "" : "hidden"}>
+            <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-3">{tab.l}</p>
+            <p class="text-white/70 leading-relaxed">{tab.body}</p>
           </div>
         ))}
         <ul class="mt-6 space-y-2 text-sm list-none p-0">
-          {["Approvals in one click", "Keyboard-first navigation (⌘K)", "Full audit trail", "Exports to CSV / PDF / API"].map((i) => (
-            <li class="flex items-center gap-2 text-white/70"><Check class="h-4 w-4 text-[#b4ff39]" />{i}</li>
+          {t.productPreview.bullets.map((b) => (
+            <li class="flex items-center gap-2 text-white/70"><Check class="h-4 w-4 text-[#b4ff39]" />{b}</li>
           ))}
         </ul>
       </div>
@@ -58,31 +58,29 @@ const tabs = [
             <span class="ml-3 text-[11px] font-mono text-black/50" data-mock-url>app.pulsehr.it/</span>
           </div>
 
-          <!-- Dashboard mock -->
           <div data-mock="dashboard" class="p-5 space-y-3">
             <div class="grid grid-cols-3 gap-2">
-              <div class="rounded-md border border-black/10 p-3"><p class="text-[10px] uppercase tracking-wider text-black/50 m-0">Pending</p><p class="font-display text-2xl m-0">4</p></div>
-              <div class="rounded-md border border-black/10 p-3"><p class="text-[10px] uppercase tracking-wider text-black/50 m-0">Headcount</p><p class="font-display text-2xl m-0">12</p></div>
-              <div class="rounded-md border border-black/10 p-3"><p class="text-[10px] uppercase tracking-wider text-black/50 m-0">Overtime</p><p class="font-display text-2xl m-0">42h</p></div>
+              <div class="rounded-md border border-black/10 p-3"><p class="text-[10px] uppercase tracking-wider text-black/50 m-0">{dash.pending}</p><p class="font-display text-2xl m-0">4</p></div>
+              <div class="rounded-md border border-black/10 p-3"><p class="text-[10px] uppercase tracking-wider text-black/50 m-0">{dash.headcount}</p><p class="font-display text-2xl m-0">12</p></div>
+              <div class="rounded-md border border-black/10 p-3"><p class="text-[10px] uppercase tracking-wider text-black/50 m-0">{dash.overtime}</p><p class="font-display text-2xl m-0">42h</p></div>
             </div>
             <div class="rounded-md border border-black/10 divide-y divide-black/5">
-              {[{n:"Marcus R.",t:"Vacation · 5d",s:"pending"},{n:"Tom B.",t:"Sick · 3d",s:"approved"},{n:"Noah W.",t:"Personal · 1d",s:"pending"}].map((r) => (
+              {dash.rows.map((r) => (
                 <div class="px-3 py-2 flex items-center gap-2 text-[12px]">
                   <div class="h-6 w-6 rounded-full bg-black/10"></div>
                   <div class="flex-1"><div class="font-medium">{r.n}</div><div class="text-black/50 text-[11px]">{r.t}</div></div>
-                  <span class={r.s === "pending" ? "text-[10px] px-1.5 py-0.5 rounded font-medium bg-amber-100 text-amber-700" : "text-[10px] px-1.5 py-0.5 rounded font-medium bg-emerald-100 text-emerald-700"}>{r.s}</span>
+                  <span class={r.s === "pending" ? "text-[10px] px-1.5 py-0.5 rounded font-medium bg-amber-100 text-amber-700" : "text-[10px] px-1.5 py-0.5 rounded font-medium bg-emerald-100 text-emerald-700"}>{r.s === "pending" ? dash.statusPending : dash.statusApproved}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <!-- Time mock -->
           <div data-mock="time" class="p-5 space-y-3 hidden">
             <div class="rounded-md border border-black/10 p-4">
-              <p class="text-[10px] uppercase tracking-wider text-black/50 m-0">Active clock</p>
+              <p class="text-[10px] uppercase tracking-wider text-black/50 m-0">{time.activeClock}</p>
               <p class="font-mono text-3xl tabular-nums mt-1 m-0">02:41:18</p>
-              <p class="text-[11px] text-black/60 mt-1 m-0">ACM-2025-01 · Platform rebuild</p>
-              <div class="mt-3 h-8 rounded-md bg-emerald-500 text-white text-[11px] font-medium grid place-items-center">Stop &amp; log hours</div>
+              <p class="text-[11px] text-black/60 mt-1 m-0">{time.project}</p>
+              <div class="mt-3 h-8 rounded-md bg-emerald-500 text-white text-[11px] font-medium grid place-items-center">{time.stopCta}</div>
             </div>
             <div class="grid grid-cols-7 gap-1 h-20">
               {[0.6,0.8,0.9,1,0.85,0.2,0].map((h) => (
@@ -93,18 +91,17 @@ const tabs = [
             </div>
           </div>
 
-          <!-- Payroll mock -->
           <div data-mock="payroll" class="p-5 space-y-3 hidden">
             <div class="rounded-md border border-black/10 p-4 bg-emerald-50/50">
-              <p class="text-[10px] uppercase tracking-wider text-black/50 m-0">Next run · April 2025</p>
+              <p class="text-[10px] uppercase tracking-wider text-black/50 m-0">{pay.nextRun}</p>
               <p class="font-display text-3xl mt-1 m-0">$124,500</p>
-              <p class="text-[11px] text-black/60 mt-1 m-0">12 employees · scheduled Apr 30</p>
+              <p class="text-[11px] text-black/60 mt-1 m-0">{pay.employees}</p>
             </div>
             <div class="rounded-md border border-black/10 divide-y divide-black/5 text-[12px]">
-              {["F24 (Italy)","Form 941 (US)","HMRC PAYE (UK)"].map((t, i) => (
+              {pay.rows.map((row, i) => (
                 <div class="px-3 py-2 flex items-center justify-between">
-                  <span>{t}</span>
-                  <span class={i === 0 ? "text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700" : "text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700"}>{i === 0 ? "pending" : "filed"}</span>
+                  <span>{row}</span>
+                  <span class={i === 0 ? "text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700" : "text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700"}>{i === 0 ? pay.pending : pay.filed}</span>
                 </div>
               ))}
             </div>
@@ -116,7 +113,6 @@ const tabs = [
 </section>
 
 <script>
-  // Vanilla JS tab switcher — no hydration, no bundle.
   document.querySelectorAll<HTMLElement>("[data-product-preview]").forEach((root) => {
     const tabs = root.querySelectorAll<HTMLButtonElement>("[data-tab]");
     const copies = root.querySelectorAll<HTMLElement>("[data-tab-copy]");

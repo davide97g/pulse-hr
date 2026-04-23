@@ -1,0 +1,74 @@
+---
+import { Globe, Check } from "lucide-astro";
+import { useI18n, LOCALES, LOCALE_LABEL, LOCALE_SHORT, localizePath } from "../i18n";
+
+const { locale, t } = useI18n(Astro);
+const currentPath = Astro.url.pathname;
+---
+
+<div class="lang-switcher relative">
+  <button
+    type="button"
+    class="lang-switcher-trigger inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white px-2.5 py-1.5 rounded-md border border-white/10 hover:border-white/20 transition-colors"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    aria-label={t.a11y.languageSwitcher}
+  >
+    <Globe class="h-4 w-4" />
+    <span class="font-mono text-[11px] tabular-nums">{LOCALE_SHORT[locale]}</span>
+  </button>
+  <div
+    class="lang-switcher-menu hidden absolute right-0 top-full mt-2 min-w-[160px] rounded-md border border-white/10 bg-[#111113] shadow-lg z-50 py-1"
+    role="menu"
+  >
+    {LOCALES.map((l) => {
+      const href = localizePath(currentPath, l);
+      const active = l === locale;
+      return (
+        <a
+          href={href}
+          class="flex items-center justify-between gap-3 px-3 py-2 text-sm text-white/80 hover:bg-white/5 hover:text-white transition-colors"
+          role="menuitem"
+          aria-current={active ? "true" : undefined}
+          data-locale={l}
+        >
+          <span>{LOCALE_LABEL[l]}</span>
+          {active && <Check class="h-3.5 w-3.5 text-[#b4ff39]" />}
+        </a>
+      );
+    })}
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".lang-switcher").forEach((root) => {
+    const trigger = root.querySelector<HTMLButtonElement>(".lang-switcher-trigger");
+    const menu = root.querySelector<HTMLElement>(".lang-switcher-menu");
+    if (!trigger || !menu) return;
+    const close = () => {
+      menu.classList.add("hidden");
+      trigger.setAttribute("aria-expanded", "false");
+    };
+    const open = () => {
+      menu.classList.remove("hidden");
+      trigger.setAttribute("aria-expanded", "true");
+    };
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.classList.contains("hidden") ? open() : close();
+    });
+    document.addEventListener("click", (e) => {
+      if (!root.contains(e.target as Node)) close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close();
+    });
+    menu.querySelectorAll<HTMLAnchorElement>("a[data-locale]").forEach((a) => {
+      a.addEventListener("click", () => {
+        try {
+          localStorage.setItem("pulse.locale", a.dataset.locale!);
+        } catch {}
+      });
+    });
+  });
+</script>

@@ -1,10 +1,12 @@
 ---
 import StubLayout from "../layouts/StubLayout.astro";
+import { useI18n } from "../i18n";
+const { t } = useI18n(Astro);
 ---
 
 <StubLayout
-  title="Privacy policy"
+  title={t.stub.privacyTitle}
   path="/privacy"
-  description="How we collect, process and protect personal data. GDPR-compliant by design with EU data residency. Full policy document being finalised by legal."
+  description={t.stub.privacyDescription}
 >
 </StubLayout>

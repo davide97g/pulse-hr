@@ -1,8 +1,12 @@
 ---
-import { STATS } from "../data/landing";
+import { useI18n } from "../i18n";
+import { getLanding } from "../data/landing";
+
+const { locale, t } = useI18n(Astro);
+const { STATS } = getLanding(locale);
 ---
 
-<section class="max-w-[1280px] mx-auto px-6 py-20" aria-label="Key stats">
+<section class="max-w-[1280px] mx-auto px-6 py-20" aria-label={t.a11y.keyStats}>
   <dl class="grid grid-cols-2 md:grid-cols-4 gap-6 list-none p-0 m-0">
     {STATS.map((s) => (
       <div class="border-l-2 border-[#b4ff39]/40 pl-5 py-2">

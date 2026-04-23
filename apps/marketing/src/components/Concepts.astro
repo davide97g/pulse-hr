@@ -1,12 +1,16 @@
 ---
-import { CONCEPTS } from "../data/landing";
+import { useI18n } from "../i18n";
+import { getLanding } from "../data/landing";
+
+const { locale, t } = useI18n(Astro);
+const { CONCEPTS } = getLanding(locale);
 ---
 
 <section id="concepts" class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="concepts-title">
   <div class="max-w-2xl">
-    <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">What we believe</p>
+    <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">{t.concepts.eyebrow}</p>
     <h2 id="concepts-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
-      Four principles. <em class="italic">No</em> HR<br />vendor will match all four.
+      {t.concepts.titleBefore} <em class="italic">{t.concepts.titleItalic}</em> {t.concepts.titleAfter}
     </h2>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5 mt-16 border border-white/5 rounded-xl overflow-hidden">

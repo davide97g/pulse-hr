@@ -1,10 +1,14 @@
 ---
-import { USE_CASES } from "../data/landing";
+import { useI18n } from "../i18n";
+import { getLanding } from "../data/landing";
+
+const { locale, t } = useI18n(Astro);
+const { USE_CASES } = getLanding(locale);
 ---
 
 <section class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="usecases-title">
   <h2 id="usecases-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight max-w-3xl">
-    Built for the way <em class="italic">your</em> team actually works.
+    {t.useCases.title.before} <em class="italic">{t.useCases.title.italic}</em> {t.useCases.title.after}
   </h2>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-14">
     {USE_CASES.map((u, i) => (

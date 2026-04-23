@@ -3,10 +3,11 @@ import BaseLayout from "./BaseLayout.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import { Sparkles, ArrowLeft } from "lucide-astro";
+import { useI18n } from "../i18n";
 
 interface Props {
   title: string;
-  /** Path relative to site root (e.g. "/pricing"). Used for canonical. */
+  /** Path relative to site root (e.g. "/privacy"). Used for canonical. */
   path: string;
   /** One-line summary shown as the page description and under the H1. */
   description: string;
@@ -14,6 +15,7 @@ interface Props {
   body?: string;
 }
 
+const { t, href } = useI18n(Astro);
 const { title, path, description, body } = Astro.props;
 const absoluteTitle = `${title} — Pulse HR`;
 ---
@@ -26,13 +28,13 @@ const absoluteTitle = `${title} — Pulse HR`;
 >
   <Nav />
   <main id="main" class="max-w-[960px] mx-auto px-6 py-24 md:py-32">
-    <a href="/" class="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors mb-10">
-      <ArrowLeft class="h-4 w-4" /> Back to Pulse HR
+    <a href={href("/")} class="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors mb-10">
+      <ArrowLeft class="h-4 w-4" /> {t.stub.back}
     </a>
 
     <p class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/70 mb-6">
       <Sparkles class="h-3 w-3 text-[#b4ff39]" />
-      Coming soon
+      {t.stub.badge}
     </p>
 
     <h1 class="font-display text-5xl md:text-7xl leading-[0.98] tracking-tight">
@@ -50,11 +52,11 @@ const absoluteTitle = `${title} — Pulse HR`;
     )}
 
     <div class="mt-12 flex items-center gap-3 flex-wrap">
-      <a href="/" class="inline-flex items-center gap-2 bg-[#b4ff39] text-[#0b0b0d] px-5 py-3 rounded-md font-medium press-scale hover:bg-[#c6ff5a] transition-colors">
-        See the overview
+      <a href={href("/")} class="inline-flex items-center gap-2 bg-[#b4ff39] text-[#0b0b0d] px-5 py-3 rounded-md font-medium press-scale hover:bg-[#c6ff5a] transition-colors">
+        {t.stub.seeOverview}
       </a>
       <a href="mailto:hello@pulsehr.it" class="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] px-5 py-3 rounded-md font-medium press-scale transition-colors">
-        Ping us about {title.toLowerCase()}
+        {t.stub.pingUs} {title.toLowerCase()}
       </a>
     </div>
   </main>

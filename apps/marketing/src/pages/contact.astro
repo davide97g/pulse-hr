@@ -4,69 +4,33 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Mail, Github, MessagesSquare, Shield, Newspaper, Building2, Clock } from "lucide-astro";
+import { useI18n } from "../i18n";
 
-const title = "Contact — email, GitHub Discussions, security reports";
-const description =
-  "One email per purpose. GitHub Discussions for anything you want to ask in public. Security reports via security@. No chatbot funnels, no \"book a demo\" form that routes to a BDR.";
-const path = "/contact";
+const { t } = useI18n(Astro);
 
-const CHANNELS = [
-  {
-    icon: Mail,
-    k: "General & sales",
-    email: "hello@pulsehr.it",
-    d: "The catch-all. Product questions, trial help, how we bill, whether we fit your use-case. One human replies, usually the same day.",
-    accent: "#b4ff39",
-  },
-  {
-    icon: Mail,
-    k: "Procurement / RFP",
-    email: "sales@pulsehr.it",
-    d: "DPAs, vendor questionnaires, security reviews, purchase orders. We pre-fill the common ones (SIG-lite, CAIQ) and send them back in 24 h.",
-    accent: "#ffbf4a",
-  },
-  {
-    icon: Shield,
-    k: "Security reports",
-    email: "security@pulsehr.it",
-    d: "Responsible disclosure. PGP key available at /.well-known/security.txt. Full policy at /security.",
-    accent: "#ff8a7a",
-  },
-  {
-    icon: Newspaper,
-    k: "Press & partnerships",
-    email: "press@pulsehr.it",
-    d: "Journalists, analysts, integration partners. Include a calendar link and we'll skip the email tennis.",
-    accent: "#6fd8ff",
-  },
+const CHANNELS_META = [
+  { icon: Mail, accent: "#b4ff39" },
+  { icon: Mail, accent: "#ffbf4a" },
+  { icon: Shield, accent: "#ff8a7a" },
+  { icon: Newspaper, accent: "#6fd8ff" },
 ];
+const CHANNELS = t.contactPage.channels.map((c, i) => ({ ...c, ...CHANNELS_META[i] }));
 
-const OTHER = [
-  {
-    icon: Github,
-    k: "GitHub issues",
-    d: "Bug reports, feature requests, anything the whole community should see. Labels: bug / feature / docs / question.",
-    href: "https://github.com/davide97g/pulse-hr/issues",
-    label: "github.com/davide97g/pulse-hr/issues",
-  },
-  {
-    icon: MessagesSquare,
-    k: "GitHub Discussions",
-    d: "Open-ended questions, ideas, show-and-tell. If it's not a concrete bug, this is where it lives.",
-    href: "https://github.com/davide97g/pulse-hr/discussions",
-    label: "github.com/davide97g/pulse-hr/discussions",
-  },
+const OTHER_META = [
+  { icon: Github, href: "https://github.com/davide97g/pulse-hr/issues" },
+  { icon: MessagesSquare, href: "https://github.com/davide97g/pulse-hr/discussions" },
 ];
+const OTHER = t.contactPage.other.map((o, i) => ({ ...o, ...OTHER_META[i] }));
 
-const breadcrumbs = [{ name: "Contact", path: "/contact" }];
+const breadcrumbs = [{ name: t.contactPage.breadcrumb, path: "/contact" }];
 
 const contactLd = {
   "@context": "https://schema.org",
   "@type": "ContactPage",
   "@id": "https://pulsehr.it/contact#page",
-  name: title,
+  name: t.contactPage.title,
   url: "https://pulsehr.it/contact",
-  description,
+  description: t.contactPage.description,
   about: { "@id": "https://pulsehr.it/#organization" },
   mainEntity: {
     "@id": "https://pulsehr.it/#organization",
@@ -75,7 +39,7 @@ const contactLd = {
       "@type": "ContactPoint",
       contactType: c.k,
       email: c.email,
-      availableLanguage: ["en"],
+      availableLanguage: ["en", "it"],
     })),
   },
 };
@@ -83,21 +47,19 @@ const contactLd = {
 const extraLd = [contactLd];
 ---
 
-<BaseLayout {title} {description} {path} {breadcrumbs} {extraLd}>
+<BaseLayout title={t.contactPage.title} description={t.contactPage.description} path="/contact" {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main">
     <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
       <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
-        <Mail class="h-3 w-3" /> Contact
+        <Mail class="h-3 w-3" /> {t.contactPage.eyebrow}
       </p>
       <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
-        A real inbox.<br />
-        <em class="italic text-[#b4ff39]">Real</em> humans.
+        {t.contactPage.titleLine1}<br />
+        <em class="italic text-[#b4ff39]">{t.contactPage.titleItalic}</em>{t.contactPage.titleAfter}
       </h1>
       <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
-        No chatbot funnels, no "book a call" form that routes to a BDR on commission.
-        One email per purpose, and most product conversation happens in public on
-        GitHub. Pick the lane that fits.
+        {t.contactPage.body}
       </p>
     </section>
 
@@ -128,7 +90,7 @@ const extraLd = [contactLd];
     </section>
 
     <section class="max-w-[1280px] mx-auto px-6 py-10">
-      <h2 class="font-display text-3xl tracking-tight mb-6">Ask in public.</h2>
+      <h2 class="font-display text-3xl tracking-tight mb-6">{t.contactPage.askPublic}</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         {OTHER.map((c) => (
           <a
@@ -154,20 +116,20 @@ const extraLd = [contactLd];
       <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-8 grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-8">
         <div>
           <Building2 class="h-6 w-6 text-[#b4ff39] mb-3" />
-          <h2 class="font-display text-2xl mb-2 m-0">Where we are.</h2>
-          <p class="text-sm text-white/60 mt-2 m-0">HQ in Milan, team remote-first across CET and PT.</p>
+          <h2 class="font-display text-2xl mb-2 m-0">{t.contactPage.whereTitle}</h2>
+          <p class="text-sm text-white/60 mt-2 m-0">{t.contactPage.whereBody}</p>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
           <div>
-            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-1">Milan (HQ)</p>
+            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-1">{t.contactPage.hq}</p>
             <p class="text-white/80 leading-relaxed m-0">Piazza Gae Aulenti<br />20154 Milano<br />Italy</p>
           </div>
           <div>
-            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-1">Berlin</p>
+            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-1">{t.contactPage.berlin}</p>
             <p class="text-white/80 leading-relaxed m-0">Torstraße 220<br />10115 Berlin<br />Germany</p>
           </div>
           <div>
-            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-1">San Francisco</p>
+            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-1">{t.contactPage.sf}</p>
             <p class="text-white/80 leading-relaxed m-0">548 Market St.<br />PMB 41225<br />CA 94104, USA</p>
           </div>
         </div>
@@ -178,10 +140,7 @@ const extraLd = [contactLd];
       <div class="rounded-xl border border-white/10 bg-white/[0.02] p-5 flex items-start gap-3">
         <Clock class="h-5 w-5 text-[#b4ff39] shrink-0 mt-0.5" />
         <p class="text-sm text-white/65 leading-relaxed m-0">
-          We aim to respond within the same business day (CET office hours) for
-          sales and general questions. Security reports: within 24 h.
-          GitHub issues: triaged daily, no SLA. For anything time-critical and private
-          that doesn't fit the categories above, hello@pulsehr.it still works.
+          {t.contactPage.slaNote}
         </p>
       </div>
     </section>

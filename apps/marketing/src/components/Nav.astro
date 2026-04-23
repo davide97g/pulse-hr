@@ -1,9 +1,11 @@
 ---
-import { ChevronDown, Github } from "lucide-astro";
+import { Github } from "lucide-astro";
+import { useI18n } from "../i18n";
+import LangSwitcher from "./LangSwitcher.astro";
 
+const { t, href } = useI18n(Astro);
 const GITHUB_REPO = "davide97g/pulse-hr";
 
-// Fetch star count at build time; fall back silently if rate-limited or offline.
 let stars: number | null = null;
 try {
   const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`, {
@@ -22,14 +24,8 @@ const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `$
 
 <header class="sticky top-0 z-50 backdrop-blur bg-[#0b0b0d]/70 border-b border-white/5">
   <div class="max-w-[1280px] mx-auto px-6 h-16 flex items-center gap-8">
-    <a href="/" class="flex items-center gap-2.5" aria-label="Pulse HR home">
-      {/* Concentric pulse mark — two rings + dot. Matches docs/brand/logo-explorations/mark-final.svg */}
-      <svg
-        class="h-7 w-7 shrink-0"
-        viewBox="0 0 64 64"
-        aria-hidden="true"
-        focusable="false"
-      >
+    <a href={href("/")} class="flex items-center gap-2.5" aria-label={t.a11y.pulseHomeLabel}>
+      <svg class="h-7 w-7 shrink-0" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
         <circle cx="32" cy="32" r="23" fill="none" stroke="#b4ff39" stroke-width="1.25" opacity="0.55"></circle>
         <circle cx="32" cy="32" r="15" fill="none" stroke="#b4ff39" stroke-width="1.75"></circle>
         <circle cx="32" cy="32" r="5" fill="#b4ff39"></circle>
@@ -38,41 +34,36 @@ const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `$
         Pulse <span class="text-[#b4ff39]">HR</span>
       </span>
     </a>
-    <nav class="hidden md:flex items-center gap-6 text-sm text-white/70" aria-label="Primary">
-      <a href="/product" class="hover:text-white transition-colors">Product</a>
-      <a href="/labs" class="hover:text-white transition-colors inline-flex items-center gap-1">
-        Labs<span class="h-1 w-1 rounded-full bg-[#b4ff39] pulse-dot"></span>
+    <nav class="hidden md:flex items-center gap-6 text-sm text-white/70" aria-label={t.a11y.primaryNav}>
+      <a href={href("/product")} class="hover:text-white transition-colors">{t.nav.product}</a>
+      <a href={href("/labs")} class="hover:text-white transition-colors inline-flex items-center gap-1">
+        {t.nav.labs}<span class="h-1 w-1 rounded-full bg-[#b4ff39] pulse-dot"></span>
       </a>
-      <a href="/docs" class="hover:text-white transition-colors">Docs</a>
-      <a href="/vs" class="hover:text-white transition-colors">vs</a>
-      <a href="/pricing" class="hover:text-white transition-colors">Pricing</a>
-      <a href="/changelog" class="hover:text-white transition-colors">Changelog</a>
+      <a href={href("/docs")} class="hover:text-white transition-colors">{t.nav.docs}</a>
+      <a href={href("/vs")} class="hover:text-white transition-colors">{t.nav.vs}</a>
+      <a href={href("/pricing")} class="hover:text-white transition-colors">{t.nav.pricing}</a>
+      <a href={href("/changelog")} class="hover:text-white transition-colors">{t.nav.changelog}</a>
     </nav>
     <div class="ml-auto flex items-center gap-2">
       <a
         href={`https://github.com/${GITHUB_REPO}`}
         class="hidden sm:inline-flex items-center gap-2 text-sm text-white/70 hover:text-white px-3 py-1.5 rounded-md border border-white/10 hover:border-white/20 transition-colors"
-        aria-label="View source on GitHub"
+        aria-label={t.nav.viewGithub}
       >
         <Github class="h-4 w-4" />
-        <span>GitHub</span>
+        <span>{t.nav.github}</span>
         {stars !== null && (
           <span class="font-mono text-[11px] tabular-nums text-white/50">★ {formatStars(stars)}</span>
         )}
       </a>
-      <a href="https://app.pulsehr.it/" class="text-sm text-white/70 hover:text-white px-3 py-1.5 rounded-md transition-colors">Sign in</a>
+      <LangSwitcher />
+      <a href="https://app.pulsehr.it/" class="text-sm text-white/70 hover:text-white px-3 py-1.5 rounded-md transition-colors">{t.nav.signIn}</a>
       <a
         href="https://app.pulsehr.it/"
         class="text-sm font-medium bg-[#b4ff39] text-[#0b0b0d] px-4 py-2 rounded-md hover:bg-[#c6ff5a] transition-colors press-scale"
       >
-        Start free
+        {t.nav.startFree}
       </a>
-      <button
-        class="md:hidden h-9 w-9 grid place-items-center rounded-md border border-white/10"
-        aria-label="Toggle menu"
-      >
-        <ChevronDown class="h-4 w-4" />
-      </button>
     </div>
   </div>
 </header>

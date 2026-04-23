@@ -1,22 +1,26 @@
 ---
 import { ArrowRight } from "lucide-astro";
-import { CHANGELOG } from "../data/landing";
+import { useI18n } from "../i18n";
+import { getLanding } from "../data/landing";
+
+const { locale, t, href } = useI18n(Astro);
+const { CHANGELOG } = getLanding(locale);
 ---
 
 <section id="changelog" class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="changelog-title">
   <div class="flex items-end justify-between gap-8 flex-wrap mb-12">
     <div class="max-w-2xl">
-      <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">Shipped recently</p>
+      <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4">{t.changelog.eyebrow}</p>
       <h2 id="changelog-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
-        A changelog<br />
-        <em class="italic">worth reading</em>.
+        {t.changelog.titleBefore}<br />
+        <em class="italic">{t.changelog.titleItalic}</em>{t.changelog.titleAfter}
       </h2>
     </div>
     <a
-      href="/changelog"
+      href={href("/changelog")}
       class="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white border-b border-white/20 hover:border-[#b4ff39] pb-1 transition-colors"
     >
-      Full changelog <ArrowRight class="h-4 w-4" />
+      {t.changelog.full} <ArrowRight class="h-4 w-4" />
     </a>
   </div>
   <ol class="relative border-l border-white/10 ml-3 space-y-5 list-none p-0">

@@ -1,21 +1,25 @@
 ---
 import { Palette } from "lucide-astro";
-import { ROLES } from "../data/landing";
+import { useI18n } from "../i18n";
+import { getLanding } from "../data/landing";
+
+const { locale, t } = useI18n(Astro);
+const { ROLES } = getLanding(locale);
 ---
 
 <section class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="roles-title">
   <div class="flex items-end justify-between gap-8 flex-wrap mb-14">
     <div class="max-w-2xl">
       <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4 inline-flex items-center gap-2">
-        <Palette class="h-3 w-3" /> Every persona, one surface
+        <Palette class="h-3 w-3" /> {t.roles.eyebrow}
       </p>
       <h2 id="roles-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
-        The same app,<br />
-        <em class="italic">five</em> points of view.
+        {t.roles.titleLine1}<br />
+        <em class="italic">{t.roles.titleItalic}</em> {t.roles.titleAfter}
       </h2>
     </div>
     <p class="text-white/60 max-w-md text-sm leading-relaxed">
-      Role themes aren't cosmetic. Each persona ships with its own palette, default view, and shortcut set. Engineers don't see payroll drafts. CFOs don't see sprint standups.
+      {t.roles.subtitle}
     </p>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-5 gap-px rounded-xl overflow-hidden border border-white/10 bg-white/5">

@@ -1,9 +1,11 @@
 ---
+import { useI18n } from "../i18n";
 import { MARQUEE_LOGOS } from "../data/landing";
+const { t } = useI18n(Astro);
 const tripled = [...MARQUEE_LOGOS, ...MARQUEE_LOGOS, ...MARQUEE_LOGOS];
 ---
 
-<div class="border-y border-white/5 py-6 overflow-hidden" aria-label="Customer logos">
+<div class="border-y border-white/5 py-6 overflow-hidden" aria-label={t.a11y.customerLogos}>
   <div class="flex gap-14 animate-marquee whitespace-nowrap text-white/30">
     {tripled.map((l) => (
       <span class="font-display text-2xl tracking-[0.25em]">{l}</span>

@@ -19,11 +19,14 @@ import TeamSection from "../components/TeamSection.astro";
 import FaqSection from "../components/FaqSection.astro";
 import Cta from "../components/Cta.astro";
 import Footer from "../components/Footer.astro";
+import { useI18n } from "../i18n";
+
+const { t } = useI18n(Astro);
 ---
 
 <BaseLayout
-  title="Open-source HR, payroll & time tracking — Pulse HR"
-  description="Open-source, modular HR & payroll. Money, People and Work as three composable products. Keyboard-first, webhooks on every event, free for the first 5 employees."
+  title={t.indexPage.title}
+  description={t.meta.description}
   path="/"
   isHome={true}
 >

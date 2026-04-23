@@ -1,10 +1,12 @@
 ---
 import StubLayout from "../layouts/StubLayout.astro";
+import { useI18n } from "../i18n";
+const { t } = useI18n(Astro);
 ---
 
 <StubLayout
-  title="Terms of service"
+  title={t.stub.termsTitle}
   path="/terms"
-  description="Master subscription agreement, acceptable use policy and data processing addendum. The full document is being finalised and publishes here shortly."
+  description={t.stub.termsDescription}
 >
 </StubLayout>

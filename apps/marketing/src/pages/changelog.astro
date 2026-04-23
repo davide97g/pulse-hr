@@ -2,22 +2,21 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-import { CHANGELOG } from "../data/landing";
+import { getLanding } from "../data/landing";
+import { useI18n } from "../i18n";
 
-const title = "Pulse HR changelog — product updates & feature shipments";
-const description =
-  "Every meaningful update to the Pulse HR platform. Gantt polish, color decluttering, Employee Score, Saturation tabs, Commessa Forecast, Command bar — in reverse chronological order.";
-const path = "/changelog";
+const { locale, t } = useI18n(Astro);
+const { CHANGELOG } = getLanding(locale);
 
-const breadcrumbs = [{ name: "Changelog", path: "/changelog" }];
+const breadcrumbs = [{ name: t.changelogPage.breadcrumb, path: "/changelog" }];
 
 const collectionLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   "@id": "https://pulsehr.it/changelog#collection",
-  name: "Pulse HR changelog",
+  name: t.changelogPage.title,
   url: "https://pulsehr.it/changelog",
-  description,
+  description: t.changelogPage.description,
   isPartOf: { "@id": "https://pulsehr.it/#software" },
   mainEntity: {
     "@type": "ItemList",
@@ -33,20 +32,18 @@ const collectionLd = {
 const extraLd = [collectionLd];
 ---
 
-<BaseLayout {title} {description} {path} {breadcrumbs} {extraLd}>
+<BaseLayout title={t.changelogPage.title} description={t.changelogPage.description} path="/changelog" {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main">
     <section class="max-w-[960px] mx-auto px-6 pt-20 pb-10">
       <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">
-        Changelog
+        {t.changelogPage.eyebrow}
       </p>
       <h1 class="font-display text-[56px] md:text-[80px] leading-[0.95] tracking-tight">
-        What's <em class="italic text-[#b4ff39]">shipped</em>.
+        {t.changelogPage.titleBefore} <em class="italic text-[#b4ff39]">{t.changelogPage.titleItalic}</em>{t.changelogPage.titleAfter}
       </h1>
       <p class="mt-6 max-w-xl text-white/70 text-lg leading-relaxed">
-        Meaningful updates only — no "version 2.38.4 bug fixes" padding.
-        New entries land every week or two, and each one gets a quick note
-        about why it mattered.
+        {t.changelogPage.body}
       </p>
     </section>
 
