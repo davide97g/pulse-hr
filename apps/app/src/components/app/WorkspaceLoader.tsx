@@ -10,7 +10,7 @@ import {
 import { createPortal } from "react-dom";
 import { Check, Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
-import { ParticleField } from "./ParticleField";
+import { ParticleField } from "@pulse-hr/ui/atoms/ParticleField";
 
 export type LoaderStep = {
   id: string;

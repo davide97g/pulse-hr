@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CloudOff, RefreshCw } from "lucide-react";
 import { useOfflineMode } from "@/lib/offline-mode";
 import { pingHealth } from "@/lib/server-wake";
-import { Button } from "@/components/ui/button";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { toast } from "sonner";
 
 export function OfflineBanner() {

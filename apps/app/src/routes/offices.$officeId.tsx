@@ -15,11 +15,11 @@ import {
   Plus,
   Users,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
 import { PageHeader } from "@/components/app/AppShell";
-import { EmptyState } from "@/components/app/EmptyState";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { RoomGantt } from "@/components/app/RoomGantt";
 import { SeatMap } from "@/components/app/SeatMap";
 import { BookingDialog, type BookingDialogPrefill } from "@/components/app/BookingDialog";

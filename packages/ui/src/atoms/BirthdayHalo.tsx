@@ -1,5 +1,5 @@
-import { Avatar } from "@/components/app/AppShell";
-import { cn } from "@/lib/utils";
+import { AvatarDisplay as Avatar } from "./AvatarDisplay";
+import { cn } from "../lib/cn";
 
 interface BirthdayHaloProps {
   initials: string;

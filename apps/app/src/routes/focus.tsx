@@ -14,18 +14,18 @@ import {
   Sparkles,
   ChevronRight,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Switch } from "@pulse-hr/ui/primitives/switch";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@pulse-hr/ui/primitives/select";
 import { PageHeader } from "@/components/app/AppShell";
-import { NewBadge } from "@/components/app/NewBadge";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { commesse, commessaById, type FocusSession } from "@/lib/mock-data";
 import { focusSessionsTable, useFocusSessions } from "@/lib/tables/focusSessions";
 import { updateFocusPrefs, useFocusPrefs } from "@/lib/focus-prefs";

@@ -7,7 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@pulse-hr/ui/primitives/dialog";
 
 interface Shortcut {
   keys: string[];

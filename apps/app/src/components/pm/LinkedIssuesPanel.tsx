@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { StatusBadge } from "@/components/app/AppShell";
-import { EmptyState } from "@/components/app/EmptyState";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { IntegrationBadge } from "./IntegrationBadge";
 import { syncIssues } from "@/lib/integrations";
 import type { IntegrationProvider, MockIssue } from "@/lib/mock-data";

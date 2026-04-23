@@ -2,10 +2,10 @@ import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useUser } from "@clerk/react";
 import { useMemo } from "react";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Checkbox } from "@pulse-hr/ui/primitives/checkbox";
+import { Label } from "@pulse-hr/ui/primitives/label";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { PageHeader } from "@/components/app/AppShell";
 import { useIsEffectiveAdmin } from "@/lib/role-override";
 import {

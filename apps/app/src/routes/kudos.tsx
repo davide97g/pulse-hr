@@ -14,20 +14,20 @@ import {
   Search,
   X,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Label } from "@pulse-hr/ui/primitives/label";
+import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@pulse-hr/ui/primitives/select";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
-import { NewBadge } from "@/components/app/NewBadge";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { employees, employeeById, type Kudo } from "@/lib/mock-data";
 import { kudosTable, useKudos } from "@/lib/tables/kudos";
 import { isBirthday } from "@/lib/birthday";

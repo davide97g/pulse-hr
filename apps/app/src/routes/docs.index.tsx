@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { ArrowUpRight, Sparkles, Gauge, Briefcase, Plug, Users } from "lucide-react";
 
 export const Route = createFileRoute("/docs/")({

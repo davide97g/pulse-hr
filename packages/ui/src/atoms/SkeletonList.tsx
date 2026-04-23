@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card } from "@/components/ui/card";
+import { Skeleton } from "@pulse-hr/ui/primitives/skeleton";
+import { Card } from "@pulse-hr/ui/primitives/card";
 
 export function SkeletonRows({ rows = 6, avatar = true }: { rows?: number; avatar?: boolean }) {
   return (

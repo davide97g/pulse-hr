@@ -14,9 +14,9 @@ import {
   Mail,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Label } from "@pulse-hr/ui/primitives/label";
 import { AuthLayout } from "@/components/app/AuthLayout";
 import { CompanyProfileForm } from "@/components/app/CompanyProfileForm";
 import { cn } from "@/lib/utils";

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Info } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
 import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 import { Avatar } from "@/components/app/AppShell";

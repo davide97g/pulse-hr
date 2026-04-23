@@ -8,10 +8,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from "@pulse-hr/ui/primitives/dialog";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import { cn } from "@/lib/utils";
 import { createProposal } from "@/lib/proposals/api";
 import type { ProposalType } from "@/lib/proposals/types";

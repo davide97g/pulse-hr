@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Sparkles, Info } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Badge } from "@pulse-hr/ui/primitives/badge";
 import {
   SCORE_WEIGHTS,
   FACTOR_LABELS,

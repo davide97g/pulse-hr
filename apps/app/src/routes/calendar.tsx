@@ -24,10 +24,10 @@ import {
   Users,
   Pencil,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Badge } from "@pulse-hr/ui/primitives/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
 import {
   Dialog,
   DialogContent,
@@ -35,7 +35,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@pulse-hr/ui/primitives/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,11 +45,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@pulse-hr/ui/primitives/alert-dialog";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
-import { SidePanel } from "@/components/app/SidePanel";
-import { EmptyState } from "@/components/app/EmptyState";
-import { SkeletonRows } from "@/components/app/SkeletonList";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
+import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
 import { employeeById, commessaById, type GCalEvent } from "@/lib/mock-data";
 import { gcalEventsTable, useGcalEvents } from "@/lib/tables/gcalEvents";
 import { useIntegration, updateIntegration } from "@/lib/integrations-store";

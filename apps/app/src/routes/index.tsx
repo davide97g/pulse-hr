@@ -14,10 +14,10 @@ import {
   Calendar,
   FileCheck2,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
-import { NewBadge } from "@/components/app/NewBadge";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { Heart, Gift, Focus as FocusIcon, Sparkles as SparkIcon } from "lucide-react";
 import { MomentsCard } from "@/components/app/MomentsCard";
 import { SwipeRow } from "@/components/app/SwipeRow";

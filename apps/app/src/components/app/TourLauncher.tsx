@@ -7,7 +7,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@pulse-hr/ui/primitives/dropdown-menu";
 import { clearCompletedTours, getCompletedTours, TOURS_BY_WORKFLOW } from "@/lib/tours";
 import { useTour } from "./TourProvider";
 import { cn } from "@/lib/utils";

@@ -25,14 +25,14 @@ import {
 } from "lucide-react";
 import { useBookings } from "@/components/app/BookingsContext";
 import { officeById, roomById } from "@/lib/offices";
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
 import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
 import { employees, kudosSeed, employeeById, leaveRequests } from "@/lib/mock-data";
 import { growthSummaryFor, strengthRadarFor, type StrengthTag } from "@/lib/growth";
 import { STRENGTH_COLORS, strengthColor } from "@/lib/colors";
 import { MiniStat } from "@/components/app/StatTiles";
-import { BirthdayHalo } from "@/components/app/BirthdayHalo";
+import { BirthdayHalo } from "@pulse-hr/ui/atoms/BirthdayHalo";
 import { isBirthday } from "@/lib/birthday";
 import { cn } from "@/lib/utils";
 

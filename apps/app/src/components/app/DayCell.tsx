@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { isSameDay, format } from "date-fns";
 import { Umbrella, Thermometer, PartyPopper, Sprout, UserRound, AlertCircle } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@pulse-hr/ui/primitives/tooltip";
 import { cn } from "@/lib/utils";
 import type { DayInfo, DayStatus } from "@/lib/timesheet";
 import { commessaById } from "@/lib/mock-data";

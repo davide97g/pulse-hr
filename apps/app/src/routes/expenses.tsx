@@ -2,14 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Plus, Upload, Check, X, Receipt, Trash2, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@pulse-hr/ui/primitives/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,11 +19,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@pulse-hr/ui/primitives/alert-dialog";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
-import { SidePanel } from "@/components/app/SidePanel";
-import { EmptyState } from "@/components/app/EmptyState";
-import { SkeletonRows } from "@/components/app/SkeletonList";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
+import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
 import { type Expense } from "@/lib/mock-data";
 import { expensesTable, useExpenses } from "@/lib/tables/expenses";

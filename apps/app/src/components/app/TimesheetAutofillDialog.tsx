@@ -18,17 +18,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from "@pulse-hr/ui/primitives/dialog";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { NewBadge } from "./NewBadge";
+} from "@pulse-hr/ui/primitives/select";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { useWorkspace } from "./WorkspaceContext";
 import { commesse, commessaById, type TimesheetEntry } from "@/lib/mock-data";
 import {

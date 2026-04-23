@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/cn";
 
 type Props = {
   size?: "sm" | "md" | "lg";

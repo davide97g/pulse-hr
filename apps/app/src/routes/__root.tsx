@@ -7,7 +7,7 @@ import { ProposalProvider } from "@/components/proposals/ProposalProvider";
 import { WorkspaceMount } from "@/components/app/WorkspaceMount";
 import { TableStoreProvider } from "@/components/app/TableStoreProvider";
 import { SidebarFeaturesProvider } from "@/components/app/SidebarFeaturesContext";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@pulse-hr/ui/primitives/sonner";
 import { useWorkspaceStatus } from "@/lib/workspace";
 // Side-effect imports: register persistent tables + wire their sync into
 // mock-data.ts. Each new entity table goes here so it's loaded before any

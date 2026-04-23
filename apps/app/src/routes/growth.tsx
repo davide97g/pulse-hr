@@ -23,16 +23,16 @@ import {
   CalendarRange,
   Calendar as CalendarIcon,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@pulse-hr/ui/primitives/tooltip";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
-import { NewBadge } from "@/components/app/NewBadge";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { StrengthsRadar } from "@/components/app/StrengthsRadar";
 import { StatTile, MiniStat } from "@/components/app/StatTiles";
-import { BirthdayHalo } from "@/components/app/BirthdayHalo";
+import { BirthdayHalo } from "@pulse-hr/ui/atoms/BirthdayHalo";
 import { isBirthday } from "@/lib/birthday";
 import {
   allGrowthSummaries,

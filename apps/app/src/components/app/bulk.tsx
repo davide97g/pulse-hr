@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Check, X, Minus } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
+import { Checkbox } from "@pulse-hr/ui/primitives/checkbox";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { cn } from "@/lib/utils";
 
 interface BulkSelectApi<T extends { id: string }> {

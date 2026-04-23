@@ -13,8 +13,8 @@ import {
   Crown,
 } from "lucide-react";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
-import { NewBadge } from "@/components/app/NewBadge";
-import { BirthdayHalo } from "@/components/app/BirthdayHalo";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
+import { BirthdayHalo } from "@pulse-hr/ui/atoms/BirthdayHalo";
 import { strengthColor } from "@/lib/colors";
 import {
   employees,

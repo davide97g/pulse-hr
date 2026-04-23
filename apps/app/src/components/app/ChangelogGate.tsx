@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { apiFetch } from "@/lib/api-client";
 import type { Tour } from "@/lib/tours";
 import { cn } from "@/lib/utils";

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, ArrowLeft, BookOpen, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@pulse-hr/ui/primitives/button";
 import { cn } from "@/lib/utils";
 import { getTour, markTourCompleted, type Tour, type TourStep } from "@/lib/tours";
 

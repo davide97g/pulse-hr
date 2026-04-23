@@ -11,17 +11,17 @@ import {
   Save,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Popover, PopoverContent, PopoverAnchor } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverAnchor } from "@pulse-hr/ui/primitives/popover";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Label } from "@pulse-hr/ui/primitives/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@pulse-hr/ui/primitives/select";
 import { StatusBadge } from "./AppShell";
 import {
   commesse,

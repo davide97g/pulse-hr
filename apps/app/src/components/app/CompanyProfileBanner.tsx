@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Coins, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { NewBadge } from "./NewBadge";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { useCompanyProfileStore } from "./CompanyProfileStore";
 
 const DISMISS_KEY = "pulse.company-profile.dismissed";

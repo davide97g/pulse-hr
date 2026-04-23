@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plug } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 
 export const Route = createFileRoute("/docs/integrations")({
   head: () => ({ meta: [{ title: "Integrations — Pulse HR docs" }] }),

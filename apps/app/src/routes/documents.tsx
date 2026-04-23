@@ -12,24 +12,24 @@ import {
   FolderPlus,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Label } from "@pulse-hr/ui/primitives/label";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from "@pulse-hr/ui/primitives/dropdown-menu";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@pulse-hr/ui/primitives/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,7 +39,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@pulse-hr/ui/primitives/alert-dialog";
 import {
   Dialog,
   DialogContent,
@@ -47,10 +47,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@pulse-hr/ui/primitives/dialog";
 import { PageHeader, StatusBadge } from "@/components/app/AppShell";
-import { EmptyState } from "@/components/app/EmptyState";
-import { SkeletonRows } from "@/components/app/SkeletonList";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
+import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
 import { type Doc } from "@/lib/mock-data";
 import { docsTable, useDocs } from "@/lib/tables/docs";
 import { useFullName } from "@/lib/current-user";

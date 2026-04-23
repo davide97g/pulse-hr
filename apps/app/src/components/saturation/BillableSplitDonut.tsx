@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { billableSplit } from "@/lib/projects";
 
 export function BillableSplitDonut() {

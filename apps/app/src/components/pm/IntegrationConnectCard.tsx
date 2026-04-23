@@ -9,9 +9,9 @@ import {
   ArrowDownToLine,
   ArrowLeftRight,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Badge } from "@pulse-hr/ui/primitives/badge";
 import {
   fakeOAuthConnect,
   fakeDisconnect,

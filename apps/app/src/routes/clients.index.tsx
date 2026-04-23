@@ -13,11 +13,11 @@ import {
   Globe,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Card } from "@/components/ui/card";
-import { NewBadge } from "@/components/app/NewBadge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card } from "@pulse-hr/ui/primitives/card";
+import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
+import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,17 +27,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@pulse-hr/ui/primitives/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+} from "@pulse-hr/ui/primitives/dropdown-menu";
+import { Badge } from "@pulse-hr/ui/primitives/badge";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
-import { EmptyState } from "@/components/app/EmptyState";
-import { SkeletonRows } from "@/components/app/SkeletonList";
+import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
+import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
 import { employeeById, type Client, type Commessa } from "@/lib/mock-data";
 import { clientsTable, useClients } from "@/lib/tables/clients";
 import { commesseTable, useCommesse } from "@/lib/tables/commesse";

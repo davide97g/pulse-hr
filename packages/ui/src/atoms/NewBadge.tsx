@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/cn";
 
 export function NewBadge({ className, label = "NEW" }: { className?: string; label?: string }) {
   return (

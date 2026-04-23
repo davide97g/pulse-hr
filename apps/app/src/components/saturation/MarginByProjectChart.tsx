@@ -10,7 +10,7 @@ import {
   Cell,
   LabelList,
 } from "recharts";
-import { Card } from "@/components/ui/card";
+import { Card } from "@pulse-hr/ui/primitives/card";
 import { commesse } from "@/lib/mock-data";
 import { projectMargin } from "@/lib/projects";
 

@@ -2,7 +2,7 @@ import { Sparkles, Lock } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import type { Employee, EmployeeLogHealth, ManagerAsk, LogSession } from "@/lib/mock-data";
 import { EmployeeScoreBadge } from "@/components/score/EmployeeScoreBadge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@pulse-hr/ui/primitives/tooltip";
 
 export function EmployeeRecapCard({
   employee,
