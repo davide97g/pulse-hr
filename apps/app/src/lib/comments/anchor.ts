@@ -137,12 +137,15 @@ export function resolveAnchor(anchor: Anchor): ResolvedPosition | null {
   return null;
 }
 
+declare const __APP_VERSION__: string | undefined;
+
 export function capturePageMeta(): PageMeta {
   return {
     title: document.title,
     viewportW: window.innerWidth,
     viewportH: window.innerHeight,
     userAgent: navigator.userAgent,
+    appVersion: typeof __APP_VERSION__ === "string" ? __APP_VERSION__ : undefined,
   };
 }
 

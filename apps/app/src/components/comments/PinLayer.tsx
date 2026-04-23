@@ -18,6 +18,7 @@ export function PinLayer() {
     closeThread,
     author,
     repositionComment,
+    visible,
   } = useCommentsOverlay();
 
   const [tick, setTick] = useState(0);
@@ -91,6 +92,8 @@ export function PinLayer() {
   };
 
   const placing = mode === "placing";
+
+  if (!visible) return null;
 
   return createPortal(
     <div

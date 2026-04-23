@@ -1,6 +1,6 @@
 import type { Author, CommentStatus } from "../comments/types";
 
-export type ProposalType = "bug" | "idea" | "improvement";
+export type ProposalType = "improvement" | "idea";
 
 export type ProposalReply = {
   id: string;

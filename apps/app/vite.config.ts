@@ -1,10 +1,15 @@
 import { defineConfig, loadEnv } from "vite";
 import path from "node:path";
+import { readFileSync } from "node:fs";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { VitePWA } from "vite-plugin-pwa";
+
+const pkg = JSON.parse(readFileSync(path.resolve(__dirname, "package.json"), "utf8")) as {
+  version: string;
+};
 
 export default defineConfig(({ mode }) => {
   // Surface VITE_* env vars (e.g. VITE_API_BASE_URL) at build time when Bun
@@ -15,6 +20,9 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    define: {
+      __APP_VERSION__: JSON.stringify(pkg.version),
+    },
     plugins: [
       tsConfigPaths(),
       tailwindcss(),

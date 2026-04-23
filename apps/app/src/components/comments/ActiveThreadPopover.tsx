@@ -135,6 +135,14 @@ export function ActiveThreadPopover({
           <AuthorBadge name={comment.author.name} avatarUrl={comment.author.avatarUrl} />
           <div className="text-xs text-muted-foreground truncate">
             {relativeTime(comment.createdAt)}
+            {comment.pageMeta?.appVersion && (
+              <span
+                className="ml-1.5 inline-flex h-4 items-center rounded border bg-muted/40 px-1 text-[10px] font-mono tabular-nums"
+                title={`Captured on app v${comment.pageMeta.appVersion}`}
+              >
+                v{comment.pageMeta.appVersion}
+              </span>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-1.5">

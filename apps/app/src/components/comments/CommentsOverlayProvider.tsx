@@ -19,6 +19,8 @@ type Mode = "idle" | "placing";
 
 type PlacementPoint = { x: number; y: number };
 
+const VISIBILITY_KEY = "pulse.comments.visible";
+
 type CommentsContextValue = {
   route: string;
   mode: Mode;
@@ -33,6 +35,8 @@ type CommentsContextValue = {
   closeThread: () => void;
   comments: Comment[];
   author: Author | null;
+  visible: boolean;
+  toggleVisibility: () => void;
   submitNew: (body: string, captureAt: PlacementPoint, tags?: string[]) => Promise<void>;
   addReply: (commentId: string, body: string) => Promise<void>;
   vote: (commentId: string, value: -1 | 0 | 1) => Promise<void>;
@@ -84,6 +88,23 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
     repositionComment: repositionCommentApi,
   } = useComments(route, user?.id ?? null);
   const autoOpenedRef = useRef<string | null>(null);
+
+  const [visible, setVisible] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    const raw = window.localStorage.getItem(VISIBILITY_KEY);
+    return raw === null ? true : raw === "1";
+  });
+  const toggleVisibility = useCallback(() => {
+    setVisible((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(VISIBILITY_KEY, next ? "1" : "0");
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  }, []);
 
   const [mode, setMode] = useState<Mode>("idle");
   const [placementPoint, setPlacementPointState] = useState<PlacementPoint | null>(null);
@@ -279,6 +300,8 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
     closeThread,
     comments,
     author,
+    visible,
+    toggleVisibility,
     submitNew,
     addReply,
     vote,

@@ -5,7 +5,10 @@ import { toast } from "sonner";
 import { useSidebarFeatures } from "@/components/app/SidebarFeaturesContext";
 import { SidebarRouteGuard } from "@/components/app/SidebarRouteGuard";
 import { CommentPill } from "@/components/comments/CommentPill";
-import { CommentsOverlayProvider } from "@/components/comments/CommentsOverlayProvider";
+import {
+  CommentsOverlayProvider,
+  useCommentsOverlay,
+} from "@/components/comments/CommentsOverlayProvider";
 import { useNewProposal } from "@/components/proposals/ProposalProvider";
 import { PinLayer } from "@/components/comments/PinLayer";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -43,6 +46,8 @@ import {
   Users,
   Zap,
   Bell,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 import {
@@ -376,6 +381,26 @@ function AppShellInner() {
   );
 }
 
+function CommentsVisibilityToggle() {
+  const { visible, toggleVisibility } = useCommentsOverlay();
+  const Icon = visible ? Eye : EyeOff;
+  return (
+    <button
+      type="button"
+      onClick={toggleVisibility}
+      className={cn(
+        "hidden md:inline-flex h-9 w-9 rounded-md border bg-background/80 hover:bg-muted items-center justify-center press-scale transition-colors",
+        !visible && "text-muted-foreground",
+      )}
+      aria-pressed={!visible}
+      aria-label={visible ? "Hide comments" : "Show comments"}
+      title={visible ? "Hide comments" : "Show comments"}
+    >
+      <Icon className="h-4 w-4" />
+    </button>
+  );
+}
+
 function Topbar({
   onOpenPalette,
   onOpenLog,
@@ -458,6 +483,7 @@ function Topbar({
           <span className="hidden xl:inline font-medium">Feedback</span>
         </Link>
       )}
+      <CommentsVisibilityToggle />
       <VotingPowerChip />
       <div data-tour="topbar-status-log" className="hidden md:inline-flex">
         <button

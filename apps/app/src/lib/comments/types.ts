@@ -14,6 +14,7 @@ export type PageMeta = {
   viewportW: number;
   viewportH: number;
   userAgent: string;
+  appVersion?: string;
 };
 
 export type Author = {

@@ -14,6 +14,7 @@ export const PageMetaSchema = z.object({
   viewportW: z.number().int().nonnegative(),
   viewportH: z.number().int().nonnegative(),
   userAgent: z.string().max(1024),
+  appVersion: z.string().max(64).optional(),
 });
 
 export const NewCommentSchema = z.object({
@@ -40,7 +41,7 @@ export const StatusSchema = z.object({
   status: z.enum(["open", "triaged", "planned", "shipped", "wont_do"]),
 });
 
-export const ProposalTypeSchema = z.enum(["bug", "idea", "improvement"]);
+export const ProposalTypeSchema = z.enum(["improvement", "idea"]);
 
 export const NewProposalSchema = z.object({
   title: z.string().trim().min(1).max(140),

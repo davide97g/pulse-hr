@@ -110,7 +110,7 @@ export const proposals = pgTable(
       "proposals_status_chk",
       sql`${t.status} in ('open','triaged','planned','shipped','wont_do')`,
     ),
-    typeCheck: check("proposals_type_chk", sql`${t.type} in ('bug','idea','improvement')`),
+    typeCheck: check("proposals_type_chk", sql`${t.type} in ('improvement','idea')`),
   }),
 );
 

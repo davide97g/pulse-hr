@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Bug, Lightbulb, Sparkles } from "lucide-react";
+import { Lightbulb, Sparkles } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,10 +16,9 @@ import { cn } from "@/lib/utils";
 import { createProposal } from "@/lib/proposals/api";
 import type { ProposalType } from "@/lib/proposals/types";
 
-const TYPES: { value: ProposalType; label: string; icon: typeof Bug; accent: string }[] = [
-  { value: "bug", label: "Bug", icon: Bug, accent: "text-destructive" },
-  { value: "idea", label: "Idea", icon: Lightbulb, accent: "text-primary" },
+const TYPES: { value: ProposalType; label: string; icon: typeof Lightbulb; accent: string }[] = [
   { value: "improvement", label: "Improvement", icon: Sparkles, accent: "text-warning" },
+  { value: "idea", label: "Idea", icon: Lightbulb, accent: "text-primary" },
 ];
 
 export function ProposalComposer({
@@ -31,14 +30,14 @@ export function ProposalComposer({
 }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [type, setType] = useState<ProposalType>("idea");
+  const [type, setType] = useState<ProposalType>("improvement");
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
     if (!open) {
       setTitle("");
       setBody("");
-      setType("idea");
+      setType("improvement");
       setPending(false);
     }
   }, [open]);
@@ -75,13 +74,13 @@ export function ProposalComposer({
         <DialogHeader>
           <DialogTitle>New proposal</DialogTitle>
           <DialogDescription>
-            Report a bug, share an idea, or suggest an improvement. Posts to the feature board with
-            upvotes and replies.
+            Suggest an improvement to the current product, or share an idea for something new.
+            Posts to the feedback board with upvotes and replies.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Type">
+          <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Type">
             {TYPES.map((t) => {
               const active = type === t.value;
               const Icon = t.icon;

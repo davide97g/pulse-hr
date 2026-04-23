@@ -20,10 +20,8 @@ import {
   Search,
   X as XIcon,
   ExternalLink,
-  PanelRight,
   Send,
   Plus,
-  Bug,
   Lightbulb,
   Sparkles,
 } from "lucide-react";
@@ -590,21 +588,19 @@ function DraggableCard({
   );
 }
 
-const PROPOSAL_TYPE_META: Record<ProposalType, { label: string; icon: typeof Bug; cls: string }> = {
-  bug: {
-    label: "BUG",
-    icon: Bug,
-    cls: "bg-destructive/10 text-destructive border-destructive/30",
+const PROPOSAL_TYPE_META: Record<
+  ProposalType,
+  { label: string; icon: typeof Lightbulb; cls: string }
+> = {
+  improvement: {
+    label: "IMPROVEMENT",
+    icon: Sparkles,
+    cls: "bg-warning/15 text-warning border-warning/30",
   },
   idea: {
     label: "IDEA",
     icon: Lightbulb,
     cls: "bg-primary/10 text-primary border-primary/30",
-  },
-  improvement: {
-    label: "IMPROVEMENT",
-    icon: Sparkles,
-    cls: "bg-warning/15 text-warning border-warning/30",
   },
 };
 
@@ -652,17 +648,36 @@ function FeedbackCard({
   const isProposal = item.kind === "proposal";
   return (
     <article
+      role="button"
+      tabIndex={isOverlay ? -1 : 0}
+      onClick={(e) => {
+        if (isOverlay) return;
+        const target = e.target as HTMLElement | null;
+        if (target?.closest("[data-card-stop]")) return;
+        onOpenThread();
+      }}
+      onKeyDown={(e) => {
+        if (isOverlay) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpenThread();
+        }
+      }}
       className={cn(
-        "group rounded-[var(--radius-md)] border bg-card p-3",
-        !isOverlay && "stagger-in hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow",
+        "group rounded-[var(--radius-md)] border bg-card p-3 text-left",
+        !isOverlay &&
+          "stagger-in cursor-pointer hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:border-primary/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
         isOverlay && "shadow-[0_16px_40px_rgba(0,0,0,0.2)] rotate-[1.5deg]",
       )}
     >
       <div className="flex items-start gap-2">
-        <div className="flex flex-col items-center gap-0.5 shrink-0">
+        <div data-card-stop className="flex flex-col items-center gap-0.5 shrink-0">
           <button
             type="button"
-            onClick={() => onVote(item.myVote === 1 ? 0 : 1)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onVote(item.myVote === 1 ? 0 : 1);
+            }}
             className={cn(
               "h-6 w-6 rounded hover:bg-muted flex items-center justify-center",
               item.myVote === 1 && "text-primary",
@@ -674,7 +689,10 @@ function FeedbackCard({
           <span className="text-xs font-semibold tabular-nums">{item.voteScore}</span>
           <button
             type="button"
-            onClick={() => onVote(item.myVote === -1 ? 0 : -1)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onVote(item.myVote === -1 ? 0 : -1);
+            }}
             className={cn(
               "h-6 w-6 rounded hover:bg-muted flex items-center justify-center",
               item.myVote === -1 && "text-destructive",
@@ -708,8 +726,10 @@ function FeedbackCard({
           <div className="mt-2 flex items-center flex-wrap gap-1.5">
             {item.kind === "comment" ? (
               <Link
+                data-card-stop
                 to={item.route}
                 search={{ thread: item.id }}
+                onClick={(e) => e.stopPropagation()}
                 className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
                 title={`Open ${item.route} with this thread`}
               >
@@ -719,18 +739,22 @@ function FeedbackCard({
             ) : (
               <TypeBadge type={(item as BoardItem & { kind: "proposal" }).type} />
             )}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenThread();
-              }}
-              className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] text-muted-foreground hover:text-foreground hover:border-primary/50"
-              title="Open full thread"
+            <span
+              className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] text-muted-foreground"
+              title={
+                item.replies.length === 1
+                  ? "1 comment"
+                  : `${item.replies.length} comments`
+              }
+              aria-label={
+                item.replies.length === 1
+                  ? "1 comment"
+                  : `${item.replies.length} comments`
+              }
             >
-              <PanelRight className="h-3 w-3" />
-              Thread
-            </button>
+              <MessageSquare className="h-3 w-3" />
+              {item.replies.length}
+            </span>
             {item.kind === "comment" &&
               item.tags.slice(0, 3).map((t) => (
                 <span
@@ -741,7 +765,7 @@ function FeedbackCard({
                 </span>
               ))}
           </div>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
+          <div className="mt-2 flex items-center text-[11px] text-muted-foreground">
             <div className="flex items-center gap-1.5 min-w-0">
               {item.author.avatarUrl ? (
                 <img
@@ -756,24 +780,22 @@ function FeedbackCard({
               )}
               <span className="truncate">{item.author.name}</span>
             </div>
-            {item.replies.length > 0 && (
-              <span className="inline-flex items-center gap-1 shrink-0">
-                <MessageSquare className="h-3 w-3" />
-                {item.replies.length}
-              </span>
-            )}
           </div>
         </div>
         {admin && (
           <button
             type="button"
+            data-card-stop
             className={cn(
               "h-6 w-5 -mr-1 shrink-0 flex items-center justify-center text-muted-foreground cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity",
               isOverlay && "opacity-100",
             )}
             aria-label="Drag to change status"
             {...(dragHandleProps ?? {})}
-            onClick={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
           >
             <GripVertical className="h-4 w-4" />
           </button>

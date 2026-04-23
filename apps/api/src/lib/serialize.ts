@@ -61,7 +61,7 @@ export type ApiProposal = {
   id: string;
   title: string;
   body: string;
-  type: "bug" | "idea" | "improvement";
+  type: "improvement" | "idea";
   author: { id: string; name: string; avatarUrl: string | null };
   status: string;
   voteScore: number;
@@ -92,7 +92,7 @@ export function serializeProposal(
     id: p.id,
     title: p.title,
     body: p.body,
-    type: p.type as "bug" | "idea" | "improvement",
+    type: p.type as "improvement" | "idea",
     author: { id: p.authorId, name: p.authorName, avatarUrl: p.authorAvatar ?? null },
     status: p.status,
     voteScore: p.voteScore,

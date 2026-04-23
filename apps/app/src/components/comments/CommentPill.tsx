@@ -3,8 +3,10 @@ import { MessageSquarePlus, X } from "lucide-react";
 import { useCommentsOverlay } from "./CommentsOverlayProvider";
 
 export function CommentPill() {
-  const { mode, enterPlacement, cancelPlacement } = useCommentsOverlay();
+  const { mode, enterPlacement, cancelPlacement, visible } = useCommentsOverlay();
   const active = mode === "placing";
+
+  if (!visible) return null;
 
   return (
     <button
