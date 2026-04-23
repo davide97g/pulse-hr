@@ -207,19 +207,21 @@ const alternates = LOCALES.map((l) => ({
     <link rel="mcp-server-card" href="/.well-known/mcp/server-card.json" type="application/json" />
 
     <!-- Browser locale auto-detect.
-         Stored preference (from LangSwitcher) always wins. Otherwise on first visit
-         we pick a locale from navigator.languages and redirect once. -->
-    <script is:inline define:vars={{ currentLocale: locale }}>
+         Priority:
+           1. localStorage["pulse.locale"]   — explicit choice from LangSwitcher; always wins.
+           2. URL prefix (e.g. /it/...)      — direct visit to a localized path counts as
+                                                explicit choice; we persist it and stop.
+           3. navigator.languages, once      — only triggers when arriving at the default
+                                                locale's path with no stored preference. -->
+    <script is:inline define:vars={{ currentLocale: locale, defaultLocale: DEFAULT_LOCALE }}>
       (function () {
         try {
           var KEY = "pulse.locale";
           var SUPPORTED = ["en", "it"];
           var pathname = location.pathname;
           function targetFor(lang) {
-            if (lang === "en") {
-              return pathname.replace(/^\/it(\/|$)/, "/");
-            }
-            if (pathname.indexOf("/it") === 0) return pathname;
+            if (lang === "en") return pathname.replace(/^\/it(\/|$)/, "/");
+            if (pathname.indexOf("/it/") === 0 || pathname === "/it") return pathname;
             return "/it" + (pathname === "/" ? "" : pathname);
           }
           var stored = null;
@@ -231,6 +233,13 @@ const alternates = LOCALES.map((l) => ({
             }
             return;
           }
+          // No stored preference. If the visitor is already on a non-default-locale URL,
+          // treat that as an explicit choice and persist it — never auto-redirect away.
+          if (currentLocale !== defaultLocale) {
+            try { localStorage.setItem(KEY, currentLocale); } catch (e) {}
+            return;
+          }
+          // On the default-locale path, auto-detect once per session.
           var redirected = false;
           try { redirected = sessionStorage.getItem("pulse.locale.autoredirected") === "1"; } catch (e) {}
           if (redirected) return;
