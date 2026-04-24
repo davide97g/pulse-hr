@@ -3,8 +3,12 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
 import { ClerkProvider } from "@clerk/react";
 import { getRouter } from "./router";
+import { initGoogleAnalytics } from "./lib/analytics";
+import { CookieConsentBanner } from "./components/CookieConsentBanner";
 import { ThemeProvider } from "@pulse-hr/ui/theme";
 import "./styles.css";
+
+initGoogleAnalytics();
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -26,6 +30,7 @@ ReactDOM.createRoot(el).render(
   <React.StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
       <ThemeProvider>
+        <CookieConsentBanner />
         <RouterProvider router={router} />
       </ThemeProvider>
     </ClerkProvider>

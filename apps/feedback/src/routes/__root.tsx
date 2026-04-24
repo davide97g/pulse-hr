@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { Outlet, createRootRoute, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@clerk/react";
 import { useEffect } from "react";
 import { Toaster } from "sonner";
@@ -6,11 +6,17 @@ import { FeedbackShell } from "@/components/feedback/FeedbackShell";
 import { ProposalProvider } from "@/components/proposals/ProposalProvider";
 import { CompanyProfileProvider } from "@/components/app/CompanyProfileStore";
 import { RoleOverrideProvider } from "@/lib/role-override";
+import { trackGaPageViewIfConsented } from "@/lib/analytics";
 
 const APP_URL = import.meta.env.VITE_APP_URL ?? "https://app.pulsehr.it";
 
 function RootComponent() {
   const { isLoaded, isSignedIn } = useAuth();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    trackGaPageViewIfConsented();
+  }, [pathname]);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
