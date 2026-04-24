@@ -1,0 +1,402 @@
+<!--
+  Pulse HR — Carousel 001 "HR software for people who *hate* HR software"
+  10 slides, 1080 × 1350 px (LinkedIn 4:5).
+  Open in Chrome → Cmd+P → Paper: Custom 1080×1350 → Margins: None → Background graphics: ON → Save as PDF.
+  Source of truth for copy: ./slides.md — if you change copy here, mirror it there.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1080" />
+<title>Pulse HR · Carousel 001 — HR software for people who hate HR software</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Geist:wght@300..700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  :root {
+    --ink: #0b0b0d;
+    --cream: #f2f2ee;
+    --lime: #b4ff39;
+    --hover: #c6ff5a;
+    --muted: rgba(242, 242, 238, 0.55);
+    --soft: rgba(242, 242, 238, 0.82);
+    --f-display: "Fraunces", Georgia, serif;
+    --f-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #1a1a1d; }
+
+  /* The printable page size. LinkedIn's best carousel is 1080×1350 (4:5). */
+  @page { size: 1080px 1350px; margin: 0; }
+
+  body {
+    font-family: var(--f-sans);
+    color: var(--cream);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .slide {
+    position: relative;
+    width: 1080px;
+    height: 1350px;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 96px;
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 48px;
+    margin: 0 auto 16px;
+  }
+
+  .slide:last-child { page-break-after: auto; }
+
+  /* Screen preview wraps pages in a gap so they don't glue together. */
+  @media screen {
+    body { padding: 40px 0; }
+  }
+
+  /* Subtle grid overlay — used on slides 1 and 5 only. */
+  .grid-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 40%, transparent 100%);
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 40%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* Ambient lime glow — hero slide only. */
+  .glow::after {
+    content: "";
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(180, 255, 57, 0.22), transparent 70%);
+    filter: blur(80px);
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 18px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--lime);
+    font-weight: 600;
+    align-self: start;
+  }
+  .eyebrow--muted { color: var(--muted); }
+
+  .headline {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-variation-settings: "SOFT" 30, "opsz" 144;
+    font-size: 116px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: var(--cream);
+    margin: 0;
+    align-self: center;
+    max-width: 880px;
+  }
+  .headline--lg { font-size: 132px; }
+  .headline em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--cream);
+  }
+  .dot { color: var(--lime); }
+
+  .body {
+    font-family: var(--f-sans);
+    font-size: 30px;
+    line-height: 1.45;
+    color: var(--soft);
+    max-width: 760px;
+    align-self: start;
+  }
+
+  .body strong {
+    color: var(--cream);
+    font-weight: 600;
+  }
+
+  .body p { margin: 0 0 16px 0; }
+  .body p:last-child { margin-bottom: 0; }
+
+  .code {
+    font-family: var(--f-mono);
+    font-size: 28px;
+    line-height: 1.55;
+    color: var(--soft);
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    padding: 32px 36px;
+    max-width: 820px;
+    display: block;
+    align-self: start;
+  }
+  .code .prompt { color: var(--lime); }
+  .code .comment { color: var(--muted); }
+
+  .vendor-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 20px;
+    max-width: 820px;
+    align-self: start;
+  }
+  .vendor-list li {
+    font-family: var(--f-sans);
+    font-size: 32px;
+    line-height: 1.3;
+    color: var(--soft);
+  }
+  .vendor-list .v {
+    color: var(--cream);
+    font-weight: 600;
+    display: inline-block;
+    min-width: 200px;
+  }
+
+  .footnote {
+    font-family: var(--f-mono);
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    align-self: end;
+    max-width: 820px;
+  }
+
+  .slide-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px;
+  }
+
+  .wordmark {
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    color: var(--soft);
+  }
+  .wordmark em { color: var(--lime); font-style: italic; }
+
+  .counter {
+    font-family: var(--f-mono);
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* Hero slide override — no body, no footer, centred everything. */
+  .slide--hero {
+    grid-template-rows: 1fr auto;
+    gap: 0;
+    justify-items: center;
+    text-align: center;
+  }
+  .slide--hero .headline {
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+    max-width: 900px;
+  }
+
+  /* Pivot slide override — mono-dominant. */
+  .slide--pivot .headline { font-size: 104px; }
+
+  /* CTA slide override. */
+  .cta-links {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    font-family: var(--f-mono);
+    font-size: 28px;
+    color: var(--cream);
+    margin-bottom: 24px;
+  }
+  .cta-links span { background: rgba(180, 255, 57, 0.08); border: 1px solid rgba(180, 255, 57, 0.3); padding: 12px 20px; border-radius: 999px; }
+  .cta-url {
+    font-family: var(--f-mono);
+    font-size: 34px;
+    color: var(--lime);
+    margin-bottom: 28px;
+    display: block;
+  }
+
+  /* Kill print UI background if the user prints at default size. */
+  @media print {
+    body { background: var(--ink); padding: 0; }
+    .slide { margin: 0 auto; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 · HOOK -->
+<section class="slide slide--hero grid-bg glow" aria-label="Slide 1 — hook">
+  <h1 class="headline headline--lg">HR&nbsp;software<br />for&nbsp;people who<br /><em>hate</em><span class="dot">.</span><br />HR&nbsp;software</h1>
+  <div class="slide-meta">
+    <span class="wordmark"><em>P</em>ulse HR · pulsehr.it</span>
+    <span class="counter">01 / 10</span>
+  </div>
+</section>
+
+<!-- SLIDE 2 · DIAGNOSIS -->
+<section class="slide" aria-label="Slide 2 — diagnosis">
+  <div class="eyebrow">DIAGNOSIS · 2026</div>
+  <h2 class="headline">Your HRIS is <em>slow</em><span class="dot">.</span></h2>
+  <div class="body">
+    <p>Your manager can only see their own team. Time entry lives in one app, the project lives in another. The same eight hours get logged twice. Nobody trusts either number.</p>
+    <p>You pay for all of this. You hate all of this.</p>
+  </div>
+  <div class="slide-meta">
+    <span class="footnote">— every services firm, every Friday afternoon</span>
+    <span class="counter">02 / 10</span>
+  </div>
+</section>
+
+<!-- SLIDE 3 · SUITE CARTEL -->
+<section class="slide" aria-label="Slide 3 — the suite cartel">
+  <div class="eyebrow">THE SUITE CARTEL</div>
+  <h2 class="headline">Three vendors.<br />One <em>racket</em><span class="dot">.</span></h2>
+  <ul class="vendor-list">
+    <li><span class="v">Rippling</span> — locks you into the suite.</li>
+    <li><span class="v">Deel</span> — locks you into contractors.</li>
+    <li><span class="v">BambooHR</span> — locks you into 2014.</li>
+  </ul>
+  <div class="slide-meta">
+    <span class="footnote">Not one of them will let you read the source.</span>
+    <span class="counter">03 / 10</span>
+  </div>
+</section>
+
+<!-- SLIDE 4 · BOOK A DEMO -->
+<section class="slide" aria-label="Slide 4 — book a demo">
+  <div class="eyebrow">OBSERVED BEHAVIOUR</div>
+  <h2 class="headline">To see what they do,<br />you have to <em>book a demo</em><span class="dot">.</span></h2>
+  <div class="body">
+    <p>Apparently "can I see the product before I pay for it" is a premium feature.</p>
+    <p>We disagreed so hard we made not-doing-that a brand value.</p>
+  </div>
+  <div class="slide-meta">
+    <span class="footnote">$ grep -r "book a demo" pulsehr.it &nbsp; → &nbsp; 0 results</span>
+    <span class="counter">04 / 10</span>
+  </div>
+</section>
+
+<!-- SLIDE 5 · PIVOT -->
+<section class="slide slide--pivot grid-bg" aria-label="Slide 5 — pivot">
+  <div class="eyebrow">OR —</div>
+  <h2 class="headline">You could just<br /><em>read</em> the source<span class="dot">.</span></h2>
+  <code class="code">
+    <span class="prompt">$</span> git clone github.com/davide97g/pulse-hr<br />
+    <span class="prompt">$</span> cd pulse-hr &amp;&amp; bun install &amp;&amp; bun run dev<br />
+    <span class="comment"># → localhost:5173. done.</span>
+  </code>
+  <div class="slide-meta">
+    <span class="footnote">≈ 58 seconds · on a 2020 MacBook · honest number</span>
+    <span class="counter">05 / 10</span>
+  </div>
+</section>
+
+<!-- SLIDE 6 · OPEN -->
+<section class="slide" aria-label="Slide 6 — commitment 1 · open">
+  <div class="eyebrow">01 · OPEN</div>
+  <h2 class="headline">The whole product.<br /><em>On</em> GitHub<span class="dot">.</span></h2>
+  <div class="body">
+    <p>FSL-1.1-MIT today. Converts to plain MIT after two years. Automatic, non-negotiable.</p>
+    <p>Read every line. Run it on your own box. Fork it if we let you down.</p>
+  </div>
+  <div class="slide-meta">
+    <span class="footnote">github.com/davide97g/pulse-hr/blob/main/LICENSE</span>
+    <span class="counter">06 / 10</span>
+  </div>
+</section>
+
+<!-- SLIDE 7 · TRANSPARENT -->
+<section class="slide" aria-label="Slide 7 — commitment 2 · transparent">
+  <div class="eyebrow">02 · TRANSPARENT</div>
+  <h2 class="headline">Nothing behind<br />a <em>sales call</em><span class="dot">.</span></h2>
+  <div class="body">
+    <p>Roadmap public. Changelog public. Prices public. Screw-ups public.</p>
+    <p>If you'd need to "talk to someone" to figure out if we'd work for you — that's on us. We'd rather just write it down.</p>
+  </div>
+  <div class="slide-meta">
+    <span class="footnote">pulsehr.it/roadmap · /changelog · /pricing</span>
+    <span class="counter">07 / 10</span>
+  </div>
+</section>
+
+<!-- SLIDE 8 · YOURS -->
+<section class="slide" aria-label="Slide 8 — commitment 3 · yours">
+  <div class="eyebrow">03 · YOURS</div>
+  <h2 class="headline">Your data. Your infra.<br />Your <em>exit</em><span class="dot">.</span></h2>
+  <div class="body">
+    <p>Self-host on Docker / Helm / Terraform. Export everything in a clean format, any time, without asking.</p>
+    <p>Leaving Pulse is the easiest thing it does. That's on purpose.</p>
+  </div>
+  <div class="slide-meta">
+    <span class="footnote">docs/self-hosting.md</span>
+    <span class="counter">08 / 10</span>
+  </div>
+</section>
+
+<!-- SLIDE 9 · BUILT BY THE HATERS -->
+<section class="slide" aria-label="Slide 9 — commitment 4 · built by the people who use it">
+  <div class="eyebrow">04 · BUILT BY THE PEOPLE WHO USE IT</div>
+  <h2 class="headline">Built by the <em>haters</em><span class="dot">.</span></h2>
+  <div class="body">
+    <p>Two devs in Milan. No BDRs. No "customer success team". No product managers.</p>
+    <p>Just commits, a public roadmap, and pull requests from people who — turns out — also hate their HR software.</p>
+  </div>
+  <div class="slide-meta">
+    <span class="footnote">Davide Ghiotto · Niccolò Naso · Milan · 2026</span>
+    <span class="counter">09 / 10</span>
+  </div>
+</section>
+
+<!-- SLIDE 10 · CTA -->
+<section class="slide" aria-label="Slide 10 — CTA">
+  <div class="eyebrow">→ YOUR MOVE</div>
+  <h2 class="headline">Come <em>hate</em> it with us<span class="dot">.</span><br />Constructively.</h2>
+  <div class="body">
+    <div class="cta-links">
+      <span>★ Star it</span>
+      <span>🍴 Fork it</span>
+      <span>🔨 Break it</span>
+    </div>
+    <span class="cta-url">github.com/davide97g/pulse-hr</span>
+    <p>We're building what we'd want to use next. If you've got the same problem, we're listening.</p>
+  </div>
+  <div class="slide-meta">
+    <span class="wordmark"><em>P</em>ulse HR · pulsehr.it</span>
+    <span class="counter">10 / 10</span>
+  </div>
+</section>
+
+</body>
+</html>
