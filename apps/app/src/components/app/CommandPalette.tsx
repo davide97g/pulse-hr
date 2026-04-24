@@ -158,7 +158,7 @@ export function CommandPalette({
             ESC
           </kbd>
         </div>
-        <div className="max-h-96 overflow-y-auto p-2">
+        <div className="max-h-96 overflow-y-auto scrollbar-thin p-2">
           {intents.length > 0 && (
             <Section
               label={

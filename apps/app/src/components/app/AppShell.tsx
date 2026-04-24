@@ -241,7 +241,11 @@ function AppShellInner() {
           )}
         </div>
 
-        <nav data-tour="sidebar-nav" className="flex-1 overflow-y-auto scrollbar-thin py-3 px-2">
+        <nav
+          data-tour="sidebar-nav"
+          className="flex-1 overflow-y-auto scroll-fade py-3 px-2"
+          style={{ ["--fade-bg" as string]: "var(--sidebar)" }}
+        >
           {groups.map((group) => (
             <div key={group.label} className="mb-4">
               {!collapsed && (
@@ -394,7 +398,10 @@ function AppShellInner() {
           <div className="px-3 py-3 border-b">
             <ThemeSwitcher />
           </div>
-          <nav className="overflow-y-auto scrollbar-thin py-3 px-2 h-[calc(100%-6.75rem)]">
+          <nav
+            className="overflow-y-auto scroll-fade py-3 px-2 h-[calc(100%-6.75rem)]"
+            style={{ ["--fade-bg" as string]: "var(--sidebar)" }}
+          >
             {groups.map((group) => (
               <div key={group.label} className="mb-4">
                 <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
