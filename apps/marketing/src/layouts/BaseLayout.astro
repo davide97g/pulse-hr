@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import { SITE, getLanding } from "../data/landing";
 import { useI18n, HTML_LANG, OG_LOCALE, localizePath, LOCALES, DEFAULT_LOCALE } from "../i18n";
+import AnalyticsConsent from "../components/AnalyticsConsent.astro";
 
 interface Props {
   title?: string;
@@ -316,5 +317,6 @@ const alternates = LOCALES.map((l) => ({
       {t.a11y.skipToMain}
     </a>
     <slot />
+    <AnalyticsConsent locale={locale} />
   </body>
 </html>

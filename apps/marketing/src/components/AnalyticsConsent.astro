@@ -1,0 +1,148 @@
+---
+import type { Locale } from "../i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim() ?? "";
+const loadGa = import.meta.env.PROD && measurementId.length > 0;
+
+const copy =
+  locale === "it"
+    ? {
+        body:
+          "Usiamo Google Analytics, con il tuo consenso, per capire come viene usato il sito. Per maggiori dettagli, consulta l’",
+        link: "informativa sulla privacy",
+        suffix: ".",
+        decline: "Rifiuta",
+        accept: "Accetta",
+        privacy: "/it/privacy",
+        aria: "Preferenze cookie",
+      }
+    : {
+        body: "We use Google Analytics, with your consent, to understand how the site is used. See the ",
+        link: "privacy policy",
+        suffix: " for details.",
+        decline: "Decline",
+        accept: "Accept",
+        privacy: "/privacy",
+        aria: "Cookie preferences",
+      };
+---
+
+{loadGa && (
+  <div
+    id="pulse-ga-bar"
+    class="hidden fixed bottom-0 left-0 right-0 z-[60] border-t border-white/10 bg-[#0b0b0d]/95 p-4 text-sm text-white/80 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-[#0b0b0d]/85 md:px-6"
+    role="region"
+    aria-label={copy.aria}
+  >
+    <div class="mx-auto flex max-w-3xl flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-6">
+      <p class="text-sm leading-relaxed text-white/75">
+        {copy.body}
+        <a
+          class="font-medium text-[#b4ff39] underline decoration-[#b4ff39]/40 underline-offset-2 hover:text-white"
+          href={copy.privacy}
+        >{copy.link}</a>{copy.suffix}
+      </p>
+      <div class="flex shrink-0 flex-col gap-2 sm:flex-row sm:justify-end">
+        <button
+          type="button"
+          class="w-full cursor-pointer rounded-md border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10 sm:w-auto"
+          data-pulse-ga-decline
+        >{copy.decline}</button>
+        <button
+          type="button"
+          class="w-full cursor-pointer rounded-md bg-[#b4ff39] px-4 py-2 text-sm font-semibold text-[#0b0b0d] transition hover:brightness-110 sm:w-auto"
+          data-pulse-ga-accept
+        >{copy.accept}</button>
+      </div>
+    </div>
+  </div>
+  <script
+    is:inline
+    set:html={`(function (measurementId, storageKey) {
+  if (!measurementId) return;
+  var bar = document.getElementById("pulse-ga-bar");
+  if (!bar) return;
+  var STORAGE_KEY = storageKey;
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    window.dataLayer.push(arguments);
+  }
+  window.gtag = gtag;
+  var stored = null;
+  try {
+    stored = localStorage.getItem(STORAGE_KEY);
+  } catch (e) {}
+  if (stored !== "granted" && stored !== "denied") stored = null;
+  if (stored === "granted" || stored === "denied") {
+    bar.classList.add("hidden");
+    bar.setAttribute("aria-hidden", "true");
+  } else {
+    bar.classList.remove("hidden");
+    bar.removeAttribute("aria-hidden");
+  }
+  gtag("consent", "default", {
+    ad_storage: "denied",
+    analytics_storage: stored === "granted" ? "granted" : "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    wait_for_update: 500
+  });
+  var already = false;
+  var all = document.getElementsByTagName("script");
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].src && all[i].src.indexOf("googletagmanager.com/gtag") !== -1) {
+      already = true;
+      break;
+    }
+  }
+  if (!already) {
+    var s = document.createElement("script");
+    s.async = true;
+    s.setAttribute("data-pulse-ga", "1");
+    s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(measurementId);
+    s.onload = function () {
+      gtag("js", new Date());
+      gtag("config", measurementId, { send_page_view: false });
+      if (stored === "granted")
+        gtag("event", "page_view", {
+          page_path: location.pathname + location.search,
+          page_location: location.href,
+          page_title: document.title
+        });
+    };
+    document.head.appendChild(s);
+  } else if (stored === "granted" && window.gtag) {
+    window.gtag("event", "page_view", {
+      page_path: location.pathname + location.search,
+      page_location: location.href,
+      page_title: document.title
+    });
+  }
+  var accept = bar.querySelector("[data-pulse-ga-accept]");
+  var decline = bar.querySelector("[data-pulse-ga-decline]");
+  function setChoice(choice) {
+    try {
+      localStorage.setItem(STORAGE_KEY, choice);
+    } catch (e) {}
+    bar.classList.add("hidden");
+    bar.setAttribute("aria-hidden", "true");
+    if (typeof window.gtag !== "function") return;
+    window.gtag("consent", "update", {
+      analytics_storage: choice === "granted" ? "granted" : "denied"
+    });
+    if (choice === "granted")
+      window.gtag("event", "page_view", {
+        page_path: location.pathname + location.search,
+        page_location: location.href,
+        page_title: document.title
+      });
+  }
+  if (accept) accept.addEventListener("click", function () { setChoice("granted"); });
+  if (decline) decline.addEventListener("click", function () { setChoice("denied"); });
+})(${JSON.stringify(measurementId)}, ${JSON.stringify("pulse.consent.analytics")});`} />
+)}
