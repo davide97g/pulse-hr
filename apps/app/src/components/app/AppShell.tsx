@@ -49,6 +49,12 @@ import {
   Bell,
   Eye,
   EyeOff,
+  Megaphone,
+  MessagesSquare,
+  Gift,
+  CreditCard,
+  BarChart3,
+  type LucideIcon,
 } from "lucide-react";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 import {
@@ -97,6 +103,54 @@ import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
 
 const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
 const SIDEBAR_COLLAPSED_KEY = "pulse.sidebarCollapsed.v1";
+
+type QuickActionEntry =
+  | { kind: "action"; id: "add-employee" | "request-leave" | "submit-expense" | "post-job" | "run-payroll"; label: string; icon: LucideIcon }
+  | { kind: "nav"; to: string; label: string; icon: LucideIcon }
+  | { kind: "automation"; label: string; icon: LucideIcon; description: string };
+
+const QUICK_ACTIONS_BY_ROLE: Record<string, QuickActionEntry[]> = {
+  employee: [
+    { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
+    { kind: "action", id: "submit-expense", label: "Submit expense", icon: Receipt },
+    { kind: "nav", to: "/log", label: "Log status", icon: MessagesSquare },
+    { kind: "nav", to: "/kudos", label: "Give kudos", icon: Gift },
+  ],
+  manager: [
+    { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
+    { kind: "action", id: "submit-expense", label: "Submit expense", icon: Receipt },
+    { kind: "nav", to: "/leave", label: "Review approvals", icon: Users },
+    { kind: "nav", to: "/kudos", label: "Give kudos", icon: Gift },
+  ],
+  hr: [
+    { kind: "action", id: "post-job", label: "Post a job", icon: Briefcase },
+    { kind: "action", id: "add-employee", label: "Add employee", icon: Users },
+    { kind: "nav", to: "/announcements", label: "New announcement", icon: Megaphone },
+    { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
+  ],
+  finance: [
+    { kind: "action", id: "run-payroll", label: "Run payroll", icon: CreditCard },
+    { kind: "action", id: "submit-expense", label: "Submit expense", icon: Receipt },
+    { kind: "nav", to: "/reports", label: "Open reports", icon: BarChart3 },
+    { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
+  ],
+  admin: [
+    { kind: "action", id: "post-job", label: "Post a job", icon: Briefcase },
+    { kind: "action", id: "run-payroll", label: "Run payroll", icon: CreditCard },
+    { kind: "action", id: "add-employee", label: "Add employee", icon: Users },
+    { kind: "nav", to: "/announcements", label: "New announcement", icon: Megaphone },
+    {
+      kind: "automation",
+      label: "Run automation",
+      icon: Zap,
+      description: "Sync new hires to Slack",
+    },
+  ],
+};
+
+function quickActionsForRole(role: string): QuickActionEntry[] {
+  return QUICK_ACTIONS_BY_ROLE[role] ?? QUICK_ACTIONS_BY_ROLE.employee;
+}
 
 export function AppShell() {
   return (
@@ -608,33 +662,40 @@ function Topbar({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>Quick actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => openAction("add-employee")}>
-            <Users className="h-4 w-4 mr-2" />
-            Add employee
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openAction("request-leave")}>
-            <Calendar className="h-4 w-4 mr-2" />
-            Request leave
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openAction("submit-expense")}>
-            <Receipt className="h-4 w-4 mr-2" />
-            Submit expense
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openAction("post-job")}>
-            <Briefcase className="h-4 w-4 mr-2" />
-            Post a job
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() =>
-              toast.success("Automation triggered", {
-                description: "Running 'Sync new hires to Slack'",
-              })
+          {quickActionsForRole(effectiveRole).map((entry, i) => {
+            const Icon = entry.icon;
+            if (entry.kind === "action") {
+              return (
+                <DropdownMenuItem key={entry.id} onClick={() => openAction(entry.id)}>
+                  <Icon className="h-4 w-4 mr-2" />
+                  {entry.label}
+                </DropdownMenuItem>
+              );
             }
-          >
-            <Zap className="h-4 w-4 mr-2" />
-            Run automation
-          </DropdownMenuItem>
+            if (entry.kind === "nav") {
+              return (
+                <DropdownMenuItem key={entry.to} onClick={() => navigate({ to: entry.to })}>
+                  <Icon className="h-4 w-4 mr-2" />
+                  {entry.label}
+                </DropdownMenuItem>
+              );
+            }
+            return (
+              <div key={`auto-${i}`}>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() =>
+                    toast.success("Automation triggered", {
+                      description: `Running '${entry.description}'`,
+                    })
+                  }
+                >
+                  <Icon className="h-4 w-4 mr-2" />
+                  {entry.label}
+                </DropdownMenuItem>
+              </div>
+            );
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
 

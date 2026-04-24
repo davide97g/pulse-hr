@@ -423,7 +423,6 @@ export function TimesheetCalendar({
         anchor={anchorEl}
         info={selectedInfo}
         prevDayEntries={prevDayEntries}
-        templates={templates}
         onClose={() => {
           setSelectedDay(null);
           setAnchorEl(null);
@@ -431,7 +430,6 @@ export function TimesheetCalendar({
         onAdd={(data) => onAdd(data)}
         onEdit={onEdit}
         onDelete={onDelete}
-        onSaveTemplate={onSaveTemplate}
         onCopyFromPrev={() => {
           if (!selectedInfo) return;
           prevDayEntries.forEach((r) =>
