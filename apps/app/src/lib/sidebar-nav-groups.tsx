@@ -26,6 +26,7 @@ import {
   Briefcase as BriefcaseIcon,
   Building2,
   PanelLeft,
+  LifeBuoy,
 } from "lucide-react";
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
 import { ADMIN_MODULES_PATH } from "@/lib/sidebar-features";
@@ -40,6 +41,11 @@ export type SidebarNavItem = {
   unreadDot?: boolean;
   /** When true, `to` is an absolute URL — render as <a> instead of a router Link. */
   external?: boolean;
+  /**
+   * When set, the item renders a custom widget instead of a link. Currently
+   * used for the Help & tours dropdown trigger that lives inline in the nav.
+   */
+  kind?: "tours";
 };
 
 export type SidebarNavGroup = { label: string; items: SidebarNavItem[]; accent?: boolean };
@@ -62,7 +68,7 @@ export function buildSidebarNavGroups(
       ],
     },
     {
-      label: "Me",
+      label: "Pulse",
       items: [
         {
           to: "/log",
@@ -132,23 +138,31 @@ export function buildSidebarNavGroups(
         { to: "/marketplace", label: "Marketplace", icon: Puzzle, featureId: "marketplace" },
         { to: "/developers", label: "Developers", icon: Code2, featureId: "developers" },
         { to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" },
-        { to: "/settings", label: "Settings", icon: Settings, featureId: "settings" },
       ],
     },
   ];
 
-  if (includeAdminVisibilityLink) {
-    const ws = groups.find((g) => g.label === "Workspace");
-    if (ws) {
-      ws.items = [
-        ...ws.items,
-        {
-          to: ADMIN_MODULES_PATH,
-          label: "Modules",
-          icon: PanelLeft,
-        },
-      ];
+  const ws = groups.find((g) => g.label === "Workspace");
+  if (ws) {
+    if (includeAdminVisibilityLink) {
+      ws.items.push({
+        to: ADMIN_MODULES_PATH,
+        label: "Modules",
+        icon: PanelLeft,
+      });
     }
+    ws.items.push({
+      to: "#help",
+      label: "Help & tours",
+      icon: LifeBuoy,
+      kind: "tours",
+    });
+    ws.items.push({
+      to: "/settings",
+      label: "Settings",
+      icon: Settings,
+      featureId: "settings",
+    });
   }
 
   return groups;

@@ -1,6 +1,6 @@
 import { useClerk, useUser } from "@clerk/react";
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { useSidebarFeatures } from "@/components/app/SidebarFeaturesContext";
 import { SidebarRouteGuard } from "@/components/app/SidebarRouteGuard";
@@ -76,6 +76,12 @@ import {
   DropdownMenuTrigger,
 } from "@pulse-hr/ui/primitives/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@pulse-hr/ui/primitives/tooltip";
 import {
   OVERRIDE_ROLES,
   useEffectiveRole,
@@ -241,79 +247,78 @@ function AppShellInner() {
           )}
         </div>
 
-        <nav
-          data-tour="sidebar-nav"
-          className="flex-1 overflow-y-auto scroll-fade py-3 px-2"
-          style={{ ["--fade-bg" as string]: "var(--sidebar)" }}
-        >
-          {groups.map((group) => (
-            <div key={group.label} className="mb-4">
-              {!collapsed && (
-                <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
-                  {group.label}
-                </div>
-              )}
-              <div className="space-y-0.5">
-                {group.items.map((item) => {
-                  const active = item.external
-                    ? false
-                    : item.to === "/"
-                      ? location.pathname === "/"
-                      : location.pathname.startsWith(item.to);
-                  const Icon = item.icon;
-                  const className = cn(
-                    "group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors relative",
-                    active
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent/60",
-                    collapsed && "justify-center",
-                  );
-                  const inner = (
-                    <>
-                      <Icon className="h-4 w-4 shrink-0" />
-                      {!collapsed && <span className="truncate flex-1">{item.label}</span>}
-                      {!collapsed && item.unreadDot && (
-                        <span
-                          className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
-                          aria-label="Unread"
-                        />
-                      )}
-                      {collapsed && item.unreadDot && (
-                        <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
-                      )}
-                    </>
-                  );
-                  if (item.external) {
-                    return (
-                      <a
-                        key={item.to}
-                        href={item.to}
-                        className={className}
-                        title={collapsed ? item.label : undefined}
-                      >
+        <TooltipProvider delayDuration={200} skipDelayDuration={100}>
+          <nav
+            data-tour="sidebar-nav"
+            className="flex-1 overflow-y-auto scroll-fade py-3 px-2"
+            style={{ ["--fade-bg" as string]: "var(--sidebar)" }}
+          >
+            {groups.map((group) => (
+              <div key={group.label} className="mb-4">
+                {!collapsed && (
+                  <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                    {group.label}
+                  </div>
+                )}
+                <div className="space-y-0.5">
+                  {group.items.map((item) => {
+                    if (item.kind === "tours") {
+                      return <TourLauncher key="tours" collapsed={collapsed} />;
+                    }
+                    const active = item.external
+                      ? false
+                      : item.to === "/"
+                        ? location.pathname === "/"
+                        : location.pathname.startsWith(item.to);
+                    const Icon = item.icon;
+                    const className = cn(
+                      "group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors relative",
+                      active
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent/60",
+                      collapsed && "justify-center",
+                    );
+                    const inner = (
+                      <>
+                        <Icon className="h-4 w-4 shrink-0" />
+                        {!collapsed && <span className="truncate flex-1">{item.label}</span>}
+                        {!collapsed && item.unreadDot && (
+                          <span
+                            className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
+                            aria-label="Unread"
+                          />
+                        )}
+                        {collapsed && item.unreadDot && (
+                          <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
+                        )}
+                      </>
+                    );
+                    const node = item.external ? (
+                      <a href={item.to} className={className}>
                         {inner}
                       </a>
+                    ) : (
+                      <Link
+                        to={item.to}
+                        id={item.to === "/focus" ? "nav-focus" : undefined}
+                        className={className}
+                      >
+                        {inner}
+                      </Link>
                     );
-                  }
-                  return (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      id={item.to === "/focus" ? "nav-focus" : undefined}
-                      className={className}
-                      title={collapsed ? item.label : undefined}
-                    >
-                      {inner}
-                    </Link>
-                  );
-                })}
+                    return (
+                      <SidebarTooltip key={item.to} label={item.label} enabled={collapsed}>
+                        {node}
+                      </SidebarTooltip>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
-        </nav>
+            ))}
+          </nav>
+        </TooltipProvider>
 
         <div className="border-t p-2 space-y-1">
-          <TourLauncher collapsed={collapsed} />
           <button
             type="button"
             onClick={() => setCollapsed((v) => !v)}
@@ -409,6 +414,9 @@ function AppShellInner() {
                 </div>
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
+                    if (item.kind === "tours") {
+                      return <TourLauncher key="tours" collapsed={false} />;
+                    }
                     const active = item.external
                       ? false
                       : item.to === "/"
@@ -453,6 +461,26 @@ function AppShellInner() {
         </SheetContent>
       </Sheet>
     </div>
+  );
+}
+
+function SidebarTooltip({
+  label,
+  enabled,
+  children,
+}: {
+  label: string;
+  enabled: boolean;
+  children: ReactNode;
+}) {
+  if (!enabled) return <>{children}</>;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="right" sideOffset={6}>
+        {label}
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
