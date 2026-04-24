@@ -88,6 +88,8 @@ import { buildSidebarNavGroups } from "@/lib/sidebar-nav-groups";
 import { cn } from "@/lib/utils";
 import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
 
+const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
+
 export function AppShell() {
   return (
     <OfficesStoreProvider>
@@ -232,25 +234,21 @@ function AppShellInner() {
               )}
               <div className="space-y-0.5">
                 {group.items.map((item) => {
-                  const active =
-                    item.to === "/"
+                  const active = item.external
+                    ? false
+                    : item.to === "/"
                       ? location.pathname === "/"
                       : location.pathname.startsWith(item.to);
                   const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      id={item.to === "/focus" ? "nav-focus" : undefined}
-                      className={cn(
-                        "group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors relative",
-                        active
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                          : "text-sidebar-foreground hover:bg-sidebar-accent/60",
-                        collapsed && "justify-center",
-                      )}
-                      title={collapsed ? item.label : undefined}
-                    >
+                  const className = cn(
+                    "group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors relative",
+                    active
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent/60",
+                    collapsed && "justify-center",
+                  );
+                  const inner = (
+                    <>
                       <Icon className="h-4 w-4 shrink-0" />
                       {!collapsed && <span className="truncate flex-1">{item.label}</span>}
                       {!collapsed && item.unreadDot && (
@@ -262,6 +260,29 @@ function AppShellInner() {
                       {collapsed && item.unreadDot && (
                         <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
                       )}
+                    </>
+                  );
+                  if (item.external) {
+                    return (
+                      <a
+                        key={item.to}
+                        href={item.to}
+                        className={className}
+                        title={collapsed ? item.label : undefined}
+                      >
+                        {inner}
+                      </a>
+                    );
+                  }
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      id={item.to === "/focus" ? "nav-focus" : undefined}
+                      className={className}
+                      title={collapsed ? item.label : undefined}
+                    >
+                      {inner}
                     </Link>
                   );
                 })}
@@ -344,22 +365,20 @@ function AppShellInner() {
                 </div>
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
-                    const active =
-                      item.to === "/"
+                    const active = item.external
+                      ? false
+                      : item.to === "/"
                         ? location.pathname === "/"
                         : location.pathname.startsWith(item.to);
                     const Icon = item.icon;
-                    return (
-                      <Link
-                        key={item.to}
-                        to={item.to}
-                        className={cn(
-                          "flex items-center gap-2.5 px-2 py-2 rounded-md text-sm transition-colors",
-                          active
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                            : "text-sidebar-foreground hover:bg-sidebar-accent/60",
-                        )}
-                      >
+                    const className = cn(
+                      "flex items-center gap-2.5 px-2 py-2 rounded-md text-sm transition-colors",
+                      active
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent/60",
+                    );
+                    const inner = (
+                      <>
                         <Icon className="h-4 w-4 shrink-0" />
                         <span className="truncate flex-1">{item.label}</span>
                         {item.unreadDot && (
@@ -368,6 +387,18 @@ function AppShellInner() {
                             aria-label="Unread"
                           />
                         )}
+                      </>
+                    );
+                    if (item.external) {
+                      return (
+                        <a key={item.to} href={item.to} className={className}>
+                          {inner}
+                        </a>
+                      );
+                    }
+                    return (
+                      <Link key={item.to} to={item.to} className={className}>
+                        {inner}
                       </Link>
                     );
                   })}
@@ -474,14 +505,14 @@ function Topbar({
         </div>
       )}
       {showFeedbackLink && (
-        <Link
-          to="/feedback"
+        <a
+          href={FEEDBACK_URL}
           className="hidden lg:inline-flex h-9 items-center gap-1.5 px-2.5 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale transition-colors"
           title="Feedback board"
         >
           <MessageSquare className="h-4 w-4 text-muted-foreground" />
           <span className="hidden xl:inline font-medium">Feedback</span>
-        </Link>
+        </a>
       )}
       <CommentsVisibilityToggle />
       <VotingPowerChip />

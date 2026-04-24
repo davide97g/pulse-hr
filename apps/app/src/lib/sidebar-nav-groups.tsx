@@ -32,6 +32,8 @@ import {
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
 import { ADMIN_SIDEBAR_VISIBILITY_PATH } from "@/lib/sidebar-features";
 
+const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
+
 export type SidebarNavItem = {
   to: string;
   label: string;
@@ -40,6 +42,8 @@ export type SidebarNavItem = {
   featureId?: SidebarFeatureId;
   /** Render a notification dot (e.g. unread activity). Not for "new feature" marketing. */
   unreadDot?: boolean;
+  /** When true, `to` is an absolute URL — render as <a> instead of a router Link. */
+  external?: boolean;
 };
 
 export type SidebarNavGroup = { label: string; items: SidebarNavItem[]; accent?: boolean };
@@ -129,7 +133,13 @@ export function buildSidebarNavGroups(
     {
       label: "Workspace",
       items: [
-        { to: "/feedback", label: "Feedback", icon: MessageSquare, featureId: "feedback" },
+        {
+          to: FEEDBACK_URL,
+          label: "Feedback",
+          icon: MessageSquare,
+          featureId: "feedback",
+          external: true,
+        },
         { to: "/marketplace", label: "Marketplace", icon: Puzzle, featureId: "marketplace" },
         { to: "/developers", label: "Developers", icon: Code2, featureId: "developers" },
         { to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" },

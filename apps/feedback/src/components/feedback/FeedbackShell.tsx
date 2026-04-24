@@ -1,5 +1,6 @@
 import { useUser, useClerk } from "@clerk/react";
-import { ArrowLeft, LogOut } from "lucide-react";
+import { Link, useLocation } from "@tanstack/react-router";
+import { ArrowLeft, Coins, LayoutGrid, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const APP_URL = import.meta.env.VITE_APP_URL ?? "https://app.pulsehr.it";
@@ -7,6 +8,9 @@ const APP_URL = import.meta.env.VITE_APP_URL ?? "https://app.pulsehr.it";
 export function FeedbackShell({ children }: { children: React.ReactNode }) {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
+  const { pathname } = useLocation();
+  const onBoard = pathname === "/";
+  const onVoting = pathname === "/voting-power";
   const displayName =
     user?.fullName || user?.firstName || user?.primaryEmailAddress?.emailAddress || "Signed in";
   const initials =
@@ -42,6 +46,35 @@ export function FeedbackShell({ children }: { children: React.ReactNode }) {
           </span>
         </div>
         <div className="flex-1" />
+        <nav className="flex items-center gap-1.5">
+          <Link
+            to="/"
+            className={cn(
+              "h-9 inline-flex items-center gap-1.5 px-2.5 rounded-md border text-sm press-scale transition-colors",
+              onBoard
+                ? "bg-muted text-foreground border-border"
+                : "bg-background/80 text-muted-foreground hover:bg-muted hover:text-foreground",
+            )}
+            title="Feature board"
+          >
+            <LayoutGrid className="h-4 w-4" />
+            <span className="hidden md:inline font-medium">Board</span>
+          </Link>
+          <Link
+            to="/voting-power"
+            className={cn(
+              "h-9 inline-flex items-center gap-1.5 px-2.5 rounded-md border text-sm press-scale transition-colors",
+              onVoting
+                ? "bg-[color:var(--labs)]/15 text-[color:var(--labs)] border-[color:var(--labs)]/40"
+                : "bg-background/80 text-muted-foreground hover:bg-muted hover:text-foreground",
+            )}
+            title="Voting power"
+          >
+            <Coins className="h-4 w-4" />
+            <span className="hidden md:inline font-medium">Voting Power</span>
+          </Link>
+          <div className="mx-1.5 h-5 w-px bg-border" />
+        </nav>
         {user && (
           <div className="flex items-center gap-2">
             <div className="hidden md:flex items-center gap-2">
