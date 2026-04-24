@@ -9,7 +9,13 @@ export const SITE = {
   // Hero tagline card — generated from docs/brand/logo-explorations/og/og-hero.svg.
   // PNG format (not SVG) because some social crawlers reject SVG og:images.
   ogImage: "/og/og-hero.png",
-  twitter: "@pulsehr",
+  twitter: "@pulsehr_it",
+  // Social profiles — canonical URLs. Keep in sync with BaseLayout.astro sameAs[].
+  social: {
+    x: "https://x.com/pulsehr_it",
+    linkedin: "https://www.linkedin.com/company/pulse-hr-official",
+    github: "https://github.com/davide97g/pulse-hr",
+  },
 };
 
 export const MARQUEE_LOGOS = [

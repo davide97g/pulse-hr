@@ -113,4 +113,6 @@ Also helpful:
 - **Feedback board:** [GitHub Discussions](https://github.com/davide97g/pulse-hr/discussions)
 - **Changelog:** [pulsehr.it/changelog](https://pulsehr.it/changelog)
 - **Status:** [status.pulsehr.it](https://status.pulsehr.it)
+- **LinkedIn:** [linkedin.com/company/pulse-hr-official](https://www.linkedin.com/company/pulse-hr-official)
+- **X / Twitter:** [@pulsehr_it](https://x.com/pulsehr_it)
 - **Contact:** [hello@pulsehr.it](mailto:hello@pulsehr.it) · security: [security@pulsehr.it](mailto:security@pulsehr.it)

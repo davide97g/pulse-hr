@@ -1,4 +1,6 @@
-# LinkedIn Company Page — `@pulsehr`
+# LinkedIn Company Page — `@pulse-hr-official`
+
+**Live URL:** https://www.linkedin.com/company/pulse-hr-official/
 
 Copy to paste into LinkedIn's "Create a Company Page" wizard. All
 fields below are paste-and-go. Character counts verified against
@@ -18,7 +20,7 @@ so he can post from the page independently on launch day.
 | -------------------- | -------------------------------------------------------------------------------------- |
 | Page type            | **Small business**                                                                     |
 | Name                 | **Pulse HR**                                                                           |
-| LinkedIn public URL  | **linkedin.com/company/pulse-hr** (fallback: `pulsehr`, not `pulse-hr-official`)       |
+| LinkedIn public URL  | **linkedin.com/company/pulse-hr-official** (the clean `pulse-hr` / `pulsehr` slugs were taken) |
 | Website              | **https://pulsehr.it**                                                                 |
 | Industry             | **Software Development**                                                               |
 | Company size         | **2-10 employees**                                                                     |
@@ -162,7 +164,7 @@ LinkedIn sometimes asks for company domain verification. If prompted:
 
 ## 8. Post-setup checklist (before 17:00)
 
-- [ ] Company page is live at `linkedin.com/company/pulse-hr`
+- [x] Company page is live at `linkedin.com/company/pulse-hr-official` ✓ (2026-04-24)
 - [ ] Logo visible at 300 × 300 on the profile
 - [ ] Cover visible, doesn't clip the profile photo
 - [ ] About section renders line breaks correctly

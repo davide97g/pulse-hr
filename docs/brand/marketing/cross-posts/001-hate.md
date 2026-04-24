@@ -26,7 +26,7 @@ Pulse HR is now on LinkedIn — and yes, the tone is "roast"
 ```
 We just published the first thing from the new Pulse HR LinkedIn page.
 
-linkedin.com/company/pulse-hr
+linkedin.com/company/pulse-hr-official
 
 The post is a 10-slide carousel about what's wrong with HR software
 (approximately everything) and what we're doing about it (this repo).
@@ -82,8 +82,7 @@ content to be co-chosen with the community. All in one post.
 
 ## 2. X / Twitter — 18:00
 
-**Account:** `@pulsehr` (if it exists; otherwise post from Davide's
-personal and re-share from Niccolò's).
+**Account:** `@pulsehr_it` — https://x.com/pulsehr_it
 
 **Post 1 (the anchor — 280 chars):**
 
@@ -93,7 +92,7 @@ Pulse HR is now on LinkedIn. The first carousel is up.
 Open-source HR software. Built by two devs who hate HR software. FSL-1.1-MIT.
 
 Read the source: github.com/davide97g/pulse-hr
-Roast us in the comments: linkedin.com/company/pulse-hr
+Roast us in the comments: linkedin.com/company/pulse-hr-official
 ```
 
 **Count:** ~255 / 280. ✓
@@ -159,7 +158,7 @@ The honest-brochure version:
   pulsehr.it — free for the first 5 employees, forever.
 
 We launched on LinkedIn yesterday with a roast-toned carousel
-(linkedin.com/company/pulse-hr) if you're curious what the brand
+(linkedin.com/company/pulse-hr-official) if you're curious what the brand
 feels like.
 
 What I'd love HN's eyes on specifically:

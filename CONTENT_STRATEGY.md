@@ -90,5 +90,5 @@ searchers won't.
 ## Guest posts
 
 We pay €400 per published piece, €200 for the draft even if we don't
-run it. Pitch `editorial@pulsehr.com` with: (a) which track, (b) one
+run it. Pitch `editorial@pulsehr.it` with: (a) which track, (b) one
 sentence of takeaway, (c) your byline link.

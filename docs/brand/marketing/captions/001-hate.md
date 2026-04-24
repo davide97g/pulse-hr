@@ -1,7 +1,7 @@
 # Caption — Carousel 001 (LinkedIn launch post)
 
 **Post type.** Document (carousel PDF) + caption.
-**Channel.** `@pulsehr` company page.
+**Channel.** `@pulse-hr-official` company page · https://www.linkedin.com/company/pulse-hr-official/
 **Go-live.** Fri Apr 24 2026, 17:00 CET.
 **Repost plan.** Davide resharse from personal at 17:15; Niccolò at 17:30; see `001-first-comments.md` for the seed comments that go up at 17:03 / 17:15 / 17:30.
 

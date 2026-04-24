@@ -133,7 +133,7 @@ Five DMs, not 500 connection requests. One line each:
 
 ```
 Hey — we just published the first carousel on the Pulse HR company page
-(linkedin.com/company/pulse-hr). If you've got 60 seconds, a comment
+(linkedin.com/company/pulse-hr-official). If you've got 60 seconds, a comment
 on the post would mean a lot today. Don't upvote for its own sake —
 genuinely react. Thanks.
 ```

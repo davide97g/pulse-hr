@@ -14,7 +14,7 @@ we actually own.
 
 ---
 
-## 17:03 — Comment 1 · `@pulsehr` company page
+## 17:03 — Comment 1 · `@pulse-hr-official` company page
 
 Post this as the **pinned first comment** on the carousel, 2–3 minutes
 after the post goes live. Purpose: invite the audience into the roast.

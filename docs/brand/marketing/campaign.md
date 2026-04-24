@@ -265,7 +265,7 @@ we have.
 
 **Who posts.** Three accounts, three registers:
 
-- `@pulsehr` company page — product updates, changelog digest, launches. Twice a week.
+- `@pulse-hr-official` (LinkedIn company page) — product updates, changelog digest, launches. Twice a week.
 - `@davide-ghiotto` personal — building-in-public narrative, decisions, essays. Once or twice a week, varying length.
 - `@niccolo-naso` personal — engineering deep-dives, code posts, migration stories. Once a week.
 
@@ -319,7 +319,7 @@ actually use to recruit contributors.
 **Launch day (T-0, PT timezone).**
 
 - Post at 00:01 PT. Davide and Niccolò both online from hour 0 for the first 6 hours.
-- Single launch tweet / X post from `@pulsehr` linking to PH, no threadjacking the comments.
+- Single launch tweet / X post from `@pulsehr_it` linking to PH, no threadjacking the comments.
 - LinkedIn launch post from Davide + from the company page, 15 min apart.
 - Hacker News submission by Davide at H+2 ("Show HN: Pulse HR — open-source, self-hostable HR"). Not earlier (PH is the lead).
 - Instagram story drop — one frame of the PH card, one of the hero reel, one of the contributor invite.
@@ -567,9 +567,10 @@ work doesn't sit.
 | `pulsehr.it` copy + marketing app | Davide   | Niccolò  |
 | Blog posts (editorial)           | Davide   | Niccolò  |
 | Engineering deep-dives           | Niccolò  | Davide   |
-| LinkedIn `@pulsehr`              | Davide   | Niccolò  |
-| Instagram `@pulsehr`             | Davide   | (TBD)    |
-| YouTube `@pulsehr`               | Davide   | Niccolò  |
+| LinkedIn `@pulse-hr-official`    | Davide   | Niccolò  |
+| X `@pulsehr_it`                  | Davide   | Niccolò  |
+| Instagram (handle TBD)           | Davide   | (TBD)    |
+| YouTube (handle TBD)             | Davide   | Niccolò  |
 | Product Hunt maker comms         | Davide   | Niccolò  |
 | Reel production (`apps/reel/`)   | Davide   | Niccolò  |
 | GitHub repo README + discoverability | Niccolò | Davide   |
@@ -602,7 +603,7 @@ Same honesty style as `../foundation.md` §15. Called out so we don't
 paper over them.
 
 - **Twitter/X.** Listed above as an atomization target (threads) but we
-  haven't decided whether `@pulsehr` lives there full-time. Decision
+  haven't decided whether `@pulsehr_it` lives there full-time. Decision
   point: T+30, after Product Hunt data lands.
 - **Niccolò public presence.** Co-byline yes/no on posts; personal
   LinkedIn activity level. Follows `../foundation.md` §15.
