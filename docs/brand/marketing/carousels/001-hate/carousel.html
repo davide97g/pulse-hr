@@ -1,7 +1,16 @@
 <!--
   Pulse HR — Carousel 001 "HR software for people who *hate* HR software"
   10 slides, 1080 × 1350 px (LinkedIn 4:5).
-  Open in Chrome → Cmd+P → Paper: Custom 1080×1350 → Margins: None → Background graphics: ON → Save as PDF.
+
+  Export to PDF for LinkedIn:
+    1. Open this file in Chrome.
+    2. Cmd+P → Destination: Save as PDF
+       Paper size: Custom → 1080 × 1350 px (or 11.25 × 14.0625 in)
+       Margins: None
+       Background graphics: ON
+       Scale: Default
+    3. Save, then upload on LinkedIn as a Document post.
+
   Source of truth for copy: ./slides.md — if you change copy here, mirror it there.
 -->
 <!doctype html>
@@ -19,174 +28,142 @@
 <style>
   :root {
     --ink: #0b0b0d;
+    --ink-2: #111115;
     --cream: #f2f2ee;
     --lime: #b4ff39;
-    --hover: #c6ff5a;
-    --muted: rgba(242, 242, 238, 0.55);
     --soft: rgba(242, 242, 238, 0.82);
+    --muted: rgba(242, 242, 238, 0.55);
+    --hair: rgba(242, 242, 238, 0.08);
+    --hair-2: rgba(242, 242, 238, 0.14);
     --f-display: "Fraunces", Georgia, serif;
     --f-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
     --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: #1a1a1d; }
+  html, body { margin: 0; padding: 0; background: #050506; }
 
-  /* The printable page size. LinkedIn's best carousel is 1080×1350 (4:5). */
   @page { size: 1080px 1350px; margin: 0; }
 
   body {
     font-family: var(--f-sans);
     color: var(--cream);
     -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 0;
+  }
+  @media print {
+    body { gap: 0; padding: 0; background: #000; }
   }
 
   .slide {
-    position: relative;
     width: 1080px;
     height: 1350px;
     background: var(--ink);
     color: var(--cream);
     padding: 96px;
     overflow: hidden;
-    page-break-after: always;
-    break-after: page;
+    position: relative;
     display: grid;
     grid-template-rows: auto 1fr auto;
-    gap: 48px;
-    margin: 0 auto 16px;
+    gap: 56px;
+    page-break-after: always;
+    break-after: page;
   }
+  .slide:last-of-type { page-break-after: auto; break-after: auto; }
 
-  .slide:last-child { page-break-after: auto; }
-
-  /* Screen preview wraps pages in a gap so they don't glue together. */
-  @media screen {
-    body { padding: 40px 0; }
-  }
-
-  /* Subtle grid overlay — used on slides 1 and 5 only. */
   .grid-bg::before {
     content: "";
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background-image:
-      linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
-    background-size: 64px 64px;
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 40%, transparent 100%);
-            mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 40%, transparent 100%);
+      linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+    -webkit-mask-image: radial-gradient(ellipse 72% 62% at 50% 42%, black 35%, transparent 100%);
+            mask-image: radial-gradient(ellipse 72% 62% at 50% 42%, black 35%, transparent 100%);
     pointer-events: none;
   }
-
-  /* Ambient lime glow — hero slide only. */
   .glow::after {
     content: "";
     position: absolute;
-    top: 120px;
-    left: 50%;
+    top: 110px; left: 50%;
     transform: translateX(-50%);
-    width: 900px;
-    height: 500px;
+    width: 1020px; height: 540px;
     border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(180, 255, 57, 0.22), transparent 70%);
-    filter: blur(80px);
+    background: radial-gradient(closest-side, rgba(180, 255, 57, 0.26), transparent 72%);
+    filter: blur(70px);
+    pointer-events: none;
+  }
+  .vignette::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(120% 80% at 50% 110%, rgba(180,255,57,0.05), transparent 55%),
+      radial-gradient(90% 70% at 50% -10%, rgba(180,255,57,0.03), transparent 60%);
     pointer-events: none;
   }
 
   .eyebrow {
     font-family: var(--f-mono);
-    font-size: 18px;
-    letter-spacing: 0.25em;
+    font-size: 20px;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--lime);
     font-weight: 600;
     align-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
   }
-  .eyebrow--muted { color: var(--muted); }
+  .eyebrow::before {
+    content: "";
+    width: 10px; height: 10px;
+    background: var(--lime);
+    border-radius: 50%;
+    box-shadow: 0 0 0 6px rgba(180,255,57,0.14);
+  }
 
   .headline {
     font-family: var(--f-display);
     font-weight: 400;
     font-variation-settings: "SOFT" 30, "opsz" 144;
-    font-size: 116px;
-    line-height: 0.95;
-    letter-spacing: -0.025em;
+    font-size: 128px;
+    line-height: 0.92;
+    letter-spacing: -0.028em;
     color: var(--cream);
     margin: 0;
     align-self: center;
     max-width: 880px;
   }
-  .headline--lg { font-size: 132px; }
   .headline em {
     font-style: italic;
     font-weight: 400;
-    color: var(--cream);
+    color: var(--lime);
   }
-  .dot { color: var(--lime); }
+  .headline svg.gh-mark {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.12em;
+    fill: var(--lime);
+    display: inline-block;
+    margin-left: 0.06em;
+  }
 
   .body {
     font-family: var(--f-sans);
     font-size: 30px;
-    line-height: 1.45;
+    line-height: 1.48;
     color: var(--soft);
-    max-width: 760px;
+    max-width: 800px;
     align-self: start;
+    font-weight: 400;
   }
-
-  .body strong {
-    color: var(--cream);
-    font-weight: 600;
-  }
-
-  .body p { margin: 0 0 16px 0; }
+  .body strong { color: var(--cream); font-weight: 600; }
+  .body p { margin: 0 0 18px 0; }
   .body p:last-child { margin-bottom: 0; }
-
-  .code {
-    font-family: var(--f-mono);
-    font-size: 28px;
-    line-height: 1.55;
-    color: var(--soft);
-    background: rgba(255, 255, 255, 0.035);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 14px;
-    padding: 32px 36px;
-    max-width: 820px;
-    display: block;
-    align-self: start;
-  }
-  .code .prompt { color: var(--lime); }
-  .code .comment { color: var(--muted); }
-
-  .vendor-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 20px;
-    max-width: 820px;
-    align-self: start;
-  }
-  .vendor-list li {
-    font-family: var(--f-sans);
-    font-size: 32px;
-    line-height: 1.3;
-    color: var(--soft);
-  }
-  .vendor-list .v {
-    color: var(--cream);
-    font-weight: 600;
-    display: inline-block;
-    min-width: 200px;
-  }
-
-  .footnote {
-    font-family: var(--f-mono);
-    font-size: 16px;
-    letter-spacing: 0.02em;
-    color: var(--muted);
-    align-self: end;
-    max-width: 820px;
-  }
 
   .slide-meta {
     display: flex;
@@ -194,71 +171,234 @@
     align-items: end;
     gap: 24px;
   }
-
+  .footnote {
+    font-family: var(--f-mono);
+    font-size: 17px;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    max-width: 820px;
+  }
+  .footnote strong { color: var(--cream); font-weight: 500; }
   .wordmark {
     font-family: var(--f-display);
     font-weight: 500;
-    font-size: 22px;
-    letter-spacing: 0.02em;
+    font-size: 24px;
+    letter-spacing: 0.01em;
     color: var(--soft);
   }
-  .wordmark em { color: var(--lime); font-style: italic; }
-
+  .wordmark em { color: var(--lime); font-style: italic; font-weight: 500; }
   .counter {
     font-family: var(--f-mono);
-    font-size: 14px;
+    font-size: 15px;
     color: var(--muted);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.18em;
   }
 
-  /* Hero slide override — no body, no footer, centred everything. */
-  .slide--hero {
-    grid-template-rows: 1fr auto;
-    gap: 0;
-    justify-items: center;
+  .slide--hook {
+    grid-template-rows: auto 1fr auto;
     text-align: center;
+    justify-items: center;
   }
-  .slide--hero .headline {
+  .slide--hook .hook-mark {
+    font-family: var(--f-mono);
+    font-size: 18px;
+    letter-spacing: 0.32em;
+    color: var(--muted);
+    text-transform: uppercase;
+    align-self: start;
+    justify-self: center;
+    padding-top: 18px;
+  }
+  .slide--hook .hook-mark span { color: var(--lime); }
+  .slide--hook .headline {
+    font-size: 152px;
+    line-height: 0.9;
+    letter-spacing: -0.032em;
     align-self: center;
     justify-self: center;
+    max-width: 960px;
     text-align: center;
-    max-width: 900px;
   }
 
-  /* Pivot slide override — mono-dominant. */
-  .slide--pivot .headline { font-size: 104px; }
+  .diagnosis-body { max-width: 820px; }
+  .diagnosis-pay {
+    margin-top: 36px;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 42px;
+    line-height: 1.2;
+    color: var(--cream);
+    letter-spacing: -0.01em;
+  }
+  .diagnosis-pay .strike { color: var(--muted); }
 
-  /* CTA slide override. */
-  .cta-links {
+  .vendor-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0;
+    max-width: 880px;
+    align-self: start;
+    border-top: 1px solid var(--hair);
+  }
+  .vendor-list li {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--hair);
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    align-items: baseline;
+    gap: 32px;
+    font-family: var(--f-sans);
+    font-size: 30px;
+    line-height: 1.3;
+    color: var(--soft);
+  }
+  .vendor-list .v {
+    font-family: var(--f-display);
+    color: var(--cream);
+    font-weight: 500;
+    font-size: 44px;
+    letter-spacing: -0.02em;
+  }
+  .vendor-list .verdict { color: var(--soft); }
+
+  .demo-body { max-width: 860px; }
+  .demo-quote {
+    margin-top: 28px;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 36px;
+    line-height: 1.3;
+    color: var(--muted);
+    letter-spacing: -0.005em;
+    padding-left: 28px;
+    border-left: 2px solid var(--lime);
+  }
+  .grep-footer {
+    font-family: var(--f-mono);
+    font-size: 18px;
+    color: var(--muted);
+  }
+  .grep-footer .prompt { color: var(--lime); }
+  .grep-footer .arrow { color: var(--lime); padding: 0 8px; }
+  .grep-footer .res { color: var(--cream); }
+
+  .slide--pivot .headline { font-size: 112px; max-width: 840px; }
+  .terminal {
+    font-family: var(--f-mono);
+    font-size: 24px;
+    line-height: 1.8;
+    color: var(--cream);
+    background: rgba(255,255,255,0.028);
+    border: 1px solid var(--hair-2);
+    border-radius: 18px;
+    padding: 28px 32px 32px;
+    max-width: 880px;
+    display: block;
+    align-self: start;
+    position: relative;
+  }
+  .terminal-head {
     display: flex;
-    gap: 28px;
+    align-items: center;
+    gap: 10px;
+    margin: -6px 0 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .terminal-head .d {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: rgba(242,242,238,0.18);
+  }
+  .terminal-head .d.lime { background: var(--lime); box-shadow: 0 0 0 4px rgba(180,255,57,0.12); }
+  .terminal-head .title {
+    margin-left: 12px;
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .terminal .prompt { color: var(--lime); margin-right: 10px; }
+  .terminal .cmd { color: var(--cream); }
+  .terminal .muted { color: var(--muted); }
+  .terminal .ok { color: var(--lime); }
+
+  .slide--commit .headline { font-size: 120px; max-width: 880px; }
+  .num-head {
+    font-family: var(--f-mono);
+    font-size: 120px;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    color: rgba(180,255,57,0.14);
+    position: absolute;
+    top: 96px;
+    right: 96px;
+    font-weight: 500;
+    user-select: none;
+  }
+
+  .slide--cta .headline {
+    font-size: 112px;
+    max-width: 880px;
+  }
+  .cta-stack {
+    display: grid;
+    gap: 36px;
+    max-width: 880px;
+    align-self: start;
+  }
+  .cta-chips {
+    display: flex;
+    gap: 16px;
     flex-wrap: wrap;
     font-family: var(--f-mono);
-    font-size: 28px;
+    font-size: 26px;
     color: var(--cream);
-    margin-bottom: 24px;
+    margin: 0;
   }
-  .cta-links span { background: rgba(180, 255, 57, 0.08); border: 1px solid rgba(180, 255, 57, 0.3); padding: 12px 20px; border-radius: 999px; }
+  .cta-chips span {
+    border: 1px solid rgba(180, 255, 57, 0.32);
+    background: rgba(180, 255, 57, 0.06);
+    padding: 14px 22px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+  }
+  .cta-chips span .glyph { color: var(--lime); margin-right: 10px; font-weight: 600; font-family: var(--f-sans); }
   .cta-url {
     font-family: var(--f-mono);
-    font-size: 34px;
+    font-size: 32px;
     color: var(--lime);
-    margin-bottom: 28px;
+    letter-spacing: -0.005em;
     display: block;
+    padding: 22px 26px;
+    border: 1px solid rgba(180,255,57,0.28);
+    border-radius: 14px;
+    background: rgba(180,255,57,0.04);
   }
-
-  /* Kill print UI background if the user prints at default size. */
-  @media print {
-    body { background: var(--ink); padding: 0; }
-    .slide { margin: 0 auto; box-shadow: none; }
+  .cta-body {
+    font-family: var(--f-sans);
+    font-size: 28px;
+    line-height: 1.45;
+    color: var(--soft);
+    max-width: 780px;
   }
 </style>
 </head>
 <body>
 
 <!-- SLIDE 1 · HOOK -->
-<section class="slide slide--hero grid-bg glow" aria-label="Slide 1 — hook">
-  <h1 class="headline headline--lg">HR&nbsp;software<br />for&nbsp;people who<br /><em>hate</em><span class="dot">.</span><br />HR&nbsp;software</h1>
+<section class="slide slide--hook grid-bg glow">
+  <div class="hook-mark">PULSE&nbsp;HR · CAROUSEL&nbsp;001 <span>·</span> 2026</div>
+  <h1 class="headline">
+    HR&nbsp;software<br />
+    for&nbsp;people<br />
+    who <em>hate</em><span class="dot">.</span><br />
+    HR&nbsp;software
+  </h1>
   <div class="slide-meta">
     <span class="wordmark"><em>P</em>ulse HR · pulsehr.it</span>
     <span class="counter">01 / 10</span>
@@ -266,12 +406,14 @@
 </section>
 
 <!-- SLIDE 2 · DIAGNOSIS -->
-<section class="slide" aria-label="Slide 2 — diagnosis">
-  <div class="eyebrow">DIAGNOSIS · 2026</div>
-  <h2 class="headline">Your HRIS is <em>slow</em><span class="dot">.</span></h2>
-  <div class="body">
-    <p>Your manager can only see their own team. Time entry lives in one app, the project lives in another. The same eight hours get logged twice. Nobody trusts either number.</p>
-    <p>You pay for all of this. You hate all of this.</p>
+<section class="slide vignette">
+  <div class="eyebrow">Diagnosis · 2026</div>
+  <h2 class="headline">Your HRIS<br />is <em>slow</em><span class="dot">.</span></h2>
+  <div>
+    <div class="body diagnosis-body">
+      <p>Your manager can only see their own team. Time entry lives in one app, the project lives in another. The same eight hours get logged twice. <strong>Nobody trusts either number.</strong></p>
+    </div>
+    <div class="diagnosis-pay">You pay for all of this.<br />You <span class="strike">hate</span> all of this.</div>
   </div>
   <div class="slide-meta">
     <span class="footnote">— every services firm, every Friday afternoon</span>
@@ -280,13 +422,13 @@
 </section>
 
 <!-- SLIDE 3 · SUITE CARTEL -->
-<section class="slide" aria-label="Slide 3 — the suite cartel">
-  <div class="eyebrow">THE SUITE CARTEL</div>
+<section class="slide vignette">
+  <div class="eyebrow">The suite cartel</div>
   <h2 class="headline">Three vendors.<br />One <em>racket</em><span class="dot">.</span></h2>
   <ul class="vendor-list">
-    <li><span class="v">Rippling</span> — locks you into the suite.</li>
-    <li><span class="v">Deel</span> — locks you into contractors.</li>
-    <li><span class="v">BambooHR</span> — locks you into 2014.</li>
+    <li><span class="v">Rippling</span><span class="verdict">locks you into the suite.</span></li>
+    <li><span class="v">Deel</span><span class="verdict">locks you into contractors.</span></li>
+    <li><span class="v">BambooHR</span><span class="verdict">locks you into 2014.</span></li>
   </ul>
   <div class="slide-meta">
     <span class="footnote">Not one of them will let you read the source.</span>
@@ -295,27 +437,31 @@
 </section>
 
 <!-- SLIDE 4 · BOOK A DEMO -->
-<section class="slide" aria-label="Slide 4 — book a demo">
-  <div class="eyebrow">OBSERVED BEHAVIOUR</div>
-  <h2 class="headline">To see what they do,<br />you have to <em>book a demo</em><span class="dot">.</span></h2>
-  <div class="body">
+<section class="slide vignette">
+  <div class="eyebrow">Observed behaviour</div>
+  <h2 class="headline">To see what they do, you have to<br /><em>book a demo</em><span class="dot">.</span></h2>
+  <div class="body demo-body">
     <p>Apparently "can I see the product before I pay for it" is a premium feature.</p>
-    <p>We disagreed so hard we made not-doing-that a brand value.</p>
+    <div class="demo-quote">We disagreed so hard we made not-doing-that a brand value.</div>
   </div>
   <div class="slide-meta">
-    <span class="footnote">$ grep -r "book a demo" pulsehr.it &nbsp; → &nbsp; 0 results</span>
+    <span class="grep-footer"><span class="prompt">$</span> grep -r "book a demo" pulsehr.it<span class="arrow">→</span><span class="res">0 results</span></span>
     <span class="counter">04 / 10</span>
   </div>
 </section>
 
-<!-- SLIDE 5 · PIVOT -->
-<section class="slide slide--pivot grid-bg" aria-label="Slide 5 — pivot">
-  <div class="eyebrow">OR —</div>
+<!-- SLIDE 5 · PIVOT (terminal) -->
+<section class="slide slide--pivot grid-bg">
+  <div class="eyebrow">Or —</div>
   <h2 class="headline">You could just<br /><em>read</em> the source<span class="dot">.</span></h2>
-  <code class="code">
-    <span class="prompt">$</span> git clone github.com/davide97g/pulse-hr<br />
-    <span class="prompt">$</span> cd pulse-hr &amp;&amp; bun install &amp;&amp; bun run dev<br />
-    <span class="comment"># → localhost:5173. done.</span>
+  <code class="terminal">
+    <div class="terminal-head">
+      <span class="d"></span><span class="d"></span><span class="d lime"></span>
+      <span class="title">~/pulse-hr — 58 s</span>
+    </div>
+    <span class="prompt">$</span><span class="cmd">git clone github.com/davide97g/pulse-hr</span><br />
+    <span class="prompt">$</span><span class="cmd">cd pulse-hr &amp;&amp; bun install &amp;&amp; bun run dev</span><br />
+    <span class="muted"># → </span><span class="ok">localhost:5173</span><span class="muted">. done.</span>
   </code>
   <div class="slide-meta">
     <span class="footnote">≈ 58 seconds · on a 2020 MacBook · honest number</span>
@@ -323,26 +469,28 @@
   </div>
 </section>
 
-<!-- SLIDE 6 · OPEN -->
-<section class="slide" aria-label="Slide 6 — commitment 1 · open">
-  <div class="eyebrow">01 · OPEN</div>
-  <h2 class="headline">The whole product.<br /><em>On</em> GitHub<span class="dot">.</span></h2>
+<!-- SLIDE 6 · 01 OPEN -->
+<section class="slide slide--commit vignette">
+  <div class="eyebrow">01 · Open</div>
+  <span class="num-head">01</span>
+  <h2 class="headline">The whole product.<br />On <svg class="gh-mark" viewBox="0 0 16 16" aria-label="GitHub" role="img"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span class="dot">.</span></h2>
   <div class="body">
-    <p>FSL-1.1-MIT today. Converts to plain MIT after two years. Automatic, non-negotiable.</p>
+    <p><strong>FSL-1.1-MIT today.</strong> Converts to plain MIT after two years. Automatic, non-negotiable.</p>
     <p>Read every line. Run it on your own box. Fork it if we let you down.</p>
   </div>
   <div class="slide-meta">
-    <span class="footnote">github.com/davide97g/pulse-hr/blob/main/LICENSE</span>
+    <span class="footnote" style="max-width: 920px; white-space: nowrap;">github.com/davide97g/pulse-hr</span>
     <span class="counter">06 / 10</span>
   </div>
 </section>
 
-<!-- SLIDE 7 · TRANSPARENT -->
-<section class="slide" aria-label="Slide 7 — commitment 2 · transparent">
-  <div class="eyebrow">02 · TRANSPARENT</div>
+<!-- SLIDE 7 · 02 TRANSPARENT -->
+<section class="slide slide--commit vignette">
+  <div class="eyebrow">02 · Transparent</div>
+  <span class="num-head">02</span>
   <h2 class="headline">Nothing behind<br />a <em>sales call</em><span class="dot">.</span></h2>
   <div class="body">
-    <p>Roadmap public. Changelog public. Prices public. Screw-ups public.</p>
+    <p>Roadmap public. Changelog public. Prices public. <strong>Screw-ups public.</strong></p>
     <p>If you'd need to "talk to someone" to figure out if we'd work for you — that's on us. We'd rather just write it down.</p>
   </div>
   <div class="slide-meta">
@@ -351,13 +499,14 @@
   </div>
 </section>
 
-<!-- SLIDE 8 · YOURS -->
-<section class="slide" aria-label="Slide 8 — commitment 3 · yours">
-  <div class="eyebrow">03 · YOURS</div>
-  <h2 class="headline">Your data. Your infra.<br />Your <em>exit</em><span class="dot">.</span></h2>
+<!-- SLIDE 8 · 03 YOURS -->
+<section class="slide slide--commit vignette">
+  <div class="eyebrow">03 · Yours</div>
+  <span class="num-head">03</span>
+  <h2 class="headline">Your data.<br />Your infra.<br />Your <em>exit</em><span class="dot">.</span></h2>
   <div class="body">
-    <p>Self-host on Docker / Helm / Terraform. Export everything in a clean format, any time, without asking.</p>
-    <p>Leaving Pulse is the easiest thing it does. That's on purpose.</p>
+    <p>Self-host on Docker, Helm or Terraform. Export everything in a clean format, any time, without asking.</p>
+    <p><strong>Leaving Pulse is the easiest thing it does.</strong> That's on purpose.</p>
   </div>
   <div class="slide-meta">
     <span class="footnote">docs/self-hosting.md</span>
@@ -365,12 +514,13 @@
   </div>
 </section>
 
-<!-- SLIDE 9 · BUILT BY THE HATERS -->
-<section class="slide" aria-label="Slide 9 — commitment 4 · built by the people who use it">
-  <div class="eyebrow">04 · BUILT BY THE PEOPLE WHO USE IT</div>
-  <h2 class="headline">Built by the <em>haters</em><span class="dot">.</span></h2>
+<!-- SLIDE 9 · 04 BUILT BY THE HATERS -->
+<section class="slide slide--commit vignette">
+  <div class="eyebrow">04 · Built by the people who use it</div>
+  <span class="num-head">04</span>
+  <h2 class="headline">Built by<br />the <em>haters</em><span class="dot">.</span></h2>
   <div class="body">
-    <p>Two devs in Milan. No BDRs. No "customer success team". No product managers.</p>
+    <p>Two devs in Milan. <strong>No BDRs. No "customer success team". No product managers.</strong></p>
     <p>Just commits, a public roadmap, and pull requests from people who — turns out — also hate their HR software.</p>
   </div>
   <div class="slide-meta">
@@ -380,17 +530,17 @@
 </section>
 
 <!-- SLIDE 10 · CTA -->
-<section class="slide" aria-label="Slide 10 — CTA">
-  <div class="eyebrow">→ YOUR MOVE</div>
-  <h2 class="headline">Come <em>hate</em> it with us<span class="dot">.</span><br />Constructively.</h2>
-  <div class="body">
-    <div class="cta-links">
-      <span>★ Star it</span>
-      <span>🍴 Fork it</span>
-      <span>🔨 Break it</span>
+<section class="slide slide--cta grid-bg">
+  <div class="eyebrow">→ Your move</div>
+  <h2 class="headline">Come <em>hate</em> it<br />with us<span class="dot">.</span><br />Constructively.</h2>
+  <div class="cta-stack">
+    <div class="cta-chips">
+      <span><span class="glyph">★</span>Star&nbsp;it</span>
+      <span><span class="glyph">✦</span>Fork&nbsp;it</span>
+      <span><span class="glyph">✕</span>Break&nbsp;it</span>
     </div>
     <span class="cta-url">github.com/davide97g/pulse-hr</span>
-    <p>We're building what we'd want to use next. If you've got the same problem, we're listening.</p>
+    <p class="cta-body">We're building what we'd want to use next. If you've got the same problem, we're listening.</p>
   </div>
   <div class="slide-meta">
     <span class="wordmark"><em>P</em>ulse HR · pulsehr.it</span>
