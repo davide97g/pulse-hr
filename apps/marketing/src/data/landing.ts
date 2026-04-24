@@ -54,11 +54,13 @@ export function getLanding(locale: Locale) {
     TESTIMONIALS: dict.testimonials.items,
     FAQ: dict.faq.items,
     TEAM: dict.team.items,
+    // Honest numbers only. See foundation.md §9 (no fake social proof).
+    // These should be wired to the repo stats as soon as we have an endpoint.
     STATS: [
-      { v: "$1.2B", l: dict.stats.processed },
-      { v: "47", l: dict.stats.countries },
-      { v: "4,800+", l: dict.stats.teams },
-      { v: "312k", l: dict.stats.commands },
+      { v: "OSS", l: dict.stats.processed },
+      { v: "FSL-1.1-MIT", l: dict.stats.countries },
+      { v: "GitHub", l: dict.stats.teams },
+      { v: "Public", l: dict.stats.commands },
     ],
     USE_CASES: dict.useCases.items,
     CHANGELOG: dict.changelog.items,

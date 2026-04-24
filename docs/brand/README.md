@@ -1,8 +1,9 @@
 # Brand & creative — workflows-people / Pulse HR
 
-This folder is the source of truth for anything brand-shaped — identity,
-voice, imagery, motion, and specific creative deliverables like
-Instagram Reels, OG cards, slide decks, pitch assets.
+This folder is the source of truth for anything brand-shaped — the
+conceptual foundation, the visual identity, the aesthetic direction,
+and the campaign plan that walks them onto LinkedIn, Product Hunt,
+Instagram and YouTube.
 
 It's deliberately **in the repo**. Brand drift starts the day the design
 system lives in a Figma file nobody updates; keeping it here means every
@@ -12,11 +13,14 @@ change is a PR anyone can see and argue with.
 
 ## What lives here
 
-| File                   | What it is                                                                    |
-| ---------------------- | ----------------------------------------------------------------------------- |
-| `identity.md`          | Core brand identity — logo, colors, fonts, voice, motion, imagery, do / don't |
-| `instagram-reel.md`    | Brief for a 15-second Instagram Reel ad + ready-to-paste Claude Design prompt |
-| `design-references.md` | Annotated moodboard of 15 brand references the creative work should draw from |
+| File / folder          | What it is                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| `foundation.md`        | The **why** — mission, vision, values, positioning, voice. The document every other asset defers to. |
+| `identity.md`          | The **what** — logo, colors, fonts, motion primitives, imagery, do / don't tables.                |
+| `aesthetic.md`         | The **how it feels** — 2026 direction: quiet, dark, translucent, lime as spark.                   |
+| `design-references.md` | Annotated moodboard of 15 brand references creative work should draw from.                        |
+| `marketing/`           | Campaign plan, platform playbooks (LinkedIn, Product Hunt, Instagram, YouTube), content backlog.  |
+| `logo-explorations/`   | Candidate lockups + OG cards.                                                                     |
 
 The design tokens themselves (hex codes, font stacks, radii) live as
 actual code at [`packages/tokens/`](../../packages/tokens/) — this
@@ -24,60 +28,52 @@ folder is for the human / brand layer that wraps those tokens.
 
 ---
 
-## How to use this — the 7-step process
+## How to use this
 
-If you're producing a single creative asset (like the Instagram Reel),
-run through these steps in order. Skipping step 1 is the number one
-reason creative work drifts away from the product.
+If you're producing a single creative asset — a LinkedIn post, a
+Product Hunt launch card, a 30-second YouTube teaser, an Instagram
+static — run through these steps in order. Skipping step 1 is the
+number-one reason creative work drifts away from the product.
 
-### 1. Read `identity.md` first
+### 1. Read `foundation.md` first
 
-Even if you've seen it before. The voice and motion principles are what
-make everything else feel like the same product. Five minutes.
+The hero line, the value prop, the anti-positioning, the voice rules —
+they all come from the foundation. If you don't know which of the four
+commitments the asset lands against (Open / Transparent / Yours / Built
+by the people who use it), stop and pick one before you draft anything.
 
-### 2. Read `design-references.md` and pick your 3 closest matches
+### 2. Read `identity.md` and `aesthetic.md` together
 
-Not "which brand do you like" — **"which three brands' approach would
-you steal for this specific deliverable?"** A reel steals from different
-references than a pitch deck.
+`identity.md` owns the primitives (hex, type stack, logo). `aesthetic.md`
+owns the 2026 feel (quiet, dark, translucent, lime as spark, no party
+tricks). Five minutes each.
 
-### 3. Pick the angle
+### 3. Pick the angle from `marketing/campaign.md`
 
-For any creative: what is the **one** thing this asset must land?
-Options for Pulse HR right now:
+The campaign doc maps pillars × targets × platforms. Every asset slots
+into one cell of that matrix. One pillar per asset — fight the urge to
+say all four.
 
-- **Open source** — "HR you can read, fork, and run"
-- **Modular** — "Money, People, Work. Pick any."
-- **Keyboard-first** — "Two keys. Everything."
-- **Anti-Rippling** — "The open alternative to the HR suite lock-in"
+### 4. Iterate against the do / don't list
 
-One angle per asset. Fight the urge to say all four — you'll land zero.
+`identity.md` §10 and `aesthetic.md` §4 have the do / don't tables.
+Check every draft against them before polishing. The banned-phrase list
+(`foundation.md` §9 and `identity.md` §6) is non-negotiable.
 
-### 4. Use the prompt from the relevant asset doc
+### 5. Produce & publish
 
-Each asset doc (`instagram-reel.md`, and any future ones) has a
-ready-to-paste prompt for Claude Design (Figma Make / Artifacts / any
-design-capable Claude surface). Paste it with your chosen angle and any
-references filled in, run it, iterate.
+Static work lands as SVG/PNG under `logo-explorations/` or the
+marketing app's `public/`. Video masters land under `apps/reel/output/`
+(the Remotion project) and get published to `apps/marketing/public/reel/`.
+Written copy lives in the marketing app's `src/i18n/` dictionaries, or
+as a blog post under `apps/marketing/src/pages/blog/`.
 
-### 5. Iterate against the do / don't list
+### 6. Commit & cross-post
 
-Every doc has a "do / don't" section calibrated to Pulse's voice.
-Check the output against it before polishing.
-
-### 6. Produce & export
-
-Claude Design outputs storyboards, frames or components. Final
-production (real motion, audio mix, color grade) happens in whatever
-tool the asset needs — CapCut / Premiere / After Effects for video,
-Figma for static, the repo itself for OG cards.
-
-### 7. Commit & publish
-
-Ship the final asset back into the repo (e.g. a rendered
-`docs/brand/renders/reel-001.mp4` or a Figma link at the bottom of the
-asset doc). Future-you and future-contributors need to see what you
-made, not just how you planned it.
+The distribution loop is in `CONTENT_STRATEGY.md` — merge the asset,
+auto-deploy via Vercel, cross-post to LinkedIn + Product Hunt +
+Instagram + YouTube on the schedule in `marketing/content-calendar.md`,
+update the repo README with the three most recent pieces.
 
 ---
 
@@ -103,5 +99,9 @@ made, not just how you planned it.
   compositions until that changes.
 - A `docs/brand/renders/` folder with approved final assets. It'll
   appear the first time someone ships production creative.
+- Instagram Reel storyboard docs and per-reel render folders were
+  removed in favour of a unified campaign plan in `marketing/`. Video
+  masters now live with the Remotion project at `apps/reel/` and its
+  `output/` folder.
 
-See `identity.md` for the current full scope.
+See `foundation.md` for the full brand scope.

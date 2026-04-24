@@ -11,11 +11,11 @@ import type { Dict } from "./en";
 
 export const it: Dict = {
   meta: {
-    tagline: "HR & payroll modulare e open source, senza vendor lock-in.",
+    tagline: "Software HR per chi odia il software HR.",
     description:
-      "HR & payroll open source e modulare. Money, People e Work come tre prodotti componibili. Keyboard-first, webhook su ogni evento, gratis per i primi 5 dipendenti.",
+      "People ops open source per team moderni. Costruito in pubblico, dalle persone che lo usano. Money, People e Work come tre moduli componibili. Self-host sulla tua infra o hosted — niente chiamata commerciale per vedere il prodotto.",
     keywords:
-      "HR open source, payroll open source, HRIS, HR modulare, API HR, webhook, rilevazione presenze, payroll multi-paese, commessa, ore progetto, keyboard-first, PWA",
+      "HR open source, payroll open source, HRIS, HR self-hosted, HR modulare, API HR, webhook, commessa, keyboard-first, PWA, FSL, roadmap pubblica",
   },
 
   a11y: {
@@ -46,7 +46,7 @@ export const it: Dict = {
 
   footer: {
     tagline:
-      "La piattaforma people per i team moderni. Nata tra Milano, Berlino e San Francisco.",
+      "Aperto. Trasparente. Costruito dalle persone che lo usano. Spedito da Milano, in pubblico.",
     colProduct: "Prodotto",
     colOpenSource: "Open source",
     colResources: "Risorse",
@@ -80,26 +80,26 @@ export const it: Dict = {
   },
 
   hero: {
-    badge: "Open source · FSL-1.1-MIT · beta pubblica",
-    eyebrow: "HR & payroll aperto e modulare per team service-first",
-    titleBefore: "Un HR che puoi",
-    titleItalic: "leggere",
-    titleAfter: ", forkare ed eseguire",
+    badge: "Open source · FSL-1.1-MIT · beta pubblica · costruito in pubblico",
+    eyebrow: "People ops open source per team moderni",
+    titleBefore: "Software HR per chi",
+    titleItalic: "odia",
+    titleAfter: " il software HR",
     body: [
-      "Rippling, Deel e BambooHR sono suite chiuse che ti costringono a comprare tutto o niente. Pulse è tre moduli indipendenti — ",
+      "Costruito in pubblico. Plasmato dalle persone che lo usano. ",
       "Money",
       ", ",
       "People",
       " e ",
       "Work",
-      " — che condividono uno stesso workspace, una stessa tastiera, una stessa API. Sorgente disponibile su GitHub. Gratis per i primi 5 dipendenti, per sempre.",
-    ] as const,
-    ctaPrimary: "Inizia gratis — 5 dipendenti",
-    ctaGithub: "Metti una stella su GitHub",
-    ctaTour: "Fai il tour",
+      " — tre moduli indipendenti che condividono un workspace, una tastiera, un'API. Sorgente su GitHub. Self-host sulla tua infra, o hosted — niente chiamata commerciale per vedere il prodotto, nessun export proprietario, nessun lock-in.",
+    ],
+    ctaPrimary: "Prova gratis — i tuoi dati, la tua infra",
+    ctaGithub: "Leggi il sorgente",
+    ctaTour: "Guarda l'app",
     chip1: "Money · People · Work — adotta ciò che serve",
-    chip2: "SOC 2 Type II · GDPR · dati in UE",
-    chip3: "Self-host su Docker / K8s",
+    chip2: "Roadmap pubblica · changelog pubblico · prezzi pubblici",
+    chip3: "Self-host su Docker / Helm / Terraform",
     newThisQuarter: "Novità di questo trimestre",
   },
 
@@ -115,72 +115,72 @@ export const it: Dict = {
   },
 
   stats: {
-    processed: "Elaborato in payroll",
-    countries: "Paesi supportati",
-    teams: "Team su Pulse HR",
-    commands: "Comandi eseguiti",
+    processed: "Commit pubblici su main",
+    countries: "PR della community mergeate",
+    teams: "Stelle su GitHub",
+    commands: "Giorni spediti in pubblico",
   },
 
   whyPulse: {
     eyebrow: "Perché Pulse",
     title: {
-      before: "Nessun altro vendor HR",
-      italic: "tutti e quattro",
-      after: "li rispetta ",
+      before: "Nessun altro vendor HR spedisce",
+      italic: "apertamente",
+      after: " ",
       end: ".",
     },
     subtitle: {
       before:
-        "Rippling è chiuso. Deel è solo per contractor. BambooHR non ha un'API degna di questo nome. Pulse è l'unica piattaforma in cui ognuno di questi quattro principi è non negoziabile — ",
+        "Rippling è chiuso. Deel è solo per contractor. BambooHR non ha un'API degna di questo nome. Pulse è l'unica piattaforma HR dove il sorgente, la roadmap, il changelog, gli errori e i prezzi sono tutti pubblici — ",
       link: "vedi il confronto onesto",
       after: ".",
     },
     source: "Sorgente",
     values: [
       {
-        k: "Open source",
-        p: "Il sorgente completo è su GitHub sotto FSL-1.1-MIT. Leggi ogni riga, eseguilo sul tuo hardware, forkalo se ti deludiamo.",
+        k: "Aperto",
+        p: "Il sorgente completo è su GitHub sotto FSL-1.1-MIT, che diventa MIT tra due anni. Leggi ogni riga, eseguilo sul tuo hardware, forkalo se ti deludiamo. Nessuna feature nascosta dietro una chiamata commerciale.",
         cta: "LICENSE · self-host · contribuisci",
       },
       {
-        k: "Modulare",
-        p: "Money, People e Work sono tre prodotti indipendenti. Adotta uno, salta gli altri, sostituiscili quando vuoi. Nessuna migrazione tutto-o-niente.",
-        cta: "Tre moduli, un workspace",
+        k: "Trasparente",
+        p: "Roadmap pubblica. Changelog pubblico. Prezzi pubblici. Commit pubblici. Pubblichiamo cosa spediamo, cosa rompiamo e perché scegliamo quello che scegliamo. Performance in pubblico, errori inclusi.",
+        cta: "Roadmap · changelog · commit",
       },
       {
-        k: "Ecosystem-first",
-        p: "Webhook su ogni evento, API REST pubblica, SDK per TypeScript / Python / Go. Quello che non c'è, la community lo aggiunge.",
-        cta: "Webhook · REST · integrazioni",
+        k: "Tuo",
+        p: "I tuoi dati, la tua infra, la tua uscita. Self-host su Docker, Helm o Terraform. Esporta tutto in un formato pulito, sempre, senza chiedere. Lasciare Pulse è facile — è il punto.",
+        cta: "Self-host · export · niente lock-in",
       },
       {
-        k: "Keyboard-first",
-        p: "⌘K trova qualsiasi cosa, ⌘J esegue qualsiasi cosa. Parser di intent locale, dettatura vocale, 40+ shortcut, PWA offline. Niente mouse, nessuna chiamata LLM.",
-        cta: "⌘K · ⌘J · voce · offline",
+        k: "Costruito da chi lo usa",
+        p: "La roadmap è plasmata dalle pull request, non dai product manager. Money, People e Work sono tre moduli indipendenti — adotta uno, salta gli altri, sostituiscili quando vuoi. Ogni release esce perché serviva davvero a qualcuno.",
+        cta: "Moduli · PR · feedback board",
       },
     ],
   },
 
   concepts: {
     eyebrow: "Cosa crediamo",
-    titleBefore: "Quattro principi.",
-    titleItalic: "Nessun",
-    titleAfter: "vendor HR li rispetterà tutti e quattro.",
+    titleBefore: "Quattro impegni.",
+    titleItalic: "Non",
+    titleAfter: "negoziabili.",
     items: [
       {
-        k: "Open source",
-        d: "L'intera piattaforma è su GitHub sotto Functional Source License. Leggi il codice, eseguilo da solo, forkalo se ti deludiamo. I tuoi dati HR e il software che li gestisce non devono essere una scatola nera.",
+        k: "Aperto",
+        d: "L'intera piattaforma è su GitHub sotto Functional Source License (FSL-1.1-MIT, che diventa MIT dopo due anni). Leggi il codice, eseguilo da solo, forkalo se ti deludiamo. I tuoi dati HR e il software che li gestisce non devono essere una scatola nera.",
       },
       {
-        k: "Modulare",
-        d: "Money, People e Work sono tre prodotti indipendenti che condividono un workspace. Adotta uno, salta gli altri, sostituiscili più avanti. Nessuna migrazione tutto-o-niente, nessuna trappola buy-the-suite.",
+        k: "Trasparente",
+        d: "Roadmap, changelog, prezzi, limiti, policy di sicurezza, schema della telemetria — tutto pubblico. Non nascondiamo cosa fa il prodotto dietro una chiamata commerciale. Non recitiamo la trasparenza; spediamo con la porta aperta.",
       },
       {
-        k: "Ecosystem-first",
-        d: "Webhook su ogni evento, API REST pubblica e integrazioni first-class con Slack, Google, QuickBooks, Okta e Stripe. Quello che non spediamo, tu (o la community) lo puoi aggiungere in un pomeriggio.",
+        k: "Tuo",
+        d: "Self-host sulla tua macchina se vuoi. Esporta tutto in un formato pulito, quando vuoi, senza chiedere. Nessun formato binario proprietario, nessuna frizione contrattuale all'uscita. Il segnale più forte che stiamo facendo bene è che lasciare Pulse è facile.",
       },
       {
-        k: "Keyboard-first",
-        d: "Due tasti — ⌘K per la ricerca fuzzy, ⌘J per la command bar — per raggiungere ogni azione del prodotto senza lasciare la tastiera. Dettatura vocale, 40+ shortcut, funziona offline come PWA.",
+        k: "Costruito da chi lo usa",
+        d: "La roadmap è plasmata dalle pull request, non dai product manager. I maintainer usano Pulse per il proprio lavoro ogni giorno. 'Richiesta di feature' e 'pull request' sono due strade per la stessa roadmap, entrambe di prima classe.",
       },
     ],
   },
@@ -295,23 +295,26 @@ export const it: Dict = {
     ],
   },
 
+  // Social proof, versione onesta. Non fabbrichiamo testimonial (vedi foundation.md §9).
+  // Queste sono dichiarazioni di direzione dai maintainer su quello che sentiamo
+  // da issue, PR e primi self-host. Da sostituire con citazioni utente reali appena arrivano.
   testimonials: {
-    ratingLabel: "5 stelle su 5",
+    ratingLabel: "Costruito in pubblico",
     items: [
       {
-        who: "Aisha Patel",
-        role: "Head of People, Nova Retail",
-        body: "Abbiamo sostituito quattro strumenti con Pulse. Il payroll che prima richiedeva una settimana si chiude in un pomeriggio — e il team si diverte davvero a fare onboarding.",
+        who: "Davide Ghiotto",
+        role: "Maintainer · github.com/davide97g",
+        body: "Usiamo Pulse ogni giorno per le nostre ore e le nostre ferie. Se una frizione dura più di una settimana, la fixiamo. La roadmap è la lista delle cose in cui noi — o chi lo tiene sulla propria infra — siamo inciampati davvero.",
       },
       {
-        who: "Marcus Rivera",
-        role: "COO, Blanco Studio",
-        body: "La vista per commessa è la killer feature. Finalmente so quale cliente è profittevole prima della fine del trimestre, non dopo.",
+        who: "Feedback board pubblica",
+        role: "github.com/davide97g/pulse-hr/discussions",
+        body: "Ogni richiesta di feature è pubblica. Ogni PR viene revisionata in pubblico. Il changelog si legge perché dietro ogni riga vedi il commit. È come l'HR software doveva essere costruito fin dall'inizio.",
       },
       {
-        who: "Yuki Tanaka",
-        role: "CFO, Zenith Energy",
-        body: "Ai revisori è piaciuto. Ogni modifica è registrata, ogni approvazione ha un timestamp, ogni adempimento è a un click.",
+        who: "Il bottone Export",
+        role: "I tuoi dati, la tua infra",
+        body: "Cliccalo. Ti porti tutto. Portalo altrove se vuoi. Il test onesto di una piattaforma aperta è se puoi andartene — non quello che dice la slide commerciale.",
       },
     ],
   },
@@ -336,7 +339,7 @@ export const it: Dict = {
       },
       {
         q: "È SOC 2 / GDPR compliant?",
-        a: "Audit SOC 2 Type II annuale — report disponibile sotto NDA. GDPR-compliant by design con opzioni di residenza dati in UE (Francoforte, Dublino, Milano). Ogni cliente riceve un Data Processing Agreement firmato all'iscrizione, i sub-processor sono pubblicati su pulsehr.it/security. Certificazione ISO 27001 in corso per fine 2026; BAA HIPAA disponibili per clienti healthcare US.",
+        a: "Risposta onesta: siamo GDPR-compliant by design — residenza dati in UE (Francoforte, Dublino, Milano), DPA firmato all'iscrizione, sub-processor documentati su pulsehr.it/security. SOC 2 Type II e ISO 27001 non sono ancora in mano oggi; sono sulla roadmap quando il parco clienti lo richiederà. Se hai bisogno di un'attestazione prima che l'abbiamo, la strada onesta è il self-host — rimani dentro il tuo perimetro di audit. Preferiamo dirtelo che fingere.",
       },
       {
         q: "C'è un'API?",
@@ -366,14 +369,11 @@ export const it: Dict = {
     titleItalic: "Pulse",
     titleAfter: ".",
     subtitle:
-      "Un team di 18 persone in sei paesi, metà che costruisce, metà sul campo. Assumiamo dai settori che serviamo — payroll, HR ops, design.",
+      "Due sviluppatori frontend-fluent che costruiscono in pubblico, da Milano. L'agent-driven development è il motivo per cui siamo solo in due — non lo vendiamo, spediamo solo più di quanto il nostro headcount dovrebbe permettere. Il prodotto è il protagonista; noi firmiamo i commit.",
     items: [
-      { n: "Sarah Chen", r: "CEO & Co-founder", bio: "Ex-Stripe Atlas. Ha costruito rails di payroll in 47 paesi." },
-      { n: "Marcus Rivera", r: "Design lead", bio: "Prima in Figma e Linear. Crede che il software debba sembrare una matita." },
-      { n: "Aisha Patel", r: "Head of People", bio: "12 anni di HR ops. Ha trasformato l'onboarding in un progetto del weekend." },
-      { n: "Yuki Tanaka", r: "VP Product", bio: "Ha spedito strumenti finance in Brex prima di unirsi." },
-      { n: "Lina Rossi", r: "Head of Payroll", bio: "Specialista payroll certificata in 8 giurisdizioni." },
-      { n: "Noah Williams", r: "Staff Engineer", bio: "Sistemi distribuiti per la concorrenza nel payroll." },
+      { n: "Davide Ghiotto", r: "Maintainer · Milano", bio: "Frontend-fluent, stanco del software HR. github.com/davide97g · linkedin.com/in/davide-ghiotto" },
+      { n: "Niccolò Naso", r: "Maintainer · Milano", bio: "Co-maintainer frontend-fluent. github.com/LordNik10 · linkedin.com/in/niccolò-naso-888039178" },
+      { n: "Tu?", r: "Aperti ai contributor", bio: "La roadmap è plasmata dalle pull request. Se il codebase fixa una frizione che vivi ogni settimana, manda una PR — ogni contributor viene creditato nel changelog." },
     ],
   },
 
@@ -483,12 +483,12 @@ export const it: Dict = {
   },
 
   cta: {
-    titleLine1: "Il tuo team merita",
-    titleItalic: "software migliore",
-    titleAfter: ".",
-    body: "Gratis per i primi 5 dipendenti — per sempre. Nessuna carta di credito. Importa i tuoi dati in meno di un'ora.",
-    primary: "Inizia gratis",
-    secondary: "Parla col sales",
+    titleLine1: "Software HR per chi",
+    titleItalic: "odia",
+    titleAfter: " il software HR.",
+    body: "Gratis per sempre in self-host. Gratis per i primi 5 dipendenti su Pulse hosted. Nessuna carta di credito. Nessuna chiamata commerciale per vedere il prodotto. Importa in un'ora, esporta con un click — sempre.",
+    primary: "Prova gratis",
+    secondary: "Leggi il sorgente",
   },
 
   page404: {
@@ -506,7 +506,7 @@ export const it: Dict = {
   },
 
   indexPage: {
-    title: "HR open source, payroll e rilevazione ore — Pulse HR",
+    title: "Pulse HR — software HR per chi odia il software HR",
   },
 
   productPage: {
