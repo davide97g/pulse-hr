@@ -1,0 +1,36 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Foundations/Elevation" />
+
+# Elevation & Radius
+
+Shadows and corner radii carry the spatial grammar of Pulse. Three shadow roles, one radius scale derived from a single base token.
+
+## Radius scale
+
+Everything descends from `--radius` (default `0.625rem` / 10px). Sub-tokens are computed, not hand-picked:
+
+| Token | Formula | Use |
+|-------|---------|-----|
+| `--radius-sm` | `calc(var(--radius) - 4px)` | Chips, tags, inline badges. |
+| `--radius-md` | `calc(var(--radius) - 2px)` | Inputs, buttons, table cells. |
+| `--radius-lg` | `var(--radius)` | Cards, modals, the default. |
+| `--radius-xl` | `calc(var(--radius) + 4px)` | Hero surfaces, nested card groups. |
+
+Changing `--radius` in a theme reshapes every surface at once. No component hard-codes a radius.
+
+## Shadow roles
+
+Theme-aware. Each theme supplies its own values — dark themes go harder because the canvas is darker.
+
+| Token | Role | Use |
+|-------|------|-----|
+| `--shadow-card` | Resting | Cards, tiles, panels on the page canvas. A whisper, not a lift. |
+| `--shadow-panel` | Lateral | Side panels, drawers. Comes from the edge, not from above. |
+| `--shadow-pop` | Floating | Popovers, dropdowns, tooltips, toasts. Reads as detached. |
+
+## Rules
+
+1. **Pick by role, not by size.** Don't use `--shadow-pop` just because you want more blur — it signals "floating above the page". Misuse flattens the hierarchy.
+2. **One shadow per surface.** Don't stack card + pop on the same element.
+3. **Radius follows role, not taste.** Inputs get `md`, cards get `lg`, don't mix.

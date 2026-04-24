@@ -17,6 +17,11 @@ dist-ssr
 .astro
 *.local
 
+# Storybook build + cache artifacts
+storybook-static
+.storybook-out
+apps/*/storybook-static
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
