@@ -15,6 +15,7 @@ import { ServerBoot } from "./components/app/ServerBoot";
 import { WorkspaceLoaderProvider } from "./components/app/WorkspaceLoader";
 import { CompanyProfileProvider } from "./components/app/CompanyProfileStore";
 import { CookieConsentBanner } from "./components/CookieConsentBanner";
+import { Analytics } from "@vercel/analytics/react";
 import "./styles.css";
 
 initGoogleAnalytics();
@@ -63,6 +64,7 @@ ReactDOM.createRoot(el).render(
             <RoleOverrideProvider>
               <ThemeProvider>
                 <CookieConsentBanner />
+                <Analytics />
                 <WorkspaceProvider>
                   <WorkspaceLoaderProvider>
                     <CompanyProfileProvider>

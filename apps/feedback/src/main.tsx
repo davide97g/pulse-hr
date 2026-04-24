@@ -6,6 +6,7 @@ import { getRouter } from "./router";
 import { initGoogleAnalytics } from "./lib/analytics";
 import { CookieConsentBanner } from "./components/CookieConsentBanner";
 import { ThemeProvider } from "@pulse-hr/ui/theme";
+import { Analytics } from "@vercel/analytics/react";
 import "./styles.css";
 
 initGoogleAnalytics();
@@ -31,6 +32,7 @@ ReactDOM.createRoot(el).render(
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
       <ThemeProvider>
         <CookieConsentBanner />
+        <Analytics />
         <RouterProvider router={router} />
       </ThemeProvider>
     </ClerkProvider>
