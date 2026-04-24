@@ -1,3 +1,4 @@
+import { initGoogleAnalytics } from "@/lib/ga";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
@@ -13,7 +14,10 @@ import { AppErrorBoundary } from "./components/app/AppErrorBoundary";
 import { ServerBoot } from "./components/app/ServerBoot";
 import { WorkspaceLoaderProvider } from "./components/app/WorkspaceLoader";
 import { CompanyProfileProvider } from "./components/app/CompanyProfileStore";
+import { CookieConsentBanner } from "./components/CookieConsentBanner";
 import "./styles.css";
+
+initGoogleAnalytics();
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -58,6 +62,7 @@ ReactDOM.createRoot(el).render(
           <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/login">
             <RoleOverrideProvider>
               <ThemeProvider>
+                <CookieConsentBanner />
                 <WorkspaceProvider>
                   <WorkspaceLoaderProvider>
                     <CompanyProfileProvider>
