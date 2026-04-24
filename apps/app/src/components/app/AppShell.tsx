@@ -14,7 +14,6 @@ import { PinLayer } from "@/components/comments/PinLayer";
 import { Sheet, SheetContent } from "@pulse-hr/ui/primitives/sheet";
 import { useTrackPageViews } from "@/lib/usage-tracking";
 import { voiceBus } from "@/lib/voice-bus";
-import { ActiveCommessaPin } from "./ActiveCommessaPin";
 import { BookingDialog } from "./BookingDialog";
 import { BookingsProvider } from "./BookingsContext";
 import { CommandPalette } from "./CommandPalette";
@@ -516,10 +515,6 @@ function Topbar({
   showFeedbackLink: boolean;
 }) {
   const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
-  const { pathname } = useLocation();
-  const showCommessaPin = ["/focus", "/time", "/forecast"].some(
-    (p) => pathname === p || pathname.startsWith(`${p}/`),
-  );
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
   const { user } = useUser();
@@ -571,11 +566,6 @@ function Topbar({
 
       <div className="flex-1" />
 
-      {showCommessaPin && (
-        <div data-tour="topbar-commessa-pin" className="hidden lg:inline-flex">
-          <ActiveCommessaPin />
-        </div>
-      )}
       {showFeedbackLink && (
         <a
           href={FEEDBACK_URL}
