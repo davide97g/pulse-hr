@@ -36,6 +36,8 @@ import {
   Building2,
   Calendar,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Menu,
   MessageSquare,
   Plus,
@@ -89,6 +91,7 @@ import { cn } from "@/lib/utils";
 import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
 
 const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
+const SIDEBAR_COLLAPSED_KEY = "pulse.sidebarCollapsed.v1";
 
 export function AppShell() {
   return (
@@ -133,7 +136,21 @@ function AppShellInner() {
       .filter((g) => g.items.length > 0);
   }, [hasOpenManagerAsks, admin, roleAllowed, isFeatureEnabled]);
   useTrackPageViews();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }, [collapsed]);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [logOpen, setLogOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -291,8 +308,28 @@ function AppShellInner() {
           ))}
         </nav>
 
-        <div className="border-t p-2">
+        <div className="border-t p-2 space-y-1">
           <TourLauncher collapsed={collapsed} />
+          <button
+            type="button"
+            onClick={() => setCollapsed((v) => !v)}
+            className={cn(
+              "w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors",
+              collapsed && "justify-center",
+            )}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-pressed={collapsed}
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4 shrink-0" />
+            ) : (
+              <>
+                <ChevronLeft className="h-4 w-4 shrink-0" />
+                <span className="truncate flex-1 text-left">Collapse</span>
+              </>
+            )}
+          </button>
         </div>
       </aside>
 

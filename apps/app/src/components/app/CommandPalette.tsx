@@ -137,7 +137,7 @@ export function CommandPalette({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="p-0 max-w-xl gap-0 overflow-hidden top-[20%] translate-y-0">
+      <DialogContent className="p-0 max-w-xl gap-0 overflow-hidden top-[20%] translate-y-0 [&>button.absolute]:hidden">
         <div className="flex items-center border-b px-3">
           <Sparkles className="h-4 w-4 text-primary shrink-0" />
           <Input

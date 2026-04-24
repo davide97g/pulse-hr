@@ -5,7 +5,7 @@
  * existing callsites don't change.
  */
 export {
-  ADMIN_SIDEBAR_VISIBILITY_PATH,
+  ADMIN_MODULES_PATH,
   ALL_SIDEBAR_FEATURE_IDS,
   SIDEBAR_FEATURE_LABELS,
   defaultSidebarFeaturesEnabled,

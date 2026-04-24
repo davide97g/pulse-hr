@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "@tanstack/react-router";
 import { useEffectiveRole, useIsEffectiveAdmin } from "@/lib/role-override";
 import { featuresForRole } from "@/lib/role-features";
 import {
-  ADMIN_SIDEBAR_VISIBILITY_PATH,
+  ADMIN_MODULES_PATH,
   firstEnabledAppPath,
   pathToSidebarFeatureId,
 } from "@/lib/sidebar-features";
@@ -30,8 +30,8 @@ export function SidebarRouteGuard({ children }: { children: React.ReactNode }) {
   }
 
   const onAdminPage =
-    pathname === ADMIN_SIDEBAR_VISIBILITY_PATH ||
-    pathname.startsWith(`${ADMIN_SIDEBAR_VISIBILITY_PATH}/`);
+    pathname === ADMIN_MODULES_PATH ||
+    pathname.startsWith(`${ADMIN_MODULES_PATH}/`);
   if (onAdminPage && !admin) {
     return <Navigate to="/" replace />;
   }

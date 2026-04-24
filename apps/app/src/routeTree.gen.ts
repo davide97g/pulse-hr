@@ -54,8 +54,7 @@ import { Route as DocsEmployeeScoreRouteImport } from './routes/docs.employee-sc
 import { Route as DocsClientsProjectsRouteImport } from './routes/docs.clients-projects'
 import { Route as CommentIdRouteImport } from './routes/comment.$id'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
-import { Route as AdminSidebarVisibilityRouteImport } from './routes/admin.sidebar-visibility'
-import { Route as AdminSendEmailRouteImport } from './routes/admin.send-email'
+import { Route as AdminModulesRouteImport } from './routes/admin.modules'
 import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$officeId.$roomId'
 
 const WelcomeRoute = WelcomeRouteImport.update({
@@ -283,14 +282,9 @@ const ClientsClientIdRoute = ClientsClientIdRouteImport.update({
   path: '/$clientId',
   getParentRoute: () => ClientsRoute,
 } as any)
-const AdminSidebarVisibilityRoute = AdminSidebarVisibilityRouteImport.update({
-  id: '/admin/sidebar-visibility',
-  path: '/admin/sidebar-visibility',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminSendEmailRoute = AdminSendEmailRouteImport.update({
-  id: '/admin/send-email',
-  path: '/admin/send-email',
+const AdminModulesRoute = AdminModulesRouteImport.update({
+  id: '/admin/modules',
+  path: '/admin/modules',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfficesOfficeIdRoomIdRoute = OfficesOfficeIdRoomIdRouteImport.update({
@@ -331,8 +325,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
-  '/admin/send-email': typeof AdminSendEmailRoute
-  '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
+  '/admin/modules': typeof AdminModulesRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/comment/$id': typeof CommentIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
@@ -379,8 +372,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
-  '/admin/send-email': typeof AdminSendEmailRoute
-  '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
+  '/admin/modules': typeof AdminModulesRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/comment/$id': typeof CommentIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
@@ -430,8 +422,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
-  '/admin/send-email': typeof AdminSendEmailRoute
-  '/admin/sidebar-visibility': typeof AdminSidebarVisibilityRoute
+  '/admin/modules': typeof AdminModulesRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/comment/$id': typeof CommentIdRoute
   '/docs/clients-projects': typeof DocsClientsProjectsRoute
@@ -482,8 +473,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
-    | '/admin/send-email'
-    | '/admin/sidebar-visibility'
+    | '/admin/modules'
     | '/clients/$clientId'
     | '/comment/$id'
     | '/docs/clients-projects'
@@ -530,8 +520,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
-    | '/admin/send-email'
-    | '/admin/sidebar-visibility'
+    | '/admin/modules'
     | '/clients/$clientId'
     | '/comment/$id'
     | '/docs/clients-projects'
@@ -580,8 +569,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
-    | '/admin/send-email'
-    | '/admin/sidebar-visibility'
+    | '/admin/modules'
     | '/clients/$clientId'
     | '/comment/$id'
     | '/docs/clients-projects'
@@ -631,8 +619,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TimeRoute: typeof TimeRoute
   WelcomeRoute: typeof WelcomeRoute
-  AdminSendEmailRoute: typeof AdminSendEmailRoute
-  AdminSidebarVisibilityRoute: typeof AdminSidebarVisibilityRoute
+  AdminModulesRoute: typeof AdminModulesRoute
   CommentIdRoute: typeof CommentIdRoute
   PeopleEmployeeIdRoute: typeof PeopleEmployeeIdRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
@@ -956,18 +943,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClientsClientIdRouteImport
       parentRoute: typeof ClientsRoute
     }
-    '/admin/sidebar-visibility': {
-      id: '/admin/sidebar-visibility'
-      path: '/admin/sidebar-visibility'
-      fullPath: '/admin/sidebar-visibility'
-      preLoaderRoute: typeof AdminSidebarVisibilityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/send-email': {
-      id: '/admin/send-email'
-      path: '/admin/send-email'
-      fullPath: '/admin/send-email'
-      preLoaderRoute: typeof AdminSendEmailRouteImport
+    '/admin/modules': {
+      id: '/admin/modules'
+      path: '/admin/modules'
+      fullPath: '/admin/modules'
+      preLoaderRoute: typeof AdminModulesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offices/$officeId/$roomId': {
@@ -1078,8 +1058,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TimeRoute: TimeRoute,
   WelcomeRoute: WelcomeRoute,
-  AdminSendEmailRoute: AdminSendEmailRoute,
-  AdminSidebarVisibilityRoute: AdminSidebarVisibilityRoute,
+  AdminModulesRoute: AdminModulesRoute,
   CommentIdRoute: CommentIdRoute,
   PeopleEmployeeIdRoute: PeopleEmployeeIdRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,

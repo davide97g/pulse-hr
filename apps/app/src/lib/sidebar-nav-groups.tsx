@@ -23,16 +23,12 @@ import {
   Focus,
   Trophy,
   Gauge,
-  MessageSquare,
   Briefcase as BriefcaseIcon,
   Building2,
   PanelLeft,
-  Send,
 } from "lucide-react";
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
-import { ADMIN_SIDEBAR_VISIBILITY_PATH } from "@/lib/sidebar-features";
-
-const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
+import { ADMIN_MODULES_PATH } from "@/lib/sidebar-features";
 
 export type SidebarNavItem = {
   to: string;
@@ -133,13 +129,6 @@ export function buildSidebarNavGroups(
     {
       label: "Workspace",
       items: [
-        {
-          to: FEEDBACK_URL,
-          label: "Feedback",
-          icon: MessageSquare,
-          featureId: "feedback",
-          external: true,
-        },
         { to: "/marketplace", label: "Marketplace", icon: Puzzle, featureId: "marketplace" },
         { to: "/developers", label: "Developers", icon: Code2, featureId: "developers" },
         { to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" },
@@ -154,14 +143,9 @@ export function buildSidebarNavGroups(
       ws.items = [
         ...ws.items,
         {
-          to: ADMIN_SIDEBAR_VISIBILITY_PATH,
-          label: "Sidebar visibility",
+          to: ADMIN_MODULES_PATH,
+          label: "Modules",
           icon: PanelLeft,
-        },
-        {
-          to: "/admin/send-email",
-          label: "Send email",
-          icon: Send,
         },
       ];
     }
