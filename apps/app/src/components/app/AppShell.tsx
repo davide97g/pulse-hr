@@ -13,6 +13,7 @@ import { useNewProposal } from "@/components/proposals/ProposalProvider";
 import { PinLayer } from "@/components/comments/PinLayer";
 import { Sheet, SheetContent } from "@pulse-hr/ui/primitives/sheet";
 import { useTrackPageViews } from "@/lib/usage-tracking";
+import { APP_VERSION } from "@/lib/version";
 import { voiceBus } from "@/lib/voice-bus";
 import { BookingDialog } from "./BookingDialog";
 import { BookingsProvider } from "./BookingsContext";
@@ -392,6 +393,15 @@ function AppShellInner() {
               </>
             )}
           </button>
+          <div
+            className={cn(
+              "text-[10px] text-sidebar-foreground/40 font-mono tabular-nums select-none",
+              collapsed ? "text-center" : "px-2",
+            )}
+            title={`Pulse HR build v${APP_VERSION}`}
+          >
+            v{APP_VERSION}
+          </div>
         </div>
       </aside>
 
