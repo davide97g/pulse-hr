@@ -176,12 +176,15 @@ function Login() {
               <Mail className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="email"
+                name="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="pl-9"
-                autoComplete="email"
+                autoComplete="username"
+                inputMode="email"
+                enterKeyHint="next"
                 placeholder="you@company.co"
               />
             </div>
@@ -201,12 +204,14 @@ function Login() {
               <Lock className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="password"
+                name="password"
                 type={show ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="pl-9 pr-9"
                 autoComplete="current-password"
+                enterKeyHint="go"
                 placeholder="••••••••"
               />
               <button

@@ -146,20 +146,26 @@ function Signup() {
             <Label htmlFor="name">Your name</Label>
             <Input
               id="name"
+              name="name"
               value={account.name}
               onChange={(e) => setAccount((a) => ({ ...a, name: e.target.value }))}
               placeholder="Alex Carter"
-              autoFocus
+              autoComplete="name"
+              enterKeyHint="next"
             />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="email">Work email</Label>
             <Input
               id="email"
+              name="email"
               type="email"
               value={account.email}
               onChange={(e) => setAccount((a) => ({ ...a, email: e.target.value }))}
               placeholder="alex@company.co"
+              autoComplete="username"
+              inputMode="email"
+              enterKeyHint="next"
             />
           </div>
           <div className="space-y-1.5">
@@ -167,10 +173,13 @@ function Signup() {
             <div className="relative">
               <Input
                 id="pw"
+                name="new-password"
                 type={account.show ? "text" : "password"}
                 value={account.password}
                 onChange={(e) => setAccount((a) => ({ ...a, password: e.target.value }))}
                 placeholder="At least 8 characters"
+                autoComplete="new-password"
+                enterKeyHint="go"
               />
               <button
                 type="button"
@@ -211,12 +220,13 @@ function Signup() {
               <Mail className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="code"
+                name="otp"
                 inputMode="numeric"
                 autoComplete="one-time-code"
+                enterKeyHint="go"
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                 placeholder="123456"
-                autoFocus
                 className="pl-9 tracking-[0.4em] font-mono"
               />
             </div>
