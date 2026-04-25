@@ -8,6 +8,7 @@ import {
   Check,
   ClipboardList,
   Coins,
+  FlaskConical,
   Loader2,
   Rocket,
   Shield,
@@ -150,6 +151,7 @@ function Welcome() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <Card className="w-full max-w-2xl p-8 fade-in">
+        <DemoBanner />
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-primary/10 text-primary inline-flex items-center justify-center">
             <Sparkles className="h-5 w-5" />
@@ -224,6 +226,28 @@ function Welcome() {
           )}
         </div>
       </Card>
+    </div>
+  );
+}
+
+function DemoBanner() {
+  return (
+    <div className="mb-6 rounded-md border border-warning/30 bg-warning/10 p-3.5 flex items-start gap-3">
+      <div className="h-8 w-8 rounded-md bg-warning/20 text-warning grid place-items-center shrink-0">
+        <FlaskConical className="h-4 w-4" />
+      </div>
+      <div className="flex-1">
+        <div className="text-sm font-medium text-foreground flex items-center gap-2">
+          Demo workspace
+          <span className="text-[10px] font-semibold uppercase tracking-wide rounded-full bg-warning/20 text-warning px-2 py-0.5">
+            Mock data
+          </span>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+          We're spinning up a fake workspace so you can explore Pulse end-to-end. No real employees,
+          payroll or invoices — everything lives in your browser and resets any time from Settings.
+        </p>
+      </div>
     </div>
   );
 }
