@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { useAuth, useUser } from "@clerk/react";
+import { toast } from "sonner";
 import { useComments } from "@/lib/comments/useComments";
 import { setTokenGetter } from "@/lib/comments/api";
 import { getScrollRoot, resolveAnchor } from "@/lib/comments/anchor";
@@ -233,17 +234,27 @@ export function CommentsOverlayProvider({ children }: { children: React.ReactNod
         }
       }
 
-      await addComment(
-        {
-          route,
-          anchor,
-          pageMeta,
-          body: trimmed,
-          tags: tags && tags.length > 0 ? tags : undefined,
-          screenshotUrl,
-        },
-        author,
-      );
+      try {
+        await addComment(
+          {
+            route,
+            anchor,
+            pageMeta,
+            body: trimmed,
+            tags: tags && tags.length > 0 ? tags : undefined,
+            screenshotUrl,
+          },
+          author,
+        );
+      } catch (err) {
+        const code = (err as { code?: string } | null)?.code;
+        if (code === "daily_cap_reached") {
+          toast.error("Daily comment limit reached — try again tomorrow.");
+          return;
+        }
+        toast.error("Failed to post comment.");
+        return;
+      }
       setPlacementPointState(null);
       resetScreenshot();
       setMode("idle");

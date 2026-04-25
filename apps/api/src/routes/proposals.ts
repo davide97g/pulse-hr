@@ -13,6 +13,17 @@ import {
 } from "../lib/validation.ts";
 import { serializeProposal, serializeProposalReply } from "../lib/serialize.ts";
 import {
+  assertDailyCap,
+  chargePower,
+  grantPower,
+  loadAndRefill,
+  refundPower,
+  VotingPowerError,
+  VP_DAILY_PROPOSAL_CAP,
+  VP_GRANT_PLANNED,
+  VP_VOTE_COST,
+} from "../lib/voting-power.ts";
+import {
   getPreferences,
   listAdmins,
   listWorkspaceMembers,
@@ -46,6 +57,15 @@ function snippet(s: string, max = 160): string {
 proposals.post("/", zValidator("json", NewProposalSchema), async (c) => {
   const user = c.get("user");
   const input = c.req.valid("json");
+
+  try {
+    await assertDailyCap(user.id, "proposal", VP_DAILY_PROPOSAL_CAP);
+  } catch (err) {
+    if (err instanceof VotingPowerError) {
+      return c.json({ error: { code: err.code, message: err.message } }, 422);
+    }
+    throw err;
+  }
 
   const [row] = await db
     .insert(schema.proposals)
@@ -266,6 +286,36 @@ proposals.post(
       .limit(1);
     if (!parent) return c.json({ error: { code: "not_found" } }, 404);
 
+    // Voting power economy: see comments route for the same pattern.
+    const [existingVote] = await db
+      .select({ value: schema.proposalVotes.value })
+      .from(schema.proposalVotes)
+      .where(
+        and(
+          eq(schema.proposalVotes.proposalId, proposalId),
+          eq(schema.proposalVotes.userId, user.id),
+        ),
+      )
+      .limit(1);
+    const prior = (existingVote?.value ?? 0) as -1 | 0 | 1;
+
+    if (prior !== value) {
+      try {
+        await loadAndRefill(user.id);
+        if (prior !== 0) {
+          await refundPower(user.id, VP_VOTE_COST, "Vote retract", null);
+        }
+        if (value !== 0) {
+          await chargePower(user.id, VP_VOTE_COST, "Vote cast", null);
+        }
+      } catch (err) {
+        if (err instanceof VotingPowerError) {
+          return c.json({ error: { code: err.code, message: err.message } }, 422);
+        }
+        throw err;
+      }
+    }
+
     if (value === 0) {
       await db
         .delete(schema.proposalVotes)
@@ -341,6 +391,20 @@ proposals.patch(
       .returning();
 
     if (!updated) return c.json({ error: { code: "not_found" } }, 404);
+
+    // Reward the author once when their proposal is moved into "planned".
+    if (updated.status === "planned" && prior[0]?.status !== "planned" && updated.authorId) {
+      try {
+        await grantPower(
+          updated.authorId,
+          VP_GRANT_PLANNED,
+          "Planned: proposal",
+          `planned:proposal:${updated.id}`,
+        );
+      } catch (err) {
+        console.warn("[api/proposals/status] planned grant failed (non-fatal)", err);
+      }
+    }
 
     try {
       if (updated.authorId && updated.authorId !== user.id && prior[0]?.status !== updated.status) {

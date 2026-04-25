@@ -18,6 +18,17 @@ import {
 } from "../lib/validation.ts";
 import { serializeComment, serializeReply } from "../lib/serialize.ts";
 import {
+  assertDailyCap,
+  chargePower,
+  grantPower,
+  loadAndRefill,
+  refundPower,
+  VotingPowerError,
+  VP_DAILY_COMMENT_CAP,
+  VP_GRANT_PLANNED,
+  VP_VOTE_COST,
+} from "../lib/voting-power.ts";
+import {
   getPreferences,
   listAdmins,
   listWorkspaceMembers,
@@ -80,6 +91,15 @@ comments.get("/", zValidator("query", ListQuerySchema), async (c) => {
 comments.post("/", zValidator("json", NewCommentSchema), async (c) => {
   const user = c.get("user");
   const input = c.req.valid("json");
+
+  try {
+    await assertDailyCap(user.id, "comment", VP_DAILY_COMMENT_CAP);
+  } catch (err) {
+    if (err instanceof VotingPowerError) {
+      return c.json({ error: { code: err.code, message: err.message } }, 422);
+    }
+    throw err;
+  }
 
   const [row] = await db
     .insert(schema.comments)
@@ -323,6 +343,38 @@ comments.post(
       .limit(1);
     if (!parent) return c.json({ error: { code: "not_found" } }, 404);
 
+    // Voting power economy: charge 1 on first cast, refund 1 on retract,
+    // refund + charge on swap (net 0 power, two ledger rows). Same value
+    // resubmitted is a no-op.
+    const [existingVote] = await db
+      .select({ value: schema.commentVotes.value })
+      .from(schema.commentVotes)
+      .where(
+        and(
+          eq(schema.commentVotes.commentId, commentId),
+          eq(schema.commentVotes.userId, user.id),
+        ),
+      )
+      .limit(1);
+    const prior = (existingVote?.value ?? 0) as -1 | 0 | 1;
+
+    if (prior !== value) {
+      try {
+        await loadAndRefill(user.id);
+        if (prior !== 0) {
+          await refundPower(user.id, VP_VOTE_COST, "Vote retract", null);
+        }
+        if (value !== 0) {
+          await chargePower(user.id, VP_VOTE_COST, "Vote cast", null);
+        }
+      } catch (err) {
+        if (err instanceof VotingPowerError) {
+          return c.json({ error: { code: err.code, message: err.message } }, 422);
+        }
+        throw err;
+      }
+    }
+
     if (value === 0) {
       await db
         .delete(schema.commentVotes)
@@ -396,6 +448,21 @@ comments.patch(
       .returning();
 
     if (!updated) return c.json({ error: { code: "not_found" } }, 404);
+
+    // Reward the author once when their item is moved into "planned".
+    // Idempotent via the unique partial index on (user_id, source_key).
+    if (updated.status === "planned" && prior[0]?.status !== "planned" && updated.authorId) {
+      try {
+        await grantPower(
+          updated.authorId,
+          VP_GRANT_PLANNED,
+          "Planned: comment",
+          `planned:comment:${updated.id}`,
+        );
+      } catch (err) {
+        console.warn("[api/comments/status] planned grant failed (non-fatal)", err);
+      }
+    }
 
     try {
       if (updated.authorId && updated.authorId !== user.id && prior[0]?.status !== updated.status) {

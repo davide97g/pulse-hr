@@ -31,6 +31,7 @@ import {
   itemKind,
   relativeTime,
 } from "./shared";
+import { useCompanyProfileStore } from "@/components/app/CompanyProfileStore";
 
 export function ContributionDetail({
   kind,
@@ -88,20 +89,34 @@ export function ContributionDetail({
     return () => window.clearInterval(t);
   }, [refresh]);
 
+  const { adjustPower } = useCompanyProfileStore();
+
   const onVote = async (value: -1 | 0 | 1) => {
     if (!item) return;
     const prev = item;
     const delta = value - item.myVote;
     setItem({ ...item, myVote: value, voteScore: item.voteScore + delta });
+
+    let powerDelta = 0;
+    if (item.myVote === 0 && value !== 0) powerDelta = -1;
+    else if (item.myVote !== 0 && value === 0) powerDelta = +1;
+    if (powerDelta !== 0) adjustPower(powerDelta);
+
     try {
       const { voteScore, myVote } =
         item.kind === "proposal"
           ? await setProposalVote(item.id, value)
           : await setVote(item.id, value);
       setItem((curr) => (curr ? { ...curr, voteScore, myVote } : curr));
-    } catch {
+    } catch (err) {
       setItem(prev);
-      toast.error("Vote failed");
+      if (powerDelta !== 0) adjustPower(-powerDelta);
+      const code = (err as { code?: string } | null)?.code;
+      if (code === "insufficient_power") {
+        toast.error("You're out of voting power. Refills weekly to 10.");
+      } else {
+        toast.error("Vote failed.");
+      }
     }
   };
 

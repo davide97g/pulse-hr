@@ -4,6 +4,7 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, schema } from "../db/client.ts";
 import { requireUser } from "../middleware/auth.ts";
+import { grantPower, loadAndRefill, VP_BASELINE, VP_GRANT_QUESTIONNAIRE } from "../lib/voting-power.ts";
 
 /**
  * Per-user profile + voting power + questionnaire history.
@@ -12,13 +13,13 @@ import { requireUser } from "../middleware/auth.ts";
  * latest answers we care to query directly. Every submission is ALSO appended
  * to `questionnaire_responses` so the questionnaire can evolve (new fields,
  * new versions) without losing history. Voting power lives in its own table
- * with an append-only `voting_power_events` ledger.
+ * with an append-only `voting_power_events` ledger; mutations go through
+ * `src/lib/voting-power.ts` (charges, refunds, grants, lazy refill).
  */
 export const userProfile = new Hono();
 
 userProfile.use("*", requireUser);
 
-const DEFAULT_BASELINE = 100;
 const QUESTIONNAIRE_KEY = "company_profile";
 const QUESTIONNAIRE_VERSION = 1;
 
@@ -39,9 +40,14 @@ type CompanyProfileBody = z.infer<typeof companyProfileBody>;
 
 userProfile.get("/me", async (c) => {
   const user = c.get("user");
-  const [profileRow, powerRow, history] = await Promise.all([
+
+  // Apply lazy weekly refill (no-op if window hasn't elapsed) before reading
+  // back the row. Side-effect: the returned `power` reflects the refill, and
+  // a `Weekly refill` event is appended when delta > 0.
+  const power = await loadAndRefill(user.id);
+
+  const [profileRow, history] = await Promise.all([
     db.select().from(schema.userProfiles).where(eq(schema.userProfiles.userId, user.id)).limit(1),
-    db.select().from(schema.votingPower).where(eq(schema.votingPower.userId, user.id)).limit(1),
     db
       .select()
       .from(schema.votingPowerEvents)
@@ -52,9 +58,7 @@ userProfile.get("/me", async (c) => {
 
   return c.json({
     profile: profileRow[0] ? serializeProfile(profileRow[0]) : null,
-    power: powerRow[0]
-      ? serializePower(powerRow[0])
-      : { userId: user.id, power: DEFAULT_BASELINE, baseline: DEFAULT_BASELINE },
+    power: serializePowerRow(power),
     history: history.map(serializeEvent),
   });
 });
@@ -107,42 +111,26 @@ userProfile.post("/company-profile", zValidator("json", companyProfileBody), asy
     submittedAt: now,
   });
 
-  const existingPower = await db
-    .select()
-    .from(schema.votingPower)
-    .where(eq(schema.votingPower.userId, user.id))
-    .limit(1);
+  // Idempotent +10 grant. Re-submitting the same questionnaire is a no-op
+  // for power (the unique partial index on `(user_id, source_key)` prevents
+  // duplicate grants).
+  await loadAndRefill(user.id);
+  await grantPower(
+    user.id,
+    VP_GRANT_QUESTIONNAIRE,
+    "Completed company profile",
+    `questionnaire:${QUESTIONNAIRE_KEY}`,
+  );
 
-  const baseline = existingPower[0]?.baseline ?? DEFAULT_BASELINE;
-  const nextPower = baseline * 2;
-
-  await db
-    .insert(schema.votingPower)
-    .values({
-      userId: user.id,
-      power: nextPower,
-      baseline,
-      updatedAt: now,
-    })
-    .onConflictDoUpdate({
-      target: schema.votingPower.userId,
-      set: { power: nextPower, updatedAt: now },
-    });
-
-  await db.insert(schema.votingPowerEvents).values({
-    userId: user.id,
-    delta: baseline,
-    reason: "Completed company profile",
-    sourceKey: `questionnaire:${QUESTIONNAIRE_KEY}`,
-    createdAt: now,
-  });
-
-  const history = await db
-    .select()
-    .from(schema.votingPowerEvents)
-    .where(eq(schema.votingPowerEvents.userId, user.id))
-    .orderBy(desc(schema.votingPowerEvents.createdAt))
-    .limit(50);
+  const [powerRow, history] = await Promise.all([
+    db.select().from(schema.votingPower).where(eq(schema.votingPower.userId, user.id)).limit(1),
+    db
+      .select()
+      .from(schema.votingPowerEvents)
+      .where(eq(schema.votingPowerEvents.userId, user.id))
+      .orderBy(desc(schema.votingPowerEvents.createdAt))
+      .limit(50),
+  ]);
 
   return c.json({
     profile: serializeProfile({
@@ -165,7 +153,9 @@ userProfile.post("/company-profile", zValidator("json", companyProfileBody), asy
       createdAt: now,
       updatedAt: now,
     }),
-    power: { userId: user.id, power: nextPower, baseline },
+    power: powerRow[0]
+      ? serializePower(powerRow[0])
+      : { userId: user.id, power: VP_BASELINE, baseline: VP_BASELINE, lastRefillAt: toIso(now) },
     history: history.map(serializeEvent),
   });
 });
@@ -184,16 +174,9 @@ userProfile.post("/skip", async (c) => {
     .onConflictDoNothing({ target: schema.userProfiles.userId });
 
   // Ensure the user has a baseline power row even on skip so the UI has
-  // something to read.
-  await db
-    .insert(schema.votingPower)
-    .values({
-      userId: user.id,
-      power: DEFAULT_BASELINE,
-      baseline: DEFAULT_BASELINE,
-      updatedAt: now,
-    })
-    .onConflictDoNothing({ target: schema.votingPower.userId });
+  // something to read. `loadAndRefill` inserts the default row if missing
+  // and applies any pending refill.
+  await loadAndRefill(user.id);
 
   return c.json({ ok: true });
 });
@@ -220,6 +203,21 @@ function serializePower(row: typeof schema.votingPower.$inferSelect) {
     userId: row.userId,
     power: row.power,
     baseline: row.baseline,
+    lastRefillAt: toIso(row.lastRefillAt),
+  };
+}
+
+function serializePowerRow(power: {
+  userId: string;
+  power: number;
+  baseline: number;
+  lastRefillAt: Date;
+}) {
+  return {
+    userId: power.userId,
+    power: power.power,
+    baseline: power.baseline,
+    lastRefillAt: toIso(power.lastRefillAt),
   };
 }
 

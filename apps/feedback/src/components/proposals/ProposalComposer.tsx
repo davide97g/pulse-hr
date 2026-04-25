@@ -14,6 +14,7 @@ import { Input } from "@pulse-hr/ui/primitives/input";
 import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import { cn } from "@/lib/utils";
 import { createProposal } from "@/lib/proposals/api";
+import { describeApiError } from "@/lib/feedback-errors";
 import type { ProposalType } from "@/lib/proposals/types";
 
 const TYPES: { value: ProposalType; label: string; icon: typeof Lightbulb; accent: string }[] = [
@@ -54,8 +55,8 @@ export function ProposalComposer({
       });
       onOpenChange(false);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to post proposal";
-      toast.error(message);
+      // Keep the dialog open so the user's draft survives the error.
+      toast.error(describeApiError(err, "Failed to post proposal"));
       setPending(false);
     }
   };

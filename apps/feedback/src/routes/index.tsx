@@ -35,6 +35,8 @@ import type { CommentStatus, Reply } from "@/lib/comments/types";
 import { createProposalReply, setProposalStatus, setProposalVote } from "@/lib/proposals/api";
 import type { ProposalReply, ProposalType } from "@/lib/proposals/types";
 import { useNewProposal } from "@/components/proposals/ProposalProvider";
+import { useCompanyProfileStore } from "@/components/app/CompanyProfileStore";
+import { describeApiError } from "@/lib/feedback-errors";
 import { useIsEffectiveAdmin } from "@/lib/role-override";
 import {
   Sheet,
@@ -148,7 +150,10 @@ function FeedbackBoard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board, threadId]);
 
+  const { adjustPower } = useCompanyProfileStore();
+
   const applyVote = async (id: string, kind: BoardItem["kind"], value: -1 | 0 | 1) => {
+    let priorVote: -1 | 0 | 1 = 0;
     setBoard((prev) => {
       const next = { ...prev } as BoardBuckets;
       for (const status of Object.keys(next) as CommentStatus[]) {
@@ -157,6 +162,7 @@ function FeedbackBoard() {
         next[status] = next[status]
           .map((c) => {
             if (c.id !== id) return c;
+            priorVote = c.myVote;
             const delta = value - c.myVote;
             return { ...c, myVote: value, voteScore: c.voteScore + delta } as BoardItem;
           })
@@ -164,6 +170,12 @@ function FeedbackBoard() {
       }
       return next;
     });
+
+    let powerDelta = 0;
+    if (priorVote === 0 && value !== 0) powerDelta = -1;
+    else if (priorVote !== 0 && value === 0) powerDelta = +1;
+    if (powerDelta !== 0) adjustPower(powerDelta);
+
     try {
       const { voteScore, myVote } =
         kind === "proposal" ? await setProposalVote(id, value) : await setVote(id, value);
@@ -178,8 +190,9 @@ function FeedbackBoard() {
         }
         return next;
       });
-    } catch {
-      toast.error("Vote failed");
+    } catch (err) {
+      if (powerDelta !== 0) adjustPower(-powerDelta);
+      toast.error(describeApiError(err, "Vote failed"));
       refresh();
     }
   };

@@ -106,10 +106,24 @@ export interface VotingPower {
   userId: string;
   power: number;
   baseline: number;
+  /**
+   * ISO timestamp of the last time the weekly refill ran for this user.
+   * Refill cadence is 7 days; the next refill is `lastRefillAt + 7d`.
+   */
+  lastRefillAt: string;
   history: VotingPowerEntry[];
 }
 
-export const VOTING_POWER_BASELINE = 100;
+/**
+ * Voting Power v1 economy (mirrored in `apps/api/src/lib/voting-power.ts`):
+ * baseline 10, each vote costs 1, weekly refill tops up to 10, +10 grants
+ * for completing a questionnaire round and for items moving into "planned".
+ */
+export const VOTING_POWER_BASELINE = 10;
+export const VOTING_POWER_REFILL_DAYS = 7;
+export const VOTING_POWER_DAILY_COMMENT_CAP = 10;
+export const VOTING_POWER_DAILY_PROPOSAL_CAP = 10;
+export const VOTING_POWER_QUESTIONNAIRE_GRANT = 10;
 
 /** Reason string used for the questionnaire grant (search-friendly constant). */
 export const REASON_COMPANY_PROFILE = "Completed company profile";
