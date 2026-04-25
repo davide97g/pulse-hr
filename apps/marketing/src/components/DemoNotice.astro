@@ -1,0 +1,68 @@
+---
+import { ArrowRight, FlaskConical, MessageSquarePlus, MousePointerClick, Lock } from "lucide-astro";
+import { useI18n } from "../i18n";
+const { t } = useI18n(Astro);
+
+const ICONS = [MousePointerClick, FlaskConical, Lock];
+---
+
+<section
+  id="demo-notice"
+  class="relative border-y border-white/10 bg-gradient-to-b from-[#b4ff39]/[0.04] via-transparent to-transparent"
+  aria-labelledby="demo-notice-title"
+>
+  <div class="max-w-[1280px] mx-auto px-6 py-20 md:py-24">
+    <div class="grid md:grid-cols-12 gap-10 items-start">
+      <div class="md:col-span-5">
+        <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
+          <FlaskConical class="h-3.5 w-3.5" />
+          {t.demoNotice.eyebrow}
+        </p>
+        <h2
+          id="demo-notice-title"
+          class="font-display text-[40px] md:text-[56px] leading-[0.95] tracking-tight"
+        >
+          {t.demoNotice.title.before}<em class="italic text-[#b4ff39]">{t.demoNotice.title.italic}</em>{t.demoNotice.title.after}
+        </h2>
+        <p class="mt-5 text-white/70 text-base md:text-lg leading-relaxed max-w-xl">
+          {t.demoNotice.body}
+        </p>
+        <div class="mt-7 flex items-center gap-3 flex-wrap">
+          <a
+            href="https://app.pulsehr.it/"
+            class="group inline-flex items-center gap-2 bg-[#b4ff39] text-[#0b0b0d] px-4 py-2.5 rounded-md font-medium press-scale hover:bg-[#c6ff5a] transition-colors text-sm"
+          >
+            {t.demoNotice.ctaPrimary}
+            <ArrowRight class="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+          </a>
+          <a
+            href="https://app.pulsehr.it/login"
+            class="inline-flex items-center gap-2 border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] px-4 py-2.5 rounded-md font-medium press-scale transition-colors text-sm"
+          >
+            <MessageSquarePlus class="h-4 w-4 text-[#b4ff39]" />
+            {t.demoNotice.ctaSecondary}
+          </a>
+        </div>
+      </div>
+
+      <ul class="md:col-span-7 grid sm:grid-cols-1 gap-3 list-none p-0 m-0">
+        {t.demoNotice.bullets.map((b, i) => {
+          const Icon = ICONS[i] ?? MousePointerClick;
+          return (
+            <li class="rounded-xl border border-white/10 bg-white/[0.02] p-5 hover:border-[#b4ff39]/30 transition-colors">
+              <div class="flex items-start gap-4">
+                <span class="h-9 w-9 shrink-0 rounded-md bg-[#b4ff39]/10 text-[#b4ff39] inline-flex items-center justify-center">
+                  <Icon class="h-4 w-4" />
+                </span>
+                <div class="flex-1 min-w-0">
+                  <div class="text-[15px] font-medium text-white">{b.k}</div>
+                  <p class="mt-1 text-sm text-white/65 leading-relaxed">{b.v}</p>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+</section>

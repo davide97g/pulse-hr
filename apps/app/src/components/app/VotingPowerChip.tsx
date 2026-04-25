@@ -1,4 +1,5 @@
 import { Coins, ExternalLink, Sparkles, TrendingUp } from "lucide-react";
+import { useAuth } from "@clerk/react";
 import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
 import { cn } from "@/lib/utils";
 import { useVotingPower } from "./CompanyProfileStore";
@@ -6,8 +7,10 @@ import { useVotingPower } from "./CompanyProfileStore";
 const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
 
 export function VotingPowerChip({ className }: { className?: string }) {
+  const { isSignedIn } = useAuth();
   const power = useVotingPower();
   const boosted = power.power > power.baseline;
+  if (!isSignedIn) return null;
   const multiplier = power.baseline > 0 ? (power.power / power.baseline).toFixed(2) : "1.00";
 
   return (

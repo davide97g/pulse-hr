@@ -79,6 +79,40 @@ export const it: Dict = {
     switchTo: "Passa a",
   },
 
+  demoStrip: {
+    label: "Avviso demo pubblica",
+    tag: "Demo pubblica",
+    headline: "Pulse è in modalità demo.",
+    body: "Il prodotto è un mock solo frontend — ogni schermata, ogni record vive nel tuo browser. Lo rilasciamo presto per capire cosa serve davvero alle persone, prima di costruire il backend. Accedi dentro l'app per lasciarci feedback che arriva diretto ai maintainer.",
+    cta: "Apri la demo",
+  },
+
+  demoNotice: {
+    eyebrow: "Stato attuale",
+    title: {
+      before: "Quello che vedi è una ",
+      italic: "demo.",
+      after: "",
+    },
+    body: "Pulse HR oggi è un mock solo frontend. Lo rilasciamo prima del backend perché chi usa software HR ogni giorno possa indicarci cosa costruire per primo. Cliccaci sopra, rompi tutto, poi raccontaci cosa manca — il feedback è l'unico pezzo collegato a un vero backend, ed è proprio quello che vogliamo sentire da te.",
+    bullets: [
+      {
+        k: "Tutto mockato",
+        v: "Ogni dipendente, commessa, busta paga e richiesta vive nel tuo browser. Niente viene inviato a un server.",
+      },
+      {
+        k: "Apri in un click",
+        v: "Nessuna registrazione per esplorare — crea il workspace, scegli un ruolo, cliccaci sopra quanto vuoi.",
+      },
+      {
+        k: "Feedback con account",
+        v: "Lasciare un commento, votare una feature Labs o postare sul board richiede un account gratuito così possiamo risponderti.",
+      },
+    ],
+    ctaPrimary: "Prova la demo — senza registrarti",
+    ctaSecondary: "Accedi per dare feedback",
+  },
+
   hero: {
     badge: "Open source · FSL-1.1-MIT · beta pubblica · costruito in pubblico",
     eyebrow: "People ops open source per team moderni",

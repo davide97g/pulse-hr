@@ -72,6 +72,40 @@ export const en = {
     switchTo: "Switch to",
   },
 
+  demoStrip: {
+    label: "Public demo notice",
+    tag: "Public demo",
+    headline: "Pulse is in demo mode.",
+    body: "The product is a frontend-only mock — every screen, every record runs in your browser. We're shipping it early to learn what people actually need before we wire up the backend. Sign in inside the app to leave feedback that goes straight to the maintainers.",
+    cta: "Open the demo",
+  },
+
+  demoNotice: {
+    eyebrow: "Status check",
+    title: {
+      before: "What you're looking at is a ",
+      italic: "demo.",
+      after: "",
+    },
+    body: "Pulse HR is currently a frontend-only mock. We deliberately ship it before the backend so the people who use HR software every day can shape what we build first. Click around, break things, then tell us what's missing — feedback is the only piece that talks to a real backend, and that's the piece we want to hear from you on.",
+    bullets: [
+      {
+        k: "Mocked end-to-end",
+        v: "Every employee, project, payslip and request lives in your browser. Nothing is sent to a server.",
+      },
+      {
+        k: "Open in one click",
+        v: "No signup needed to explore — spin up a workspace, pick a role, click around for as long as you like.",
+      },
+      {
+        k: "Feedback is members-only",
+        v: "Leaving a comment, voting on a Labs feature or posting on the feedback board needs a free account so we can follow up.",
+      },
+    ],
+    ctaPrimary: "Try the demo — no signup",
+    ctaSecondary: "Sign in to leave feedback",
+  },
+
   hero: {
     badge: "Open source · FSL-1.1-MIT · public beta · built in public",
     eyebrow: "Open-source people ops for modern teams",

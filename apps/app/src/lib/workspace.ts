@@ -16,6 +16,7 @@ import { useSyncExternalStore } from "react";
 
 export const SCHEMA_VERSION = 1;
 export const DEFAULT_WORKSPACE_NAME = "Acme";
+export const ANON_USER_ID = "__anon__";
 const ROOT = "pulse.ws";
 
 // ── Current user ─────────────────────────────────────────────────────
@@ -173,9 +174,11 @@ function notifyStatus() {
 }
 
 export interface WorkspaceStatus {
-  /** Clerk user is known. */
+  /** Real Clerk user is known (excludes the anonymous demo namespace). */
   hasUser: boolean;
-  /** Workspace has been created (seed applied) for this user. */
+  /** Either a real or anonymous user namespace is active. */
+  hasAnyUser: boolean;
+  /** Workspace has been created (seed applied) for this namespace. */
   ready: boolean;
   /** Stored schema version differs from code SCHEMA_VERSION. */
   needsReset: boolean;
@@ -185,11 +188,16 @@ export interface WorkspaceStatus {
 
 function snapshotStatus(): WorkspaceStatus {
   return {
-    hasUser: currentUserId != null,
+    hasUser: currentUserId != null && currentUserId !== ANON_USER_ID,
+    hasAnyUser: currentUserId != null,
     ready: isWorkspaceReady(),
     needsReset: needsResetForSchema(),
     name: getWorkspaceName(),
   };
+}
+
+export function isAnonymousWorkspace(): boolean {
+  return currentUserId === ANON_USER_ID;
 }
 
 // Cache the snapshot object so useSyncExternalStore sees referential equality

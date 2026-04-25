@@ -1,4 +1,5 @@
-import { useClerk, useUser } from "@clerk/react";
+import { useAuth, useClerk, useUser } from "@clerk/react";
+import { useLoginWall } from "@/components/app/LoginWall";
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
@@ -19,6 +20,7 @@ import { BookingDialog } from "./BookingDialog";
 import { BookingsProvider } from "./BookingsContext";
 import { CommandPalette } from "./CommandPalette";
 import { LogOverlay } from "./LogOverlay";
+import { DemoBanner } from "./DemoBanner";
 import { OfflineBanner } from "./OfflineBanner";
 import { BrandMark } from "@pulse-hr/ui/atoms/BrandMark";
 import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
@@ -406,12 +408,15 @@ function AppShellInner() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
+        <DemoBanner />
         <OfflineBanner />
         <Topbar
           onOpenPalette={() => setPaletteOpen(true)}
           onOpenLog={() => setLogOpen(true)}
           onOpenMobileNav={() => setMobileNavOpen(true)}
-          showFeedbackLink={admin || isFeatureEnabled("feedback")}
+          // Always offer the Feedback entry-point. When the visitor is
+          // anonymous, the link opens the LoginWall instead of leaving the app.
+          showFeedbackLink
         />
         <main className="flex-1 overflow-y-auto scrollbar-thin">
           <SidebarRouteGuard>
@@ -546,6 +551,32 @@ function SidebarTooltip({
   );
 }
 
+function FeedbackLink() {
+  const { isSignedIn } = useAuth();
+  const { require } = useLoginWall();
+  const className =
+    "hidden lg:inline-flex h-9 items-center gap-1.5 px-2.5 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale transition-colors";
+  if (!isSignedIn) {
+    return (
+      <button
+        type="button"
+        onClick={() => require("feedback")}
+        className={className}
+        title="Sign in to share feedback"
+      >
+        <MessageSquare className="h-4 w-4 text-muted-foreground" />
+        <span className="hidden xl:inline font-medium">Feedback</span>
+      </button>
+    );
+  }
+  return (
+    <a href={FEEDBACK_URL} className={className} title="Feedback board">
+      <MessageSquare className="h-4 w-4 text-muted-foreground" />
+      <span className="hidden xl:inline font-medium">Feedback</span>
+    </a>
+  );
+}
+
 function CommentsVisibilityToggle() {
   const { visible, toggleVisibility } = useCommentsOverlay();
   const Icon = visible ? Eye : EyeOff;
@@ -581,6 +612,7 @@ function Topbar({
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
   const { user } = useUser();
+  const { isSignedIn } = useAuth();
   const { signOut } = useClerk();
   const displayName =
     user?.fullName ||
@@ -628,16 +660,7 @@ function Topbar({
 
       <div className="flex-1" />
 
-      {showFeedbackLink && (
-        <a
-          href={FEEDBACK_URL}
-          className="hidden lg:inline-flex h-9 items-center gap-1.5 px-2.5 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale transition-colors"
-          title="Feedback board"
-        >
-          <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          <span className="hidden xl:inline font-medium">Feedback</span>
-        </a>
-      )}
+      {showFeedbackLink && <FeedbackLink />}
       <CommentsVisibilityToggle />
       <VotingPowerChip />
       <div data-tour="topbar-status-log" className="hidden md:inline-flex">
@@ -791,6 +814,17 @@ function Topbar({
         </PopoverContent>
       </Popover>
 
+      {!isSignedIn ? (
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-9 px-3 gap-1.5"
+          onClick={() => navigate({ to: "/login", search: {} })}
+        >
+          <span className="font-medium">Log in</span>
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      ) : (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2 h-9 pl-1 pr-2 rounded-md hover:bg-muted">
@@ -871,6 +905,7 @@ function Topbar({
           <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      )}
     </header>
   );
 }

@@ -1,8 +1,8 @@
 import { createRootRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useAuth } from "@clerk/react";
 import { AppShell } from "@/components/app/AppShell";
 import { RouteErrorFallback } from "@/components/app/AppErrorBoundary";
+import { LoginWallProvider } from "@/components/app/LoginWall";
 import { ProposalProvider } from "@/components/proposals/ProposalProvider";
 import { WorkspaceMount } from "@/components/app/WorkspaceMount";
 import { TableStoreProvider } from "@/components/app/TableStoreProvider";
@@ -104,7 +104,6 @@ const TITLE_BY_PATH: Record<string, string> = {
 function RootComponent() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoaded, isSignedIn } = useAuth();
   const isPublic = PUBLIC_PREFIXES.some(
     (p) => location.pathname === p || location.pathname.startsWith(`${p}/`),
   );
@@ -123,61 +122,34 @@ function RootComponent() {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (!isLoaded) return;
-    if (!isSignedIn && !isPublic) {
-      navigate({ to: "/login", search: {}, replace: true });
-      return;
-    }
-    if (!isSignedIn) return;
-    // Authed. Gate on workspace readiness — except for public, feedback, and
-    // the welcome page itself.
+    // Demo mode: every visitor (signed-in or anonymous) gets a workspace.
+    // Authentication is required only for feedback / commenting / voting,
+    // which is gated by the LoginWall modal at the click site.
     if (isPublic || isFeedback) return;
-    // Wait until WorkspaceMount has propagated the Clerk userId before we
-    // route on workspace readiness; otherwise we'd flash to /welcome on
-    // every reload before the controller hydrates.
-    if (!workspace.hasUser) return;
+    if (!workspace.hasAnyUser) return;
     if (!workspace.ready && !isWelcome) {
       navigate({ to: "/welcome", replace: true });
     } else if (workspace.ready && isWelcome) {
       navigate({ to: "/", replace: true });
     }
-  }, [
-    isLoaded,
-    isSignedIn,
-    isPublic,
-    isFeedback,
-    isWelcome,
-    workspace.hasUser,
-    workspace.ready,
-    navigate,
-  ]);
+  }, [isPublic, isFeedback, isWelcome, workspace.hasAnyUser, workspace.ready, navigate]);
 
-  if (!isLoaded) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-6 w-6 rounded-full border-2 border-muted-foreground/30 border-t-foreground animate-spin" />
-      </div>
-    );
-  }
-
-  if (!isSignedIn && !isPublic) return null;
-
-  // Authed but no workspace yet → render only the welcome route until the user
-  // creates one. Suppresses an AppShell flash when redirecting from any
-  // protected page after sign-up.
-  const showWelcomeOnly = isSignedIn && workspace.hasUser && !workspace.ready;
+  // No workspace yet → render only the welcome route until they create one.
+  const showWelcomeOnly = workspace.hasAnyUser && !workspace.ready;
 
   return (
     <TableStoreProvider>
       <SidebarFeaturesProvider>
         <WorkspaceMount />
-        {isPublic ? (
-          <Outlet />
-        ) : (
-          <ProposalProvider>
-            {isFeedback || isWelcome || showWelcomeOnly ? <Outlet /> : <AppShell />}
-          </ProposalProvider>
-        )}
+        <LoginWallProvider>
+          {isPublic ? (
+            <Outlet />
+          ) : (
+            <ProposalProvider>
+              {isFeedback || isWelcome || showWelcomeOnly ? <Outlet /> : <AppShell />}
+            </ProposalProvider>
+          )}
+        </LoginWallProvider>
         <Toaster position="bottom-right" richColors closeButton />
       </SidebarFeaturesProvider>
     </TableStoreProvider>

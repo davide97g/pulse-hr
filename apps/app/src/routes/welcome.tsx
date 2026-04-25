@@ -221,7 +221,7 @@ function Welcome() {
               type="button"
               size="lg"
               className="press-scale"
-              disabled={creating || !status.hasUser}
+              disabled={creating || !status.hasAnyUser}
               onClick={finish}
             >
               {creating ? (
@@ -251,12 +251,13 @@ function DemoBanner() {
         <div className="text-sm font-medium text-foreground flex items-center gap-2">
           Demo workspace
           <span className="text-[10px] font-semibold uppercase tracking-wide rounded-full bg-warning/20 text-warning px-2 py-0.5">
-            Mock data
+            Frontend-only mock
           </span>
         </div>
         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-          We're spinning up a fake workspace so you can explore Pulse end-to-end. No real employees,
-          payroll or invoices — everything lives in your browser and resets any time from Settings.
+          Pulse HR is shipping early as a fully-mocked demo so we can shape v1 around real feedback.
+          Every employee, project and payslip lives in your browser. Click around, then sign in and
+          drop a note in the Feedback area — that's the only piece wired up to a real backend.
         </p>
       </div>
     </div>

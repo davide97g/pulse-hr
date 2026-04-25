@@ -15,6 +15,7 @@ import { useEffect, useRef } from "react";
 import { useAuth } from "@clerk/react";
 import { toast } from "sonner";
 import {
+  ANON_USER_ID,
   createWorkspace,
   getNamespace,
   isWorkspaceReady,
@@ -29,7 +30,10 @@ export function WorkspaceMount() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    setCurrentUserId(userId ?? null);
+    // Unauthed visitors get an anonymous namespace so they can spin up a demo
+    // workspace immediately. Real Clerk userIds always take precedence — when
+    // someone signs in mid-session we drop the anon namespace.
+    setCurrentUserId(userId ?? ANON_USER_ID);
   }, [isLoaded, userId]);
 
   const status = useWorkspaceStatus();

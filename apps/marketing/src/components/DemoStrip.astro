@@ -1,0 +1,29 @@
+---
+import { FlaskConical, ArrowRight } from "lucide-astro";
+import { useI18n } from "../i18n";
+const { t } = useI18n(Astro);
+---
+
+<div
+  class="relative z-50 border-b border-[#b4ff39]/20 bg-[#b4ff39]/[0.06] backdrop-blur"
+  role="note"
+  aria-label={t.demoStrip.label}
+>
+  <div class="max-w-[1280px] mx-auto px-4 md:px-6 py-2 flex items-center gap-3 text-[12px] md:text-[13px] flex-wrap">
+    <span class="inline-flex items-center gap-1.5 rounded-full border border-[#b4ff39]/30 bg-[#b4ff39]/10 px-2 py-0.5 font-mono uppercase tracking-[0.18em] text-[10px] text-[#b4ff39] shrink-0">
+      <FlaskConical class="h-3 w-3" />
+      {t.demoStrip.tag}
+    </span>
+    <span class="text-white/80 leading-snug flex-1 min-w-0">
+      <strong class="text-white font-medium">{t.demoStrip.headline}</strong>
+      <span class="text-white/60"> — {t.demoStrip.body}</span>
+    </span>
+    <a
+      href="https://app.pulsehr.it/"
+      class="inline-flex items-center gap-1 text-[#b4ff39] hover:text-[#c6ff5a] underline underline-offset-2 font-medium shrink-0"
+    >
+      {t.demoStrip.cta}
+      <ArrowRight class="h-3.5 w-3.5" />
+    </a>
+  </div>
+</div>
