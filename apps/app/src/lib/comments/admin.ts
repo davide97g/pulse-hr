@@ -1,16 +1,15 @@
 type ClerkUserLike = {
   publicMetadata?: Record<string, unknown>;
-  unsafeMetadata?: Record<string, unknown>;
 };
 
 /**
- * Client-side admin check. Canonical answer still comes from the server —
- * this only controls which controls are visible in the UI.
+ * Pulse-staff admin check (real Clerk role only). `unsafeMetadata` is
+ * user-writable, so it must never count as an admin signal — workspace
+ * persona "admin" lives in `workspace-role.ts` and is a separate concept.
+ *
+ * Server-side checks remain authoritative; this only controls visibility.
  */
 export function isAdminUser(user: ClerkUserLike | null | undefined): boolean {
   if (!user) return false;
-  const role =
-    (user.publicMetadata?.role as string | undefined) ??
-    (user.unsafeMetadata?.role as string | undefined);
-  return role === "admin";
+  return (user.publicMetadata?.role as string | undefined) === "admin";
 }

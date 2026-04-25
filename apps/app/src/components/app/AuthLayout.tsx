@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Star } from "lucide-react";
 import { BrandMark } from "@pulse-hr/ui/atoms/BrandMark";
+import { APP_VERSION } from "@/lib/version";
 
 export function AuthLayout({
   title,
@@ -31,6 +32,12 @@ export function AuthLayout({
             {children}
             {footer && <div className="mt-6 text-sm text-muted-foreground">{footer}</div>}
           </div>
+        </div>
+        <div
+          className="px-8 lg:px-14 pb-6 text-[10px] font-mono tabular-nums text-muted-foreground/60 select-none"
+          title={`Pulse HR build v${APP_VERSION}`}
+        >
+          v{APP_VERSION}
         </div>
       </div>
       <div className="hidden lg:block relative bg-[#0b0b0d] text-[#f2f2ee] overflow-hidden">

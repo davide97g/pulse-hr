@@ -26,6 +26,7 @@ import { Button } from "@pulse-hr/ui/primitives/button";
 import { Input } from "@pulse-hr/ui/primitives/input";
 import { Label } from "@pulse-hr/ui/primitives/label";
 import { DEFAULT_WORKSPACE_NAME, createWorkspace, useWorkspaceStatus } from "@/lib/workspace";
+import { setWorkspaceRole, type WorkspaceRole } from "@/lib/workspace-role";
 import { employeesTable, makeEmployee } from "@/lib/tables/employees";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/welcome")({
   component: Welcome,
 });
 
-type OnboardingRole = "admin" | "hr" | "manager" | "finance" | "employee";
+type OnboardingRole = WorkspaceRole;
 
 const ROLES: {
   id: OnboardingRole;
@@ -67,7 +68,9 @@ function Welcome() {
   const { user } = useUser();
 
   const [step, setStep] = useState<Step>(0);
-  const [role, setRole] = useState<OnboardingRole | null>(null);
+  // Default to admin: every user owns the demo workspace they're about to
+  // create — they can preview as another role later via the topbar switcher.
+  const [role, setRole] = useState<OnboardingRole | null>("admin");
   const [goals, setGoals] = useState<Set<string>>(new Set());
   const [name, setName] = useState(DEFAULT_WORKSPACE_NAME);
   const [colleagues, setColleagues] = useState<string[]>(["", "", ""]);
@@ -100,12 +103,17 @@ function Welcome() {
 
     const cleanColleagues = colleagues.map((c) => c.trim()).filter(Boolean);
 
+    // Onboarding answers (goals, workspace name, colleagues) are demo-only
+    // metadata so we keep them on Clerk's `unsafeMetadata` for cross-device
+    // hydration. The chosen `role` deliberately does NOT go there — it's a
+    // workspace persona, not a real Clerk role, and `unsafeMetadata` is
+    // user-writable so granting admin from the browser would be a real
+    // privilege escalation.
     try {
       if (user) {
         await user.update({
           unsafeMetadata: {
             ...(user.unsafeMetadata ?? {}),
-            role,
             goals: Array.from(goals),
             workspaceName: name.trim() || DEFAULT_WORKSPACE_NAME,
             colleagues: cleanColleagues,
@@ -118,6 +126,9 @@ function Welcome() {
 
     try {
       createWorkspace(name);
+      // Save the workspace persona AFTER createWorkspace — that call
+      // initializes the per-user namespace the role lives under.
+      setWorkspaceRole(role);
       if (cleanColleagues.length) {
         const today = new Date().toISOString().slice(0, 10);
         for (const cname of cleanColleagues) {

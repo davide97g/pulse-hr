@@ -53,6 +53,23 @@ export function setCurrentUserId(uid: string | null) {
     else t.clear();
   }
   notifyStatus();
+  for (const cb of namespaceListeners) {
+    try {
+      cb();
+    } catch (err) {
+      console.warn("namespace listener", err);
+    }
+  }
+}
+
+// Lightweight pub-sub for "the active Clerk user changed". `workspace-role.ts`
+// uses this to force its memoized snapshot to re-read from the new namespace.
+const namespaceListeners = new Set<() => void>();
+export function onNamespaceChange(cb: () => void): () => void {
+  namespaceListeners.add(cb);
+  return () => {
+    namespaceListeners.delete(cb);
+  };
 }
 
 // ── Workspace lifecycle ──────────────────────────────────────────────

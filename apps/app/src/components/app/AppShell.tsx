@@ -92,7 +92,6 @@ import {
   OVERRIDE_ROLES,
   useEffectiveRole,
   useIsEffectiveAdmin,
-  useIsRealAdmin,
   useRoleOverride,
 } from "@/lib/role-override";
 import { featuresForRole } from "@/lib/role-features";
@@ -594,7 +593,6 @@ function Topbar({
     ? effectiveRole.charAt(0).toUpperCase() + effectiveRole.slice(1)
     : "";
   const isAdmin = useIsEffectiveAdmin();
-  const isRealAdmin = useIsRealAdmin();
   const { override, setOverride } = useRoleOverride();
   const initials =
     (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") ||
@@ -826,7 +824,7 @@ function Topbar({
           <DropdownMenuItem asChild>
             <Link to="/profile">Profile</Link>
           </DropdownMenuItem>
-          {isRealAdmin && (
+          {isAdmin && (
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <span className="flex-1">Switch role</span>
