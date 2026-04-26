@@ -26,7 +26,10 @@ const { t } = useI18n(Astro);
         class="hero-reel-poster w-full h-full object-cover absolute inset-0"
         src="/reel/poster.jpg"
         alt={t.heroReel.posterAlt}
-        loading="lazy"
+        width="1920"
+        height="1080"
+        loading="eager"
+        fetchpriority="high"
         decoding="async"
       />
       <div

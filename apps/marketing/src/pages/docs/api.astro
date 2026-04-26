@@ -6,8 +6,6 @@ const title = "API reference — Pulse HR REST v1";
 const description =
   "REST API for Pulse HR. Bearer auth, cursor pagination, stable schemas, 1k req/min rate limit, webhooks on every resource event. Maintained SDKs for TypeScript, Python and Go — generated from the OpenAPI 3.1 spec.";
 const path = "/docs/api";
-const keywords =
-  "Pulse HR API, HRIS API, open source HR API, HR webhooks, HR OpenAPI, TypeScript HR SDK";
 
 // Resources — partial, but representative.
 const RESOURCES = [
@@ -86,7 +84,7 @@ const apiDocLd = {
 const extraLd = [apiDocLd];
 ---
 
-<DocsLayout {title} {description} {path} {keywords} {crumb} {extraLd}>
+<DocsLayout {title} {description} {path} {crumb} {extraLd}>
   <div class="flex items-center gap-3 mb-6">
     <span class="h-10 w-10 rounded-lg bg-[#b4ff39]/15 text-[#b4ff39] grid place-items-center">
       <Code2 class="h-5 w-5" />

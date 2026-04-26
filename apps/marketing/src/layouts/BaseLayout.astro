@@ -15,8 +15,6 @@ interface Props {
   ogImage?: string;
   /** Set true on the landing page so we emit extra JSON-LD (Organization + SoftwareApplication + FAQPage). */
   isHome?: boolean;
-  /** Optional additional keywords; appended to SITE.keywords. */
-  keywords?: string;
   /** Stub/placeholder pages set this to keep them out of the index until content lands. */
   noIndex?: boolean;
   /**
@@ -32,12 +30,11 @@ const { locale, t } = useI18n(Astro);
 const landing = getLanding(locale);
 
 const {
-  title = `${landing.site.tagline} — ${SITE.name}`,
+  title = landing.site.tagline,
   description = landing.site.description,
   path = "/",
   ogImage = SITE.ogImage,
   isHome = false,
-  keywords,
   noIndex = false,
   breadcrumbs,
   extraLd,
@@ -46,7 +43,6 @@ const {
 const localePath = localizePath(path, locale);
 const canonical = new URL(localePath, SITE.url).toString();
 const absoluteOg = new URL(ogImage, SITE.url).toString();
-const allKeywords = keywords ? `${landing.site.keywords}, ${keywords}` : landing.site.keywords;
 
 const orgLd = {
   "@context": "https://schema.org",
@@ -74,23 +70,12 @@ const softwareLd = {
   offers: {
     "@type": "Offer",
     price: "0",
-    priceCurrency: "USD",
+    priceCurrency: "EUR",
     description:
       locale === "it"
         ? "Gratis per i primi 5 dipendenti, per sempre."
         : "Free for the first 5 employees, forever.",
   },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    reviewCount: "312",
-  },
-  review: landing.TESTIMONIALS.map((tt) => ({
-    "@type": "Review",
-    reviewBody: tt.body,
-    reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
-    author: { "@type": "Person", name: tt.who, jobTitle: tt.role },
-  })),
   speakable: {
     "@type": "SpeakableSpecification",
     cssSelector: ["#hero-title", "#faq summary h3"],
@@ -158,7 +143,6 @@ const alternates = LOCALES.map((l) => ({
 
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content={allKeywords} />
     <link rel="canonical" href={canonical} />
     {alternates.map((a) => (
       <link rel="alternate" hreflang={a.lang} href={a.href} />
@@ -209,14 +193,11 @@ const alternates = LOCALES.map((l) => ({
     <link rel="agent-skills" href="/.well-known/agent-skills/index.json" type="application/json" />
     <link rel="mcp-server-card" href="/.well-known/mcp/server-card.json" type="application/json" />
 
-    <!-- Browser locale auto-detect.
-         Priority:
-           1. localStorage["pulse.locale"]   — explicit choice from LangSwitcher; always wins.
-           2. URL prefix (e.g. /it/...)      — direct visit to a localized path counts as
-                                                explicit choice; we persist it and stop.
-           3. navigator.languages, once      — only triggers when arriving at the default
-                                                locale's path with no stored preference. -->
-    <script is:inline define:vars={{ currentLocale: locale, defaultLocale: DEFAULT_LOCALE }}>
+    <!-- Locale persistence.
+         Honors a previously-stored explicit choice from LangSwitcher only.
+         No navigator.languages auto-detect: SERP→page locale mismatch is a
+         soft-cloaking pattern. hreflang serves the right locale to crawlers. -->
+    <script is:inline define:vars={{ currentLocale: locale }}>
       (function () {
         try {
           var KEY = "pulse.locale";
@@ -229,35 +210,14 @@ const alternates = LOCALES.map((l) => ({
           }
           var stored = null;
           try { stored = localStorage.getItem(KEY); } catch (e) {}
-          if (stored && SUPPORTED.indexOf(stored) !== -1) {
-            if (stored !== currentLocale) {
-              var t = targetFor(stored);
-              if (t !== pathname) location.replace(t + location.search + location.hash);
-            }
+          if (stored && SUPPORTED.indexOf(stored) !== -1 && stored !== currentLocale) {
+            var t = targetFor(stored);
+            if (t !== pathname) location.replace(t + location.search + location.hash);
             return;
           }
-          // No stored preference. If the visitor is already on a non-default-locale URL,
-          // treat that as an explicit choice and persist it — never auto-redirect away.
-          if (currentLocale !== defaultLocale) {
+          if (!stored) {
             try { localStorage.setItem(KEY, currentLocale); } catch (e) {}
-            return;
           }
-          // On the default-locale path, auto-detect once per session.
-          var redirected = false;
-          try { redirected = sessionStorage.getItem("pulse.locale.autoredirected") === "1"; } catch (e) {}
-          if (redirected) return;
-          var navLangs = (navigator.languages && navigator.languages.length)
-            ? navigator.languages : [navigator.language || "en"];
-          var detected = "en";
-          for (var i = 0; i < navLangs.length; i++) {
-            var lc = (navLangs[i] || "").toLowerCase();
-            if (lc.indexOf("it") === 0) { detected = "it"; break; }
-            if (lc.indexOf("en") === 0) { detected = "en"; break; }
-          }
-          if (detected === currentLocale) return;
-          try { sessionStorage.setItem("pulse.locale.autoredirected", "1"); } catch (e) {}
-          var t = targetFor(detected);
-          if (t && t !== pathname) location.replace(t + location.search + location.hash);
         } catch (e) {}
       })();
     </script>

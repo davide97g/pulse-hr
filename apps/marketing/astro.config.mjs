@@ -14,9 +14,6 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      changefreq: "weekly",
-      priority: 0.8,
-      lastmod: new Date(),
       i18n: {
         defaultLocale: "en",
         locales: { en: "en-US", it: "it-IT" },

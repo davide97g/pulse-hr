@@ -25,8 +25,8 @@ export const it: Dict = {
     pulseHomeLabel: "Home Pulse HR",
     primaryNav: "Principale",
     footer: "Piè di pagina",
-    customerLogos: "Loghi clienti",
-    customerTestimonials: "Testimonianze clienti",
+    customerLogos: "Workspace di esempio",
+    customerTestimonials: "Note dai maintainer",
     keyStats: "Statistiche principali",
     languageSwitcher: "Cambia lingua",
   },
@@ -145,7 +145,7 @@ export const it: Dict = {
   },
 
   marquee: {
-    title: "Team su Pulse",
+    title: "Workspace di esempio — non clienti reali",
   },
 
   stats: {

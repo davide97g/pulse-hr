@@ -9,8 +9,6 @@ const title = "Blog — OSS HR, commessa ops, agent-native workflows";
 const description =
   "A 6-month publishing schedule. Engineering deep-dives on the open-source HR stack, commessa-first financial operations for services firms, and agent-native workflows for HR data.";
 const path = "/blog";
-const keywords =
-  "open source HR blog, commessa ops, MCP HR, product-led growth OSS, FSL license explained, self-host HR";
 
 // Four tracks × six months = 24 planned slots. We publish 12 (two per month,
 // tracks rotating) to keep a realistic cadence. Each post is a commitment
@@ -113,22 +111,12 @@ const blogLd = {
   url: "https://pulsehr.it/blog",
   description,
   publisher: { "@id": "https://pulsehr.it/#organization" },
-  blogPost: POSTS.map((p) => ({
-    "@type": "BlogPosting",
-    headline: p.t,
-    description: p.s,
-    datePublished: p.d,
-    articleSection: p.track,
-    url: `https://pulsehr.it/blog#${p.d}`,
-    author: { "@id": "https://pulsehr.it/#organization" },
-    publisher: { "@id": "https://pulsehr.it/#organization" },
-  })),
 };
 
 const extraLd = [blogLd];
 ---
 
-<BaseLayout {title} {description} {path} {keywords} {breadcrumbs} {extraLd}>
+<BaseLayout {title} {description} {path} {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main">
     <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">

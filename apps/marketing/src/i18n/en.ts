@@ -19,8 +19,8 @@ export const en = {
     pulseHomeLabel: "Pulse HR home",
     primaryNav: "Primary",
     footer: "Footer",
-    customerLogos: "Customer logos",
-    customerTestimonials: "Customer testimonials",
+    customerLogos: "Sample workspace names",
+    customerTestimonials: "Maintainer notes",
     keyStats: "Key stats",
     languageSwitcher: "Switch language",
   },
@@ -138,7 +138,7 @@ export const en = {
   },
 
   marquee: {
-    title: "Teams on Pulse",
+    title: "Sample workspace names — not real customers",
   },
 
   stats: {

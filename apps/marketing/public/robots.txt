@@ -1,5 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /privacy
+Disallow: /terms
+Disallow: /404
+Disallow: /it/privacy
+Disallow: /it/terms
+Disallow: /it/404
 
 # Content usage signals — let agents know what's ok
 # https://contentsignals.org · draft spec, declarative best-effort
