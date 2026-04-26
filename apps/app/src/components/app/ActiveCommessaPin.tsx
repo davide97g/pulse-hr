@@ -139,7 +139,7 @@ export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
           )}
         </div>
         <div className="px-3 py-2 border-t text-[10px] text-muted-foreground">
-          Used by Time, Focus and Forecast defaults.
+          Used by Time and Focus defaults.
         </div>
       </PopoverContent>
     </Popover>

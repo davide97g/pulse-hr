@@ -10,14 +10,12 @@ import {
   CalendarDays,
   FileText,
   Receipt,
-  CreditCard,
   Network,
   GraduationCap,
   Megaphone,
   Puzzle,
   Code2,
   BookOpen,
-  TrendingUp,
   MessagesSquare,
   Gift,
   Focus,
@@ -110,14 +108,7 @@ export function buildSidebarNavGroups(
     {
       label: "Money",
       items: [
-        { to: "/payroll", label: "Payroll", icon: CreditCard, featureId: "payroll" },
         { to: "/expenses", label: "Expenses", icon: Receipt, featureId: "expenses" },
-        {
-          to: "/forecast",
-          label: "Commessa Forecast",
-          icon: TrendingUp,
-          featureId: "forecast",
-        },
       ],
     },
     {

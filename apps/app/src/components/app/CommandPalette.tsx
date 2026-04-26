@@ -9,7 +9,6 @@ import {
   Settings,
   Users,
   Clock,
-  CreditCard,
   Sparkles,
   Wand2,
   ArrowRight,
@@ -78,7 +77,6 @@ export function CommandPalette({
     { label: "Employees", to: "/people", icon: Users },
     { label: "Time & attendance", to: "/time", icon: Clock },
     { label: "Leave", to: "/leave", icon: Calendar },
-    { label: "Payroll", to: "/payroll", icon: CreditCard },
     { label: "Expenses", to: "/expenses", icon: Receipt },
     { label: "Documents", to: "/documents", icon: FileText },
   ].filter((n) => !q || n.label.toLowerCase().includes(q.toLowerCase()));

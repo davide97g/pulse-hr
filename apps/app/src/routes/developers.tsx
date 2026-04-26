@@ -535,7 +535,6 @@ const EVENT_OPTIONS = [
   "leave.rejected",
   "expense.submitted",
   "expense.approved",
-  "payroll.completed",
 ];
 
 function NewHookForm({

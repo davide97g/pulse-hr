@@ -5,7 +5,6 @@ const { t } = useI18n(Astro);
 const tabs = t.productPreview.tabs;
 const dash = t.productPreview.mockDashboard;
 const time = t.productPreview.mockTime;
-const pay = t.productPreview.mockPayroll;
 ---
 
 <section id="product" class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="product-title">
@@ -91,21 +90,6 @@ const pay = t.productPreview.mockPayroll;
             </div>
           </div>
 
-          <div data-mock="payroll" class="p-5 space-y-3 hidden">
-            <div class="rounded-md border border-black/10 p-4 bg-emerald-50/50">
-              <p class="text-[10px] uppercase tracking-wider text-black/50 m-0">{pay.nextRun}</p>
-              <p class="font-display text-3xl mt-1 m-0">$124,500</p>
-              <p class="text-[11px] text-black/60 mt-1 m-0">{pay.employees}</p>
-            </div>
-            <div class="rounded-md border border-black/10 divide-y divide-black/5 text-[12px]">
-              {pay.rows.map((row, i) => (
-                <div class="px-3 py-2 flex items-center justify-between">
-                  <span>{row}</span>
-                  <span class={i === 0 ? "text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700" : "text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700"}>{i === 0 ? pay.pending : pay.filed}</span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>

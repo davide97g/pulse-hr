@@ -95,7 +95,7 @@ export const TOURS: Tour[] = [
       {
         target: "topbar-commessa-pin",
         title: "Active commessa pin",
-        body: "Pin the commessa you're working on and new entries default to it. The pin follows you between Time, Forecast, and Focus.",
+        body: "Pin the commessa you're working on and new entries default to it. The pin follows you between Time and Focus.",
         placement: "bottom",
       },
       {
@@ -164,39 +164,16 @@ export const TOURS: Tour[] = [
     ],
   },
   {
-    id: "payroll",
-    name: "Run a payroll cycle",
-    summary: "Reviewing a run, payslips, and re-opening if something's off.",
-    workflow: "Money",
+    id: "labs-focus",
+    name: "Highlights: Focus, Kudos, Saturation",
+    summary:
+      "The newest surfaces — deep-work timer, peer coins, and team saturation.",
+    workflow: "Highlights",
     duration: "2 min",
     steps: [
       {
-        title: "Payroll",
-        body: "Monthly runs roll up timesheets, leave, and expenses into payslips.",
-        route: "/payroll",
-      },
-      {
-        target: "page-header",
-        title: "The run list",
-        body: "Draft → Processing → Completed. Open a run to see every payslip, gross/net, and contributions.",
-      },
-      {
-        title: "Payslip detail",
-        body: "Each employee's payslip shows base, overtime, expenses reimbursed, deductions, and the final net.",
-      },
-    ],
-  },
-  {
-    id: "labs-focus",
-    name: "Highlights: Focus, Kudos, Forecast, Saturation",
-    summary:
-      "The newest surfaces — deep-work timer, peer coins, burn forecasting, and team saturation.",
-    workflow: "Highlights",
-    duration: "3 min",
-    steps: [
-      {
         title: "Highlights",
-        body: "Four recent features scattered across Me, Money and Insights — all tagged with a pulsing 'new' dot in the sidebar.",
+        body: "Recent features scattered across Me and Insights — all tagged with a pulsing 'new' dot in the sidebar.",
       },
       {
         title: "Focus Mode",
@@ -208,11 +185,6 @@ export const TOURS: Tour[] = [
         body: "Peer recognition with coins. Leaderboard + confetti. Kudos feed your employee score.",
         route: "/kudos",
         docHref: "/docs/kudos",
-      },
-      {
-        title: "Commessa Forecast",
-        body: "Burn projection with scenario sliders — drag to see how staffing changes move the end-date.",
-        route: "/forecast",
       },
       {
         title: "Saturation",

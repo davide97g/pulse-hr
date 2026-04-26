@@ -55,7 +55,6 @@ import {
   Megaphone,
   MessagesSquare,
   Gift,
-  CreditCard,
   BarChart3,
   type LucideIcon,
 } from "lucide-react";
@@ -131,14 +130,12 @@ const QUICK_ACTIONS_BY_ROLE: Record<string, QuickActionEntry[]> = {
     { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
   ],
   finance: [
-    { kind: "action", id: "run-payroll", label: "Run payroll", icon: CreditCard },
     { kind: "action", id: "submit-expense", label: "Submit expense", icon: Receipt },
     { kind: "nav", to: "/reports", label: "Open reports", icon: BarChart3 },
     { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
   ],
   admin: [
     { kind: "action", id: "post-job", label: "Post a job", icon: Briefcase },
-    { kind: "action", id: "run-payroll", label: "Run payroll", icon: CreditCard },
     { kind: "action", id: "add-employee", label: "Add employee", icon: Users },
     { kind: "nav", to: "/announcements", label: "New announcement", icon: Megaphone },
     {

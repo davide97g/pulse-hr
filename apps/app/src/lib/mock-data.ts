@@ -90,7 +90,7 @@ const raw: Omit<Employee, "avatarColor" | "initials">[] = [
     id: "e5",
     name: "Lina Rossi",
     email: "lina.r@acme.co",
-    role: "Payroll Specialist",
+    role: "Finance Specialist",
     department: "Finance",
     location: "Milan",
     status: "active",
@@ -654,7 +654,7 @@ function iso(daysAgo: number, hour = 9) {
 const SAMPLE_EMP_LINES = [
   "Shipped the pricing page ahead of the sprint goal.",
   "Blocked on the legal review for the ACME contract.",
-  "Spent the morning debugging a flaky export in payroll.",
+  "Spent the morning debugging a flaky CSV export.",
   "Pairing session with Luca helped me unstick the onboarding flow.",
   "Feeling stretched thin — three clients active at once.",
   "Client demo went well, they want to scope phase 2.",
@@ -748,8 +748,8 @@ export let managerAsks: ManagerAsk[] = [
     id: "ma-3",
     managerId: employees[0].id,
     employeeId: employees[2].id,
-    topic: "Internal project — payroll v2",
-    prompt: "Quick read on the payroll v2 kickoff — risks you see, wins so far?",
+    topic: "Internal project — billing v2",
+    prompt: "Quick read on the billing v2 kickoff — risks you see, wins so far?",
     createdAt: iso(4),
     answeredAt: iso(2),
     answerSummary: "Confident on scope; worried about QA capacity. Wants a week buffer.",
@@ -909,7 +909,7 @@ export let kudosSeed: Kudo[] = [
     amount: 15,
     tag: "kindness",
     date: "2026-04-12",
-    message: "Thanks for catching the payroll discrepancy before it shipped.",
+    message: "Thanks for catching the invoice discrepancy before it shipped.",
   },
 
   // ── this month (March 18 – April 11) ────────────────────────────────
@@ -1064,7 +1064,7 @@ export let kudosSeed: Kudo[] = [
     amount: 20,
     tag: "craft",
     date: "2026-03-24",
-    message: "Payroll close documentation is gorgeous.",
+    message: "Month-end close documentation is gorgeous.",
   },
   {
     id: "kd30",
@@ -1291,7 +1291,7 @@ export let kudosSeed: Kudo[] = [
     amount: 15,
     tag: "craft",
     date: "2026-01-24",
-    message: "Payroll audit tooling is sharper than what I've seen at bigger cos.",
+    message: "Audit tooling is sharper than what I've seen at bigger cos.",
   },
   {
     id: "kd55",
@@ -1835,7 +1835,7 @@ export let onboardingWorkflows: OnboardingWorkflow[] = [
         category: "Access",
       },
       { id: "t3", label: "Return laptop", done: false, owner: "Greg Holland", category: "Access" },
-      { id: "t4", label: "Final payroll", done: false, owner: "Lina Rossi", category: "Paperwork" },
+      { id: "t4", label: "Final settlement", done: false, owner: "Lina Rossi", category: "Paperwork" },
     ],
   },
 ];
@@ -1969,8 +1969,8 @@ export let webhooksSeed: Webhook[] = [
   },
   {
     id: "w3",
-    url: "https://internal.acme.co/payroll",
-    events: ["payroll.completed"],
+    url: "https://internal.acme.co/expenses",
+    events: ["expense.approved"],
     status: "pending",
     deliveries: 0,
   },
@@ -2006,7 +2006,7 @@ export let rolesSeed: RoleRecord[] = [
   {
     id: "r2",
     name: "HR Manager",
-    desc: "Manage employees, payroll, and reports",
+    desc: "Manage employees, expenses, and reports",
     count: 3,
     color: "oklch(0.6 0.16 220)",
   },
@@ -2044,7 +2044,7 @@ export let auditLogSeed: AuditEntry[] = [
   {
     id: "a2",
     who: "Lina Rossi",
-    what: "ran payroll for March 2026",
+    what: "closed the books for March 2026",
     when: "Yesterday",
     severity: "info",
   },
@@ -2105,8 +2105,8 @@ export let notifications: Notification[] = [
   },
   {
     id: "n3",
-    title: "Payroll run scheduled",
-    desc: "April 2026 run will execute Apr 30",
+    title: "Month-end close scheduled",
+    desc: "April 2026 close will execute Apr 30",
     time: "3h ago",
     type: "info",
     unread: true,
@@ -2279,7 +2279,7 @@ export let clients: Client[] = [
 export const clientById = (id: string) => clients.find((c) => c.id === id);
 
 /**
- * Commessa = Project. The legacy name `Commessa` is kept because Time/Focus/Forecast
+ * Commessa = Project. The legacy name `Commessa` is kept because Time and Focus
  * routes already reference it; the new Clients/Projects feature treats each commessa
  * as a project with a `clientId` FK and extended PM metadata.
  */
@@ -2814,7 +2814,7 @@ export let activities: Activity[] = [
   {
     id: "ac15",
     projectId: "cm4",
-    title: "Payroll approval workflow",
+    title: "Expense approval workflow",
     description: "Multi-step approval with audit log.",
     status: "in_progress",
     assigneeId: "e3",
@@ -3907,7 +3907,7 @@ export const plugins = [
   {
     id: "pg3",
     name: "QuickBooks",
-    desc: "Push payroll journal entries automatically.",
+    desc: "Push expense journal entries automatically.",
     category: "Accounting",
     installed: false,
     icon: "📊",

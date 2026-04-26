@@ -16,7 +16,7 @@ const shortcuts = [
   { k: "⌘⇧.", n: "Start voice",       d: "Dictate into any input via Web Speech API." },
   { k: "G P", n: "Go to People",      d: "Navigate to /people without a mouse." },
   { k: "G T", n: "Go to Time",        d: "Navigate to /time." },
-  { k: "G $", n: "Go to Payroll",     d: "Navigate to /payroll." },
+  { k: "G $", n: "Go to Expenses",    d: "Navigate to /expenses." },
   { k: "N",   n: "New (context-aware)", d: "In /people: new employee. In /time: new entry. Etc." },
   { k: "?",   n: "Show all shortcuts", d: "Cheat-sheet overlay, always up to date." },
 ];
@@ -128,7 +128,7 @@ const commands = [
         timesheets and kudos drafts keep working offline and sync as soon as you're
         back. The command bar runs locally, so even your "log 4h on NOV-07"
         typing still parses in a basement meeting room. Destructive actions
-        (payroll runs, offer sends) require a live connection and queue if offline.
+        (offer sends, exports) require a live connection and queue if offline.
       </p>
       <a href="/" class="mt-8 inline-flex items-center gap-2 text-[#b4ff39] font-mono hover:gap-3 transition-all">
         Back to the overview <ArrowRight class="h-4 w-4" />

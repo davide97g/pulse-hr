@@ -46,7 +46,7 @@ const ROLES: {
   { id: "admin", label: "Admin", desc: "Workspace owner, full access", icon: Shield },
   { id: "hr", label: "HR / People ops", desc: "Hiring, onboarding, growth", icon: UsersRound },
   { id: "manager", label: "Manager", desc: "Team, time, projects", icon: Briefcase },
-  { id: "finance", label: "Finance", desc: "Payroll, expenses, reports", icon: Wallet },
+  { id: "finance", label: "Finance", desc: "Expenses, reports, budgets", icon: Wallet },
   { id: "employee", label: "Employee", desc: "Day-to-day contributor view", icon: Users },
 ];
 

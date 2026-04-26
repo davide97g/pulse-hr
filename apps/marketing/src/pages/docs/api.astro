@@ -47,13 +47,6 @@ const RESOURCES = [
     events: ["leave.requested", "leave.approved", "leave.rejected", "leave.cancelled"],
   },
   {
-    name: "payroll_runs",
-    desc: "One run per country/period. Generates payslips once finalised; fires a single payroll.run.completed on success.",
-    fields: ["id", "country", "period_start", "period_end", "status", "total_gross", "total_net", "payslip_ids[]"],
-    methods: ["GET /v1/payroll_runs", "POST /v1/payroll_runs", "POST /v1/payroll_runs/{id}:finalise"],
-    events: ["payroll.run.started", "payroll.run.completed", "payroll.run.failed", "payslip.finalised"],
-  },
-  {
     name: "kudos",
     desc: "Peer recognition. Feeds the Employee Score Recognition factor.",
     fields: ["id", "from_employee_id", "to_employee_id", "coins", "tag", "note", "created_at"],

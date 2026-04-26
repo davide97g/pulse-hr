@@ -14,14 +14,13 @@ const modules = [
   {
     icon: Wallet,
     k: "Money",
-    tag: "Finance + payroll",
-    p: "Multi-country payroll, expenses, invoicing, cost centers, P&L per commessa. Close the month in an afternoon instead of a week.",
+    tag: "Finance ops",
+    p: "Expenses, invoicing, cost centers, P&L per commessa. Close the month in an afternoon instead of a week.",
     includes: [
-      "Payroll in US, UK, IT, ES, FR, DE, IE, NL",
       "Expense approval chains with receipts",
       "Commessa-native cost tracking",
       "Journal export to QuickBooks / Xero / SAP",
-      "Payslips, tax filings (F24, 941, PAYE)",
+      "Per-client invoicing and margin tracking",
     ],
     standalone: "Roll out Money first if you're drowning in spreadsheets at month-end.",
     accent: "#c48fff",
@@ -45,12 +44,11 @@ const modules = [
     icon: Briefcase,
     k: "Work",
     tag: "Time + projects",
-    p: "Clock in, track against commesse (project codes, the finance way), run saturation and forecast analyses on top. Focus Mode auto-declines meetings.",
+    p: "Clock in, track against commesse (project codes, the finance way), run saturation analyses on top. Focus Mode auto-declines meetings.",
     includes: [
       "Time tracking + timesheets",
       "Commessa (project) hours + costs",
       "Saturation heatmap + margin view",
-      "Commessa Forecast with scenario sliders",
       "Focus Mode deep-work timer",
     ],
     standalone: "Roll out Work first if you bill by the hour and can't answer \"is this project profitable?\".",
@@ -117,7 +115,7 @@ const modules = [
       <div class="space-y-4 text-white/70 leading-relaxed">
         <p>
           Each module has its own routes, its own permissions, its own API scope.
-          If you pay for People only, People is all you see — no ghost payroll menus,
+          If you pay for People only, People is all you see — no ghost menus,
           no greyed-out finance tabs, no upsell banners.
         </p>
         <p>

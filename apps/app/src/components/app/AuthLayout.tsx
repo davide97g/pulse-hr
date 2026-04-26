@@ -121,7 +121,7 @@ function DefaultSide() {
         ))}
       </div>
       <blockquote className="font-display text-3xl leading-snug max-w-lg">
-        "We replaced four tools with Pulse. Payroll that used to take a week now closes in an
+        "We replaced four tools with Pulse. Month-end that used to take a week now closes in an
         afternoon — and the team <em className="italic">enjoys</em> onboarding."
       </blockquote>
       <div className="mt-8 flex items-center gap-3">

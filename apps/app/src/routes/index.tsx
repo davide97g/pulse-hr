@@ -8,7 +8,6 @@ import {
   X,
   Clock,
   Users,
-  Wallet,
   AlertTriangle,
   TrendingUp,
   Calendar,
@@ -75,13 +74,8 @@ function Dashboard() {
               , or jump straight in.
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full md:w-auto">
+          <div className="grid grid-cols-3 gap-2 w-full md:w-auto">
             <LabsChip to="/log" icon={<Heart className="h-3.5 w-3.5" />} label="Status Log" />
-            <LabsChip
-              to="/forecast"
-              icon={<TrendingUp className="h-3.5 w-3.5" />}
-              label="Forecast"
-            />
             <LabsChip to="/kudos" icon={<Gift className="h-3.5 w-3.5" />} label="Kudos" />
             <LabsChip to="/focus" icon={<FocusIcon className="h-3.5 w-3.5" />} label="Focus Mode" />
           </div>
@@ -89,7 +83,7 @@ function Dashboard() {
       </div>
 
       {/* KPI cards — action centers */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <KpiCard
           icon={<FileCheck2 className="h-4 w-4" />}
           label="Pending approvals"
@@ -132,20 +126,6 @@ function Dashboard() {
               className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
             >
               View details →
-            </Link>
-          }
-        />
-        <KpiCard
-          icon={<Wallet className="h-4 w-4" />}
-          label="Payroll runs Apr 30"
-          value="$124.5k"
-          delta={`${employees.length} employees`}
-          action={
-            <Link
-              to="/payroll"
-              className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
-            >
-              Review run →
             </Link>
           }
         />

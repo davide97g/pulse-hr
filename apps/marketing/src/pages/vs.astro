@@ -7,7 +7,7 @@ import { Scale, CheckCircle2, XCircle, MinusCircle, AlertTriangle } from "lucide
 
 const title = "Pulse HR vs Rippling, Deel, BambooHR — honest comparison";
 const description =
-  "Straight comparison of Pulse HR against Rippling, Deel, BambooHR, Gusto and Personio across the four things we think matter most: open source, modularity, ecosystem and keyboard-first UX. Including where we're weaker.";
+  "Straight comparison of Pulse HR against Rippling, Deel, BambooHR and Personio across the four things we think matter most: open source, modularity, ecosystem and keyboard-first UX. Including where we're weaker.";
 const path = "/vs";
 const keywords =
   "Pulse HR vs Rippling, Pulse HR vs Deel, Pulse HR vs BambooHR, open source HR, HR comparison, HRIS comparison";
@@ -18,7 +18,6 @@ const VENDORS = [
   { k: "rippling", n: "Rippling",  self: false },
   { k: "deel",     n: "Deel",      self: false },
   { k: "bamboo",   n: "BambooHR",  self: false },
-  { k: "gusto",    n: "Gusto",     self: false },
   { k: "personio", n: "Personio",  self: false },
 ];
 
@@ -34,66 +33,64 @@ interface Row {
 const ROWS: Row[] = [
   // Open source
   { cat: "Open source", q: "Source code public",
-    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", personio: "no" } },
   { cat: "Open source", q: "Permissive future license (converts to MIT/Apache)",
     n: "Pulse is FSL-1.1-MIT — every release becomes plain MIT after 2 years.",
-    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", personio: "no" } },
   { cat: "Open source", q: "Self-host on your own infra",
-    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", personio: "no" } },
   { cat: "Open source", q: "Public issue tracker / accept PRs",
-    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", personio: "no" } },
 
   // Modularity
   { cat: "Modular", q: "Adopt one module without paying for the suite",
     n: "Money, People and Work can be enabled independently.",
-    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "partial", gusto: "no", personio: "partial" } },
-  { cat: "Modular", q: "No forced payroll seat when you only want HR",
-    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "yes", gusto: "no", personio: "partial" } },
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "partial", personio: "partial" } },
   { cat: "Modular", q: "Time tracking as a standalone module",
-    cells: { pulse: "yes", rippling: "partial", deel: "no", bamboo: "partial", gusto: "no", personio: "partial" } },
+    cells: { pulse: "yes", rippling: "partial", deel: "no", bamboo: "partial", personio: "partial" } },
   { cat: "Modular", q: "Project-first (commessa) hours + margin tracking",
     n: "Real cost/revenue per commessa, not just \"tag a project\" on a timesheet.",
-    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", personio: "no" } },
 
   // Ecosystem
   { cat: "Ecosystem", q: "Public REST API (included on every tier)",
-    cells: { pulse: "yes", rippling: "partial", deel: "partial", bamboo: "partial", gusto: "partial", personio: "yes" } },
+    cells: { pulse: "yes", rippling: "partial", deel: "partial", bamboo: "partial", personio: "yes" } },
   { cat: "Ecosystem", q: "Webhooks on every resource event",
-    n: "Pulse ships employee/leave/timesheet/expense/payroll/payslip/candidate/commessa events.",
-    cells: { pulse: "yes", rippling: "partial", deel: "partial", bamboo: "partial", gusto: "partial", personio: "partial" } },
+    n: "Pulse ships employee/leave/timesheet/expense/candidate/commessa events.",
+    cells: { pulse: "yes", rippling: "partial", deel: "partial", bamboo: "partial", personio: "partial" } },
   { cat: "Ecosystem", q: "API access without enterprise upsell",
-    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "partial", personio: "yes" } },
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", personio: "yes" } },
   { cat: "Ecosystem", q: "Maintained SDKs (TS / Python / Go)",
-    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "partial", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", personio: "no" } },
   { cat: "Ecosystem", q: "OpenAPI spec published",
-    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "partial", personio: "yes" } },
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", personio: "yes" } },
 
   // Keyboard-first
   { cat: "Keyboard-first", q: "⌘K global fuzzy search",
-    cells: { pulse: "yes", rippling: "partial", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+    cells: { pulse: "yes", rippling: "partial", deel: "no", bamboo: "no", personio: "no" } },
   { cat: "Keyboard-first", q: "Natural-language command bar (⌘J)",
     n: "Local deterministic parser — no LLM, works offline.",
-    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", personio: "no" } },
   { cat: "Keyboard-first", q: "Offline PWA (install + work on a plane)",
-    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", personio: "no" } },
   { cat: "Keyboard-first", q: "Native voice dictation",
-    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", gusto: "no", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "no", bamboo: "no", personio: "no" } },
 
   // Pricing & access
   { cat: "Pricing & access", q: "Free tier for small teams",
     n: "Pulse: free for the first 5 active employees, forever. No feature paywall.",
-    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "no", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", personio: "no" } },
   { cat: "Pricing & access", q: "Published per-seat price (no \"contact sales\")",
-    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "yes", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", personio: "no" } },
   { cat: "Pricing & access", q: "One tier — no enterprise unlock for SSO / API / audit log",
-    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", gusto: "partial", personio: "no" } },
+    cells: { pulse: "yes", rippling: "no", deel: "partial", bamboo: "no", personio: "no" } },
 ];
 
 // Honest weaknesses — the "where they're stronger" section.
 const WEAKNESSES = [
   {
     against: "Rippling",
-    body: "Deeper IT / device management (MDM, app provisioning), broader in-house global payroll (50+ countries natively), bigger compliance team. Pick Rippling if you need device fleet control and a single vendor for IT + HR.",
+    body: "Deeper IT / device management (MDM, app provisioning), bigger compliance team, mature global hiring rails. Pick Rippling if you need device fleet control and a single vendor for IT + HR.",
   },
   {
     against: "Deel",
@@ -102,10 +99,6 @@ const WEAKNESSES = [
   {
     against: "BambooHR",
     body: "Largest SMB install base with a mature performance-review module, open-enrolment flows, and a deep integrations marketplace. Pick BambooHR if you want the most battle-tested US-SMB HR experience and don't need an API.",
-  },
-  {
-    against: "Gusto",
-    body: "Best-in-class US-only payroll UX, embedded benefits broker, tax filing depth across all 50 states. Pick Gusto if you are US-only and payroll is your primary need.",
   },
   {
     against: "Personio",
@@ -212,10 +205,10 @@ const CATEGORIES = Array.from(new Set(ROWS.map((r) => r.cat)));
           Every vendor<br />does <em class="italic text-[#ffbf4a]">something</em> better.
         </h2>
         <p class="mt-6 text-white/70 leading-relaxed">
-          Pulse is opinionated. We traded breadth (50-country in-house payroll,
-          Workday-grade compliance matrices, a 200-strong customer-success team)
-          for depth on the four pillars above. Here's when another vendor is the
-          right call.
+          Pulse is opinionated. We traded breadth (Workday-grade compliance
+          matrices, a 200-strong customer-success team, a global benefits
+          broker) for depth on the four pillars above. Here's when another
+          vendor is the right call.
         </p>
       </div>
 
@@ -235,10 +228,9 @@ const CATEGORIES = Array.from(new Set(ROWS.map((r) => r.cat)));
         The one-line decision tree.
       </h2>
       <ol class="space-y-3 text-white/75 leading-relaxed list-decimal list-inside">
-        <li>If you need <strong>device management + global payroll in one vendor</strong> → Rippling.</li>
+        <li>If you need <strong>device management plus HR in one vendor</strong> → Rippling.</li>
         <li>If your primary need is <strong>paying contractors across borders</strong> → Deel.</li>
         <li>If you're a <strong>US-SMB prioritising performance reviews</strong> → BambooHR.</li>
-        <li>If you're <strong>US-only and payroll comes first</strong> → Gusto.</li>
         <li>If you're <strong>German-speaking mid-market Europe</strong> → Personio.</li>
         <li>
           If you want <strong>open source, modular adoption, a real API, keyboard-first UX</strong>,
