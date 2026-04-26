@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Wiki
+
+`/wiki` is the product knowledge base — HR-readable, LLM-maintained. Read `wiki/AGENTS.md` before answering product/domain questions, and read relevant pages in `wiki/personas/`, `wiki/features/`, `wiki/entities/`, `wiki/concepts/`, `wiki/journeys/`, `wiki/glossary/` instead of re-deriving the product model from routes and mock-data. Start with `wiki/index.md`.
+
+Modify wiki contents only during explicit `/wiki-ingest` or `/wiki-lint` flows, never as a side-effect of code changes.
+
 ## Monorepo layout
 
 Bun workspaces. Five deployable apps + three shared packages. Each app deploys independently.

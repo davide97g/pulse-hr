@@ -4,6 +4,16 @@ All notable user-facing changes to Pulse HR. Each `## version — date — "titl
 below becomes a release announcement. An optional fenced ` ```tour ` block embeds an in-app
 tour that the "What's new" prompt can launch.
 
+## 0.8.0 — 2026-04-26 — "A wiki you can read"
+
+Pulse HR now ships a public, HR-readable knowledge base at `/wiki` — an Obsidian-vault-compatible companion to the source code. Around 80 pages model the product as a product (personas, features, entities, journeys, Italian glossary) instead of as code, so a non-technical reader can learn what Pulse HR does without opening the codebase, and any LLM agent can build context for a session without re-deriving the product model from routes and mock-data every time.
+
+- **Six folders, one schema** — `personas/`, `features/`, `entities/`, `concepts/`, `journeys/`, `glossary/`, plus a top-level `README.md`, `index.md`, `log.md`, and an `AGENTS.md` that tells future agents how to ingest, query, and lint the wiki.
+- **Italian-first glossary** — *commessa*, *permesso*, *ferie*, *busta paga*, TFR, ROL, *malattia*, *badge*. First mention on any page wikilinks to the glossary entry.
+- **Obsidian-native** — minimal frontmatter (type, tags, last_updated), wikilinks for internal references, `aliases:` on every multi-word file so `[[Time Tracking]]` resolves to `time-tracking.md` without renaming.
+- **CLAUDE.md pointer** — the root agent guide now tells Claude Code sessions to read `wiki/AGENTS.md` and the relevant wiki pages before answering product or domain questions.
+- **Maintenance workflow** — manual ingest (pre-merge) and lint (on demand). The agent owns updates; humans curate sources and ask the questions.
+
 ## 0.7.0 — 2026-04-25 — "Voting power, with a real economy"
 
 Voting power stops being a vanity number and becomes a usable currency. Every account starts with **10**, every vote on a comment or proposal **costs 1**, and the balance **refills weekly to 10** without accumulating beyond that. New comments and new proposals are still free, but each capped at **10 per UTC day** so the board doesn't drown in noise.
