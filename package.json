@@ -7,7 +7,6 @@
   },
   "workspaces": [
     "apps/*",
-    "apps/app/recordings",
     "packages/*"
   ],
   "scripts": {
@@ -27,10 +26,10 @@
     "preview:feedback": "bun run --filter '@pulse-hr/feedback' preview",
     "preview:design": "bun run --filter '@pulse-hr/design' preview",
     "preview:marketing": "bun run --filter 'pulse-hr-marketing' preview",
-    "studio:reel": "bun run --filter '@pulse-hr/reel' studio",
-    "render:reel": "bun run --filter '@pulse-hr/reel' render:all",
+    "studio": "bun run --filter '@pulse-hr/studio' studio",
+    "render:studio": "bun run --filter '@pulse-hr/studio' render:all",
+    "record": "bun run --filter '@pulse-hr/studio' record",
     "lint": "bun run --filter '@workflows-people/app' lint",
-    "db:migrate": "bun run --filter '@pulse-hr/api' db:migrate",
-    "demo:record": "bun --cwd apps/app/recordings scripts/run.ts"
+    "db:migrate": "bun run --filter '@pulse-hr/api' db:migrate"
   }
 }

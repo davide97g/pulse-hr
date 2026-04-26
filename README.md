@@ -127,7 +127,7 @@ pulse-hr/
 │   ├── feedback/    # @pulse-hr/feedback      — public feature board (proposals, comments, votes)
 │   ├── marketing/   # pulse-hr-marketing      — Astro marketing site, SEO-first
 │   ├── design/      # @pulse-hr/design        — design playground
-│   └── reel/        # @pulse-hr/reel          — Remotion demo videos
+│   └── studio/      # @pulse-hr/studio        — content workspace (Remotion + testreel)
 ├── packages/
 │   ├── shared/      # @pulse-hr/shared        — shared types & utils
 │   ├── tokens/      # @pulse-hr/tokens        — design tokens shared across apps

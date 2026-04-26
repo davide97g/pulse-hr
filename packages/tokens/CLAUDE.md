@@ -1,6 +1,6 @@
 # @pulse-hr/tokens
 
-Zero-dep design token package. CSS variables + TypeScript constants. Consumed by every app (apps/app, apps/feedback, apps/marketing, apps/reel, apps/design).
+Zero-dep design token package. CSS variables + TypeScript constants. Consumed by every app (apps/app, apps/feedback, apps/marketing, apps/studio, apps/design).
 
 ## Structure
 
@@ -50,7 +50,7 @@ Plus the flash-prevention IIFE in `index.html` that sets `<html data-theme="empl
 
 Set `data-theme="employee" class="dark"` on the `<html>` element in the layout.
 
-### Remotion (apps/reel) / JS
+### Remotion (apps/studio) / JS
 
 ```ts
 import { hex, font, radius } from "@pulse-hr/tokens";

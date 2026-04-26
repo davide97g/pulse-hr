@@ -11,7 +11,7 @@ apps/
   app/        # @workflows-people/app   → app.pulsehr.it     (React SPA)
   api/        # @pulse-hr/api            → api.pulsehr.it     (Bun + Hono)
   marketing/  # pulse-hr-marketing       → pulsehr.it         (Astro)
-  reel/       # @pulse-hr/reel           — Remotion demo videos
+  studio/     # @pulse-hr/studio         — content workspace (Remotion + testreel)
 packages/
   shared/     # @pulse-hr/shared         — types, utils, zod schemas
   tokens/     # @pulse-hr/tokens — design tokens shared by app + marketing

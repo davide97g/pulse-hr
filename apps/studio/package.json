@@ -1,0 +1,34 @@
+{
+  "name": "@pulse-hr/studio",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Content workspace — Remotion compositions and testreel browser recordings for marketing, tutorials, and ad content. Renders into apps/marketing/public/studio/*.",
+  "scripts": {
+    "studio": "remotion studio src/remotion/index.ts",
+    "render": "remotion render src/remotion/index.ts DayInPulse ../marketing/public/studio/reel.mp4 --codec=h264 --crf=20",
+    "render:webm": "remotion render src/remotion/index.ts DayInPulse ../marketing/public/studio/reel.webm --codec=vp8",
+    "render:poster": "remotion still src/remotion/index.ts DayInPulse ../marketing/public/studio/poster.jpg --frame=0 --image-format=jpeg --jpeg-quality=88",
+    "render:all": "bun run render && bun run render:webm && bun run render:poster",
+    "record": "bun src/recordings/scripts/run.ts",
+    "record:kudos-copilot": "bun src/recordings/scripts/run.ts kudos-copilot",
+    "postinstall": "playwright install chromium --with-deps || playwright install chromium"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.400",
+    "@remotion/cli": "^4.0.400",
+    "@remotion/google-fonts": "^4.0.400",
+    "@remotion/renderer": "^4.0.400",
+    "@pulse-hr/tokens": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.400"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "playwright": "^1.48.0",
+    "testreel": "latest",
+    "typescript": "^5.6.3"
+  }
+}

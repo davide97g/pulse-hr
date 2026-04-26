@@ -12,8 +12,8 @@ import { fileURLToPath } from "node:url";
 import { spawn, spawnSync } from "node:child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const recordingsDir = resolve(__dirname, "..");
-const appDir = resolve(recordingsDir, "..");
+const studioDir = resolve(__dirname, "..", "..", "..");
+const appDir = resolve(studioDir, "..", "app");
 const specName = process.argv[2] ?? "kudos-copilot";
 const format = process.env.FORMAT ?? "mp4";
 const baseUrl = process.env.BASE_URL ?? "http://localhost:5173";
@@ -25,14 +25,14 @@ if (!existsSync(credsPath)) {
 }
 const { email, password } = JSON.parse(readFileSync(credsPath, "utf8"));
 
-const templatePath = resolve(recordingsDir, "specs", `${specName}.template.json`);
+const templatePath = resolve(studioDir, "specs", `${specName}.template.json`);
 if (!existsSync(templatePath)) {
   console.error(`missing ${templatePath}`);
   process.exit(1);
 }
 let raw = readFileSync(templatePath, "utf8");
 
-const setupPartialPath = resolve(recordingsDir, "specs", "_setup.partial.json");
+const setupPartialPath = resolve(studioDir, "specs", "_setup.partial.json");
 if (existsSync(setupPartialPath) && raw.includes('"{{SETUP}}"')) {
   const setupBlock = readFileSync(setupPartialPath, "utf8").trim();
   raw = raw.replace('"{{SETUP}}"', setupBlock);
@@ -43,7 +43,7 @@ const rendered = raw
   .replaceAll("{{TEST_EMAIL}}", email)
   .replaceAll("{{TEST_PASSWORD}}", password);
 
-const outRoot = resolve(recordingsDir, "output");
+const outRoot = resolve(studioDir, "output");
 const outDir = resolve(outRoot, specName);
 mkdirSync(outDir, { recursive: true });
 const compiledPath = resolve(outDir, `${specName}.json`);
@@ -58,7 +58,7 @@ if (process.env.HEADED === "1") args.push("--headed");
 if (process.env.VERBOSE === "1") args.push("--verbose");
 
 const child = spawn("bunx", ["testreel", ...args], {
-  cwd: recordingsDir,
+  cwd: studioDir,
   stdio: "inherit",
   env: process.env,
 });
@@ -66,8 +66,8 @@ child.on("exit", (code) => {
   if (code !== 0) process.exit(code ?? 1);
 
   const audioPath = process.env.AUDIO
-    ? resolve(recordingsDir, process.env.AUDIO)
-    : resolve(recordingsDir, "audio", "Launch Window.mp3");
+    ? resolve(studioDir, process.env.AUDIO)
+    : resolve(studioDir, "audio", "Launch Window.mp3");
 
   if (!existsSync(audioPath)) {
     console.log(`[recordings] no audio at ${audioPath}, skipping mux`);

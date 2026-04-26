@@ -25,14 +25,14 @@ Before adding anything, credit what exists:
 
 | ID     | Asset                                      | Location                                      | Status      |
 | ------ | ------------------------------------------ | --------------------------------------------- | ----------- |
-| EX-01  | Hero reel — "A day at Pulse" (12s, 1280×720) | `apps/reel/output/desktop.mp4`                | Ready       |
-| EX-02  | Social vertical of EX-01 (9:16)              | `apps/reel/output/social-vertical.mp4`        | Ready       |
+| EX-01  | Hero reel — "A day at Pulse" (12s, 1280×720) | `apps/studio/output/desktop.mp4`                | Ready       |
+| EX-02  | Social vertical of EX-01 (9:16)              | `apps/studio/output/social-vertical.mp4`        | Ready       |
 | EX-03  | Marketing site copy (EN + IT)              | `apps/marketing/src/i18n/{en,it}.ts`          | Updated to foundation (this commit) |
 | EX-04  | Lockup + OG cards                          | `docs/brand/logo-explorations/`               | Ready       |
 | EX-05  | Repo README                                | `README.md`                                   | Ready       |
 | EX-06  | Architecture + self-host docs              | `ARCHITECTURE.md`, `docs/self-hosting.md`     | Ready       |
 | EX-07  | Content-strategy doc                       | `CONTENT_STRATEGY.md`                         | Ready       |
-| EX-08  | Remotion video pipeline                    | `apps/reel/`                                  | Usable      |
+| EX-08  | Remotion video pipeline                    | `apps/studio/`                                  | Usable      |
 
 Anything below is **not** in this inventory — it's what we still need.
 
@@ -44,7 +44,7 @@ Anything below is **not** in this inventory — it's what we still need.
 
 | ID      | Title                                                           | Owner    | Pillar · Target | Derived from                        |
 | ------- | --------------------------------------------------------------- | -------- | --------------- | ----------------------------------- |
-| MD-001  | Hero re-cut video using the primary line "HR software for people who hate HR software" | Davide | O · B/C | `apps/reel/src/DayInPulse.tsx`      |
+| MD-001  | Hero re-cut video using the primary line "HR software for people who hate HR software" | Davide | O · B/C | `apps/studio/src/DayInPulse.tsx`      |
 | MD-002  | `/open-source` page rewrite off `foundation.md` §5              | Davide   | O · A           | foundation §5, LICENSE              |
 | MD-003  | `/vs` page update — include honest losses alongside wins        | Niccolò  | T · B           | foundation §10                      |
 | MD-004  | `/pricing` page — explicit "no sales call", "export any time"   | Davide   | Y · B           | foundation §11                      |
@@ -189,7 +189,7 @@ acknowledged here so the intent is clear.
 | Removed                                | Why                                                                                  |
 | -------------------------------------- | ------------------------------------------------------------------------------------ |
 | `docs/brand/instagram-reel.md`         | One reel brief is not a campaign. Superseded by `campaign.md` + `content-calendar.md`. |
-| `docs/brand/reels/001-open-source/`    | Single-reel render folder. Video masters now live under `apps/reel/output/` and ship to `apps/marketing/public/reel/`. |
+| `docs/brand/reels/001-open-source/`    | Single-reel render folder. Video masters now live under `apps/studio/output/` and ship to `apps/marketing/public/studio/`. |
 | Fake team section (18 people, 6 countries) | Contradicted `foundation.md` §13. Replaced with Davide + Niccolò + an open contributor slot. |
 | Fake testimonials (Aisha / Marcus / Yuki) | Contradicted `foundation.md` §9 (no fabricated social proof). Replaced with honest maintainer framing pending real quotes. |
 | SOC 2 Type II "audited annually" claim | Not true today. Replaced with an honest explanation of what we have vs. what's on the roadmap. |

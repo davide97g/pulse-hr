@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.2.0",
   "type": "module",
-  "description": "Shared design tokens (color, font, radius, motion, shadow, themes) consumed by apps/app, apps/feedback, apps/marketing, apps/reel, and apps/design.",
+  "description": "Shared design tokens (color, font, radius, motion, shadow, themes) consumed by apps/app, apps/feedback, apps/marketing, apps/studio, and apps/design.",
   "exports": {
     ".": "./src/index.ts",
     "./index.css": "./src/index.css",

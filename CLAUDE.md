@@ -14,14 +14,12 @@ pulse-hr/
 │   ├── feedback/   # @pulse-hr/feedback      → feedback site     (Vite + React + TanStack Router)
 │   ├── marketing/  # pulse-hr-marketing      → pulsehr.it        (Astro)
 │   ├── design/     # @pulse-hr/design        → design.pulsehr.it (Storybook for the design system)
-│   └── reel/       # @pulse-hr/reel          (Remotion compositions → marketing/public/reel/*)
+│   └── studio/     # @pulse-hr/studio        (content workspace: Remotion compositions + testreel browser recordings → marketing/public/studio/*)
 └── packages/
     ├── shared/     # @pulse-hr/shared (sidebar features, tours, changelog data)
     ├── tokens/     # @pulse-hr/tokens (CSS variables + TS constants — sole theme source of truth)
     └── ui/         # @pulse-hr/ui     (shadcn primitives + design atoms + ThemeProvider)
 ```
-
-`apps/app/recordings/` is also a workspace member (demo-recording sandbox).
 
 The root package name is `workflows-people` for legacy reasons; the product is **Pulse HR**. Root `bunfig.toml` opts out of the text lockfile (`saveTextLockfile = false`) — `bun.lockb` is the canonical lockfile.
 
@@ -49,9 +47,9 @@ bun run build:app | build:api | build:feedback | build:design | build:marketing
 
 bun run lint                # eslint in apps/app
 bun run db:migrate          # apply Drizzle migrations against Neon
-bun run studio:reel         # Remotion studio
-bun run render:reel         # render reel.mp4 + .webm + poster into apps/marketing/public/reel/
-bun run demo:record         # apps/app/recordings/scripts/run.ts
+bun run studio              # Remotion studio (apps/studio)
+bun run render:studio       # render reel.mp4 + .webm + poster into apps/marketing/public/studio/
+bun run record              # testreel browser recording (apps/studio/src/recordings/scripts/run.ts)
 ```
 
 Or `cd apps/<name>` and run that workspace's own scripts.
@@ -110,9 +108,14 @@ Content in `src/data/*.ts` and `src/pages/*.astro`. Ships changelog, roadmap, se
 
 Hosts design-system docs at `design.pulsehr.it`. Globs stories from `packages/ui/src/**/*.stories.tsx` and MDX from `apps/design/docs/**`. Has its own `CLAUDE.md`.
 
-### apps/reel — Remotion
+### apps/studio — content workspace
 
-Renders `DayInPulse` composition into `apps/marketing/public/reel/{reel.mp4,reel.webm,poster.jpg}`. React 18 (Remotion constraint) — do not bump to 19 here.
+Two co-located content-creation toolchains under one workspace (`@pulse-hr/studio`):
+
+- **Remotion** (`src/remotion/`) renders the `DayInPulse` composition into `apps/marketing/public/studio/{reel.mp4,reel.webm,poster.jpg}`. React 18 (Remotion constraint) — do not bump to 19 here.
+- **testreel** (`src/recordings/scripts/run.ts` + top-level `specs/`, `audio/`) records browser flows of `apps/app` for tutorials, demos, and ads — outputs land in `apps/studio/output/<spec-name>/` and can feed back into Remotion via `public/captures/`.
+
+Drop new content workflows (extra compositions, vertical/social cuts, ads) into the same package — add scripts alongside the existing `studio` / `render` / `record` ones.
 
 ### Shared packages
 
@@ -140,6 +143,6 @@ Each app has its own deploy target.
 - `apps/feedback` → Vercel (rooted at `apps/feedback`).
 - `apps/marketing` → Vercel (rooted at `apps/marketing`). Framework `astro`, output `dist`.
 - `apps/design` → Vercel (rooted at `apps/design`). Framework "Other", output `storybook-static`.
-- `apps/reel` — not deployed; renders artifacts into `apps/marketing/public/reel/`.
+- `apps/studio` — not deployed; renders artifacts into `apps/marketing/public/studio/` and writes recording outputs to `apps/studio/output/`.
 
 Vercel auto-detects the Bun workspace and installs from the monorepo root. Root `.vercelignore` strips tooling dirs.

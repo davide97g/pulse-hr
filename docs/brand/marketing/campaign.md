@@ -348,7 +348,7 @@ SaaS ad", which is what we want.
 | ------------------ | ------------ | ------------------------------------------------------------------------------------ |
 | Static (feed)      | 2            | One italic word + one lime dot + ink background. The brand `'s` signature composition. |
 | Carousel           | 1            | 6–8 slides. "What open source actually means for your HR data." Swipe-friendly pacing. |
-| Reel (9:16 video)  | 1            | 12–20 s. Screen capture with burned-in Geist captions. Driven off `apps/reel/` output.  |
+| Reel (9:16 video)  | 1            | 12–20 s. Screen capture with burned-in Geist captions. Driven off `apps/studio/` output.  |
 | Story (ephemeral)  | 3–5          | Day-in-the-build fragments, behind-the-scenes, PR merges, commit diffs.                 |
 
 **Motion rules.** See `../aesthetic.md` §2.6 — one signature motion
@@ -522,7 +522,7 @@ Three phases. Each phase moves the plan from zero to flywheel.
 Goal: have ~500 people who will see the launch land, not cold.
 
 - Marketing site live at `pulsehr.it` with the foundation copy deployed (done in this commit).
-- Hero reel re-rendered off `apps/reel/` and published.
+- Hero reel re-rendered off `apps/studio/` and published.
 - LinkedIn company page active, 8 posts over 4 weeks.
 - Davide: 4 long posts on building-in-public. Niccolò: 2 technical posts.
 - Instagram account seeded with 12 posts (4 carousels, 4 stills, 4 reels) before launch day.
@@ -572,7 +572,7 @@ work doesn't sit.
 | Instagram (handle TBD)           | Davide   | (TBD)    |
 | YouTube (handle TBD)             | Davide   | Niccolò  |
 | Product Hunt maker comms         | Davide   | Niccolò  |
-| Reel production (`apps/reel/`)   | Davide   | Niccolò  |
+| Reel production (`apps/studio/`)   | Davide   | Niccolò  |
 | GitHub repo README + discoverability | Niccolò | Davide   |
 | Community PR reviews             | Niccolò  | Davide   |
 
@@ -627,7 +627,7 @@ paper over them.
 - `../design-references.md` — the 15-brand moodboard for creative work.
 - `../../../CONTENT_STRATEGY.md` — the content pillars, publishing discipline, and paid-guest-post model.
 - `../../../README.md` + `../../../ARCHITECTURE.md` — product reality (what the product actually does today).
-- `apps/reel/` — the Remotion-based video pipeline that turns brand primitives into motion.
+- `apps/studio/` — the Remotion-based video pipeline that turns brand primitives into motion.
 
 ---
 

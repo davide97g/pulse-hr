@@ -41,7 +41,6 @@ apps/*/storybook-static
 apps/app/test.credentials.json
 
 # Recording + render outputs (regenerated from specs — do not commit)
-apps/app/recordings/output/
-apps/app/recordings/testreel-output/
-apps/reel/output/
-apps/reel/public/captures/
+apps/studio/output/
+apps/studio/testreel-output/
+apps/studio/public/captures/
