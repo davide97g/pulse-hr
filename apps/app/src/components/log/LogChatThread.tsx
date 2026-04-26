@@ -20,7 +20,7 @@ export function LogChatThread({
       {groups.map(([day, items]) => (
         <div key={day}>
           <LogSessionDivider date={day} />
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {items.map((m) => (
               <li
                 key={m.id}
@@ -36,10 +36,10 @@ export function LogChatThread({
                 )}
                 <div
                   className={cn(
-                    "max-w-[72ch] rounded-2xl px-3.5 py-2 text-sm leading-relaxed",
+                    "max-w-[72ch] text-sm leading-relaxed",
                     m.role === "employee"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-foreground",
+                      ? "rounded-2xl px-3.5 py-2 bg-primary/15 text-foreground ring-1 ring-primary/25"
+                      : "py-1 text-foreground/90",
                   )}
                 >
                   {streamingId === m.id && !m.text ? (
@@ -50,7 +50,12 @@ export function LogChatThread({
                       {streamingId === m.id && <span className="ml-1 animate-pulse">▍</span>}
                     </>
                   )}
-                  <div className="mt-1 flex items-center gap-2 text-[10px] opacity-60">
+                  <div
+                    className={cn(
+                      "mt-1 flex items-center gap-2 text-[10px]",
+                      m.role === "employee" ? "opacity-60" : "text-muted-foreground",
+                    )}
+                  >
                     <span>{format(new Date(m.createdAt), "HH:mm")}</span>
                     {m.voice && <Mic className="h-3 w-3" aria-label="voice" />}
                     {m.topic && <span className="uppercase tracking-wide">{m.topic}</span>}

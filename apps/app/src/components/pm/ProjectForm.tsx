@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,30 @@ import { clients as clientSeed, employees, employeeById } from "@/lib/mock-data"
 
 const STATUSES: ProjectStatus[] = ["draft", "active", "on_hold", "at_risk", "done", "closed"];
 
+function blankProject(lockedClientId?: string): Commessa {
+  const defaultClientId = lockedClientId ?? clientSeed[0]?.id ?? "";
+  const client = clientSeed.find((c) => c.id === defaultClientId);
+  return {
+    id: `cm${Date.now()}`,
+    code: "",
+    name: "",
+    client: client?.name ?? "",
+    clientId: defaultClientId,
+    ownerId: employees[0].id,
+    color: client?.colorToken ?? "oklch(0.6 0.18 258)",
+    budgetHours: 400,
+    burnedHours: 0,
+    status: "draft",
+    manager: employeeById(employees[0].id)?.name ?? "",
+    startDate: new Date().toISOString().slice(0, 10),
+    endDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 180).toISOString().slice(0, 10),
+    defaultBillableRate: 120,
+    tags: [],
+    externalLinks: [],
+    referenceContactId: client?.primaryContactId ?? null,
+  };
+}
+
 export function ProjectForm({
   open,
   onClose,
@@ -35,31 +59,31 @@ export function ProjectForm({
   lockedClientId?: string;
 }) {
   const isEdit = !!initial;
-  const defaultClientId = lockedClientId ?? initial?.clientId ?? clientSeed[0]?.id ?? "";
-  const defaultOwnerId = initial?.ownerId ?? employees[0].id;
-  const [draft, setDraft] = useState<Commessa>(
-    initial ?? {
-      id: `cm${Date.now()}`,
-      code: "",
-      name: "",
-      client: clientSeed.find((c) => c.id === defaultClientId)?.name ?? "",
-      clientId: defaultClientId,
-      ownerId: defaultOwnerId,
-      color: clientSeed.find((c) => c.id === defaultClientId)?.colorToken ?? "oklch(0.6 0.18 258)",
-      budgetHours: 400,
-      burnedHours: 0,
-      status: "draft",
-      manager: employeeById(defaultOwnerId)?.name ?? "",
-      startDate: new Date().toISOString().slice(0, 10),
-      endDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 180).toISOString().slice(0, 10),
-      defaultBillableRate: 120,
-      tags: [],
-      externalLinks: [],
-    },
-  );
+  const [draft, setDraft] = useState<Commessa>(() => initial ?? blankProject(lockedClientId));
+
+  useEffect(() => {
+    if (open) setDraft(initial ?? blankProject(lockedClientId));
+  }, [open, initial, lockedClientId]);
 
   const set = <K extends keyof Commessa>(k: K, v: Commessa[K]) =>
     setDraft((d) => ({ ...d, [k]: v }));
+
+  const selectedClient = useMemo(
+    () => clientSeed.find((c) => c.id === draft.clientId),
+    [draft.clientId],
+  );
+  const contacts = selectedClient?.contacts ?? [];
+
+  const onClientChange = (newClientId: string) => {
+    const c = clientSeed.find((x) => x.id === newClientId);
+    setDraft((d) => ({
+      ...d,
+      clientId: newClientId,
+      client: c?.name ?? d.client,
+      color: c?.colorToken ?? d.color,
+      referenceContactId: c?.primaryContactId ?? c?.contacts[0]?.id ?? null,
+    }));
+  };
 
   const save = () => {
     const clientName = clientSeed.find((c) => c.id === draft.clientId)?.name ?? draft.client;
@@ -98,7 +122,7 @@ export function ProjectForm({
               <Label>Client</Label>
               <Select
                 value={draft.clientId}
-                onValueChange={(v) => set("clientId", v)}
+                onValueChange={onClientChange}
                 disabled={!!lockedClientId}
               >
                 <SelectTrigger>
@@ -128,6 +152,28 @@ export function ProjectForm({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          <div className="grid gap-1.5">
+            <Label>Reference contact</Label>
+            <Select
+              value={draft.referenceContactId ?? "__none"}
+              onValueChange={(v) => set("referenceContactId", v === "__none" ? null : v)}
+              disabled={contacts.length === 0}
+            >
+              <SelectTrigger>
+                <SelectValue
+                  placeholder={contacts.length === 0 ? "Client has no contacts" : "Pick a contact"}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none">— None —</SelectItem>
+                {contacts.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name} {c.role ? `(${c.role})` : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5">

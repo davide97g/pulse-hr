@@ -7,9 +7,13 @@ import { cn } from "@/lib/utils";
 export function LogComposer({
   onSend,
   disabled,
+  seed,
+  placeholder,
 }: {
   onSend: (text: string, voice: boolean) => void;
   disabled?: boolean;
+  seed?: string;
+  placeholder?: string;
 }) {
   const [text, setText] = useState("");
   const [listening, setListening] = useState(false);
@@ -26,6 +30,18 @@ export function LogComposer({
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (seed) {
+      setText(seed);
+      requestAnimationFrame(() => {
+        const ta = taRef.current;
+        if (!ta) return;
+        ta.focus();
+        ta.setSelectionRange(seed.length, seed.length);
+      });
+    }
+  }, [seed]);
 
   function submit() {
     const trimmed = text.trim();
@@ -48,7 +64,7 @@ export function LogComposer({
               submit();
             }
           }}
-          placeholder="Log a thought, a win, a struggle…"
+          placeholder={placeholder ?? "Log a thought, a win, a struggle…"}
           rows={1}
           className="flex-1 resize-none rounded-xl border bg-background px-3 py-2 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/40"
           disabled={disabled}

@@ -14,7 +14,7 @@
  */
 import { useSyncExternalStore } from "react";
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 export const DEFAULT_WORKSPACE_NAME = "Acme";
 export const ANON_USER_ID = "__anon__";
 const ROOT = "pulse.ws";

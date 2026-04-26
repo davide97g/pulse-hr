@@ -30,7 +30,7 @@ const FEATURE_PATHS: Record<SidebarFeatureId, string[]> = {
   org: ["/org"],
   recruiting: ["/recruiting"],
   onboarding: ["/onboarding"],
-  clients: ["/clients", "/projects"],
+  clients: ["/clients", "/projects", "/activities"],
   time: ["/time"],
   calendar: ["/calendar"],
   leave: ["/leave"],

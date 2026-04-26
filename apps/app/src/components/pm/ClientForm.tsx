@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@pulse-hr/ui/primitives/select";
-import type { Client } from "@/lib/mock-data";
+import type { Client, ClientContact } from "@/lib/mock-data";
 import { employees } from "@/lib/mock-data";
+import { ClientContactsEditor } from "./ClientContactsEditor";
 
 const HUES = [
   { label: "Blue", value: "oklch(0.6 0.18 258)" },
@@ -29,6 +30,30 @@ const HUES = [
   { label: "Teal", value: "oklch(0.6 0.16 195)" },
   { label: "Violet", value: "oklch(0.6 0.18 290)" },
 ];
+
+function blankClient(): Client {
+  const id = `cl${Date.now()}`;
+  const firstContact: ClientContact = {
+    id: `${id}-cn1`,
+    name: "",
+    email: "",
+    role: "",
+  };
+  return {
+    id,
+    name: "",
+    industry: "",
+    accountOwnerId: employees[0].id,
+    healthScore: 75,
+    billingCurrency: "EUR",
+    contacts: [firstContact],
+    primaryContactId: firstContact.id,
+    website: "",
+    notes: "",
+    createdAt: new Date().toISOString().slice(0, 10),
+    colorToken: HUES[0].value,
+  };
+}
 
 export function ClientForm({
   open,
@@ -42,28 +67,17 @@ export function ClientForm({
   initial?: Client | null;
 }) {
   const isEdit = !!initial;
-  const [draft, setDraft] = useState<Client>(
-    initial ?? {
-      id: `cl${Date.now()}`,
-      name: "",
-      industry: "",
-      accountOwnerId: employees[0].id,
-      healthScore: 75,
-      billingCurrency: "EUR",
-      contactName: "",
-      contactEmail: "",
-      website: "",
-      notes: "",
-      createdAt: new Date().toISOString().slice(0, 10),
-      colorToken: HUES[0].value,
-    },
-  );
+  const [draft, setDraft] = useState<Client>(initial ?? blankClient());
+
+  useEffect(() => {
+    if (open) setDraft(initial ?? blankClient());
+  }, [open, initial]);
 
   const set = <K extends keyof Client>(k: K, v: Client[K]) => setDraft((d) => ({ ...d, [k]: v }));
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit client" : "New client"}</DialogTitle>
         </DialogHeader>
@@ -95,22 +109,6 @@ export function ClientForm({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="grid gap-1.5">
-              <Label>Contact name</Label>
-              <Input
-                value={draft.contactName}
-                onChange={(e) => set("contactName", e.target.value)}
-              />
-            </div>
-            <div className="grid gap-1.5">
-              <Label>Contact email</Label>
-              <Input
-                value={draft.contactEmail}
-                onChange={(e) => set("contactEmail", e.target.value)}
-              />
             </div>
           </div>
           <div className="grid grid-cols-[1fr_110px_120px] gap-3">
@@ -164,6 +162,14 @@ export function ClientForm({
               ))}
             </div>
           </div>
+          <ClientContactsEditor
+            clientIdHint={draft.id}
+            contacts={draft.contacts}
+            primaryContactId={draft.primaryContactId}
+            onChange={({ contacts, primaryContactId }) =>
+              setDraft((d) => ({ ...d, contacts, primaryContactId }))
+            }
+          />
           <div className="grid gap-1.5">
             <Label>Notes</Label>
             <Textarea

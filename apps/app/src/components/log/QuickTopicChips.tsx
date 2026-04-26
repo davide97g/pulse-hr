@@ -9,22 +9,33 @@ const CHIPS: { topic: LogTopic; emoji: string; label: string }[] = [
   { topic: "feedback", emoji: "💬", label: "Feedback" },
 ];
 
-export function QuickTopicChips({ onPick }: { onPick: (topic: LogTopic) => void }) {
+export function QuickTopicChips({
+  onPick,
+  preferredTopics,
+}: {
+  onPick: (topic: LogTopic) => void;
+  preferredTopics?: LogTopic[];
+}) {
+  const set = preferredTopics && preferredTopics.length > 0 ? new Set(preferredTopics) : null;
   return (
     <div className="flex flex-wrap gap-1.5 px-4 md:px-6 pb-2">
-      {CHIPS.map((c) => (
-        <button
-          key={c.topic}
-          onClick={() => onPick(c.topic)}
-          className={cn(
-            "inline-flex items-center gap-1 rounded-full border bg-background px-2.5 h-7 text-xs press-scale",
-            "hover:bg-muted",
-          )}
-        >
-          <span>{c.emoji}</span>
-          <span>{c.label}</span>
-        </button>
-      ))}
+      {CHIPS.map((c) => {
+        const dim = set && !set.has(c.topic);
+        return (
+          <button
+            key={c.topic}
+            onClick={() => onPick(c.topic)}
+            className={cn(
+              "inline-flex items-center gap-1 rounded-full border bg-background px-2.5 h-7 text-xs press-scale",
+              "hover:bg-muted",
+              dim && "opacity-50",
+            )}
+          >
+            <span>{c.emoji}</span>
+            <span>{c.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

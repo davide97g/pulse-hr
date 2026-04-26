@@ -6,6 +6,7 @@ import {
   employees,
   employeeById,
   clientById,
+  plans,
   projectById,
   timesheetEntries,
   type Activity,
@@ -13,6 +14,7 @@ import {
   type Client,
   type Commessa,
   type Employee,
+  type Plan,
 } from "./mock-data";
 
 const FTE_HOURS_PER_YEAR = 1800;
@@ -210,8 +212,21 @@ export function personValue(today = new Date()): PersonValue[] {
   });
 }
 
-export function projectActivities(projectId: string, list: Activity[] = activities): Activity[] {
-  return list.filter((a) => a.projectId === projectId).sort((a, b) => a.order - b.order);
+export function planActivities(planId: string, list: Activity[] = activities): Activity[] {
+  return list.filter((a) => a.planId === planId).sort((a, b) => a.order - b.order);
+}
+
+export function projectActivities(
+  projectId: string,
+  list: Activity[] = activities,
+  planList: Plan[] = plans,
+): Activity[] {
+  const planIds = new Set(planList.filter((p) => p.projectId === projectId).map((p) => p.id));
+  return list.filter((a) => planIds.has(a.planId)).sort((a, b) => a.order - b.order);
+}
+
+export function projectForPlan(planId: string, planList: Plan[] = plans): string | undefined {
+  return planList.find((p) => p.id === planId)?.projectId;
 }
 
 export { clientById, projectById };

@@ -39,13 +39,16 @@ import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
+import { Route as ActivitiesRouteImport } from './routes/activities'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ProposalIdRouteImport } from './routes/proposal.$id'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
 import { Route as PeopleEmployeeIdRouteImport } from './routes/people_.$employeeId'
 import { Route as OfficesOfficeIdRouteImport } from './routes/offices.$officeId'
+import { Route as LogRecapRouteImport } from './routes/log.recap'
 import { Route as LogEmployeeIdRouteImport } from './routes/log.$employeeId'
 import { Route as DocsSaturationRouteImport } from './routes/docs.saturation'
 import { Route as DocsKudosRouteImport } from './routes/docs.kudos'
@@ -56,6 +59,7 @@ import { Route as CommentIdRouteImport } from './routes/comment.$id'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as AdminModulesRouteImport } from './routes/admin.modules'
 import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$officeId.$roomId'
+import { Route as ProjectsProjectIdPlansPlanIdRouteImport } from './routes/projects.$projectId.plans.$planId'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -207,9 +211,19 @@ const AnnouncementsRoute = AnnouncementsRouteImport.update({
   path: '/announcements',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ActivitiesRoute = ActivitiesRouteImport.update({
+  id: '/activities',
+  path: '/activities',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocsIndexRoute = DocsIndexRouteImport.update({
@@ -241,6 +255,11 @@ const OfficesOfficeIdRoute = OfficesOfficeIdRouteImport.update({
   id: '/$officeId',
   path: '/$officeId',
   getParentRoute: () => OfficesRoute,
+} as any)
+const LogRecapRoute = LogRecapRouteImport.update({
+  id: '/recap',
+  path: '/recap',
+  getParentRoute: () => LogRoute,
 } as any)
 const LogEmployeeIdRoute = LogEmployeeIdRouteImport.update({
   id: '/$employeeId',
@@ -292,9 +311,16 @@ const OfficesOfficeIdRoomIdRoute = OfficesOfficeIdRoomIdRouteImport.update({
   path: '/$roomId',
   getParentRoute: () => OfficesOfficeIdRoute,
 } as any)
+const ProjectsProjectIdPlansPlanIdRoute =
+  ProjectsProjectIdPlansPlanIdRouteImport.update({
+    id: '/plans/$planId',
+    path: '/plans/$planId',
+    getParentRoute: () => ProjectsProjectIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/activities': typeof ActivitiesRoute
   '/announcements': typeof AnnouncementsRoute
   '/calendar': typeof CalendarRoute
   '/clients': typeof ClientsRouteWithChildren
@@ -334,16 +360,20 @@ export interface FileRoutesByFullPath {
   '/docs/kudos': typeof DocsKudosRoute
   '/docs/saturation': typeof DocsSaturationRoute
   '/log/$employeeId': typeof LogEmployeeIdRoute
+  '/log/recap': typeof LogRecapRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/people/$employeeId': typeof PeopleEmployeeIdRoute
-  '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRouteWithChildren
   '/proposal/$id': typeof ProposalIdRoute
   '/clients/': typeof ClientsIndexRoute
   '/docs/': typeof DocsIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
+  '/projects/$projectId/plans/$planId': typeof ProjectsProjectIdPlansPlanIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/activities': typeof ActivitiesRoute
   '/announcements': typeof AnnouncementsRoute
   '/calendar': typeof CalendarRoute
   '/developers': typeof DevelopersRoute
@@ -381,17 +411,21 @@ export interface FileRoutesByTo {
   '/docs/kudos': typeof DocsKudosRoute
   '/docs/saturation': typeof DocsSaturationRoute
   '/log/$employeeId': typeof LogEmployeeIdRoute
+  '/log/recap': typeof LogRecapRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/people/$employeeId': typeof PeopleEmployeeIdRoute
-  '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRouteWithChildren
   '/proposal/$id': typeof ProposalIdRoute
   '/clients': typeof ClientsIndexRoute
   '/docs': typeof DocsIndexRoute
+  '/projects': typeof ProjectsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
+  '/projects/$projectId/plans/$planId': typeof ProjectsProjectIdPlansPlanIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/activities': typeof ActivitiesRoute
   '/announcements': typeof AnnouncementsRoute
   '/calendar': typeof CalendarRoute
   '/clients': typeof ClientsRouteWithChildren
@@ -431,18 +465,22 @@ export interface FileRoutesById {
   '/docs/kudos': typeof DocsKudosRoute
   '/docs/saturation': typeof DocsSaturationRoute
   '/log/$employeeId': typeof LogEmployeeIdRoute
+  '/log/recap': typeof LogRecapRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/people_/$employeeId': typeof PeopleEmployeeIdRoute
-  '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRouteWithChildren
   '/proposal/$id': typeof ProposalIdRoute
   '/clients/': typeof ClientsIndexRoute
   '/docs/': typeof DocsIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
+  '/projects/$projectId/plans/$planId': typeof ProjectsProjectIdPlansPlanIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/activities'
     | '/announcements'
     | '/calendar'
     | '/clients'
@@ -482,16 +520,20 @@ export interface FileRouteTypes {
     | '/docs/kudos'
     | '/docs/saturation'
     | '/log/$employeeId'
+    | '/log/recap'
     | '/offices/$officeId'
     | '/people/$employeeId'
     | '/projects/$projectId'
     | '/proposal/$id'
     | '/clients/'
     | '/docs/'
+    | '/projects/'
     | '/offices/$officeId/$roomId'
+    | '/projects/$projectId/plans/$planId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/activities'
     | '/announcements'
     | '/calendar'
     | '/developers'
@@ -529,16 +571,20 @@ export interface FileRouteTypes {
     | '/docs/kudos'
     | '/docs/saturation'
     | '/log/$employeeId'
+    | '/log/recap'
     | '/offices/$officeId'
     | '/people/$employeeId'
     | '/projects/$projectId'
     | '/proposal/$id'
     | '/clients'
     | '/docs'
+    | '/projects'
     | '/offices/$officeId/$roomId'
+    | '/projects/$projectId/plans/$planId'
   id:
     | '__root__'
     | '/'
+    | '/activities'
     | '/announcements'
     | '/calendar'
     | '/clients'
@@ -578,17 +624,21 @@ export interface FileRouteTypes {
     | '/docs/kudos'
     | '/docs/saturation'
     | '/log/$employeeId'
+    | '/log/recap'
     | '/offices/$officeId'
     | '/people_/$employeeId'
     | '/projects/$projectId'
     | '/proposal/$id'
     | '/clients/'
     | '/docs/'
+    | '/projects/'
     | '/offices/$officeId/$roomId'
+    | '/projects/$projectId/plans/$planId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ActivitiesRoute: typeof ActivitiesRoute
   AnnouncementsRoute: typeof AnnouncementsRoute
   CalendarRoute: typeof CalendarRoute
   ClientsRoute: typeof ClientsRouteWithChildren
@@ -622,8 +672,9 @@ export interface RootRouteChildren {
   AdminModulesRoute: typeof AdminModulesRoute
   CommentIdRoute: typeof CommentIdRoute
   PeopleEmployeeIdRoute: typeof PeopleEmployeeIdRoute
-  ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
+  ProjectsProjectIdRoute: typeof ProjectsProjectIdRouteWithChildren
   ProposalIdRoute: typeof ProposalIdRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -838,11 +889,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnnouncementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/activities': {
+      id: '/activities'
+      path: '/activities'
+      fullPath: '/activities'
+      preLoaderRoute: typeof ActivitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs/': {
@@ -886,6 +951,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/offices/$officeId'
       preLoaderRoute: typeof OfficesOfficeIdRouteImport
       parentRoute: typeof OfficesRoute
+    }
+    '/log/recap': {
+      id: '/log/recap'
+      path: '/recap'
+      fullPath: '/log/recap'
+      preLoaderRoute: typeof LogRecapRouteImport
+      parentRoute: typeof LogRoute
     }
     '/log/$employeeId': {
       id: '/log/$employeeId'
@@ -957,6 +1029,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfficesOfficeIdRoomIdRouteImport
       parentRoute: typeof OfficesOfficeIdRoute
     }
+    '/projects/$projectId/plans/$planId': {
+      id: '/projects/$projectId/plans/$planId'
+      path: '/plans/$planId'
+      fullPath: '/projects/$projectId/plans/$planId'
+      preLoaderRoute: typeof ProjectsProjectIdPlansPlanIdRouteImport
+      parentRoute: typeof ProjectsProjectIdRoute
+    }
   }
 }
 
@@ -995,10 +1074,12 @@ const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
 
 interface LogRouteChildren {
   LogEmployeeIdRoute: typeof LogEmployeeIdRoute
+  LogRecapRoute: typeof LogRecapRoute
 }
 
 const LogRouteChildren: LogRouteChildren = {
   LogEmployeeIdRoute: LogEmployeeIdRoute,
+  LogRecapRoute: LogRecapRoute,
 }
 
 const LogRouteWithChildren = LogRoute._addFileChildren(LogRouteChildren)
@@ -1026,8 +1107,20 @@ const OfficesRouteChildren: OfficesRouteChildren = {
 const OfficesRouteWithChildren =
   OfficesRoute._addFileChildren(OfficesRouteChildren)
 
+interface ProjectsProjectIdRouteChildren {
+  ProjectsProjectIdPlansPlanIdRoute: typeof ProjectsProjectIdPlansPlanIdRoute
+}
+
+const ProjectsProjectIdRouteChildren: ProjectsProjectIdRouteChildren = {
+  ProjectsProjectIdPlansPlanIdRoute: ProjectsProjectIdPlansPlanIdRoute,
+}
+
+const ProjectsProjectIdRouteWithChildren =
+  ProjectsProjectIdRoute._addFileChildren(ProjectsProjectIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ActivitiesRoute: ActivitiesRoute,
   AnnouncementsRoute: AnnouncementsRoute,
   CalendarRoute: CalendarRoute,
   ClientsRoute: ClientsRouteWithChildren,
@@ -1061,8 +1154,9 @@ const rootRouteChildren: RootRouteChildren = {
   AdminModulesRoute: AdminModulesRoute,
   CommentIdRoute: CommentIdRoute,
   PeopleEmployeeIdRoute: PeopleEmployeeIdRoute,
-  ProjectsProjectIdRoute: ProjectsProjectIdRoute,
+  ProjectsProjectIdRoute: ProjectsProjectIdRouteWithChildren,
   ProposalIdRoute: ProposalIdRoute,
+  ProjectsIndexRoute: ProjectsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

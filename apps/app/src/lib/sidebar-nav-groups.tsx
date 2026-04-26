@@ -25,6 +25,7 @@ import {
   Building2,
   PanelLeft,
   LifeBuoy,
+  ListChecks,
 } from "lucide-react";
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
 import { ADMIN_MODULES_PATH } from "@/lib/sidebar-features";
@@ -92,12 +93,9 @@ export function buildSidebarNavGroups(
     {
       label: "Work",
       items: [
-        {
-          to: "/clients",
-          label: "Clients & Projects",
-          icon: BriefcaseIcon,
-          featureId: "clients",
-        },
+        { to: "/clients", label: "Clients", icon: Building2, featureId: "clients" },
+        { to: "/projects", label: "Projects", icon: BriefcaseIcon, featureId: "clients" },
+        { to: "/activities", label: "Activities", icon: ListChecks, featureId: "clients" },
         { to: "/time", label: "Time & attendance", icon: Clock, featureId: "time" },
         { to: "/calendar", label: "Calendar", icon: CalendarDays, featureId: "calendar" },
         { to: "/leave", label: "Leave", icon: Calendar, featureId: "leave" },

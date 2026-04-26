@@ -8,8 +8,17 @@ import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 import { employees, employeeLogHealth, type EmployeeLogHealth } from "@/lib/mock-data";
 import { managerAsksTable, useManagerAsks } from "@/lib/tables/managerAsks";
 import { AskTopicDialog } from "./AskTopicDialog";
+import { TeamPulseStrip } from "./TeamPulseStrip";
+import { SentimentHeatmap } from "./SentimentHeatmap";
+import { RiskPanel } from "./RiskPanel";
+import { SentimentRadar } from "./SentimentRadar";
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@pulse-hr/ui/primitives/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@pulse-hr/ui/primitives/tooltip";
 
 export function ManagerLogView() {
   const asks = useManagerAsks();
@@ -20,9 +29,21 @@ export function ManagerLogView() {
   }));
   const [askFor, setAskFor] = useState<string | null>(null);
 
+  const allHealth = rows.map((r) => r.health);
+  const totalOpen = asks.filter((a) => a.status === "pending").length;
+
   return (
     <TooltipProvider delayDuration={150}>
-      <div className="flex-1 min-h-0 overflow-y-auto p-4 md:p-6">
+      <div className="flex-1 min-h-0 overflow-y-auto p-4 md:p-6 space-y-4">
+        <TeamPulseStrip health={allHealth} openAsks={totalOpen} />
+        <div className="grid gap-3 lg:grid-cols-[2fr_1fr]">
+          <SentimentHeatmap rows={rows} />
+          <RiskPanel rows={rows} />
+        </div>
+
+        <h2 className="text-sm uppercase tracking-wide text-muted-foreground pt-2">
+          Team recaps
+        </h2>
         <div className="grid gap-3 stagger-in grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           {rows.map(({ employee, health, openAsks }) => (
             <article
@@ -58,8 +79,23 @@ export function ManagerLogView() {
                     )}
                   </div>
                 </div>
+                <div className="shrink-0 w-16 -mr-1 -mt-1">
+                  <SentimentRadar values={health.dimensions} size={68} showLabels={false} />
+                </div>
               </div>
               <p className="mt-3 text-sm text-foreground/90 line-clamp-2">{health.recap}</p>
+              {health.recapTopics.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {health.recapTopics.slice(0, 3).map((t) => (
+                    <span
+                      key={t.topic}
+                      className="rounded-full border bg-background px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground"
+                    >
+                      {t.topic} · {t.count}
+                    </span>
+                  ))}
+                </div>
+              )}
               <div className="mt-3 flex items-center justify-between">
                 <Tooltip>
                   <TooltipTrigger asChild>
