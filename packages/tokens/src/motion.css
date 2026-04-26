@@ -396,12 +396,6 @@
       transform: rotate(360deg);
     }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .birthday-halo {
-      animation: none;
-    }
-  }
-
   @keyframes marquee {
     to {
       transform: translateX(-33.333%);
@@ -409,5 +403,36 @@
   }
   .animate-marquee {
     animation: marquee 40s linear infinite;
+  }
+
+  /*
+   * Reduced-motion guard. Single source of truth — every motion utility above
+   * collapses to a no-op when the user requests reduced motion. Add new motion
+   * utilities to this list as well.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .panel-enter,
+    .fade-in,
+    .pop-in,
+    .stagger-in > *,
+    .press-scale,
+    .shimmer,
+    .pulse-dot::after,
+    .new-badge,
+    .iridescent-border::before,
+    .confetti-piece,
+    .typing-dot,
+    .voice-pill,
+    .birthday-halo,
+    .animate-marquee {
+      animation: none !important;
+      transition: none !important;
+    }
+    .stagger-in > * {
+      opacity: 1 !important;
+    }
+    .voice-wave-bar {
+      transition: none !important;
+    }
   }
 }

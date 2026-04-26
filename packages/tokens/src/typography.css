@@ -1,0 +1,73 @@
+/*
+ * Typography scale — single source of truth for text styling across apps.
+ * Use these classes instead of hand-rolled font-size + weight combos.
+ *
+ * Fraunces (font-display) is reserved for *deliberate* moments:
+ *   - text-display:    hero numbers (StatCard size="lg"), welcome headlines
+ *   - text-page-title: page H1 (driven by PageHeader atom)
+ *   - text-numeric:    any large tabular figure
+ *
+ * Body, labels and captions stay on Geist (font-sans) for legibility.
+ */
+@layer components {
+  .text-display {
+    font-family: var(--font-display, "Fraunces", ui-serif, serif);
+    font-size: 28px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+  }
+
+  .text-page-title {
+    font-family: var(--font-display, "Fraunces", ui-serif, serif);
+    font-size: 1.375rem; /* 22px — slightly larger than text-xl for serif balance */
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    font-weight: 500;
+  }
+
+  .text-section {
+    font-size: 0.875rem;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    font-weight: 600;
+  }
+
+  .text-subsection {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted-foreground);
+  }
+
+  .text-body {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .text-body-sm {
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .text-label {
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted-foreground);
+  }
+
+  .text-caption {
+    font-size: 0.6875rem;
+    line-height: 1.4;
+    color: var(--muted-foreground);
+  }
+
+  .text-numeric {
+    font-family: var(--font-display, "Fraunces", ui-serif, serif);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+}

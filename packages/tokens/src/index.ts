@@ -54,6 +54,13 @@ export const token = {
   labs: "var(--labs)",
   labsForeground: "var(--labs-foreground)",
 
+  // role identification (stable across themes)
+  roleEmployee: "var(--role-employee)",
+  roleManager: "var(--role-manager)",
+  roleHr: "var(--role-hr)",
+  roleAdmin: "var(--role-admin)",
+  roleFinance: "var(--role-finance)",
+
   // calendar
   calVacation: "var(--cal-vacation)",
   calSick: "var(--cal-sick)",

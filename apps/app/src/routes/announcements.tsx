@@ -24,14 +24,6 @@ import {
   DropdownMenuSeparator,
 } from "@pulse-hr/ui/primitives/dropdown-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@pulse-hr/ui/primitives/dialog";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -43,6 +35,10 @@ import {
 } from "@pulse-hr/ui/primitives/alert-dialog";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { ListLayout } from "@pulse-hr/ui/atoms/ListLayout";
+import { DataState } from "@pulse-hr/ui/atoms/DataState";
+import { useSimulatedLoading } from "@pulse-hr/ui/hooks/use-simulated-loading";
 import type { Announcement } from "@/lib/mock-data";
 import { announcementsTable, useAnnouncements } from "@/lib/tables/announcements";
 import { useFullName } from "@/lib/current-user";
@@ -59,16 +55,11 @@ function Announcements() {
   const posts = useAnnouncements();
   const [composeOpen, setComposeOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Announcement | null>(null);
-  const [loading, setLoading] = useState(true);
+  const loading = useSimulatedLoading(320);
   const [commentForRaw, setCommentForRaw] = useUrlParam("comment");
   const commentFor = commentForRaw || null;
   const setCommentFor = (v: string | null) => setCommentForRaw(v);
   const [commentText, setCommentText] = useState("");
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 320);
-    return () => clearTimeout(t);
-  }, []);
 
   const create = (data: { title: string; body: string; pinned: boolean }) => {
     announcementsTable.add({
@@ -110,47 +101,74 @@ function Announcements() {
   };
 
   const sorted = [...posts].sort((a, b) => Number(b.pinned) - Number(a.pinned));
+  const state = loading ? "loading" : sorted.length === 0 ? "empty" : "populated";
 
   return (
-    <div className="p-4 md:p-6 max-w-[900px] mx-auto fade-in">
-      <PageHeader
-        title="Announcements"
-        description="Company-wide updates from leadership and HR"
-        actions={
-          <Button size="sm" className="press-scale" onClick={() => setComposeOpen(true)}>
-            <Plus className="h-4 w-4 mr-1.5" />
-            New post
-          </Button>
-        }
-      />
-
-      {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="p-5 flex gap-3">
-              <div className="h-10 w-10 rounded-full shimmer" />
-              <div className="flex-1 space-y-2">
-                <div className="h-3 w-[40%] shimmer rounded" />
-                <div className="h-2.5 w-[60%] shimmer rounded" />
-                <div className="h-10 w-full shimmer rounded mt-2" />
-              </div>
-            </Card>
-          ))}
-        </div>
-      ) : sorted.length === 0 ? (
-        <EmptyState
-          tone="welcome"
-          icon={<Megaphone className="h-6 w-6" />}
-          title="No announcements yet"
-          description="Share something with the team to kick off the feed."
-          action={
-            <Button size="sm" onClick={() => setComposeOpen(true)}>
+    <ListLayout
+      width="narrow"
+      className="fade-in"
+      header={
+        <PageHeader
+          title="Announcements"
+          description="Company-wide updates from leadership and HR"
+          actions={
+            <Button size="sm" className="press-scale" onClick={() => setComposeOpen(true)}>
               <Plus className="h-4 w-4 mr-1.5" />
-              First post
+              New post
             </Button>
           }
         />
-      ) : (
+      }
+      sidePanel={
+        <SidePanel
+          open={composeOpen}
+          onClose={() => setComposeOpen(false)}
+          title="New announcement"
+        >
+          <div className="p-5">
+            <p className="text-caption mb-4">Visible to everyone in Acme Inc.</p>
+            <ComposeForm
+              onCancel={() => setComposeOpen(false)}
+              onSave={(d) => {
+                create(d);
+                setComposeOpen(false);
+              }}
+            />
+          </div>
+        </SidePanel>
+      }
+    >
+      <DataState
+        state={state}
+        loading={
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Card key={i} className="p-5 flex gap-3">
+                <div className="h-10 w-10 rounded-full shimmer" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 w-[40%] shimmer rounded" />
+                  <div className="h-2.5 w-[60%] shimmer rounded" />
+                  <div className="h-10 w-full shimmer rounded mt-2" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        }
+        empty={
+          <EmptyState
+            tone="welcome"
+            icon={<Megaphone className="h-6 w-6" />}
+            title="No announcements yet"
+            description="Share something with the team to kick off the feed."
+            action={
+              <Button size="sm" onClick={() => setComposeOpen(true)}>
+                <Plus className="h-4 w-4 mr-1.5" />
+                First post
+              </Button>
+            }
+          />
+        }
+      >
         <div className="space-y-3 stagger-in">
           {sorted.map((a) => {
             const reactions = a.reactions ?? 12;
@@ -266,23 +284,7 @@ function Announcements() {
             );
           })}
         </div>
-      )}
-
-      <Dialog open={composeOpen} onOpenChange={setComposeOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>New announcement</DialogTitle>
-            <DialogDescription>Visible to everyone in Acme Inc.</DialogDescription>
-          </DialogHeader>
-          <ComposeForm
-            onCancel={() => setComposeOpen(false)}
-            onSave={(d) => {
-              create(d);
-              setComposeOpen(false);
-            }}
-          />
-        </DialogContent>
-      </Dialog>
+      </DataState>
 
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
@@ -306,7 +308,7 @@ function Announcements() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </ListLayout>
   );
 }
 
@@ -351,7 +353,7 @@ function ComposeForm({
           Pin to top
         </label>
       </div>
-      <DialogFooter>
+      <div className="flex items-center justify-end gap-2 mt-6">
         <Button variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
@@ -362,7 +364,7 @@ function ComposeForm({
           <Send className="h-4 w-4 mr-1.5" />
           Publish
         </Button>
-      </DialogFooter>
+      </div>
     </>
   );
 }

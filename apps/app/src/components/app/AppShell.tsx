@@ -259,7 +259,10 @@ function AppShellInner() {
   }, []);
 
   return (
-    <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
+    <div
+      className="flex h-screen w-full bg-background text-foreground overflow-hidden"
+      style={{ ["--topbar-height" as string]: "3.5rem" }}
+    >
       {/* Sidebar — desktop only */}
       <aside
         className={cn(

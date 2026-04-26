@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
-  ArrowDownRight,
   Check,
   X,
   Clock,
@@ -17,6 +16,8 @@ import { Card } from "@pulse-hr/ui/primitives/card";
 import { Button } from "@pulse-hr/ui/primitives/button";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
+import { StatCard } from "@pulse-hr/ui/atoms/StatCard";
+import { DashboardLayout } from "@pulse-hr/ui/atoms/DashboardLayout";
 import { Heart, Gift, Focus as FocusIcon, Sparkles as SparkIcon } from "lucide-react";
 import { MomentsCard } from "@/components/app/MomentsCard";
 import { SwipeRow } from "@/components/app/SwipeRow";
@@ -41,21 +42,24 @@ function Dashboard() {
   const greeting = useGreeting();
 
   return (
-    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
-      <PageHeader
-        title={greeting}
-        description="Here's what needs your attention today."
-        actions={
-          <Button variant="outline" size="sm">
-            <Calendar className="h-4 w-4 mr-1.5" /> Today
-          </Button>
-        }
-      />
-
+    <DashboardLayout
+      className="fade-in"
+      header={
+        <PageHeader
+          title={greeting}
+          description="Here's what needs your attention today."
+          actions={
+            <Button variant="outline" size="sm">
+              <Calendar className="h-4 w-4 mr-1.5" /> Today
+            </Button>
+          }
+        />
+      }
+    >
       <CompanyProfileBanner />
 
       {/* Labs spotlight */}
-      <div className="mb-6 relative rounded-xl iridescent-border bg-gradient-to-br from-primary/[0.05] via-transparent to-transparent p-5 overflow-hidden">
+      <div className="relative rounded-xl iridescent-border bg-gradient-to-br from-primary/[0.05] via-transparent to-transparent p-5 overflow-hidden">
         <div className="absolute inset-0 opacity-[0.04] grid-bg pointer-events-none" aria-hidden />
         <div className="relative flex items-start justify-between gap-4 flex-wrap">
           <div className="min-w-0">
@@ -66,7 +70,7 @@ function Dashboard() {
               </span>
               <NewBadge />
             </div>
-            <div className="font-display text-xl leading-snug max-w-xl">
+            <div className="text-display max-w-xl">
               Five Labs features are live — ask Copilot with{" "}
               <kbd className="font-mono text-[11px] border rounded px-1.5 py-0.5 bg-background">
                 ⌘J
@@ -83,9 +87,10 @@ function Dashboard() {
       </div>
 
       {/* KPI cards — action centers */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <KpiCard
-          icon={<FileCheck2 className="h-4 w-4" />}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <StatCard
+          size="lg"
+          icon={<FileCheck2 />}
           label="Pending approvals"
           value={pendingLeaves.length + pendingExpenses.length}
           delta={`${pendingLeaves.length} leave • ${pendingExpenses.length} expense`}
@@ -94,38 +99,48 @@ function Dashboard() {
               to="/leave"
               className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
             >
-              Review now →
+              Review →
             </Link>
           }
         />
-        <KpiCard
-          icon={<Users className="h-4 w-4" />}
+        <StatCard
+          size="lg"
+          icon={<Users />}
           label="Headcount"
           value={employees.length}
-          delta="+2 this month"
-          trend="up"
+          delta={
+            <span className="inline-flex items-center gap-1">
+              <ArrowUpRight className="h-3 w-3" /> +2 this month
+            </span>
+          }
+          deltaTone="positive"
           action={
             <Link
               to="/people"
               className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
             >
-              View employees →
+              View →
             </Link>
           }
         />
-        <KpiCard
-          icon={<Clock className="h-4 w-4" />}
+        <StatCard
+          size="lg"
+          icon={<Clock />}
           label="Overtime hours"
           value="42h"
-          delta="+18% vs last week"
-          trend="up"
-          warn
+          delta={
+            <span className="inline-flex items-center gap-1">
+              <ArrowUpRight className="h-3 w-3" /> +18% vs last week
+            </span>
+          }
+          deltaTone="negative"
+          accent
           action={
             <Link
               to="/time"
               className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
             >
-              View details →
+              Details →
             </Link>
           }
         />
@@ -292,43 +307,7 @@ function Dashboard() {
           </div>
         </Card>
       </div>
-    </div>
-  );
-}
-
-function KpiCard({
-  icon,
-  label,
-  value,
-  delta,
-  action,
-  trend,
-  warn,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-  delta?: string;
-  action?: React.ReactNode;
-  trend?: "up" | "down";
-  warn?: boolean;
-}) {
-  return (
-    <Card className="p-5 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between mb-3">
-        <div
-          className={`h-8 w-8 rounded-md flex items-center justify-center ${warn ? "bg-warning/10 text-warning" : "bg-muted text-muted-foreground"}`}
-        >
-          {icon}
-        </div>
-        {trend === "up" && <ArrowUpRight className="h-4 w-4 text-success" />}
-        {trend === "down" && <ArrowDownRight className="h-4 w-4 text-destructive" />}
-      </div>
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="text-2xl font-semibold mt-0.5">{value}</div>
-      {delta && <div className="text-xs text-muted-foreground mt-1">{delta}</div>}
-      {action && <div className="mt-3 pt-3 border-t">{action}</div>}
-    </Card>
+    </DashboardLayout>
   );
 }
 
