@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowDownRight, AlertTriangle, MessageSquare } from "lucide-react";
 import { Button } from "@pulse-hr/ui/primitives/button";
@@ -20,26 +20,30 @@ interface RiskRow {
 
 export function RiskPanel({ rows }: RiskPanelProps) {
   const [askFor, setAskFor] = useState<RiskRow | null>(null);
-  const risks: RiskRow[] = rows
-    .map(({ employee, health }) => {
-      const reasons: string[] = [];
-      if (health.trend === "down") reasons.push("trending down");
-      if (health.dimensions.stress > 0.4) reasons.push("stress signals high");
-      if (health.dimensions.engagement < -0.2) reasons.push("engagement dipping");
-      if (health.score < 55) reasons.push("score below 55");
-      if (reasons.length === 0) return null;
-      const { topic, prompt } = riskPrompt(employee, health);
-      return {
-        employee,
-        health,
-        reason: reasons.slice(0, 2).join(" · "),
-        topic,
-        prompt,
-      };
-    })
-    .filter((x): x is RiskRow => x !== null)
-    .sort((a, b) => a.health.score - b.health.score)
-    .slice(0, 6);
+  const risks = useMemo<RiskRow[]>(
+    () =>
+      rows
+        .map(({ employee, health }) => {
+          const reasons: string[] = [];
+          if (health.trend === "down") reasons.push("trending down");
+          if (health.dimensions.stress > 0.4) reasons.push("stress signals high");
+          if (health.dimensions.engagement < -0.2) reasons.push("engagement dipping");
+          if (health.score < 55) reasons.push("score below 55");
+          if (reasons.length === 0) return null;
+          const { topic, prompt } = riskPrompt(employee, health);
+          return {
+            employee,
+            health,
+            reason: reasons.slice(0, 2).join(" · "),
+            topic,
+            prompt,
+          };
+        })
+        .filter((x): x is RiskRow => x !== null)
+        .sort((a, b) => a.health.score - b.health.score)
+        .slice(0, 6),
+    [rows],
+  );
 
   return (
     <section className="rounded-xl border bg-card p-4">

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { cn } from "@/lib/utils";
 
 export interface RadarDimensions {
@@ -14,7 +15,17 @@ const AXES: { key: keyof RadarDimensions; label: string; invert?: boolean }[] = 
   { key: "stress", label: "Stress", invert: true },
 ];
 
-export function SentimentRadar({
+export const SentimentRadar = memo(SentimentRadarImpl, (a, b) =>
+  a.size === b.size &&
+  a.showLabels === b.showLabels &&
+  a.className === b.className &&
+  a.values.energy === b.values.energy &&
+  a.values.stress === b.values.stress &&
+  a.values.engagement === b.values.engagement &&
+  a.values.alignment === b.values.alignment,
+);
+
+function SentimentRadarImpl({
   values,
   size = 160,
   showLabels = true,

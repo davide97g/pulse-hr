@@ -29,6 +29,25 @@ import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { parseCommand, type ParsedIntent } from "@/lib/nlp";
 import { cn } from "@/lib/utils";
 
+const NAV_ITEMS: { label: string; to: string; icon: typeof User }[] = [
+  { label: "Dashboard", to: "/", icon: Settings },
+  { label: "Employees", to: "/people", icon: Users },
+  { label: "Time & attendance", to: "/time", icon: Clock },
+  { label: "Leave", to: "/leave", icon: Calendar },
+  { label: "Expenses", to: "/expenses", icon: Receipt },
+  { label: "Documents", to: "/documents", icon: FileText },
+];
+
+const ACTIONS = [
+  { label: "Add employee", id: "add-employee", icon: User },
+  { label: "Request leave", id: "request-leave", icon: Calendar },
+  { label: "Submit expense", id: "submit-expense", icon: Receipt },
+  { label: "Post a job", id: "post-job", icon: Briefcase },
+] as const;
+
+const TOUR_KEYWORDS = ["tour", "guide", "help", "walkthrough"];
+const PROPOSAL_KEYWORDS = "new proposal bug idea improvement feedback";
+
 export function CommandPalette({
   open,
   onOpenChange,
@@ -46,12 +65,19 @@ export function CommandPalette({
     if (!open) setQ("");
   }, [open]);
 
-  const qLower = q.toLowerCase();
-  const queryHintsTours =
-    !q || ["tour", "guide", "help", "walkthrough"].some((k) => qLower.includes(k));
-  const tourMatches = TOURS.filter(
-    (t) => !q || `${t.name} ${t.summary} ${t.workflow}`.toLowerCase().includes(qLower),
-  ).slice(0, 4);
+  const qLower = useMemo(() => q.toLowerCase(), [q]);
+
+  const queryHintsTours = useMemo(
+    () => !q || TOUR_KEYWORDS.some((k) => qLower.includes(k)),
+    [q, qLower],
+  );
+  const tourMatches = useMemo(
+    () =>
+      TOURS.filter(
+        (t) => !q || `${t.name} ${t.summary} ${t.workflow}`.toLowerCase().includes(qLower),
+      ).slice(0, 4),
+    [q, qLower],
+  );
 
   const go = (to: string) => {
     onOpenChange(false);
@@ -62,33 +88,31 @@ export function CommandPalette({
     openAction(id);
   };
 
-  const empMatches = q
-    ? employees
-        .filter(
-          (e) =>
-            e.name.toLowerCase().includes(q.toLowerCase()) ||
-            e.role.toLowerCase().includes(q.toLowerCase()),
-        )
-        .slice(0, 5)
-    : [];
+  const empMatches = useMemo(
+    () =>
+      q
+        ? employees
+            .filter(
+              (e) =>
+                e.name.toLowerCase().includes(qLower) ||
+                e.role.toLowerCase().includes(qLower),
+            )
+            .slice(0, 5)
+        : [],
+    [q, qLower],
+  );
 
-  const navItems = [
-    { label: "Dashboard", to: "/", icon: Settings },
-    { label: "Employees", to: "/people", icon: Users },
-    { label: "Time & attendance", to: "/time", icon: Clock },
-    { label: "Leave", to: "/leave", icon: Calendar },
-    { label: "Expenses", to: "/expenses", icon: Receipt },
-    { label: "Documents", to: "/documents", icon: FileText },
-  ].filter((n) => !q || n.label.toLowerCase().includes(q.toLowerCase()));
+  const navItems = useMemo(
+    () => NAV_ITEMS.filter((n) => !q || n.label.toLowerCase().includes(qLower)),
+    [q, qLower],
+  );
 
-  const actions = [
-    { label: "Add employee", id: "add-employee" as const, icon: User },
-    { label: "Request leave", id: "request-leave" as const, icon: Calendar },
-    { label: "Submit expense", id: "submit-expense" as const, icon: Receipt },
-    { label: "Post a job", id: "post-job" as const, icon: Briefcase },
-  ].filter((a) => !q || a.label.toLowerCase().includes(q.toLowerCase()));
+  const actions = useMemo(
+    () => ACTIONS.filter((a) => !q || a.label.toLowerCase().includes(qLower)),
+    [q, qLower],
+  );
 
-  const proposalMatches = !q || "new proposal bug idea improvement feedback".includes(qLower);
+  const proposalMatches = !q || PROPOSAL_KEYWORDS.includes(qLower);
 
   const intents = useMemo(() => (q.length > 2 ? parseCommand(q).slice(0, 3) : []), [q]);
 

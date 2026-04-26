@@ -1,7 +1,7 @@
 import { useAuth, useClerk, useUser } from "@clerk/react";
 import { useLoginWall } from "@/components/app/LoginWall";
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { useSidebarFeatures } from "@/components/app/SidebarFeaturesContext";
 import { SidebarRouteGuard } from "@/components/app/SidebarRouteGuard";
@@ -221,6 +221,9 @@ function AppShellInner() {
     setMobileNavOpen(false);
   }, [location.pathname]);
 
+  const handlersRef = useRef({ openProposal, appShellNav });
+  handlersRef.current = { openProposal, appShellNav };
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === "k") {
@@ -237,11 +240,11 @@ function AppShellInner() {
       }
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "o") {
         e.preventDefault();
-        openProposal();
+        handlersRef.current.openProposal();
       }
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "m") {
         e.preventDefault();
-        appShellNav({ to: "/moments" });
+        handlersRef.current.appShellNav({ to: "/moments" });
       }
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "b") {
         e.preventDefault();
@@ -250,7 +253,7 @@ function AppShellInner() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [openProposal, appShellNav]);
+  }, []);
 
   useEffect(() => {
     return voiceBus.on((ev) => {

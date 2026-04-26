@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { formatDistanceToNow } from "date-fns";
 import { ArrowUpRight, ArrowDownRight, Minus, Lock, MessageSquare } from "lucide-react";
@@ -22,15 +22,23 @@ import {
 
 export function ManagerLogView() {
   const asks = useManagerAsks();
-  const rows = employees.map((e) => ({
-    employee: e,
-    health: employeeLogHealth.find((h) => h.employeeId === e.id)!,
-    openAsks: asks.filter((a) => a.employeeId === e.id && a.status === "pending").length,
-  }));
   const [askFor, setAskFor] = useState<string | null>(null);
 
-  const allHealth = rows.map((r) => r.health);
-  const totalOpen = asks.filter((a) => a.status === "pending").length;
+  const rows = useMemo(
+    () =>
+      employees.map((e) => ({
+        employee: e,
+        health: employeeLogHealth.find((h) => h.employeeId === e.id)!,
+        openAsks: asks.filter((a) => a.employeeId === e.id && a.status === "pending").length,
+      })),
+    [asks],
+  );
+
+  const allHealth = useMemo(() => rows.map((r) => r.health), [rows]);
+  const totalOpen = useMemo(
+    () => asks.filter((a) => a.status === "pending").length,
+    [asks],
+  );
 
   return (
     <TooltipProvider delayDuration={150}>
