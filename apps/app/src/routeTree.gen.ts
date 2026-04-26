@@ -42,6 +42,7 @@ import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as ActivitiesRouteImport } from './routes/activities'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
+import { Route as LogIndexRouteImport } from './routes/log.index'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ProposalIdRouteImport } from './routes/proposal.$id'
@@ -226,6 +227,11 @@ const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
   path: '/projects/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LogIndexRoute = LogIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LogRoute,
+} as any)
 const DocsIndexRoute = DocsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -367,6 +373,7 @@ export interface FileRoutesByFullPath {
   '/proposal/$id': typeof ProposalIdRoute
   '/clients/': typeof ClientsIndexRoute
   '/docs/': typeof DocsIndexRoute
+  '/log/': typeof LogIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
   '/projects/$projectId/plans/$planId': typeof ProjectsProjectIdPlansPlanIdRoute
@@ -385,7 +392,6 @@ export interface FileRoutesByTo {
   '/growth': typeof GrowthRoute
   '/kudos': typeof KudosRoute
   '/leave': typeof LeaveRoute
-  '/log': typeof LogRouteWithChildren
   '/login': typeof LoginRoute
   '/marketplace': typeof MarketplaceRoute
   '/moments': typeof MomentsRoute
@@ -418,6 +424,7 @@ export interface FileRoutesByTo {
   '/proposal/$id': typeof ProposalIdRoute
   '/clients': typeof ClientsIndexRoute
   '/docs': typeof DocsIndexRoute
+  '/log': typeof LogIndexRoute
   '/projects': typeof ProjectsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
   '/projects/$projectId/plans/$planId': typeof ProjectsProjectIdPlansPlanIdRoute
@@ -472,6 +479,7 @@ export interface FileRoutesById {
   '/proposal/$id': typeof ProposalIdRoute
   '/clients/': typeof ClientsIndexRoute
   '/docs/': typeof DocsIndexRoute
+  '/log/': typeof LogIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
   '/projects/$projectId/plans/$planId': typeof ProjectsProjectIdPlansPlanIdRoute
@@ -527,6 +535,7 @@ export interface FileRouteTypes {
     | '/proposal/$id'
     | '/clients/'
     | '/docs/'
+    | '/log/'
     | '/projects/'
     | '/offices/$officeId/$roomId'
     | '/projects/$projectId/plans/$planId'
@@ -545,7 +554,6 @@ export interface FileRouteTypes {
     | '/growth'
     | '/kudos'
     | '/leave'
-    | '/log'
     | '/login'
     | '/marketplace'
     | '/moments'
@@ -578,6 +586,7 @@ export interface FileRouteTypes {
     | '/proposal/$id'
     | '/clients'
     | '/docs'
+    | '/log'
     | '/projects'
     | '/offices/$officeId/$roomId'
     | '/projects/$projectId/plans/$planId'
@@ -631,6 +640,7 @@ export interface FileRouteTypes {
     | '/proposal/$id'
     | '/clients/'
     | '/docs/'
+    | '/log/'
     | '/projects/'
     | '/offices/$officeId/$roomId'
     | '/projects/$projectId/plans/$planId'
@@ -910,6 +920,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/log/': {
+      id: '/log/'
+      path: '/'
+      fullPath: '/log/'
+      preLoaderRoute: typeof LogIndexRouteImport
+      parentRoute: typeof LogRoute
+    }
     '/docs/': {
       id: '/docs/'
       path: '/'
@@ -1075,11 +1092,13 @@ const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
 interface LogRouteChildren {
   LogEmployeeIdRoute: typeof LogEmployeeIdRoute
   LogRecapRoute: typeof LogRecapRoute
+  LogIndexRoute: typeof LogIndexRoute
 }
 
 const LogRouteChildren: LogRouteChildren = {
   LogEmployeeIdRoute: LogEmployeeIdRoute,
   LogRecapRoute: LogRecapRoute,
+  LogIndexRoute: LogIndexRoute,
 }
 
 const LogRouteWithChildren = LogRoute._addFileChildren(LogRouteChildren)
