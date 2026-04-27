@@ -52,6 +52,8 @@ import { PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
+import { FileDown } from "lucide-react";
 import { type Doc } from "@/lib/mock-data";
 import { docsTable, useDocs } from "@/lib/tables/docs";
 import { useFullName } from "@/lib/current-user";
@@ -105,6 +107,43 @@ function Documents() {
     toast("Document deleted", {
       action: { label: "Undo", onClick: () => docsTable.add(d) },
     });
+  };
+
+  const bulk = useBulkSelect(filtered);
+
+  const bulkDelete = () => {
+    const targets = bulk.selectedRows;
+    if (targets.length === 0) return;
+    targets.forEach((d) => docsTable.remove(d.id));
+    bulk.clear();
+    toast(`${targets.length} document${targets.length === 1 ? "" : "s"} deleted`, {
+      action: {
+        label: "Undo",
+        onClick: () => targets.forEach((d) => docsTable.add(d)),
+      },
+    });
+  };
+
+  const bulkDownload = () => {
+    const rows = bulk.selectedRows;
+    if (rows.length === 0) return;
+    // TODO: zip generation — bundles a single text manifest for now
+    const manifest = rows
+      .map(
+        (d) =>
+          `Pulse HR document\n\nName: ${d.name}\nFolder: ${d.folder}\nOwner: ${d.owner}\nUpdated: ${d.updated}\nStatus: ${d.status}\n`,
+      )
+      .join("\n---\n\n");
+    const blob = new Blob([manifest], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `documents-${rows.length}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`Downloaded ${rows.length} document${rows.length === 1 ? "" : "s"}`);
   };
 
   return (
@@ -210,6 +249,13 @@ function Documents() {
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
+                <th className="w-10 px-3 py-2.5">
+                  <HeaderCheckbox
+                    allSelected={bulk.allSelected}
+                    someSelected={bulk.someSelected}
+                    onToggle={() => bulk.toggleAll(filtered)}
+                  />
+                </th>
                 <th className="text-left font-medium px-4 py-2.5">Name</th>
                 <th className="text-left font-medium px-4 py-2.5">Folder</th>
                 <th className="text-left font-medium px-4 py-2.5">Size</th>
@@ -226,6 +272,13 @@ function Documents() {
                   className="border-t hover:bg-muted/40 cursor-pointer group transition-colors"
                   onClick={() => setSelected(d)}
                 >
+                  <td className="px-3 py-2.5" onClick={(ev) => ev.stopPropagation()}>
+                    <RowCheckbox
+                      checked={bulk.isSelected(d.id)}
+                      onChange={() => bulk.toggle(d.id)}
+                      label={`Select ${d.name}`}
+                    />
+                  </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2.5">
                       <FileText className="h-4 w-4 text-muted-foreground" />
@@ -315,6 +368,52 @@ function Documents() {
             </tbody>
           </table>
         )}
+        <BulkBar
+          count={bulk.count}
+          onClear={bulk.clear}
+          noun="document"
+          actions={[
+            {
+              label: "Download",
+              icon: <Download className="h-3.5 w-3.5" />,
+              onClick: bulkDownload,
+            },
+            {
+              label: "Export CSV",
+              icon: <FileDown className="h-3.5 w-3.5" />,
+              onClick: () => {
+                const rows = bulk.selectedRows;
+                const cols = ["id", "name", "folder", "size", "owner", "updated", "status"];
+                const esc = (v: unknown) => {
+                  const s = String(v ?? "");
+                  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+                };
+                const body = [
+                  cols.join(","),
+                  ...rows.map((r) =>
+                    cols.map((c) => esc(r[c as keyof Doc])).join(","),
+                  ),
+                ].join("\n");
+                const blob = new Blob([body], { type: "text/csv;charset=utf-8" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `documents-${rows.length}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                toast.success(`Exported ${rows.length} row${rows.length === 1 ? "" : "s"}`);
+              },
+            },
+            {
+              label: "Delete",
+              icon: <Trash2 className="h-3.5 w-3.5" />,
+              onClick: bulkDelete,
+              tone: "destructive",
+            },
+          ]}
+        />
       </Card>
 
       <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>

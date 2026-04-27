@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Upload, Check, X, Receipt, Trash2, MoreHorizontal } from "lucide-react";
+import { Plus, Upload, Check, X, Receipt, Trash2, MoreHorizontal, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Button } from "@pulse-hr/ui/primitives/button";
@@ -29,6 +29,7 @@ import { DataState } from "@pulse-hr/ui/atoms/DataState";
 import { StatCard } from "@pulse-hr/ui/atoms/StatCard";
 import { useSimulatedLoading } from "@pulse-hr/ui/hooks/use-simulated-loading";
 import { useQuickAction } from "@/components/app/QuickActions";
+import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
 import { type Expense } from "@/lib/mock-data";
 import { expensesTable, useExpenses } from "@/lib/tables/expenses";
 import { employeeById } from "@/lib/tables/employees";
@@ -66,6 +67,55 @@ function Expenses() {
     toast("Expense deleted", {
       action: { label: "Undo", onClick: () => expensesTable.add(e) },
     });
+  };
+
+  const bulk = useBulkSelect(list);
+
+  const bulkDecide = (status: Expense["status"]) => {
+    const targets = bulk.selectedRows.filter((e) => e.status !== status);
+    if (targets.length === 0) {
+      toast("Nothing to update", { description: `Already ${status}.` });
+      return;
+    }
+    const snaps = targets.map((e) => ({ id: e.id, prior: e.status }));
+    targets.forEach((e) => expensesTable.update(e.id, { status }));
+    bulk.clear();
+    toast(
+      status === "approved"
+        ? `Approved ${targets.length} expense${targets.length === 1 ? "" : "s"}`
+        : `Rejected ${targets.length} expense${targets.length === 1 ? "" : "s"}`,
+      {
+        action: {
+          label: "Undo",
+          onClick: () =>
+            snaps.forEach((s) => expensesTable.update(s.id, { status: s.prior })),
+        },
+      },
+    );
+  };
+
+  const bulkExport = () => {
+    const rows = bulk.selectedRows;
+    if (rows.length === 0) return;
+    const cols = ["id", "description", "category", "amount", "currency", "date", "status"];
+    const esc = (v: unknown) => {
+      const s = String(v ?? "");
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const body = [
+      cols.join(","),
+      ...rows.map((r) => cols.map((c) => esc(r[c as keyof Expense])).join(",")),
+    ].join("\n");
+    const blob = new Blob([body], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `expenses-${rows.length}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} row${rows.length === 1 ? "" : "s"}`);
   };
 
   useEffect(() => {
@@ -220,6 +270,13 @@ function Expenses() {
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
+                <th className="w-10 px-3 py-2.5">
+                  <HeaderCheckbox
+                    allSelected={bulk.allSelected}
+                    someSelected={bulk.someSelected}
+                    onToggle={() => bulk.toggleAll(list)}
+                  />
+                </th>
                 <th className="text-left font-medium px-4 py-2.5">Description</th>
                 <th className="text-left font-medium px-4 py-2.5">Submitted by</th>
                 <th className="text-left font-medium px-4 py-2.5">Category</th>
@@ -253,6 +310,13 @@ function Expenses() {
                     }
                     className="border-t hover:bg-muted/40 cursor-pointer group transition-colors focus:outline-none focus-visible:bg-primary/[0.04] focus-visible:ring-2 focus-visible:ring-primary/30"
                   >
+                    <td className="px-3 py-2.5" onClick={(ev) => ev.stopPropagation()}>
+                      <RowCheckbox
+                        checked={bulk.isSelected(x.id)}
+                        onChange={() => bulk.toggle(x.id)}
+                        label={`Select ${x.description}`}
+                      />
+                    </td>
                     <td className="px-4 py-2.5 font-medium">{x.description}</td>
                     <td className="px-4 py-2.5">
                       <div className="flex items-center gap-2">
@@ -313,6 +377,30 @@ function Expenses() {
             </tbody>
           </table>
         </DataState>
+        <BulkBar
+          count={bulk.count}
+          onClear={bulk.clear}
+          noun="expense"
+          actions={[
+            {
+              label: "Approve",
+              icon: <Check className="h-3.5 w-3.5" />,
+              onClick: () => bulkDecide("approved"),
+              tone: "success",
+            },
+            {
+              label: "Reject",
+              icon: <X className="h-3.5 w-3.5" />,
+              onClick: () => bulkDecide("rejected"),
+              tone: "destructive",
+            },
+            {
+              label: "Export CSV",
+              icon: <FileDown className="h-3.5 w-3.5" />,
+              onClick: bulkExport,
+            },
+          ]}
+        />
       </Card>
 
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>

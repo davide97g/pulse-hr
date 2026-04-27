@@ -59,6 +59,8 @@ import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
+import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
+import { Archive, FileDown } from "lucide-react";
 import { type Employee, departments } from "@/lib/mock-data";
 import { employeesTable, employeeById, useEmployees } from "@/lib/tables/employees";
 import { useSavedViews } from "@/lib/useSavedViews";
@@ -130,6 +132,49 @@ function People() {
       ),
     [q, dept, statusFilter, typeFilter, list],
   );
+
+  const bulk = useBulkSelect(filtered);
+
+  const bulkArchive = () => {
+    const targets = bulk.selectedRows.filter((e) => e.status !== "offboarding");
+    if (targets.length === 0) {
+      toast("Nothing to archive", { description: "All selected are already offboarding." });
+      return;
+    }
+    const snapshots = targets.map((e) => ({ id: e.id, prior: e.status }));
+    targets.forEach((e) => employeesTable.update(e.id, { status: "offboarding" }));
+    bulk.clear();
+    toast(`Started offboarding for ${targets.length} employee${targets.length === 1 ? "" : "s"}`, {
+      action: {
+        label: "Undo",
+        onClick: () => snapshots.forEach((s) => employeesTable.update(s.id, { status: s.prior })),
+      },
+    });
+  };
+
+  const bulkExport = () => {
+    const rows = bulk.selectedRows;
+    if (rows.length === 0) return;
+    const cols = ["id", "name", "email", "role", "department", "location", "status", "joinDate"];
+    const esc = (v: unknown) => {
+      const s = String(v ?? "");
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const body = [
+      cols.join(","),
+      ...rows.map((r) => cols.map((c) => esc(r[c as keyof Employee])).join(",")),
+    ].join("\n");
+    const blob = new Blob([body], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `employees-${rows.length}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} row${rows.length === 1 ? "" : "s"}`);
+  };
 
   const remove = (e: Employee) => {
     employeesTable.remove(e.id);
@@ -271,6 +316,13 @@ function People() {
               <table className="w-full text-sm">
                 <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
+                    <th className="w-10 px-3 py-2.5">
+                      <HeaderCheckbox
+                        allSelected={bulk.allSelected}
+                        someSelected={bulk.someSelected}
+                        onToggle={() => bulk.toggleAll(filtered)}
+                      />
+                    </th>
                     <th className="text-left font-medium px-4 py-2.5">Employee</th>
                     <th className="text-left font-medium px-4 py-2.5">Department</th>
                     <th className="text-left font-medium px-4 py-2.5">Location</th>
@@ -286,6 +338,13 @@ function People() {
                       onClick={() => setSelected(e)}
                       className="border-t cursor-pointer hover:bg-muted/40 transition-colors group"
                     >
+                      <td className="px-3 py-2.5">
+                        <RowCheckbox
+                          checked={bulk.isSelected(e.id)}
+                          onChange={() => bulk.toggle(e.id)}
+                          label={`Select ${e.name}`}
+                        />
+                      </td>
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-3">
                           <BirthdayHalo
@@ -355,6 +414,23 @@ function People() {
                 </tbody>
               </table>
             )}
+            <BulkBar
+              count={bulk.count}
+              onClear={bulk.clear}
+              noun="employee"
+              actions={[
+                {
+                  label: "Archive",
+                  icon: <Archive className="h-3.5 w-3.5" />,
+                  onClick: bulkArchive,
+                },
+                {
+                  label: "Export CSV",
+                  icon: <FileDown className="h-3.5 w-3.5" />,
+                  onClick: bulkExport,
+                },
+              ]}
+            />
           </Card>
         </TabsContent>
 

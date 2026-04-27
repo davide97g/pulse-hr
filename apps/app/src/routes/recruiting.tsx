@@ -50,6 +50,8 @@ import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { SkeletonCards } from "@pulse-hr/ui/atoms/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
+import { useBulkSelect, BulkBar, RowCheckbox } from "@/components/app/bulk";
+import { Ban as BanIcon, FileDown } from "lucide-react";
 import { type Candidate, type JobPosting, type Scorecard } from "@/lib/mock-data";
 import { candidatesTable, useCandidates } from "@/lib/tables/candidates";
 import { jobPostingsTable, useJobPostings } from "@/lib/tables/jobPostings";
@@ -89,6 +91,44 @@ function Recruiting() {
   const [tab, setTab] = useUrlParam("tab", "pipeline");
   const [scorecardOpen, setScorecardOpen] = useState(false);
   const [scorecardDraft, setScorecardDraft] = useState({ title: "", criteria: "", score: 4 });
+  const candBulk = useBulkSelect(candidates);
+
+  const bulkRejectCandidates = () => {
+    const targets = candBulk.selectedRows;
+    if (targets.length === 0) return;
+    targets.forEach((c) => candidatesTable.remove(c.id));
+    candBulk.clear();
+    toast(`${targets.length} candidate${targets.length === 1 ? "" : "s"} rejected`, {
+      action: {
+        label: "Undo",
+        onClick: () => targets.forEach((c) => candidatesTable.add(c)),
+      },
+    });
+  };
+
+  const bulkExportCandidates = () => {
+    const rows = candBulk.selectedRows;
+    if (rows.length === 0) return;
+    const cols = ["id", "name", "role", "stage", "appliedDate", "rating"];
+    const esc = (v: unknown) => {
+      const s = String(v ?? "");
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const body = [
+      cols.join(","),
+      ...rows.map((r) => cols.map((c) => esc(r[c as keyof Candidate])).join(",")),
+    ].join("\n");
+    const blob = new Blob([body], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `candidates-${rows.length}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} row${rows.length === 1 ? "" : "s"}`);
+  };
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 420);
@@ -248,7 +288,10 @@ function Recruiting() {
                             <Card
                               key={c.id}
                               onClick={() => setSelected(c)}
-                              className="p-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all press-scale"
+                              className={cn(
+                                "p-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all press-scale group",
+                                candBulk.isSelected(c.id) && "ring-2 ring-primary/50",
+                              )}
                             >
                               <div className="flex items-center gap-2.5 mb-2">
                                 <Avatar initials={c.initials} color={c.avatarColor} size={28} />
@@ -258,6 +301,11 @@ function Recruiting() {
                                     {c.role}
                                   </div>
                                 </div>
+                                <RowCheckbox
+                                  checked={candBulk.isSelected(c.id)}
+                                  onChange={() => candBulk.toggle(c.id)}
+                                  label={`Select ${c.name}`}
+                                />
                               </div>
                               <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                                 <div className="flex">
@@ -595,6 +643,26 @@ function Recruiting() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <BulkBar
+        count={candBulk.count}
+        onClear={candBulk.clear}
+        noun="candidate"
+        actions={[
+          {
+            label: "Reject",
+            icon: <BanIcon className="h-3.5 w-3.5" />,
+            onClick: bulkRejectCandidates,
+            tone: "destructive",
+          },
+          {
+            label: "Export CSV",
+            icon: <FileDown className="h-3.5 w-3.5" />,
+            onClick: bulkExportCandidates,
+          },
+        ]}
+        className="-mx-4 md:-mx-6"
+      />
     </div>
   );
 }
