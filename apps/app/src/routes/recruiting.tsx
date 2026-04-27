@@ -92,6 +92,37 @@ function Recruiting() {
   const [scorecardOpen, setScorecardOpen] = useState(false);
   const [scorecardDraft, setScorecardDraft] = useState({ title: "", criteria: "", score: 4 });
   const candBulk = useBulkSelect(candidates);
+  const jobBulk = useBulkSelect(jobs);
+
+  const bulkSetJobStatus = (status: JobPosting["status"]) => {
+    const targets = jobBulk.selectedRows.filter((j) => j.status !== status);
+    if (targets.length === 0) {
+      toast(`Already ${status}`);
+      return;
+    }
+    const snaps = targets.map((j) => ({ id: j.id, prior: j.status }));
+    targets.forEach((j) => jobPostingsTable.update(j.id, { status }));
+    jobBulk.clear();
+    toast(`${targets.length} job${targets.length === 1 ? "" : "s"} marked ${status}`, {
+      action: {
+        label: "Undo",
+        onClick: () => snaps.forEach((s) => jobPostingsTable.update(s.id, { status: s.prior })),
+      },
+    });
+  };
+
+  const bulkDeleteJobs = () => {
+    const targets = jobBulk.selectedRows;
+    if (targets.length === 0) return;
+    targets.forEach((j) => jobPostingsTable.remove(j.id));
+    jobBulk.clear();
+    toast(`${targets.length} job${targets.length === 1 ? "" : "s"} deleted`, {
+      action: {
+        label: "Undo",
+        onClick: () => targets.forEach((j) => jobPostingsTable.add(j)),
+      },
+    });
+  };
 
   const bulkRejectCandidates = () => {
     const targets = candBulk.selectedRows;
@@ -349,9 +380,21 @@ function Recruiting() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 stagger-in">
               {jobs.map((j) => (
-                <Card key={j.id} className="p-5 press-scale hover:shadow-md transition-all">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="min-w-0">
+                <Card
+                  key={j.id}
+                  className={cn(
+                    "p-5 press-scale hover:shadow-md transition-all",
+                    jobBulk.isSelected(j.id) && "ring-2 ring-primary/50",
+                  )}
+                >
+                  <div className="flex items-start justify-between mb-2 gap-2">
+                    <RowCheckbox
+                      checked={jobBulk.isSelected(j.id)}
+                      onChange={() => jobBulk.toggle(j.id)}
+                      label={`Select ${j.title}`}
+                      visibleWhen="always"
+                    />
+                    <div className="min-w-0 flex-1">
                       <div className="font-semibold truncate">{j.title}</div>
                       <div className="text-xs text-muted-foreground">
                         {j.department} · {j.location}
@@ -644,25 +687,53 @@ function Recruiting() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <BulkBar
-        count={candBulk.count}
-        onClear={candBulk.clear}
-        noun="candidate"
-        actions={[
-          {
-            label: "Reject",
-            icon: <BanIcon className="h-3.5 w-3.5" />,
-            onClick: bulkRejectCandidates,
-            tone: "destructive",
-          },
-          {
-            label: "Export CSV",
-            icon: <FileDown className="h-3.5 w-3.5" />,
-            onClick: bulkExportCandidates,
-          },
-        ]}
-        className="-mx-4 md:-mx-6"
-      />
+      {tab === "pipeline" && (
+        <BulkBar
+          count={candBulk.count}
+          onClear={candBulk.clear}
+          noun="candidate"
+          actions={[
+            {
+              label: "Reject",
+              icon: <BanIcon className="h-3.5 w-3.5" />,
+              onClick: bulkRejectCandidates,
+              tone: "destructive",
+            },
+            {
+              label: "Export CSV",
+              icon: <FileDown className="h-3.5 w-3.5" />,
+              onClick: bulkExportCandidates,
+            },
+          ]}
+          className="-mx-4 md:-mx-6"
+        />
+      )}
+      {tab === "jobs" && (
+        <BulkBar
+          count={jobBulk.count}
+          onClear={jobBulk.clear}
+          noun="job"
+          actions={[
+            {
+              label: "Open",
+              icon: <Plus className="h-3.5 w-3.5" />,
+              onClick: () => bulkSetJobStatus("open"),
+            },
+            {
+              label: "Close",
+              icon: <BanIcon className="h-3.5 w-3.5" />,
+              onClick: () => bulkSetJobStatus("closed"),
+            },
+            {
+              label: "Delete",
+              icon: <Trash2 className="h-3.5 w-3.5" />,
+              onClick: bulkDeleteJobs,
+              tone: "destructive",
+            },
+          ]}
+          className="-mx-4 md:-mx-6"
+        />
+      )}
     </div>
   );
 }

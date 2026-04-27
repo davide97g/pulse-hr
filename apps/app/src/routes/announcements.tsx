@@ -39,6 +39,7 @@ import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { ListLayout } from "@pulse-hr/ui/atoms/ListLayout";
 import { DataState } from "@pulse-hr/ui/atoms/DataState";
 import { useSimulatedLoading } from "@pulse-hr/ui/hooks/use-simulated-loading";
+import { useBulkSelect, BulkBar, RowCheckbox } from "@/components/app/bulk";
 import type { Announcement } from "@/lib/mock-data";
 import { announcementsTable, useAnnouncements } from "@/lib/tables/announcements";
 import { useFullName } from "@/lib/current-user";
@@ -102,6 +103,36 @@ function Announcements() {
 
   const sorted = [...posts].sort((a, b) => Number(b.pinned) - Number(a.pinned));
   const state = loading ? "loading" : sorted.length === 0 ? "empty" : "populated";
+
+  const bulk = useBulkSelect(sorted);
+
+  const bulkSetPinned = (pinned: boolean) => {
+    const targets = bulk.selectedRows.filter((p) => p.pinned !== pinned);
+    if (targets.length === 0) {
+      toast(`Already ${pinned ? "pinned" : "unpinned"}`);
+      return;
+    }
+    targets.forEach((p) => announcementsTable.update(p.id, { pinned }));
+    bulk.clear();
+    toast.success(
+      `${pinned ? "Pinned" : "Unpinned"} ${targets.length} announcement${
+        targets.length === 1 ? "" : "s"
+      }`,
+    );
+  };
+
+  const bulkDelete = () => {
+    const targets = bulk.selectedRows;
+    if (targets.length === 0) return;
+    targets.forEach((p) => announcementsTable.remove(p.id));
+    bulk.clear();
+    toast(`${targets.length} announcement${targets.length === 1 ? "" : "s"} deleted`, {
+      action: {
+        label: "Undo",
+        onClick: () => targets.forEach((p) => announcementsTable.add(p)),
+      },
+    });
+  };
 
   return (
     <ListLayout
@@ -177,9 +208,17 @@ function Announcements() {
             return (
               <Card
                 key={a.id}
-                className={`p-5 hover:shadow-md transition-shadow ${a.pinned ? "border-warning/40 bg-warning/[0.03]" : ""}`}
+                className={`p-5 hover:shadow-md transition-shadow group ${
+                  a.pinned ? "border-warning/40 bg-warning/[0.03]" : ""
+                } ${bulk.isSelected(a.id) ? "ring-2 ring-primary/50" : ""}`}
               >
                 <div className="flex items-start gap-3">
+                  <RowCheckbox
+                    checked={bulk.isSelected(a.id)}
+                    onChange={() => bulk.toggle(a.id)}
+                    label={`Select ${a.title}`}
+                    className="mt-1"
+                  />
                   <Avatar
                     initials={a.author
                       .split(" ")
@@ -318,6 +357,30 @@ function Announcements() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <BulkBar
+        count={bulk.count}
+        onClear={bulk.clear}
+        noun="announcement"
+        actions={[
+          {
+            label: "Pin",
+            icon: <Pin className="h-3.5 w-3.5" />,
+            onClick: () => bulkSetPinned(true),
+          },
+          {
+            label: "Unpin",
+            icon: <Pin className="h-3.5 w-3.5" />,
+            onClick: () => bulkSetPinned(false),
+          },
+          {
+            label: "Delete",
+            icon: <Trash2 className="h-3.5 w-3.5" />,
+            onClick: bulkDelete,
+            tone: "destructive",
+          },
+        ]}
+      />
     </ListLayout>
   );
 }

@@ -9,6 +9,7 @@ import {
   TrendingUp,
   AlertTriangle,
   Briefcase,
+  FileDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@pulse-hr/ui/primitives/card";
@@ -37,6 +38,7 @@ import { employeeById, primaryContact, type Client } from "@/lib/mock-data";
 import { clientsTable, useClients } from "@/lib/tables/clients";
 import { commesseTable, useCommesse } from "@/lib/tables/commesse";
 import { ClientForm } from "@/components/pm/ClientForm";
+import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
 import { clientMargin } from "@/lib/projects";
 import { cn } from "@/lib/utils";
 
@@ -110,6 +112,61 @@ function ClientsPage() {
         },
       },
     });
+  };
+
+  const bulk = useBulkSelect(filteredClients);
+
+  const bulkDelete = () => {
+    const targets = bulk.selectedRows;
+    if (targets.length === 0) return;
+    const relatedByClient = new Map<string, ReturnType<typeof commesseTable.getAll>>();
+    for (const c of targets) {
+      const related = commesseTable.getAll().filter((p) => p.clientId === c.id);
+      relatedByClient.set(c.id, related);
+      clientsTable.remove(c.id);
+      for (const p of related) commesseTable.remove(p.id);
+    }
+    bulk.clear();
+    const projectCount = Array.from(relatedByClient.values()).reduce(
+      (n, list) => n + list.length,
+      0,
+    );
+    toast(`Removed ${targets.length} client${targets.length === 1 ? "" : "s"}`, {
+      description: projectCount ? `${projectCount} project(s) also removed` : undefined,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          for (const c of targets) {
+            clientsTable.add(c);
+            for (const p of relatedByClient.get(c.id) ?? []) commesseTable.add(p);
+          }
+        },
+      },
+    });
+  };
+
+  const bulkExport = () => {
+    const rows = bulk.selectedRows;
+    if (rows.length === 0) return;
+    const cols = ["id", "name", "industry", "accountOwnerId", "notes"];
+    const esc = (v: unknown) => {
+      const s = String(v ?? "");
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const body = [
+      cols.join(","),
+      ...rows.map((r) => cols.map((c) => esc(r[c as keyof Client])).join(",")),
+    ].join("\n");
+    const blob = new Blob([body], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `clients-${rows.length}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} row${rows.length === 1 ? "" : "s"}`);
   };
 
   const kpi = useMemo(() => {
@@ -202,6 +259,13 @@ function ClientsPage() {
             <table className="w-full text-sm">
               <thead className="text-xs text-muted-foreground bg-muted/40">
                 <tr>
+                  <th className="w-10 px-3 py-2.5">
+                    <HeaderCheckbox
+                      allSelected={bulk.allSelected}
+                      someSelected={bulk.someSelected}
+                      onToggle={() => bulk.toggleAll(filteredClients)}
+                    />
+                  </th>
                   <th className="text-left font-medium px-5 py-2.5">Client</th>
                   <th className="text-left font-medium px-3 py-2.5">Industry</th>
                   <th className="text-left font-medium px-3 py-2.5">Owner</th>
@@ -219,9 +283,16 @@ function ClientsPage() {
                   return (
                     <tr
                       key={c.id}
-                      className="border-t hover:bg-muted/30 cursor-pointer"
+                      className="border-t hover:bg-muted/30 cursor-pointer group"
                       onClick={() => nav({ to: "/clients/$clientId", params: { clientId: c.id } })}
                     >
+                      <td className="px-3 py-3" onClick={(ev) => ev.stopPropagation()}>
+                        <RowCheckbox
+                          checked={bulk.isSelected(c.id)}
+                          onChange={() => bulk.toggle(c.id)}
+                          label={`Select ${c.name}`}
+                        />
+                      </td>
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
                           <div
@@ -318,6 +389,24 @@ function ClientsPage() {
             </table>
           </div>
         )}
+        <BulkBar
+          count={bulk.count}
+          onClear={bulk.clear}
+          noun="client"
+          actions={[
+            {
+              label: "Export CSV",
+              icon: <FileDown className="h-3.5 w-3.5" />,
+              onClick: bulkExport,
+            },
+            {
+              label: "Delete",
+              icon: <Trash2 className="h-3.5 w-3.5" />,
+              onClick: bulkDelete,
+              tone: "destructive",
+            },
+          ]}
+        />
       </Card>
 
       <ClientForm
