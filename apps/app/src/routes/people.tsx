@@ -298,14 +298,25 @@ function People() {
                             <DropdownMenuItem onClick={() => setSelected(e)}>
                               View profile
                             </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => toast.success(`Email drafted to ${e.name}`)}
-                            >
-                              <Send className="h-4 w-4 mr-2" />
-                              Send message
+                            <DropdownMenuItem asChild>
+                              <a href={`mailto:${e.email}`}>
+                                <Send className="h-4 w-4 mr-2" />
+                                Send message
+                              </a>
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              onClick={() => toast.success(`Started offboarding for ${e.name}`)}
+                              disabled={e.status === "offboarding"}
+                              onClick={() => {
+                                const prior = e.status;
+                                employeesTable.update(e.id, { status: "offboarding" });
+                                toast(`Started offboarding for ${e.name}`, {
+                                  action: {
+                                    label: "Undo",
+                                    onClick: () =>
+                                      employeesTable.update(e.id, { status: prior }),
+                                  },
+                                });
+                              }}
                             >
                               Start offboarding
                             </DropdownMenuItem>
@@ -479,14 +490,11 @@ function EmployeePanel({
             </div>
           </div>
           <div className="flex gap-2 mb-5">
-            <Button
-              size="sm"
-              variant="outline"
-              className="flex-1 press-scale"
-              onClick={() => toast.success(`Email drafted to ${employee.name}`)}
-            >
-              <Mail className="h-3.5 w-3.5 mr-1.5" />
-              Email
+            <Button size="sm" variant="outline" className="flex-1 press-scale" asChild>
+              <a href={`mailto:${employee.email}`}>
+                <Mail className="h-3.5 w-3.5 mr-1.5" />
+                Email
+              </a>
             </Button>
             <Button
               size="sm"

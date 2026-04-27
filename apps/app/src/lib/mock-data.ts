@@ -462,6 +462,14 @@ export function __setExpenses(next: Expense[]) {
   expenses = next;
 }
 
+export interface Scorecard {
+  id: string;
+  title: string;
+  criteria: string;
+  score: number;
+  createdAt: string;
+}
+
 export interface Candidate {
   id: string;
   name: string;
@@ -471,6 +479,7 @@ export interface Candidate {
   avatarColor: string;
   appliedDate: string;
   rating: number;
+  scorecards?: Scorecard[];
 }
 const cnames = [
   ["Emma Wilson", "Senior Engineer"],
@@ -1867,6 +1876,7 @@ export interface Doc {
   updated: string;
   status: "approved" | "pending" | "draft";
   owner: string;
+  esignStatus?: "none" | "requested" | "signed";
 }
 export let docsSeed: Doc[] = [
   {

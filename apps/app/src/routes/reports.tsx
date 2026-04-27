@@ -201,7 +201,30 @@ function Reports() {
             <Button
               size="sm"
               className="press-scale"
-              onClick={() => toast.success("PDF export started")}
+              onClick={() => {
+                // TODO: real PDF generation — exports a JSON snapshot for now
+                const payload = {
+                  generatedAt: new Date().toISOString(),
+                  range,
+                  dept,
+                  attendance,
+                  overtime,
+                  cost,
+                  growth,
+                };
+                const blob = new Blob([JSON.stringify(payload, null, 2)], {
+                  type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `pulse-report-${range}.json`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                toast.success("Report exported", { description: a.download });
+              }}
             >
               <Download className="h-4 w-4 mr-1.5" />
               PDF

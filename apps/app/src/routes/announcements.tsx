@@ -204,7 +204,17 @@ function Announcements() {
                               <Pin className="h-4 w-4 mr-2" />
                               {a.pinned ? "Unpin" : "Pin"}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => toast.success("Link copied")}>
+                            <DropdownMenuItem
+                              onClick={async () => {
+                                const url = `${window.location.origin}/announcements/${a.id}`;
+                                try {
+                                  await navigator.clipboard.writeText(url);
+                                  toast.success("Link copied", { description: url });
+                                } catch {
+                                  toast.error("Couldn't copy link");
+                                }
+                              }}
+                            >
                               Copy link
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />

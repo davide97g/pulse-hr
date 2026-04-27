@@ -38,11 +38,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@pulse-hr/ui/primitives/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@pulse-hr/ui/primitives/dialog";
+import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { SkeletonCards } from "@pulse-hr/ui/atoms/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
-import { type Candidate, type JobPosting } from "@/lib/mock-data";
+import { type Candidate, type JobPosting, type Scorecard } from "@/lib/mock-data";
 import { candidatesTable, useCandidates } from "@/lib/tables/candidates";
 import { jobPostingsTable, useJobPostings } from "@/lib/tables/jobPostings";
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
@@ -79,6 +87,8 @@ function Recruiting() {
   } | null>(null);
   const { open: openAction } = useQuickAction();
   const [tab, setTab] = useUrlParam("tab", "pipeline");
+  const [scorecardOpen, setScorecardOpen] = useState(false);
+  const [scorecardDraft, setScorecardDraft] = useState({ title: "", criteria: "", score: 4 });
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 420);
@@ -310,7 +320,17 @@ function Recruiting() {
                         <DropdownMenuItem onClick={() => toggleJobStatus(j)}>
                           {j.status === "open" ? "Close job" : "Publish job"}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => toast.success("Share link copied")}>
+                        <DropdownMenuItem
+                          onClick={async () => {
+                            const url = `${window.location.origin}/jobs/${j.id}`;
+                            try {
+                              await navigator.clipboard.writeText(url);
+                              toast.success("Public link copied", { description: url });
+                            } catch {
+                              toast.error("Couldn't copy link");
+                            }
+                          }}
+                        >
                           Copy public link
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -434,7 +454,10 @@ function Recruiting() {
                 size="sm"
                 variant="outline"
                 className="flex-1 press-scale"
-                onClick={() => toast.success("Scorecard saved")}
+                onClick={() => {
+                  setScorecardDraft({ title: "", criteria: "", score: 4 });
+                  setScorecardOpen(true);
+                }}
               >
                 Add scorecard
               </Button>
@@ -474,6 +497,78 @@ function Recruiting() {
           />
         )}
       </SidePanel>
+
+      <Dialog open={scorecardOpen} onOpenChange={setScorecardOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add scorecard{selected ? ` — ${selected.name}` : ""}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="sc-title">Title</Label>
+              <Input
+                id="sc-title"
+                value={scorecardDraft.title}
+                onChange={(e) =>
+                  setScorecardDraft((d) => ({ ...d, title: e.target.value }))
+                }
+                placeholder="e.g. Tech interview, Culture fit"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="sc-criteria">Notes</Label>
+              <Textarea
+                id="sc-criteria"
+                rows={4}
+                value={scorecardDraft.criteria}
+                onChange={(e) =>
+                  setScorecardDraft((d) => ({ ...d, criteria: e.target.value }))
+                }
+                placeholder="What stood out? Strengths, concerns, next steps."
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Score: {scorecardDraft.score} / 5</Label>
+              <input
+                type="range"
+                min={1}
+                max={5}
+                step={1}
+                value={scorecardDraft.score}
+                onChange={(e) =>
+                  setScorecardDraft((d) => ({ ...d, score: Number(e.target.value) }))
+                }
+                className="w-full"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setScorecardOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={!selected || !scorecardDraft.title.trim()}
+              onClick={() => {
+                if (!selected) return;
+                const card: Scorecard = {
+                  id: `sc-${Date.now()}`,
+                  title: scorecardDraft.title.trim(),
+                  criteria: scorecardDraft.criteria.trim(),
+                  score: scorecardDraft.score,
+                  createdAt: new Date().toISOString().slice(0, 10),
+                };
+                candidatesTable.update(selected.id, {
+                  scorecards: [...(selected.scorecards ?? []), card],
+                });
+                toast.success("Scorecard saved");
+                setScorecardOpen(false);
+              }}
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>

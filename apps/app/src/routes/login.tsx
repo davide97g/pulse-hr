@@ -194,7 +194,19 @@ function Login() {
               <Label htmlFor="password">Password</Label>
               <button
                 type="button"
-                onClick={() => toast("Use the 'Forgot?' flow on clerk.com reset page")}
+                onClick={() => {
+                  if (!email) {
+                    toast("Enter your work email first", {
+                      description: "We need an address to send the reset link to.",
+                    });
+                    document.getElementById("email")?.focus();
+                    return;
+                  }
+                  // TODO: integrate Clerk password reset (signIn.create({ strategy: "reset_password_email_code" }))
+                  toast.success("Reset link sent", {
+                    description: `Check ${email} for instructions.`,
+                  });
+                }}
                 className="text-xs text-muted-foreground hover:text-foreground"
               >
                 Forgot?
@@ -314,11 +326,21 @@ function Login() {
 
       <p className="text-[11px] text-muted-foreground text-center mt-5">
         By continuing you agree to our{" "}
-        <a href="#" className="underline underline-offset-2">
+        <a
+          href="https://pulsehr.it/terms"
+          target="_blank"
+          rel="noreferrer"
+          className="underline underline-offset-2"
+        >
           Terms
         </a>{" "}
         and{" "}
-        <a href="#" className="underline underline-offset-2">
+        <a
+          href="https://pulsehr.it/privacy"
+          target="_blank"
+          rel="noreferrer"
+          className="underline underline-offset-2"
+        >
           Privacy Policy
         </a>
         .

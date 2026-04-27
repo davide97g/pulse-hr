@@ -62,6 +62,7 @@ import { useIntegrations, updateIntegration } from "@/lib/integrations-store";
 import { resetWorkspace, setWorkspaceName, useWorkspaceStatus } from "@/lib/workspace";
 import {
   updateCompanySettings,
+  updateLocale,
   updateSecurity,
   useCompanySettings,
 } from "@/lib/company-settings";
@@ -92,6 +93,11 @@ function Settings() {
     currency: persisted.currency,
   }));
   const [dirty, setDirty] = useState(false);
+  const [localeDraft, setLocaleDraft] = useState(() => persisted.locale);
+  const localeDirty =
+    localeDraft.language !== persisted.locale.language ||
+    localeDraft.timezone !== persisted.locale.timezone ||
+    localeDraft.dateFormat !== persisted.locale.dateFormat;
   const [auditQ, setAuditQ] = useState("");
   const [auditFilter, setAuditFilter] = useState<"all" | AuditEntry["severity"]>("all");
 
@@ -405,7 +411,10 @@ function Settings() {
           <Card className="p-6 space-y-4 max-w-2xl">
             <div className="space-y-1.5">
               <Label>Language</Label>
-              <Select defaultValue="en-US">
+              <Select
+                value={localeDraft.language}
+                onValueChange={(v) => setLocaleDraft((d) => ({ ...d, language: v }))}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -427,11 +436,19 @@ function Settings() {
             </div>
             <div className="space-y-1.5">
               <Label>Timezone</Label>
-              <Input defaultValue="America/Los_Angeles" />
+              <Input
+                value={localeDraft.timezone}
+                onChange={(e) =>
+                  setLocaleDraft((d) => ({ ...d, timezone: e.target.value }))
+                }
+              />
             </div>
             <div className="space-y-1.5">
               <Label>Date format</Label>
-              <Select defaultValue="YYYY-MM-DD">
+              <Select
+                value={localeDraft.dateFormat}
+                onValueChange={(v) => setLocaleDraft((d) => ({ ...d, dateFormat: v }))}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -444,8 +461,14 @@ function Settings() {
                 </SelectContent>
               </Select>
             </div>
-            {/* mock: locale form is uncontrolled (defaultValue only) — nothing to persist yet. */}
-            <Button className="press-scale" onClick={() => toast.success("Locale saved")}>
+            <Button
+              className="press-scale"
+              disabled={!localeDirty}
+              onClick={() => {
+                updateLocale(localeDraft);
+                toast.success("Locale saved");
+              }}
+            >
               Save
             </Button>
           </Card>

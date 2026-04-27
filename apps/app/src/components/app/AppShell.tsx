@@ -718,11 +718,12 @@ function Topbar({
               <div key={`auto-${i}`}>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() =>
+                  onClick={() => {
                     toast.success("Automation triggered", {
                       description: `Running '${entry.description}'`,
-                    })
-                  }
+                    });
+                    navigate({ to: "/developers" });
+                  }}
                 >
                   <Icon className="h-4 w-4 mr-2" />
                   {entry.label}

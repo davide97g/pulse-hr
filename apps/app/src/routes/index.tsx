@@ -49,8 +49,10 @@ function Dashboard() {
           title={greeting}
           description="Here's what needs your attention today."
           actions={
-            <Button variant="outline" size="sm">
-              <Calendar className="h-4 w-4 mr-1.5" /> Today
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/calendar">
+                <Calendar className="h-4 w-4 mr-1.5" /> Today
+              </Link>
             </Button>
           }
         />
@@ -243,8 +245,10 @@ function Dashboard() {
               <div className="bg-muted-foreground/50 h-full" style={{ width: "17%" }} />
               <div className="bg-muted-foreground/25 h-full" style={{ width: "8%" }} />
             </div>
-            <Button variant="outline" size="sm" className="w-full mt-4">
-              View attendance <ArrowRight className="h-3.5 w-3.5 ml-1" />
+            <Button variant="outline" size="sm" className="w-full mt-4" asChild>
+              <Link to="/calendar">
+                View attendance <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              </Link>
             </Button>
           </Card>
 
