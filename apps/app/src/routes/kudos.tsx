@@ -13,6 +13,9 @@ import {
   ShieldCheck,
   Search,
   X,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Button } from "@pulse-hr/ui/primitives/button";
@@ -26,6 +29,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@pulse-hr/ui/primitives/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@pulse-hr/ui/primitives/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@pulse-hr/ui/primitives/dialog";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
 import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { employees, employeeById, type Kudo } from "@/lib/mock-data";
@@ -58,6 +75,8 @@ const tagMeta = (v: Kudo["tag"]) => TAGS.find((t) => t.v === v)!;
 
 function Kudos() {
   const feed = useKudos();
+  const [editKudo, setEditKudo] = useState<Kudo | null>(null);
+  const [editMessage, setEditMessage] = useState("");
   const [feedQuery, setFeedQuery] = useState("");
   const [feedTags, setFeedTags] = useState<Set<Kudo["tag"]>>(new Set());
   const [toId, setToId] = useState<string>("e2");
@@ -648,6 +667,46 @@ function Kudos() {
                     <span className="ml-auto text-sm font-semibold tabular-nums">
                       {k.amount} 🪙
                     </span>
+                    {from.id === ME && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground"
+                            aria-label="Kudo actions"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setEditKudo(k);
+                              setEditMessage(k.message);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4 mr-2" />
+                            Edit message
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => {
+                              const snap = k;
+                              kudosTable.remove(k.id);
+                              toast("Kudo deleted", {
+                                action: {
+                                  label: "Undo",
+                                  onClick: () => kudosTable.add(snap),
+                                },
+                              });
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </div>
                   <div className="text-sm mt-1.5">"{k.message}"</div>
                   <div className="text-[11px] text-muted-foreground mt-1 tabular-nums">
@@ -659,6 +718,39 @@ function Kudos() {
           })}
         </div>
       </Card>
+
+      <Dialog open={!!editKudo} onOpenChange={(o) => !o && setEditKudo(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit kudo</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-1.5">
+            <Label htmlFor="kudo-msg">Message</Label>
+            <Textarea
+              id="kudo-msg"
+              rows={4}
+              value={editMessage}
+              onChange={(e) => setEditMessage(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setEditKudo(null)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={!editMessage.trim()}
+              onClick={() => {
+                if (!editKudo) return;
+                kudosTable.update(editKudo.id, { message: editMessage.trim() });
+                toast.success("Kudo updated");
+                setEditKudo(null);
+              }}
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

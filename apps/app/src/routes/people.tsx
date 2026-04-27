@@ -76,19 +76,33 @@ interface PeopleView {
   q: string;
   dept: string;
   tab: string;
+  status: string[];
+  type: string[];
 }
 
 function People() {
   const views = useSavedViews<PeopleView>("people", {
-    defaults: { q: "", dept: "", tab: "list" },
-    schema: { q: "string", dept: "string", tab: "string" },
+    defaults: { q: "", dept: "", tab: "list", status: [], type: [] },
+    schema: {
+      q: "string",
+      dept: "string",
+      tab: "string",
+      status: "array",
+      type: "array",
+    },
   });
   const q = views.state.q;
   const dept = views.state.dept || null;
   const tab = views.state.tab || "list";
+  const statusFilter = views.state.status;
+  const typeFilter = views.state.type;
   const setQ = (v: string) => views.setState({ q: v });
   const setDept = (v: string | null) => views.setState({ dept: v ?? "" });
   const setTab = (v: string) => views.setState({ tab: v });
+  const setStatusFilter = (v: string[]) => views.setState({ status: v });
+  const setTypeFilter = (v: string[]) => views.setState({ type: v });
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const activeFilterCount = statusFilter.length + typeFilter.length;
   const [selId, setSelId] = useUrlParam("sel");
   const list = useEmployees();
   const selected = selId ? (list.find((e) => e.id === selId) ?? employeeById(selId) ?? null) : null;
@@ -110,9 +124,11 @@ function People() {
           (!q ||
             e.name.toLowerCase().includes(q.toLowerCase()) ||
             e.role.toLowerCase().includes(q.toLowerCase())) &&
-          (!dept || e.department === dept),
+          (!dept || e.department === dept) &&
+          (statusFilter.length === 0 || statusFilter.includes(e.status)) &&
+          (typeFilter.length === 0 || typeFilter.includes(e.employmentType)),
       ),
-    [q, dept, list],
+    [q, dept, statusFilter, typeFilter, list],
   );
 
   const remove = (e: Employee) => {
@@ -130,6 +146,8 @@ function People() {
   const clearFilters = () => {
     setQ("");
     setDept(null);
+    setStatusFilter([]);
+    setTypeFilter([]);
   };
 
   return (
@@ -204,13 +222,14 @@ function People() {
             </button>
           ))}
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => toast("Filters", { description: "Open advanced filter builder" })}
-        >
+        <Button variant="outline" size="sm" onClick={() => setFiltersOpen(true)}>
           <Filter className="h-4 w-4 mr-1.5" />
           More filters
+          {activeFilterCount > 0 && (
+            <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-medium">
+              {activeFilterCount}
+            </span>
+          )}
         </Button>
       </Card>
 
@@ -403,6 +422,92 @@ function People() {
           )}
         </TabsContent>
       </Tabs>
+
+      <SidePanel
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        width={380}
+        title="Filters"
+      >
+        <div className="space-y-6">
+          <div>
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+              Status
+            </div>
+            <div className="space-y-1.5">
+              {(["active", "remote", "on_leave", "offboarding"] as const).map((s) => {
+                const checked = statusFilter.includes(s);
+                return (
+                  <label
+                    key={s}
+                    className="flex items-center gap-2 text-sm py-1 cursor-pointer hover:bg-muted/40 rounded-md px-2 -mx-2"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) =>
+                        setStatusFilter(
+                          e.target.checked
+                            ? [...statusFilter, s]
+                            : statusFilter.filter((v) => v !== s),
+                        )
+                      }
+                      className="h-4 w-4 rounded border-border"
+                    />
+                    <span className="capitalize">{s.replace("_", " ")}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+              Employment type
+            </div>
+            <div className="space-y-1.5">
+              {(["Full-time", "Part-time", "Contractor"] as const).map((t) => {
+                const checked = typeFilter.includes(t);
+                return (
+                  <label
+                    key={t}
+                    className="flex items-center gap-2 text-sm py-1 cursor-pointer hover:bg-muted/40 rounded-md px-2 -mx-2"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) =>
+                        setTypeFilter(
+                          e.target.checked
+                            ? [...typeFilter, t]
+                            : typeFilter.filter((v) => v !== t),
+                        )
+                      }
+                      className="h-4 w-4 rounded border-border"
+                    />
+                    <span>{t}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex justify-between gap-2 pt-2 border-t">
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={activeFilterCount === 0}
+              onClick={() => {
+                setStatusFilter([]);
+                setTypeFilter([]);
+              }}
+            >
+              Clear
+            </Button>
+            <Button size="sm" onClick={() => setFiltersOpen(false)}>
+              Done
+            </Button>
+          </div>
+        </div>
+      </SidePanel>
 
       <EmployeePanel
         employee={selected ? (list.find((x) => x.id === selected.id) ?? selected) : null}

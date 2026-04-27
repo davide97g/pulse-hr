@@ -29,6 +29,14 @@ import {
 } from "recharts";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Button } from "@pulse-hr/ui/primitives/button";
+import { Switch } from "@pulse-hr/ui/primitives/switch";
+import { Label } from "@pulse-hr/ui/primitives/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@pulse-hr/ui/primitives/dialog";
 import {
   Select,
   SelectContent,
@@ -38,6 +46,7 @@ import {
 } from "@pulse-hr/ui/primitives/select";
 import { PageHeader } from "@/components/app/AppShell";
 import { SkeletonCards } from "@pulse-hr/ui/atoms/SkeletonList";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { departments } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
@@ -160,6 +169,9 @@ function Reports() {
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState("30d");
   const [dept, setDept] = useState("all");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [includeWeekends, setIncludeWeekends] = useState(true);
+  const [minOvertime, setMinOvertime] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -168,10 +180,19 @@ function Reports() {
   }, [range, dept]);
 
   const days = range === "7d" ? 7 : range === "90d" ? 60 : range === "ytd" ? 90 : 30;
-  const attendance = useMemo(() => attendanceSeries(days), [days]);
-  const overtime = useMemo(overtimeByTeam, []);
+  const attendanceRaw = useMemo(() => attendanceSeries(days), [days]);
+  const attendance = useMemo(
+    () => (includeWeekends ? attendanceRaw : attendanceRaw.filter((d) => !d.weekend)),
+    [attendanceRaw, includeWeekends],
+  );
+  const overtimeRaw = useMemo(overtimeByTeam, []);
+  const overtime = useMemo(
+    () => overtimeRaw.filter((row) => row.hours >= minOvertime),
+    [overtimeRaw, minOvertime],
+  );
   const cost = useMemo(costByDepartment, []);
   const growth = useMemo(headcountGrowth, []);
+  const activeAdvancedFilters = (includeWeekends ? 0 : 1) + (minOvertime > 0 ? 1 : 0);
 
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
@@ -184,10 +205,15 @@ function Reports() {
               size="sm"
               variant="outline"
               className="press-scale"
-              onClick={() => toast("Filter builder opened")}
+              onClick={() => setFiltersOpen(true)}
             >
               <Filter className="h-4 w-4 mr-1.5" />
               More filters
+              {activeAdvancedFilters > 0 && (
+                <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-medium">
+                  {activeAdvancedFilters}
+                </span>
+              )}
             </Button>
             <Button
               size="sm"
@@ -326,6 +352,60 @@ function Reports() {
           <HeadcountChart data={growth} />
         </ChartCard>
       </div>
+
+      <SidePanel
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        width={380}
+        title="Advanced filters"
+      >
+        <div className="space-y-6">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <Label className="text-sm">Include weekends</Label>
+              <div className="text-xs text-muted-foreground mt-0.5">
+                Off hides Sat/Sun from attendance.
+              </div>
+            </div>
+            <Switch checked={includeWeekends} onCheckedChange={setIncludeWeekends} />
+          </div>
+          <div>
+            <Label className="text-sm">Min overtime hours</Label>
+            <div className="text-xs text-muted-foreground mt-0.5 mb-2">
+              Only show teams with at least this many OT hours. Currently {minOvertime}h.
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={50}
+              step={5}
+              value={minOvertime}
+              onChange={(e) => setMinOvertime(Number(e.target.value))}
+              className="w-full"
+            />
+            <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+              <span>0h</span>
+              <span>50h</span>
+            </div>
+          </div>
+          <div className="flex justify-between gap-2 pt-2 border-t">
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={activeAdvancedFilters === 0}
+              onClick={() => {
+                setIncludeWeekends(true);
+                setMinOvertime(0);
+              }}
+            >
+              Reset
+            </Button>
+            <Button size="sm" onClick={() => setFiltersOpen(false)}>
+              Done
+            </Button>
+          </div>
+        </div>
+      </SidePanel>
     </div>
   );
 }
@@ -400,19 +480,30 @@ function KpiTile({
 
 // ── Chart card wrapper ─────────────────────────────────────────────────
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
   return (
-    <Card className="p-5">
-      <div className="flex items-center justify-between mb-4">
-        <div className="font-semibold text-sm">{title}</div>
-        <button
-          onClick={() => toast(`${title} drill-down`)}
-          className="text-xs text-primary inline-flex items-center gap-1 hover:underline press-scale"
-        >
-          <Maximize2 className="h-3 w-3" /> Expand
-        </button>
-      </div>
-      <div className="h-60">{children}</div>
-    </Card>
+    <>
+      <Card className="p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="font-semibold text-sm">{title}</div>
+          <button
+            onClick={() => setOpen(true)}
+            className="text-xs text-primary inline-flex items-center gap-1 hover:underline press-scale"
+          >
+            <Maximize2 className="h-3 w-3" /> Expand
+          </button>
+        </div>
+        <div className="h-60">{children}</div>
+      </Card>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+          </DialogHeader>
+          <div className="h-[60vh] min-h-[400px]">{children}</div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 

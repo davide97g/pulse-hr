@@ -1,16 +1,51 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ListChecks, Search, Briefcase, Layers } from "lucide-react";
+import {
+  ListChecks,
+  Search,
+  Briefcase,
+  Layers,
+  Plus,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+} from "lucide-react";
+import { toast } from "sonner";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Input } from "@pulse-hr/ui/primitives/input";
+import { Label } from "@pulse-hr/ui/primitives/label";
+import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { Button } from "@pulse-hr/ui/primitives/button";
-import { useActivities } from "@/lib/tables/activities";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@pulse-hr/ui/primitives/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@pulse-hr/ui/primitives/alert-dialog";
+import { activitiesTable, useActivities } from "@/lib/tables/activities";
 import { usePlans } from "@/lib/tables/plans";
 import { useCommesse } from "@/lib/tables/commesse";
-import { employeeById, employees, type ActivityStatus } from "@/lib/mock-data";
+import {
+  employeeById,
+  employees,
+  type Activity,
+  type ActivityStatus,
+} from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 type ActivitiesSearch = {
@@ -49,6 +84,8 @@ function ActivitiesPage() {
   const plans = usePlans();
   const projects = useCommesse();
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<Activity | "new" | null>(null);
+  const [toDelete, setToDelete] = useState<Activity | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 420);
@@ -112,6 +149,17 @@ function ActivitiesPage() {
       <PageHeader
         title="Activities"
         description="Every activity across all plans and projects."
+        actions={
+          <Button
+            size="sm"
+            className="press-scale"
+            disabled={plans.length === 0}
+            onClick={() => setEditing("new")}
+          >
+            <Plus className="h-4 w-4 mr-1.5" />
+            New activity
+          </Button>
+        }
       />
 
       <Card className="overflow-hidden">
@@ -209,6 +257,7 @@ function ActivitiesPage() {
                   <th className="text-left font-medium px-3 py-2.5">Status</th>
                   <th className="text-right font-medium px-3 py-2.5">Hours</th>
                   <th className="text-right font-medium px-3 py-2.5">End</th>
+                  <th className="w-10" />
                 </tr>
               </thead>
               <tbody className="stagger-in">
@@ -277,6 +326,29 @@ function ActivitiesPage() {
                       <td className="px-3 py-3 text-right tabular-nums text-xs">
                         {a.endDate ?? "—"}
                       </td>
+                      <td className="px-2" onClick={(ev) => ev.stopPropagation()}>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setEditing(a)}>
+                              <Pencil className="h-4 w-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => setToDelete(a)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
                     </tr>
                   );
                 })}
@@ -285,6 +357,226 @@ function ActivitiesPage() {
           </div>
         )}
       </Card>
+
+      <SidePanel
+        open={editing !== null}
+        onClose={() => setEditing(null)}
+        width={460}
+        title={editing === "new" ? "New activity" : editing ? "Edit activity" : ""}
+      >
+        {editing !== null && (
+          <ActivityForm
+            initial={editing === "new" ? null : editing}
+            plans={plans}
+            onCancel={() => setEditing(null)}
+            onSave={(data) => {
+              if (editing === "new") {
+                const created = activitiesTable.add({
+                  ...data,
+                  dependencies: [],
+                  order: activities.length + 1,
+                });
+                toast.success("Activity created", { description: created.title });
+              } else {
+                activitiesTable.update(editing.id, data);
+                toast.success("Activity updated");
+              }
+              setEditing(null);
+            }}
+          />
+        )}
+      </SidePanel>
+
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete activity?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {toDelete && `"${toDelete.title}" will be removed.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (toDelete) {
+                  const snap = toDelete;
+                  activitiesTable.remove(snap.id);
+                  toast("Activity deleted", {
+                    action: {
+                      label: "Undo",
+                      onClick: () => activitiesTable.add(snap),
+                    },
+                  });
+                }
+                setToDelete(null);
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
+
+interface ActivityFormData {
+  planId: string;
+  title: string;
+  description?: string;
+  status: ActivityStatus;
+  assigneeId?: string;
+  startDate?: string;
+  endDate?: string;
+  estimateHours: number;
+  ticketLink?: Activity["ticketLink"];
+}
+
+function ActivityForm({
+  initial,
+  plans,
+  onCancel,
+  onSave,
+}: {
+  initial: Activity | null;
+  plans: { id: string; name: string; projectId: string }[];
+  onCancel: () => void;
+  onSave: (data: ActivityFormData) => void;
+}) {
+  const [planId, setPlanId] = useState(initial?.planId ?? plans[0]?.id ?? "");
+  const [title, setTitle] = useState(initial?.title ?? "");
+  const [description, setDescription] = useState(initial?.description ?? "");
+  const [status, setStatus] = useState<ActivityStatus>(initial?.status ?? "todo");
+  const [assigneeId, setAssigneeId] = useState(initial?.assigneeId ?? "");
+  const [startDate, setStartDate] = useState(initial?.startDate ?? "");
+  const [endDate, setEndDate] = useState(initial?.endDate ?? "");
+  const [estimateHours, setEstimateHours] = useState(initial?.estimateHours ?? 4);
+
+  const valid = planId && title.trim().length > 0 && estimateHours > 0;
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1.5">
+        <Label htmlFor="ac-title">Title</Label>
+        <Input
+          id="ac-title"
+          autoFocus
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="What needs doing?"
+        />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="ac-desc">Description</Label>
+        <Textarea
+          id="ac-desc"
+          rows={3}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Optional context, scope, links."
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label>Plan</Label>
+          <select
+            className="h-9 w-full px-3 text-sm bg-background border rounded-md"
+            value={planId}
+            onChange={(e) => setPlanId(e.target.value)}
+          >
+            {plans.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <Label>Status</Label>
+          <select
+            className="h-9 w-full px-3 text-sm bg-background border rounded-md"
+            value={status}
+            onChange={(e) => setStatus(e.target.value as ActivityStatus)}
+          >
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="space-y-1.5">
+        <Label>Assignee</Label>
+        <select
+          className="h-9 w-full px-3 text-sm bg-background border rounded-md"
+          value={assigneeId}
+          onChange={(e) => setAssigneeId(e.target.value)}
+        >
+          <option value="">Unassigned</option>
+          {employees.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="grid grid-cols-3 gap-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="ac-start">Start</Label>
+          <Input
+            id="ac-start"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="ac-end">End</Label>
+          <Input
+            id="ac-end"
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="ac-hours">Hours</Label>
+          <Input
+            id="ac-hours"
+            type="number"
+            min={0.5}
+            step={0.5}
+            value={estimateHours}
+            onChange={(e) => setEstimateHours(Number(e.target.value))}
+          />
+        </div>
+      </div>
+      <div className="flex justify-end gap-2 pt-2 border-t">
+        <Button variant="ghost" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button
+          disabled={!valid}
+          onClick={() =>
+            onSave({
+              planId,
+              title: title.trim(),
+              description: description.trim() || undefined,
+              status,
+              assigneeId: assigneeId || undefined,
+              startDate: startDate || undefined,
+              endDate: endDate || undefined,
+              estimateHours,
+              ticketLink: initial?.ticketLink,
+            })
+          }
+        >
+          {initial ? "Save changes" : "Create activity"}
+        </Button>
+      </div>
     </div>
   );
 }
