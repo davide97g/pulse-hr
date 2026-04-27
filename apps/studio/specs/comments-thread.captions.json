@@ -1,0 +1,9 @@
+{
+  "spec": "comments-thread",
+  "captions": [
+    { "atStep": 0, "text": "The feedback board", "holdMs": 1800 },
+    { "atStep": 2, "text": "Open a thread", "holdMs": 1800 },
+    { "atStep": 6, "text": "Reply inline — no email loop", "holdMs": 2400 },
+    { "atStep": 8, "text": "Sent. The team sees it instantly.", "holdMs": 2400 }
+  ]
+}

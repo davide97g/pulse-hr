@@ -1,0 +1,11 @@
+{
+  "spec": "workspace-create",
+  "captions": [
+    { "atStep": 2, "text": "Sign in", "holdMs": 1600 },
+    { "atStep": 10, "text": "Pick your role", "holdMs": 1800 },
+    { "atStep": 16, "text": "What you want from Pulse", "holdMs": 2400 },
+    { "atStep": 28, "text": "Name your workspace", "holdMs": 2000 },
+    { "atStep": 36, "text": "Invite your team", "holdMs": 2400 },
+    { "atStep": 42, "text": "You're in.", "holdMs": 2400 }
+  ]
+}

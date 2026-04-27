@@ -2,126 +2,270 @@
   "$schema": "../node_modules/testreel/recording-definition.schema.json",
   "url": "{{BASE_URL}}/",
   "colorScheme": "dark",
-  "viewport": { "width": 1280, "height": 720 },
-  "outputSize": { "width": 1920, "height": 1080 },
-  "chrome": { "url": true },
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
   "background": {
-    "gradient": { "from": "#667eea", "to": "#764ba2" },
+    "color": "#0a0a0f",
+    "padding": 60,
     "borderRadius": 12
   },
-  "cursor": true,
-  "localStorage": { "pulse.theme": "employee" },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "employee",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1"
+  },
   "setup": {
     "url": "{{BASE_URL}}/login",
     "steps": [
-      { "action": "wait", "ms": 200 },
-      { "action": "zoom", "selector": "input[type=email]", "scale": 1.8, "duration": 180 },
-      { "action": "type", "selector": "input[type=email]", "text": "{{TEST_EMAIL}}", "delay": 12 },
-      { "action": "zoom", "selector": "input[type=password]", "scale": 1.8, "duration": 180 },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "zoom",
+        "selector": "input[type=email]",
+        "scale": 1.8,
+        "duration": 180
+      },
+      {
+        "action": "type",
+        "selector": "input[type=email]",
+        "text": "{{TEST_EMAIL}}",
+        "delay": 12
+      },
+      {
+        "action": "wait",
+        "ms": 400,
+        "waitFor": "input[type=password]",
+        "timeout": 15000
+      },
+      {
+        "action": "zoom",
+        "selector": "input[type=password]",
+        "scale": 1.8,
+        "duration": 180
+      },
       {
         "action": "type",
         "selector": "input[type=password]",
         "text": "{{TEST_PASSWORD}}",
         "delay": 12
       },
-      { "action": "zoom", "selector": "button[type=submit]", "scale": 1.8, "duration": 180 },
-      { "action": "click", "selector": "button[type=submit]" },
-      { "action": "zoom", "scale": 1, "duration": 80 },
-      { "action": "wait", "ms": 1600 },
-
-      { "action": "zoom", "selector": "button:has-text('Admin')", "scale": 2, "duration": 180 },
-      { "action": "click", "selector": "button:has-text('Admin')" },
-      { "action": "wait", "ms": 150 },
-      { "action": "zoom", "selector": "button:has-text('Continue')", "scale": 2, "duration": 180 },
-      { "action": "click", "selector": "button:has-text('Continue')" },
-      { "action": "zoom", "scale": 1, "duration": 80 },
-      { "action": "wait", "ms": 200 },
-
+      {
+        "action": "click",
+        "selector": "button[type=submit]",
+        "zoom": 1.8
+      },
       {
         "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 1600
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Admin')",
+        "zoom": 2
+      },
+      {
+        "action": "wait",
+        "ms": 150
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Continue')",
+        "zoom": 2
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "click",
         "selector": "button:has-text('Hire faster')",
-        "scale": 2,
-        "duration": 180
+        "zoom": 2
       },
-      { "action": "click", "selector": "button:has-text('Hire faster')" },
-      { "action": "wait", "ms": 120 },
       {
-        "action": "zoom",
+        "action": "wait",
+        "ms": 120
+      },
+      {
+        "action": "click",
         "selector": "button:has-text('Retain top talent')",
-        "scale": 2,
-        "duration": 180
+        "zoom": 2
       },
-      { "action": "click", "selector": "button:has-text('Retain top talent')" },
-      { "action": "wait", "ms": 120 },
       {
-        "action": "zoom",
+        "action": "wait",
+        "ms": 120
+      },
+      {
+        "action": "click",
         "selector": "button:has-text('Boost engagement')",
-        "scale": 2,
-        "duration": 180
+        "zoom": 2
       },
-      { "action": "click", "selector": "button:has-text('Boost engagement')" },
-      { "action": "wait", "ms": 120 },
-      { "action": "zoom", "selector": "button:has-text('Continue')", "scale": 2, "duration": 180 },
-      { "action": "click", "selector": "button:has-text('Continue')" },
-      { "action": "zoom", "scale": 1, "duration": 80 },
-      { "action": "wait", "ms": 200 },
-
-      { "action": "zoom", "selector": "#ws-name", "scale": 1.8, "duration": 180 },
-      { "action": "fill", "selector": "#ws-name", "text": "" },
-      { "action": "type", "selector": "#ws-name", "text": "Bitrock", "delay": 18 },
-      { "action": "wait", "ms": 150 },
-      { "action": "zoom", "selector": "button:has-text('Continue')", "scale": 2, "duration": 180 },
-      { "action": "click", "selector": "button:has-text('Continue')" },
-      { "action": "zoom", "scale": 1, "duration": 80 },
-      { "action": "wait", "ms": 200 },
-
-      { "action": "zoom", "selector": "#col-0", "scale": 1.6, "duration": 180 },
-      { "action": "type", "selector": "#col-0", "text": "Niccolò Naso", "delay": 14 },
-      { "action": "wait", "ms": 80 },
-      { "action": "type", "selector": "#col-1", "text": "Yi Zhang", "delay": 14 },
-      { "action": "wait", "ms": 80 },
-      { "action": "type", "selector": "#col-2", "text": "Andrea Mazza", "delay": 14 },
-      { "action": "wait", "ms": 200 },
+      {
+        "action": "wait",
+        "ms": 120
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Continue')",
+        "zoom": 2
+      },
       {
         "action": "zoom",
-        "selector": "button:has-text('Create workspace')",
-        "scale": 2,
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "zoom",
+        "selector": "#ws-name",
+        "scale": 1.8,
         "duration": 180
       },
-      { "action": "click", "selector": "button:has-text('Create workspace')" },
-      { "action": "zoom", "scale": 1, "duration": 80 },
-      { "action": "wait", "ms": 1600 },
-      { "action": "wait", "ms": 400, "waitFor": "main", "timeout": 10000 }
+      {
+        "action": "fill",
+        "selector": "#ws-name",
+        "text": ""
+      },
+      {
+        "action": "type",
+        "selector": "#ws-name",
+        "text": "Bitrock",
+        "delay": 18
+      },
+      {
+        "action": "wait",
+        "ms": 150
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Continue')",
+        "zoom": 2
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "zoom",
+        "selector": "#col-0",
+        "scale": 1.6,
+        "duration": 180
+      },
+      {
+        "action": "type",
+        "selector": "#col-0",
+        "text": "Niccolò Naso",
+        "delay": 14
+      },
+      {
+        "action": "wait",
+        "ms": 80
+      },
+      {
+        "action": "type",
+        "selector": "#col-1",
+        "text": "Yi Zhang",
+        "delay": 14
+      },
+      {
+        "action": "wait",
+        "ms": 80
+      },
+      {
+        "action": "type",
+        "selector": "#col-2",
+        "text": "Andrea Mazza",
+        "delay": 14
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Create workspace')",
+        "zoom": 2
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 1600
+      },
+      {
+        "action": "wait",
+        "ms": 400,
+        "waitFor": "main",
+        "timeout": 10000
+      }
     ]
   },
   "steps": [
-    { "action": "wait", "ms": 300, "waitFor": "main", "timeout": 10000 },
-
     {
-      "action": "zoom",
-      "selector": "button[aria-label='Leave a comment']",
-      "scale": 2,
-      "duration": 130
+      "action": "wait",
+      "ms": 300,
+      "waitFor": "main",
+      "timeout": 10000
     },
     {
       "action": "click",
       "selector": "button[aria-label='Leave a comment']",
       "timeout": 8000,
-      "pauseAfter": 120
-    },
-    {
-      "action": "zoom",
-      "selector": "[data-tour=\"page-header\"] h1",
-      "scale": 1.9,
-      "duration": 130
+      "pauseAfter": 120,
+      "zoom": 2
     },
     {
       "action": "click",
       "selector": "[data-tour=\"page-header\"] h1",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 1.9
     },
-    { "action": "wait", "ms": 200 },
+    {
+      "action": "wait",
+      "ms": 200
+    },
     {
       "action": "zoom",
       "selector": "input[placeholder='Leave a comment…']",
@@ -134,23 +278,31 @@
       "text": "Pulse demo pin on dashboard",
       "delay": 18
     },
-    { "action": "wait", "ms": 200 },
     {
-      "action": "zoom",
-      "selector": "button[aria-label='Post comment']",
-      "scale": 2,
-      "duration": 130
+      "action": "wait",
+      "ms": 200
     },
     {
       "action": "click",
       "selector": "button[aria-label='Post comment']",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 2
     },
-    { "action": "wait", "ms": 1200 },
-    { "action": "zoom", "scale": 1, "duration": 100 },
-    { "action": "screenshot", "name": "01-pin-dashboard", "pauseAfter": 80 },
-
+    {
+      "action": "wait",
+      "ms": 1200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 100
+    },
+    {
+      "action": "screenshot",
+      "name": "01-pin-dashboard",
+      "pauseAfter": 80
+    },
     {
       "action": "wait",
       "ms": 200,
@@ -158,21 +310,21 @@
       "timeout": 15000
     },
     {
-      "action": "zoom",
-      "selector": "button[aria-label*='comment by'] >> nth=0",
-      "scale": 2,
-      "duration": 130,
-      "timeout": 12000
-    },
-    {
       "action": "click",
       "selector": "button[aria-label*='comment by'] >> nth=0",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 2
     },
-    { "action": "wait", "ms": 500 },
-    { "action": "screenshot", "name": "02-thread-popover", "pauseAfter": 80 },
-
+    {
+      "action": "wait",
+      "ms": 500
+    },
+    {
+      "action": "screenshot",
+      "name": "02-thread-popover",
+      "pauseAfter": 80
+    },
     {
       "action": "zoom",
       "selector": "div.pop-in:has(button[aria-label='Close thread']) input[placeholder='Reply…']",
@@ -187,67 +339,70 @@
       "delay": 16,
       "timeout": 8000
     },
-    { "action": "wait", "ms": 200 },
     {
-      "action": "zoom",
-      "selector": "div.pop-in:has(button[aria-label='Close thread']) button[aria-label='Send reply']",
-      "scale": 2,
-      "duration": 130,
-      "timeout": 12000
+      "action": "wait",
+      "ms": 200
     },
     {
       "action": "click",
       "selector": "div.pop-in:has(button[aria-label='Close thread']) button[aria-label='Send reply']",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 2
     },
-    { "action": "wait", "ms": 900 },
-    { "action": "screenshot", "name": "03-reply-in-thread", "pauseAfter": 80 },
-
     {
-      "action": "zoom",
+      "action": "wait",
+      "ms": 900
+    },
+    {
+      "action": "screenshot",
+      "name": "03-reply-in-thread",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
       "selector": "div.pop-in:has(button[aria-label='Close thread']) button[aria-label='Close thread']",
-      "scale": 1.9,
-      "duration": 130,
-      "timeout": 12000
+      "timeout": 8000,
+      "pauseAfter": 120,
+      "zoom": 1.9
+    },
+    {
+      "action": "wait",
+      "ms": 400
+    },
+    {
+      "action": "navigate",
+      "url": "{{BASE_URL}}/people"
+    },
+    {
+      "action": "wait",
+      "ms": 900,
+      "waitFor": "main",
+      "timeout": 10000
+    },
+    {
+      "action": "screenshot",
+      "name": "04-people",
+      "pauseAfter": 80
     },
     {
       "action": "click",
-      "selector": "div.pop-in:has(button[aria-label='Close thread']) button[aria-label='Close thread']",
-      "timeout": 8000,
-      "pauseAfter": 120
-    },
-    { "action": "wait", "ms": 400 },
-
-    { "action": "navigate", "url": "{{BASE_URL}}/people" },
-    { "action": "wait", "ms": 900, "waitFor": "main", "timeout": 10000 },
-    { "action": "screenshot", "name": "04-people", "pauseAfter": 80 },
-
-    {
-      "action": "zoom",
-      "selector": "button[aria-label='Leave a comment']",
-      "scale": 2,
-      "duration": 130
-    },
-    {
-      "action": "click",
       "selector": "button[aria-label='Leave a comment']",
       "timeout": 8000,
-      "pauseAfter": 120
-    },
-    {
-      "action": "zoom",
-      "selector": "main tr:has-text('Marcus Rivera')",
-      "scale": 1.7,
-      "duration": 130
+      "pauseAfter": 120,
+      "zoom": 2
     },
     {
       "action": "click",
       "selector": "main tr:has-text('Marcus Rivera')",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 1.7
     },
-    { "action": "wait", "ms": 250 },
+    {
+      "action": "wait",
+      "ms": 250
+    },
     {
       "action": "zoom",
       "selector": "input[placeholder='Leave a comment…']",
@@ -260,62 +415,79 @@
       "text": "Birthday UI is super cool!",
       "delay": 18
     },
-    { "action": "wait", "ms": 200 },
     {
-      "action": "zoom",
-      "selector": "button[aria-label='Post comment']",
-      "scale": 2,
-      "duration": 130
+      "action": "wait",
+      "ms": 200
     },
     {
       "action": "click",
       "selector": "button[aria-label='Post comment']",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 2
     },
-    { "action": "wait", "ms": 1100 },
-    { "action": "screenshot", "name": "05-comment-on-people", "pauseAfter": 80 },
-
-    { "action": "navigate", "url": "{{BASE_URL}}/feedback" },
-    { "action": "wait", "ms": 1200, "waitFor": "text=Feedback", "timeout": 10000 },
-    { "action": "screenshot", "name": "06-feedback-board", "pauseAfter": 80 },
-
     {
-      "action": "zoom",
-      "selector": "article:has-text('Pulse demo pin on dashboard') button[aria-label='Upvote']",
-      "scale": 2,
-      "duration": 130
+      "action": "wait",
+      "ms": 1100
+    },
+    {
+      "action": "screenshot",
+      "name": "05-comment-on-people",
+      "pauseAfter": 80
+    },
+    {
+      "action": "navigate",
+      "url": "{{BASE_URL}}/feedback"
+    },
+    {
+      "action": "wait",
+      "ms": 1200,
+      "waitFor": "text=Feedback",
+      "timeout": 10000
+    },
+    {
+      "action": "screenshot",
+      "name": "06-feedback-board",
+      "pauseAfter": 80
     },
     {
       "action": "click",
       "selector": "article:has-text('Pulse demo pin on dashboard') button[aria-label='Upvote']",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 2
     },
-    { "action": "wait", "ms": 600 },
-    { "action": "screenshot", "name": "07-upvoted-card", "pauseAfter": 80 },
-
     {
-      "action": "zoom",
-      "selector": "article:has-text('Pulse demo pin on dashboard') button:has-text('Thread')",
-      "scale": 2,
-      "duration": 130
+      "action": "wait",
+      "ms": 600
+    },
+    {
+      "action": "screenshot",
+      "name": "07-upvoted-card",
+      "pauseAfter": 80
     },
     {
       "action": "click",
       "selector": "article:has-text('Pulse demo pin on dashboard') button:has-text('Thread')",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 2
     },
-    { "action": "wait", "ms": 300 },
+    {
+      "action": "wait",
+      "ms": 300
+    },
     {
       "action": "wait",
       "ms": 200,
       "waitFor": "[role=dialog]:has-text('On /') input[placeholder='Reply…']",
       "timeout": 20000
     },
-    { "action": "screenshot", "name": "08-feedback-thread-sheet", "pauseAfter": 80 },
-
+    {
+      "action": "screenshot",
+      "name": "08-feedback-thread-sheet",
+      "pauseAfter": 80
+    },
     {
       "action": "zoom",
       "selector": "[role=dialog]:has-text('On /') input[placeholder='Reply…']",
@@ -330,26 +502,44 @@
       "delay": 16,
       "timeout": 8000
     },
-    { "action": "wait", "ms": 200 },
     {
-      "action": "zoom",
-      "selector": "[role=dialog]:has-text('On /') button[aria-label='Send reply']",
-      "scale": 2,
-      "duration": 130,
-      "timeout": 12000
+      "action": "wait",
+      "ms": 200
     },
     {
       "action": "click",
       "selector": "[role=dialog]:has-text('On /') button[aria-label='Send reply']",
       "timeout": 8000,
+      "pauseAfter": 120,
+      "zoom": 2
+    },
+    {
+      "action": "wait",
+      "ms": 900
+    },
+    {
+      "action": "screenshot",
+      "name": "09-feedback-reply",
+      "pauseAfter": 80
+    },
+    {
+      "action": "keyboard",
+      "key": "Escape",
       "pauseAfter": 120
     },
-    { "action": "wait", "ms": 900 },
-    { "action": "screenshot", "name": "09-feedback-reply", "pauseAfter": 80 },
-
-    { "action": "keyboard", "key": "Escape", "pauseAfter": 120 },
-    { "action": "wait", "ms": 500 },
-    { "action": "screenshot", "name": "10-sheet-closed", "pauseAfter": 80 },
-    { "action": "zoom", "scale": 1, "duration": 100 }
+    {
+      "action": "wait",
+      "ms": 500
+    },
+    {
+      "action": "screenshot",
+      "name": "10-sheet-closed",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 100
+    }
   ]
 }

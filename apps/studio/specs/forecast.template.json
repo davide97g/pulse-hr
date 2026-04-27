@@ -1,53 +1,171 @@
 {
   "$schema": "../node_modules/testreel/recording-definition.schema.json",
   "url": "{{BASE_URL}}/forecast",
-  "viewport": { "width": 1440, "height": 900 },
-  "chrome": { "title": "Pulse HR — Forecast" },
-  "background": { "padding": 48, "borderRadius": 14 },
-  "cursor": true,
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
   "setup": "{{SETUP}}",
   "steps": [
-    { "action": "wait", "ms": 1400 },
-    { "action": "screenshot", "name": "01-forecast-overview" },
-
-    { "action": "zoom", "selector": "[role=slider]", "scale": 1.6, "duration": 700 },
-    { "action": "wait", "ms": 400 },
-    { "action": "click", "selector": "[role=slider]" },
-    { "action": "keyboard", "key": "ArrowRight" },
-    { "action": "wait", "ms": 250 },
-    { "action": "keyboard", "key": "ArrowRight" },
-    { "action": "wait", "ms": 250 },
-    { "action": "keyboard", "key": "ArrowRight" },
-    { "action": "wait", "ms": 800 },
-    { "action": "screenshot", "name": "02-headcount-plus3" },
-
-    { "action": "zoom", "scale": 1, "duration": 500 },
-    { "action": "wait", "ms": 400 },
-
-    { "action": "zoom", "selector": "text=Team efficiency", "scale": 1.5, "duration": 600 },
-    { "action": "wait", "ms": 300 },
+    {
+      "action": "wait",
+      "ms": 1400
+    },
+    {
+      "action": "screenshot",
+      "name": "01-forecast-overview"
+    },
+    {
+      "action": "zoom",
+      "selector": "[role=slider]",
+      "scale": 1.6,
+      "duration": 700
+    },
+    {
+      "action": "wait",
+      "ms": 400
+    },
+    {
+      "action": "click",
+      "selector": "[role=slider]"
+    },
+    {
+      "action": "keyboard",
+      "key": "ArrowRight"
+    },
+    {
+      "action": "wait",
+      "ms": 250
+    },
+    {
+      "action": "keyboard",
+      "key": "ArrowRight"
+    },
+    {
+      "action": "wait",
+      "ms": 250
+    },
+    {
+      "action": "keyboard",
+      "key": "ArrowRight"
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "02-headcount-plus3"
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 500
+    },
+    {
+      "action": "wait",
+      "ms": 400
+    },
+    {
+      "action": "wait",
+      "ms": 300
+    },
     {
       "action": "click",
       "selector": "text=Team efficiency >> xpath=following::*[@role='slider'][1]"
     },
-    { "action": "keyboard", "key": "ArrowRight" },
-    { "action": "wait", "ms": 200 },
-    { "action": "keyboard", "key": "ArrowRight" },
-    { "action": "wait", "ms": 200 },
-    { "action": "keyboard", "key": "ArrowRight" },
-    { "action": "wait", "ms": 200 },
-    { "action": "keyboard", "key": "ArrowRight" },
-    { "action": "wait", "ms": 800 },
-    { "action": "screenshot", "name": "03-efficiency-up" },
-
-    { "action": "zoom", "scale": 1, "duration": 500 },
-    { "action": "wait", "ms": 400 },
-    { "action": "scroll", "y": 300 },
-    { "action": "wait", "ms": 800 },
-    { "action": "screenshot", "name": "04-narrative" },
-
-    { "action": "click", "selector": "button:has-text('Reset')", "zoom": 1.5 },
-    { "action": "wait", "ms": 1500 },
-    { "action": "screenshot", "name": "05-reset" }
-  ]
+    {
+      "action": "keyboard",
+      "key": "ArrowRight"
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "keyboard",
+      "key": "ArrowRight"
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "keyboard",
+      "key": "ArrowRight"
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "keyboard",
+      "key": "ArrowRight"
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "03-efficiency-up"
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 500
+    },
+    {
+      "action": "wait",
+      "ms": 400
+    },
+    {
+      "action": "scroll",
+      "y": 300
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "04-narrative"
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Reset')",
+      "zoom": 1.5
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "screenshot",
+      "name": "05-reset"
+    }
+  ],
+  "localStorage": {
+    "pulse.theme": "employee",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1"
+  }
 }

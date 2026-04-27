@@ -10,8 +10,17 @@
     "render:webm": "remotion render src/remotion/index.ts DayInPulse ../marketing/public/studio/reel.webm --codec=vp8",
     "render:poster": "remotion still src/remotion/index.ts DayInPulse ../marketing/public/studio/poster.jpg --frame=0 --image-format=jpeg --jpeg-quality=88",
     "render:all": "bun run render && bun run render:webm && bun run render:poster",
+    "reel": "bun scripts/render-reel.ts",
+    "reel:all": "bun scripts/render-reel.ts --all",
+    "reel:montage": "bun scripts/render-reel.ts montage",
     "record": "bun src/recordings/scripts/run.ts",
     "record:kudos-copilot": "bun src/recordings/scripts/run.ts kudos-copilot",
+    "record:kudos-give": "bun src/recordings/scripts/run.ts kudos-give",
+    "record:workspace-create": "CRED=new bun src/recordings/scripts/run.ts workspace-create",
+    "record:time-attendance": "bun src/recordings/scripts/run.ts time-attendance-entry",
+    "record:growth-checks": "bun src/recordings/scripts/run.ts growth-checks",
+    "record:comments-thread": "bun src/recordings/scripts/run.ts comments-thread",
+    "record:feedback-live": "GHOSTS=1 bun src/recordings/scripts/run.ts feedback-live",
     "postinstall": "playwright install chromium --with-deps || playwright install chromium"
   },
   "dependencies": {

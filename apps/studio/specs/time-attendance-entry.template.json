@@ -2,120 +2,287 @@
   "$schema": "../node_modules/testreel/recording-definition.schema.json",
   "url": "{{BASE_URL}}/time",
   "colorScheme": "dark",
-  "viewport": { "width": 1280, "height": 720 },
-  "outputSize": { "width": 1920, "height": 1080 },
-  "chrome": { "url": true },
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
   "background": {
-    "gradient": { "from": "#667eea", "to": "#764ba2" },
+    "color": "#0a0a0f",
+    "padding": 60,
     "borderRadius": 12
   },
-  "cursor": true,
-  "localStorage": { "pulse.theme": "employee" },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "employee",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1"
+  },
   "setup": {
     "url": "{{BASE_URL}}/login",
     "steps": [
-      { "action": "wait", "ms": 200 },
-      { "action": "zoom", "selector": "input[type=email]", "scale": 1.8, "duration": 180 },
-      { "action": "type", "selector": "input[type=email]", "text": "{{TEST_EMAIL}}", "delay": 12 },
-      { "action": "zoom", "selector": "input[type=password]", "scale": 1.8, "duration": 180 },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "zoom",
+        "selector": "input[type=email]",
+        "scale": 1.8,
+        "duration": 180
+      },
+      {
+        "action": "type",
+        "selector": "input[type=email]",
+        "text": "{{TEST_EMAIL}}",
+        "delay": 12
+      },
+      {
+        "action": "wait",
+        "ms": 400,
+        "waitFor": "input[type=password]",
+        "timeout": 15000
+      },
+      {
+        "action": "zoom",
+        "selector": "input[type=password]",
+        "scale": 1.8,
+        "duration": 180
+      },
       {
         "action": "type",
         "selector": "input[type=password]",
         "text": "{{TEST_PASSWORD}}",
         "delay": 12
       },
-      { "action": "zoom", "selector": "button[type=submit]", "scale": 1.8, "duration": 180 },
-      { "action": "click", "selector": "button[type=submit]" },
-      { "action": "zoom", "scale": 1, "duration": 80 },
-      { "action": "wait", "ms": 2000 },
-      { "action": "navigate", "url": "{{BASE_URL}}/dev/recording-reset" },
-      { "action": "wait", "ms": 600 },
+      {
+        "action": "click",
+        "selector": "button[type=submit]",
+        "zoom": 1.8
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 2000
+      },
+      {
+        "action": "navigate",
+        "url": "{{BASE_URL}}/dev/recording-reset"
+      },
+      {
+        "action": "wait",
+        "ms": 600
+      },
       {
         "action": "wait",
         "ms": 400,
         "waitFor": "button:has-text('Admin')",
         "timeout": 25000
       },
-
-      { "action": "zoom", "selector": "button:has-text('Admin')", "scale": 2, "duration": 180 },
-      { "action": "click", "selector": "button:has-text('Admin')" },
-      { "action": "wait", "ms": 150 },
-      { "action": "zoom", "selector": "button:has-text('Continue')", "scale": 2, "duration": 180 },
-      { "action": "click", "selector": "button:has-text('Continue')" },
-      { "action": "zoom", "scale": 1, "duration": 80 },
-      { "action": "wait", "ms": 200 },
-
+      {
+        "action": "click",
+        "selector": "button:has-text('Admin')",
+        "zoom": 2
+      },
+      {
+        "action": "wait",
+        "ms": 150
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Continue')",
+        "zoom": 2
+      },
       {
         "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "click",
         "selector": "button:has-text('Hire faster')",
-        "scale": 2,
-        "duration": 180
+        "zoom": 2
       },
-      { "action": "click", "selector": "button:has-text('Hire faster')" },
-      { "action": "wait", "ms": 120 },
       {
-        "action": "zoom",
+        "action": "wait",
+        "ms": 120
+      },
+      {
+        "action": "click",
         "selector": "button:has-text('Retain top talent')",
-        "scale": 2,
-        "duration": 180
+        "zoom": 2
       },
-      { "action": "click", "selector": "button:has-text('Retain top talent')" },
-      { "action": "wait", "ms": 120 },
       {
-        "action": "zoom",
+        "action": "wait",
+        "ms": 120
+      },
+      {
+        "action": "click",
         "selector": "button:has-text('Boost engagement')",
-        "scale": 2,
-        "duration": 180
+        "zoom": 2
       },
-      { "action": "click", "selector": "button:has-text('Boost engagement')" },
-      { "action": "wait", "ms": 120 },
-      { "action": "zoom", "selector": "button:has-text('Continue')", "scale": 2, "duration": 180 },
-      { "action": "click", "selector": "button:has-text('Continue')" },
-      { "action": "zoom", "scale": 1, "duration": 80 },
-      { "action": "wait", "ms": 200 },
-
-      { "action": "zoom", "selector": "#ws-name", "scale": 1.8, "duration": 180 },
-      { "action": "fill", "selector": "#ws-name", "text": "" },
-      { "action": "type", "selector": "#ws-name", "text": "Bitrock", "delay": 18 },
-      { "action": "wait", "ms": 150 },
-      { "action": "zoom", "selector": "button:has-text('Continue')", "scale": 2, "duration": 180 },
-      { "action": "click", "selector": "button:has-text('Continue')" },
-      { "action": "zoom", "scale": 1, "duration": 80 },
-      { "action": "wait", "ms": 200 },
-
-      { "action": "zoom", "selector": "#col-0", "scale": 1.6, "duration": 180 },
-      { "action": "type", "selector": "#col-0", "text": "Niccolò Naso", "delay": 14 },
-      { "action": "wait", "ms": 80 },
-      { "action": "type", "selector": "#col-1", "text": "Yi Zhang", "delay": 14 },
-      { "action": "wait", "ms": 80 },
-      { "action": "type", "selector": "#col-2", "text": "Andrea Mazza", "delay": 14 },
-      { "action": "wait", "ms": 200 },
+      {
+        "action": "wait",
+        "ms": 120
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Continue')",
+        "zoom": 2
+      },
       {
         "action": "zoom",
-        "selector": "button:has-text('Create workspace')",
-        "scale": 2,
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "zoom",
+        "selector": "#ws-name",
+        "scale": 1.8,
         "duration": 180
       },
-      { "action": "click", "selector": "button:has-text('Create workspace')" },
-      { "action": "zoom", "scale": 1, "duration": 80 },
-      { "action": "wait", "ms": 1600 },
-      { "action": "wait", "ms": 400, "waitFor": "main", "timeout": 10000 }
+      {
+        "action": "fill",
+        "selector": "#ws-name",
+        "text": ""
+      },
+      {
+        "action": "type",
+        "selector": "#ws-name",
+        "text": "Bitrock",
+        "delay": 18
+      },
+      {
+        "action": "wait",
+        "ms": 150
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Continue')",
+        "zoom": 2
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "zoom",
+        "selector": "#col-0",
+        "scale": 1.6,
+        "duration": 180
+      },
+      {
+        "action": "type",
+        "selector": "#col-0",
+        "text": "Niccolò Naso",
+        "delay": 14
+      },
+      {
+        "action": "wait",
+        "ms": 80
+      },
+      {
+        "action": "type",
+        "selector": "#col-1",
+        "text": "Yi Zhang",
+        "delay": 14
+      },
+      {
+        "action": "wait",
+        "ms": 80
+      },
+      {
+        "action": "type",
+        "selector": "#col-2",
+        "text": "Andrea Mazza",
+        "delay": 14
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Create workspace')",
+        "zoom": 2
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 1600
+      },
+      {
+        "action": "wait",
+        "ms": 400,
+        "waitFor": "main",
+        "timeout": 10000
+      }
     ]
   },
   "steps": [
-    { "action": "wait", "ms": 450, "waitFor": "text=Time & attendance", "timeout": 10000 },
-    { "action": "screenshot", "name": "01-time-idle", "pauseAfter": 80 },
-
-    { "action": "zoom", "selector": "button:has-text('New entry')", "scale": 2, "duration": 140 },
+    {
+      "action": "wait",
+      "ms": 450,
+      "waitFor": "text=Time & attendance",
+      "timeout": 10000
+    },
+    {
+      "action": "screenshot",
+      "name": "01-time-idle",
+      "pauseAfter": 80
+    },
     {
       "action": "click",
       "selector": "button:has-text('New entry')",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 2
     },
-    { "action": "wait", "ms": 500 },
-    { "action": "screenshot", "name": "02-new-entry-panel", "pauseAfter": 80 },
-
+    {
+      "action": "wait",
+      "ms": 500
+    },
+    {
+      "action": "screenshot",
+      "name": "02-new-entry-panel",
+      "pauseAfter": 80
+    },
     {
       "action": "zoom",
       "selector": "textarea[placeholder='What did you work on?']",
@@ -128,7 +295,10 @@
       "text": "Monthly close support and anomaly checks on payroll totals.",
       "delay": 16
     },
-    { "action": "wait", "ms": 180 },
+    {
+      "action": "wait",
+      "ms": 180
+    },
     {
       "action": "zoom",
       "selector": "input[type='number'][step='0.25']",
@@ -140,31 +310,37 @@
       "selector": "input[type='number'][step='0.25']",
       "text": "2.5"
     },
-    { "action": "wait", "ms": 180 },
-    { "action": "screenshot", "name": "03-entry-draft", "pauseAfter": 80 },
-
-    { "action": "zoom", "selector": "button:has-text('Add entry')", "scale": 2, "duration": 140 },
+    {
+      "action": "wait",
+      "ms": 180
+    },
+    {
+      "action": "screenshot",
+      "name": "03-entry-draft",
+      "pauseAfter": 80
+    },
     {
       "action": "click",
       "selector": "button:has-text('Add entry')",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 2
     },
-    { "action": "wait", "ms": 1000 },
-    { "action": "screenshot", "name": "04-entry-added", "pauseAfter": 80 },
-
     {
-      "action": "zoom",
-      "selector": "button[aria-label*='· filled ·'] >> nth=0",
-      "scale": 1.7,
-      "duration": 140,
-      "timeout": 12000
+      "action": "wait",
+      "ms": 1000
+    },
+    {
+      "action": "screenshot",
+      "name": "04-entry-added",
+      "pauseAfter": 80
     },
     {
       "action": "click",
       "selector": "button[aria-label*='· filled ·'] >> nth=0",
       "timeout": 8000,
-      "pauseAfter": 120
+      "pauseAfter": 120,
+      "zoom": 1.7
     },
     {
       "action": "wait",
@@ -172,7 +348,15 @@
       "waitFor": "text=logged ·",
       "timeout": 12000
     },
-    { "action": "screenshot", "name": "05-agenda-day-detail", "pauseAfter": 80 },
-    { "action": "zoom", "scale": 1, "duration": 100 }
+    {
+      "action": "screenshot",
+      "name": "05-agenda-day-detail",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 100
+    }
   ]
 }

@@ -1,13 +1,222 @@
 {
   "url": "{{BASE_URL}}/login",
   "steps": [
-    { "action": "wait", "ms": 600 },
-    { "action": "fill", "selector": "input[type=email]", "text": "{{TEST_EMAIL}}" },
-    { "action": "fill", "selector": "input[type=password]", "text": "{{TEST_PASSWORD}}" },
-    { "action": "click", "selector": "button[type=submit]" },
-    { "action": "wait", "ms": 3500 },
-    { "action": "fill", "selector": "#workspace-name", "text": "Acme" },
-    { "action": "click", "selector": "button:has-text('Create my workspace')" },
-    { "action": "wait", "ms": 2500 }
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "zoom",
+      "selector": "input[type=email]",
+      "scale": 1.8,
+      "duration": 180
+    },
+    {
+      "action": "type",
+      "selector": "input[type=email]",
+      "text": "{{TEST_EMAIL}}",
+      "delay": 12
+    },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "input[type=password]",
+      "timeout": 15000
+    },
+    {
+      "action": "zoom",
+      "selector": "input[type=password]",
+      "scale": 1.8,
+      "duration": 180
+    },
+    {
+      "action": "type",
+      "selector": "input[type=password]",
+      "text": "{{TEST_PASSWORD}}",
+      "delay": 12
+    },
+    {
+      "action": "click",
+      "selector": "button[type=submit]",
+      "zoom": 1.8
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 80
+    },
+    {
+      "action": "wait",
+      "ms": 2000
+    },
+    {
+      "action": "navigate",
+      "url": "{{BASE_URL}}/dev/recording-reset"
+    },
+    {
+      "action": "wait",
+      "ms": 600
+    },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "button:has-text('Admin')",
+      "timeout": 25000
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Admin')",
+      "zoom": 2
+    },
+    {
+      "action": "wait",
+      "ms": 150
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Continue')",
+      "zoom": 2
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 80
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Hire faster')",
+      "zoom": 2
+    },
+    {
+      "action": "wait",
+      "ms": 120
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Retain top talent')",
+      "zoom": 2
+    },
+    {
+      "action": "wait",
+      "ms": 120
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Boost engagement')",
+      "zoom": 2
+    },
+    {
+      "action": "wait",
+      "ms": 120
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Continue')",
+      "zoom": 2
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 80
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "zoom",
+      "selector": "#ws-name",
+      "scale": 1.8,
+      "duration": 180
+    },
+    {
+      "action": "fill",
+      "selector": "#ws-name",
+      "text": ""
+    },
+    {
+      "action": "type",
+      "selector": "#ws-name",
+      "text": "Bitrock",
+      "delay": 18
+    },
+    {
+      "action": "wait",
+      "ms": 150
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Continue')",
+      "zoom": 2
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 80
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "zoom",
+      "selector": "#col-0",
+      "scale": 1.6,
+      "duration": 180
+    },
+    {
+      "action": "type",
+      "selector": "#col-0",
+      "text": "Niccolò Naso",
+      "delay": 14
+    },
+    {
+      "action": "wait",
+      "ms": 80
+    },
+    {
+      "action": "type",
+      "selector": "#col-1",
+      "text": "Yi Zhang",
+      "delay": 14
+    },
+    {
+      "action": "wait",
+      "ms": 80
+    },
+    {
+      "action": "type",
+      "selector": "#col-2",
+      "text": "Andrea Mazza",
+      "delay": 14
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Create workspace')",
+      "zoom": 2
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 80
+    },
+    {
+      "action": "wait",
+      "ms": 1600
+    },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "main",
+      "timeout": 10000
+    }
   ]
 }

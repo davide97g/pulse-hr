@@ -1,0 +1,10 @@
+{
+  "spec": "time-attendance-entry",
+  "captions": [
+    { "atStep": 2, "text": "New time entry", "holdMs": 1600 },
+    { "atStep": 6, "text": "What you actually worked on", "holdMs": 2400 },
+    { "atStep": 9, "text": "Hours, in quarters", "holdMs": 1800 },
+    { "atStep": 12, "text": "Logged. Weekly total updates.", "holdMs": 2200 },
+    { "atStep": 15, "text": "Filled days at a glance", "holdMs": 2000 }
+  ]
+}

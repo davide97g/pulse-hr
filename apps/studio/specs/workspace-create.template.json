@@ -2,98 +2,267 @@
   "$schema": "../node_modules/testreel/recording-definition.schema.json",
   "url": "{{BASE_URL}}/login",
   "colorScheme": "dark",
-  "viewport": { "width": 1280, "height": 720 },
-  "outputSize": { "width": 1920, "height": 1080 },
-  "chrome": { "url": true },
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
   "background": {
-    "gradient": { "from": "#667eea", "to": "#764ba2" },
+    "color": "#0a0a0f",
+    "padding": 60,
     "borderRadius": 12
   },
-  "cursor": true,
-  "localStorage": { "pulse.theme": "employee" },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "employee",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1"
+  },
   "steps": [
-    { "action": "wait", "ms": 200 },
-    { "action": "zoom", "selector": "input[type=email]", "scale": 1.8, "duration": 180 },
-    { "action": "type", "selector": "input[type=email]", "text": "{{TEST_EMAIL}}", "delay": 12 },
-    { "action": "zoom", "selector": "input[type=password]", "scale": 1.8, "duration": 180 },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "zoom",
+      "selector": "input[type=email]",
+      "scale": 1.8,
+      "duration": 180
+    },
+    {
+      "action": "type",
+      "selector": "input[type=email]",
+      "text": "{{TEST_EMAIL}}",
+      "delay": 12
+    },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "input[type=password]",
+      "timeout": 15000
+    },
+    {
+      "action": "zoom",
+      "selector": "input[type=password]",
+      "scale": 1.8,
+      "duration": 180
+    },
     {
       "action": "type",
       "selector": "input[type=password]",
       "text": "{{TEST_PASSWORD}}",
       "delay": 12
     },
-    { "action": "zoom", "selector": "button[type=submit]", "scale": 1.8, "duration": 180 },
-    { "action": "click", "selector": "button[type=submit]" },
-    { "action": "zoom", "scale": 1, "duration": 80 },
-    { "action": "wait", "ms": 1600 },
-
-    { "action": "screenshot", "name": "01-welcome-pick-role" },
-
-    { "action": "zoom", "selector": "button:has-text('Admin')", "scale": 2, "duration": 180 },
-    { "action": "click", "selector": "button:has-text('Admin')" },
-    { "action": "wait", "ms": 150 },
-    { "action": "zoom", "selector": "button:has-text('Continue')", "scale": 2, "duration": 180 },
-    { "action": "click", "selector": "button:has-text('Continue')" },
-    { "action": "zoom", "scale": 1, "duration": 80 },
-    { "action": "wait", "ms": 200 },
-    { "action": "screenshot", "name": "02-goals-pick-one-or-more" },
-
-    { "action": "zoom", "selector": "button:has-text('Hire faster')", "scale": 2, "duration": 180 },
-    { "action": "click", "selector": "button:has-text('Hire faster')" },
-    { "action": "wait", "ms": 120 },
+    {
+      "action": "click",
+      "selector": "button[type=submit]",
+      "zoom": 1.8
+    },
     {
       "action": "zoom",
+      "scale": 1,
+      "duration": 80
+    },
+    {
+      "action": "wait",
+      "ms": 1600
+    },
+    {
+      "action": "screenshot",
+      "name": "01-welcome-pick-role"
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Admin')",
+      "zoom": 2
+    },
+    {
+      "action": "wait",
+      "ms": 150
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Continue')",
+      "zoom": 2
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 80
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "screenshot",
+      "name": "02-goals-pick-one-or-more"
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Hire faster')",
+      "zoom": 2
+    },
+    {
+      "action": "wait",
+      "ms": 120
+    },
+    {
+      "action": "click",
       "selector": "button:has-text('Retain top talent')",
-      "scale": 2,
-      "duration": 180
+      "zoom": 2
     },
-    { "action": "click", "selector": "button:has-text('Retain top talent')" },
-    { "action": "wait", "ms": 120 },
     {
-      "action": "zoom",
+      "action": "wait",
+      "ms": 120
+    },
+    {
+      "action": "click",
       "selector": "button:has-text('Boost engagement')",
-      "scale": 2,
-      "duration": 180
+      "zoom": 2
     },
-    { "action": "click", "selector": "button:has-text('Boost engagement')" },
-    { "action": "wait", "ms": 120 },
-    { "action": "zoom", "selector": "button:has-text('Continue')", "scale": 2, "duration": 180 },
-    { "action": "click", "selector": "button:has-text('Continue')" },
-    { "action": "zoom", "scale": 1, "duration": 80 },
-    { "action": "wait", "ms": 200 },
-    { "action": "screenshot", "name": "03-workspace-name-step" },
-
-    { "action": "zoom", "selector": "#ws-name", "scale": 1.8, "duration": 180 },
-    { "action": "fill", "selector": "#ws-name", "text": "" },
-    { "action": "type", "selector": "#ws-name", "text": "Bitrock", "delay": 18 },
-    { "action": "wait", "ms": 200 },
-    { "action": "screenshot", "name": "04-workspace-name-filled" },
-    { "action": "zoom", "selector": "button:has-text('Continue')", "scale": 2, "duration": 180 },
-    { "action": "click", "selector": "button:has-text('Continue')" },
-    { "action": "zoom", "scale": 1, "duration": 80 },
-    { "action": "wait", "ms": 200 },
-    { "action": "screenshot", "name": "05-teammates-optional" },
-
-    { "action": "zoom", "selector": "#col-0", "scale": 1.6, "duration": 180 },
-    { "action": "type", "selector": "#col-0", "text": "Niccolò Naso", "delay": 14 },
-    { "action": "wait", "ms": 80 },
-    { "action": "type", "selector": "#col-1", "text": "Yi Zhang", "delay": 14 },
-    { "action": "wait", "ms": 80 },
-    { "action": "type", "selector": "#col-2", "text": "Andrea Mazza", "delay": 14 },
-    { "action": "wait", "ms": 200 },
+    {
+      "action": "wait",
+      "ms": 120
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Continue')",
+      "zoom": 2
+    },
     {
       "action": "zoom",
-      "selector": "button:has-text('Create workspace')",
-      "scale": 2,
+      "scale": 1,
+      "duration": 80
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "screenshot",
+      "name": "03-workspace-name-step"
+    },
+    {
+      "action": "zoom",
+      "selector": "#ws-name",
+      "scale": 1.8,
       "duration": 180
     },
-    { "action": "click", "selector": "button:has-text('Create workspace')" },
-    { "action": "zoom", "scale": 1, "duration": 80 },
-    { "action": "wait", "ms": 1600 },
-
-    { "action": "zoom", "selector": "main", "scale": 1.12, "duration": 220, "timeout": 8000 },
-    { "action": "wait", "ms": 250 },
-    { "action": "screenshot", "name": "06-dashboard-ready" },
-    { "action": "zoom", "scale": 1, "duration": 120 }
+    {
+      "action": "fill",
+      "selector": "#ws-name",
+      "text": ""
+    },
+    {
+      "action": "type",
+      "selector": "#ws-name",
+      "text": "Bitrock",
+      "delay": 18
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "screenshot",
+      "name": "04-workspace-name-filled"
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Continue')",
+      "zoom": 2
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 80
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "screenshot",
+      "name": "05-teammates-optional"
+    },
+    {
+      "action": "zoom",
+      "selector": "#col-0",
+      "scale": 1.6,
+      "duration": 180
+    },
+    {
+      "action": "type",
+      "selector": "#col-0",
+      "text": "Niccolò Naso",
+      "delay": 14
+    },
+    {
+      "action": "wait",
+      "ms": 80
+    },
+    {
+      "action": "type",
+      "selector": "#col-1",
+      "text": "Yi Zhang",
+      "delay": 14
+    },
+    {
+      "action": "wait",
+      "ms": 80
+    },
+    {
+      "action": "type",
+      "selector": "#col-2",
+      "text": "Andrea Mazza",
+      "delay": 14
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Create workspace')",
+      "zoom": 2
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 80
+    },
+    {
+      "action": "wait",
+      "ms": 1600
+    },
+    {
+      "action": "wait",
+      "ms": 250
+    },
+    {
+      "action": "screenshot",
+      "name": "06-dashboard-ready"
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 120
+    }
   ]
 }

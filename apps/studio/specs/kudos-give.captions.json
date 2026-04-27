@@ -1,0 +1,9 @@
+{
+  "spec": "kudos-give",
+  "captions": [
+    { "atStep": 2, "text": "Pick a teammate", "holdMs": 1800 },
+    { "atStep": 7, "text": "Say what they did. Plain English.", "holdMs": 2400 },
+    { "atStep": 10, "text": "25 coins on the way", "holdMs": 1800 },
+    { "atStep": 12, "text": "Sent. Confetti optional.", "holdMs": 2400 }
+  ]
+}

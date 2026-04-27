@@ -1,0 +1,11 @@
+{
+  "spec": "kudos-copilot",
+  "captions": [
+    { "atStep": 16, "text": "Open Copilot — ⌘K", "holdMs": 1800 },
+    { "atStep": 19, "text": "Just say what you did", "holdMs": 2400 },
+    { "atStep": 27, "text": "Copilot drafts the kudos", "holdMs": 2200 },
+    { "atStep": 29, "text": "Pick the coin amount", "holdMs": 1600 },
+    { "atStep": 31, "text": "Edit, or send as-is", "holdMs": 2200 },
+    { "atStep": 34, "text": "Sent. No fields. No friction.", "holdMs": 2400 }
+  ]
+}

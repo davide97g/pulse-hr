@@ -1,0 +1,183 @@
+{
+  "$schema": "../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{FEEDBACK_BASE_URL}}/",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "employee",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1",
+    "feedback.viewer.identity": "{\"id\":\"emp-marcus\",\"name\":\"Marcus Rivera\"}"
+  },
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 800,
+      "waitFor": "main",
+      "timeout": 12000
+    },
+    {
+      "action": "screenshot",
+      "name": "01-board",
+      "pauseAfter": 80
+    },
+    {
+      "action": "scroll",
+      "y": 240,
+      "pauseAfter": 700
+    },
+    {
+      "action": "wait",
+      "ms": 400
+    },
+    {
+      "action": "click",
+      "selector": "button[aria-label='Upvote']",
+      "zoom": 1.8,
+      "pauseAfter": 220,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "02-upvoted",
+      "pauseAfter": 80
+    },
+    {
+      "action": "scroll",
+      "y": -240,
+      "pauseAfter": 500
+    },
+    {
+      "action": "wait",
+      "ms": 400
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('New proposal')",
+      "zoom": 2,
+      "pauseAfter": 220,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 700,
+      "waitFor": "#proposal-title",
+      "timeout": 8000
+    },
+    {
+      "action": "screenshot",
+      "name": "03-composer-open",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "selector": "#proposal-title",
+      "scale": 1.6,
+      "duration": 220
+    },
+    {
+      "action": "type",
+      "selector": "#proposal-title",
+      "text": "Slack-style threads on commessa pages",
+      "delay": 16
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "zoom",
+      "selector": "#proposal-body",
+      "scale": 1.4,
+      "duration": 220
+    },
+    {
+      "action": "type",
+      "selector": "#proposal-body",
+      "text": "Right now comments live on proposals only. We'd love a thread directly on each commessa to keep delivery context together.",
+      "delay": 12
+    },
+    {
+      "action": "wait",
+      "ms": 300
+    },
+    {
+      "action": "screenshot",
+      "name": "04-composer-filled",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Post proposal')",
+      "zoom": 2,
+      "pauseAfter": 220,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 1800
+    },
+    {
+      "action": "screenshot",
+      "name": "05-posted",
+      "pauseAfter": 80
+    },
+    {
+      "action": "wait",
+      "ms": 6000
+    },
+    {
+      "action": "screenshot",
+      "name": "06-replies-flowing",
+      "pauseAfter": 80
+    },
+    {
+      "action": "scroll",
+      "y": 200,
+      "pauseAfter": 600
+    },
+    {
+      "action": "wait",
+      "ms": 2000
+    },
+    {
+      "action": "screenshot",
+      "name": "07-engagement",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 300
+    }
+  ]
+}

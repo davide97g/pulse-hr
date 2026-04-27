@@ -1,0 +1,56 @@
+{
+  "spec": "feedback-live",
+  "feedbackBaseUrl": "{{FEEDBACK_BASE_URL}}",
+  "description": "Choreography for ghost users that interact with the freshly-posted proposal while the main reel records. Each ghost is a separate Playwright session driven by run.ts in --ghosts mode.",
+  "ghosts": [
+    {
+      "id": "lina",
+      "credsKey": "ghosts.lina",
+      "identity": { "id": "emp-lina", "name": "Lina Park" },
+      "actions": [
+        {
+          "atSeconds": 22,
+          "kind": "reply",
+          "matchProposalTitle": "Slack-style threads on commessa pages",
+          "text": "Strong yes — we hit this every monthly close."
+        },
+        {
+          "atSeconds": 30,
+          "kind": "upvote",
+          "matchProposalTitle": "Slack-style threads on commessa pages"
+        }
+      ]
+    },
+    {
+      "id": "andrea",
+      "credsKey": "ghosts.andrea",
+      "identity": { "id": "emp-andrea", "name": "Andrea Mazza" },
+      "actions": [
+        {
+          "atSeconds": 26,
+          "kind": "reply",
+          "matchProposalTitle": "Slack-style threads on commessa pages",
+          "text": "How about scoping it per office first? Smaller blast radius."
+        }
+      ]
+    },
+    {
+      "id": "yi",
+      "credsKey": "ghosts.yi",
+      "identity": { "id": "emp-yi", "name": "Yi Zhang" },
+      "actions": [
+        {
+          "atSeconds": 33,
+          "kind": "reply",
+          "matchProposalTitle": "Slack-style threads on commessa pages",
+          "text": "Nice idea — bonus if it surfaces in the daily digest."
+        },
+        {
+          "atSeconds": 36,
+          "kind": "upvote",
+          "matchProposalTitle": "Slack-style threads on commessa pages"
+        }
+      ]
+    }
+  ]
+}

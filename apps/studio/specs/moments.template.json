@@ -1,34 +1,112 @@
 {
   "$schema": "../node_modules/testreel/recording-definition.schema.json",
   "url": "{{BASE_URL}}/moments",
-  "viewport": { "width": 1440, "height": 900 },
-  "chrome": { "title": "Pulse HR — Moments" },
-  "background": { "padding": 48, "borderRadius": 14 },
-  "cursor": true,
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
   "setup": "{{SETUP}}",
   "steps": [
-    { "action": "wait", "ms": 1800 },
-    { "action": "screenshot", "name": "01-moments-open" },
-
-    { "action": "zoom", "scale": 1.2, "duration": 700 },
-    { "action": "wait", "ms": 1600 },
-    { "action": "screenshot", "name": "02-first-slide" },
-    { "action": "zoom", "scale": 1, "duration": 500 },
-
-    { "action": "click", "selector": "button:has-text('Next')", "zoom": 1.4 },
-    { "action": "wait", "ms": 1500 },
-    { "action": "screenshot", "name": "03-slide-2" },
-
-    { "action": "click", "selector": "button:has-text('Next')", "zoom": 1.4 },
-    { "action": "wait", "ms": 1500 },
-    { "action": "screenshot", "name": "04-slide-3" },
-
-    { "action": "click", "selector": "button:has-text('Next')", "zoom": 1.4 },
-    { "action": "wait", "ms": 1500 },
-    { "action": "screenshot", "name": "05-slide-4" },
-
-    { "action": "click", "selector": "button:has-text('Next')", "zoom": 1.4 },
-    { "action": "wait", "ms": 1800 },
-    { "action": "screenshot", "name": "06-slide-5" }
-  ]
+    {
+      "action": "wait",
+      "ms": 1800
+    },
+    {
+      "action": "screenshot",
+      "name": "01-moments-open"
+    },
+    {
+      "action": "zoom",
+      "scale": 1.2,
+      "duration": 700
+    },
+    {
+      "action": "wait",
+      "ms": 1600
+    },
+    {
+      "action": "screenshot",
+      "name": "02-first-slide"
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 500
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Next')",
+      "zoom": 1.4
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "screenshot",
+      "name": "03-slide-2"
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Next')",
+      "zoom": 1.4
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "screenshot",
+      "name": "04-slide-3"
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Next')",
+      "zoom": 1.4
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "screenshot",
+      "name": "05-slide-4"
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Next')",
+      "zoom": 1.4
+    },
+    {
+      "action": "wait",
+      "ms": 1800
+    },
+    {
+      "action": "screenshot",
+      "name": "06-slide-5"
+    }
+  ],
+  "localStorage": {
+    "pulse.theme": "employee",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1"
+  }
 }
