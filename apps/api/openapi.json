@@ -1,0 +1,1037 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Pulse HR API",
+    "version": "0.6.0",
+    "description": "Pulse HR backend (Hono + Bun on Render). This document is auto-generated from the route definitions in `apps/api/src/openapi/*` — do not hand-edit."
+  },
+  "servers": [
+    {
+      "url": "https://api.pulsehr.it",
+      "description": "production"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "local dev"
+    }
+  ],
+  "tags": [
+    {
+      "name": "system",
+      "description": "Service health and diagnostics"
+    },
+    {
+      "name": "comments",
+      "description": "Inline page comments and replies"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Clerk-issued JWT. Pass as `Authorization: Bearer <token>`."
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "description": "True iff database, Clerk, and Neon are all healthy"
+          },
+          "service": {
+            "type": "string",
+            "enum": [
+              "@pulse-hr/api"
+            ]
+          },
+          "checks": {
+            "$ref": "#/components/schemas/HealthChecks"
+          },
+          "neon": {
+            "$ref": "#/components/schemas/NeonCheck"
+          },
+          "runtime": {
+            "type": "string",
+            "example": "bun 1.3.11"
+          }
+        },
+        "required": [
+          "ok",
+          "service",
+          "checks",
+          "neon",
+          "runtime"
+        ]
+      },
+      "HealthChecks": {
+        "type": "object",
+        "properties": {
+          "databaseUrl": {
+            "type": "boolean"
+          },
+          "clerkSecretKey": {
+            "type": "boolean"
+          },
+          "resendKey": {
+            "type": "boolean"
+          },
+          "cronSecret": {
+            "type": "boolean"
+          },
+          "r2Configured": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "databaseUrl",
+          "clerkSecretKey",
+          "resendKey",
+          "cronSecret",
+          "r2Configured"
+        ]
+      },
+      "NeonCheck": {
+        "type": "object",
+        "properties": {
+          "reachable": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "reachable"
+        ]
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string"
+          },
+          "anchor": {
+            "type": "object",
+            "properties": {
+              "selector": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 2048
+              },
+              "xPct": {
+                "type": "number"
+              },
+              "yPct": {
+                "type": "number"
+              },
+              "fallbackX": {
+                "type": "number"
+              },
+              "fallbackY": {
+                "type": "number"
+              },
+              "scrollY": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "selector",
+              "xPct",
+              "yPct",
+              "fallbackX",
+              "fallbackY",
+              "scrollY"
+            ]
+          },
+          "pageMeta": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "maxLength": 512
+              },
+              "viewportW": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "viewportH": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "userAgent": {
+                "type": "string",
+                "maxLength": 1024
+              },
+              "appVersion": {
+                "type": "string",
+                "maxLength": 64
+              }
+            },
+            "required": [
+              "title",
+              "viewportW",
+              "viewportH",
+              "userAgent"
+            ]
+          },
+          "body": {
+            "type": "string"
+          },
+          "author": {
+            "$ref": "#/components/schemas/Author"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "triaged",
+              "planned",
+              "shipped",
+              "wont_do"
+            ]
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "screenshotUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "voteScore": {
+            "type": "integer"
+          },
+          "myVote": {
+            "anyOf": [
+              {
+                "type": "number",
+                "enum": [
+                  -1
+                ]
+              },
+              {
+                "type": "number",
+                "enum": [
+                  0
+                ]
+              },
+              {
+                "type": "number",
+                "enum": [
+                  1
+                ]
+              }
+            ]
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reply"
+            }
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "route",
+          "anchor",
+          "pageMeta",
+          "body",
+          "author",
+          "status",
+          "tags",
+          "screenshotUrl",
+          "voteScore",
+          "myVote",
+          "replies",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Author": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "avatarUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "avatarUrl"
+        ]
+      },
+      "Reply": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "commentId": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "author": {
+            "$ref": "#/components/schemas/Author"
+          },
+          "mentions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "commentId",
+          "body",
+          "author",
+          "mentions",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "ErrorBody": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "not_found"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "EditComment": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "anchor": {
+            "type": "object",
+            "properties": {
+              "selector": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 2048
+              },
+              "xPct": {
+                "type": "number"
+              },
+              "yPct": {
+                "type": "number"
+              },
+              "fallbackX": {
+                "type": "number"
+              },
+              "fallbackY": {
+                "type": "number"
+              },
+              "scrollY": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "selector",
+              "xPct",
+              "yPct",
+              "fallbackX",
+              "fallbackY",
+              "scrollY"
+            ]
+          }
+        }
+      },
+      "VoteResult": {
+        "type": "object",
+        "properties": {
+          "voteScore": {
+            "type": "integer"
+          },
+          "myVote": {
+            "anyOf": [
+              {
+                "type": "number",
+                "enum": [
+                  -1
+                ]
+              },
+              {
+                "type": "number",
+                "enum": [
+                  0
+                ]
+              },
+              {
+                "type": "number",
+                "enum": [
+                  1
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "voteScore",
+          "myVote"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Service health check",
+        "description": "Public diagnostics endpoint. Returns environment configuration flags and a live Neon connectivity probe. No secrets are leaked — only booleans indicating whether keys are present.",
+        "responses": {
+          "200": {
+            "description": "Health snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments": {
+      "get": {
+        "tags": [
+          "comments"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "List comments for a route",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512,
+              "pattern": "^\\/"
+            },
+            "required": true,
+            "name": "route",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comments on the requested route",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Comment"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "comments"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Create a comment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "route": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512,
+                    "pattern": "^\\/"
+                  },
+                  "anchor": {
+                    "type": "object",
+                    "properties": {
+                      "selector": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "maxLength": 2048
+                      },
+                      "xPct": {
+                        "type": "number"
+                      },
+                      "yPct": {
+                        "type": "number"
+                      },
+                      "fallbackX": {
+                        "type": "number"
+                      },
+                      "fallbackY": {
+                        "type": "number"
+                      },
+                      "scrollY": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "selector",
+                      "xPct",
+                      "yPct",
+                      "fallbackX",
+                      "fallbackY",
+                      "scrollY"
+                    ]
+                  },
+                  "pageMeta": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "maxLength": 512
+                      },
+                      "viewportW": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "viewportH": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "userAgent": {
+                        "type": "string",
+                        "maxLength": 1024
+                      },
+                      "appVersion": {
+                        "type": "string",
+                        "maxLength": 64
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "viewportW",
+                      "viewportH",
+                      "userAgent"
+                    ]
+                  },
+                  "body": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9-]{1,24}$"
+                    },
+                    "maxItems": 10
+                  },
+                  "screenshotUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 1024,
+                    "format": "uri"
+                  }
+                },
+                "required": [
+                  "route",
+                  "anchor",
+                  "pageMeta",
+                  "body"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comment created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Daily comment cap reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/{id}": {
+      "patch": {
+        "tags": [
+          "comments"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Edit a comment",
+        "description": "Author-only. Body changes append a revision row; anchor changes do not.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i",
+              "example": "9d4a0a8c-1c8e-4b2a-9c4f-0a8c1c8e4b2a"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditComment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated comment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not the author",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "comments"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Soft-delete a comment",
+        "description": "Author or admin. Returns 204 with no body.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i",
+              "example": "9d4a0a8c-1c8e-4b2a-9c4f-0a8c1c8e4b2a"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "403": {
+            "description": "Not the author and not an admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/{id}/replies": {
+      "post": {
+        "tags": [
+          "comments"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Reply to a comment",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i",
+              "example": "9d4a0a8c-1c8e-4b2a-9c4f-0a8c1c8e4b2a"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "body": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  }
+                },
+                "required": [
+                  "body"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reply created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reply"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Parent comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/{id}/vote": {
+      "post": {
+        "tags": [
+          "comments"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Cast, swap, or retract a vote",
+        "description": "Voting power economy: charge 1 on first cast, refund 1 on retract, refund + charge on swap (net 0, two ledger rows). Same value resubmitted is a no-op.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i",
+              "example": "9d4a0a8c-1c8e-4b2a-9c4f-0a8c1c8e4b2a"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "enum": [
+                          -1
+                        ]
+                      },
+                      {
+                        "type": "number",
+                        "enum": [
+                          0
+                        ]
+                      },
+                      {
+                        "type": "number",
+                        "enum": [
+                          1
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "value"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated vote score",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoteResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Insufficient voting power",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/{id}/status": {
+      "patch": {
+        "tags": [
+          "comments"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Move a comment to a new status (admin only)",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i",
+              "example": "9d4a0a8c-1c8e-4b2a-9c4f-0a8c1c8e4b2a"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "open",
+                      "triaged",
+                      "planned",
+                      "shipped",
+                      "wont_do"
+                    ]
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated comment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not an admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {}
+}
