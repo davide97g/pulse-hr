@@ -8,7 +8,7 @@
 
 **Tone.** Roasting, sarcastic, light-aggressive on stereotypes, no people-pleasing. We name names. We don't hedge. We land the punch, then back it up with what's true. Informed by `foundation.md` §10 voice rules + the "Built by the haters" tagline.
 
-**Format.** 10 slides, 1080 × 1350 px (LinkedIn 4:5 document), PDF, portrait. Dark ink background, lime accents, one italic word per slide.
+**Format.** 9 slides, 1080 × 1350 px (LinkedIn 4:5 document), PDF, portrait. Dark ink background, lime accents, one italic word per slide.
 
 ---
 
@@ -61,7 +61,7 @@ Paste the prompt below into Claude Design (Figma Make / Artifacts). It will rebu
 | Headline    | `HR software for people who *hate* HR software.`                                                  |
 | Body        | —                                                                                                 |
 | Footer      | `pulsehr.it`                                                                                      |
-| Slide count | `01 / 10`                                                                                         |
+| Slide count | `01 / 09`                                                                                         |
 
 **Design note.** Nothing but the headline on ink. Lime period. Massive — 110–140pt. The slide where the ink does most of the work.
 
@@ -73,19 +73,9 @@ Paste the prompt below into Claude Design (Figma Make / Artifacts). It will rebu
 | Headline | `Your HRIS is *slow*.`                                                                                                                                                                                     |
 | Body     | Your manager can only see their own team. Time entry lives in one app, the project in another. The same eight hours get logged twice. Nobody trusts either number. You pay for all of this. You hate all of this. |
 | Footer   | `— every services firm, every Friday afternoon`                                                                                                                                                            |
-| Slide count | `02 / 10`                                                                                                                                                                                               |
+| Slide count | `02 / 09`                                                                                                                                                                                               |
 
-### Slide 3 — THE SUITE CARTEL
-
-| Field    | Content                                                                                          |
-| -------- | ------------------------------------------------------------------------------------------------ |
-| Eyebrow  | `THE SUITE CARTEL`                                                                               |
-| Headline | `Three vendors. One *racket*.`                                                                   |
-| Body     | **Rippling** — locks you into the suite.<br>**Deel** — locks you into contractors.<br>**BambooHR** — locks you into 2014.<br>Not one of them will let you read the source. |
-| Footer   | `We can name names. Foundation.md §10.`                                                          |
-| Slide count | `03 / 10`                                                                                     |
-
-### Slide 4 — BOOK-A-DEMO
+### Slide 3 — BOOK-A-DEMO
 
 | Field    | Content                                                                                                 |
 | -------- | ------------------------------------------------------------------------------------------------------- |
@@ -93,9 +83,9 @@ Paste the prompt below into Claude Design (Figma Make / Artifacts). It will rebu
 | Headline | `To see what they do, you have to *book a demo*.`                                                       |
 | Body     | Apparently "can I see the product before I pay for it" is a premium feature. We disagreed so hard we made not-doing-that a brand value. |
 | Footer   | `$ grep -r "book a demo" pulsehr.it   →   0 results`                                                    |
-| Slide count | `04 / 10`                                                                                            |
+| Slide count | `03 / 09`                                                                                            |
 
-### Slide 5 — PIVOT
+### Slide 4 — PIVOT
 
 | Field    | Content                                                                                           |
 | -------- | ------------------------------------------------------------------------------------------------- |
@@ -103,11 +93,11 @@ Paste the prompt below into Claude Design (Figma Make / Artifacts). It will rebu
 | Headline | `You could just *read* the source.`                                                               |
 | Body     | `$ git clone github.com/davide97g/pulse-hr`<br>`$ cd pulse-hr && bun install && bun run dev`<br>` → localhost:5173. done.` |
 | Footer   | `≈ 58 seconds. on a 2020 MacBook.`                                                                |
-| Slide count | `05 / 10`                                                                                      |
+| Slide count | `04 / 09`                                                                                      |
 
 **Design note.** The `$` prompt in lime. Mono throughout the body. Keep the terminal aesthetic — this is the turning point of the carousel, people should feel the vibe change here.
 
-### Slide 6 — 01 · OPEN
+### Slide 5 — 01 · OPEN
 
 | Field    | Content                                                                                                                              |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -115,9 +105,9 @@ Paste the prompt below into Claude Design (Figma Make / Artifacts). It will rebu
 | Headline | `The whole product. *On GitHub*.`                                                                                                    |
 | Body     | FSL-1.1-MIT today. Converts to plain MIT after two years. Automatic, non-negotiable. Read every line. Run it on your box. Fork it if we let you down. |
 | Footer   | `github.com/davide97g/pulse-hr/blob/main/LICENSE`                                                                                    |
-| Slide count | `06 / 10`                                                                                                                         |
+| Slide count | `05 / 09`                                                                                                                         |
 
-### Slide 7 — 02 · TRANSPARENT
+### Slide 6 — 02 · TRANSPARENT
 
 | Field    | Content                                                                                                                               |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -125,9 +115,9 @@ Paste the prompt below into Claude Design (Figma Make / Artifacts). It will rebu
 | Headline | `Nothing behind a *sales call*.`                                                                                                      |
 | Body     | Roadmap public. Changelog public. Prices public. Screw-ups public. If you'd need to "talk to someone" to figure out if we'd work for you — that's on us, and we'd rather just write it down. |
 | Footer   | `pulsehr.it/roadmap · pulsehr.it/changelog · pulsehr.it/pricing`                                                                      |
-| Slide count | `07 / 10`                                                                                                                          |
+| Slide count | `06 / 09`                                                                                                                          |
 
-### Slide 8 — 03 · YOURS
+### Slide 7 — 03 · YOURS
 
 | Field    | Content                                                                                                                        |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
@@ -135,9 +125,9 @@ Paste the prompt below into Claude Design (Figma Make / Artifacts). It will rebu
 | Headline | `Your data. Your infra. *Your exit*.`                                                                                          |
 | Body     | Self-host on Docker / Helm / Terraform. Export everything in a clean format, any time, without asking. Leaving Pulse is the easiest thing it does. That's on purpose. |
 | Footer   | `docs/self-hosting.md`                                                                                                         |
-| Slide count | `08 / 10`                                                                                                                   |
+| Slide count | `07 / 09`                                                                                                                   |
 
-### Slide 9 — 04 · BUILT BY THE HATERS
+### Slide 8 — 04 · BUILT BY THE HATERS
 
 | Field    | Content                                                                                                                                                      |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -145,9 +135,9 @@ Paste the prompt below into Claude Design (Figma Make / Artifacts). It will rebu
 | Headline | `Built by the *haters*.`                                                                                                                                     |
 | Body     | Two devs in Milan. No BDRs. No "customer success team". No product managers. Just commits, a public roadmap, and pull requests from people who — turns out — also hate their HR software. |
 | Footer   | `Davide Ghiotto · Niccolò Naso · Milan · 2026`                                                                                                              |
-| Slide count | `09 / 10`                                                                                                                                                 |
+| Slide count | `08 / 09`                                                                                                                                                 |
 
-### Slide 10 — CTA
+### Slide 9 — CTA
 
 | Field    | Content                                                                                                                  |
 | -------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -155,7 +145,7 @@ Paste the prompt below into Claude Design (Figma Make / Artifacts). It will rebu
 | Headline | `Come *hate* it with us. Constructively.`                                                                                |
 | Body     | `★ Star it.`  ·  `🍴 Fork it.`  ·  `🔨 Break it.`<br>`github.com/davide97g/pulse-hr`<br><br>We're building what we'd want to use next. If you've got the same problem, we're listening. |
 | Footer   | `Pulse HR · pulsehr.it`                                                                                                  |
-| Slide count | `10 / 10`                                                                                                             |
+| Slide count | `09 / 09`                                                                                                             |
 
 ---
 
@@ -173,17 +163,16 @@ conflicts with those files, the files win.
 
 ## Deliverable
 
-A **10-slide LinkedIn document carousel** for launch day. 1080 × 1350 px
+A **9-slide LinkedIn document carousel** for launch day. 1080 × 1350 px
 per slide (portrait, 4:5). Designed for PDF export. Also usable as
 individual PNGs for Instagram static / Twitter cards.
 
 ## Tone
 
-Roasting, sarcastic, light-aggressive on stereotypes. We name competitors
-explicitly (Rippling, Deel, BambooHR). We don't hedge. We land the
-punch, then back it up with real substance. Start big, dial down to
-real content by slide 6. The first five slides are the hook; slides
-6–9 are the four commitments; slide 10 is the CTA.
+Roasting, sarcastic, light-aggressive on stereotypes. We don't hedge.
+We land the punch, then back it up with real substance. Start big, dial
+down to real content by slide 5. The first four slides are the hook;
+slides 5–8 are the four commitments; slide 9 is the CTA.
 
 ## Brand system (pasted from identity.md + aesthetic.md)
 
@@ -211,9 +200,9 @@ real content by slide 6. The first five slides are the hook; slides
 - Under headline: **body** in Geist, 28–34px, line-height 1.45, max
   width ~700px. Cream at 0.8 opacity.
 - Bottom-left: mono **footer** at 16px, 0.75 opacity.
-- Bottom-right: mono **slide counter** `NN / 10` at 14px, 0.5 opacity.
+- Bottom-right: mono **slide counter** `NN / 09` at 14px, 0.5 opacity.
 - Subtle 64px ink-on-ink grid, 12% opacity, radially masked (slide 1
-  and 5 only — these are the hero moments).
+  and 4 only — these are the hero moments).
 
 ## Per-slide copy
 
@@ -222,7 +211,7 @@ words wrapped in asterisks are CSS `font-style: italic`]
 
 ## Deliverables (one pass)
 
-1. All 10 slides rendered at 1080 × 1350, side-by-side storyboard grid.
+1. All 9 slides rendered at 1080 × 1350, side-by-side storyboard grid.
 2. Each slide also exported individually as a PNG at 1080 × 1350 for
    single-use repurposing (Instagram static, Twitter card).
 3. An export-ready combined PDF, one slide per page, portrait.
@@ -252,9 +241,8 @@ words wrapped in asterisks are CSS `font-style: italic`]
 ## References used (for the human reviewer)
 
 - `docs/brand/foundation.md` §1 (one-line positioning) — hero line on slide 1.
-- `docs/brand/foundation.md` §5 (core values) — slides 6–9 one-per-commitment.
-- `docs/brand/foundation.md` §9 (anti-positioning) — slide 4's book-a-demo roast.
-- `docs/brand/foundation.md` §10 (voice rules) — name competitors: slide 3.
+- `docs/brand/foundation.md` §5 (core values) — slides 5–8 one-per-commitment.
+- `docs/brand/foundation.md` §9 (anti-positioning) — slide 3's book-a-demo roast.
 - `docs/brand/identity.md` §5 (typography rules) — one italic word, lime period.
 - `docs/brand/identity.md` §6 (banned phrases) — vetting pass before publish.
 - `docs/brand/aesthetic.md` §1 (one-line aesthetic) — "Quiet, dark, translucent. Lime as spark. No party tricks."
