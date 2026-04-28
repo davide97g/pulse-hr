@@ -70,6 +70,15 @@ export const docInfo = {
   tags: [
     { name: "system", description: "Service health and diagnostics" },
     { name: "comments", description: "Inline page comments and replies" },
+    { name: "proposals", description: "Improvement proposals and ideas" },
+    { name: "feedback", description: "Unified feedback board" },
+    { name: "changelog", description: "Public release notes" },
+    { name: "notifications", description: "User notifications and preferences" },
+    { name: "screenshots", description: "Comment screenshot uploads" },
+    { name: "workspace", description: "Workspace-level configuration" },
+    { name: "admin", description: "Admin-only endpoints" },
+    { name: "user-profile", description: "User profile and voting power" },
+    { name: "cron", description: "Scheduled tasks (cron-secret auth)" },
   ],
 };
 
@@ -80,9 +89,18 @@ export const bearerAuth = {
   description: "Clerk-issued JWT. Pass as `Authorization: Bearer <token>`.",
 };
 
-export const securitySchemes = { Bearer: bearerAuth };
+export const cronBearerAuth = {
+  type: "http" as const,
+  scheme: "bearer",
+  description: "Cron secret. Pass as `Authorization: Bearer ${CRON_SECRET}`.",
+};
+
+export const securitySchemes = { Bearer: bearerAuth, CronBearer: cronBearerAuth };
 
 /** Convenience marker for routes that require Clerk auth. */
 export const RequireAuth = [{ Bearer: [] as string[] }];
+
+/** Convenience marker for cron-secret-protected routes. */
+export const RequireCronAuth = [{ CronBearer: [] as string[] }];
 
 export { z, OpenAPIHono };

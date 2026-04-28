@@ -2,7 +2,7 @@
  * Cron endpoints protected by `requireCronSecret`. Called by GitHub Actions
  * scheduled workflows (see .github/workflows/cron-*.yml).
  */
-import { Hono } from "hono";
+import { createRoute } from "@hono/zod-openapi";
 import { and, desc, eq, gte, isNull, sql } from "drizzle-orm";
 import { render } from "@react-email/render";
 import { marked } from "marked";
@@ -19,9 +19,18 @@ import { resend, EMAIL_FROM, absoluteAppUrl } from "../services/email.ts";
 import { ReleaseAnnouncement, BODY_PLACEHOLDER_TOKEN } from "../emails/ReleaseAnnouncement.tsx";
 import { MentionInReply } from "../emails/MentionInReply.tsx";
 import { AdminMessage } from "../emails/AdminMessage.tsx";
+import {
+  createApp,
+  errorResponse,
+  jsonContent,
+  RequireCronAuth,
+  z,
+} from "./registry.ts";
 
-export const cron = new Hono();
+export const cron = createApp();
 cron.use("*", requireCronSecret);
+
+const TAG = "cron";
 
 // Free-tier Resend cap.
 const DAILY_CAP = 100;
@@ -29,10 +38,41 @@ const DAILY_CAP = 100;
 // Actions (5-min min granularity) we drain more per tick.
 const BATCH = 80;
 
-/** Diff CHANGELOG.md against released_versions; fan out per version. */
-cron.on(["GET", "POST"], "/announce-release", async (c) => {
+const AnnounceResultSchema = z
+  .object({
+    ok: z.literal(true),
+    announced: z.array(z.string()),
+    members: z.number().int().optional(),
+  })
+  .openapi("AnnounceReleaseResult");
+
+const SendPendingResultSchema = z
+  .object({
+    ok: z.boolean(),
+    reason: z.string().optional(),
+    skipped: z.string().optional(),
+    sentToday: z.number().int().optional(),
+    attempted: z.number().int().optional(),
+    results: z
+      .array(
+        z.object({
+          id: z.string(),
+          status: z.enum(["sent", "failed"]),
+          error: z.string().optional(),
+        }),
+      )
+      .optional(),
+  })
+  .openapi("SendPendingResult");
+
+async function announceReleaseHandler(): Promise<{
+  body: z.infer<typeof AnnounceResultSchema>;
+  status: 200;
+}> {
   const releases = loadReleases();
-  if (releases.length === 0) return c.json({ ok: true, announced: [] });
+  if (releases.length === 0) {
+    return { body: { ok: true as const, announced: [] }, status: 200 };
+  }
 
   for (const r of releases) {
     await db
@@ -46,7 +86,9 @@ cron.on(["GET", "POST"], "/announce-release", async (c) => {
     .from(schema.releasedVersions)
     .where(isNull(schema.releasedVersions.announcedAt));
 
-  if (pending.length === 0) return c.json({ ok: true, announced: [] });
+  if (pending.length === 0) {
+    return { body: { ok: true as const, announced: [] }, status: 200 };
+  }
 
   const members = await listWorkspaceMembers();
   const announced: string[] = [];
@@ -90,13 +132,15 @@ cron.on(["GET", "POST"], "/announce-release", async (c) => {
     announced.push(row.version);
   }
 
-  return c.json({ ok: true, announced, members: members.length });
-});
+  return { body: { ok: true as const, announced, members: members.length }, status: 200 };
+}
 
-/** Drain outbox via Resend; respects DAILY_CAP and BATCH. */
-cron.on(["GET", "POST"], "/send-pending", async (c) => {
+async function sendPendingHandler(): Promise<{
+  body: z.infer<typeof SendPendingResultSchema>;
+  status: 200;
+}> {
   if (!resend) {
-    return c.json({ ok: false, reason: "RESEND_API_KEY not configured" });
+    return { body: { ok: false, reason: "RESEND_API_KEY not configured" }, status: 200 };
   }
 
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -111,7 +155,7 @@ cron.on(["GET", "POST"], "/send-pending", async (c) => {
     );
   const sentToday = sentCountRows[0]?.c ?? 0;
   const remaining = Math.max(0, DAILY_CAP - sentToday);
-  if (remaining === 0) return c.json({ ok: true, skipped: "daily-cap" });
+  if (remaining === 0) return { body: { ok: true, skipped: "daily-cap" }, status: 200 };
 
   const take = Math.min(BATCH, remaining);
   const queued = await db
@@ -154,7 +198,51 @@ cron.on(["GET", "POST"], "/send-pending", async (c) => {
     }
   }
 
-  return c.json({ ok: true, sentToday, attempted: queued.length, results });
+  return { body: { ok: true, sentToday, attempted: queued.length, results }, status: 200 };
+}
+
+const announceGet = createRoute({
+  method: "get",
+  path: "/announce-release",
+  tags: [TAG],
+  security: RequireCronAuth,
+  summary: "Diff CHANGELOG.md against released_versions; fan out per version",
+  responses: {
+    200: jsonContent(AnnounceResultSchema, "OK"),
+    401: errorResponse("Cron secret missing or invalid"),
+    503: errorResponse("CRON_SECRET not configured"),
+  },
+});
+const announcePost = createRoute({ ...announceGet, method: "post" });
+cron.openapi(announceGet, async (c) => {
+  const r = await announceReleaseHandler();
+  return c.json(r.body, r.status);
+});
+cron.openapi(announcePost, async (c) => {
+  const r = await announceReleaseHandler();
+  return c.json(r.body, r.status);
+});
+
+const sendGet = createRoute({
+  method: "get",
+  path: "/send-pending",
+  tags: [TAG],
+  security: RequireCronAuth,
+  summary: "Drain the email outbox via Resend (cap-respecting)",
+  responses: {
+    200: jsonContent(SendPendingResultSchema, "OK"),
+    401: errorResponse("Cron secret missing or invalid"),
+    503: errorResponse("CRON_SECRET not configured"),
+  },
+});
+const sendPost = createRoute({ ...sendGet, method: "post" });
+cron.openapi(sendGet, async (c) => {
+  const r = await sendPendingHandler();
+  return c.json(r.body, r.status);
+});
+cron.openapi(sendPost, async (c) => {
+  const r = await sendPendingHandler();
+  return c.json(r.body, r.status);
 });
 
 function formatError(err: unknown): string {

@@ -1,23 +1,54 @@
-import { Hono } from "hono";
+import { createRoute } from "@hono/zod-openapi";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { db, schema } from "../db/client.ts";
 import { requireUser } from "../middleware/auth.ts";
-import {
-  serializeComment,
-  serializeProposal,
-  type ApiComment,
-  type ApiProposal,
-} from "../lib/serialize.ts";
+import { serializeComment, serializeProposal } from "../lib/serialize.ts";
+import { createApp, errorResponse, jsonContent, RequireAuth, z } from "./registry.ts";
 
-export const feedback = new Hono();
+export const feedback = createApp();
 
 feedback.use("*", requireUser);
 
-export type BoardItem = (ApiComment & { kind: "comment" }) | (ApiProposal & { kind: "proposal" });
+const BoardItemSchema = z
+  .object({
+    kind: z.enum(["comment", "proposal"]),
+    id: z.string(),
+    body: z.string(),
+    voteScore: z.number().int(),
+    myVote: z.union([z.literal(-1), z.literal(0), z.literal(1)]),
+    status: z.string(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  })
+  .catchall(z.unknown())
+  .openapi("BoardItem");
 
+const BoardSchema = z
+  .object({
+    open: z.array(BoardItemSchema),
+    triaged: z.array(BoardItemSchema),
+    planned: z.array(BoardItemSchema),
+    shipped: z.array(BoardItemSchema),
+    wont_do: z.array(BoardItemSchema),
+  })
+  .openapi("FeedbackBoard");
+
+type BoardItem = z.infer<typeof BoardItemSchema>;
 type BoardBuckets = Record<string, BoardItem[]>;
 
-feedback.get("/board", async (c) => {
+const boardRoute = createRoute({
+  method: "get",
+  path: "/board",
+  tags: ["feedback"],
+  security: RequireAuth,
+  summary: "Combined comments + proposals grouped by status",
+  responses: {
+    200: jsonContent(BoardSchema, "Board buckets"),
+    401: errorResponse("Missing or invalid bearer token"),
+  },
+});
+
+feedback.openapi(boardRoute, async (c) => {
   const user = c.get("user");
 
   const [commentRows, proposalRows] = await Promise.all([
@@ -95,7 +126,7 @@ feedback.get("/board", async (c) => {
   for (const row of commentRows) {
     if (!buckets[row.status]) continue;
     const serialized = serializeComment(row, commentRepliesByParent[row.id] ?? [], commentVoteMap);
-    buckets[row.status].push({ ...serialized, kind: "comment" });
+    buckets[row.status].push({ ...serialized, kind: "comment" } as unknown as BoardItem);
   }
   for (const row of proposalRows) {
     if (!buckets[row.status]) continue;
@@ -104,11 +135,11 @@ feedback.get("/board", async (c) => {
       proposalRepliesByParent[row.id] ?? [],
       proposalVoteMap,
     );
-    buckets[row.status].push({ ...serialized, kind: "proposal" });
+    buckets[row.status].push({ ...serialized, kind: "proposal" } as unknown as BoardItem);
   }
   for (const key of Object.keys(buckets)) {
     buckets[key].sort((a, b) => b.voteScore - a.voteScore || (a.createdAt < b.createdAt ? 1 : -1));
   }
 
-  return c.json(buckets);
+  return c.json(buckets as unknown as z.infer<typeof BoardSchema>, 200);
 });

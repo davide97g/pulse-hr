@@ -14,22 +14,23 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { accessLog } from "./middleware/access-log.ts";
 import { buildCors } from "./middleware/cors.ts";
 import { errorHandler } from "./middleware/error.ts";
-import { bearerAuth, createApp, docInfo } from "./openapi/registry.ts";
+import { bearerAuth, createApp, cronBearerAuth, docInfo } from "./openapi/registry.ts";
 import { health } from "./openapi/health.ts";
 import { comments } from "./openapi/comments.ts";
-import { proposals } from "./routes/proposals.ts";
-import { feedback } from "./routes/feedback.ts";
-import { changelog } from "./routes/changelog.ts";
-import { notifications } from "./routes/notifications.ts";
-import { screenshots } from "./routes/screenshots.ts";
-import { workspace } from "./routes/workspace.ts";
-import { cron } from "./routes/cron.ts";
-import { admin } from "./routes/admin.ts";
-import { userProfile } from "./routes/user-profile.ts";
+import { proposals } from "./openapi/proposals.ts";
+import { feedback } from "./openapi/feedback.ts";
+import { changelog } from "./openapi/changelog.ts";
+import { notifications } from "./openapi/notifications.ts";
+import { screenshots } from "./openapi/screenshots.ts";
+import { workspace } from "./openapi/workspace.ts";
+import { cron } from "./openapi/cron.ts";
+import { admin } from "./openapi/admin.ts";
+import { userProfile } from "./openapi/user-profile.ts";
 
 export const app = createApp();
 
 app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", bearerAuth);
+app.openAPIRegistry.registerComponent("securitySchemes", "CronBearer", cronBearerAuth);
 
 app.use("*", accessLog());
 app.use("*", buildCors());
