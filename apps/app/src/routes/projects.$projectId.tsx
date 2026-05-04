@@ -5,13 +5,11 @@ import {
   ArrowLeft,
   Pencil,
   Trash2,
-  Plus,
   Users as UsersIcon,
   Calendar,
   TrendingUp,
   Briefcase,
-  Layers,
-  ChevronRight,
+  ListChecks,
 } from "lucide-react";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Button } from "@pulse-hr/ui/primitives/button";
@@ -35,25 +33,23 @@ import {
   type Allocation,
   type Commessa,
   type IntegrationConnection,
-  type Plan,
 } from "@/lib/mock-data";
 import { useClients } from "@/lib/tables/clients";
 import { commesseTable, useCommesse } from "@/lib/tables/commesse";
 import { allocationsTable, useAllocations } from "@/lib/tables/allocations";
-import { plansTable, usePlans } from "@/lib/tables/plans";
 import { activitiesTable, useActivities } from "@/lib/tables/activities";
 import { projectMargin, projectActivities } from "@/lib/projects";
 import { ProjectForm } from "@/components/pm/ProjectForm";
 import { TeamPanel } from "@/components/pm/TeamPanel";
 import { ProjectActivitiesGantt } from "@/components/pm/ProjectActivitiesGantt";
+import { ActivityBoard } from "@/components/pm/ActivityBoard";
 import { LinkedIssuesPanel } from "@/components/pm/LinkedIssuesPanel";
 import { IntegrationConnectCard } from "@/components/pm/IntegrationConnectCard";
-import { PlanForm } from "@/components/pm/PlanForm";
 import { cn } from "@/lib/utils";
 
 type ProjectSection =
   | "overview"
-  | "plans"
+  | "activities"
   | "gantt"
   | "team"
   | "integrations";
@@ -61,10 +57,10 @@ type ProjectSection =
 type ProjectSearch = { section?: ProjectSection };
 
 export const Route = createFileRoute("/projects/$projectId")({
-  head: () => ({ meta: [{ title: "Project — Pulse HR" }] }),
   validateSearch: (s: Record<string, unknown>): ProjectSearch => ({
     section: (s.section as ProjectSection) || undefined,
   }),
+  head: () => ({ meta: [{ title: "Project — Pulse HR" }] }),
   component: ProjectDetail,
 });
 
@@ -73,13 +69,6 @@ const fmtEUR = new Intl.NumberFormat("en-IE", {
   currency: "EUR",
   maximumFractionDigits: 0,
 });
-
-const PLAN_STATUS_TONE: Record<Plan["status"], string> = {
-  active: "var(--success)",
-  on_hold: "var(--warning)",
-  done: "var(--muted-foreground)",
-  draft: "var(--muted-foreground)",
-};
 
 function ProjectDetail() {
   const { projectId } = useParams({ from: "/projects/$projectId" });
@@ -90,33 +79,24 @@ function ProjectDetail() {
   const projects = useCommesse();
   const clients = useClients();
   const allocations = useAllocations();
-  const plans = usePlans();
   const activities = useActivities();
 
   const [connections, setConnections] = useState<IntegrationConnection[]>(integrationsSeed);
   const [editOpen, setEditOpen] = useState(false);
   const [toDelete, setToDelete] = useState(false);
-  const [planForm, setPlanForm] = useState<{ open: boolean; initial?: Plan | null }>({
-    open: false,
-  });
-  const [planToDelete, setPlanToDelete] = useState<Plan | null>(null);
 
   const project = projects.find((p) => p.id === projectId);
   const projectTeamAllocs = useMemo(
     () => allocations.filter((a) => a.projectId === projectId),
     [allocations, projectId],
   );
-  const projectPlans = useMemo(
-    () => plans.filter((p) => p.projectId === projectId).sort((a, b) => a.order - b.order),
-    [plans, projectId],
-  );
   const projectActs = useMemo(
-    () => projectActivities(projectId, activities, plans),
-    [activities, plans, projectId],
+    () => projectActivities(projectId, activities),
+    [activities, projectId],
   );
   const margin = useMemo(
     () => (project ? projectMargin(project) : null),
-    [project, allocations],
+    [project],
   );
   const client = project ? clients.find((c) => c.id === project.clientId) : null;
   const owner = project ? employeeById(project.ownerId) : null;
@@ -161,35 +141,26 @@ function ProjectDetail() {
     setConnections((list) => list.map((x) => (x.provider === c.provider ? c : x)));
   const removeProject = () => {
     const snapshot = project;
+    const relatedAllocations = allocationsTable.getAll().filter((a) => a.projectId === snapshot.id);
+    const relatedActivities = activitiesTable.getAll().filter((a) => a.projectId === snapshot.id);
     commesseTable.remove(snapshot.id);
+    for (const a of relatedAllocations) allocationsTable.remove(a.id);
+    for (const a of relatedActivities) activitiesTable.remove(a.id);
     toast(`Removed ${snapshot.name}`, {
-      action: { label: "Undo", onClick: () => commesseTable.add(snapshot) },
-    });
-    nav({ to: "/projects" });
-  };
-
-  const upsertPlan = (p: Plan) => {
-    const exists = plansTable.getAll().some((x) => x.id === p.id);
-    if (exists) plansTable.update(p.id, p);
-    else plansTable.add(p);
-    toast.success(`Plan “${p.name}” saved`);
-  };
-  const removePlan = (p: Plan) => {
-    const orphanedActs = activitiesTable.getAll().filter((a) => a.planId === p.id);
-    plansTable.remove(p.id);
-    for (const a of orphanedActs) activitiesTable.remove(a.id);
-    toast(`Removed ${p.name}`, {
-      description: orphanedActs.length
-        ? `${orphanedActs.length} activit${orphanedActs.length === 1 ? "y" : "ies"} also removed`
-        : undefined,
+      description:
+        relatedAllocations.length || relatedActivities.length
+          ? `${relatedAllocations.length} allocation(s) and ${relatedActivities.length} activit${relatedActivities.length === 1 ? "y" : "ies"} also removed`
+          : undefined,
       action: {
         label: "Undo",
         onClick: () => {
-          plansTable.add(p);
-          for (const a of orphanedActs) activitiesTable.add(a);
+          commesseTable.add(snapshot);
+          for (const a of relatedAllocations) allocationsTable.add(a);
+          for (const a of relatedActivities) activitiesTable.add(a);
         },
       },
     });
+    nav({ to: "/projects" });
   };
 
   const burnPct = Math.round((project.burnedHours / Math.max(1, project.budgetHours)) * 100);
@@ -254,7 +225,7 @@ function ProjectDetail() {
       <Tabs value={section} onValueChange={setSection}>
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="plans">Plans ({projectPlans.length})</TabsTrigger>
+          <TabsTrigger value="activities">Activities ({projectActs.length})</TabsTrigger>
           <TabsTrigger value="team">Team ({projectTeamAllocs.length})</TabsTrigger>
           <TabsTrigger value="gantt">Gantt</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
@@ -274,9 +245,9 @@ function ProjectDetail() {
               tone={burnPct > 100 ? "warn" : undefined}
             />
             <OverviewTile
-              icon={<Layers className="h-4 w-4" />}
-              label="Plans"
-              value={projectPlans.length}
+              icon={<ListChecks className="h-4 w-4" />}
+              label="Activities"
+              value={projectActs.length}
             />
             <OverviewTile
               icon={<TrendingUp className="h-4 w-4" />}
@@ -365,7 +336,6 @@ function ProjectDetail() {
                   .slice(0, 5)
                   .map((a) => {
                     const assignee = a.assigneeId ? employeeById(a.assigneeId) : null;
-                    const plan = plans.find((p) => p.id === a.planId);
                     return (
                       <div
                         key={a.id}
@@ -374,10 +344,11 @@ function ProjectDetail() {
                         <StatusBadge status={a.status} />
                         <div className="flex-1 truncate">
                           <div className="font-medium truncate">{a.title}</div>
-                          <div className="text-xs text-muted-foreground truncate">
-                            {plan?.name}
-                            {a.description ? ` · ${a.description}` : ""}
-                          </div>
+                          {a.description && (
+                            <div className="text-xs text-muted-foreground truncate">
+                              {a.description}
+                            </div>
+                          )}
                         </div>
                         {assignee && (
                           <Avatar
@@ -399,96 +370,24 @@ function ProjectDetail() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="plans" className="pt-5 space-y-4">
-          <Card className="overflow-hidden">
-            <div className="px-5 py-3 border-b text-sm font-semibold flex items-center justify-between">
-              <span>Plans</span>
-              <Button size="sm" onClick={() => setPlanForm({ open: true, initial: null })}>
-                <Plus className="h-3.5 w-3.5 mr-1.5" />
-                New plan
-              </Button>
-            </div>
-            {projectPlans.length === 0 ? (
+        <TabsContent value="activities" className="pt-5">
+          {projectActs.length === 0 && (
+            <Card className="p-5 mb-4">
               <EmptyState
-                icon={<Layers className="h-5 w-5" />}
-                title="No plans yet"
-                description="Plans group activities, team roles, contacts and docs by phase or workstream."
-                action={
-                  <Button onClick={() => setPlanForm({ open: true, initial: null })}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    New plan
-                  </Button>
-                }
+                icon={<ListChecks className="h-5 w-5" />}
+                title="No activities yet"
+                description="Add activities to schedule work and assign it to employees on this project."
               />
-            ) : (
-              <div className="divide-y stagger-in">
-                {projectPlans.map((p) => {
-                  const acts = projectActs.filter((a) => a.planId === p.id);
-                  const done = acts.filter((a) => a.status === "done").length;
-                  return (
-                    <div
-                      key={p.id}
-                      className="px-5 py-4 flex items-start gap-4 hover:bg-muted/30 cursor-pointer"
-                      onClick={() =>
-                        nav({
-                          to: "/projects/$projectId/plans/$planId",
-                          params: { projectId: project.id, planId: p.id },
-                        })
-                      }
-                    >
-                      <span
-                        className="h-2 w-2 rounded-full mt-1.5 shrink-0"
-                        style={{ backgroundColor: PLAN_STATUS_TONE[p.status] }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <div className="font-medium truncate">{p.name}</div>
-                          <Badge variant="outline" className="text-[10px] uppercase">
-                            {p.status}
-                          </Badge>
-                        </div>
-                        {p.description && (
-                          <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                            {p.description}
-                          </div>
-                        )}
-                        <div className="text-[11px] text-muted-foreground mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5">
-                          <span>
-                            {p.startDate} → {p.endDate}
-                          </span>
-                          <span>{p.team.length} on team</span>
-                          <span>
-                            {acts.length} activit{acts.length === 1 ? "y" : "ies"}
-                            {acts.length > 0 && ` · ${done} done`}
-                          </span>
-                          {p.docs.length > 0 && <span>{p.docs.length} doc(s)</span>}
-                        </div>
-                      </div>
-                      <div onClick={(e) => e.stopPropagation()} className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => setPlanForm({ open: true, initial: p })}
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-destructive"
-                          onClick={() => setPlanToDelete(p)}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground self-center shrink-0" />
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </Card>
+            </Card>
+          )}
+          <ActivityBoard
+            projectId={project.id}
+            activities={projectActs}
+            onChange={(next) => {
+              const others = activitiesTable.getAll().filter((a) => a.projectId !== project.id);
+              activitiesTable.replace([...others, ...next]);
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="team" className="pt-5">
@@ -497,8 +396,7 @@ function ProjectDetail() {
 
         <TabsContent value="gantt" className="pt-5 space-y-4">
           <div className="text-xs text-muted-foreground">
-            Weekly timeline of scheduled activities across all plans, with dependency arrows. Click
-            a bar to open it.
+            Weekly timeline of scheduled activities for this project, with dependency arrows.
           </div>
           <ProjectActivitiesGantt project={project} activities={projectActs} />
         </TabsContent>
@@ -541,45 +439,17 @@ function ProjectDetail() {
         onSave={saveProject}
         initial={project}
       />
-      <PlanForm
-        open={planForm.open}
-        onClose={() => setPlanForm({ open: false, initial: null })}
-        onSave={upsertPlan}
-        initial={planForm.initial ?? null}
-        project={project}
-      />
       <AlertDialog open={toDelete} onOpenChange={(v) => !v && setToDelete(false)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Remove {project.name}?</AlertDialogTitle>
             <AlertDialogDescription>
-              Allocations, plans and activities under this project will be removed too.
+              Allocations and activities under this project will be removed too.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={removeProject}>Remove</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <AlertDialog open={!!planToDelete} onOpenChange={(v) => !v && setPlanToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Remove {planToDelete?.name}?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Activities under this plan will also be removed (you can undo from the toast).
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (planToDelete) removePlan(planToDelete);
-                setPlanToDelete(null);
-              }}
-            >
-              Remove
-            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

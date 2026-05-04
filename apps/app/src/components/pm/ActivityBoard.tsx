@@ -12,10 +12,9 @@ import {
 import { useDroppable } from "@dnd-kit/core";
 import { useDraggable } from "@dnd-kit/core";
 import { toast } from "sonner";
-import { Plus, Calendar, User, Trash2 } from "lucide-react";
+import { Plus, Calendar, User, Trash2, Pencil } from "lucide-react";
 import { Button } from "@pulse-hr/ui/primitives/button";
 import { Avatar, StatusBadge } from "@/components/app/AppShell";
-import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { IntegrationBadge } from "./IntegrationBadge";
 import { ActivityDialog } from "./ActivityDialog";
 import { employeeById, type Activity, type ActivityStatus } from "@/lib/mock-data";
@@ -30,11 +29,11 @@ const COLUMNS: { id: ActivityStatus; label: string; tone: string }[] = [
 ];
 
 export function ActivityBoard({
-  planId,
+  projectId,
   activities,
   onChange,
 }: {
-  planId: string;
+  projectId: string;
   activities: Activity[];
   onChange: (next: Activity[]) => void;
 }) {
@@ -125,7 +124,7 @@ export function ActivityBoard({
         onClose={() => setDialog({ open: false })}
         onSave={upsert}
         initial={dialog.initial ?? null}
-        planId={planId}
+        projectId={projectId}
         defaultStatus={dialog.defaultStatus}
       />
     </>
@@ -228,22 +227,37 @@ function Card({
         "rounded-md border bg-card p-3 shadow-sm hover:shadow-md transition",
         dragging && "shadow-lg rotate-1",
       )}
-      onDoubleClick={onEdit}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="font-medium text-sm leading-tight flex-1">{activity.title}</div>
-        {onRemove && (
-          <button
-            className="text-muted-foreground hover:text-destructive shrink-0"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove();
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            <Trash2 className="h-3 w-3" />
-          </button>
-        )}
+        <div className="flex items-center gap-1 shrink-0">
+          {onEdit && (
+            <button
+              type="button"
+              className="text-muted-foreground hover:text-foreground"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit();
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <Pencil className="h-3 w-3" />
+            </button>
+          )}
+          {onRemove && (
+            <button
+              type="button"
+              className="text-muted-foreground hover:text-destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove();
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <Trash2 className="h-3 w-3" />
+            </button>
+          )}
+        </div>
       </div>
       {activity.description && (
         <div className="text-[11px] text-muted-foreground mt-1 line-clamp-2">

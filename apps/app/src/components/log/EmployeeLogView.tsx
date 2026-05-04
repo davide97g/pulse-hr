@@ -41,15 +41,15 @@ import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import {
   employees,
   type LogMessage,
+  type ManagerAsk,
   type LogSentiment,
   type LogTopic,
-  type ManagerAsk,
 } from "@/lib/mock-data";
 import { logMessagesTable, useLogMessages } from "@/lib/tables/logMessages";
 import { managerAsksTable, useManagerAsks } from "@/lib/tables/managerAsks";
 import { useEmployee } from "@/lib/tables/employees";
 import { computeRecap } from "@/lib/log-recap";
-import type { LogPreset } from "@/lib/log-presets";
+import { PRESETS, type LogPreset } from "@/lib/log-presets";
 import { QuickTopicChips } from "./QuickTopicChips";
 import { PinnedAskCard } from "./PinnedAskCard";
 import { PresetPicker } from "./PresetPicker";
@@ -67,13 +67,22 @@ const TOPIC_ROOMS: {
   {
     topic: "status",
     label: "Status",
-    description: "Plan, progress, and next moves.",
+    description: "Progress, priorities, and next moves.",
     placeholder: "Log current state, next move, or blocker...",
     modalPrompt: "What changed, what is next, and anything blocked?",
     fields: [
-      { key: "current", label: "Current state", placeholder: "Where does the work stand right now?" },
+      {
+        key: "current",
+        label: "Current state",
+        placeholder: "Where does the work stand right now?",
+      },
       { key: "next", label: "Next move", placeholder: "What will you do next?" },
-      { key: "blocker", label: "Blocker or risk", placeholder: "Anything blocked or at risk?", optional: true },
+      {
+        key: "blocker",
+        label: "Blocker or risk",
+        placeholder: "Anything blocked or at risk?",
+        optional: true,
+      },
     ],
   },
   {
@@ -97,7 +106,12 @@ const TOPIC_ROOMS: {
     fields: [
       { key: "pain", label: "Pain point", placeholder: "What is heavier than it should be?" },
       { key: "impact", label: "Impact", placeholder: "How is it affecting your work?" },
-      { key: "help", label: "Help needed", placeholder: "What would reduce the friction?", optional: true },
+      {
+        key: "help",
+        label: "Help needed",
+        placeholder: "What would reduce the friction?",
+        optional: true,
+      },
     ],
   },
   {
@@ -126,14 +140,63 @@ const TOPIC_ROOMS: {
   },
 ];
 
-const SENTIMENT_OPTIONS: { value: LogSentiment; label: string; helper: string }[] = [
-  { value: "positive", label: "Positive", helper: "Energy, progress, or confidence" },
-  { value: "neutral", label: "Neutral", helper: "Plain update, no strong signal" },
-  { value: "mixed", label: "Mixed", helper: "Some good signal, some friction" },
-  { value: "negative", label: "Negative", helper: "Stress, risk, or pain" },
+const SENTIMENT_OPTIONS: {
+  value: LogSentiment;
+  label: string;
+  emoji: string;
+  helper: string;
+  className: string;
+}[] = [
+  {
+    value: "positive",
+    label: "Positive",
+    emoji: "🌱",
+    helper: "Energy, progress, or confidence",
+    className: "border-success/35 bg-success/10 text-success",
+  },
+  {
+    value: "neutral",
+    label: "Neutral",
+    emoji: "⚪",
+    helper: "Plain update, no strong signal",
+    className: "border-muted-foreground/25 bg-muted text-muted-foreground",
+  },
+  {
+    value: "mixed",
+    label: "Mixed",
+    emoji: "🌗",
+    helper: "Some good signal, some friction",
+    className: "border-warning/40 bg-warning/10 text-warning",
+  },
+  {
+    value: "negative",
+    label: "Negative",
+    emoji: "🔥",
+    helper: "Stress, risk, or pain",
+    className: "border-destructive/35 bg-destructive/10 text-destructive",
+  },
 ];
 
 type TemplateValues = Record<string, string>;
+type WorkflowChoice = "generic" | string;
+
+function workflowById(id?: string): LogPreset | undefined {
+  return id ? PRESETS.find((preset) => preset.id === id) : undefined;
+}
+
+function workflowPatch(
+  workflowChoice: WorkflowChoice,
+): Pick<LogMessage, "logKind" | "workflowId" | "workflowLabel"> {
+  if (workflowChoice === "generic") {
+    return { logKind: "generic", workflowId: undefined, workflowLabel: undefined };
+  }
+  const workflow = workflowById(workflowChoice);
+  return {
+    logKind: "workflow",
+    workflowId: workflowChoice,
+    workflowLabel: workflow?.label ?? workflowChoice,
+  };
+}
 
 function emptyValues(room: (typeof TOPIC_ROOMS)[number]): TemplateValues {
   return Object.fromEntries(room.fields.map((field) => [field.key, ""]));
@@ -177,14 +240,12 @@ export function EmployeeLogView() {
     () => allAsks.filter((a) => a.employeeId === ME_ID && a.status === "pending"),
     [allAsks],
   );
-  const recap = useMemo(
-    () => computeRecap(me?.name ?? "You", msgs),
-    [msgs, me?.name],
-  );
+  const recap = useMemo(() => computeRecap(me?.name ?? "You", msgs), [msgs, me?.name]);
   const [activeTopic, setActiveTopic] = useState<Exclude<LogTopic, "freeform">>("status");
   const [logDialogOpen, setLogDialogOpen] = useState(false);
   const [editingLog, setEditingLog] = useState<LogMessage | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<LogMessage | null>(null);
+  const [workflowChoice, setWorkflowChoice] = useState<WorkflowChoice>("generic");
   const activeRoom = TOPIC_ROOMS.find((r) => r.topic === activeTopic) ?? TOPIC_ROOMS[0];
 
   const roomMsgs = useMemo(
@@ -198,7 +259,9 @@ export function EmployeeLogView() {
   const topicCounts = useMemo(
     () =>
       TOPIC_ROOMS.reduce<Partial<Record<LogTopic, number>>>((acc, room) => {
-        acc[room.topic] = msgs.filter((m) => m.topic === room.topic && m.role === "employee").length;
+        acc[room.topic] = msgs.filter(
+          (m) => m.topic === room.topic && m.role === "employee",
+        ).length;
         return acc;
       }, {}),
     [msgs],
@@ -209,8 +272,7 @@ export function EmployeeLogView() {
         if (room.topic === activeTopic) return [];
         const items = msgs.filter((m) => m.topic === room.topic && m.role === "employee");
         const last = items.reduce<LogMessage | undefined>(
-          (latest, item) =>
-            !latest || item.createdAt > latest.createdAt ? item : latest,
+          (latest, item) => (!latest || item.createdAt > latest.createdAt ? item : latest),
           undefined,
         );
         return [{ room, count: items.length, last }];
@@ -223,6 +285,7 @@ export function EmployeeLogView() {
       (t): t is Exclude<LogTopic, "freeform"> => t !== "freeform",
     );
     if (firstTopic) setActiveTopic(firstTopic);
+    setWorkflowChoice(preset.id);
     setEditingLog(null);
     setLogDialogOpen(true);
     toast(`Using template: ${preset.label}`, { icon: <Sparkles className="h-4 w-4" /> });
@@ -238,7 +301,11 @@ export function EmployeeLogView() {
       createdAt: new Date().toISOString(),
       topic: "feedback",
       sentiment: "neutral",
+      logKind: "workflow",
+      workflowId: "feedback-draft",
+      workflowLabel: "Feedback draft",
     });
+    setWorkflowChoice("feedback-draft");
     setLogDialogOpen(true);
     toast("Composer seeded with the ask — add your answer.", {
       icon: <Sparkles className="h-4 w-4" />,
@@ -257,21 +324,29 @@ export function EmployeeLogView() {
   function openCreateLog(topic = activeTopic) {
     setActiveTopic(topic);
     setEditingLog(null);
+    setWorkflowChoice("generic");
     setLogDialogOpen(true);
   }
 
   function openEditLog(log: LogMessage) {
     if (log.topic && log.topic !== "freeform") setActiveTopic(log.topic);
+    setWorkflowChoice(log.logKind === "workflow" ? (log.workflowId ?? "generic") : "generic");
     setEditingLog(log);
     setLogDialogOpen(true);
   }
 
-  function saveLog(input: { text: string; sentiment: LogSentiment }) {
+  function saveLog(input: {
+    text: string;
+    sentiment: LogSentiment;
+    workflowChoice: WorkflowChoice;
+  }) {
+    const workflow = workflowPatch(input.workflowChoice);
     if (editingLog && !editingLog.id.startsWith("draft-")) {
       logMessagesTable.update(editingLog.id, {
         text: input.text,
         sentiment: input.sentiment,
         topic: activeTopic,
+        ...workflow,
       });
       toast.success("Log updated");
       return;
@@ -284,6 +359,7 @@ export function EmployeeLogView() {
       createdAt: new Date().toISOString(),
       topic: activeTopic,
       sentiment: input.sentiment,
+      ...workflow,
     });
     toast.success(`${activeRoom.label} log added`);
   }
@@ -349,6 +425,8 @@ export function EmployeeLogView() {
             room={activeRoom}
             onSubmit={saveLog}
             onOpenFullForm={() => openCreateLog()}
+            workflowChoice={workflowChoice}
+            onWorkflowChange={setWorkflowChoice}
           />
           <LogHistoryPanel
             room={activeRoom}
@@ -422,6 +500,8 @@ export function EmployeeLogView() {
         }}
         room={activeRoom}
         log={editingLog}
+        workflowChoice={workflowChoice}
+        onWorkflowChange={setWorkflowChoice}
         onSave={saveLog}
       />
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
@@ -452,10 +532,18 @@ function StructuredLogTemplate({
   room,
   onSubmit,
   onOpenFullForm,
+  workflowChoice,
+  onWorkflowChange,
 }: {
   room: (typeof TOPIC_ROOMS)[number];
-  onSubmit: (input: { text: string; sentiment: LogSentiment }) => void;
+  onSubmit: (input: {
+    text: string;
+    sentiment: LogSentiment;
+    workflowChoice: WorkflowChoice;
+  }) => void;
   onOpenFullForm: () => void;
+  workflowChoice: WorkflowChoice;
+  onWorkflowChange: (choice: WorkflowChoice) => void;
 }) {
   const [values, setValues] = useState<TemplateValues>(() => emptyValues(room));
   const [sentiment, setSentiment] = useState<LogSentiment>("neutral");
@@ -471,7 +559,7 @@ function StructuredLogTemplate({
   function submit() {
     const text = composeLogText(room, values);
     if (!text) return;
-    onSubmit({ text, sentiment });
+    onSubmit({ text, sentiment, workflowChoice });
     setValues(emptyValues(room));
     setSentiment("neutral");
   }
@@ -498,7 +586,11 @@ function StructuredLogTemplate({
       <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
         <div className="grid gap-3">
           {room.fields.map((field) => (
-            <label key={field.key} htmlFor={`log-${room.topic}-${field.key}`} className="space-y-1.5">
+            <label
+              key={field.key}
+              htmlFor={`log-${room.topic}-${field.key}`}
+              className="space-y-1.5"
+            >
               <span className="flex items-center gap-1.5 text-sm font-medium">
                 {field.label}
                 {field.optional && (
@@ -518,6 +610,7 @@ function StructuredLogTemplate({
           ))}
         </div>
         <div className="space-y-3">
+          <WorkflowSelect value={workflowChoice} onValueChange={onWorkflowChange} />
           <div className="rounded-xl border bg-background/60 p-3">
             <div className="text-sm font-medium">Sentiment</div>
             <Select
@@ -525,12 +618,14 @@ function StructuredLogTemplate({
               onValueChange={(value) => setSentiment(value as LogSentiment)}
             >
               <SelectTrigger className="mt-2">
-                <SelectValue placeholder="Choose sentiment" />
+                <SelectValue placeholder="Choose sentiment">
+                  {selectedSentiment && <SentimentPill option={selectedSentiment} />}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {SENTIMENT_OPTIONS.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
-                    {option.label}
+                    <SentimentPill option={option} />
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -592,7 +687,23 @@ function LogHistoryPanel({
                     <span>{log.createdAt.slice(0, 10)}</span>
                     {log.sentiment && <span>· {log.sentiment}</span>}
                   </div>
-                  <p className={expanded ? "mt-1 whitespace-pre-line text-sm leading-relaxed" : "mt-1 line-clamp-3 text-xs leading-relaxed"}>
+                  <div className="mt-1">
+                    {log.logKind === "workflow" ? (
+                      <WorkflowPill label={log.workflowLabel ?? log.workflowId ?? "Workflow"} />
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                        <span aria-hidden>📝</span>
+                        Generic log
+                      </span>
+                    )}
+                  </div>
+                  <p
+                    className={
+                      expanded
+                        ? "mt-1 whitespace-pre-line text-sm leading-relaxed"
+                        : "mt-1 line-clamp-3 text-xs leading-relaxed"
+                    }
+                  >
                     {log.text}
                   </p>
                 </div>
@@ -623,18 +734,91 @@ function LogHistoryPanel({
   );
 }
 
+function SentimentPill({ option }: { option: (typeof SENTIMENT_OPTIONS)[number] }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium ${option.className}`}
+    >
+      <span aria-hidden>{option.emoji}</span>
+      <span>{option.label}</span>
+    </span>
+  );
+}
+
+function WorkflowSelect({
+  value,
+  onValueChange,
+}: {
+  value: WorkflowChoice;
+  onValueChange: (value: WorkflowChoice) => void;
+}) {
+  const workflow = workflowById(value);
+  return (
+    <div className="rounded-xl border bg-background/60 p-3">
+      <div className="text-sm font-medium">Log type</div>
+      <Select value={value} onValueChange={(next) => onValueChange(next as WorkflowChoice)}>
+        <SelectTrigger className="mt-2">
+          <SelectValue placeholder="Choose log type">
+            {value === "generic" ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                <span aria-hidden>📝</span>
+                Generic log
+              </span>
+            ) : (
+              <WorkflowPill label={workflow?.label ?? value} />
+            )}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="generic">
+            <span className="inline-flex items-center gap-1.5">
+              <span aria-hidden>📝</span>
+              Generic log
+            </span>
+          </SelectItem>
+          {PRESETS.map((preset) => (
+            <SelectItem key={preset.id} value={preset.id}>
+              <WorkflowPill label={preset.label} />
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Use generic for free logging, or attach this entry to a workflow for grouping later.
+      </p>
+    </div>
+  );
+}
+
+function WorkflowPill({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+      <span aria-hidden>🧭</span>
+      {label}
+    </span>
+  );
+}
+
 function LogEntryDialog({
   open,
   onOpenChange,
   room,
   log,
+  workflowChoice,
+  onWorkflowChange,
   onSave,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   room: (typeof TOPIC_ROOMS)[number];
   log: LogMessage | null;
-  onSave: (input: { text: string; sentiment: LogSentiment }) => void;
+  workflowChoice: WorkflowChoice;
+  onWorkflowChange: (choice: WorkflowChoice) => void;
+  onSave: (input: {
+    text: string;
+    sentiment: LogSentiment;
+    workflowChoice: WorkflowChoice;
+  }) => void;
 }) {
   const [values, setValues] = useState<TemplateValues>(() => emptyValues(room));
   const [sentiment, setSentiment] = useState<LogSentiment>("neutral");
@@ -643,12 +827,13 @@ function LogEntryDialog({
     if (!open) return;
     setValues(log?.text ? valuesFromLog(room, log.text) : emptyValues(room));
     setSentiment(log?.sentiment ?? "neutral");
-  }, [log, open, room]);
+    onWorkflowChange(log?.logKind === "workflow" ? (log.workflowId ?? "generic") : workflowChoice);
+  }, [log, onWorkflowChange, open, room, workflowChoice]);
 
   function submit() {
     const text = composeLogText(room, values);
     if (!text) return;
-    onSave({ text, sentiment });
+    onSave({ text, sentiment, workflowChoice });
     onOpenChange(false);
   }
 
@@ -666,10 +851,11 @@ function LogEntryDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div className="rounded-xl border bg-muted/30 p-3">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground">
-              Context
-            </div>
+            <div className="text-xs uppercase tracking-wide text-muted-foreground">Context</div>
             <p className="mt-1 text-sm">{room.description}</p>
+          </div>
+          <div className="space-y-2">
+            <WorkflowSelect value={workflowChoice} onValueChange={onWorkflowChange} />
           </div>
           <div className="space-y-2">
             <span className="text-sm font-medium">Sentiment</span>
@@ -678,12 +864,14 @@ function LogEntryDialog({
               onValueChange={(value) => setSentiment(value as LogSentiment)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Choose sentiment" />
+                <SelectValue placeholder="Choose sentiment">
+                  {selectedSentiment && <SentimentPill option={selectedSentiment} />}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {SENTIMENT_OPTIONS.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
-                    {option.label}
+                    <SentimentPill option={option} />
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -704,9 +892,7 @@ function LogEntryDialog({
                 <span className="text-sm font-medium">
                   {field.label}
                   {field.optional && (
-                    <span className="ml-1 text-xs font-normal text-muted-foreground">
-                      optional
-                    </span>
+                    <span className="ml-1 text-xs font-normal text-muted-foreground">optional</span>
                   )}
                 </span>
                 <Textarea

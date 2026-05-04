@@ -2,6 +2,8 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useMemo, useState } from "react";
 import { clientsTable, useClients } from "@/lib/tables/clients";
 import { commesseTable, useCommesse } from "@/lib/tables/commesse";
+import { allocationsTable } from "@/lib/tables/allocations";
+import { activitiesTable } from "@/lib/tables/activities";
 import { toast } from "sonner";
 import {
   ArrowLeft,
@@ -49,10 +51,10 @@ import { cn } from "@/lib/utils";
 type ClientDetailSearch = { tab?: "overview" | "contacts" | "projects" };
 
 export const Route = createFileRoute("/clients/$clientId")({
-  head: () => ({ meta: [{ title: "Client — Pulse HR" }] }),
   validateSearch: (s: Record<string, unknown>): ClientDetailSearch => ({
     tab: (s.tab as ClientDetailSearch["tab"]) || undefined,
   }),
+  head: () => ({ meta: [{ title: "Client — Pulse HR" }] }),
   component: ClientDetail,
 });
 
@@ -87,7 +89,7 @@ function ClientDetail() {
     [projects, clientId],
   );
   const owner = client ? employeeById(client.accountOwnerId) : null;
-  const margin = useMemo(() => (client ? clientMargin(client.id) : null), [client, projects]);
+  const margin = useMemo(() => (client ? clientMargin(client.id) : null), [client]);
   const uniqueTeam = useMemo(() => {
     const ids = new Set<string>();
     for (const p of clientProjects)
@@ -128,17 +130,24 @@ function ClientDetail() {
   const removeClient = () => {
     const snapshot = client;
     const relatedProjects = commesseTable.getAll().filter((p) => p.clientId === snapshot.id);
+    const projectIds = new Set(relatedProjects.map((p) => p.id));
+    const relatedAllocations = allocationsTable.getAll().filter((a) => projectIds.has(a.projectId));
+    const relatedActivities = activitiesTable.getAll().filter((a) => projectIds.has(a.projectId));
     clientsTable.remove(snapshot.id);
     for (const p of relatedProjects) commesseTable.remove(p.id);
+    for (const a of relatedAllocations) allocationsTable.remove(a.id);
+    for (const a of relatedActivities) activitiesTable.remove(a.id);
     toast(`Removed ${snapshot.name}`, {
       description: relatedProjects.length
-        ? `${relatedProjects.length} project(s) also removed`
+        ? `${relatedProjects.length} project(s), ${relatedAllocations.length} allocation(s), and ${relatedActivities.length} activit${relatedActivities.length === 1 ? "y" : "ies"} also removed`
         : undefined,
       action: {
         label: "Undo",
         onClick: () => {
           clientsTable.add(snapshot);
           for (const p of relatedProjects) commesseTable.add(p);
+          for (const a of relatedAllocations) allocationsTable.add(a);
+          for (const a of relatedActivities) activitiesTable.add(a);
         },
       },
     });
@@ -487,7 +496,7 @@ function ClientDetail() {
           <AlertDialogHeader>
             <AlertDialogTitle>Remove {client.name}?</AlertDialogTitle>
             <AlertDialogDescription>
-              This also removes every project linked to this client.
+              This also removes every project, allocation, and activity linked to this client.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

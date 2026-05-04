@@ -603,6 +603,9 @@ export interface LogMessage {
   createdAt: string; // ISO
   topic?: LogTopic;
   sentiment?: LogSentiment;
+  logKind?: "generic" | "workflow";
+  workflowId?: string;
+  workflowLabel?: string;
   voice?: boolean;
   actionId?: string;
 }
@@ -2698,196 +2701,9 @@ export let allocations: Allocation[] = [
   },
 ];
 
-export interface PlanContactRef {
-  id: string;
-  /** Either reference an existing client contact, or hold an ad-hoc embedded one. */
-  kind: "client" | "adhoc";
-  /** Set when kind === "client" — points at ClientContact.id */
-  clientContactId?: string;
-  /** Set when kind === "adhoc" */
-  name?: string;
-  email?: string;
-  role?: string;
-  phone?: string;
-}
-
-export interface PlanTeamMember {
-  employeeId: string;
-  /** Free text role on this plan (Tech Lead, QA, ...). */
-  role: string;
-}
-
-export interface PlanDoc {
-  id: string;
-  label: string;
-  url: string;
-}
-
-export interface PlanFaqEntry {
-  id: string;
-  question: string;
-  answer: string;
-}
-
-export type PlanStatus = "draft" | "active" | "on_hold" | "done";
-
-export interface Plan {
-  id: string;
-  projectId: string;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  status: PlanStatus;
-  team: PlanTeamMember[];
-  contacts: PlanContactRef[];
-  docs: PlanDoc[];
-  faq: PlanFaqEntry[];
-  createdAt: string;
-  order: number;
-}
-
-/** One default plan per seeded project — covers full project window. */
-export let plans: Plan[] = [
-  {
-    id: "pl-cm1",
-    projectId: "cm1",
-    name: "Default plan",
-    description:
-      "Migration program covering API contracts, dry-run, rollback plan and cutover scheduling.",
-    startDate: "2025-10-01",
-    endDate: "2026-06-30",
-    status: "active",
-    team: [
-      { employeeId: "e1", role: "Tech lead" },
-      { employeeId: "e9", role: "Senior engineer" },
-      { employeeId: "e4", role: "Engineer" },
-      { employeeId: "e11", role: "Ops" },
-    ],
-    contacts: [{ id: "pl-cm1-c1", kind: "client", clientContactId: "cl1-cn1" }],
-    docs: [
-      {
-        id: "pl-cm1-d1",
-        label: "Migration runbook",
-        url: "https://docs.test/acme/migration-runbook",
-      },
-      { id: "pl-cm1-d2", label: "API contract", url: "https://docs.test/acme/api-contract" },
-    ],
-    faq: [
-      {
-        id: "pl-cm1-f1",
-        question: "What is the rollback strategy?",
-        answer: "Per-service feature flag plus a 1-hour DB snapshot window.",
-      },
-    ],
-    createdAt: "2025-10-01",
-    order: 1,
-  },
-  {
-    id: "pl-cm2",
-    projectId: "cm2",
-    name: "Default plan",
-    description: "Mobile onboarding research, prototype, and launch.",
-    startDate: "2026-02-01",
-    endDate: "2026-07-15",
-    status: "active",
-    team: [
-      { employeeId: "e7", role: "Project manager" },
-      { employeeId: "e2", role: "Designer" },
-      { employeeId: "e9", role: "Engineer" },
-      { employeeId: "e8", role: "QA" },
-    ],
-    contacts: [{ id: "pl-cm2-c1", kind: "client", clientContactId: "cl2-cn1" }],
-    docs: [],
-    faq: [],
-    createdAt: "2026-02-01",
-    order: 1,
-  },
-  {
-    id: "pl-cm3",
-    projectId: "cm3",
-    name: "Default plan",
-    description: "Token migration, component library audit and docs refresh.",
-    startDate: "2025-12-01",
-    endDate: "2026-05-15",
-    status: "active",
-    team: [
-      { employeeId: "e2", role: "Lead designer" },
-      { employeeId: "e1", role: "Consult" },
-    ],
-    contacts: [{ id: "pl-cm3-c1", kind: "client", clientContactId: "cl3-cn1" }],
-    docs: [],
-    faq: [],
-    createdAt: "2025-12-01",
-    order: 1,
-  },
-  {
-    id: "pl-cm4",
-    projectId: "cm4",
-    name: "Default plan",
-    description: "Internal HR tooling — leave + expense workflows.",
-    startDate: "2026-01-15",
-    endDate: "2026-09-30",
-    status: "active",
-    team: [
-      { employeeId: "e3", role: "Project manager" },
-      { employeeId: "e8", role: "QA" },
-    ],
-    contacts: [{ id: "pl-cm4-c1", kind: "client", clientContactId: "cl4-cn1" }],
-    docs: [],
-    faq: [],
-    createdAt: "2026-01-15",
-    order: 1,
-  },
-  {
-    id: "pl-cm5",
-    projectId: "cm5",
-    name: "Default plan",
-    description: "Legacy migration — paused pending budget renewal.",
-    startDate: "2024-09-01",
-    endDate: "2026-03-31",
-    status: "on_hold",
-    team: [{ employeeId: "e4", role: "Engineer" }],
-    contacts: [{ id: "pl-cm5-c1", kind: "client", clientContactId: "cl5-cn1" }],
-    docs: [],
-    faq: [],
-    createdAt: "2024-09-01",
-    order: 1,
-  },
-  {
-    id: "pl-cm6",
-    projectId: "cm6",
-    name: "Default plan",
-    description: "Analytics ingestion, dashboards, ETL and exec reporting.",
-    startDate: "2026-03-01",
-    endDate: "2026-10-31",
-    status: "active",
-    team: [
-      { employeeId: "e10", role: "Lead engineer" },
-      { employeeId: "e12", role: "Designer" },
-      { employeeId: "e7", role: "Project manager" },
-      { employeeId: "e1", role: "Consult" },
-    ],
-    contacts: [{ id: "pl-cm6-c1", kind: "client", clientContactId: "cl6-cn1" }],
-    docs: [{ id: "pl-cm6-d1", label: "Schema sketch", url: "https://docs.test/zenith/schema" }],
-    faq: [],
-    createdAt: "2026-03-01",
-    order: 1,
-  },
-];
-
-export const planById = (id: string) => plans.find((p) => p.id === id);
-export const plansForProject = (projectId: string) =>
-  plans.filter((p) => p.projectId === projectId).sort((a, b) => a.order - b.order);
-export const defaultPlanIdForProject = (projectId: string): string => {
-  const list = plansForProject(projectId);
-  return list[0]?.id ?? "";
-};
-
 export interface Activity {
   id: string;
-  /** Plan the activity belongs to. The owning project is `plan.projectId`. */
-  planId: string;
+  projectId: string;
   title: string;
   description?: string;
   status: ActivityStatus;
@@ -2905,7 +2721,7 @@ export let activities: Activity[] = [
   // cm1
   {
     id: "ac1",
-    planId: "pl-cm1",
+    projectId: "cm1",
     title: "Finalise API contract",
     description: "REST + GraphQL surfaces, auth layer agreed with client.",
     status: "done",
@@ -2919,7 +2735,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac2",
-    planId: "pl-cm1",
+    projectId: "cm1",
     title: "Migration dry-run on staging",
     description: "End-to-end smoke test with production data volumes.",
     status: "in_progress",
@@ -2933,7 +2749,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac3",
-    planId: "pl-cm1",
+    projectId: "cm1",
     title: "Rollback plan sign-off",
     description: "DR runbook + legal review.",
     status: "review",
@@ -2946,7 +2762,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac4",
-    planId: "pl-cm1",
+    projectId: "cm1",
     title: "Cutover window scheduling",
     description: "Coordinate with Acme ops + support.",
     status: "todo",
@@ -2959,7 +2775,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac5",
-    planId: "pl-cm1",
+    projectId: "cm1",
     title: "Post-cutover monitoring",
     description: "24×7 rota for first week after go-live.",
     status: "todo",
@@ -2972,7 +2788,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac6",
-    planId: "pl-cm1",
+    projectId: "cm1",
     title: "Launch comms pack",
     description: "Marketing + internal announcement.",
     status: "blocked",
@@ -2987,7 +2803,7 @@ export let activities: Activity[] = [
   // cm2
   {
     id: "ac7",
-    planId: "pl-cm2",
+    projectId: "cm2",
     title: "Onboarding UX research",
     description: "User interviews + competitor teardown.",
     status: "done",
@@ -3000,7 +2816,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac8",
-    planId: "pl-cm2",
+    projectId: "cm2",
     title: "Sign-up flow prototype",
     description: "Hi-fi Figma with variants.",
     status: "in_progress",
@@ -3014,7 +2830,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac9",
-    planId: "pl-cm2",
+    projectId: "cm2",
     title: "Auth API integration",
     description: "OTP + social.",
     status: "todo",
@@ -3028,7 +2844,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac10",
-    planId: "pl-cm2",
+    projectId: "cm2",
     title: "QA + accessibility audit",
     description: "Screen reader, contrast, tap targets.",
     status: "todo",
@@ -3042,7 +2858,7 @@ export let activities: Activity[] = [
   // cm3
   {
     id: "ac11",
-    planId: "pl-cm3",
+    projectId: "cm3",
     title: "Token migration",
     description: "Move from SCSS vars to oklch CSS variables.",
     status: "review",
@@ -3055,7 +2871,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac12",
-    planId: "pl-cm3",
+    projectId: "cm3",
     title: "Component library audit",
     description: "Button/Input/Card parity with Figma.",
     status: "in_progress",
@@ -3068,7 +2884,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac13",
-    planId: "pl-cm3",
+    projectId: "cm3",
     title: "Docs site refresh",
     description: "New IA + search.",
     status: "todo",
@@ -3082,7 +2898,7 @@ export let activities: Activity[] = [
   // cm4
   {
     id: "ac14",
-    planId: "pl-cm4",
+    projectId: "cm4",
     title: "Leave policy engine",
     description: "Rule engine powering the leave tab.",
     status: "done",
@@ -3095,7 +2911,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac15",
-    planId: "pl-cm4",
+    projectId: "cm4",
     title: "Expense approval workflow",
     description: "Multi-step approval with audit log.",
     status: "in_progress",
@@ -3109,7 +2925,7 @@ export let activities: Activity[] = [
   // cm6
   {
     id: "ac16",
-    planId: "pl-cm6",
+    projectId: "cm6",
     title: "Ingestion spike",
     description: "Assess throughput + schema evolution.",
     status: "done",
@@ -3122,7 +2938,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac17",
-    planId: "pl-cm6",
+    projectId: "cm6",
     title: "Dashboard wireframes",
     description: "Five primary boards.",
     status: "in_progress",
@@ -3135,7 +2951,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac18",
-    planId: "pl-cm6",
+    projectId: "cm6",
     title: "ETL pipeline v1",
     description: "Airflow DAGs + monitoring.",
     status: "todo",
@@ -3149,7 +2965,7 @@ export let activities: Activity[] = [
   },
   {
     id: "ac19",
-    planId: "pl-cm6",
+    projectId: "cm6",
     title: "Exec-level reporting",
     description: "Quarterly rollups.",
     status: "todo",
@@ -4423,9 +4239,6 @@ export function __setAllocations(n: Allocation[]) {
 }
 export function __setActivities(n: Activity[]) {
   activities = n;
-}
-export function __setPlans(n: Plan[]) {
-  plans = n;
 }
 export function __setMockCalendarEvents(n: CalendarEvent[]) {
   mockCalendarEvents = n;

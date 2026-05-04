@@ -57,7 +57,7 @@ const GOALS = [
   { id: "budget", label: "Control budget & margin", icon: Coins },
   { id: "engage", label: "Boost engagement", icon: TrendingUp },
   { id: "compliance", label: "Stay compliant", icon: ClipboardList },
-  { id: "plan", label: "Plan capacity", icon: Target },
+  { id: "capacity", label: "Balance capacity", icon: Target },
 ] as const;
 
 type Step = 0 | 1 | 2 | 3;

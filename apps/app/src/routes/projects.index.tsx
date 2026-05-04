@@ -34,18 +34,20 @@ import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
 import { employeeById, type Commessa, type ProjectStatus } from "@/lib/mock-data";
 import { commesseTable, useCommesse } from "@/lib/tables/commesse";
 import { useClients } from "@/lib/tables/clients";
+import { allocationsTable } from "@/lib/tables/allocations";
+import { activitiesTable } from "@/lib/tables/activities";
 import { ProjectForm } from "@/components/pm/ProjectForm";
 import { projectTeam } from "@/lib/projects";
 
 type ProjectsSearch = { q?: string; client?: string; status?: ProjectStatus };
 
 export const Route = createFileRoute("/projects/")({
-  head: () => ({ meta: [{ title: "Projects — Pulse HR" }] }),
   validateSearch: (s: Record<string, unknown>): ProjectsSearch => ({
     q: typeof s.q === "string" ? s.q : undefined,
     client: typeof s.client === "string" ? s.client : undefined,
     status: typeof s.status === "string" ? (s.status as ProjectStatus) : undefined,
   }),
+  head: () => ({ meta: [{ title: "Projects — Pulse HR" }] }),
   component: ProjectsIndex,
 });
 
@@ -92,9 +94,24 @@ function ProjectsIndex() {
     toast.success(`Project “${p.name}” saved`);
   };
   const removeProject = (p: Commessa) => {
+    const relatedAllocations = allocationsTable.getAll().filter((a) => a.projectId === p.id);
+    const relatedActivities = activitiesTable.getAll().filter((a) => a.projectId === p.id);
     commesseTable.remove(p.id);
+    for (const a of relatedAllocations) allocationsTable.remove(a.id);
+    for (const a of relatedActivities) activitiesTable.remove(a.id);
     toast(`Removed ${p.name}`, {
-      action: { label: "Undo", onClick: () => commesseTable.add(p) },
+      description:
+        relatedAllocations.length || relatedActivities.length
+          ? `${relatedAllocations.length} allocation(s) and ${relatedActivities.length} activit${relatedActivities.length === 1 ? "y" : "ies"} also removed`
+          : undefined,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          commesseTable.add(p);
+          for (const a of relatedAllocations) allocationsTable.add(a);
+          for (const a of relatedActivities) activitiesTable.add(a);
+        },
+      },
     });
   };
 
@@ -260,29 +277,32 @@ function ProjectsIndex() {
                         <StatusBadge status={p.status} />
                       </td>
                       <td className="px-2 py-3">
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => setProjectForm({ open: true, initial: p })}
-                              >
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-destructive"
-                                onClick={() => setProjectToDelete(p)}
-                              >
-                                <Trash2 className="h-3.5 w-3.5 mr-2" />
-                                Remove
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => setProjectForm({ open: true, initial: p })}
+                            >
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => setProjectToDelete(p)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-2" />
+                              Remove
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </td>
                     </tr>
                   );
@@ -305,7 +325,7 @@ function ProjectsIndex() {
           <AlertDialogHeader>
             <AlertDialogTitle>Remove {projectToDelete?.name}?</AlertDialogTitle>
             <AlertDialogDescription>
-              All plans, allocations and activities under this project will also be removed.
+              All allocations and activities under this project will also be removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

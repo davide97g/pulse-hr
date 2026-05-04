@@ -6,7 +6,6 @@ import {
   employees,
   employeeById,
   clientById,
-  plans,
   projectById,
   timesheetEntries,
   type Activity,
@@ -14,7 +13,6 @@ import {
   type Client,
   type Commessa,
   type Employee,
-  type Plan,
 } from "./mock-data";
 
 const FTE_HOURS_PER_YEAR = 1800;
@@ -38,13 +36,6 @@ export function projectTeam(projectId: string, allocs: Allocation[] = allocation
 
 export function projectTotalPercent(projectId: string, allocs: Allocation[] = allocations): number {
   return projectTeam(projectId, allocs).reduce((s, a) => s + a.percent, 0);
-}
-
-/** Weeks between two ISO dates (fractional, clamped to >=0). */
-function weeksBetween(fromISO: string, toISO: string): number {
-  const from = new Date(fromISO).getTime();
-  const to = new Date(toISO).getTime();
-  return Math.max(0, (to - from) / (7 * 24 * 60 * 60 * 1000));
 }
 
 /** Overlap in weeks between [aStart,aEnd] and [bStart,bEnd]. */
@@ -212,21 +203,8 @@ export function personValue(today = new Date()): PersonValue[] {
   });
 }
 
-export function planActivities(planId: string, list: Activity[] = activities): Activity[] {
-  return list.filter((a) => a.planId === planId).sort((a, b) => a.order - b.order);
-}
-
-export function projectActivities(
-  projectId: string,
-  list: Activity[] = activities,
-  planList: Plan[] = plans,
-): Activity[] {
-  const planIds = new Set(planList.filter((p) => p.projectId === projectId).map((p) => p.id));
-  return list.filter((a) => planIds.has(a.planId)).sort((a, b) => a.order - b.order);
-}
-
-export function projectForPlan(planId: string, planList: Plan[] = plans): string | undefined {
-  return planList.find((p) => p.id === planId)?.projectId;
+export function projectActivities(projectId: string, list: Activity[] = activities): Activity[] {
+  return list.filter((a) => a.projectId === projectId).sort((a, b) => a.order - b.order);
 }
 
 export { clientById, projectById };

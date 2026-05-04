@@ -1,10 +1,8 @@
 import {
   activities as activitiesSeed,
   allocations as allocationsSeed,
-  plans as plansSeed,
   type Activity,
   type Allocation,
-  type Plan,
 } from "./mock-data";
 
 const HOURS_PER_DAY = 8;
@@ -66,15 +64,13 @@ export function employeeAssignedHours(
   windowStartISO: string,
   windowEndISO: string,
   acts: Activity[] = activitiesSeed,
-  planList: Plan[] = plansSeed,
   excludeActivityId?: string,
 ): number {
-  const planIds = new Set(planList.filter((p) => p.projectId === projectId).map((p) => p.id));
   let hours = 0;
   for (const act of acts) {
     if (act.id === excludeActivityId) continue;
     if (act.assigneeId !== employeeId) continue;
-    if (!planIds.has(act.planId)) continue;
+    if (act.projectId !== projectId) continue;
     const start = act.startDate;
     const end = act.endDate;
     if (!start || !end) {
@@ -106,7 +102,6 @@ export function employeeCapacityRow(
   opts?: {
     excludeActivityId?: string;
     activities?: Activity[];
-    plans?: Plan[];
     allocations?: Allocation[];
   },
 ): EmployeeCapacityRow {
@@ -123,7 +118,6 @@ export function employeeCapacityRow(
     windowStartISO,
     windowEndISO,
     opts?.activities,
-    opts?.plans,
     opts?.excludeActivityId,
   );
   return {
