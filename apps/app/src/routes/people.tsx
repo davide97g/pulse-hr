@@ -72,10 +72,17 @@ export const Route = createFileRoute("/people")({
   component: People,
 });
 
-interface PeopleView {
+type PeopleView = Record<string, unknown> & {
   q: string;
   dept: string;
   tab: string;
+};
+
+/** Radix tabs only use `list` | `grid`; normalize legacy / bad URL values. */
+function peopleDisplayTab(raw: string): "list" | "grid" {
+  const t = (raw || "list").toLowerCase();
+  if (t === "grid" || t === "cards") return "grid";
+  return "list";
 }
 
 function People() {
@@ -85,7 +92,7 @@ function People() {
   });
   const q = views.state.q;
   const dept = views.state.dept || null;
-  const tab = views.state.tab || "list";
+  const tab = peopleDisplayTab(views.state.tab);
   const setQ = (v: string) => views.setState({ q: v });
   const setDept = (v: string | null) => views.setState({ dept: v ?? "" });
   const setTab = (v: string) => views.setState({ tab: v });
@@ -215,9 +222,19 @@ function People() {
       </Card>
 
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList>
-          <TabsTrigger value="list">List</TabsTrigger>
-          <TabsTrigger value="grid">Cards</TabsTrigger>
+        <TabsList className="bg-muted/80">
+          <TabsTrigger
+            value="list"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+          >
+            List
+          </TabsTrigger>
+          <TabsTrigger
+            value="grid"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+          >
+            Cards
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="mt-4">
