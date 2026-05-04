@@ -603,6 +603,9 @@ export interface LogMessage {
   createdAt: string; // ISO
   topic?: LogTopic;
   sentiment?: LogSentiment;
+  logKind?: "generic" | "workflow";
+  workflowId?: string;
+  workflowLabel?: string;
   voice?: boolean;
   actionId?: string;
 }
