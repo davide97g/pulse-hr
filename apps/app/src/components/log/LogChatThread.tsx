@@ -8,64 +8,69 @@ export function LogChatThread({
   messages,
   streamingId,
   pinned,
+  empty,
 }: {
   messages: LogMessage[];
   streamingId?: string;
   pinned?: React.ReactNode;
+  empty?: React.ReactNode;
 }) {
   const groups = groupByDay(messages);
   return (
     <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 pb-4 scrollbar-thin">
-      {pinned}
-      {groups.map(([day, items]) => (
-        <div key={day}>
-          <LogSessionDivider date={day} />
-          <ul className="space-y-3">
-            {items.map((m) => (
-              <li
-                key={m.id}
-                className={cn(
-                  "flex gap-2 fade-in",
-                  m.role === "employee" ? "justify-end" : "justify-start",
-                )}
-              >
-                {m.role === "agent" && (
-                  <span className="h-7 w-7 shrink-0 rounded-full bg-primary/10 text-primary grid place-items-center">
-                    <Bot className="h-4 w-4" />
-                  </span>
-                )}
-                <div
+      <div className="mx-auto w-full max-w-3xl">
+        {pinned}
+        {groups.length === 0 && empty}
+        {groups.map(([day, items]) => (
+          <div key={day}>
+            <LogSessionDivider date={day} />
+            <ul className="space-y-3">
+              {items.map((m) => (
+                <li
+                  key={m.id}
                   className={cn(
-                    "max-w-[72ch] text-sm leading-relaxed",
-                    m.role === "employee"
-                      ? "rounded-2xl px-3.5 py-2 bg-primary/15 text-foreground ring-1 ring-primary/25"
-                      : "py-1 text-foreground/90",
+                    "flex gap-2 fade-in",
+                    m.role === "employee" ? "justify-end" : "justify-start",
                   )}
                 >
-                  {streamingId === m.id && !m.text ? (
-                    <TypingDots />
-                  ) : (
-                    <>
-                      {m.text}
-                      {streamingId === m.id && <span className="ml-1 animate-pulse">▍</span>}
-                    </>
+                  {m.role === "agent" && (
+                    <span className="h-7 w-7 shrink-0 rounded-full bg-primary/10 text-primary grid place-items-center">
+                      <Bot className="h-4 w-4" />
+                    </span>
                   )}
                   <div
                     className={cn(
-                      "mt-1 flex items-center gap-2 text-[10px]",
-                      m.role === "employee" ? "opacity-60" : "text-muted-foreground",
+                      "max-w-[56ch] text-sm leading-relaxed",
+                      m.role === "employee"
+                        ? "rounded-2xl px-3.5 py-2 bg-primary/15 text-foreground ring-1 ring-primary/25"
+                        : "rounded-2xl rounded-tl-md border bg-card px-3.5 py-2 text-foreground/90 shadow-sm",
                     )}
                   >
-                    <span>{format(new Date(m.createdAt), "HH:mm")}</span>
-                    {m.voice && <Mic className="h-3 w-3" aria-label="voice" />}
-                    {m.topic && <span className="uppercase tracking-wide">{m.topic}</span>}
+                    {streamingId === m.id && !m.text ? (
+                      <TypingDots />
+                    ) : (
+                      <>
+                        {m.text}
+                        {streamingId === m.id && <span className="ml-1 animate-pulse">▍</span>}
+                      </>
+                    )}
+                    <div
+                      className={cn(
+                        "mt-1 flex items-center gap-2 text-[10px]",
+                        m.role === "employee" ? "opacity-60" : "text-muted-foreground",
+                      )}
+                    >
+                      <span>{format(new Date(m.createdAt), "HH:mm")}</span>
+                      {m.voice && <Mic className="h-3 w-3" aria-label="voice" />}
+                      {m.topic && <span className="uppercase tracking-wide">{m.topic}</span>}
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -85,7 +90,8 @@ function groupByDay(msgs: LogMessage[]): [string, LogMessage[]][] {
   for (const m of msgs) {
     const day = m.createdAt.slice(0, 10);
     if (!map.has(day)) map.set(day, []);
-    map.get(day)!.push(m);
+    const bucket = map.get(day);
+    if (bucket) bucket.push(m);
   }
-  return [...map.entries()].sort(([a], [b]) => a.localeCompare(b));
+  return [...map.entries()].toSorted(([a], [b]) => a.localeCompare(b));
 }

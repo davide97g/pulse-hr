@@ -21,8 +21,13 @@ export interface RecapDimensions {
 
 export interface RecapResult {
   summary: string;
+  managerSummary: string;
   topics: { topic: LogTopic; count: number }[];
+  topicContribution: { topic: LogTopic; count: number; sentiment: number }[];
   dimensions: RecapDimensions;
+  confidence: number;
+  drivers: { label: string; value: number; tone: "positive" | "negative" | "neutral" }[];
+  suggestedActions: string[];
   dailyMeans: DailyMean[]; // 14 entries oldest -> newest
   sparkline: number[];
   trend: EmployeeLogHealth["trend"];
@@ -45,6 +50,11 @@ export function computeRecap(employeeName: string, msgs: LogMessage[]): RecapRes
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
     .map(([topic, count]) => ({ topic, count }));
+  const topicContribution = topics.map(({ topic, count }) => {
+    const topicMsgs = employeeMsgs.filter((m) => m.topic === topic);
+    const sentiment = avg(topicMsgs.map((m) => scoreMessage(m.text, topic).overall));
+    return { topic, count, sentiment: round2(sentiment) };
+  });
 
   const today = startOfDay(new Date());
   const dailyMeans: DailyMean[] = [];
@@ -94,10 +104,15 @@ export function computeRecap(employeeName: string, msgs: LogMessage[]): RecapRes
     : undefined;
 
   const summary = renderSummary(employeeName, agg, topics, trend);
+  const drivers = renderDrivers(agg);
+  const suggestedActions = renderSuggestedActions(agg, topics, trend);
+  const managerSummary = renderManagerSummary(employeeName, agg, topics, trend);
 
   return {
     summary,
+    managerSummary,
     topics,
+    topicContribution,
     dimensions: {
       energy: agg.energy,
       stress: agg.stress,
@@ -105,6 +120,9 @@ export function computeRecap(employeeName: string, msgs: LogMessage[]): RecapRes
       alignment: agg.alignment,
       overall: agg.overall,
     },
+    confidence: round2(agg.confidence),
+    drivers,
+    suggestedActions,
     dailyMeans,
     sparkline,
     trend,
@@ -150,6 +168,63 @@ function renderSummary(
     trend === "up" ? " Trend is improving." : trend === "down" ? " Trend is sliding." : "";
   const focus = top ? ` Focus this week: ${top}.` : "";
   return `${first} is ${mood}.${stressNote}${engageNote}${trendNote}${focus}`.trim();
+}
+
+function renderManagerSummary(
+  name: string,
+  agg: RecapDimensions,
+  topics: { topic: LogTopic; count: number }[],
+  trend: EmployeeLogHealth["trend"],
+): string {
+  const first = name.split(" ")[0];
+  const top = topics[0]?.topic ?? "status";
+  const trendText =
+    trend === "up" ? "improving" : trend === "down" ? "softening" : "steady";
+  if (agg.stress > 0.35) {
+    return `${first}'s ${top} signal is ${trendText}, with workload strain worth a manager check-in.`;
+  }
+  if (agg.engagement > 0.25) {
+    return `${first}'s ${top} signal is ${trendText}, with strong engagement and useful momentum to reinforce.`;
+  }
+  if (agg.alignment < -0.2) {
+    return `${first}'s ${top} signal is ${trendText}, with some ambiguity around priorities.`;
+  }
+  return `${first}'s ${top} signal is ${trendText}; no raw transcript is shared.`;
+}
+
+function renderDrivers(
+  agg: RecapDimensions,
+): { label: string; value: number; tone: "positive" | "negative" | "neutral" }[] {
+  const rows = [
+    { label: "Energy", value: agg.energy, invert: false },
+    { label: "Engagement", value: agg.engagement, invert: false },
+    { label: "Alignment", value: agg.alignment, invert: false },
+    { label: "Stress load", value: agg.stress, invert: true },
+  ];
+  return rows
+    .map((r) => {
+      const display = r.invert ? -r.value : r.value;
+      const tone = display > 0.15 ? "positive" : display < -0.15 ? "negative" : "neutral";
+      return { label: r.label, value: round2(display), tone };
+    })
+    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+}
+
+function renderSuggestedActions(
+  agg: RecapDimensions,
+  topics: { topic: LogTopic; count: number }[],
+  trend: EmployeeLogHealth["trend"],
+): string[] {
+  const actions: string[] = [];
+  const top = topics[0]?.topic;
+  if (agg.stress > 0.35) actions.push("Ask what can be removed, delayed, or paired.");
+  if (agg.alignment < -0.2) actions.push("Clarify the next priority and what success looks like.");
+  if (agg.engagement < -0.2) actions.push("Use the next 1:1 to find what would restore momentum.");
+  if (top === "win") actions.push("Reflect the win back before it disappears into the week.");
+  if (top === "feedback") actions.push("Turn the feedback into one specific request.");
+  if (trend === "down") actions.push("Schedule a low-pressure check-in before the next cycle.");
+  if (actions.length === 0) actions.push("Keep the cadence: one short check-in each workday.");
+  return actions.slice(0, 3);
 }
 
 function toLegacy(overall: number): LogSentiment {

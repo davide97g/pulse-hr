@@ -63,24 +63,25 @@ export function LogComposer({
 
   return (
     <div className="border-t bg-background/80 backdrop-blur px-4 md:px-6 py-3">
-      {topicMeta && onClearTopic && (
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-[11px] text-muted-foreground uppercase tracking-wide">
-            Next send
-          </span>
-          <button
-            type="button"
-            onClick={onClearTopic}
-            aria-label={`Clear topic: ${topicMeta.label}`}
-            className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary press-scale hover:bg-primary/15"
-          >
-            <span>{topicMeta.emoji}</span>
-            <span>{topicMeta.label}</span>
-            <X className="h-3 w-3 opacity-70" aria-hidden />
-          </button>
-        </div>
-      )}
-      <div className="flex items-end gap-2">
+      <div className="mx-auto w-full max-w-3xl">
+        {topicMeta && onClearTopic && (
+          <div className="mb-2 flex items-center gap-2">
+            <span className="text-[11px] text-muted-foreground uppercase tracking-wide">
+              Next send
+            </span>
+            <button
+              type="button"
+              onClick={onClearTopic}
+              aria-label={`Clear topic: ${topicMeta.label}`}
+              className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary press-scale hover:bg-primary/15"
+            >
+              <span>{topicMeta.emoji}</span>
+              <span>{topicMeta.label}</span>
+              <X className="h-3 w-3 opacity-70" aria-hidden />
+            </button>
+          </div>
+        )}
+        <div className="flex items-end gap-2">
         <textarea
           ref={taRef}
           value={text}
@@ -119,12 +120,13 @@ export function LogComposer({
         >
           <Send className="h-4 w-4" />
         </Button>
+        </div>
+        {fromVoice && (
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Voice draft — review, edit, then send.
+          </p>
+        )}
       </div>
-      {fromVoice && (
-        <p className="mt-1 text-[11px] text-muted-foreground">
-          Voice draft — review, edit, then send.
-        </p>
-      )}
     </div>
   );
 }

@@ -4,14 +4,15 @@ import {
   ArrowDownRight,
   ArrowLeft,
   ArrowUpRight,
+  CheckCircle2,
   Lock,
+  MessageSquareText,
   Minus,
   Sparkles,
   TrendingUp,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { PageHeader } from "@/components/app/AppShell";
-import { useTheme } from "@pulse-hr/ui/theme";
 import {
   employees,
   employeeLogHealth,
@@ -29,6 +30,7 @@ import {
   TooltipTrigger,
 } from "@pulse-hr/ui/primitives/tooltip";
 import { cn } from "@/lib/utils";
+import { useEffectiveRole } from "@/lib/role-override";
 
 const ME_ID = employees[0].id;
 
@@ -38,8 +40,8 @@ export const Route = createFileRoute("/log/recap")({
 });
 
 function LogRecapRoute() {
-  const { theme } = useTheme();
-  const isManager = theme === "manager" || theme === "hr" || theme === "admin";
+  const role = useEffectiveRole();
+  const isManager = role === "manager" || role === "hr" || role === "admin";
   const [ready, setReady] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setReady(true), 300);
@@ -51,13 +53,12 @@ function LogRecapRoute() {
 
   const reports = useMemo(
     () =>
-      employees
-        .filter((e) => e.id !== ME_ID)
-        .map((e) => ({
-          employee: e,
-          health: employeeLogHealth.find((h) => h.employeeId === e.id)!,
-        }))
-        .filter((r) => r.health),
+      employees.reduce<{ employee: Employee; health: EmployeeLogHealth }[]>((acc, e) => {
+        if (e.id === ME_ID) return acc;
+        const health = employeeLogHealth.find((h) => h.employeeId === e.id);
+        if (health) acc.push({ employee: e, health });
+        return acc;
+      }, []),
     [],
   );
 
@@ -67,7 +68,7 @@ function LogRecapRoute() {
 
   return (
     <TooltipProvider delayDuration={150}>
-      <div className="p-4 md:p-6 space-y-6">
+      <div className="mx-auto max-w-7xl p-4 md:p-6 space-y-6">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <PageHeader
             title={
@@ -122,7 +123,7 @@ function SelfRecapSection({
 }) {
   const messageCount = health.messageCount;
   return (
-    <section className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+    <section className="grid gap-4 lg:grid-cols-[minmax(0,1.6fr)_minmax(300px,0.9fr)]">
       <div className="iridescent-border rounded-2xl">
         <div className="rounded-[calc(1rem-1px)] bg-card p-5">
           <div className="flex items-start gap-4">
@@ -135,6 +136,15 @@ function SelfRecapSection({
                 <TrendBadge trend={health.trend} />
               </div>
               <p className="mt-2 text-base leading-relaxed">{health.recap}</p>
+              <div className="mt-4 rounded-xl border bg-background/60 p-3">
+                <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
+                  <Lock className="h-3.5 w-3.5" />
+                  Manager-safe preview
+                </div>
+                <p className="mt-1 text-sm leading-relaxed text-foreground/90">
+                  {health.managerSummary}
+                </p>
+              </div>
               {health.recapTopics.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {health.recapTopics.map((t) => (
@@ -186,6 +196,43 @@ function SelfRecapSection({
         </div>
       </div>
 
+      <div className="grid gap-4 lg:col-span-2 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.8fr)]">
+        <section className="rounded-2xl border bg-card p-5">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
+            <TrendingUp className="h-3.5 w-3.5 text-primary" />
+            Sentiment drivers
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {health.drivers.map((driver) => (
+              <DriverCard key={driver.label} driver={driver} />
+            ))}
+          </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+            {health.topicContribution.map((item) => (
+              <TopicContribution key={item.topic} item={item} />
+            ))}
+          </div>
+        </section>
+        <section className="rounded-2xl border bg-card p-5">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
+            <CheckCircle2 className="h-3.5 w-3.5 text-success" />
+            Suggested next moves
+          </div>
+          <ul className="mt-4 space-y-3">
+            {health.suggestedActions.map((action) => (
+              <li key={action} className="flex gap-2 text-sm leading-relaxed">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                <span>{action}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-4 rounded-xl border bg-background/60 p-3 text-xs text-muted-foreground">
+            Confidence {Math.round(health.confidence * 100)}%. Low-confidence recaps should be
+            read as prompts, not conclusions.
+          </div>
+        </section>
+      </div>
+
       <div className="lg:col-span-2">
         <SentimentHeatmap rows={[{ employee, health }]} />
       </div>
@@ -211,6 +258,7 @@ function ManagerSection({
     <section className="space-y-4">
       <div className="flex items-baseline justify-between">
         <h2 className="text-sm uppercase tracking-wide text-muted-foreground">
+          <MessageSquareText className="mr-1 inline h-3.5 w-3.5" />
           Reports — sentiment
         </h2>
         <Tooltip>
@@ -281,7 +329,9 @@ function ManagerSection({
                 <SentimentRadar values={health.dimensions} size={68} showLabels={false} />
               </div>
             </div>
-            <p className="mt-3 text-sm text-foreground/90 line-clamp-2">{health.recap}</p>
+            <p className="mt-3 text-sm text-foreground/90 line-clamp-2">
+              {health.managerSummary}
+            </p>
             <div className="mt-3 grid grid-cols-4 gap-1.5">
               <MiniDim label="EN" value={health.dimensions.energy} />
               <MiniDim label="EG" value={health.dimensions.engagement} />
@@ -361,6 +411,58 @@ function MiniDim({
   );
 }
 
+function DriverCard({
+  driver,
+}: {
+  driver: EmployeeLogHealth["drivers"][number];
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-xl border bg-background/60 p-3",
+        driver.tone === "positive" && "border-success/30",
+        driver.tone === "negative" && "border-destructive/30",
+      )}
+    >
+      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+        {driver.label}
+      </div>
+      <div
+        className={cn(
+          "mt-1 font-display text-2xl",
+          driver.tone === "positive" && "text-success",
+          driver.tone === "negative" && "text-destructive",
+        )}
+      >
+        {driver.value > 0 ? "+" : ""}
+        {driver.value.toFixed(2)}
+      </div>
+      <Bar value={driver.value} />
+    </div>
+  );
+}
+
+function TopicContribution({
+  item,
+}: {
+  item: EmployeeLogHealth["topicContribution"][number];
+}) {
+  return (
+    <div className="rounded-lg border bg-background/50 px-3 py-2">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+          {item.topic}
+        </span>
+        <span className="text-[10px] text-muted-foreground">{item.count}</span>
+      </div>
+      <div className={cn("mt-1 text-sm tabular-nums", numTone(item.sentiment))}>
+        {item.sentiment > 0 ? "+" : ""}
+        {item.sentiment.toFixed(2)}
+      </div>
+    </div>
+  );
+}
+
 function Bar({ value }: { value: number }) {
   const pct = Math.max(0, Math.min(100, ((value + 1) / 2) * 100));
   return (
@@ -375,6 +477,12 @@ function Bar({ value }: { value: number }) {
       />
     </div>
   );
+}
+
+function numTone(v: number): string {
+  if (v > 0.15) return "text-success";
+  if (v < -0.15) return "text-destructive";
+  return "text-muted-foreground";
 }
 
 function TrendBadge({ trend }: { trend: EmployeeLogHealth["trend"] }) {
@@ -441,7 +549,7 @@ function Sparkline({ values }: { values: number[] }) {
       <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">
         14d sentiment
       </div>
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-11">
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-11" aria-hidden="true">
         <line
           x1={0}
           y1={h / 2}
