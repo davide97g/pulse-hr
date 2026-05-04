@@ -457,7 +457,7 @@ function ActivityForm({
   const valid = planId && title.trim().length > 0 && estimateHours > 0;
 
   return (
-    <div className="space-y-4">
+    <div className="p-5 md:p-6 pb-8 space-y-5">
       <div className="space-y-1.5">
         <Label htmlFor="ac-title">Title</Label>
         <Input
@@ -554,7 +554,7 @@ function ActivityForm({
           />
         </div>
       </div>
-      <div className="flex justify-end gap-2 pt-2 border-t">
+      <div className="flex justify-end gap-2 pt-4 mt-1 border-t border-border">
         <Button variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
