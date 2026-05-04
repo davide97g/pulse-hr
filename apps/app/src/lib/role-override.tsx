@@ -16,10 +16,10 @@ import { useWorkspaceRole, type WorkspaceRole } from "@/lib/workspace-role";
  *     previews. Defaults to "admin" because every user owns their own
  *     demo workspace.
  *
- * `useEffectiveRole` returns the workspace persona (with the optional
- * "view as another role" override applied for users whose persona is
- * admin). UI gates that talk about "admin" almost always mean
- * **workspace persona admin** (`useIsEffectiveAdmin`); only Pulse-staff
+ * `useEffectiveRole` returns the workspace persona, or the optional
+ * "view as" override when set (any saved persona can preview another role
+ * from the topbar switcher). UI gates that talk about "admin" almost always
+ * mean **workspace persona admin** (`useIsEffectiveAdmin`); only Pulse-staff
  * features should call `useIsRealAdmin`.
  */
 export type Role = "admin" | "hr" | "manager" | "finance" | "employee";
@@ -94,14 +94,13 @@ export function useWorkspacePersona(): WorkspaceRole {
 }
 
 /**
- * Effective role for UI: workspace persona, with the "view as" override
- * applied when the persona is admin (admins of their own workspace can
- * preview the experience as another role).
+ * Effective role for UI: workspace persona, unless a "view as" override
+ * is active (see topbar Switch role).
  */
 export function useEffectiveRole(): Role {
   const persona = useWorkspaceRole();
   const { override } = useRoleOverride();
-  if (persona === "admin" && override) return override;
+  if (override) return override;
   return persona;
 }
 

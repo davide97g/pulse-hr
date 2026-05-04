@@ -94,6 +94,7 @@ import {
   useEffectiveRole,
   useIsEffectiveAdmin,
   useRoleOverride,
+  useWorkspacePersona,
 } from "@/lib/role-override";
 import { featuresForRole } from "@/lib/role-features";
 import { managerAsks } from "@/lib/mock-data";
@@ -624,11 +625,14 @@ function Topbar({
     "Signed in";
   const displayEmail = user?.primaryEmailAddress?.emailAddress ?? "";
   const effectiveRole = useEffectiveRole();
+  const workspacePersona = useWorkspacePersona();
   const displayRole = effectiveRole
     ? effectiveRole.charAt(0).toUpperCase() + effectiveRole.slice(1)
     : "";
   const isAdmin = useIsEffectiveAdmin();
   const { override, setOverride } = useRoleOverride();
+  const savedRoleLabel =
+    workspacePersona.charAt(0).toUpperCase() + workspacePersona.slice(1);
   const initials =
     (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") ||
     displayName.slice(0, 2).toUpperCase();
@@ -862,49 +866,49 @@ function Topbar({
           <DropdownMenuItem asChild>
             <Link to="/profile">Profile</Link>
           </DropdownMenuItem>
-          {isAdmin && (
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <span className="flex-1">Switch role</span>
-                {override && (
-                  <span className="ml-2 text-[10px] uppercase tracking-wide text-muted-foreground">
-                    {override}
-                  </span>
-                )}
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-44">
-                <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  View as
-                </DropdownMenuLabel>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <span className="flex-1">Switch role</span>
+              {override && (
+                <span className="ml-2 text-[10px] uppercase tracking-wide text-muted-foreground">
+                  {override}
+                </span>
+              )}
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="w-44">
+              <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                View as
+              </DropdownMenuLabel>
+              <DropdownMenuItem
+                onSelect={() => {
+                  setOverride(null);
+                  toast.success(`Showing as ${savedRoleLabel}`, {
+                    description: "Your saved workspace role.",
+                  });
+                }}
+              >
+                <span className="flex-1">{savedRoleLabel}</span>
+                {!override && <span className="text-xs text-muted-foreground">current</span>}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {OVERRIDE_ROLES.map((r) => (
                 <DropdownMenuItem
+                  key={r}
                   onSelect={() => {
-                    setOverride(null);
-                    toast.success("Back to admin view");
+                    setOverride(r);
+                    toast.success(`Viewing as ${r}`, {
+                      description: "You can switch back any time.",
+                    });
                   }}
                 >
-                  <span className="flex-1">Admin</span>
-                  {!override && <span className="text-xs text-muted-foreground">current</span>}
+                  <span className="flex-1 capitalize">{r}</span>
+                  {effectiveRole === r && (
+                    <span className="text-xs text-muted-foreground">current</span>
+                  )}
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                {OVERRIDE_ROLES.map((r) => (
-                  <DropdownMenuItem
-                    key={r}
-                    onSelect={() => {
-                      setOverride(r);
-                      toast.success(`Viewing as ${r}`, {
-                        description: "You can switch back any time.",
-                      });
-                    }}
-                  >
-                    <span className="flex-1 capitalize">{r}</span>
-                    {override === r && (
-                      <span className="text-xs text-muted-foreground">current</span>
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          )}
+              ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
         </DropdownMenuContent>
