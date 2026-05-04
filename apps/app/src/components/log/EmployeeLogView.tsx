@@ -1,15 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
-import {
-  employees,
-  employeeLogHealth,
-  type LogMessage,
-  type LogTopic,
-  type ManagerAsk,
-} from "@/lib/mock-data";
+import { employees, type LogMessage, type LogTopic, type ManagerAsk } from "@/lib/mock-data";
 import { logMessagesTable, useLogMessages } from "@/lib/tables/logMessages";
 import { managerAsksTable, useManagerAsks } from "@/lib/tables/managerAsks";
+import { useEmployee } from "@/lib/tables/employees";
+import { computeRecap } from "@/lib/log-recap";
 import { openerFor, replyTo, streamReply } from "@/lib/log-agent";
 import { type LogPreset, presetById } from "@/lib/log-presets";
 import { LogChatThread } from "./LogChatThread";
@@ -24,18 +20,21 @@ const ME_ID = employees[0].id; // demo: first employee is "me"
 export function EmployeeLogView() {
   const allMsgs = useLogMessages();
   const allAsks = useManagerAsks();
+  const me = useEmployee(ME_ID);
   const msgs = useMemo(() => allMsgs.filter((m) => m.employeeId === ME_ID), [allMsgs]);
   const asks = useMemo(
     () => allAsks.filter((a) => a.employeeId === ME_ID && a.status === "pending"),
     [allAsks],
+  );
+  const recap = useMemo(
+    () => computeRecap(me?.name ?? "You", msgs),
+    [msgs, me?.name],
   );
   const [streamingId, setStreamingId] = useState<string | undefined>();
   const [pendingTopic, setPendingTopic] = useState<LogTopic | undefined>();
   const [composerSeed, setComposerSeed] = useState<string | undefined>();
   const [activePresetId, setActivePresetId] = useState<string | undefined>();
   const activePreset = activePresetId ? presetById(activePresetId) : undefined;
-
-  const health = employeeLogHealth.find((h) => h.employeeId === ME_ID);
 
   const today = new Date().toISOString().slice(0, 10);
   const todayMsgs = useMemo(
@@ -163,29 +162,40 @@ export function EmployeeLogView() {
             </>
           }
         />
-        <QuickTopicChips onPick={(t) => setPendingTopic(t)} preferredTopics={topicChips} />
-        <LogComposer onSend={handleSend} seed={composerSeed} />
+        <QuickTopicChips
+          onPick={(t) => setPendingTopic(t)}
+          preferredTopics={topicChips}
+          selectedTopic={pendingTopic}
+        />
+        <LogComposer
+          onSend={handleSend}
+          seed={composerSeed}
+          activeTopic={pendingTopic}
+          onClearTopic={() => setPendingTopic(undefined)}
+        />
       </div>
       <aside className="hidden lg:flex flex-col border-l bg-muted/20 p-4 gap-4">
         <div className="rounded-xl border bg-card p-4">
           <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
             <Sparkles className="h-3.5 w-3.5" /> Your recap
           </div>
-          <p className="mt-2 text-sm">{health?.recap ?? "Not enough data yet."}</p>
+          <p className="mt-2 text-sm">
+            {recap.messageCount === 0
+              ? "Not enough data yet. Log a thought to see your recap here."
+              : recap.summary}
+          </p>
         </div>
-        {health && (
-          <div className="rounded-xl border bg-card p-4">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
-              How you've been
-            </div>
-            <SentimentRadar values={health.dimensions} size={180} />
+        <div className="rounded-xl border bg-card p-4">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+            How you've been
           </div>
-        )}
+          <SentimentRadar values={recap.dimensions} size={180} />
+        </div>
         <div className="rounded-xl border bg-card p-4">
           <div className="text-xs uppercase tracking-wide text-muted-foreground">
             14-day sentiment
           </div>
-          <Sparkline values={health?.sparkline ?? []} />
+          <Sparkline values={recap.sparkline} />
         </div>
         <div className="rounded-xl border bg-card p-4 text-sm">
           <div className="text-xs uppercase tracking-wide text-muted-foreground">Open asks</div>
