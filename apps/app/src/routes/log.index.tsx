@@ -3,22 +3,22 @@ import { useEffect, useState } from "react";
 import { MessagesSquare, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
 import { Button } from "@pulse-hr/ui/primitives/button";
-import { useTheme } from "@pulse-hr/ui/theme";
 import { EmployeeLogView } from "@/components/log/EmployeeLogView";
 import { ManagerLogView } from "@/components/log/ManagerLogView";
+import { useEffectiveRole } from "@/lib/role-override";
 
 type LogSearch = { view?: "me" | "team" };
 
 export const Route = createFileRoute("/log/")({
-  head: () => ({ meta: [{ title: "Status Log — Pulse HR" }] }),
   validateSearch: (s: Record<string, unknown>): LogSearch => ({
     view: s.view === "team" || s.view === "me" ? s.view : undefined,
   }),
+  head: () => ({ meta: [{ title: "Status Log — Pulse HR" }] }),
   component: LogIndexRoute,
 });
 
 function LogIndexRoute() {
-  const { theme } = useTheme();
+  const role = useEffectiveRole();
   const { view } = Route.useSearch();
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -26,7 +26,7 @@ function LogIndexRoute() {
     return () => clearTimeout(t);
   }, []);
 
-  const isManager = theme === "manager" || theme === "hr" || theme === "admin";
+  const isManager = role === "manager" || role === "hr" || role === "admin";
   const showTeam = isManager && view !== "me";
 
   return (

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -11,10 +11,11 @@ import {
   TrendingUp,
   Calendar,
   FileCheck2,
+  ShieldAlert,
 } from "lucide-react";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Button } from "@pulse-hr/ui/primitives/button";
-import { Avatar, PageHeader, StatusBadge } from "@/components/app/AppShell";
+import { Avatar, PageHeader } from "@/components/app/AppShell";
 import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { StatCard } from "@pulse-hr/ui/atoms/StatCard";
 import { DashboardLayout } from "@pulse-hr/ui/atoms/DashboardLayout";
@@ -22,11 +23,12 @@ import { Heart, Gift, Focus as FocusIcon, Sparkles as SparkIcon } from "lucide-r
 import { MomentsCard } from "@/components/app/MomentsCard";
 import { SwipeRow } from "@/components/app/SwipeRow";
 import { CompanyProfileBanner } from "@/components/app/CompanyProfileBanner";
-import { announcements } from "@/lib/mock-data";
+import { announcements, employeeLogHealth, managerAsks } from "@/lib/mock-data";
 import { useEmployees, employeeById } from "@/lib/tables/employees";
 import { useLeaveRequests, leaveTable } from "@/lib/tables/leave";
 import { useExpenses } from "@/lib/tables/expenses";
 import { useGreeting } from "@/lib/current-user";
+import { useEffectiveRole } from "@/lib/role-override";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: "Dashboard — Pulse HR" }] }),
@@ -40,6 +42,8 @@ function Dashboard() {
   const pendingLeaves = leaveRequests.filter((l) => l.status === "pending");
   const pendingExpenses = expenses.filter((e) => e.status === "pending");
   const greeting = useGreeting();
+  const role = useEffectiveRole();
+  const showManagerPulse = role === "admin" || role === "hr" || role === "manager";
 
   return (
     <DashboardLayout
@@ -147,6 +151,8 @@ function Dashboard() {
           }
         />
       </div>
+
+      {showManagerPulse && <ManagerPulseOverview />}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Approvals queue */}
@@ -315,6 +321,109 @@ function Dashboard() {
   );
 }
 
+function ManagerPulseOverview() {
+  const rows = useMemo(() => employeeLogHealth, []);
+  const avgScore = Math.round(avg(rows.map((h) => h.score)));
+  const atRisk = rows.filter(
+    (h) => h.trend === "down" || h.score < 55 || h.dimensions.stress > 0.4,
+  ).length;
+  const openAsks = managerAsks.filter((a) => a.status === "pending").length;
+  const topDriver = rows
+    .flatMap((h) => h.drivers)
+    .reduce<(typeof rows)[number]["drivers"][number] | undefined>(
+      (best, driver) =>
+        !best || Math.abs(driver.value) > Math.abs(best.value) ? driver : best,
+      undefined,
+    );
+
+  return (
+    <Card className="overflow-hidden p-0">
+      <div className="grid gap-0 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="relative p-5">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] via-transparent to-transparent" />
+          <div className="relative flex items-start justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                <Heart className="h-3.5 w-3.5 text-primary" />
+                Manager pulse
+              </div>
+              <h2 className="mt-2 font-display text-2xl">Team signal at a glance</h2>
+              <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+                Status Log summaries, sentiment trends, and manager asks. Raw employee chats stay
+                private.
+              </p>
+            </div>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/log" search={{ view: "team" }}>
+                Open pulse <ArrowRight className="ml-1 h-3.5 w-3.5" />
+              </Link>
+            </Button>
+          </div>
+          <div className="relative mt-5 grid gap-3 sm:grid-cols-3">
+            <PulseMetric label="Avg score" value={`${avgScore}`} sub="team health" />
+            <PulseMetric label="At risk" value={`${atRisk}`} sub="needs attention" danger={atRisk > 0} />
+            <PulseMetric label="Open asks" value={`${openAsks}`} sub="awaiting reply" />
+          </div>
+        </div>
+        <div className="border-t bg-muted/20 p-5 lg:border-l lg:border-t-0">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <ShieldAlert className="h-4 w-4 text-warning" />
+            Strongest signal
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {topDriver
+              ? `${topDriver.label}: ${topDriver.value > 0 ? "+" : ""}${topDriver.value.toFixed(2)}`
+              : "No signal yet."}
+          </p>
+          <div className="mt-4 space-y-2">
+            {rows.slice(0, 3).map((health) => {
+              const emp = employeeById(health.employeeId);
+              if (!emp) return null;
+              return (
+                <Link
+                  key={health.employeeId}
+                  to="/log/$employeeId"
+                  params={{ employeeId: health.employeeId }}
+                  className="flex items-center justify-between rounded-lg border bg-background/70 px-3 py-2 text-sm transition hover:bg-background"
+                >
+                  <span className="truncate">{emp.name}</span>
+                  <span className="text-xs text-muted-foreground">{health.trend}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function PulseMetric({
+  label,
+  value,
+  sub,
+  danger,
+}: {
+  label: string;
+  value: string;
+  sub: string;
+  danger?: boolean;
+}) {
+  return (
+    <div className="rounded-xl border bg-background/75 p-3">
+      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className={danger ? "mt-1 font-display text-3xl text-destructive" : "mt-1 font-display text-3xl"}>
+        {value}
+      </div>
+      <div className="text-xs text-muted-foreground">{sub}</div>
+    </div>
+  );
+}
+
+function avg(xs: number[]): number {
+  return xs.length ? xs.reduce((s, x) => s + x, 0) / xs.length : 0;
+}
+
 function LabsChip({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
   return (
     <Link
@@ -337,7 +446,7 @@ function MiniChart() {
   return (
     <div className="flex items-end gap-3 h-40">
       {data.map((v, i) => (
-        <div key={i} className="flex-1 flex flex-col items-center gap-2">
+        <div key={labels[i]} className="flex-1 flex flex-col items-center gap-2">
           <div className="flex-1 w-full flex items-end">
             <div
               className="w-full rounded-t-md bg-muted hover:bg-muted/70 transition-colors relative group"

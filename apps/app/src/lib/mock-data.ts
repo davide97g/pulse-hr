@@ -662,6 +662,11 @@ export interface EmployeeLogHealth {
   };
   dailyMeans: RecapDailyMean[]; // 14 entries, oldest -> newest
   messageCount: number;
+  confidence: number;
+  managerSummary: string;
+  drivers: { label: string; value: number; tone: "positive" | "negative" | "neutral" }[];
+  suggestedActions: string[];
+  topicContribution: { topic: LogTopic; count: number; sentiment: number }[];
 }
 
 function lcg(seed: number) {
@@ -817,6 +822,11 @@ export const employeeLogHealth: EmployeeLogHealth[] = employees.map((e) => {
     dimensions: recap.dimensions,
     dailyMeans: recap.dailyMeans,
     messageCount: recap.messageCount,
+    confidence: recap.confidence,
+    managerSummary: recap.managerSummary,
+    drivers: recap.drivers,
+    suggestedActions: recap.suggestedActions,
+    topicContribution: recap.topicContribution,
   };
 });
 

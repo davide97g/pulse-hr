@@ -38,6 +38,8 @@ const BANKS: Record<keyof Dimensions, { positive: string[]; negative: string[] }
       "sleepy",
       "no sleep",
       "hardly slept",
+      "fried",
+      "running on fumes",
     ],
   },
   stress: {
@@ -57,6 +59,8 @@ const BANKS: Record<keyof Dimensions, { positive: string[]; negative: string[] }
       "pressure",
       "too much",
       "drowning",
+      "urgent",
+      "escalation",
     ],
   },
   engagement: {
@@ -82,6 +86,8 @@ const BANKS: Record<keyof Dimensions, { positive: string[]; negative: string[] }
       "dragging",
       "checked out",
       "not motivated",
+      "no momentum",
+      "detached",
     ],
   },
   alignment: {
@@ -102,6 +108,8 @@ const BANKS: Record<keyof Dimensions, { positive: string[]; negative: string[] }
       "shifting priorities",
       "don't know what",
       "what should i",
+      "misaligned",
+      "surprised by scope",
     ],
   },
 };

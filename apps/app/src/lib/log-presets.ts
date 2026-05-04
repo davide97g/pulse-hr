@@ -1,5 +1,15 @@
 import type { LucideIcon } from "lucide-react";
-import { CalendarRange, Compass, Heart, RotateCcw, Sunrise, Trophy } from "lucide-react";
+import {
+  CalendarCheck,
+  CalendarRange,
+  Compass,
+  Heart,
+  MessageSquareText,
+  RotateCcw,
+  Sunrise,
+  Trophy,
+  Wrench,
+} from "lucide-react";
 import type { LogTopic } from "./mock-data";
 
 export type AgentPersona =
@@ -34,6 +44,17 @@ export const PRESETS: LogPreset[] = [
     accent: "from-amber-500/15 to-amber-500/0",
   },
   {
+    id: "end-of-day",
+    label: "End-of-day close",
+    icon: CalendarCheck,
+    description: "Done, still open, tomorrow's first move.",
+    persona: "reflective",
+    opener: "Let's close the loop. What got done, what's still open, and what's tomorrow's first move?",
+    suggestedTopics: ["status", "win", "challenge"],
+    composerSeed: "Today I closed ",
+    accent: "from-lime-500/15 to-lime-500/0",
+  },
+  {
     id: "weekly-recap",
     label: "Weekly recap",
     icon: CalendarRange,
@@ -44,6 +65,17 @@ export const PRESETS: LogPreset[] = [
     accent: "from-sky-500/15 to-sky-500/0",
   },
   {
+    id: "blocker-unblock",
+    label: "Blocker unblock",
+    icon: Wrench,
+    description: "Name the block, owner, next ask.",
+    persona: "coach",
+    opener: "Let's isolate the blocker. What is stuck, who owns the next step, and what ask would unblock it?",
+    suggestedTopics: ["pain", "challenge", "status"],
+    composerSeed: "I'm blocked on ",
+    accent: "from-orange-500/15 to-orange-500/0",
+  },
+  {
     id: "vent",
     label: "Vent session",
     icon: Heart,
@@ -52,6 +84,17 @@ export const PRESETS: LogPreset[] = [
     opener: "Off the record. What's frustrating you right now? No structure needed.",
     suggestedTopics: ["pain", "feedback"],
     accent: "from-rose-500/15 to-rose-500/0",
+  },
+  {
+    id: "feedback-draft",
+    label: "Feedback draft",
+    icon: MessageSquareText,
+    description: "Turn rough feedback into a useful ask.",
+    persona: "strategic",
+    opener: "Say the feedback plainly. I'll help turn it into a kind, specific request.",
+    suggestedTopics: ["feedback", "challenge"],
+    composerSeed: "Feedback I want to give: ",
+    accent: "from-cyan-500/15 to-cyan-500/0",
   },
   {
     id: "one-on-one-prep",

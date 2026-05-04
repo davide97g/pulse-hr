@@ -11,6 +11,7 @@ const ALLOW: Record<Exclude<Role, "admin">, SidebarFeatureId[]> = {
   hr: [
     "dashboard",
     "announcements",
+    "log",
     "people",
     "org",
     "recruiting",
@@ -28,6 +29,7 @@ const ALLOW: Record<Exclude<Role, "admin">, SidebarFeatureId[]> = {
   manager: [
     "dashboard",
     "announcements",
+    "log",
     "people",
     "org",
     "time",
@@ -54,6 +56,7 @@ const ALLOW: Record<Exclude<Role, "admin">, SidebarFeatureId[]> = {
   employee: [
     "dashboard",
     "announcements",
+    "log",
     "people",
     "org",
     "time",

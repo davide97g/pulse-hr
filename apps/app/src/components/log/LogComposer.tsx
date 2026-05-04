@@ -53,6 +53,7 @@ export function LogComposer({
 
   return (
     <div className="border-t bg-background/80 backdrop-blur px-4 md:px-6 py-3">
+      <div className="mx-auto w-full max-w-3xl">
       <div className="flex items-end gap-2">
         <textarea
           ref={taRef}
@@ -98,6 +99,7 @@ export function LogComposer({
           Voice draft — review, edit, then send.
         </p>
       )}
+      </div>
     </div>
   );
 }
