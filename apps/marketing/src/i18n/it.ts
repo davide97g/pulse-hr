@@ -1,7 +1,7 @@
 import type { Dict } from "./en";
 
 // Italian dictionary.
-// Brand names (Pulse HR, Money, People, Work, Team Pulse, Commessa Forecast, Kudos,
+// Brand names (Pulse HR, Money, People, Work, Team Pulse, Kudos,
 // Focus Mode, Saturation), tech acronyms (API, SDK, REST, SSO, SOC 2, GDPR, HRIS,
 // PWA, F24, HMRC PAYE, ISO, HIPAA, BAA, DPA, SIG-lite, CAIQ, CET, PT, BDR),
 // product vendor names (Rippling, Deel, BambooHR, Slack, Google, QuickBooks, Okta,
@@ -15,7 +15,7 @@ export const it: Dict = {
     description:
       "People ops open source per team moderni. Costruito in pubblico, dalle persone che lo usano. Money, People e Work come tre moduli componibili. Self-host sulla tua infra o hosted — niente chiamata commerciale per vedere il prodotto.",
     keywords:
-      "HR open source, payroll open source, HRIS, HR self-hosted, HR modulare, API HR, webhook, commessa, keyboard-first, PWA, FSL, roadmap pubblica",
+      "HR open source, HRIS, HR self-hosted, HR modulare, API HR, webhook, commessa, keyboard-first, PWA, FSL, roadmap pubblica",
   },
 
   a11y: {
@@ -25,8 +25,8 @@ export const it: Dict = {
     pulseHomeLabel: "Home Pulse HR",
     primaryNav: "Principale",
     footer: "Piè di pagina",
-    customerLogos: "Loghi clienti",
-    customerTestimonials: "Testimonianze clienti",
+    customerLogos: "Workspace di esempio",
+    customerTestimonials: "Note dai maintainer",
     keyStats: "Statistiche principali",
     languageSwitcher: "Cambia lingua",
   },
@@ -79,6 +79,40 @@ export const it: Dict = {
     switchTo: "Passa a",
   },
 
+  demoStrip: {
+    label: "Avviso demo pubblica",
+    tag: "Demo pubblica",
+    headline: "Pulse è in modalità demo.",
+    body: "Il prodotto è un mock solo frontend — ogni schermata, ogni record vive nel tuo browser. Lo rilasciamo presto per capire cosa serve davvero alle persone, prima di costruire il backend. Accedi dentro l'app per lasciarci feedback che arriva diretto ai maintainer.",
+    cta: "Apri la demo",
+  },
+
+  demoNotice: {
+    eyebrow: "Stato attuale",
+    title: {
+      before: "Quello che vedi è una ",
+      italic: "demo.",
+      after: "",
+    },
+    body: "Pulse HR oggi è un mock solo frontend. Lo rilasciamo prima del backend perché chi usa software HR ogni giorno possa indicarci cosa costruire per primo. Cliccaci sopra, rompi tutto, poi raccontaci cosa manca — il feedback è l'unico pezzo collegato a un vero backend, ed è proprio quello che vogliamo sentire da te.",
+    bullets: [
+      {
+        k: "Tutto mockato",
+        v: "Ogni dipendente, commessa, documento e richiesta vive nel tuo browser. Niente viene inviato a un server.",
+      },
+      {
+        k: "Apri in un click",
+        v: "Nessuna registrazione per esplorare — crea il workspace, scegli un ruolo, cliccaci sopra quanto vuoi.",
+      },
+      {
+        k: "Feedback con account",
+        v: "Lasciare un commento, votare una feature Labs o postare sul board richiede un account gratuito così possiamo risponderti.",
+      },
+    ],
+    ctaPrimary: "Prova la demo — senza registrarti",
+    ctaSecondary: "Accedi per dare feedback",
+  },
+
   hero: {
     badge: "Open source · FSL-1.1-MIT · beta pubblica · costruito in pubblico",
     eyebrow: "People ops open source per team moderni",
@@ -111,7 +145,7 @@ export const it: Dict = {
   },
 
   marquee: {
-    title: "Team su Pulse",
+    title: "Workspace di esempio — non clienti reali",
   },
 
   stats: {
@@ -187,7 +221,7 @@ export const it: Dict = {
 
   features: {
     eyebrow: "Tutto in un posto solo",
-    title: "Nove prodotti che sembrano uno.",
+    title: "Otto prodotti che sembrano uno.",
     subtitle:
       "Ogni modulo è abbastanza profondo da sostituire uno strumento dedicato, ma tutti condividono un profilo, una ricerca, un audit log. Smetterai di cambiare tab — promesso.",
     items: [
@@ -195,11 +229,6 @@ export const it: Dict = {
         icon: "Clock",
         title: "Presenze & rilevazione ore",
         body: "Timbra da ovunque. Traccia le ore sulle commesse (codici progetto, nel modo in cui finance li vede), non solo sull'orologio. Inserimento manuale, import, approvazioni, anomalie di straordinario — tutto in un'unica superficie.",
-      },
-      {
-        icon: "Wallet",
-        title: "Payroll senza panico",
-        body: "Esegui il payroll multi-paese in pochi minuti. F24, Form 941, HMRC PAYE. Buste paga, adempimenti fiscali e scritture contabili inviati direttamente al tuo stack contabile.",
       },
       {
         icon: "Users",
@@ -241,7 +270,7 @@ export const it: Dict = {
 
   labs: {
     eyebrow: "Labs · già disponibile",
-    title: "Cinque scommesse vinte.",
+    title: "Quattro scommesse vinte.",
     subtitle:
       "Labs è dove rilasciamo le cose sperimentali. Ogni team su Pulse le riceve di default — niente liste d'attesa, niente upsell, niente paywall \"enterprise tier\".",
     badgeNew: "NEW",
@@ -251,12 +280,6 @@ export const it: Dict = {
         kind: "Team Pulse",
         tag: "Segnale",
         body: "Vibe check anonimi + heatmap settimanale. Vedi il sentiment prima che emerga in un 1:1.",
-      },
-      {
-        icon: "TrendingUp",
-        kind: "Commessa Forecast",
-        tag: "Scenari",
-        body: "Slider di scenario sopra il burn del progetto. 'E se aggiungo un designer?' risposto in millisecondi.",
       },
       {
         icon: "Gift",
@@ -285,13 +308,13 @@ export const it: Dict = {
     titleItalic: "cinque",
     titleAfter: "punti di vista.",
     subtitle:
-      "I temi per ruolo non sono cosmetica. Ogni persona ha la sua palette, la sua vista di default e il suo set di shortcut. Gli engineer non vedono le bozze di payroll. I CFO non vedono gli standup di sprint.",
+      "I temi per ruolo non sono cosmetica. Ogni persona ha la sua palette, la sua vista di default e il suo set di shortcut. Gli engineer non vedono le code di spese. I CFO non vedono gli standup di sprint.",
     items: [
       { k: "Employee", d: "Accento lime. Timbra, ferie, kudos, focus." },
       { k: "Manager", d: "Tono ambra. Approvazioni, carico team, autorità kudos." },
       { k: "HR", d: "Corallo. People ops, onboarding, anomalie." },
       { k: "Admin", d: "Ciano elettrico. Integrazioni, API, audit." },
-      { k: "Finance", d: "Violetto. Payroll, margini, forecast." },
+      { k: "Finance", d: "Violetto. Spese, margini, report." },
     ],
   },
 
@@ -327,15 +350,11 @@ export const it: Dict = {
     items: [
       {
         q: "Posso importare i dati dal mio attuale strumento HR?",
-        a: "Sì. Forniamo importer one-click per BambooHR, Personio, Rippling, Deel e Factorial, oltre a un importer CSV generico con mapping delle colonne per tutto il resto. L'importer esegue prima un dry-run così puoi correggere le righe sbagliate prima di committare, e preserva gli ID dei dipendenti in modo che le integrazioni continuino a funzionare. La maggior parte dei team migra un dataset completo — dipendenti, storico payroll, saldi ferie, documenti — in meno di un'ora.",
+        a: "Sì. Forniamo importer one-click per BambooHR, Personio, Rippling, Deel e Factorial, oltre a un importer CSV generico con mapping delle colonne per tutto il resto. L'importer esegue prima un dry-run così puoi correggere le righe sbagliate prima di committare, e preserva gli ID dei dipendenti in modo che le integrazioni continuino a funzionare. La maggior parte dei team migra un dataset completo — dipendenti, saldi ferie, documenti — in meno di un'ora.",
       },
       {
         q: "Come è fatto il pricing di Pulse HR?",
-        a: "Per dipendente attivo, al mese. Un unico piano trasparente con tutte le funzionalità incluse — niente 'parla col sales per il payroll', niente upsell per le feature Labs, niente add-on per l'accesso API o SSO. Gratis per i primi 5 dipendenti attivi, per sempre. I contractor hanno prezzi diversi, max $4 per contractor attivo al mese. Con fatturazione annuale 15% di sconto.",
-      },
-      {
-        q: "Quali paesi supporta il payroll?",
-        a: "Eseguiamo nativamente il payroll in US, UK, Italia, Spagna, Francia, Germania, Irlanda e Paesi Bassi — inclusi tutti gli adempimenti fiscali (F24, Form 941, HMRC PAYE, Modelo 111, URSSAF, Lohnsteuer) e la reportistica obbligatoria. Per ogni altro paese ci integriamo con Deel e Remote come rails per contractor, e con Employer of Record locali dove serve un'assunzione full.",
+        a: "Per dipendente attivo, al mese. Un unico piano trasparente con tutte le funzionalità incluse — niente gate 'parla col sales', niente upsell per le feature Labs, niente add-on per l'accesso API o SSO. Gratis per i primi 5 dipendenti attivi, per sempre. I contractor hanno prezzi diversi, max $4 per contractor attivo al mese. Con fatturazione annuale 15% di sconto.",
       },
       {
         q: "È SOC 2 / GDPR compliant?",
@@ -343,7 +362,7 @@ export const it: Dict = {
       },
       {
         q: "C'è un'API?",
-        a: "Sì — un'API REST completa, webhook su ogni evento (employee.created, leave.approved, payslip.finalised, ecc.) e SDK mantenuti per TypeScript, Python e Go. Le chiavi API sono scoped per ambiente con permessi granulari. Spec OpenAPI completa su pulsehr.it/docs/api. Il rate limit è 1.000 richieste/minuto sul tier standard.",
+        a: "Sì — un'API REST completa, webhook su ogni evento (employee.created, leave.approved, expense.approved, ecc.) e SDK mantenuti per TypeScript, Python e Go. Le chiavi API sono scoped per ambiente con permessi granulari. Spec OpenAPI completa su pulsehr.it/docs/api. Il rate limit è 1.000 richieste/minuto sul tier standard.",
       },
       {
         q: "Pulse è davvero open source?",
@@ -351,7 +370,7 @@ export const it: Dict = {
       },
       {
         q: "Possiamo fare self-hosting?",
-        a: "Sì. L'intera piattaforma è un monorepo Bun che puoi clonare ed eseguire. I deployment self-hosted su Docker o Kubernetes sono supportati con un Helm chart di riferimento e moduli Terraform. I connettori di adempimento payroll restano gestiti da Pulse (altrimenti serve l'integrazione con le authority fiscali), ma tutto il resto gira sulla tua infrastruttura. Parti da github.com/davide97g/pulse-hr.",
+        a: "Sì. L'intera piattaforma è un monorepo Bun che puoi clonare ed eseguire. I deployment self-hosted su Docker o Kubernetes sono supportati con un Helm chart di riferimento e moduli Terraform. Tutto gira sulla tua infrastruttura. Parti da github.com/davide97g/pulse-hr.",
       },
       {
         q: "Come funziona la command bar (⌘J)?",
@@ -359,7 +378,7 @@ export const it: Dict = {
       },
       {
         q: "Pulse funziona offline?",
-        a: "L'intera superficie si installa come PWA su macOS, Windows, iOS e Android. Viste recenti, timesheet e bozze di kudos continuano a funzionare offline e sincronizzano appena torni online — niente schermate 'loading…' in aeroporto o nella sala riunioni in cantina. I run payroll e altre azioni distruttive richiedono una connessione attiva e vengono messe in coda se offline, così non paghi mai qualcuno due volte per sbaglio.",
+        a: "L'intera superficie si installa come PWA su macOS, Windows, iOS e Android. Viste recenti, timesheet e bozze di kudos continuano a funzionare offline e sincronizzano appena torni online — niente schermate 'loading…' in aeroporto o nella sala riunioni in cantina. Le azioni distruttive richiedono una connessione attiva e vengono messe in coda se offline, così niente parte due volte per sbaglio.",
       },
     ],
   },
@@ -386,7 +405,7 @@ export const it: Dict = {
     items: [
       { k: "Agenzie & consulenze", d: "Fattura per codice progetto (commessa), traccia l'utilizzo, chiudi il bilancio senza fogli di calcolo." },
       { k: "Startup prodotto", d: "Onboarda da una mail di candidate-accepted con un click. Equity, offerte, laptop — on rails." },
-      { k: "Scale-up (50-500)", d: "Payroll multi-entità, catene di approvazione che rispecchiano la tua org, report che il tuo CFO aprirà davvero." },
+      { k: "Scale-up (50-500)", d: "Catene di approvazione che rispecchiano la tua org, controlli multi-entità, report che il tuo CFO aprirà davvero." },
     ],
   },
 
@@ -401,7 +420,6 @@ export const it: Dict = {
       { d: "18 apr", t: "Pulizia colori in tutta l'app", k: "Design" },
       { d: "14 apr", t: "Hover card avatar + Employee Score", k: "People" },
       { d: "09 apr", t: "Tab Saturation + vista Insights", k: "Labs" },
-      { d: "02 apr", t: "Commessa Forecast con scenari AI", k: "Labs" },
       { d: "28 mar", t: "Command bar ⌘J con azioni eseguibili", k: "Tastiera" },
     ],
   },
@@ -448,7 +466,6 @@ export const it: Dict = {
     tabs: [
       { k: "dashboard", l: "Dashboard", body: "Approvazioni, alert, presenze e trend. L'unico pannello che il tuo team HR apre alle 9." },
       { k: "time", l: "Ore & commesse", body: "Registra ore su qualsiasi commessa. Burn di budget, redditività per cliente, export in CSV." },
-      { k: "payroll", l: "Payroll", body: "Preview delle buste paga prima di lanciare, splitting dipendenti/contractor, F24 con un click." },
     ],
     bullets: [
       "Approvazioni in un click",
@@ -472,13 +489,6 @@ export const it: Dict = {
       activeClock: "Timbratura attiva",
       project: "ACM-2025-01 · Rebuild piattaforma",
       stopCta: "Ferma & registra ore",
-    },
-    mockPayroll: {
-      nextRun: "Prossimo run · Aprile 2025",
-      employees: "12 dipendenti · programmato 30 apr",
-      rows: ["F24 (Italia)", "Form 941 (US)", "HMRC PAYE (UK)"],
-      pending: "in attesa",
-      filed: "inviato",
     },
   },
 
@@ -514,7 +524,7 @@ export const it: Dict = {
     description:
       "Tre moduli indipendenti — Money, People e Work — che condividono un workspace, una tastiera, un'API. Open source sotto FSL. Keyboard-first, a tema per ruolo, multi-paese.",
     eyebrow: "Tour del prodotto",
-    titleLine1: "Nove prodotti,",
+    titleLine1: "Otto prodotti,",
     titleItalic: "un workspace",
     titleAfter: ".",
     body:
@@ -522,21 +532,21 @@ export const it: Dict = {
   },
 
   labsPage: {
-    title: "Pulse Labs — forecast, kudos, focus e tool di pulse",
+    title: "Pulse Labs — kudos, focus e tool di pulse",
     description:
-      "Cinque feature Labs già disponibili: sentiment di Team Pulse, Commessa Forecast con scenari, riconoscimenti Kudos, Focus Mode per il deep work e utilizzo Saturation. Incluse in ogni piano.",
+      "Quattro feature Labs già disponibili: sentiment di Team Pulse, riconoscimenti Kudos, Focus Mode per il deep work e utilizzo Saturation. Incluse in ogni piano.",
     eyebrow: "Labs · già disponibile · incluso in ogni piano",
-    titleLine1: "Le cinque feature Pulse",
+    titleLine1: "Le quattro feature Pulse",
     titleItalic: "che reinventano",
     titleAfter: " il software HR.",
     body:
-      "Labs è dove spediamo prima le capacità sperimentali — forecast AI, heatmap di sentiment, riconoscimenti peer, automazione deep-work e insight live di utilizzo. Niente liste d'attesa, niente upsell, niente paywall enterprise-tier.",
+      "Labs è dove spediamo prima le capacità sperimentali — heatmap di sentiment, riconoscimenti peer, automazione deep-work e insight live di utilizzo. Niente liste d'attesa, niente upsell, niente paywall enterprise-tier.",
   },
 
   changelogPage: {
     title: "Changelog Pulse HR — aggiornamenti prodotto e feature rilasciate",
     description:
-      "Ogni aggiornamento significativo della piattaforma Pulse HR. Polish del Gantt, pulizia colori, Employee Score, tab Saturation, Commessa Forecast, Command bar — in ordine cronologico inverso.",
+      "Ogni aggiornamento significativo della piattaforma Pulse HR. Polish del Gantt, pulizia colori, Employee Score, tab Saturation, Command bar — in ordine cronologico inverso.",
     eyebrow: "Changelog",
     titleBefore: "Cosa è stato",
     titleItalic: "spedito",
@@ -616,7 +626,6 @@ export const it: Dict = {
 
   heroNewTags: [
     "Command bar ⌘J",
-    "Commessa Forecast",
     "Saturation",
     "Team Pulse",
     "Kudos",

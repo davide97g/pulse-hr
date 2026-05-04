@@ -1,8 +1,8 @@
 /*
  * DEPRECATED compatibility shim — maps legacy `--wp-*` tokens to the canonical
- * semantic tokens. Kept temporarily so apps/marketing and apps/reel keep
+ * semantic tokens. Kept temporarily so apps/marketing and apps/studio keep
  * working through the extraction rollout. Remove after Phase 5 (marketing +
- * reel migrated to semantic names).
+ * studio migrated to semantic names).
  */
 :root {
   --wp-color-brand: var(--labs);

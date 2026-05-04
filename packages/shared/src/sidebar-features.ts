@@ -7,7 +7,7 @@
  * here.
  */
 
-export const ADMIN_SIDEBAR_VISIBILITY_PATH = "/admin/sidebar-visibility" as const;
+export const ADMIN_MODULES_PATH = "/admin/modules" as const;
 
 export const ALL_SIDEBAR_FEATURE_IDS = [
   "dashboard",

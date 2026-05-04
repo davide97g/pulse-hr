@@ -6,8 +6,6 @@ const title = "API reference — Pulse HR REST v1";
 const description =
   "REST API for Pulse HR. Bearer auth, cursor pagination, stable schemas, 1k req/min rate limit, webhooks on every resource event. Maintained SDKs for TypeScript, Python and Go — generated from the OpenAPI 3.1 spec.";
 const path = "/docs/api";
-const keywords =
-  "Pulse HR API, HRIS API, open source HR API, HR webhooks, HR OpenAPI, TypeScript HR SDK";
 
 // Resources — partial, but representative.
 const RESOURCES = [
@@ -45,13 +43,6 @@ const RESOURCES = [
     fields: ["id", "employee_id", "kind", "start_date", "end_date", "days", "status", "reason"],
     methods: ["GET /v1/leave", "GET /v1/leave/balance/{employee_id}", "POST /v1/leave", "POST /v1/leave/{id}:approve"],
     events: ["leave.requested", "leave.approved", "leave.rejected", "leave.cancelled"],
-  },
-  {
-    name: "payroll_runs",
-    desc: "One run per country/period. Generates payslips once finalised; fires a single payroll.run.completed on success.",
-    fields: ["id", "country", "period_start", "period_end", "status", "total_gross", "total_net", "payslip_ids[]"],
-    methods: ["GET /v1/payroll_runs", "POST /v1/payroll_runs", "POST /v1/payroll_runs/{id}:finalise"],
-    events: ["payroll.run.started", "payroll.run.completed", "payroll.run.failed", "payslip.finalised"],
   },
   {
     name: "kudos",
@@ -93,7 +84,7 @@ const apiDocLd = {
 const extraLd = [apiDocLd];
 ---
 
-<DocsLayout {title} {description} {path} {keywords} {crumb} {extraLd}>
+<DocsLayout {title} {description} {path} {crumb} {extraLd}>
   <div class="flex items-center gap-3 mb-6">
     <span class="h-10 w-10 rounded-lg bg-[#b4ff39]/15 text-[#b4ff39] grid place-items-center">
       <Code2 class="h-5 w-5" />

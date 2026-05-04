@@ -24,7 +24,7 @@ buyer / lurker). `✍` = writing; `🖼` = static/graphic; `🎬` = video.
 | Mon | LinkedIn · Davide     | ✍ Long post: "Building an open-source HR product in public"        | T · C           | new                     |
 | Tue | LinkedIn · Company    | ✍ Short: "pulsehr.it is live. read the source."                    | O · A/B         | marketing site + repo   |
 | Wed | Instagram             | 🖼 Static: the four-commitment stamp (Open · Transparent · Yours · Built-by) | — · C        | `logo-explorations/`    |
-| Wed | YouTube Short         | 🎬 15s vertical cut of hero reel                                   | O · A/C         | `apps/reel/output/social-vertical.mp4` |
+| Wed | YouTube Short         | 🎬 15s vertical cut of hero reel                                   | O · A/C         | `apps/studio/output/social-vertical.mp4` |
 | Thu | LinkedIn · Niccolò    | ✍ Short: "the tech stack behind Pulse HR, in 200 words"            | O · A           | `ARCHITECTURE.md`        |
 | Fri | LinkedIn · Davide     | ✍ Short: "what we said no to this week"                             | T · C           | anti-positioning §9     |
 

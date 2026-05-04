@@ -54,4 +54,11 @@ html[data-theme="finance"] {
 
   --labs: oklch(0.86 0.22 135);
   --labs-foreground: oklch(0.14 0.006 280);
+
+  /* Role identification — same hues as light, calibrated for dark surfaces. */
+  --role-employee: oklch(0.88 0.22 135);
+  --role-manager: oklch(0.84 0.17 75);
+  --role-hr: oklch(0.78 0.19 25);
+  --role-admin: oklch(0.82 0.17 220);
+  --role-finance: oklch(0.76 0.2 305);
 }

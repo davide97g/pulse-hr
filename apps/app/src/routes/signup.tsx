@@ -1,60 +1,54 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSignUp } from "@clerk/react";
-import {
-  ArrowRight,
-  ArrowLeft,
-  Check,
-  Loader2,
-  Building2,
-  User,
-  Users,
-  Eye,
-  EyeOff,
-  Mail,
-} from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Loader2, Mail, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@pulse-hr/ui/primitives/button";
 import { Input } from "@pulse-hr/ui/primitives/input";
 import { Label } from "@pulse-hr/ui/primitives/label";
 import { AuthLayout } from "@/components/app/AuthLayout";
 import { CompanyProfileForm } from "@/components/app/CompanyProfileForm";
+import { useCompanyProfileStore } from "@/components/app/CompanyProfileStore";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/signup")({
-  head: () => ({ meta: [{ title: "Create your workspace — Pulse HR" }] }),
+  head: () => ({ meta: [{ title: "Create your account — Pulse HR" }] }),
   component: Signup,
 });
 
-const SIZE_OPTIONS = ["1–10", "11–50", "51–200", "201–500", "500+"] as const;
+type Stage = "account" | "verify" | "questionnaire";
 
 function Signup() {
   const nav = useNavigate();
   const { signUp, fetchStatus } = useSignUp();
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [verifying, setVerifying] = useState(false);
+  const { profile, loading: profileLoading } = useCompanyProfileStore();
+  const [stage, setStage] = useState<Stage>("account");
   const [code, setCode] = useState("");
   const [account, setAccount] = useState({ name: "", email: "", password: "", show: false });
-  const [company, setCompany] = useState({
-    name: "",
-    size: "11–50" as (typeof SIZE_OPTIONS)[number],
-    country: "Italy",
-  });
-  const [role, setRole] = useState<"founder" | "hr" | "finance" | "other">("hr");
   const [loading, setLoading] = useState(false);
 
-  const canNext =
-    step === 1
-      ? account.name.trim().length > 1 &&
-        account.email.includes("@") &&
-        account.password.length >= 8
-      : step === 2
-        ? company.name.trim().length > 1
-        : true;
+  // If a returning user already filled (or skipped) the questionnaire we keep
+  // signup at "create account → verify email → workspace" — questionnaire only
+  // appears the first time, never again.
+  const questionnaireDone = !profileLoading && profile !== undefined;
+
+  const canStart =
+    account.name.trim().length > 1 &&
+    account.email.includes("@") &&
+    account.password.length >= 8;
+
+  const goToWorkspace = () => nav({ to: "/welcome" });
+
+  // After verifying the email, jump straight to /welcome if the questionnaire
+  // was already completed in a prior session.
+  useEffect(() => {
+    if (stage === "questionnaire" && questionnaireDone) goToWorkspace();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage, questionnaireDone]);
 
   const startSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canNext || loading) return;
+    if (!canStart || loading) return;
     setLoading(true);
     try {
       const [firstName, ...rest] = account.name.trim().split(" ");
@@ -74,7 +68,7 @@ function Signup() {
         toast.error("Couldn't send verification code", { description: sendRes.error.message });
         return;
       }
-      setVerifying(true);
+      setStage("verify");
     } finally {
       setLoading(false);
     }
@@ -99,8 +93,9 @@ function Signup() {
         toast.error("Couldn't activate session", { description: finRes.error.message });
         return;
       }
-      setVerifying(false);
-      setStep(2);
+      // Profile state hydrates async after the user is signed in; the effect
+      // above will route forward once we know whether to show the form.
+      setStage("questionnaire");
     } finally {
       setLoading(false);
     }
@@ -112,50 +107,28 @@ function Signup() {
     else toast("New code sent");
   };
 
-  const submit = () => {
-    setLoading(true);
-    setTimeout(() => {
-      toast.success("Workspace created", {
-        description: `Welcome to ${company.name || "Pulse HR"}!`,
-      });
-      setLoading(false);
-      setStep(4);
-    }, 900);
-  };
-
-  const finishAfterQuestionnaire = () => {
-    nav({ to: "/" });
-  };
-
-  const sidePanel = <SignupSide step={step} />;
+  const totalSteps = 3 as const;
+  const stepIndex = stage === "account" ? 1 : stage === "verify" ? 1 : 2;
 
   return (
     <AuthLayout
       title={
-        verifying
-          ? "Check your inbox."
-          : step === 1
-            ? "Start free."
-            : step === 2
-              ? "Tell us about your team."
-              : step === 3
-                ? "Pick your flavor."
-                : "One last thing."
+        stage === "account"
+          ? "Start free."
+          : stage === "verify"
+            ? "Check your inbox."
+            : "Tell us about your company."
       }
       subtitle={
-        verifying
-          ? `We sent a 6-digit code to ${account.email}. Paste it below to continue.`
-          : step === 1
-            ? "Create a Pulse HR workspace in under a minute. No credit card required."
-            : step === 2
-              ? "We'll set sensible defaults based on your region and team size."
-              : step === 3
-                ? "We'll pre-configure the workspace for how you'll use it."
-                : "Help us understand your company — earn double voting power if you do."
+        stage === "account"
+          ? "Create a Pulse HR account in under a minute. No credit card required."
+          : stage === "verify"
+            ? `We sent a 6-digit code to ${account.email}. Paste it below to continue.`
+            : "Optional — answer four questions to double your voting power. We'll only ask once."
       }
-      side={sidePanel}
+      side={<SignupSide stage={stage} />}
       footer={
-        step === 1 && !verifying ? (
+        stage === "account" ? (
           <>
             Already have an account?{" "}
             <Link to="/login" className="text-foreground font-medium hover:underline">
@@ -165,48 +138,34 @@ function Signup() {
         ) : undefined
       }
     >
-      <div className="flex items-center gap-2 mb-7">
-        {[1, 2, 3, 4].map((n) => (
-          <div key={n} className="flex items-center gap-2 flex-1">
-            <div
-              className={cn(
-                "h-7 w-7 rounded-full grid place-items-center text-xs font-medium transition-colors shrink-0",
-                n < step
-                  ? "bg-success text-success-foreground"
-                  : n === step
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground",
-              )}
-            >
-              {n < step ? <Check className="h-3.5 w-3.5" /> : n}
-            </div>
-            {n !== 4 && (
-              <div className={cn("h-px flex-1", n < step ? "bg-success" : "bg-border")} />
-            )}
-          </div>
-        ))}
-      </div>
+      <Stepper current={stepIndex} total={totalSteps} />
 
-      {step === 1 && !verifying && (
+      {stage === "account" && (
         <form onSubmit={startSignUp} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="name">Your name</Label>
             <Input
               id="name"
+              name="name"
               value={account.name}
               onChange={(e) => setAccount((a) => ({ ...a, name: e.target.value }))}
               placeholder="Alex Carter"
-              autoFocus
+              autoComplete="name"
+              enterKeyHint="next"
             />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="email">Work email</Label>
             <Input
               id="email"
+              name="email"
               type="email"
               value={account.email}
               onChange={(e) => setAccount((a) => ({ ...a, email: e.target.value }))}
               placeholder="alex@company.co"
+              autoComplete="username"
+              inputMode="email"
+              enterKeyHint="next"
             />
           </div>
           <div className="space-y-1.5">
@@ -214,10 +173,13 @@ function Signup() {
             <div className="relative">
               <Input
                 id="pw"
+                name="new-password"
                 type={account.show ? "text" : "password"}
                 value={account.password}
                 onChange={(e) => setAccount((a) => ({ ...a, password: e.target.value }))}
                 placeholder="At least 8 characters"
+                autoComplete="new-password"
+                enterKeyHint="go"
               />
               <button
                 type="button"
@@ -233,7 +195,7 @@ function Signup() {
           <div id="clerk-captcha" />
           <Button
             type="submit"
-            disabled={!canNext || loading || fetchStatus === "fetching"}
+            disabled={!canStart || loading || fetchStatus === "fetching"}
             className="w-full h-11 press-scale"
           >
             {loading ? (
@@ -250,7 +212,7 @@ function Signup() {
         </form>
       )}
 
-      {step === 1 && verifying && (
+      {stage === "verify" && (
         <form onSubmit={verify} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="code">Verification code</Label>
@@ -258,12 +220,13 @@ function Signup() {
               <Mail className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="code"
+                name="otp"
                 inputMode="numeric"
                 autoComplete="one-time-code"
+                enterKeyHint="go"
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                 placeholder="123456"
-                autoFocus
                 className="pl-9 tracking-[0.4em] font-mono"
               />
             </div>
@@ -281,7 +244,7 @@ function Signup() {
               variant="outline"
               className="press-scale"
               onClick={() => {
-                setVerifying(false);
+                setStage("account");
                 setCode("");
               }}
             >
@@ -308,143 +271,47 @@ function Signup() {
         </form>
       )}
 
-      {step === 2 && (
-        <div className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="cname">Company name</Label>
-            <Input
-              id="cname"
-              value={company.name}
-              onChange={(e) => setCompany((c) => ({ ...c, name: e.target.value }))}
-              placeholder="Acme Inc."
-              autoFocus
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label>Team size</Label>
-            <div className="grid grid-cols-5 gap-1.5">
-              {SIZE_OPTIONS.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setCompany((c) => ({ ...c, size: s }))}
-                  className={cn(
-                    "h-10 rounded-md text-xs border press-scale transition-colors",
-                    company.size === s
-                      ? "border-primary bg-primary/5 text-primary font-medium"
-                      : "hover:bg-muted",
-                  )}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="country">Headquarters country</Label>
-            <Input
-              id="country"
-              value={company.country}
-              onChange={(e) => setCompany((c) => ({ ...c, country: e.target.value }))}
-            />
-          </div>
-          <div className="flex gap-2 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="press-scale"
-              onClick={() => setStep(1)}
-            >
-              <ArrowLeft className="h-4 w-4 mr-1.5" />
-              Back
-            </Button>
-            <Button
-              type="button"
-              disabled={!canNext}
-              className="flex-1 h-11 press-scale"
-              onClick={() => setStep(3)}
-            >
-              Continue <ArrowRight className="h-4 w-4 ml-1.5" />
-            </Button>
-          </div>
-        </div>
+      {stage === "questionnaire" && !questionnaireDone && (
+        <CompanyProfileForm
+          onSubmitted={goToWorkspace}
+          onSkipped={goToWorkspace}
+          submitLabel="Continue to workspace"
+        />
       )}
 
-      {step === 3 && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-2">
-            {(
-              [
-                { v: "founder", l: "Founder / CEO", i: Building2 },
-                { v: "hr", l: "HR / People ops", i: User },
-                { v: "finance", l: "Finance / Payroll", i: Users },
-                { v: "other", l: "Something else", i: User },
-              ] as const
-            ).map((o) => {
-              const Icon = o.i;
-              return (
-                <button
-                  key={o.v}
-                  type="button"
-                  onClick={() => setRole(o.v)}
-                  className={cn(
-                    "p-4 rounded-md border text-left press-scale transition-colors",
-                    role === o.v ? "border-primary bg-primary/5" : "hover:bg-muted/40",
-                  )}
-                >
-                  <Icon className="h-5 w-5 mb-2 text-primary" />
-                  <div className="text-sm font-medium">{o.l}</div>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="rounded-md border p-4 bg-info/5 border-info/20 text-xs text-muted-foreground">
-            We'll create a sample workspace with mock employees and commesse so you can explore
-            every flow instantly. Import your real data anytime from Settings.
-          </div>
-
-          <div className="flex gap-2 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="press-scale"
-              onClick={() => setStep(2)}
-            >
-              <ArrowLeft className="h-4 w-4 mr-1.5" />
-              Back
-            </Button>
-            <Button
-              type="button"
-              disabled={loading}
-              className="flex-1 h-11 press-scale"
-              onClick={submit}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Spinning up your workspace…
-                </>
-              ) : (
-                <>
-                  Create workspace <ArrowRight className="h-4 w-4 ml-1.5" />
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {step === 4 && (
-        <div className="space-y-4">
-          <CompanyProfileForm
-            onSubmitted={finishAfterQuestionnaire}
-            onSkipped={finishAfterQuestionnaire}
-            submitLabel="Submit & enter workspace"
-          />
+      {stage === "questionnaire" && questionnaireDone && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading your workspace…
         </div>
       )}
     </AuthLayout>
+  );
+}
+
+function Stepper({ current, total }: { current: 1 | 2; total: 3 }) {
+  return (
+    <div className="flex items-center gap-2 mb-7">
+      {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
+        <div key={n} className="flex items-center gap-2 flex-1">
+          <div
+            className={cn(
+              "h-7 w-7 rounded-full grid place-items-center text-xs font-medium transition-colors shrink-0",
+              n < current
+                ? "bg-success text-success-foreground"
+                : n === current
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground",
+            )}
+          >
+            {n < current ? <Check className="h-3.5 w-3.5" /> : n}
+          </div>
+          {n !== total && (
+            <div className={cn("h-px flex-1", n < current ? "bg-success" : "bg-border")} />
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -487,23 +354,22 @@ function PasswordStrength({ value }: { value: string }) {
   );
 }
 
-function SignupSide({ step }: { step: 1 | 2 | 3 | 4 }) {
-  const steps = [
+function SignupSide({ stage }: { stage: Stage }) {
+  const steps: { k: string; d: string; matches: Stage[] }[] = [
     {
       k: "Create account",
       d: "Name, email, password. Nothing else — we'll figure out the rest together.",
+      matches: ["account", "verify"],
     },
     {
-      k: "Shape your workspace",
-      d: "Tell us your size and country. We pre-fill payroll regions, currencies and compliance.",
+      k: "Tell us about your company",
+      d: "One quick optional questionnaire — earn double voting power. Asked only once.",
+      matches: ["questionnaire"],
     },
     {
-      k: "Pick your flavor",
-      d: "We tune the default dashboards and workflows for how your role uses Pulse.",
-    },
-    {
-      k: "Earn voting power",
-      d: "Answer a few company questions to double your baseline voting power. Skippable.",
+      k: "Build your workspace",
+      d: "Pick a role, name your demo workspace, and you're in.",
+      matches: [],
     },
   ];
   return (
@@ -518,9 +384,10 @@ function SignupSide({ step }: { step: 1 | 2 | 3 | 4 }) {
       </h2>
       <div className="mt-10 space-y-5 max-w-md">
         {steps.map((s, i) => {
-          const n = (i + 1) as 1 | 2 | 3 | 4;
-          const active = n === step;
-          const done = n < step;
+          const active = s.matches.includes(stage);
+          // anything strictly before the active step is "done"
+          const activeIdx = steps.findIndex((x) => x.matches.includes(stage));
+          const done = activeIdx >= 0 && i < activeIdx;
           return (
             <div
               key={s.k}
@@ -539,7 +406,7 @@ function SignupSide({ step }: { step: 1 | 2 | 3 | 4 }) {
                       : "bg-white/10 text-white/70",
                 )}
               >
-                {done ? <Check className="h-4 w-4" /> : n}
+                {done ? <Check className="h-4 w-4" /> : i + 1}
               </div>
               <div>
                 <div className={cn("text-sm font-medium", active ? "text-white" : "text-white/80")}>

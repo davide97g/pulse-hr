@@ -1,0 +1,104 @@
+{
+  "$schema": "../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/growth",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "employee",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1"
+  },
+  "setup": "{{SETUP}}",
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "text=Contenders",
+      "timeout": 12000
+    },
+    {
+      "action": "screenshot",
+      "name": "01-growth-idle",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Month')",
+      "zoom": 1.6,
+      "pauseAfter": 200
+    },
+    {
+      "action": "wait",
+      "ms": 700
+    },
+    {
+      "action": "screenshot",
+      "name": "02-monthly",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Year')",
+      "zoom": 1.6,
+      "pauseAfter": 200
+    },
+    {
+      "action": "wait",
+      "ms": 700
+    },
+    {
+      "action": "scroll",
+      "y": 360,
+      "pauseAfter": 600
+    },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "text=Challenges",
+      "timeout": 8000
+    },
+    {
+      "action": "screenshot",
+      "name": "03-challenges",
+      "pauseAfter": 80
+    },
+    {
+      "action": "wait",
+      "ms": 1400
+    },
+    {
+      "action": "scroll",
+      "y": -360,
+      "pauseAfter": 500
+    },
+    {
+      "action": "wait",
+      "ms": 300
+    }
+  ]
+}

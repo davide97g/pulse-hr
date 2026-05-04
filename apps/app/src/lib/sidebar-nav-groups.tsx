@@ -10,29 +10,25 @@ import {
   CalendarDays,
   FileText,
   Receipt,
-  CreditCard,
   Network,
   GraduationCap,
   Megaphone,
   Puzzle,
   Code2,
   BookOpen,
-  TrendingUp,
   MessagesSquare,
   Gift,
   Focus,
   Trophy,
   Gauge,
-  MessageSquare,
   Briefcase as BriefcaseIcon,
   Building2,
   PanelLeft,
-  Send,
+  LifeBuoy,
+  ListChecks,
 } from "lucide-react";
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
-import { ADMIN_SIDEBAR_VISIBILITY_PATH } from "@/lib/sidebar-features";
-
-const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
+import { ADMIN_MODULES_PATH } from "@/lib/sidebar-features";
 
 export type SidebarNavItem = {
   to: string;
@@ -44,6 +40,11 @@ export type SidebarNavItem = {
   unreadDot?: boolean;
   /** When true, `to` is an absolute URL — render as <a> instead of a router Link. */
   external?: boolean;
+  /**
+   * When set, the item renders a custom widget instead of a link. Currently
+   * used for the Help & tours dropdown trigger that lives inline in the nav.
+   */
+  kind?: "tours";
 };
 
 export type SidebarNavGroup = { label: string; items: SidebarNavItem[]; accent?: boolean };
@@ -66,7 +67,7 @@ export function buildSidebarNavGroups(
       ],
     },
     {
-      label: "Me",
+      label: "Pulse",
       items: [
         {
           to: "/log",
@@ -92,12 +93,9 @@ export function buildSidebarNavGroups(
     {
       label: "Work",
       items: [
-        {
-          to: "/clients",
-          label: "Clients & Projects",
-          icon: BriefcaseIcon,
-          featureId: "clients",
-        },
+        { to: "/clients", label: "Clients", icon: Building2, featureId: "clients" },
+        { to: "/projects", label: "Projects", icon: BriefcaseIcon, featureId: "clients" },
+        { to: "/activities", label: "Activities", icon: ListChecks, featureId: "clients" },
         { to: "/time", label: "Time & attendance", icon: Clock, featureId: "time" },
         { to: "/calendar", label: "Calendar", icon: CalendarDays, featureId: "calendar" },
         { to: "/leave", label: "Leave", icon: Calendar, featureId: "leave" },
@@ -108,14 +106,7 @@ export function buildSidebarNavGroups(
     {
       label: "Money",
       items: [
-        { to: "/payroll", label: "Payroll", icon: CreditCard, featureId: "payroll" },
         { to: "/expenses", label: "Expenses", icon: Receipt, featureId: "expenses" },
-        {
-          to: "/forecast",
-          label: "Commessa Forecast",
-          icon: TrendingUp,
-          featureId: "forecast",
-        },
       ],
     },
     {
@@ -133,38 +124,34 @@ export function buildSidebarNavGroups(
     {
       label: "Workspace",
       items: [
-        {
-          to: FEEDBACK_URL,
-          label: "Feedback",
-          icon: MessageSquare,
-          featureId: "feedback",
-          external: true,
-        },
         { to: "/marketplace", label: "Marketplace", icon: Puzzle, featureId: "marketplace" },
         { to: "/developers", label: "Developers", icon: Code2, featureId: "developers" },
         { to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" },
-        { to: "/settings", label: "Settings", icon: Settings, featureId: "settings" },
       ],
     },
   ];
 
-  if (includeAdminVisibilityLink) {
-    const ws = groups.find((g) => g.label === "Workspace");
-    if (ws) {
-      ws.items = [
-        ...ws.items,
-        {
-          to: ADMIN_SIDEBAR_VISIBILITY_PATH,
-          label: "Sidebar visibility",
-          icon: PanelLeft,
-        },
-        {
-          to: "/admin/send-email",
-          label: "Send email",
-          icon: Send,
-        },
-      ];
+  const ws = groups.find((g) => g.label === "Workspace");
+  if (ws) {
+    if (includeAdminVisibilityLink) {
+      ws.items.push({
+        to: ADMIN_MODULES_PATH,
+        label: "Modules",
+        icon: PanelLeft,
+      });
     }
+    ws.items.push({
+      to: "#help",
+      label: "Help & tours",
+      icon: LifeBuoy,
+      kind: "tours",
+    });
+    ws.items.push({
+      to: "/settings",
+      label: "Settings",
+      icon: Settings,
+      featureId: "settings",
+    });
   }
 
   return groups;

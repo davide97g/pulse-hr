@@ -9,6 +9,7 @@ import {
   smallint,
   boolean,
   index,
+  uniqueIndex,
   primaryKey,
   check,
 } from "drizzle-orm/pg-core";
@@ -302,15 +303,26 @@ export const questionnaireResponses = pgTable(
   }),
 );
 
-/** Current voting power per user. One row per Clerk userId. */
+/**
+ * Current voting power per user. One row per Clerk userId.
+ *
+ * Defaults reflect the v1 economy (see `src/lib/voting-power.ts`):
+ * baseline 10, lazy weekly refill anchored at `lastRefillAt`.
+ */
 export const votingPower = pgTable("voting_power", {
   userId: text("user_id").primaryKey(),
-  power: integer("power").notNull().default(100),
-  baseline: integer("baseline").notNull().default(100),
+  power: integer("power").notNull().default(10),
+  baseline: integer("baseline").notNull().default(10),
+  lastRefillAt: timestamp("last_refill_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-/** Append-only ledger of power grants/decrements for auditability. */
+/**
+ * Append-only ledger of power grants/decrements for auditability.
+ *
+ * `(user_id, source_key)` is uniquely indexed when `source_key IS NOT NULL`,
+ * which makes one-shot grants idempotent via INSERT … ON CONFLICT DO NOTHING.
+ */
 export const votingPowerEvents = pgTable(
   "voting_power_events",
   {
@@ -324,6 +336,9 @@ export const votingPowerEvents = pgTable(
   },
   (t) => ({
     byUser: index("voting_power_events_user_idx").on(t.userId, t.createdAt.desc()),
+    bySource: uniqueIndex("voting_power_events_user_source_uniq")
+      .on(t.userId, t.sourceKey)
+      .where(sql`${t.sourceKey} is not null`),
   }),
 );
 

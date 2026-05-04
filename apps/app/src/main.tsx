@@ -15,6 +15,7 @@ import { ServerBoot } from "./components/app/ServerBoot";
 import { WorkspaceLoaderProvider } from "./components/app/WorkspaceLoader";
 import { CompanyProfileProvider } from "./components/app/CompanyProfileStore";
 import { CookieConsentBanner } from "./components/CookieConsentBanner";
+import { Analytics } from "@vercel/analytics/react";
 import "./styles.css";
 
 initGoogleAnalytics();
@@ -24,21 +25,44 @@ if (!PUBLISHABLE_KEY) {
   throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY in .env.local");
 }
 
-registerSW({
+// Reload as soon as the new SW takes control. Combined with skipWaiting +
+// clientsClaim in vite.config.ts this means the next refresh after a deploy
+// always boots the latest bundle — no stale tabs, no manual cache wipe.
+if ("serviceWorker" in navigator) {
+  let reloading = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloading) return;
+    reloading = true;
+    window.location.reload();
+  });
+}
+
+const updateSW = registerSW({
   immediate: true,
   onNeedRefresh() {
-    toast("New version available", {
-      description: "Reload to get the latest updates.",
-      duration: 10000,
-      action: {
-        label: "Reload",
-        onClick: () => window.location.reload(),
-      },
-    });
+    // We could prompt, but caching has been biting users — auto-apply.
+    void updateSW(true);
+    toast("Updating to the latest version…", { duration: 4000 });
   },
   onOfflineReady() {
     toast.success("Ready to work offline", {
       description: "Pulse HR has been cached for offline use.",
+    });
+  },
+  onRegisteredSW(_swUrl, registration) {
+    if (!registration) return;
+    // Poll for new versions every 15 minutes while the tab is open and on
+    // each tab focus, so users running the PWA all day still pick up
+    // deploys without having to manually relaunch.
+    const check = () => {
+      registration.update().catch(() => {
+        /* ignore — the next tick will retry */
+      });
+    };
+    setInterval(check, 15 * 60 * 1000);
+    window.addEventListener("focus", check);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") check();
     });
   },
 });
@@ -63,6 +87,7 @@ ReactDOM.createRoot(el).render(
             <RoleOverrideProvider>
               <ThemeProvider>
                 <CookieConsentBanner />
+                <Analytics />
                 <WorkspaceProvider>
                   <WorkspaceLoaderProvider>
                     <CompanyProfileProvider>

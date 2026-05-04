@@ -12,11 +12,16 @@ import {
   BellOff,
   Headphones,
   Sparkles,
-  ChevronRight,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Button } from "@pulse-hr/ui/primitives/button";
+import { Input } from "@pulse-hr/ui/primitives/input";
+import { Label } from "@pulse-hr/ui/primitives/label";
 import { Switch } from "@pulse-hr/ui/primitives/switch";
+import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import {
   Select,
   SelectContent,
@@ -24,6 +29,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@pulse-hr/ui/primitives/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@pulse-hr/ui/primitives/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@pulse-hr/ui/primitives/dialog";
 import { PageHeader } from "@/components/app/AppShell";
 import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { commesse, commessaById, type FocusSession } from "@/lib/mock-data";
@@ -47,6 +66,9 @@ const PRESETS = [
 function FocusPage() {
   const sessions = useFocusSessions();
   const workspace = useWorkspace();
+  const [editSession, setEditSession] = useState<FocusSession | null>(null);
+  const [editNote, setEditNote] = useState("");
+  const [editDuration, setEditDuration] = useState(0);
   const [commessaId, setCommessaId] = useState(workspace.activeCommessaId);
   useEffect(() => {
     setCommessaId(workspace.activeCommessaId);
@@ -416,7 +438,42 @@ function FocusPage() {
                           </div>
                         )}
                       </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setEditSession(s);
+                              setEditNote(s.note ?? "");
+                              setEditDuration(s.durationMin);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => {
+                              const snap = s;
+                              focusSessionsTable.remove(s.id);
+                              toast("Session removed", {
+                                action: {
+                                  label: "Undo",
+                                  onClick: () => focusSessionsTable.add(snap),
+                                },
+                              });
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   );
                 })}
@@ -424,6 +481,63 @@ function FocusPage() {
           )}
         </Card>
       </div>
+
+      <Dialog
+        open={!!editSession}
+        onOpenChange={(o) => !o && setEditSession(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit focus session</DialogTitle>
+          </DialogHeader>
+          {editSession && (
+            <div className="space-y-4">
+              <div className="text-xs text-muted-foreground">
+                {editSession.date} · started {editSession.startedAt}
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="fs-duration">Duration (minutes)</Label>
+                <Input
+                  id="fs-duration"
+                  type="number"
+                  min={1}
+                  max={600}
+                  value={editDuration}
+                  onChange={(e) => setEditDuration(Number(e.target.value))}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="fs-note">Notes</Label>
+                <Textarea
+                  id="fs-note"
+                  rows={3}
+                  value={editNote}
+                  onChange={(e) => setEditNote(e.target.value)}
+                  placeholder="What did you work on?"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setEditSession(null)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (!editSession) return;
+                focusSessionsTable.update(editSession.id, {
+                  note: editNote.trim() || undefined,
+                  durationMin: Math.max(1, Math.round(editDuration)),
+                });
+                toast.success("Session updated");
+                setEditSession(null);
+              }}
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -24,14 +24,6 @@ import {
   DropdownMenuSeparator,
 } from "@pulse-hr/ui/primitives/dropdown-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@pulse-hr/ui/primitives/dialog";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -43,6 +35,11 @@ import {
 } from "@pulse-hr/ui/primitives/alert-dialog";
 import { PageHeader, Avatar } from "@/components/app/AppShell";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { ListLayout } from "@pulse-hr/ui/atoms/ListLayout";
+import { DataState } from "@pulse-hr/ui/atoms/DataState";
+import { useSimulatedLoading } from "@pulse-hr/ui/hooks/use-simulated-loading";
+import { useBulkSelect, BulkBar, RowCheckbox } from "@/components/app/bulk";
 import type { Announcement } from "@/lib/mock-data";
 import { announcementsTable, useAnnouncements } from "@/lib/tables/announcements";
 import { useFullName } from "@/lib/current-user";
@@ -59,16 +56,11 @@ function Announcements() {
   const posts = useAnnouncements();
   const [composeOpen, setComposeOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Announcement | null>(null);
-  const [loading, setLoading] = useState(true);
+  const loading = useSimulatedLoading(320);
   const [commentForRaw, setCommentForRaw] = useUrlParam("comment");
   const commentFor = commentForRaw || null;
   const setCommentFor = (v: string | null) => setCommentForRaw(v);
   const [commentText, setCommentText] = useState("");
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 320);
-    return () => clearTimeout(t);
-  }, []);
 
   const create = (data: { title: string; body: string; pinned: boolean }) => {
     announcementsTable.add({
@@ -110,47 +102,104 @@ function Announcements() {
   };
 
   const sorted = [...posts].sort((a, b) => Number(b.pinned) - Number(a.pinned));
+  const state = loading ? "loading" : sorted.length === 0 ? "empty" : "populated";
+
+  const bulk = useBulkSelect(sorted);
+
+  const bulkSetPinned = (pinned: boolean) => {
+    const targets = bulk.selectedRows.filter((p) => p.pinned !== pinned);
+    if (targets.length === 0) {
+      toast(`Already ${pinned ? "pinned" : "unpinned"}`);
+      return;
+    }
+    targets.forEach((p) => announcementsTable.update(p.id, { pinned }));
+    bulk.clear();
+    toast.success(
+      `${pinned ? "Pinned" : "Unpinned"} ${targets.length} announcement${
+        targets.length === 1 ? "" : "s"
+      }`,
+    );
+  };
+
+  const bulkDelete = () => {
+    const targets = bulk.selectedRows;
+    if (targets.length === 0) return;
+    targets.forEach((p) => announcementsTable.remove(p.id));
+    bulk.clear();
+    toast(`${targets.length} announcement${targets.length === 1 ? "" : "s"} deleted`, {
+      action: {
+        label: "Undo",
+        onClick: () => targets.forEach((p) => announcementsTable.add(p)),
+      },
+    });
+  };
 
   return (
-    <div className="p-4 md:p-6 max-w-[900px] mx-auto fade-in">
-      <PageHeader
-        title="Announcements"
-        description="Company-wide updates from leadership and HR"
-        actions={
-          <Button size="sm" className="press-scale" onClick={() => setComposeOpen(true)}>
-            <Plus className="h-4 w-4 mr-1.5" />
-            New post
-          </Button>
-        }
-      />
-
-      {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="p-5 flex gap-3">
-              <div className="h-10 w-10 rounded-full shimmer" />
-              <div className="flex-1 space-y-2">
-                <div className="h-3 w-[40%] shimmer rounded" />
-                <div className="h-2.5 w-[60%] shimmer rounded" />
-                <div className="h-10 w-full shimmer rounded mt-2" />
-              </div>
-            </Card>
-          ))}
-        </div>
-      ) : sorted.length === 0 ? (
-        <EmptyState
-          tone="welcome"
-          icon={<Megaphone className="h-6 w-6" />}
-          title="No announcements yet"
-          description="Share something with the team to kick off the feed."
-          action={
-            <Button size="sm" onClick={() => setComposeOpen(true)}>
+    <ListLayout
+      width="narrow"
+      className="fade-in"
+      header={
+        <PageHeader
+          title="Announcements"
+          description="Company-wide updates from leadership and HR"
+          actions={
+            <Button size="sm" className="press-scale" onClick={() => setComposeOpen(true)}>
               <Plus className="h-4 w-4 mr-1.5" />
-              First post
+              New post
             </Button>
           }
         />
-      ) : (
+      }
+      sidePanel={
+        <SidePanel
+          open={composeOpen}
+          onClose={() => setComposeOpen(false)}
+          title="New announcement"
+        >
+          <div className="p-5">
+            <p className="text-caption mb-4">Visible to everyone in Acme Inc.</p>
+            <ComposeForm
+              onCancel={() => setComposeOpen(false)}
+              onSave={(d) => {
+                create(d);
+                setComposeOpen(false);
+              }}
+            />
+          </div>
+        </SidePanel>
+      }
+    >
+      <DataState
+        state={state}
+        loading={
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Card key={i} className="p-5 flex gap-3">
+                <div className="h-10 w-10 rounded-full shimmer" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 w-[40%] shimmer rounded" />
+                  <div className="h-2.5 w-[60%] shimmer rounded" />
+                  <div className="h-10 w-full shimmer rounded mt-2" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        }
+        empty={
+          <EmptyState
+            tone="welcome"
+            icon={<Megaphone className="h-6 w-6" />}
+            title="No announcements yet"
+            description="Share something with the team to kick off the feed."
+            action={
+              <Button size="sm" onClick={() => setComposeOpen(true)}>
+                <Plus className="h-4 w-4 mr-1.5" />
+                First post
+              </Button>
+            }
+          />
+        }
+      >
         <div className="space-y-3 stagger-in">
           {sorted.map((a) => {
             const reactions = a.reactions ?? 12;
@@ -159,9 +208,17 @@ function Announcements() {
             return (
               <Card
                 key={a.id}
-                className={`p-5 hover:shadow-md transition-shadow ${a.pinned ? "border-warning/40 bg-warning/[0.03]" : ""}`}
+                className={`p-5 hover:shadow-md transition-shadow group ${
+                  a.pinned ? "border-warning/40 bg-warning/[0.03]" : ""
+                } ${bulk.isSelected(a.id) ? "ring-2 ring-primary/50" : ""}`}
               >
                 <div className="flex items-start gap-3">
+                  <RowCheckbox
+                    checked={bulk.isSelected(a.id)}
+                    onChange={() => bulk.toggle(a.id)}
+                    label={`Select ${a.title}`}
+                    className="mt-1"
+                  />
                   <Avatar
                     initials={a.author
                       .split(" ")
@@ -186,7 +243,17 @@ function Announcements() {
                               <Pin className="h-4 w-4 mr-2" />
                               {a.pinned ? "Unpin" : "Pin"}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => toast.success("Link copied")}>
+                            <DropdownMenuItem
+                              onClick={async () => {
+                                const url = `${window.location.origin}/announcements/${a.id}`;
+                                try {
+                                  await navigator.clipboard.writeText(url);
+                                  toast.success("Link copied", { description: url });
+                                } catch {
+                                  toast.error("Couldn't copy link");
+                                }
+                              }}
+                            >
                               Copy link
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -266,23 +333,7 @@ function Announcements() {
             );
           })}
         </div>
-      )}
-
-      <Dialog open={composeOpen} onOpenChange={setComposeOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>New announcement</DialogTitle>
-            <DialogDescription>Visible to everyone in Acme Inc.</DialogDescription>
-          </DialogHeader>
-          <ComposeForm
-            onCancel={() => setComposeOpen(false)}
-            onSave={(d) => {
-              create(d);
-              setComposeOpen(false);
-            }}
-          />
-        </DialogContent>
-      </Dialog>
+      </DataState>
 
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
@@ -306,7 +357,31 @@ function Announcements() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+
+      <BulkBar
+        count={bulk.count}
+        onClear={bulk.clear}
+        noun="announcement"
+        actions={[
+          {
+            label: "Pin",
+            icon: <Pin className="h-3.5 w-3.5" />,
+            onClick: () => bulkSetPinned(true),
+          },
+          {
+            label: "Unpin",
+            icon: <Pin className="h-3.5 w-3.5" />,
+            onClick: () => bulkSetPinned(false),
+          },
+          {
+            label: "Delete",
+            icon: <Trash2 className="h-3.5 w-3.5" />,
+            onClick: bulkDelete,
+            tone: "destructive",
+          },
+        ]}
+      />
+    </ListLayout>
   );
 }
 
@@ -351,7 +426,7 @@ function ComposeForm({
           Pin to top
         </label>
       </div>
-      <DialogFooter>
+      <div className="flex items-center justify-end gap-2 mt-6">
         <Button variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
@@ -362,7 +437,7 @@ function ComposeForm({
           <Send className="h-4 w-4 mr-1.5" />
           Publish
         </Button>
-      </DialogFooter>
+      </div>
     </>
   );
 }

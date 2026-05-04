@@ -7,17 +7,15 @@ import { Newspaper, Calendar, Github } from "lucide-astro";
 
 const title = "Blog — OSS HR, commessa ops, agent-native workflows";
 const description =
-  "A 6-month publishing schedule. Engineering deep-dives on the open-source HR & payroll stack, commessa-first financial operations for services firms, and agent-native workflows for HR data.";
+  "A 6-month publishing schedule. Engineering deep-dives on the open-source HR stack, commessa-first financial operations for services firms, and agent-native workflows for HR data.";
 const path = "/blog";
-const keywords =
-  "open source HR blog, commessa ops, MCP HR, product-led growth OSS, FSL license explained, self-host HR";
 
 // Four tracks × six months = 24 planned slots. We publish 12 (two per month,
 // tracks rotating) to keep a realistic cadence. Each post is a commitment
 // with a named owner and a concrete takeaway.
 const TRACKS = [
   { k: "OSS mechanics",       accent: "#b4ff39", d: "How we run Pulse as an open-source business — license design, governance, self-host economics." },
-  { k: "Commessa ops",        accent: "#ffbf4a", d: "Financial ops for services firms: project profitability, utilisation, forecasting, close-the-month playbooks." },
+  { k: "Commessa ops",        accent: "#ffbf4a", d: "Financial ops for services firms: project profitability, utilisation, close-the-month playbooks." },
   { k: "Agent-native HR",     accent: "#6fd8ff", d: "Building Pulse toward MCP + tool schemas so Claude, Copilot and other agents can ground on HR data safely." },
   { k: "Engineering notes",   accent: "#ff8a7a", d: "TanStack Router, Bun workspaces, Astro marketing + React app monorepo, PWA offline, local intent parser." },
 ];
@@ -78,12 +76,6 @@ const POSTS = [
     s: "Every GitHub issue opened in the first six months, clustered by theme, with the three features we'll ship because of them and the two we said no to.",
   },
   {
-    d: "2026-09-16",
-    track: "Commessa ops",
-    t: "Scenario planning on your own burn: the Forecast walkthrough",
-    s: "\"What if I add a designer in August?\" Scenario sliders walked through with numbers and the kinds of decisions they actually change.",
-  },
-  {
     d: "2026-10-07",
     track: "Engineering notes",
     t: "Self-hosting Pulse on a €25 Hetzner box",
@@ -119,22 +111,12 @@ const blogLd = {
   url: "https://pulsehr.it/blog",
   description,
   publisher: { "@id": "https://pulsehr.it/#organization" },
-  blogPost: POSTS.map((p) => ({
-    "@type": "BlogPosting",
-    headline: p.t,
-    description: p.s,
-    datePublished: p.d,
-    articleSection: p.track,
-    url: `https://pulsehr.it/blog#${p.d}`,
-    author: { "@id": "https://pulsehr.it/#organization" },
-    publisher: { "@id": "https://pulsehr.it/#organization" },
-  })),
 };
 
 const extraLd = [blogLd];
 ---
 
-<BaseLayout {title} {description} {path} {keywords} {breadcrumbs} {extraLd}>
+<BaseLayout {title} {description} {path} {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main">
     <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ChevronRight, Trophy, Users } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -35,6 +35,8 @@ import type { CommentStatus, Reply } from "@/lib/comments/types";
 import { createProposalReply, setProposalStatus, setProposalVote } from "@/lib/proposals/api";
 import type { ProposalReply, ProposalType } from "@/lib/proposals/types";
 import { useNewProposal } from "@/components/proposals/ProposalProvider";
+import { useCompanyProfileStore } from "@/components/app/CompanyProfileStore";
+import { describeApiError } from "@/lib/feedback-errors";
 import { useIsEffectiveAdmin } from "@/lib/role-override";
 import {
   Sheet,
@@ -88,6 +90,11 @@ function FeedbackBoard() {
   const [loaded, setLoaded] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  useEffect(() => {
+    const id = window.setTimeout(() => setDebouncedQuery(query), 180);
+    return () => window.clearTimeout(id);
+  }, [query]);
   const [routeFilter, setRouteFilter] = useState<string>("");
   const [activeTags, setActiveTags] = useState<Set<string>>(new Set());
   const [activeKinds, setActiveKinds] = useState<Set<BoardItemKind>>(new Set());
@@ -148,7 +155,10 @@ function FeedbackBoard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board, threadId]);
 
+  const { adjustPower } = useCompanyProfileStore();
+
   const applyVote = async (id: string, kind: BoardItem["kind"], value: -1 | 0 | 1) => {
+    let priorVote: -1 | 0 | 1 = 0;
     setBoard((prev) => {
       const next = { ...prev } as BoardBuckets;
       for (const status of Object.keys(next) as CommentStatus[]) {
@@ -157,6 +167,7 @@ function FeedbackBoard() {
         next[status] = next[status]
           .map((c) => {
             if (c.id !== id) return c;
+            priorVote = c.myVote;
             const delta = value - c.myVote;
             return { ...c, myVote: value, voteScore: c.voteScore + delta } as BoardItem;
           })
@@ -164,6 +175,12 @@ function FeedbackBoard() {
       }
       return next;
     });
+
+    let powerDelta = 0;
+    if (priorVote === 0 && value !== 0) powerDelta = -1;
+    else if (priorVote !== 0 && value === 0) powerDelta = +1;
+    if (powerDelta !== 0) adjustPower(powerDelta);
+
     try {
       const { voteScore, myVote } =
         kind === "proposal" ? await setProposalVote(id, value) : await setVote(id, value);
@@ -178,8 +195,9 @@ function FeedbackBoard() {
         }
         return next;
       });
-    } catch {
-      toast.error("Vote failed");
+    } catch (err) {
+      if (powerDelta !== 0) adjustPower(-powerDelta);
+      toast.error(describeApiError(err, "Vote failed"));
       refresh();
     }
   };
@@ -280,7 +298,7 @@ function FeedbackBoard() {
   }, [allItems]);
 
   const filteredBoard = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = debouncedQuery.trim().toLowerCase();
     const passes = (c: BoardItem) => {
       if (tab === "comments" && c.kind !== "comment") return false;
       if (tab === "proposals" && c.kind !== "proposal") return false;
@@ -304,7 +322,7 @@ function FeedbackBoard() {
       wont_do: board.wont_do.filter(passes),
     };
     return next;
-  }, [board, query, routeFilter, activeTags, activeKinds, tab]);
+  }, [board, debouncedQuery, routeFilter, activeTags, activeKinds, tab]);
 
   const totals = {
     open: filteredBoard.open.length,
@@ -668,7 +686,15 @@ function DraggableCard({
     ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
     : undefined;
   return (
-    <div ref={setNodeRef} style={style} className={cn(isDragging && "opacity-40")} {...attributes}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "[content-visibility:auto] [contain-intrinsic-size:0_180px]",
+        isDragging && "opacity-40",
+      )}
+      {...attributes}
+    >
       <FeedbackCard
         item={item}
         onVote={(v) => onVote(item.id, item.kind, v)}
@@ -1262,6 +1288,8 @@ function ContributorsPanel({
     window.setTimeout(() => setHighlightId(null), 2400);
   };
 
+  const handleSelectContributor = useCallback((id: string) => setOpenUserId(id), []);
+
   const openContributor = contributors.find((c) => c.author.id === openUserId) ?? null;
 
   if (!loaded) {
@@ -1311,65 +1339,16 @@ function ContributorsPanel({
           <span className="text-right">Score</span>
           <span />
         </div>
-        {pageRows.map((c, idx) => {
-          const rank = start + idx + 1;
-          const isMe = currentUserId && c.author.id === currentUserId;
-          const isHighlighted = highlightId && c.author.id === highlightId;
-          return (
-            <button
-              key={c.author.id}
-              type="button"
-              onClick={() => setOpenUserId(c.author.id)}
-              className={cn(
-                "w-full grid grid-cols-[40px_1fr_80px_80px_80px_80px_auto] items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors border-b last:border-b-0 hover:bg-muted/60",
-                isMe && "bg-primary/5",
-                isHighlighted && "ring-2 ring-primary/60 ring-inset bg-primary/10",
-              )}
-            >
-              <span
-                className={cn(
-                  "font-semibold tabular-nums text-xs",
-                  rank === 1 && "text-primary",
-                  rank === 2 && "text-foreground/80",
-                  rank === 3 && "text-warning",
-                  rank > 3 && "text-muted-foreground",
-                )}
-              >
-                {rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `#${rank}`}
-              </span>
-              <span className="flex items-center gap-2 min-w-0">
-                {c.author.avatarUrl ? (
-                  <img
-                    src={c.author.avatarUrl}
-                    alt=""
-                    className="h-7 w-7 rounded-full object-cover shrink-0"
-                  />
-                ) : (
-                  <span className="h-7 w-7 rounded-full text-[10px] font-semibold flex items-center justify-center text-white shrink-0 bg-gradient-to-br from-[#8b5cf6] via-[#ec4899] to-[#f59e0b]">
-                    {c.author.name
-                      .split(" ")
-                      .map((s) => s[0])
-                      .filter(Boolean)
-                      .join("")
-                      .slice(0, 2)
-                      .toUpperCase() || "?"}
-                  </span>
-                )}
-                <span className="min-w-0 truncate font-medium">
-                  {c.author.name}
-                  {isMe && (
-                    <span className="ml-1.5 text-[10px] font-normal text-primary">(you)</span>
-                  )}
-                </span>
-              </span>
-              <span className="text-right tabular-nums">{c.comments}</span>
-              <span className="text-right tabular-nums">{c.proposals}</span>
-              <span className="text-right tabular-nums">{c.replies}</span>
-              <span className="text-right tabular-nums font-semibold">{c.score}</span>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            </button>
-          );
-        })}
+        {pageRows.map((c, idx) => (
+          <ContributorRow
+            key={c.author.id}
+            contributor={c}
+            rank={start + idx + 1}
+            isMe={Boolean(currentUserId && c.author.id === currentUserId)}
+            isHighlighted={Boolean(highlightId && c.author.id === highlightId)}
+            onSelect={handleSelectContributor}
+          />
+        ))}
       </div>
 
       {totalPages > 1 && (
@@ -1400,6 +1379,72 @@ function ContributorsPanel({
     </div>
   );
 }
+
+const ContributorRow = memo(function ContributorRow({
+  contributor: c,
+  rank,
+  isMe,
+  isHighlighted,
+  onSelect,
+}: {
+  contributor: Contributor;
+  rank: number;
+  isMe: boolean;
+  isHighlighted: boolean;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(c.author.id)}
+      className={cn(
+        "w-full grid grid-cols-[40px_1fr_80px_80px_80px_80px_auto] items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors border-b last:border-b-0 hover:bg-muted/60",
+        isMe && "bg-primary/5",
+        isHighlighted && "ring-2 ring-primary/60 ring-inset bg-primary/10",
+      )}
+    >
+      <span
+        className={cn(
+          "font-semibold tabular-nums text-xs",
+          rank === 1 && "text-primary",
+          rank === 2 && "text-foreground/80",
+          rank === 3 && "text-warning",
+          rank > 3 && "text-muted-foreground",
+        )}
+      >
+        {rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `#${rank}`}
+      </span>
+      <span className="flex items-center gap-2 min-w-0">
+        {c.author.avatarUrl ? (
+          <img
+            src={c.author.avatarUrl}
+            alt=""
+            className="h-7 w-7 rounded-full object-cover shrink-0"
+          />
+        ) : (
+          <span className="h-7 w-7 rounded-full text-[10px] font-semibold flex items-center justify-center text-white shrink-0 bg-gradient-to-br from-[#8b5cf6] via-[#ec4899] to-[#f59e0b]">
+            {c.author.name
+              .split(" ")
+              .map((s) => s[0])
+              .filter(Boolean)
+              .join("")
+              .slice(0, 2)
+              .toUpperCase() || "?"}
+          </span>
+        )}
+        <span className="min-w-0 truncate font-medium">
+          {c.author.name}
+          {isMe && <span className="ml-1.5 text-[10px] font-normal text-primary">(you)</span>}
+        </span>
+      </span>
+      <span className="text-right tabular-nums">{c.comments}</span>
+      <span className="text-right tabular-nums">{c.proposals}</span>
+      <span className="text-right tabular-nums">{c.replies}</span>
+      <span className="text-right tabular-nums font-semibold">{c.score}</span>
+      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+    </button>
+  );
+});
 
 function ContributorSheet({
   contributor,

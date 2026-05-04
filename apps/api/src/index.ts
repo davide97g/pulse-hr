@@ -2,24 +2,35 @@
  * Hono + Bun backend for Pulse HR. One long-running HTTP server hosted on
  * Render.com. Replaces the Vercel serverless functions previously under
  * `apps/app/api/*`.
+ *
+ * Uses OpenAPIHono as the root app — a drop-in superset of Hono that lets
+ * routes opt into auto-generated OpenAPI docs by being defined with
+ * `createRoute()`. Legacy routes (`app.get()` + zValidator) keep working but
+ * don't appear in the spec until they're migrated to `src/openapi/*`.
+ *
+ * Docs: GET /docs (Swagger UI) — spec at GET /openapi.json.
  */
-import { Hono } from "hono";
+import { swaggerUI } from "@hono/swagger-ui";
 import { accessLog } from "./middleware/access-log.ts";
 import { buildCors } from "./middleware/cors.ts";
 import { errorHandler } from "./middleware/error.ts";
-import { health } from "./routes/health.ts";
-import { comments } from "./routes/comments.ts";
-import { proposals } from "./routes/proposals.ts";
-import { feedback } from "./routes/feedback.ts";
-import { changelog } from "./routes/changelog.ts";
-import { notifications } from "./routes/notifications.ts";
-import { screenshots } from "./routes/screenshots.ts";
-import { workspace } from "./routes/workspace.ts";
-import { cron } from "./routes/cron.ts";
-import { admin } from "./routes/admin.ts";
-import { userProfile } from "./routes/user-profile.ts";
+import { bearerAuth, createApp, cronBearerAuth, docInfo } from "./openapi/registry.ts";
+import { health } from "./openapi/health.ts";
+import { comments } from "./openapi/comments.ts";
+import { proposals } from "./openapi/proposals.ts";
+import { feedback } from "./openapi/feedback.ts";
+import { changelog } from "./openapi/changelog.ts";
+import { notifications } from "./openapi/notifications.ts";
+import { screenshots } from "./openapi/screenshots.ts";
+import { workspace } from "./openapi/workspace.ts";
+import { cron } from "./openapi/cron.ts";
+import { admin } from "./openapi/admin.ts";
+import { userProfile } from "./openapi/user-profile.ts";
 
-const app = new Hono();
+export const app = createApp();
+
+app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", bearerAuth);
+app.openAPIRegistry.registerComponent("securitySchemes", "CronBearer", cronBearerAuth);
 
 app.use("*", accessLog());
 app.use("*", buildCors());
@@ -43,8 +54,21 @@ app.route("/user-profile", userProfile);
 
 app.get("/", (c) => c.json({ ok: true, service: "@pulse-hr/api" }));
 
+// OpenAPI spec — served live, also written to apps/api/openapi.json at build
+// time by scripts/build-openapi.ts (see package.json `prebuild`).
+app.doc31("/openapi.json", docInfo);
+
+app.get(
+  "/docs",
+  swaggerUI({
+    url: "/openapi.json",
+    title: "Pulse HR API — Swagger",
+  }),
+);
+
 const port = Number(process.env.PORT ?? 3000);
 console.log(`[api] listening on http://localhost:${port}`);
+console.log(`[api] docs at  http://localhost:${port}/docs`);
 
 export default {
   port,

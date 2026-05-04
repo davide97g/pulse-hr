@@ -4,6 +4,50 @@ All notable user-facing changes to Pulse HR. Each `## version — date — "titl
 below becomes a release announcement. An optional fenced ` ```tour ` block embeds an in-app
 tour that the "What's new" prompt can launch.
 
+## 0.8.0 — 2026-04-26 — "A wiki you can read"
+
+Pulse HR now ships a public, HR-readable knowledge base at `/wiki` — an Obsidian-vault-compatible companion to the source code. Around 80 pages model the product as a product (personas, features, entities, journeys, Italian glossary) instead of as code, so a non-technical reader can learn what Pulse HR does without opening the codebase, and any LLM agent can build context for a session without re-deriving the product model from routes and mock-data every time.
+
+- **Six folders, one schema** — `personas/`, `features/`, `entities/`, `concepts/`, `journeys/`, `glossary/`, plus a top-level `README.md`, `index.md`, `log.md`, and an `AGENTS.md` that tells future agents how to ingest, query, and lint the wiki.
+- **Italian-first glossary** — *commessa*, *permesso*, *ferie*, *busta paga*, TFR, ROL, *malattia*, *badge*. First mention on any page wikilinks to the glossary entry.
+- **Obsidian-native** — minimal frontmatter (type, tags, last_updated), wikilinks for internal references, `aliases:` on every multi-word file so `[[Time Tracking]]` resolves to `time-tracking.md` without renaming.
+- **CLAUDE.md pointer** — the root agent guide now tells Claude Code sessions to read `wiki/AGENTS.md` and the relevant wiki pages before answering product or domain questions.
+- **Maintenance workflow** — manual ingest (pre-merge) and lint (on demand). The agent owns updates; humans curate sources and ask the questions.
+
+## 0.7.0 — 2026-04-25 — "Voting power, with a real economy"
+
+Voting power stops being a vanity number and becomes a usable currency. Every account starts with **10**, every vote on a comment or proposal **costs 1**, and the balance **refills weekly to 10** without accumulating beyond that. New comments and new proposals are still free, but each capped at **10 per UTC day** so the board doesn't drown in noise.
+
+- **Spend to vote** — upvotes and downvotes both cost 1. Retracting refunds 1. Switching from up to down (or vice-versa) refunds and recharges in one round, so net cost is the same as a single vote.
+- **Weekly refill** — power tops back up to 10 every 7 days, lazily on read. Boosted balances above 10 do not refill — those are earned and stay until you spend them.
+- **Daily caps** — 10 new comments and 10 new proposals per UTC day, per user. Replies to existing threads stay unlimited so conversations aren't throttled.
+- **Earn more power** — completing a questionnaire grants **+10**, once per round (the company-profile questionnaire is the only round live today). When a comment or proposal you authored moves to **planned**, you earn **+10** as a one-shot reward.
+- **Migration** — the previous "double the baseline" bonus is replaced by the new +10 grant. Existing voting-power events are archived to `voting_power_events_legacy` for audit, and questionnaire completers keep their boost (now +10 above the new 10 baseline, so 20 total).
+- **Out of power UX** — vote attempts on an empty wallet return a structured error and toast in both `apps/app` and `apps/feedback`. Daily-cap-reached toasts keep the composer open with the user's draft intact.
+
+```tour
+{
+  "id": "release-0.7.0",
+  "name": "What's new in 0.7.0",
+  "workflow": "Getting started",
+  "duration": "1 min",
+  "steps": [
+    {
+      "title": "You start with 10 voting power",
+      "body": "Every vote on a comment or proposal costs 1, retracting refunds it, and the balance refills weekly to 10. The chip in the topbar shows what you've got and when the next refill lands."
+    },
+    {
+      "title": "Earn more by helping us",
+      "body": "Complete a questionnaire round to earn +10. When a comment or proposal you wrote moves to ‘planned', you earn another +10 — once per item, automatically."
+    },
+    {
+      "title": "Daily caps on new posts",
+      "body": "Up to 10 new live comments and 10 new proposals per UTC day. Replies don't count, so conversations stay open. If you hit the cap, the composer keeps your draft and tells you to come back tomorrow."
+    }
+  ]
+}
+```
+
 ## 0.6.0 — 2026-04-22 — "Tell us about your company, double your voting power"
 
 Pulse now asks new accounts a few short questions about their company — name, website, size, industry — and rewards a complete, honest answer with double the baseline voting power. Voting power is a new Labs primitive that will weigh future in-product decisions, so getting it seeded early matters.

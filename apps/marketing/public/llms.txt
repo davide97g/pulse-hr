@@ -9,7 +9,7 @@
 - [Pricing](https://pulsehr.it/pricing) — One transparent tier per active employee per month. Free up to 5 employees.
 - [Security](https://pulsehr.it/security) — SOC 2 Type II, GDPR-compliant, EU data residency, ISO 27001 in progress.
 - [API reference](https://pulsehr.it/docs/api) — REST API, webhooks on every resource, SDKs for TypeScript, Python, Go.
-- [Source code](https://github.com/davide97g/workflows-people) — Public repository, FSL-1.1-MIT license.
+- [Source code](https://github.com/davide97g/pulse-hr) — Public repository, FSL-1.1-MIT license.
 
 ## Principles
 - **Open source** — Full source on GitHub under the Functional Source License (converts to MIT after 2 years). Read it, run it, fork it.
@@ -26,4 +26,4 @@ Installs as a PWA on macOS, Windows, iOS, Android. Recent views, timesheets and 
 ## Contact
 - Email: hello@pulsehr.it · sales@pulsehr.it
 - Status: https://status.pulsehr.it
-- GitHub: https://github.com/davide97g/workflows-people
+- GitHub: https://github.com/davide97g/pulse-hr

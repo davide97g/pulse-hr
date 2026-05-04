@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Upload, Check, X, Receipt, Trash2, MoreHorizontal } from "lucide-react";
+import { Plus, Upload, Check, X, Receipt, Trash2, MoreHorizontal, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Button } from "@pulse-hr/ui/primitives/button";
@@ -24,7 +24,12 @@ import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
+import { ListLayout } from "@pulse-hr/ui/atoms/ListLayout";
+import { DataState } from "@pulse-hr/ui/atoms/DataState";
+import { StatCard } from "@pulse-hr/ui/atoms/StatCard";
+import { useSimulatedLoading } from "@pulse-hr/ui/hooks/use-simulated-loading";
 import { useQuickAction } from "@/components/app/QuickActions";
+import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
 import { type Expense } from "@/lib/mock-data";
 import { expensesTable, useExpenses } from "@/lib/tables/expenses";
 import { employeeById } from "@/lib/tables/employees";
@@ -44,13 +49,8 @@ function Expenses() {
   const selected = selId ? (list.find((x) => x.id === selId) ?? null) : null;
   const setSelected = (e: Expense | null) => setSelId(e?.id ?? null);
   const [toDelete, setToDelete] = useState<Expense | null>(null);
-  const [loading, setLoading] = useState(true);
+  const loading = useSimulatedLoading();
   const { open: openAction } = useQuickAction();
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 450);
-    return () => clearTimeout(t);
-  }, []);
 
   const decide = (e: Expense, status: Expense["status"]) => {
     const before = e.status;
@@ -67,6 +67,55 @@ function Expenses() {
     toast("Expense deleted", {
       action: { label: "Undo", onClick: () => expensesTable.add(e) },
     });
+  };
+
+  const bulk = useBulkSelect(list);
+
+  const bulkDecide = (status: Expense["status"]) => {
+    const targets = bulk.selectedRows.filter((e) => e.status !== status);
+    if (targets.length === 0) {
+      toast("Nothing to update", { description: `Already ${status}.` });
+      return;
+    }
+    const snaps = targets.map((e) => ({ id: e.id, prior: e.status }));
+    targets.forEach((e) => expensesTable.update(e.id, { status }));
+    bulk.clear();
+    toast(
+      status === "approved"
+        ? `Approved ${targets.length} expense${targets.length === 1 ? "" : "s"}`
+        : `Rejected ${targets.length} expense${targets.length === 1 ? "" : "s"}`,
+      {
+        action: {
+          label: "Undo",
+          onClick: () =>
+            snaps.forEach((s) => expensesTable.update(s.id, { status: s.prior })),
+        },
+      },
+    );
+  };
+
+  const bulkExport = () => {
+    const rows = bulk.selectedRows;
+    if (rows.length === 0) return;
+    const cols = ["id", "description", "category", "amount", "currency", "date", "status"];
+    const esc = (v: unknown) => {
+      const s = String(v ?? "");
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const body = [
+      cols.join(","),
+      ...rows.map((r) => cols.map((c) => esc(r[c as keyof Expense])).join(",")),
+    ].join("\n");
+    const blob = new Blob([body], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `expenses-${rows.length}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} row${rows.length === 1 ? "" : "s"}`);
   };
 
   useEffect(() => {
@@ -94,37 +143,100 @@ function Expenses() {
     return () => window.removeEventListener("keydown", onKey);
   }, [list]);
 
-  return (
-    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
-      <PageHeader
-        title="Expenses"
-        description="Submit, approve and reimburse expenses"
-        actions={
-          <Button size="sm" onClick={() => openAction("submit-expense")}>
-            <Plus className="h-4 w-4 mr-1.5" />
-            Submit expense
-          </Button>
-        }
-      />
+  const state = loading ? "loading" : list.length === 0 ? "empty" : "populated";
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        {[
-          { label: "Pending review", v: "$804.50", n: 2, color: "warning" },
-          { label: "Approved", v: "$1,070", n: 2, color: "success" },
-          { label: "Reimbursed (mo)", v: "$1,240", n: 1, color: "info" },
-          { label: "Rejected", v: "$0", n: 0, color: "muted" },
-        ].map((s) => (
-          <Card key={s.label} className="p-4">
-            <div className="text-xs text-muted-foreground">{s.label}</div>
-            <div className="text-2xl font-semibold mt-1">{s.v}</div>
-            <div className="text-xs text-muted-foreground mt-0.5">{s.n} expenses</div>
-          </Card>
-        ))}
+  return (
+    <ListLayout
+      className="fade-in"
+      header={
+        <PageHeader
+          title="Expenses"
+          description="Submit, approve and reimburse expenses"
+          actions={
+            <Button size="sm" onClick={() => openAction("submit-expense")}>
+              <Plus className="h-4 w-4 mr-1.5" />
+              Submit expense
+            </Button>
+          }
+        />
+      }
+      sidePanel={
+        <SidePanel open={!!selected} onClose={() => setSelected(null)} title="Expense detail">
+          {selected &&
+            (() => {
+              const emp = employeeById(selected.employeeId)!;
+              const status = selected.status;
+              return (
+                <div className="p-5">
+                  <div className="text-2xl font-semibold mb-1">
+                    {sym[selected.currency]}
+                    {selected.amount.toLocaleString()}
+                  </div>
+                  <div className="text-sm text-muted-foreground mb-4">{selected.description}</div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Avatar
+                      initials={emp.initials}
+                      color={emp.avatarColor}
+                      size={32}
+                      employeeId={emp.id}
+                    />
+                    <div className="flex-1">
+                      <div className="text-sm font-medium">{emp.name}</div>
+                      <div className="text-xs text-muted-foreground">{emp.role}</div>
+                    </div>
+                    <StatusBadge status={status} />
+                  </div>
+                  <div className="aspect-[3/4] rounded-md border bg-muted/40 flex items-center justify-center text-xs text-muted-foreground mb-4">
+                    📄 Receipt preview
+                  </div>
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                    Approval flow
+                  </div>
+                  <div className="space-y-2 mb-5">
+                    <Step done label="Submitted" who={emp.name} />
+                    <Step done label="Manager review" who="Sarah Chen" />
+                    <Step
+                      done={status === "approved" || status === "reimbursed"}
+                      label="Finance approval"
+                      who="Lina Rossi"
+                    />
+                    <Step done={status === "reimbursed"} label="Reimbursed" />
+                  </div>
+                  {status === "pending" && (
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        className="flex-1"
+                        onClick={() => decide(selected, "rejected")}
+                      >
+                        <X className="h-4 w-4 mr-1.5" />
+                        Reject
+                      </Button>
+                      <Button
+                        className="flex-1 bg-success hover:bg-success/90 text-white"
+                        onClick={() => decide(selected, "approved")}
+                      >
+                        <Check className="h-4 w-4 mr-1.5" />
+                        Approve
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+        </SidePanel>
+      }
+    >
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <StatCard size="md" label="Pending review" value="$804.50" delta="2 expenses" />
+        <StatCard size="md" label="Approved" value="$1,070" delta="2 expenses" deltaTone="positive" accent />
+        <StatCard size="md" label="Reimbursed (mo)" value="$1,240" delta="1 expense" />
+        <StatCard size="md" label="Rejected" value="$0" delta="0 expenses" />
       </div>
 
       <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
         <div className="px-5 py-4 border-b flex items-center justify-between">
-          <div className="font-semibold text-sm">All expenses</div>
+          <div className="text-section">All expenses</div>
           <Button
             size="sm"
             variant="outline"
@@ -138,24 +250,33 @@ function Expenses() {
             Upload receipts
           </Button>
         </div>
-        {loading ? (
-          <SkeletonRows rows={5} />
-        ) : list.length === 0 ? (
-          <EmptyState
-            icon={<Receipt className="h-6 w-6" />}
-            title="No expenses yet"
-            description="Submit your first expense to start the reimbursement flow."
-            action={
-              <Button size="sm" onClick={() => openAction("submit-expense")}>
-                <Plus className="h-4 w-4 mr-1.5" />
-                Submit expense
-              </Button>
-            }
-          />
-        ) : (
+        <DataState
+          state={state}
+          loading={<SkeletonRows rows={5} />}
+          empty={
+            <EmptyState
+              icon={<Receipt className="h-6 w-6" />}
+              title="No expenses yet"
+              description="Submit your first expense to start the reimbursement flow."
+              action={
+                <Button size="sm" onClick={() => openAction("submit-expense")}>
+                  <Plus className="h-4 w-4 mr-1.5" />
+                  Submit expense
+                </Button>
+              }
+            />
+          }
+        >
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
+                <th className="w-10 px-3 py-2.5">
+                  <HeaderCheckbox
+                    allSelected={bulk.allSelected}
+                    someSelected={bulk.someSelected}
+                    onToggle={() => bulk.toggleAll(list)}
+                  />
+                </th>
                 <th className="text-left font-medium px-4 py-2.5">Description</th>
                 <th className="text-left font-medium px-4 py-2.5">Submitted by</th>
                 <th className="text-left font-medium px-4 py-2.5">Category</th>
@@ -189,6 +310,13 @@ function Expenses() {
                     }
                     className="border-t hover:bg-muted/40 cursor-pointer group transition-colors focus:outline-none focus-visible:bg-primary/[0.04] focus-visible:ring-2 focus-visible:ring-primary/30"
                   >
+                    <td className="px-3 py-2.5" onClick={(ev) => ev.stopPropagation()}>
+                      <RowCheckbox
+                        checked={bulk.isSelected(x.id)}
+                        onChange={() => bulk.toggle(x.id)}
+                        label={`Select ${x.description}`}
+                      />
+                    </td>
                     <td className="px-4 py-2.5 font-medium">{x.description}</td>
                     <td className="px-4 py-2.5">
                       <div className="flex items-center gap-2">
@@ -248,7 +376,31 @@ function Expenses() {
               })}
             </tbody>
           </table>
-        )}
+        </DataState>
+        <BulkBar
+          count={bulk.count}
+          onClear={bulk.clear}
+          noun="expense"
+          actions={[
+            {
+              label: "Approve",
+              icon: <Check className="h-3.5 w-3.5" />,
+              onClick: () => bulkDecide("approved"),
+              tone: "success",
+            },
+            {
+              label: "Reject",
+              icon: <X className="h-3.5 w-3.5" />,
+              onClick: () => bulkDecide("rejected"),
+              tone: "destructive",
+            },
+            {
+              label: "Export CSV",
+              icon: <FileDown className="h-3.5 w-3.5" />,
+              onClick: bulkExport,
+            },
+          ]}
+        />
       </Card>
 
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
@@ -274,72 +426,7 @@ function Expenses() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      <SidePanel open={!!selected} onClose={() => setSelected(null)} title="Expense detail">
-        {selected &&
-          (() => {
-            const emp = employeeById(selected.employeeId)!;
-            const status = selected.status;
-            return (
-              <div className="p-5">
-                <div className="text-2xl font-semibold mb-1">
-                  {sym[selected.currency]}
-                  {selected.amount.toLocaleString()}
-                </div>
-                <div className="text-sm text-muted-foreground mb-4">{selected.description}</div>
-                <div className="flex items-center gap-2 mb-4">
-                  <Avatar
-                    initials={emp.initials}
-                    color={emp.avatarColor}
-                    size={32}
-                    employeeId={emp.id}
-                  />
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">{emp.name}</div>
-                    <div className="text-xs text-muted-foreground">{emp.role}</div>
-                  </div>
-                  <StatusBadge status={status} />
-                </div>
-                <div className="aspect-[3/4] rounded-md border bg-muted/40 flex items-center justify-center text-xs text-muted-foreground mb-4">
-                  📄 Receipt preview
-                </div>
-                <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                  Approval flow
-                </div>
-                <div className="space-y-2 mb-5">
-                  <Step done label="Submitted" who={emp.name} />
-                  <Step done label="Manager review" who="Sarah Chen" />
-                  <Step
-                    done={status === "approved" || status === "reimbursed"}
-                    label="Finance approval"
-                    who="Lina Rossi"
-                  />
-                  <Step done={status === "reimbursed"} label="Reimbursed" />
-                </div>
-                {status === "pending" && (
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => decide(selected, "rejected")}
-                    >
-                      <X className="h-4 w-4 mr-1.5" />
-                      Reject
-                    </Button>
-                    <Button
-                      className="flex-1 bg-success hover:bg-success/90 text-white"
-                      onClick={() => decide(selected, "approved")}
-                    >
-                      <Check className="h-4 w-4 mr-1.5" />
-                      Approve
-                    </Button>
-                  </div>
-                )}
-              </div>
-            );
-          })()}
-      </SidePanel>
-    </div>
+    </ListLayout>
   );
 }
 

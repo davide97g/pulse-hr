@@ -1,0 +1,8 @@
+{
+  "spec": "growth-checks",
+  "captions": [
+    { "atStep": 0, "text": "Growth at a glance", "holdMs": 1800 },
+    { "atStep": 2, "text": "Switch the window — Week, Month, Year", "holdMs": 2400 },
+    { "atStep": 7, "text": "Seasonal challenges + prize ladder", "holdMs": 2400 }
+  ]
+}

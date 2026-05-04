@@ -11,7 +11,8 @@
     "./atoms/*": "./src/atoms/*.tsx",
     "./theme": "./src/theme/ThemeProvider.tsx",
     "./lib/cn": "./src/lib/cn.ts",
-    "./hooks/use-mobile": "./src/hooks/use-mobile.tsx"
+    "./hooks/use-mobile": "./src/hooks/use-mobile.tsx",
+    "./hooks/use-simulated-loading": "./src/hooks/use-simulated-loading.ts"
   },
   "files": [
     "src"

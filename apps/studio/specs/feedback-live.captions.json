@@ -1,0 +1,13 @@
+{
+  "spec": "feedback-live",
+  "captions": [
+    { "atStep": 0, "text": "Pulse Feedback — the team's open board", "holdMs": 2400 },
+    { "atStep": 4, "text": "Upvote what matters to you", "holdMs": 2200 },
+    { "atStep": 9, "text": "Post your own proposal", "holdMs": 2200 },
+    { "atStep": 13, "text": "Title — one line", "holdMs": 2000 },
+    { "atStep": 16, "text": "Why it matters, in your words", "holdMs": 2400 },
+    { "atStep": 19, "text": "Posted. Now the team weighs in.", "holdMs": 2600 },
+    { "atStep": 21, "text": "Replies arrive in real time", "holdMs": 2800 },
+    { "atStep": 24, "text": "From idea to thread in seconds", "holdMs": 2600 }
+  ]
+}

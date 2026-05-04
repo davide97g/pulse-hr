@@ -1,7 +1,41 @@
 @import "tailwindcss" source(none);
 @source "../src";
+@source "../../../packages/ui/src";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 @import "@pulse-hr/tokens/index.css";
+
+@layer utilities {
+  @keyframes authDotDrift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+      opacity: 0.55;
+    }
+    50% {
+      transform: translate3d(8px, -10px, 0);
+      opacity: 1;
+    }
+  }
+  .auth-dot-a {
+    animation: authDotDrift 5.6s ease-in-out infinite;
+  }
+  .auth-dot-b {
+    animation: authDotDrift 7.2s ease-in-out infinite;
+    animation-delay: -1.4s;
+  }
+  .auth-dot-c {
+    animation: authDotDrift 6.4s ease-in-out infinite;
+    animation-delay: -3.1s;
+  }
+  .auth-dot-d {
+    animation: authDotDrift 8.1s ease-in-out infinite;
+    animation-delay: -2.2s;
+  }
+  .auth-dot-e {
+    animation: authDotDrift 5.1s ease-in-out infinite;
+    animation-delay: -0.8s;
+  }
+}

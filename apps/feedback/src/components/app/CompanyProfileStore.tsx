@@ -5,6 +5,7 @@ import { apiFetch } from "@/lib/api-client";
 import {
   REASON_COMPANY_PROFILE,
   VOTING_POWER_BASELINE,
+  VOTING_POWER_QUESTIONNAIRE_GRANT,
   type CompanyProfile,
   type CompanyProfileDraft,
   type CompanySize,
@@ -28,6 +29,7 @@ interface ApiPower {
   userId: string;
   power: number;
   baseline: number;
+  lastRefillAt: string;
 }
 
 interface ApiEvent {
@@ -63,6 +65,13 @@ interface CompanyProfileContextValue {
     draft: CompanyProfileDraft,
   ) => Promise<{ ok: true } | { ok: false; errors: Record<string, string> }>;
   skipProfile: () => Promise<void>;
+  /**
+   * Optimistically nudge `power.power` by `delta` (positive = grant/refund,
+   * negative = charge), clamped at `baseline`. Used by vote buttons to keep
+   * the chip in sync without an extra round-trip; the server response is
+   * still the source of truth and reconciles via `setPowerFromServer`.
+   */
+  adjustPower: (delta: number) => void;
 }
 
 const CompanyProfileContext = createContext<CompanyProfileContextValue | null>(null);
@@ -72,6 +81,7 @@ function baselinePower(userId: string): VotingPower {
     userId,
     power: VOTING_POWER_BASELINE,
     baseline: VOTING_POWER_BASELINE,
+    lastRefillAt: new Date().toISOString(),
     history: [],
   };
 }
@@ -85,6 +95,7 @@ function toClientPower(power: ApiPower, history: ApiEvent[]): VotingPower {
     userId: power.userId,
     power: power.power,
     baseline: power.baseline,
+    lastRefillAt: power.lastRefillAt,
     history: history.map(toEntry),
   };
 }
@@ -166,13 +177,15 @@ export function CompanyProfileProvider({ children }: { children: ReactNode }) {
         return { ok: false, errors: localValidation.errors as Record<string, string> };
       }
 
-      // Optimistic update so the chip/banner update immediately.
+      // Optimistic update so the chip/banner update immediately. The
+      // questionnaire grant is +VOTING_POWER_QUESTIONNAIRE_GRANT (boost above
+      // baseline; weekly refill won't top this back up).
       const optimisticPower: VotingPower = {
         ...power,
-        power: power.baseline * 2,
+        power: power.power + VOTING_POWER_QUESTIONNAIRE_GRANT,
         history: [
           {
-            delta: power.baseline,
+            delta: VOTING_POWER_QUESTIONNAIRE_GRANT,
             reason: REASON_COMPANY_PROFILE,
             at: new Date().toISOString(),
           },
@@ -249,6 +262,13 @@ export function CompanyProfileProvider({ children }: { children: ReactNode }) {
     }
   }, [getToken, isSignedIn, userId]);
 
+  const adjustPower = useCallback((delta: number) => {
+    setPower((prev) => ({
+      ...prev,
+      power: Math.max(0, prev.power + delta),
+    }));
+  }, []);
+
   const value = useMemo<CompanyProfileContextValue>(
     () => ({
       currentUserId: userId,
@@ -257,8 +277,9 @@ export function CompanyProfileProvider({ children }: { children: ReactNode }) {
       loading,
       submitProfile,
       skipProfile,
+      adjustPower,
     }),
-    [userId, profile, power, loading, submitProfile, skipProfile],
+    [userId, profile, power, loading, submitProfile, skipProfile, adjustPower],
   );
 
   return <CompanyProfileContext.Provider value={value}>{children}</CompanyProfileContext.Provider>;

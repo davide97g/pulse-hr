@@ -8,13 +8,12 @@ interface Props {
   title: string;
   description: string;
   path: string;
-  keywords?: string;
   /** Breadcrumb tail (after Home → Docs). Pass the current page's `{ name, path }`. */
   crumb?: { name: string; path: string };
   extraLd?: Record<string, unknown>[];
 }
 
-const { title, description, path, keywords, crumb, extraLd } = Astro.props;
+const { title, description, path, crumb, extraLd } = Astro.props;
 
 const CRUMB_LABELS: Record<string, string> = {
   "/docs/employee-score": "Employee Score",
@@ -47,7 +46,7 @@ const TOPICS = [
 const current = path.replace(/\/$/, "") || "/";
 ---
 
-<BaseLayout {title} {description} {path} keywords={keywords ?? "Pulse HR docs, documentation, employee score, saturation, integrations, kudos"} {breadcrumbs} {extraLd}>
+<BaseLayout {title} {description} {path} {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main" class="max-w-[1280px] mx-auto px-6 py-12 md:py-16">
     <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">

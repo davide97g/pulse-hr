@@ -1,3 +1,5 @@
+import { computeRecap } from "./log-recap";
+
 export type EmployeeStatus = "active" | "on_leave" | "remote" | "offboarding";
 export type Role = "Admin" | "HR Manager" | "Manager" | "Employee";
 
@@ -90,7 +92,7 @@ const raw: Omit<Employee, "avatarColor" | "initials">[] = [
     id: "e5",
     name: "Lina Rossi",
     email: "lina.r@acme.co",
-    role: "Payroll Specialist",
+    role: "Finance Specialist",
     department: "Finance",
     location: "Milan",
     status: "active",
@@ -460,6 +462,14 @@ export function __setExpenses(next: Expense[]) {
   expenses = next;
 }
 
+export interface Scorecard {
+  id: string;
+  title: string;
+  criteria: string;
+  score: number;
+  createdAt: string;
+}
+
 export interface Candidate {
   id: string;
   name: string;
@@ -469,6 +479,7 @@ export interface Candidate {
   avatarColor: string;
   appliedDate: string;
   rating: number;
+  scorecards?: Scorecard[];
 }
 const cnames = [
   ["Emma Wilson", "Senior Engineer"],
@@ -621,6 +632,16 @@ export interface ManagerAsk {
   tone?: "neutral" | "empathetic" | "probing";
 }
 
+export interface RecapDailyMean {
+  date: string;
+  overall: number;
+  energy: number;
+  stress: number;
+  engagement: number;
+  alignment: number;
+  count: number;
+}
+
 export interface EmployeeLogHealth {
   employeeId: string;
   score: number; // 0..100
@@ -631,6 +652,16 @@ export interface EmployeeLogHealth {
   recap: string; // 1-2 sentence AI mock, manager-safe
   recapUpdatedAt: string;
   sparkline: number[]; // 14 daily sentiment ticks, -1..+1
+  recapTopics: { topic: LogTopic; count: number }[];
+  dimensions: {
+    energy: number;
+    stress: number;
+    engagement: number;
+    alignment: number;
+    overall: number;
+  };
+  dailyMeans: RecapDailyMean[]; // 14 entries, oldest -> newest
+  messageCount: number;
 }
 
 function lcg(seed: number) {
@@ -654,7 +685,7 @@ function iso(daysAgo: number, hour = 9) {
 const SAMPLE_EMP_LINES = [
   "Shipped the pricing page ahead of the sprint goal.",
   "Blocked on the legal review for the ACME contract.",
-  "Spent the morning debugging a flaky export in payroll.",
+  "Spent the morning debugging a flaky CSV export.",
   "Pairing session with Luca helped me unstick the onboarding flow.",
   "Feeling stretched thin — three clients active at once.",
   "Client demo went well, they want to scope phase 2.",
@@ -748,8 +779,8 @@ export let managerAsks: ManagerAsk[] = [
     id: "ma-3",
     managerId: employees[0].id,
     employeeId: employees[2].id,
-    topic: "Internal project — payroll v2",
-    prompt: "Quick read on the payroll v2 kickoff — risks you see, wins so far?",
+    topic: "Internal project — billing v2",
+    prompt: "Quick read on the billing v2 kickoff — risks you see, wins so far?",
     createdAt: iso(4),
     answeredAt: iso(2),
     answerSummary: "Confident on scope; worried about QA capacity. Wants a week buffer.",
@@ -769,26 +800,23 @@ export let managerAsks: ManagerAsk[] = [
   },
 ];
 
-export const employeeLogHealth: EmployeeLogHealth[] = employees.map((e, i) => {
-  const rand = lcg(200 + i);
-  const score = Math.round(55 + rand() * 45);
-  const trend: EmployeeLogHealth["trend"] = score > 78 ? "up" : score < 60 ? "down" : "flat";
-  const days = Math.floor(rand() * 8);
+export const employeeLogHealth: EmployeeLogHealth[] = employees.map((e) => {
+  const empMsgs = logMessages.filter((m) => m.employeeId === e.id);
+  const recap = computeRecap(e.name, empMsgs);
   return {
     employeeId: e.id,
-    score,
-    trend,
-    lastLogAt: iso(days),
-    lastSentiment: SENTIMENTS[Math.floor(rand() * SENTIMENTS.length)],
+    score: recap.score,
+    trend: recap.trend,
+    lastLogAt: recap.lastLogAt,
+    lastSentiment: recap.lastSentiment,
     openAsks: managerAsks.filter((a) => a.employeeId === e.id && a.status === "pending").length,
-    recap:
-      score > 78
-        ? `${e.name.split(" ")[0]} is shipping consistently and flagging risks early.`
-        : score < 60
-          ? `${e.name.split(" ")[0]} is signalling overload — two pain points in the last week.`
-          : `${e.name.split(" ")[0]} is steady; mix of wins and minor blockers.`,
-    recapUpdatedAt: iso(0, 7),
-    sparkline: Array.from({ length: 14 }, () => Math.round((rand() * 2 - 1) * 100) / 100),
+    recap: recap.summary,
+    recapUpdatedAt: recap.recapUpdatedAt,
+    sparkline: recap.sparkline,
+    recapTopics: recap.topics,
+    dimensions: recap.dimensions,
+    dailyMeans: recap.dailyMeans,
+    messageCount: recap.messageCount,
   };
 });
 
@@ -909,7 +937,7 @@ export let kudosSeed: Kudo[] = [
     amount: 15,
     tag: "kindness",
     date: "2026-04-12",
-    message: "Thanks for catching the payroll discrepancy before it shipped.",
+    message: "Thanks for catching the invoice discrepancy before it shipped.",
   },
 
   // ── this month (March 18 – April 11) ────────────────────────────────
@@ -1064,7 +1092,7 @@ export let kudosSeed: Kudo[] = [
     amount: 20,
     tag: "craft",
     date: "2026-03-24",
-    message: "Payroll close documentation is gorgeous.",
+    message: "Month-end close documentation is gorgeous.",
   },
   {
     id: "kd30",
@@ -1291,7 +1319,7 @@ export let kudosSeed: Kudo[] = [
     amount: 15,
     tag: "craft",
     date: "2026-01-24",
-    message: "Payroll audit tooling is sharper than what I've seen at bigger cos.",
+    message: "Audit tooling is sharper than what I've seen at bigger cos.",
   },
   {
     id: "kd55",
@@ -1835,7 +1863,7 @@ export let onboardingWorkflows: OnboardingWorkflow[] = [
         category: "Access",
       },
       { id: "t3", label: "Return laptop", done: false, owner: "Greg Holland", category: "Access" },
-      { id: "t4", label: "Final payroll", done: false, owner: "Lina Rossi", category: "Paperwork" },
+      { id: "t4", label: "Final settlement", done: false, owner: "Lina Rossi", category: "Paperwork" },
     ],
   },
 ];
@@ -1848,6 +1876,7 @@ export interface Doc {
   updated: string;
   status: "approved" | "pending" | "draft";
   owner: string;
+  esignStatus?: "none" | "requested" | "signed";
 }
 export let docsSeed: Doc[] = [
   {
@@ -1969,8 +1998,8 @@ export let webhooksSeed: Webhook[] = [
   },
   {
     id: "w3",
-    url: "https://internal.acme.co/payroll",
-    events: ["payroll.completed"],
+    url: "https://internal.acme.co/expenses",
+    events: ["expense.approved"],
     status: "pending",
     deliveries: 0,
   },
@@ -2006,7 +2035,7 @@ export let rolesSeed: RoleRecord[] = [
   {
     id: "r2",
     name: "HR Manager",
-    desc: "Manage employees, payroll, and reports",
+    desc: "Manage employees, expenses, and reports",
     count: 3,
     color: "oklch(0.6 0.16 220)",
   },
@@ -2044,7 +2073,7 @@ export let auditLogSeed: AuditEntry[] = [
   {
     id: "a2",
     who: "Lina Rossi",
-    what: "ran payroll for March 2026",
+    what: "closed the books for March 2026",
     when: "Yesterday",
     severity: "info",
   },
@@ -2105,8 +2134,8 @@ export let notifications: Notification[] = [
   },
   {
     id: "n3",
-    title: "Payroll run scheduled",
-    desc: "April 2026 run will execute Apr 30",
+    title: "Month-end close scheduled",
+    desc: "April 2026 close will execute Apr 30",
     time: "3h ago",
     type: "info",
     unread: true,
@@ -2174,6 +2203,14 @@ export type AllocationType = "dev" | "design" | "pm" | "qa" | "ops" | "consult";
 export type ProjectStatus = "active" | "on_hold" | "closed" | "at_risk" | "done" | "draft";
 export type ActivityStatus = "todo" | "in_progress" | "review" | "done" | "blocked";
 
+export interface ClientContact {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role?: string;
+}
+
 export interface Client {
   id: string;
   name: string;
@@ -2181,13 +2218,16 @@ export interface Client {
   accountOwnerId: string;
   healthScore: number;
   billingCurrency: "EUR" | "USD" | "GBP";
-  contactName: string;
-  contactEmail: string;
+  contacts: ClientContact[];
+  primaryContactId: string | null;
   website?: string;
   notes?: string;
   createdAt: string;
   colorToken: string;
 }
+
+export const primaryContact = (c: Client | undefined): ClientContact | undefined =>
+  c ? c.contacts.find((x) => x.id === c.primaryContactId) ?? c.contacts[0] : undefined;
 
 export let clients: Client[] = [
   {
@@ -2197,8 +2237,18 @@ export let clients: Client[] = [
     accountOwnerId: "e1",
     healthScore: 82,
     billingCurrency: "EUR",
-    contactName: "Rachel Morton",
-    contactEmail: "rachel@acme.test",
+    contacts: [
+      {
+        id: "cl1-cn1",
+        name: "Rachel Morton",
+        email: "rachel@acme.test",
+        role: "VP Engineering",
+        phone: "+1 415 555 0142",
+      },
+      { id: "cl1-cn2", name: "Daniel Park", email: "daniel.park@acme.test", role: "Procurement" },
+      { id: "cl1-cn3", name: "Mara Liu", email: "mara@acme.test", role: "Tech lead" },
+    ],
+    primaryContactId: "cl1-cn1",
     website: "acme.test",
     notes: "Platform rebuild flagship account — quarterly steerco.",
     createdAt: "2024-09-10",
@@ -2211,8 +2261,11 @@ export let clients: Client[] = [
     accountOwnerId: "e7",
     healthScore: 71,
     billingCurrency: "EUR",
-    contactName: "Diego Romero",
-    contactEmail: "diego@novaretail.test",
+    contacts: [
+      { id: "cl2-cn1", name: "Diego Romero", email: "diego@novaretail.test", role: "CDO" },
+      { id: "cl2-cn2", name: "Sara Bianchi", email: "sara.b@novaretail.test", role: "Product" },
+    ],
+    primaryContactId: "cl2-cn1",
     website: "novaretail.test",
     notes: "Mobile-first onboarding program.",
     createdAt: "2025-01-18",
@@ -2225,8 +2278,10 @@ export let clients: Client[] = [
     accountOwnerId: "e2",
     healthScore: 88,
     billingCurrency: "EUR",
-    contactName: "Sophie Blanco",
-    contactEmail: "sophie@blanco.test",
+    contacts: [
+      { id: "cl3-cn1", name: "Sophie Blanco", email: "sophie@blanco.test", role: "Founder" },
+    ],
+    primaryContactId: "cl3-cn1",
     website: "blanco.test",
     notes: "Design system partnership.",
     createdAt: "2024-11-02",
@@ -2239,8 +2294,8 @@ export let clients: Client[] = [
     accountOwnerId: "e3",
     healthScore: 95,
     billingCurrency: "EUR",
-    contactName: "Aisha Patel",
-    contactEmail: "aisha.p@acme.co",
+    contacts: [{ id: "cl4-cn1", name: "Aisha Patel", email: "aisha.p@acme.co", role: "Head of HR" }],
+    primaryContactId: "cl4-cn1",
     website: undefined,
     notes: "Internal tooling — no external billing.",
     createdAt: "2024-01-01",
@@ -2253,8 +2308,11 @@ export let clients: Client[] = [
     accountOwnerId: "e4",
     healthScore: 48,
     billingCurrency: "EUR",
-    contactName: "Marco Longo",
-    contactEmail: "m.longo@longo.test",
+    contacts: [
+      { id: "cl5-cn1", name: "Marco Longo", email: "m.longo@longo.test", role: "CEO" },
+      { id: "cl5-cn2", name: "Elena Conti", email: "elena.conti@longo.test", role: "IT Manager" },
+    ],
+    primaryContactId: "cl5-cn1",
     website: "longo.test",
     notes: "Legacy migration — currently on hold pending budget renewal.",
     createdAt: "2023-08-22",
@@ -2267,8 +2325,11 @@ export let clients: Client[] = [
     accountOwnerId: "e10",
     healthScore: 77,
     billingCurrency: "EUR",
-    contactName: "Eleanor Wick",
-    contactEmail: "eleanor@zenith.test",
+    contacts: [
+      { id: "cl6-cn1", name: "Eleanor Wick", email: "eleanor@zenith.test", role: "VP Data" },
+      { id: "cl6-cn2", name: "Hassan Ali", email: "hassan@zenith.test", role: "Data Engineer" },
+    ],
+    primaryContactId: "cl6-cn1",
     website: "zenith.test",
     notes: "Analytics program — expanding scope to forecasting in Q3.",
     createdAt: "2025-02-14",
@@ -2279,7 +2340,7 @@ export let clients: Client[] = [
 export const clientById = (id: string) => clients.find((c) => c.id === id);
 
 /**
- * Commessa = Project. The legacy name `Commessa` is kept because Time/Focus/Forecast
+ * Commessa = Project. The legacy name `Commessa` is kept because Time and Focus
  * routes already reference it; the new Clients/Projects feature treats each commessa
  * as a project with a `clientId` FK and extended PM metadata.
  */
@@ -2300,6 +2361,8 @@ export interface Commessa {
   defaultBillableRate: number; // €/h
   tags: string[];
   externalLinks: { provider: IntegrationProvider; key: string; url: string }[];
+  /** Client contact treated as the project's reference person. Must belong to clientId. */
+  referenceContactId: string | null;
 }
 
 export type Project = Commessa;
@@ -2322,6 +2385,7 @@ export let commesse: Commessa[] = [
     defaultBillableRate: 145,
     tags: ["platform", "backend"],
     externalLinks: [{ provider: "jira", key: "ACME-18", url: "https://jira.test/ACME-18" }],
+    referenceContactId: "cl1-cn1",
   },
   {
     id: "cm2",
@@ -2340,6 +2404,7 @@ export let commesse: Commessa[] = [
     defaultBillableRate: 130,
     tags: ["mobile", "ux"],
     externalLinks: [{ provider: "linear", key: "NOV-3", url: "https://linear.test/NOV-3" }],
+    referenceContactId: "cl2-cn1",
   },
   {
     id: "cm3",
@@ -2358,6 +2423,7 @@ export let commesse: Commessa[] = [
     defaultBillableRate: 120,
     tags: ["design", "tokens"],
     externalLinks: [],
+    referenceContactId: "cl3-cn1",
   },
   {
     id: "cm4",
@@ -2376,6 +2442,7 @@ export let commesse: Commessa[] = [
     defaultBillableRate: 0,
     tags: ["internal"],
     externalLinks: [],
+    referenceContactId: "cl4-cn1",
   },
   {
     id: "cm5",
@@ -2394,6 +2461,7 @@ export let commesse: Commessa[] = [
     defaultBillableRate: 110,
     tags: ["legacy", "migration"],
     externalLinks: [{ provider: "jira", key: "LGO-42", url: "https://jira.test/LGO-42" }],
+    referenceContactId: "cl5-cn1",
   },
   {
     id: "cm6",
@@ -2412,6 +2480,7 @@ export let commesse: Commessa[] = [
     defaultBillableRate: 135,
     tags: ["analytics", "data"],
     externalLinks: [],
+    referenceContactId: "cl6-cn1",
   },
 ];
 
@@ -2619,15 +2688,204 @@ export let allocations: Allocation[] = [
   },
 ];
 
-export interface Activity {
+export interface PlanContactRef {
+  id: string;
+  /** Either reference an existing client contact, or hold an ad-hoc embedded one. */
+  kind: "client" | "adhoc";
+  /** Set when kind === "client" — points at ClientContact.id */
+  clientContactId?: string;
+  /** Set when kind === "adhoc" */
+  name?: string;
+  email?: string;
+  role?: string;
+  phone?: string;
+}
+
+export interface PlanTeamMember {
+  employeeId: string;
+  /** Free text role on this plan (Tech Lead, QA, ...). */
+  role: string;
+}
+
+export interface PlanDoc {
+  id: string;
+  label: string;
+  url: string;
+}
+
+export interface PlanFaqEntry {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+export type PlanStatus = "draft" | "active" | "on_hold" | "done";
+
+export interface Plan {
   id: string;
   projectId: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  status: PlanStatus;
+  team: PlanTeamMember[];
+  contacts: PlanContactRef[];
+  docs: PlanDoc[];
+  faq: PlanFaqEntry[];
+  createdAt: string;
+  order: number;
+}
+
+/** One default plan per seeded project — covers full project window. */
+export let plans: Plan[] = [
+  {
+    id: "pl-cm1",
+    projectId: "cm1",
+    name: "Default plan",
+    description:
+      "Migration program covering API contracts, dry-run, rollback plan and cutover scheduling.",
+    startDate: "2025-10-01",
+    endDate: "2026-06-30",
+    status: "active",
+    team: [
+      { employeeId: "e1", role: "Tech lead" },
+      { employeeId: "e9", role: "Senior engineer" },
+      { employeeId: "e4", role: "Engineer" },
+      { employeeId: "e11", role: "Ops" },
+    ],
+    contacts: [{ id: "pl-cm1-c1", kind: "client", clientContactId: "cl1-cn1" }],
+    docs: [
+      {
+        id: "pl-cm1-d1",
+        label: "Migration runbook",
+        url: "https://docs.test/acme/migration-runbook",
+      },
+      { id: "pl-cm1-d2", label: "API contract", url: "https://docs.test/acme/api-contract" },
+    ],
+    faq: [
+      {
+        id: "pl-cm1-f1",
+        question: "What is the rollback strategy?",
+        answer: "Per-service feature flag plus a 1-hour DB snapshot window.",
+      },
+    ],
+    createdAt: "2025-10-01",
+    order: 1,
+  },
+  {
+    id: "pl-cm2",
+    projectId: "cm2",
+    name: "Default plan",
+    description: "Mobile onboarding research, prototype, and launch.",
+    startDate: "2026-02-01",
+    endDate: "2026-07-15",
+    status: "active",
+    team: [
+      { employeeId: "e7", role: "Project manager" },
+      { employeeId: "e2", role: "Designer" },
+      { employeeId: "e9", role: "Engineer" },
+      { employeeId: "e8", role: "QA" },
+    ],
+    contacts: [{ id: "pl-cm2-c1", kind: "client", clientContactId: "cl2-cn1" }],
+    docs: [],
+    faq: [],
+    createdAt: "2026-02-01",
+    order: 1,
+  },
+  {
+    id: "pl-cm3",
+    projectId: "cm3",
+    name: "Default plan",
+    description: "Token migration, component library audit and docs refresh.",
+    startDate: "2025-12-01",
+    endDate: "2026-05-15",
+    status: "active",
+    team: [
+      { employeeId: "e2", role: "Lead designer" },
+      { employeeId: "e1", role: "Consult" },
+    ],
+    contacts: [{ id: "pl-cm3-c1", kind: "client", clientContactId: "cl3-cn1" }],
+    docs: [],
+    faq: [],
+    createdAt: "2025-12-01",
+    order: 1,
+  },
+  {
+    id: "pl-cm4",
+    projectId: "cm4",
+    name: "Default plan",
+    description: "Internal HR tooling — leave + expense workflows.",
+    startDate: "2026-01-15",
+    endDate: "2026-09-30",
+    status: "active",
+    team: [
+      { employeeId: "e3", role: "Project manager" },
+      { employeeId: "e8", role: "QA" },
+    ],
+    contacts: [{ id: "pl-cm4-c1", kind: "client", clientContactId: "cl4-cn1" }],
+    docs: [],
+    faq: [],
+    createdAt: "2026-01-15",
+    order: 1,
+  },
+  {
+    id: "pl-cm5",
+    projectId: "cm5",
+    name: "Default plan",
+    description: "Legacy migration — paused pending budget renewal.",
+    startDate: "2024-09-01",
+    endDate: "2026-03-31",
+    status: "on_hold",
+    team: [{ employeeId: "e4", role: "Engineer" }],
+    contacts: [{ id: "pl-cm5-c1", kind: "client", clientContactId: "cl5-cn1" }],
+    docs: [],
+    faq: [],
+    createdAt: "2024-09-01",
+    order: 1,
+  },
+  {
+    id: "pl-cm6",
+    projectId: "cm6",
+    name: "Default plan",
+    description: "Analytics ingestion, dashboards, ETL and exec reporting.",
+    startDate: "2026-03-01",
+    endDate: "2026-10-31",
+    status: "active",
+    team: [
+      { employeeId: "e10", role: "Lead engineer" },
+      { employeeId: "e12", role: "Designer" },
+      { employeeId: "e7", role: "Project manager" },
+      { employeeId: "e1", role: "Consult" },
+    ],
+    contacts: [{ id: "pl-cm6-c1", kind: "client", clientContactId: "cl6-cn1" }],
+    docs: [{ id: "pl-cm6-d1", label: "Schema sketch", url: "https://docs.test/zenith/schema" }],
+    faq: [],
+    createdAt: "2026-03-01",
+    order: 1,
+  },
+];
+
+export const planById = (id: string) => plans.find((p) => p.id === id);
+export const plansForProject = (projectId: string) =>
+  plans.filter((p) => p.projectId === projectId).sort((a, b) => a.order - b.order);
+export const defaultPlanIdForProject = (projectId: string): string => {
+  const list = plansForProject(projectId);
+  return list[0]?.id ?? "";
+};
+
+export interface Activity {
+  id: string;
+  /** Plan the activity belongs to. The owning project is `plan.projectId`. */
+  planId: string;
   title: string;
   description?: string;
   status: ActivityStatus;
   assigneeId?: string;
   startDate?: string;
   endDate?: string;
+  /** Effort estimate in hours — used by the capacity check. */
+  estimateHours: number;
   dependencies: string[];
   ticketLink?: { provider: IntegrationProvider; key: string; url: string };
   order: number;
@@ -2637,75 +2895,81 @@ export let activities: Activity[] = [
   // cm1
   {
     id: "ac1",
-    projectId: "cm1",
+    planId: "pl-cm1",
     title: "Finalise API contract",
     description: "REST + GraphQL surfaces, auth layer agreed with client.",
     status: "done",
     assigneeId: "e1",
     startDate: "2026-03-02",
     endDate: "2026-03-20",
+    estimateHours: 8,
     dependencies: [],
     ticketLink: { provider: "jira", key: "ACME-21", url: "https://jira.test/ACME-21" },
     order: 1,
   },
   {
     id: "ac2",
-    projectId: "cm1",
+    planId: "pl-cm1",
     title: "Migration dry-run on staging",
     description: "End-to-end smoke test with production data volumes.",
     status: "in_progress",
     assigneeId: "e9",
     startDate: "2026-04-01",
     endDate: "2026-04-25",
+    estimateHours: 8,
     dependencies: ["ac1"],
     ticketLink: { provider: "jira", key: "ACME-22", url: "https://jira.test/ACME-22" },
     order: 1,
   },
   {
     id: "ac3",
-    projectId: "cm1",
+    planId: "pl-cm1",
     title: "Rollback plan sign-off",
     description: "DR runbook + legal review.",
     status: "review",
     assigneeId: "e4",
     startDate: "2026-04-10",
     endDate: "2026-04-22",
+    estimateHours: 8,
     dependencies: ["ac1"],
     order: 1,
   },
   {
     id: "ac4",
-    projectId: "cm1",
+    planId: "pl-cm1",
     title: "Cutover window scheduling",
     description: "Coordinate with Acme ops + support.",
     status: "todo",
     assigneeId: "e1",
     startDate: "2026-05-01",
     endDate: "2026-05-10",
+    estimateHours: 8,
     dependencies: ["ac2", "ac3"],
     order: 1,
   },
   {
     id: "ac5",
-    projectId: "cm1",
+    planId: "pl-cm1",
     title: "Post-cutover monitoring",
     description: "24×7 rota for first week after go-live.",
     status: "todo",
     assigneeId: "e11",
     startDate: "2026-05-11",
     endDate: "2026-05-25",
+    estimateHours: 8,
     dependencies: ["ac4"],
     order: 2,
   },
   {
     id: "ac6",
-    projectId: "cm1",
+    planId: "pl-cm1",
     title: "Launch comms pack",
     description: "Marketing + internal announcement.",
     status: "blocked",
     assigneeId: "e12",
     startDate: "2026-05-05",
     endDate: "2026-05-18",
+    estimateHours: 8,
     dependencies: ["ac4"],
     ticketLink: { provider: "linear", key: "NOV-9", url: "https://linear.test/NOV-9" },
     order: 1,
@@ -2713,163 +2977,176 @@ export let activities: Activity[] = [
   // cm2
   {
     id: "ac7",
-    projectId: "cm2",
+    planId: "pl-cm2",
     title: "Onboarding UX research",
     description: "User interviews + competitor teardown.",
     status: "done",
     assigneeId: "e7",
     startDate: "2026-02-10",
     endDate: "2026-03-05",
+    estimateHours: 8,
     dependencies: [],
     order: 1,
   },
   {
     id: "ac8",
-    projectId: "cm2",
+    planId: "pl-cm2",
     title: "Sign-up flow prototype",
     description: "Hi-fi Figma with variants.",
     status: "in_progress",
     assigneeId: "e2",
     startDate: "2026-03-05",
     endDate: "2026-04-20",
+    estimateHours: 8,
     dependencies: ["ac7"],
     ticketLink: { provider: "linear", key: "NOV-11", url: "https://linear.test/NOV-11" },
     order: 1,
   },
   {
     id: "ac9",
-    projectId: "cm2",
+    planId: "pl-cm2",
     title: "Auth API integration",
     description: "OTP + social.",
     status: "todo",
     assigneeId: "e9",
     startDate: "2026-04-20",
     endDate: "2026-05-20",
+    estimateHours: 8,
     dependencies: ["ac8"],
     ticketLink: { provider: "linear", key: "NOV-14", url: "https://linear.test/NOV-14" },
     order: 1,
   },
   {
     id: "ac10",
-    projectId: "cm2",
+    planId: "pl-cm2",
     title: "QA + accessibility audit",
     description: "Screen reader, contrast, tap targets.",
     status: "todo",
     assigneeId: "e8",
     startDate: "2026-05-20",
     endDate: "2026-06-15",
+    estimateHours: 8,
     dependencies: ["ac9"],
     order: 2,
   },
   // cm3
   {
     id: "ac11",
-    projectId: "cm3",
+    planId: "pl-cm3",
     title: "Token migration",
     description: "Move from SCSS vars to oklch CSS variables.",
     status: "review",
     assigneeId: "e2",
     startDate: "2026-02-01",
     endDate: "2026-04-10",
+    estimateHours: 8,
     dependencies: [],
     order: 1,
   },
   {
     id: "ac12",
-    projectId: "cm3",
+    planId: "pl-cm3",
     title: "Component library audit",
     description: "Button/Input/Card parity with Figma.",
     status: "in_progress",
     assigneeId: "e2",
     startDate: "2026-03-01",
     endDate: "2026-05-01",
+    estimateHours: 8,
     dependencies: [],
     order: 2,
   },
   {
     id: "ac13",
-    projectId: "cm3",
+    planId: "pl-cm3",
     title: "Docs site refresh",
     description: "New IA + search.",
     status: "todo",
     assigneeId: "e1",
     startDate: "2026-04-15",
     endDate: "2026-05-15",
+    estimateHours: 8,
     dependencies: ["ac12"],
     order: 1,
   },
   // cm4
   {
     id: "ac14",
-    projectId: "cm4",
+    planId: "pl-cm4",
     title: "Leave policy engine",
     description: "Rule engine powering the leave tab.",
     status: "done",
     assigneeId: "e3",
     startDate: "2026-01-20",
     endDate: "2026-03-01",
+    estimateHours: 8,
     dependencies: [],
     order: 1,
   },
   {
     id: "ac15",
-    projectId: "cm4",
-    title: "Payroll approval workflow",
+    planId: "pl-cm4",
+    title: "Expense approval workflow",
     description: "Multi-step approval with audit log.",
     status: "in_progress",
     assigneeId: "e3",
     startDate: "2026-03-01",
     endDate: "2026-05-15",
+    estimateHours: 8,
     dependencies: ["ac14"],
     order: 1,
   },
   // cm6
   {
     id: "ac16",
-    projectId: "cm6",
+    planId: "pl-cm6",
     title: "Ingestion spike",
     description: "Assess throughput + schema evolution.",
     status: "done",
     assigneeId: "e10",
     startDate: "2026-03-05",
     endDate: "2026-03-25",
+    estimateHours: 8,
     dependencies: [],
     order: 1,
   },
   {
     id: "ac17",
-    projectId: "cm6",
+    planId: "pl-cm6",
     title: "Dashboard wireframes",
     description: "Five primary boards.",
     status: "in_progress",
     assigneeId: "e12",
     startDate: "2026-04-01",
     endDate: "2026-05-10",
+    estimateHours: 8,
     dependencies: ["ac16"],
     order: 1,
   },
   {
     id: "ac18",
-    projectId: "cm6",
+    planId: "pl-cm6",
     title: "ETL pipeline v1",
     description: "Airflow DAGs + monitoring.",
     status: "todo",
     assigneeId: "e10",
     startDate: "2026-05-10",
     endDate: "2026-07-10",
+    estimateHours: 8,
     dependencies: ["ac16"],
     ticketLink: { provider: "jira", key: "ZNE-3", url: "https://jira.test/ZNE-3" },
     order: 2,
   },
   {
     id: "ac19",
-    projectId: "cm6",
+    planId: "pl-cm6",
     title: "Exec-level reporting",
     description: "Quarterly rollups.",
     status: "todo",
     assigneeId: "e10",
     startDate: "2026-07-10",
     endDate: "2026-09-01",
+    estimateHours: 8,
     dependencies: ["ac18"],
     order: 3,
   },
@@ -3907,7 +4184,7 @@ export const plugins = [
   {
     id: "pg3",
     name: "QuickBooks",
-    desc: "Push payroll journal entries automatically.",
+    desc: "Push expense journal entries automatically.",
     category: "Accounting",
     installed: false,
     icon: "📊",
@@ -4136,6 +4413,9 @@ export function __setAllocations(n: Allocation[]) {
 }
 export function __setActivities(n: Activity[]) {
   activities = n;
+}
+export function __setPlans(n: Plan[]) {
+  plans = n;
 }
 export function __setMockCalendarEvents(n: CalendarEvent[]) {
   mockCalendarEvents = n;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,7 @@ import { Button } from "@pulse-hr/ui/primitives/button";
 import { Input } from "@pulse-hr/ui/primitives/input";
 import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import { Label } from "@pulse-hr/ui/primitives/label";
+import { AlertTriangle } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -19,10 +20,18 @@ import {
 } from "@pulse-hr/ui/primitives/select";
 import {
   employees,
+  employeeById,
+  planById,
   type Activity,
   type ActivityStatus,
   type IntegrationProvider,
+  type Plan,
 } from "@/lib/mock-data";
+import { useAllocations } from "@/lib/tables/allocations";
+import { useActivities } from "@/lib/tables/activities";
+import { usePlans } from "@/lib/tables/plans";
+import { employeeCapacityRow } from "@/lib/capacity";
+import { cn } from "@/lib/utils";
 
 const STATUSES: ActivityStatus[] = ["todo", "in_progress", "review", "done", "blocked"];
 
@@ -31,23 +40,66 @@ export function ActivityDialog({
   onClose,
   onSave,
   initial,
-  projectId,
+  planId,
   defaultStatus,
 }: {
   open: boolean;
   onClose: () => void;
   onSave: (a: Activity) => void;
   initial: Activity | null;
-  projectId: string;
+  planId: string;
   defaultStatus?: ActivityStatus;
 }) {
-  const [draft, setDraft] = useState<Activity>(() => blankActivity(projectId, defaultStatus));
+  const allocations = useAllocations();
+  const activities = useActivities();
+  const plans = usePlans();
+
+  const plan: Plan | undefined = useMemo(
+    () => plans.find((p) => p.id === planId) ?? planById(planId),
+    [plans, planId],
+  );
+
+  const [draft, setDraft] = useState<Activity>(() => blankActivity(planId, defaultStatus, plan));
   useEffect(() => {
-    if (open) setDraft(initial ?? blankActivity(projectId, defaultStatus));
-  }, [open, initial, projectId, defaultStatus]);
+    if (open) setDraft(initial ?? blankActivity(planId, defaultStatus, plan));
+  }, [open, initial, planId, defaultStatus, plan]);
 
   const set = <K extends keyof Activity>(k: K, v: Activity[K]) =>
     setDraft((d) => ({ ...d, [k]: v }));
+
+  // Pool of candidate assignees: employees who have any allocation on this project
+  const candidatePool = useMemo(() => {
+    if (!plan) return employees;
+    const allocated = new Set(
+      allocations.filter((a) => a.projectId === plan.projectId).map((a) => a.employeeId),
+    );
+    return employees.filter((e) => allocated.has(e.id) || e.id === draft.assigneeId);
+  }, [plan, allocations, draft.assigneeId]);
+
+  const windowStart = draft.startDate || plan?.startDate || "";
+  const windowEnd = draft.endDate || plan?.endDate || "";
+
+  const capByEmployee = useMemo(() => {
+    if (!plan || !windowStart || !windowEnd) return new Map<string, ReturnType<typeof employeeCapacityRow>>();
+    const map = new Map<string, ReturnType<typeof employeeCapacityRow>>();
+    for (const e of candidatePool) {
+      map.set(
+        e.id,
+        employeeCapacityRow(e.id, plan.projectId, windowStart, windowEnd, {
+          excludeActivityId: initial?.id,
+          activities,
+          plans,
+          allocations,
+        }),
+      );
+    }
+    return map;
+  }, [plan, candidatePool, windowStart, windowEnd, activities, plans, allocations, initial?.id]);
+
+  const selectedRow = draft.assigneeId ? capByEmployee.get(draft.assigneeId) : null;
+  const newAssignedHours = (selectedRow?.assignedHours ?? 0) + draft.estimateHours;
+  const overAlloc = selectedRow ? newAssignedHours > selectedRow.capacityHours : false;
+  const overByHours = selectedRow ? newAssignedHours - selectedRow.capacityHours : 0;
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -76,19 +128,35 @@ export function ActivityDialog({
             <div className="grid gap-1.5">
               <Label>Assignee</Label>
               <Select
-                value={draft.assigneeId ?? ""}
-                onValueChange={(v) => set("assigneeId", v || undefined)}
+                value={draft.assigneeId ?? "__none"}
+                onValueChange={(v) => set("assigneeId", v === "__none" ? undefined : v)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Unassigned" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__none">Unassigned</SelectItem>
-                  {employees.map((e) => (
-                    <SelectItem key={e.id} value={e.id}>
-                      {e.name}
-                    </SelectItem>
-                  ))}
+                  {candidatePool.map((e) => {
+                    const row = capByEmployee.get(e.id);
+                    const remainder = row ? row.capacityHours - row.assignedHours : null;
+                    return (
+                      <SelectItem key={e.id} value={e.id}>
+                        <span className="flex items-center justify-between gap-3 w-full">
+                          <span>{e.name}</span>
+                          {remainder !== null && (
+                            <span
+                              className={cn(
+                                "text-[10px] tabular-nums",
+                                remainder < 0 ? "text-destructive" : "text-muted-foreground",
+                              )}
+                            >
+                              {remainder.toFixed(0)}h left
+                            </span>
+                          )}
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -111,7 +179,7 @@ export function ActivityDialog({
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <div className="grid gap-1.5">
               <Label>Start</Label>
               <Input
@@ -128,7 +196,42 @@ export function ActivityDialog({
                 onChange={(e) => set("endDate", e.target.value || undefined)}
               />
             </div>
+            <div className="grid gap-1.5">
+              <Label>Estimate (h)</Label>
+              <Input
+                type="number"
+                min={0}
+                step={1}
+                value={draft.estimateHours}
+                onChange={(e) => set("estimateHours", Number(e.target.value) || 0)}
+              />
+            </div>
           </div>
+          {selectedRow && (
+            <div
+              className={cn(
+                "rounded-md border px-3 py-2 text-xs flex items-start gap-2",
+                overAlloc
+                  ? "bg-destructive/10 border-destructive/30 text-destructive"
+                  : "bg-muted/50",
+              )}
+            >
+              {overAlloc && <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />}
+              <div>
+                <div>
+                  {employeeById(draft.assigneeId!)?.name} on{" "}
+                  <span className="font-mono">{plan?.projectId}</span> for {windowStart || "—"} →{" "}
+                  {windowEnd || "—"}: {selectedRow.assignedHours.toFixed(0)}h booked of{" "}
+                  {selectedRow.capacityHours.toFixed(0)}h capacity.
+                </div>
+                {overAlloc && (
+                  <div className="mt-0.5 font-medium">
+                    Adding this activity would over-allocate by {overByHours.toFixed(0)}h.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
           <div className="grid grid-cols-[120px_1fr] gap-3">
             <div className="grid gap-1.5">
               <Label>Link</Label>
@@ -179,9 +282,7 @@ export function ActivityDialog({
           </Button>
           <Button
             onClick={() => {
-              const out = { ...draft };
-              if (out.assigneeId === "__none") out.assigneeId = undefined;
-              onSave(out);
+              onSave(draft);
               onClose();
             }}
             disabled={!draft.title.trim()}
@@ -194,13 +295,16 @@ export function ActivityDialog({
   );
 }
 
-function blankActivity(projectId: string, status: ActivityStatus = "todo"): Activity {
+function blankActivity(planId: string, status: ActivityStatus = "todo", plan?: Plan): Activity {
   return {
     id: `ac${Date.now()}`,
-    projectId,
+    planId,
     title: "",
     description: "",
     status,
+    estimateHours: 8,
+    startDate: plan?.startDate,
+    endDate: plan?.endDate,
     dependencies: [],
     order: 100,
   };

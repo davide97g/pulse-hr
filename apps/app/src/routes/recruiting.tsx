@@ -38,11 +38,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@pulse-hr/ui/primitives/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@pulse-hr/ui/primitives/dialog";
+import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { SkeletonCards } from "@pulse-hr/ui/atoms/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
-import { type Candidate, type JobPosting } from "@/lib/mock-data";
+import { useBulkSelect, BulkBar, RowCheckbox } from "@/components/app/bulk";
+import { Ban as BanIcon, FileDown } from "lucide-react";
+import { type Candidate, type JobPosting, type Scorecard } from "@/lib/mock-data";
 import { candidatesTable, useCandidates } from "@/lib/tables/candidates";
 import { jobPostingsTable, useJobPostings } from "@/lib/tables/jobPostings";
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
@@ -79,6 +89,77 @@ function Recruiting() {
   } | null>(null);
   const { open: openAction } = useQuickAction();
   const [tab, setTab] = useUrlParam("tab", "pipeline");
+  const [scorecardOpen, setScorecardOpen] = useState(false);
+  const [scorecardDraft, setScorecardDraft] = useState({ title: "", criteria: "", score: 4 });
+  const candBulk = useBulkSelect(candidates);
+  const jobBulk = useBulkSelect(jobs);
+
+  const bulkSetJobStatus = (status: JobPosting["status"]) => {
+    const targets = jobBulk.selectedRows.filter((j) => j.status !== status);
+    if (targets.length === 0) {
+      toast(`Already ${status}`);
+      return;
+    }
+    const snaps = targets.map((j) => ({ id: j.id, prior: j.status }));
+    targets.forEach((j) => jobPostingsTable.update(j.id, { status }));
+    jobBulk.clear();
+    toast(`${targets.length} job${targets.length === 1 ? "" : "s"} marked ${status}`, {
+      action: {
+        label: "Undo",
+        onClick: () => snaps.forEach((s) => jobPostingsTable.update(s.id, { status: s.prior })),
+      },
+    });
+  };
+
+  const bulkDeleteJobs = () => {
+    const targets = jobBulk.selectedRows;
+    if (targets.length === 0) return;
+    targets.forEach((j) => jobPostingsTable.remove(j.id));
+    jobBulk.clear();
+    toast(`${targets.length} job${targets.length === 1 ? "" : "s"} deleted`, {
+      action: {
+        label: "Undo",
+        onClick: () => targets.forEach((j) => jobPostingsTable.add(j)),
+      },
+    });
+  };
+
+  const bulkRejectCandidates = () => {
+    const targets = candBulk.selectedRows;
+    if (targets.length === 0) return;
+    targets.forEach((c) => candidatesTable.remove(c.id));
+    candBulk.clear();
+    toast(`${targets.length} candidate${targets.length === 1 ? "" : "s"} rejected`, {
+      action: {
+        label: "Undo",
+        onClick: () => targets.forEach((c) => candidatesTable.add(c)),
+      },
+    });
+  };
+
+  const bulkExportCandidates = () => {
+    const rows = candBulk.selectedRows;
+    if (rows.length === 0) return;
+    const cols = ["id", "name", "role", "stage", "appliedDate", "rating"];
+    const esc = (v: unknown) => {
+      const s = String(v ?? "");
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const body = [
+      cols.join(","),
+      ...rows.map((r) => cols.map((c) => esc(r[c as keyof Candidate])).join(",")),
+    ].join("\n");
+    const blob = new Blob([body], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `candidates-${rows.length}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} row${rows.length === 1 ? "" : "s"}`);
+  };
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 420);
@@ -238,7 +319,10 @@ function Recruiting() {
                             <Card
                               key={c.id}
                               onClick={() => setSelected(c)}
-                              className="p-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all press-scale"
+                              className={cn(
+                                "p-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all press-scale group",
+                                candBulk.isSelected(c.id) && "ring-2 ring-primary/50",
+                              )}
                             >
                               <div className="flex items-center gap-2.5 mb-2">
                                 <Avatar initials={c.initials} color={c.avatarColor} size={28} />
@@ -248,6 +332,11 @@ function Recruiting() {
                                     {c.role}
                                   </div>
                                 </div>
+                                <RowCheckbox
+                                  checked={candBulk.isSelected(c.id)}
+                                  onChange={() => candBulk.toggle(c.id)}
+                                  label={`Select ${c.name}`}
+                                />
                               </div>
                               <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                                 <div className="flex">
@@ -291,9 +380,21 @@ function Recruiting() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 stagger-in">
               {jobs.map((j) => (
-                <Card key={j.id} className="p-5 press-scale hover:shadow-md transition-all">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="min-w-0">
+                <Card
+                  key={j.id}
+                  className={cn(
+                    "p-5 press-scale hover:shadow-md transition-all",
+                    jobBulk.isSelected(j.id) && "ring-2 ring-primary/50",
+                  )}
+                >
+                  <div className="flex items-start justify-between mb-2 gap-2">
+                    <RowCheckbox
+                      checked={jobBulk.isSelected(j.id)}
+                      onChange={() => jobBulk.toggle(j.id)}
+                      label={`Select ${j.title}`}
+                      visibleWhen="always"
+                    />
+                    <div className="min-w-0 flex-1">
                       <div className="font-semibold truncate">{j.title}</div>
                       <div className="text-xs text-muted-foreground">
                         {j.department} · {j.location}
@@ -310,7 +411,17 @@ function Recruiting() {
                         <DropdownMenuItem onClick={() => toggleJobStatus(j)}>
                           {j.status === "open" ? "Close job" : "Publish job"}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => toast.success("Share link copied")}>
+                        <DropdownMenuItem
+                          onClick={async () => {
+                            const url = `${window.location.origin}/jobs/${j.id}`;
+                            try {
+                              await navigator.clipboard.writeText(url);
+                              toast.success("Public link copied", { description: url });
+                            } catch {
+                              toast.error("Couldn't copy link");
+                            }
+                          }}
+                        >
                           Copy public link
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -434,7 +545,10 @@ function Recruiting() {
                 size="sm"
                 variant="outline"
                 className="flex-1 press-scale"
-                onClick={() => toast.success("Scorecard saved")}
+                onClick={() => {
+                  setScorecardDraft({ title: "", criteria: "", score: 4 });
+                  setScorecardOpen(true);
+                }}
               >
                 Add scorecard
               </Button>
@@ -475,6 +589,78 @@ function Recruiting() {
         )}
       </SidePanel>
 
+      <Dialog open={scorecardOpen} onOpenChange={setScorecardOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add scorecard{selected ? ` — ${selected.name}` : ""}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="sc-title">Title</Label>
+              <Input
+                id="sc-title"
+                value={scorecardDraft.title}
+                onChange={(e) =>
+                  setScorecardDraft((d) => ({ ...d, title: e.target.value }))
+                }
+                placeholder="e.g. Tech interview, Culture fit"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="sc-criteria">Notes</Label>
+              <Textarea
+                id="sc-criteria"
+                rows={4}
+                value={scorecardDraft.criteria}
+                onChange={(e) =>
+                  setScorecardDraft((d) => ({ ...d, criteria: e.target.value }))
+                }
+                placeholder="What stood out? Strengths, concerns, next steps."
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Score: {scorecardDraft.score} / 5</Label>
+              <input
+                type="range"
+                min={1}
+                max={5}
+                step={1}
+                value={scorecardDraft.score}
+                onChange={(e) =>
+                  setScorecardDraft((d) => ({ ...d, score: Number(e.target.value) }))
+                }
+                className="w-full"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setScorecardOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={!selected || !scorecardDraft.title.trim()}
+              onClick={() => {
+                if (!selected) return;
+                const card: Scorecard = {
+                  id: `sc-${Date.now()}`,
+                  title: scorecardDraft.title.trim(),
+                  criteria: scorecardDraft.criteria.trim(),
+                  score: scorecardDraft.score,
+                  createdAt: new Date().toISOString().slice(0, 10),
+                };
+                candidatesTable.update(selected.id, {
+                  scorecards: [...(selected.scorecards ?? []), card],
+                });
+                toast.success("Scorecard saved");
+                setScorecardOpen(false);
+              }}
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -500,6 +686,54 @@ function Recruiting() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {tab === "pipeline" && (
+        <BulkBar
+          count={candBulk.count}
+          onClear={candBulk.clear}
+          noun="candidate"
+          actions={[
+            {
+              label: "Reject",
+              icon: <BanIcon className="h-3.5 w-3.5" />,
+              onClick: bulkRejectCandidates,
+              tone: "destructive",
+            },
+            {
+              label: "Export CSV",
+              icon: <FileDown className="h-3.5 w-3.5" />,
+              onClick: bulkExportCandidates,
+            },
+          ]}
+          className="-mx-4 md:-mx-6"
+        />
+      )}
+      {tab === "jobs" && (
+        <BulkBar
+          count={jobBulk.count}
+          onClear={jobBulk.clear}
+          noun="job"
+          actions={[
+            {
+              label: "Open",
+              icon: <Plus className="h-3.5 w-3.5" />,
+              onClick: () => bulkSetJobStatus("open"),
+            },
+            {
+              label: "Close",
+              icon: <BanIcon className="h-3.5 w-3.5" />,
+              onClick: () => bulkSetJobStatus("closed"),
+            },
+            {
+              label: "Delete",
+              icon: <Trash2 className="h-3.5 w-3.5" />,
+              onClick: bulkDeleteJobs,
+              tone: "destructive",
+            },
+          ]}
+          className="-mx-4 md:-mx-6"
+        />
+      )}
     </div>
   );
 }

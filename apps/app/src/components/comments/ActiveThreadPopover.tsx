@@ -19,6 +19,7 @@ import {
 } from "@pulse-hr/ui/primitives/alert-dialog";
 import { cn } from "@/lib/utils";
 import { useCommentsOverlay } from "./CommentsOverlayProvider";
+import { useCompanyProfileStore } from "@/components/app/CompanyProfileStore";
 import { VoteButtons } from "./VoteButtons";
 import type { Comment } from "@/lib/comments/types";
 
@@ -37,6 +38,7 @@ export function ActiveThreadPopover({
   onClose: () => void;
 }) {
   const { addReply, vote, editComment, deleteComment, author } = useCommentsOverlay();
+  const { adjustPower } = useCompanyProfileStore();
   const [reply, setReply] = useState("");
   const [pending, setPending] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -149,7 +151,24 @@ export function ActiveThreadPopover({
           <VoteButtons
             score={comment.voteScore}
             myVote={comment.myVote}
-            onChange={(v) => vote(comment.id, v)}
+            onChange={async (v) => {
+              const prior = comment.myVote;
+              let powerDelta = 0;
+              if (prior === 0 && v !== 0) powerDelta = -1;
+              else if (prior !== 0 && v === 0) powerDelta = +1;
+              if (powerDelta !== 0) adjustPower(powerDelta);
+              try {
+                await vote(comment.id, v);
+              } catch (err) {
+                if (powerDelta !== 0) adjustPower(-powerDelta);
+                const code = (err as { code?: string } | null)?.code;
+                if (code === "insufficient_power") {
+                  toast.error("You're out of voting power. Refills weekly to 10.");
+                } else {
+                  toast.error("Vote failed.");
+                }
+              }
+            }}
           />
           {isAuthor && !editing && (
             <DropdownMenu>

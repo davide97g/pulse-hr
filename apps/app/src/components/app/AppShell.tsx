@@ -1,6 +1,7 @@
-import { useClerk, useUser } from "@clerk/react";
+import { useAuth, useClerk, useUser } from "@clerk/react";
+import { useLoginWall } from "@/components/app/LoginWall";
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { useSidebarFeatures } from "@/components/app/SidebarFeaturesContext";
 import { SidebarRouteGuard } from "@/components/app/SidebarRouteGuard";
@@ -13,12 +14,13 @@ import { useNewProposal } from "@/components/proposals/ProposalProvider";
 import { PinLayer } from "@/components/comments/PinLayer";
 import { Sheet, SheetContent } from "@pulse-hr/ui/primitives/sheet";
 import { useTrackPageViews } from "@/lib/usage-tracking";
+import { APP_VERSION } from "@/lib/version";
 import { voiceBus } from "@/lib/voice-bus";
-import { ActiveCommessaPin } from "./ActiveCommessaPin";
 import { BookingDialog } from "./BookingDialog";
 import { BookingsProvider } from "./BookingsContext";
 import { CommandPalette } from "./CommandPalette";
 import { LogOverlay } from "./LogOverlay";
+import { DemoBanner } from "./DemoBanner";
 import { OfflineBanner } from "./OfflineBanner";
 import { BrandMark } from "@pulse-hr/ui/atoms/BrandMark";
 import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
@@ -36,6 +38,8 @@ import {
   Building2,
   Calendar,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Menu,
   MessageSquare,
   Plus,
@@ -48,6 +52,11 @@ import {
   Bell,
   Eye,
   EyeOff,
+  Megaphone,
+  MessagesSquare,
+  Gift,
+  BarChart3,
+  type LucideIcon,
 } from "lucide-react";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
 import {
@@ -75,10 +84,15 @@ import {
 } from "@pulse-hr/ui/primitives/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@pulse-hr/ui/primitives/tooltip";
+import {
   OVERRIDE_ROLES,
   useEffectiveRole,
   useIsEffectiveAdmin,
-  useIsRealAdmin,
   useRoleOverride,
 } from "@/lib/role-override";
 import { featuresForRole } from "@/lib/role-features";
@@ -89,6 +103,53 @@ import { cn } from "@/lib/utils";
 import { resetWorkspace, useWorkspaceStatus } from "@/lib/workspace";
 
 const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
+const SIDEBAR_COLLAPSED_KEY = "pulse.sidebarCollapsed.v1";
+
+type QuickActionEntry =
+  | { kind: "action"; id: "add-employee" | "request-leave" | "submit-expense" | "post-job" | "run-payroll"; label: string; icon: LucideIcon }
+  | { kind: "nav"; to: string; label: string; icon: LucideIcon }
+  | { kind: "automation"; label: string; icon: LucideIcon; description: string };
+
+const QUICK_ACTIONS_BY_ROLE: Record<string, QuickActionEntry[]> = {
+  employee: [
+    { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
+    { kind: "action", id: "submit-expense", label: "Submit expense", icon: Receipt },
+    { kind: "nav", to: "/log", label: "Log status", icon: MessagesSquare },
+    { kind: "nav", to: "/kudos", label: "Give kudos", icon: Gift },
+  ],
+  manager: [
+    { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
+    { kind: "action", id: "submit-expense", label: "Submit expense", icon: Receipt },
+    { kind: "nav", to: "/leave", label: "Review approvals", icon: Users },
+    { kind: "nav", to: "/kudos", label: "Give kudos", icon: Gift },
+  ],
+  hr: [
+    { kind: "action", id: "post-job", label: "Post a job", icon: Briefcase },
+    { kind: "action", id: "add-employee", label: "Add employee", icon: Users },
+    { kind: "nav", to: "/announcements", label: "New announcement", icon: Megaphone },
+    { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
+  ],
+  finance: [
+    { kind: "action", id: "submit-expense", label: "Submit expense", icon: Receipt },
+    { kind: "nav", to: "/reports", label: "Open reports", icon: BarChart3 },
+    { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
+  ],
+  admin: [
+    { kind: "action", id: "post-job", label: "Post a job", icon: Briefcase },
+    { kind: "action", id: "add-employee", label: "Add employee", icon: Users },
+    { kind: "nav", to: "/announcements", label: "New announcement", icon: Megaphone },
+    {
+      kind: "automation",
+      label: "Run automation",
+      icon: Zap,
+      description: "Sync new hires to Slack",
+    },
+  ],
+};
+
+function quickActionsForRole(role: string): QuickActionEntry[] {
+  return QUICK_ACTIONS_BY_ROLE[role] ?? QUICK_ACTIONS_BY_ROLE.employee;
+}
 
 export function AppShell() {
   return (
@@ -133,7 +194,21 @@ function AppShellInner() {
       .filter((g) => g.items.length > 0);
   }, [hasOpenManagerAsks, admin, roleAllowed, isFeatureEnabled]);
   useTrackPageViews();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }, [collapsed]);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [logOpen, setLogOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -145,6 +220,9 @@ function AppShellInner() {
   useEffect(() => {
     setMobileNavOpen(false);
   }, [location.pathname]);
+
+  const handlersRef = useRef({ openProposal, appShellNav });
+  handlersRef.current = { openProposal, appShellNav };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -162,11 +240,11 @@ function AppShellInner() {
       }
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "o") {
         e.preventDefault();
-        openProposal();
+        handlersRef.current.openProposal();
       }
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "m") {
         e.preventDefault();
-        appShellNav({ to: "/moments" });
+        handlersRef.current.appShellNav({ to: "/moments" });
       }
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "b") {
         e.preventDefault();
@@ -175,7 +253,7 @@ function AppShellInner() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [openProposal, appShellNav]);
+  }, []);
 
   useEffect(() => {
     return voiceBus.on((ev) => {
@@ -184,7 +262,10 @@ function AppShellInner() {
   }, []);
 
   return (
-    <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
+    <div
+      className="flex h-screen w-full bg-background text-foreground overflow-hidden"
+      style={{ ["--topbar-height" as string]: "3.5rem" }}
+    >
       {/* Sidebar — desktop only */}
       <aside
         className={cn(
@@ -224,86 +305,121 @@ function AppShellInner() {
           )}
         </div>
 
-        <nav data-tour="sidebar-nav" className="flex-1 overflow-y-auto scrollbar-thin py-3 px-2">
-          {groups.map((group) => (
-            <div key={group.label} className="mb-4">
-              {!collapsed && (
-                <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
-                  {group.label}
-                </div>
-              )}
-              <div className="space-y-0.5">
-                {group.items.map((item) => {
-                  const active = item.external
-                    ? false
-                    : item.to === "/"
-                      ? location.pathname === "/"
-                      : location.pathname.startsWith(item.to);
-                  const Icon = item.icon;
-                  const className = cn(
-                    "group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors relative",
-                    active
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent/60",
-                    collapsed && "justify-center",
-                  );
-                  const inner = (
-                    <>
-                      <Icon className="h-4 w-4 shrink-0" />
-                      {!collapsed && <span className="truncate flex-1">{item.label}</span>}
-                      {!collapsed && item.unreadDot && (
-                        <span
-                          className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
-                          aria-label="Unread"
-                        />
-                      )}
-                      {collapsed && item.unreadDot && (
-                        <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
-                      )}
-                    </>
-                  );
-                  if (item.external) {
-                    return (
-                      <a
-                        key={item.to}
-                        href={item.to}
-                        className={className}
-                        title={collapsed ? item.label : undefined}
-                      >
+        <TooltipProvider delayDuration={200} skipDelayDuration={100}>
+          <nav
+            data-tour="sidebar-nav"
+            className="flex-1 overflow-y-auto scroll-fade py-3 px-2"
+            style={{ ["--fade-bg" as string]: "var(--sidebar)" }}
+          >
+            {groups.map((group) => (
+              <div key={group.label} className="mb-4">
+                {!collapsed && (
+                  <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                    {group.label}
+                  </div>
+                )}
+                <div className="space-y-0.5">
+                  {group.items.map((item) => {
+                    if (item.kind === "tours") {
+                      return <TourLauncher key="tours" collapsed={collapsed} />;
+                    }
+                    const active = item.external
+                      ? false
+                      : item.to === "/"
+                        ? location.pathname === "/"
+                        : location.pathname.startsWith(item.to);
+                    const Icon = item.icon;
+                    const className = cn(
+                      "group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors relative",
+                      active
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent/60",
+                      collapsed && "justify-center",
+                    );
+                    const inner = (
+                      <>
+                        <Icon className="h-4 w-4 shrink-0" />
+                        {!collapsed && <span className="truncate flex-1">{item.label}</span>}
+                        {!collapsed && item.unreadDot && (
+                          <span
+                            className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
+                            aria-label="Unread"
+                          />
+                        )}
+                        {collapsed && item.unreadDot && (
+                          <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
+                        )}
+                      </>
+                    );
+                    const node = item.external ? (
+                      <a href={item.to} className={className}>
                         {inner}
                       </a>
+                    ) : (
+                      <Link
+                        to={item.to}
+                        id={item.to === "/focus" ? "nav-focus" : undefined}
+                        className={className}
+                      >
+                        {inner}
+                      </Link>
                     );
-                  }
-                  return (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      id={item.to === "/focus" ? "nav-focus" : undefined}
-                      className={className}
-                      title={collapsed ? item.label : undefined}
-                    >
-                      {inner}
-                    </Link>
-                  );
-                })}
+                    return (
+                      <SidebarTooltip key={item.to} label={item.label} enabled={collapsed}>
+                        {node}
+                      </SidebarTooltip>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
-        </nav>
+            ))}
+          </nav>
+        </TooltipProvider>
 
-        <div className="border-t p-2">
-          <TourLauncher collapsed={collapsed} />
+        <div className="border-t p-2 space-y-1">
+          <button
+            type="button"
+            onClick={() => setCollapsed((v) => !v)}
+            className={cn(
+              "w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors",
+              collapsed && "justify-center",
+            )}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-pressed={collapsed}
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4 shrink-0" />
+            ) : (
+              <>
+                <ChevronLeft className="h-4 w-4 shrink-0" />
+                <span className="truncate flex-1 text-left">Collapse</span>
+              </>
+            )}
+          </button>
+          <div
+            className={cn(
+              "text-[10px] text-sidebar-foreground/40 font-mono tabular-nums select-none",
+              collapsed ? "text-center" : "px-2",
+            )}
+            title={`Pulse HR build v${APP_VERSION}`}
+          >
+            v{APP_VERSION}
+          </div>
         </div>
       </aside>
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
+        <DemoBanner />
         <OfflineBanner />
         <Topbar
           onOpenPalette={() => setPaletteOpen(true)}
           onOpenLog={() => setLogOpen(true)}
           onOpenMobileNav={() => setMobileNavOpen(true)}
-          showFeedbackLink={admin || isFeatureEnabled("feedback")}
+          // Always offer the Feedback entry-point. When the visitor is
+          // anonymous, the link opens the LoginWall instead of leaving the app.
+          showFeedbackLink
         />
         <main className="flex-1 overflow-y-auto scrollbar-thin">
           <SidebarRouteGuard>
@@ -357,7 +473,10 @@ function AppShellInner() {
           <div className="px-3 py-3 border-b">
             <ThemeSwitcher />
           </div>
-          <nav className="overflow-y-auto scrollbar-thin py-3 px-2 h-[calc(100%-6.75rem)]">
+          <nav
+            className="overflow-y-auto scroll-fade py-3 px-2 h-[calc(100%-6.75rem)]"
+            style={{ ["--fade-bg" as string]: "var(--sidebar)" }}
+          >
             {groups.map((group) => (
               <div key={group.label} className="mb-4">
                 <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
@@ -365,6 +484,9 @@ function AppShellInner() {
                 </div>
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
+                    if (item.kind === "tours") {
+                      return <TourLauncher key="tours" collapsed={false} />;
+                    }
                     const active = item.external
                       ? false
                       : item.to === "/"
@@ -412,6 +534,52 @@ function AppShellInner() {
   );
 }
 
+function SidebarTooltip({
+  label,
+  enabled,
+  children,
+}: {
+  label: string;
+  enabled: boolean;
+  children: ReactNode;
+}) {
+  if (!enabled) return <>{children}</>;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="right" sideOffset={6}>
+        {label}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+function FeedbackLink() {
+  const { isSignedIn } = useAuth();
+  const { require } = useLoginWall();
+  const className =
+    "hidden lg:inline-flex h-9 items-center gap-1.5 px-2.5 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale transition-colors";
+  if (!isSignedIn) {
+    return (
+      <button
+        type="button"
+        onClick={() => require("feedback")}
+        className={className}
+        title="Sign in to share feedback"
+      >
+        <MessageSquare className="h-4 w-4 text-muted-foreground" />
+        <span className="hidden xl:inline font-medium">Feedback</span>
+      </button>
+    );
+  }
+  return (
+    <a href={FEEDBACK_URL} className={className} title="Feedback board">
+      <MessageSquare className="h-4 w-4 text-muted-foreground" />
+      <span className="hidden xl:inline font-medium">Feedback</span>
+    </a>
+  );
+}
+
 function CommentsVisibilityToggle() {
   const { visible, toggleVisibility } = useCommentsOverlay();
   const Icon = visible ? Eye : EyeOff;
@@ -444,13 +612,10 @@ function Topbar({
   showFeedbackLink: boolean;
 }) {
   const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
-  const { pathname } = useLocation();
-  const showCommessaPin = ["/focus", "/time", "/forecast"].some(
-    (p) => pathname === p || pathname.startsWith(`${p}/`),
-  );
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
   const { user } = useUser();
+  const { isSignedIn } = useAuth();
   const { signOut } = useClerk();
   const displayName =
     user?.fullName ||
@@ -463,7 +628,6 @@ function Topbar({
     ? effectiveRole.charAt(0).toUpperCase() + effectiveRole.slice(1)
     : "";
   const isAdmin = useIsEffectiveAdmin();
-  const isRealAdmin = useIsRealAdmin();
   const { override, setOverride } = useRoleOverride();
   const initials =
     (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") ||
@@ -499,21 +663,7 @@ function Topbar({
 
       <div className="flex-1" />
 
-      {showCommessaPin && (
-        <div data-tour="topbar-commessa-pin" className="hidden lg:inline-flex">
-          <ActiveCommessaPin />
-        </div>
-      )}
-      {showFeedbackLink && (
-        <a
-          href={FEEDBACK_URL}
-          className="hidden lg:inline-flex h-9 items-center gap-1.5 px-2.5 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale transition-colors"
-          title="Feedback board"
-        >
-          <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          <span className="hidden xl:inline font-medium">Feedback</span>
-        </a>
-      )}
+      {showFeedbackLink && <FeedbackLink />}
       <CommentsVisibilityToggle />
       <VotingPowerChip />
       <div data-tour="topbar-status-log" className="hidden md:inline-flex">
@@ -546,33 +696,41 @@ function Topbar({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>Quick actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => openAction("add-employee")}>
-            <Users className="h-4 w-4 mr-2" />
-            Add employee
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openAction("request-leave")}>
-            <Calendar className="h-4 w-4 mr-2" />
-            Request leave
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openAction("submit-expense")}>
-            <Receipt className="h-4 w-4 mr-2" />
-            Submit expense
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openAction("post-job")}>
-            <Briefcase className="h-4 w-4 mr-2" />
-            Post a job
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() =>
-              toast.success("Automation triggered", {
-                description: "Running 'Sync new hires to Slack'",
-              })
+          {quickActionsForRole(effectiveRole).map((entry, i) => {
+            const Icon = entry.icon;
+            if (entry.kind === "action") {
+              return (
+                <DropdownMenuItem key={entry.id} onClick={() => openAction(entry.id)}>
+                  <Icon className="h-4 w-4 mr-2" />
+                  {entry.label}
+                </DropdownMenuItem>
+              );
             }
-          >
-            <Zap className="h-4 w-4 mr-2" />
-            Run automation
-          </DropdownMenuItem>
+            if (entry.kind === "nav") {
+              return (
+                <DropdownMenuItem key={entry.to} onClick={() => navigate({ to: entry.to })}>
+                  <Icon className="h-4 w-4 mr-2" />
+                  {entry.label}
+                </DropdownMenuItem>
+              );
+            }
+            return (
+              <div key={`auto-${i}`}>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    toast.success("Automation triggered", {
+                      description: `Running '${entry.description}'`,
+                    });
+                    navigate({ to: "/developers" });
+                  }}
+                >
+                  <Icon className="h-4 w-4 mr-2" />
+                  {entry.label}
+                </DropdownMenuItem>
+              </div>
+            );
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -660,6 +818,17 @@ function Topbar({
         </PopoverContent>
       </Popover>
 
+      {!isSignedIn ? (
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-9 px-3 gap-1.5"
+          onClick={() => navigate({ to: "/login", search: {} })}
+        >
+          <span className="font-medium">Log in</span>
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      ) : (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2 h-9 pl-1 pr-2 rounded-md hover:bg-muted">
@@ -693,7 +862,7 @@ function Topbar({
           <DropdownMenuItem asChild>
             <Link to="/profile">Profile</Link>
           </DropdownMenuItem>
-          {isRealAdmin && (
+          {isAdmin && (
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
                 <span className="flex-1">Switch role</span>
@@ -740,6 +909,7 @@ function Topbar({
           <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      )}
     </header>
   );
 }

@@ -61,7 +61,7 @@ export function answerFor(prompt: string): CopilotAnswer {
   if (q.includes("anomal")) {
     return {
       text:
-        "April payroll has 1 anomaly: Engineering overtime up 18% week-over-week, concentrated in the " +
+        "1 anomaly this week: Engineering overtime up 18% week-over-week, concentrated in the " +
         "migration commessa (ACM-2025-01). No over-threshold expenses detected.",
       actions: [
         { label: "Open time page", run: (ctx) => ctx.navigate({ to: "/time" }) },
@@ -86,8 +86,8 @@ export function answerFor(prompt: string): CopilotAnswer {
     return {
       text:
         "Two commesse are over budget this month: LGO-2024-12 Legacy migration (101%) and " +
-        "BCO-2025-03 Design system v2 (83%, trending over). I can surface a forecast with scenarios.",
-      actions: [{ label: "Open Forecast", run: (ctx) => ctx.navigate({ to: "/forecast" }) }],
+        "BCO-2025-03 Design system v2 (83%, trending over).",
+      actions: [{ label: "Open clients", run: (ctx) => ctx.navigate({ to: "/clients" }) }],
     };
   }
 

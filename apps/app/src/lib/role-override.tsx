@@ -1,6 +1,27 @@
 import { useUser } from "@clerk/react";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useWorkspaceRole, type WorkspaceRole } from "@/lib/workspace-role";
 
+/**
+ * Two role concepts live here, deliberately kept separate:
+ *
+ *   - **Real role** — comes from Clerk `publicMetadata.role`. Server-set
+ *     only (Clerk dashboard / backend), never written from the browser.
+ *     Defaults to "user" — new sign-ups are NOT admins. Reserved for
+ *     Pulse staff / system-level capabilities.
+ *
+ *   - **Workspace persona** — admin/hr/manager/finance/employee. Picked
+ *     by the user at /welcome and stored locally per Clerk user (see
+ *     `workspace-role.ts`). Drives sidebar groups, themes, role-as
+ *     previews. Defaults to "admin" because every user owns their own
+ *     demo workspace.
+ *
+ * `useEffectiveRole` returns the workspace persona (with the optional
+ * "view as another role" override applied for users whose persona is
+ * admin). UI gates that talk about "admin" almost always mean
+ * **workspace persona admin** (`useIsEffectiveAdmin`); only Pulse-staff
+ * features should call `useIsRealAdmin`.
+ */
 export type Role = "admin" | "hr" | "manager" | "finance" | "employee";
 export const OVERRIDE_ROLES: Role[] = ["employee", "hr", "manager", "finance"];
 
@@ -50,38 +71,41 @@ export function useRoleOverride(): Ctx {
 }
 
 function realRoleFromUser(user: unknown): string {
-  const u = user as
-    | {
-        publicMetadata?: Record<string, unknown>;
-        unsafeMetadata?: Record<string, unknown>;
-      }
-    | null
-    | undefined;
-  return (
-    (u?.publicMetadata?.role as string | undefined) ??
-    (u?.unsafeMetadata?.role as string | undefined) ??
-    ""
-  );
+  // Server-controlled role only — `unsafeMetadata` is user-writable and
+  // therefore must never count as a system role.
+  const u = user as { publicMetadata?: Record<string, unknown> } | null | undefined;
+  return (u?.publicMetadata?.role as string | undefined) ?? "";
 }
 
-/** The user's true Clerk role, ignoring any override. */
+/** Real Clerk role — Pulse staff / system flag. NOT the workspace persona. */
 export function useRealRole(): string {
   const { user } = useUser();
   return realRoleFromUser(user);
 }
 
-/** The effective role — respects admin overrides. */
-export function useEffectiveRole(): string {
-  const real = useRealRole();
-  const { override } = useRoleOverride();
-  if (real === "admin" && override) return override;
-  return real;
-}
-
+/** True only for Pulse staff (`publicMetadata.role === "admin"`). */
 export function useIsRealAdmin(): boolean {
   return useRealRole() === "admin";
 }
 
+/** Workspace persona — the frontend "what does the UI show" role. */
+export function useWorkspacePersona(): WorkspaceRole {
+  return useWorkspaceRole();
+}
+
+/**
+ * Effective role for UI: workspace persona, with the "view as" override
+ * applied when the persona is admin (admins of their own workspace can
+ * preview the experience as another role).
+ */
+export function useEffectiveRole(): Role {
+  const persona = useWorkspaceRole();
+  const { override } = useRoleOverride();
+  if (persona === "admin" && override) return override;
+  return persona;
+}
+
+/** Workspace-level admin (owner of the demo workspace). */
 export function useIsEffectiveAdmin(): boolean {
   return useEffectiveRole() === "admin";
 }

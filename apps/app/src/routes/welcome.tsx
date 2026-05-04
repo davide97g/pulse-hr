@@ -8,6 +8,7 @@ import {
   Check,
   ClipboardList,
   Coins,
+  FlaskConical,
   Loader2,
   Rocket,
   Shield,
@@ -25,6 +26,7 @@ import { Button } from "@pulse-hr/ui/primitives/button";
 import { Input } from "@pulse-hr/ui/primitives/input";
 import { Label } from "@pulse-hr/ui/primitives/label";
 import { DEFAULT_WORKSPACE_NAME, createWorkspace, useWorkspaceStatus } from "@/lib/workspace";
+import { setWorkspaceRole, type WorkspaceRole } from "@/lib/workspace-role";
 import { employeesTable, makeEmployee } from "@/lib/tables/employees";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +35,7 @@ export const Route = createFileRoute("/welcome")({
   component: Welcome,
 });
 
-type OnboardingRole = "admin" | "hr" | "manager" | "finance" | "employee";
+type OnboardingRole = WorkspaceRole;
 
 const ROLES: {
   id: OnboardingRole;
@@ -44,7 +46,7 @@ const ROLES: {
   { id: "admin", label: "Admin", desc: "Workspace owner, full access", icon: Shield },
   { id: "hr", label: "HR / People ops", desc: "Hiring, onboarding, growth", icon: UsersRound },
   { id: "manager", label: "Manager", desc: "Team, time, projects", icon: Briefcase },
-  { id: "finance", label: "Finance", desc: "Payroll, expenses, reports", icon: Wallet },
+  { id: "finance", label: "Finance", desc: "Expenses, reports, budgets", icon: Wallet },
   { id: "employee", label: "Employee", desc: "Day-to-day contributor view", icon: Users },
 ];
 
@@ -66,7 +68,9 @@ function Welcome() {
   const { user } = useUser();
 
   const [step, setStep] = useState<Step>(0);
-  const [role, setRole] = useState<OnboardingRole | null>(null);
+  // Default to admin: every user owns the demo workspace they're about to
+  // create — they can preview as another role later via the topbar switcher.
+  const [role, setRole] = useState<OnboardingRole | null>("admin");
   const [goals, setGoals] = useState<Set<string>>(new Set());
   const [name, setName] = useState(DEFAULT_WORKSPACE_NAME);
   const [colleagues, setColleagues] = useState<string[]>(["", "", ""]);
@@ -99,12 +103,17 @@ function Welcome() {
 
     const cleanColleagues = colleagues.map((c) => c.trim()).filter(Boolean);
 
+    // Onboarding answers (goals, workspace name, colleagues) are demo-only
+    // metadata so we keep them on Clerk's `unsafeMetadata` for cross-device
+    // hydration. The chosen `role` deliberately does NOT go there — it's a
+    // workspace persona, not a real Clerk role, and `unsafeMetadata` is
+    // user-writable so granting admin from the browser would be a real
+    // privilege escalation.
     try {
       if (user) {
         await user.update({
           unsafeMetadata: {
             ...(user.unsafeMetadata ?? {}),
-            role,
             goals: Array.from(goals),
             workspaceName: name.trim() || DEFAULT_WORKSPACE_NAME,
             colleagues: cleanColleagues,
@@ -117,6 +126,9 @@ function Welcome() {
 
     try {
       createWorkspace(name);
+      // Save the workspace persona AFTER createWorkspace — that call
+      // initializes the per-user namespace the role lives under.
+      setWorkspaceRole(role);
       if (cleanColleagues.length) {
         const today = new Date().toISOString().slice(0, 10);
         for (const cname of cleanColleagues) {
@@ -150,6 +162,7 @@ function Welcome() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <Card className="w-full max-w-2xl p-8 fade-in">
+        <DemoBanner />
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-primary/10 text-primary inline-flex items-center justify-center">
             <Sparkles className="h-5 w-5" />
@@ -208,7 +221,7 @@ function Welcome() {
               type="button"
               size="lg"
               className="press-scale"
-              disabled={creating || !status.hasUser}
+              disabled={creating || !status.hasAnyUser}
               onClick={finish}
             >
               {creating ? (
@@ -224,6 +237,29 @@ function Welcome() {
           )}
         </div>
       </Card>
+    </div>
+  );
+}
+
+function DemoBanner() {
+  return (
+    <div className="mb-6 rounded-md border border-warning/30 bg-warning/10 p-3.5 flex items-start gap-3">
+      <div className="h-8 w-8 rounded-md bg-warning/20 text-warning grid place-items-center shrink-0">
+        <FlaskConical className="h-4 w-4" />
+      </div>
+      <div className="flex-1">
+        <div className="text-sm font-medium text-foreground flex items-center gap-2">
+          Demo workspace
+          <span className="text-[10px] font-semibold uppercase tracking-wide rounded-full bg-warning/20 text-warning px-2 py-0.5">
+            Frontend-only mock
+          </span>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+          Pulse HR is shipping early as a fully-mocked demo so we can shape v1 around real feedback.
+          Every employee, project and payslip lives in your browser. Click around, then sign in and
+          drop a note in the Feedback area — that's the only piece wired up to a real backend.
+        </p>
+      </div>
     </div>
   );
 }

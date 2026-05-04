@@ -30,11 +30,11 @@ const COLUMNS: { id: ActivityStatus; label: string; tone: string }[] = [
 ];
 
 export function ActivityBoard({
-  projectId,
+  planId,
   activities,
   onChange,
 }: {
-  projectId: string;
+  planId: string;
   activities: Activity[];
   onChange: (next: Activity[]) => void;
 }) {
@@ -125,7 +125,7 @@ export function ActivityBoard({
         onClose={() => setDialog({ open: false })}
         onSave={upsert}
         initial={dialog.initial ?? null}
-        projectId={projectId}
+        planId={planId}
         defaultStatus={dialog.defaultStatus}
       />
     </>

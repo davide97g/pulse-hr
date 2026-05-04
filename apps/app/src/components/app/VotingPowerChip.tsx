@@ -1,14 +1,19 @@
 import { Coins, ExternalLink, Sparkles, TrendingUp } from "lucide-react";
+import { useAuth } from "@clerk/react";
 import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
 import { cn } from "@/lib/utils";
+import { VOTING_POWER_REFILL_DAYS } from "@/lib/company-profile";
 import { useVotingPower } from "./CompanyProfileStore";
 
 const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
 
 export function VotingPowerChip({ className }: { className?: string }) {
+  const { isSignedIn } = useAuth();
   const power = useVotingPower();
   const boosted = power.power > power.baseline;
+  if (!isSignedIn) return null;
   const multiplier = power.baseline > 0 ? (power.power / power.baseline).toFixed(2) : "1.00";
+  const refillIn = describeNextRefill(power.lastRefillAt);
 
   return (
     <Popover>
@@ -58,9 +63,16 @@ export function VotingPowerChip({ className }: { className?: string }) {
             </div>
           </div>
         </div>
-        <div className="px-4 py-3 text-xs text-muted-foreground leading-relaxed">
-          Complete questionnaires on Pulse Feedback to grow your voting power. Higher power weighs
-          your votes on upcoming Labs features.
+        <div className="px-4 py-3 text-xs text-muted-foreground leading-relaxed space-y-1">
+          <p>
+            Complete questionnaires on Pulse Feedback to grow your voting power. Higher power
+            weighs your votes on upcoming Labs features.
+          </p>
+          {refillIn && (
+            <p className="text-[11px]">
+              Refills to {power.baseline} {refillIn}.
+            </p>
+          )}
         </div>
         <a
           href={`${FEEDBACK_URL}/voting-power`}
@@ -74,4 +86,18 @@ export function VotingPowerChip({ className }: { className?: string }) {
       </PopoverContent>
     </Popover>
   );
+}
+
+function describeNextRefill(lastRefillAt: string | undefined): string | null {
+  if (!lastRefillAt) return null;
+  const last = new Date(lastRefillAt).getTime();
+  if (Number.isNaN(last)) return null;
+  const next = last + VOTING_POWER_REFILL_DAYS * 24 * 60 * 60 * 1000;
+  const diffMs = next - Date.now();
+  if (diffMs <= 0) return "any moment";
+  const days = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+  if (days >= 1) return `in ${days}d`;
+  const hours = Math.floor(diffMs / (60 * 60 * 1000));
+  if (hours >= 1) return `in ${hours}h`;
+  return "in <1h";
 }

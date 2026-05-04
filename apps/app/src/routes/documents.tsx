@@ -51,6 +51,9 @@ import {
 import { PageHeader, StatusBadge } from "@/components/app/AppShell";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
+import { FileDown } from "lucide-react";
 import { type Doc } from "@/lib/mock-data";
 import { docsTable, useDocs } from "@/lib/tables/docs";
 import { useFullName } from "@/lib/current-user";
@@ -63,7 +66,7 @@ export const Route = createFileRoute("/documents")({
   component: Documents,
 });
 
-const FOLDERS = ["Contracts", "Policies", "Templates", "Tax forms", "Onboarding"];
+const DEFAULT_FOLDERS = ["Contracts", "Policies", "Templates", "Tax forms", "Onboarding"];
 
 function Documents() {
   const me = useFullName() || "You";
@@ -76,6 +79,12 @@ function Documents() {
   const [rename, setRename] = useState<Doc | null>(null);
   const [toDelete, setToDelete] = useState<Doc | null>(null);
   const [loading, setLoading] = useState(true);
+  const [customFolders, setCustomFolders] = useState<string[]>([]);
+  const FOLDERS = useMemo(() => [...DEFAULT_FOLDERS, ...customFolders], [customFolders]);
+  const [newFolderOpen, setNewFolderOpen] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [selected, setSelected] = useState<Doc | null>(null);
+  const liveSelected = selected ? (list.find((d) => d.id === selected.id) ?? null) : null;
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 420);
@@ -100,6 +109,43 @@ function Documents() {
     });
   };
 
+  const bulk = useBulkSelect(filtered);
+
+  const bulkDelete = () => {
+    const targets = bulk.selectedRows;
+    if (targets.length === 0) return;
+    targets.forEach((d) => docsTable.remove(d.id));
+    bulk.clear();
+    toast(`${targets.length} document${targets.length === 1 ? "" : "s"} deleted`, {
+      action: {
+        label: "Undo",
+        onClick: () => targets.forEach((d) => docsTable.add(d)),
+      },
+    });
+  };
+
+  const bulkDownload = () => {
+    const rows = bulk.selectedRows;
+    if (rows.length === 0) return;
+    // TODO: zip generation — bundles a single text manifest for now
+    const manifest = rows
+      .map(
+        (d) =>
+          `Pulse HR document\n\nName: ${d.name}\nFolder: ${d.folder}\nOwner: ${d.owner}\nUpdated: ${d.updated}\nStatus: ${d.status}\n`,
+      )
+      .join("\n---\n\n");
+    const blob = new Blob([manifest], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `documents-${rows.length}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`Downloaded ${rows.length} document${rows.length === 1 ? "" : "s"}`);
+  };
+
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
@@ -111,8 +157,10 @@ function Documents() {
               variant="outline"
               size="sm"
               className="press-scale"
-              // mock: no backing data — folders are a hard-coded set.
-              onClick={() => toast("Folder creator opened")}
+              onClick={() => {
+                setNewFolderName("");
+                setNewFolderOpen(true);
+              }}
             >
               <FolderPlus className="h-4 w-4 mr-1.5" />
               New folder
@@ -201,6 +249,13 @@ function Documents() {
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
+                <th className="w-10 px-3 py-2.5">
+                  <HeaderCheckbox
+                    allSelected={bulk.allSelected}
+                    someSelected={bulk.someSelected}
+                    onToggle={() => bulk.toggleAll(filtered)}
+                  />
+                </th>
                 <th className="text-left font-medium px-4 py-2.5">Name</th>
                 <th className="text-left font-medium px-4 py-2.5">Folder</th>
                 <th className="text-left font-medium px-4 py-2.5">Size</th>
@@ -215,9 +270,15 @@ function Documents() {
                 <tr
                   key={d.id}
                   className="border-t hover:bg-muted/40 cursor-pointer group transition-colors"
-                  // mock: preview/viewer not implemented.
-                  onClick={() => toast.success(`Opening ${d.name}`)}
+                  onClick={() => setSelected(d)}
                 >
+                  <td className="px-3 py-2.5" onClick={(ev) => ev.stopPropagation()}>
+                    <RowCheckbox
+                      checked={bulk.isSelected(d.id)}
+                      onChange={() => bulk.toggle(d.id)}
+                      label={`Select ${d.name}`}
+                    />
+                  </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center gap-2.5">
                       <FileText className="h-4 w-4 text-muted-foreground" />
@@ -239,8 +300,26 @@ function Documents() {
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        {/* mock: no real file to stream. */}
-                        <DropdownMenuItem onClick={() => toast.success("Download started")}>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            // TODO: real storage fetch — stubs a metadata blob for now
+                            const blob = new Blob(
+                              [
+                                `Pulse HR document\n\nName: ${d.name}\nFolder: ${d.folder}\nOwner: ${d.owner}\nUpdated: ${d.updated}\nStatus: ${d.status}\n`,
+                              ],
+                              { type: "text/plain" },
+                            );
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = `${d.name}.txt`;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            URL.revokeObjectURL(url);
+                            toast.success("Download started", { description: d.name });
+                          }}
+                        >
                           <Download className="h-4 w-4 mr-2" />
                           Download
                         </DropdownMenuItem>
@@ -248,9 +327,30 @@ function Documents() {
                           <Pencil className="h-4 w-4 mr-2" />
                           Rename
                         </DropdownMenuItem>
-                        {/* mock: e-sign provider integration not wired. */}
-                        <DropdownMenuItem onClick={() => toast.success("Signature request sent")}>
+                        <DropdownMenuItem
+                          disabled={d.esignStatus === "requested" || d.esignStatus === "signed"}
+                          onClick={() => {
+                            // TODO: integrate e-sign provider
+                            docsTable.update(d.id, {
+                              esignStatus: "requested",
+                              updated: "just now",
+                            });
+                            toast.success("Signature request sent", {
+                              description: `${d.name} marked as awaiting signature.`,
+                            });
+                          }}
+                        >
                           Request e-sign
+                          {d.esignStatus === "requested" && (
+                            <span className="ml-auto text-[10px] uppercase text-muted-foreground">
+                              pending
+                            </span>
+                          )}
+                          {d.esignStatus === "signed" && (
+                            <span className="ml-auto text-[10px] uppercase text-success">
+                              signed
+                            </span>
+                          )}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
@@ -268,6 +368,52 @@ function Documents() {
             </tbody>
           </table>
         )}
+        <BulkBar
+          count={bulk.count}
+          onClear={bulk.clear}
+          noun="document"
+          actions={[
+            {
+              label: "Download",
+              icon: <Download className="h-3.5 w-3.5" />,
+              onClick: bulkDownload,
+            },
+            {
+              label: "Export CSV",
+              icon: <FileDown className="h-3.5 w-3.5" />,
+              onClick: () => {
+                const rows = bulk.selectedRows;
+                const cols = ["id", "name", "folder", "size", "owner", "updated", "status"];
+                const esc = (v: unknown) => {
+                  const s = String(v ?? "");
+                  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+                };
+                const body = [
+                  cols.join(","),
+                  ...rows.map((r) =>
+                    cols.map((c) => esc(r[c as keyof Doc])).join(","),
+                  ),
+                ].join("\n");
+                const blob = new Blob([body], { type: "text/csv;charset=utf-8" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `documents-${rows.length}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                toast.success(`Exported ${rows.length} row${rows.length === 1 ? "" : "s"}`);
+              },
+            },
+            {
+              label: "Delete",
+              icon: <Trash2 className="h-3.5 w-3.5" />,
+              onClick: bulkDelete,
+              tone: "destructive",
+            },
+          ]}
+        />
       </Card>
 
       <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
@@ -277,6 +423,7 @@ function Documents() {
             <DialogDescription>Drop a file or choose one to attach. Mock only.</DialogDescription>
           </DialogHeader>
           <UploadForm
+            folders={FOLDERS}
             onSave={(data) => {
               const d = docsTable.add({
                 name: data.name,
@@ -291,6 +438,59 @@ function Documents() {
             }}
             onCancel={() => setUploadOpen(false)}
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={newFolderOpen} onOpenChange={setNewFolderOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>New folder</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-1.5">
+            <Label htmlFor="new-folder-name">Folder name</Label>
+            <Input
+              id="new-folder-name"
+              autoFocus
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              placeholder="e.g. Compliance"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && newFolderName.trim()) {
+                  e.preventDefault();
+                  const name = newFolderName.trim();
+                  if (FOLDERS.includes(name)) {
+                    toast.error("Folder already exists");
+                    return;
+                  }
+                  setCustomFolders((f) => [...f, name]);
+                  setFolder(name);
+                  toast.success("Folder created", { description: name });
+                  setNewFolderOpen(false);
+                }
+              }}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setNewFolderOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={!newFolderName.trim()}
+              onClick={() => {
+                const name = newFolderName.trim();
+                if (FOLDERS.includes(name)) {
+                  toast.error("Folder already exists");
+                  return;
+                }
+                setCustomFolders((f) => [...f, name]);
+                setFolder(name);
+                toast.success("Folder created", { description: name });
+                setNewFolderOpen(false);
+              }}
+            >
+              Create
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -312,6 +512,109 @@ function Documents() {
           )}
         </DialogContent>
       </Dialog>
+
+      <SidePanel
+        open={!!liveSelected}
+        onClose={() => setSelected(null)}
+        width={420}
+        title={liveSelected?.name}
+      >
+        {liveSelected && (
+          <div className="space-y-5">
+            <Card className="p-4 flex items-center gap-3">
+              <FileText className="h-7 w-7 text-muted-foreground" />
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium truncate">{liveSelected.name}</div>
+                <div className="text-xs text-muted-foreground">{liveSelected.folder}</div>
+              </div>
+              <StatusBadge status={liveSelected.status} />
+            </Card>
+            <dl className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">Owner</dt>
+                <dd className="mt-0.5">{liveSelected.owner}</dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">Updated</dt>
+                <dd className="mt-0.5">{liveSelected.updated}</dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">Size</dt>
+                <dd className="mt-0.5 tabular-nums">{liveSelected.size}</dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">E-sign</dt>
+                <dd className="mt-0.5 capitalize">{liveSelected.esignStatus ?? "none"}</dd>
+              </div>
+            </dl>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  // TODO: real storage fetch
+                  const blob = new Blob(
+                    [
+                      `Pulse HR document\n\nName: ${liveSelected.name}\nFolder: ${liveSelected.folder}\nOwner: ${liveSelected.owner}\nUpdated: ${liveSelected.updated}\nStatus: ${liveSelected.status}\n`,
+                    ],
+                    { type: "text/plain" },
+                  );
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `${liveSelected.name}.txt`;
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  URL.revokeObjectURL(url);
+                  toast.success("Download started", { description: liveSelected.name });
+                }}
+              >
+                <Download className="h-3.5 w-3.5 mr-1.5" /> Download
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setSelected(null);
+                  setRename(liveSelected);
+                }}
+              >
+                <Pencil className="h-3.5 w-3.5 mr-1.5" /> Rename
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={
+                  liveSelected.esignStatus === "requested" ||
+                  liveSelected.esignStatus === "signed"
+                }
+                onClick={() => {
+                  // TODO: integrate e-sign provider
+                  docsTable.update(liveSelected.id, {
+                    esignStatus: "requested",
+                    updated: "just now",
+                  });
+                  toast.success("Signature request sent");
+                }}
+              >
+                Request e-sign
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-destructive hover:bg-destructive/10"
+                onClick={() => {
+                  setSelected(null);
+                  setToDelete(liveSelected);
+                }}
+              >
+                <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
+              </Button>
+            </div>
+          </div>
+        )}
+      </SidePanel>
 
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
@@ -342,12 +645,14 @@ function Documents() {
 function UploadForm({
   onSave,
   onCancel,
+  folders,
 }: {
   onSave: (d: { name: string; folder: string }) => void;
   onCancel: () => void;
+  folders: string[];
 }) {
   const [name, setName] = useState("");
-  const [folder, setFolder] = useState(FOLDERS[0]);
+  const [folder, setFolder] = useState(folders[0]);
   return (
     <>
       <div className="space-y-4">
@@ -371,7 +676,7 @@ function UploadForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {FOLDERS.map((f) => (
+              {folders.map((f) => (
                 <SelectItem key={f} value={f}>
                   {f}
                 </SelectItem>

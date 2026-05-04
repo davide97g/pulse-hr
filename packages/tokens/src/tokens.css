@@ -61,6 +61,12 @@
   --color-cal-personal: var(--cal-personal);
   --color-cal-parental: var(--cal-parental);
   --color-cal-holiday: var(--cal-holiday);
+
+  --color-role-employee: var(--role-employee);
+  --color-role-manager: var(--role-manager);
+  --color-role-hr: var(--role-hr);
+  --color-role-admin: var(--role-admin);
+  --color-role-finance: var(--role-finance);
 }
 
 :root,

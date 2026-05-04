@@ -63,8 +63,8 @@ Check every draft against them before polishing. The banned-phrase list
 ### 5. Produce & publish
 
 Static work lands as SVG/PNG under `logo-explorations/` or the
-marketing app's `public/`. Video masters land under `apps/reel/output/`
-(the Remotion project) and get published to `apps/marketing/public/reel/`.
+marketing app's `public/`. Video masters land under `apps/studio/output/`
+(the Remotion project) and get published to `apps/marketing/public/studio/`.
 Written copy lives in the marketing app's `src/i18n/` dictionaries, or
 as a blog post under `apps/marketing/src/pages/blog/`.
 
@@ -101,7 +101,7 @@ update the repo README with the three most recent pieces.
   appear the first time someone ships production creative.
 - Instagram Reel storyboard docs and per-reel render folders were
   removed in favour of a unified campaign plan in `marketing/`. Video
-  masters now live with the Remotion project at `apps/reel/` and its
+  masters now live with the Remotion project at `apps/studio/` and its
   `output/` folder.
 
 See `foundation.md` for the full brand scope.

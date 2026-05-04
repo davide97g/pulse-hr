@@ -81,7 +81,30 @@ export default defineConfig(({ mode }) => {
           navigateFallback: "/index.html",
           navigateFallbackDenylist: [/^\/api/],
           cleanupOutdatedCaches: true,
+          // New SW activates immediately and takes control of every open client
+          // — no "waiting" state, no need to close all tabs. Combined with the
+          // controllerchange listener in main.tsx this gives users the latest
+          // version on the very next refresh.
+          skipWaiting: true,
+          clientsClaim: true,
+          // The HTML shell must always be revalidated against the network so
+          // the deploy bumping `assets/<hash>.js` can never be served stale
+          // from the SW cache.
+          navigationPreload: true,
           runtimeCaching: [
+            // index.html / navigations: always go to network, fall back to
+            // cache only when offline. Prevents the "stuck on old version"
+            // class of bug where the SW kept serving the previous HTML shell.
+            {
+              urlPattern: ({ request }) => request.mode === "navigate",
+              handler: "NetworkFirst",
+              options: {
+                cacheName: "html-shell",
+                networkTimeoutSeconds: 4,
+                expiration: { maxEntries: 4 },
+                cacheableResponse: { statuses: [0, 200] },
+              },
+            },
             {
               urlPattern: ({ url }) =>
                 url.origin === "https://fonts.googleapis.com" ||

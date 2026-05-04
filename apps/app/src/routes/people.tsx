@@ -59,6 +59,8 @@ import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
 import { useQuickAction } from "@/components/app/QuickActions";
+import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
+import { Archive, FileDown } from "lucide-react";
 import { type Employee, departments } from "@/lib/mock-data";
 import { employeesTable, employeeById, useEmployees } from "@/lib/tables/employees";
 import { useSavedViews } from "@/lib/useSavedViews";
@@ -76,26 +78,33 @@ type PeopleView = Record<string, unknown> & {
   q: string;
   dept: string;
   tab: string;
+  status: string[];
+  type: string[];
 };
-
-/** Radix tabs only use `list` | `grid`; normalize legacy / bad URL values. */
-function peopleDisplayTab(raw: string): "list" | "grid" {
-  const t = (raw || "list").toLowerCase();
-  if (t === "grid" || t === "cards") return "grid";
-  return "list";
-}
 
 function People() {
   const views = useSavedViews<PeopleView>("people", {
-    defaults: { q: "", dept: "", tab: "list" },
-    schema: { q: "string", dept: "string", tab: "string" },
+    defaults: { q: "", dept: "", tab: "list", status: [], type: [] },
+    schema: {
+      q: "string",
+      dept: "string",
+      tab: "string",
+      status: "array",
+      type: "array",
+    },
   });
   const q = views.state.q;
   const dept = views.state.dept || null;
-  const tab = peopleDisplayTab(views.state.tab);
+  const tab = views.state.tab || "list";
+  const statusFilter = views.state.status;
+  const typeFilter = views.state.type;
   const setQ = (v: string) => views.setState({ q: v });
   const setDept = (v: string | null) => views.setState({ dept: v ?? "" });
   const setTab = (v: string) => views.setState({ tab: v });
+  const setStatusFilter = (v: string[]) => views.setState({ status: v });
+  const setTypeFilter = (v: string[]) => views.setState({ type: v });
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const activeFilterCount = statusFilter.length + typeFilter.length;
   const [selId, setSelId] = useUrlParam("sel");
   const list = useEmployees();
   const selected = selId ? (list.find((e) => e.id === selId) ?? employeeById(selId) ?? null) : null;
@@ -117,10 +126,55 @@ function People() {
           (!q ||
             e.name.toLowerCase().includes(q.toLowerCase()) ||
             e.role.toLowerCase().includes(q.toLowerCase())) &&
-          (!dept || e.department === dept),
+          (!dept || e.department === dept) &&
+          (statusFilter.length === 0 || statusFilter.includes(e.status)) &&
+          (typeFilter.length === 0 || typeFilter.includes(e.employmentType)),
       ),
-    [q, dept, list],
+    [q, dept, statusFilter, typeFilter, list],
   );
+
+  const bulk = useBulkSelect(filtered);
+
+  const bulkArchive = () => {
+    const targets = bulk.selectedRows.filter((e) => e.status !== "offboarding");
+    if (targets.length === 0) {
+      toast("Nothing to archive", { description: "All selected are already offboarding." });
+      return;
+    }
+    const snapshots = targets.map((e) => ({ id: e.id, prior: e.status }));
+    targets.forEach((e) => employeesTable.update(e.id, { status: "offboarding" }));
+    bulk.clear();
+    toast(`Started offboarding for ${targets.length} employee${targets.length === 1 ? "" : "s"}`, {
+      action: {
+        label: "Undo",
+        onClick: () => snapshots.forEach((s) => employeesTable.update(s.id, { status: s.prior })),
+      },
+    });
+  };
+
+  const bulkExport = () => {
+    const rows = bulk.selectedRows;
+    if (rows.length === 0) return;
+    const cols = ["id", "name", "email", "role", "department", "location", "status", "joinDate"];
+    const esc = (v: unknown) => {
+      const s = String(v ?? "");
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const body = [
+      cols.join(","),
+      ...rows.map((r) => cols.map((c) => esc(r[c as keyof Employee])).join(",")),
+    ].join("\n");
+    const blob = new Blob([body], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `employees-${rows.length}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} row${rows.length === 1 ? "" : "s"}`);
+  };
 
   const remove = (e: Employee) => {
     employeesTable.remove(e.id);
@@ -137,6 +191,8 @@ function People() {
   const clearFilters = () => {
     setQ("");
     setDept(null);
+    setStatusFilter([]);
+    setTypeFilter([]);
   };
 
   return (
@@ -211,13 +267,14 @@ function People() {
             </button>
           ))}
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => toast("Filters", { description: "Open advanced filter builder" })}
-        >
+        <Button variant="outline" size="sm" onClick={() => setFiltersOpen(true)}>
           <Filter className="h-4 w-4 mr-1.5" />
           More filters
+          {activeFilterCount > 0 && (
+            <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-medium">
+              {activeFilterCount}
+            </span>
+          )}
         </Button>
       </Card>
 
@@ -269,6 +326,13 @@ function People() {
               <table className="w-full text-sm">
                 <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
+                    <th className="w-10 px-3 py-2.5">
+                      <HeaderCheckbox
+                        allSelected={bulk.allSelected}
+                        someSelected={bulk.someSelected}
+                        onToggle={() => bulk.toggleAll(filtered)}
+                      />
+                    </th>
                     <th className="text-left font-medium px-4 py-2.5">Employee</th>
                     <th className="text-left font-medium px-4 py-2.5">Department</th>
                     <th className="text-left font-medium px-4 py-2.5">Location</th>
@@ -284,6 +348,13 @@ function People() {
                       onClick={() => setSelected(e)}
                       className="border-t cursor-pointer hover:bg-muted/40 transition-colors group"
                     >
+                      <td className="px-3 py-2.5">
+                        <RowCheckbox
+                          checked={bulk.isSelected(e.id)}
+                          onChange={() => bulk.toggle(e.id)}
+                          label={`Select ${e.name}`}
+                        />
+                      </td>
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-3">
                           <BirthdayHalo
@@ -315,14 +386,24 @@ function People() {
                             <DropdownMenuItem onClick={() => setSelected(e)}>
                               View profile
                             </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => toast.success(`Email drafted to ${e.name}`)}
-                            >
-                              <Send className="h-4 w-4 mr-2" />
-                              Send message
+                            <DropdownMenuItem asChild>
+                              <a href={`mailto:${e.email}`}>
+                                <Send className="h-4 w-4 mr-2" />
+                                Send message
+                              </a>
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              onClick={() => toast.success(`Started offboarding for ${e.name}`)}
+                              disabled={e.status === "offboarding"}
+                              onClick={() => {
+                                const prior = e.status;
+                                employeesTable.update(e.id, { status: "offboarding" });
+                                toast(`Started offboarding for ${e.name}`, {
+                                  action: {
+                                    label: "Undo",
+                                    onClick: () => employeesTable.update(e.id, { status: prior }),
+                                  },
+                                });
+                              }}
                             >
                               Start offboarding
                             </DropdownMenuItem>
@@ -342,6 +423,23 @@ function People() {
                 </tbody>
               </table>
             )}
+            <BulkBar
+              count={bulk.count}
+              onClear={bulk.clear}
+              noun="employee"
+              actions={[
+                {
+                  label: "Archive",
+                  icon: <Archive className="h-3.5 w-3.5" />,
+                  onClick: bulkArchive,
+                },
+                {
+                  label: "Export CSV",
+                  icon: <FileDown className="h-3.5 w-3.5" />,
+                  onClick: bulkExport,
+                },
+              ]}
+            />
           </Card>
         </TabsContent>
 
@@ -409,6 +507,88 @@ function People() {
           )}
         </TabsContent>
       </Tabs>
+
+      <SidePanel
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        width={380}
+        title="Filters"
+      >
+        <div className="space-y-6">
+          <div>
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Status</div>
+            <div className="space-y-1.5">
+              {(["active", "remote", "on_leave", "offboarding"] as const).map((s) => {
+                const checked = statusFilter.includes(s);
+                return (
+                  <label
+                    key={s}
+                    className="flex items-center gap-2 text-sm py-1 cursor-pointer hover:bg-muted/40 rounded-md px-2 -mx-2"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) =>
+                        setStatusFilter(
+                          e.target.checked
+                            ? [...statusFilter, s]
+                            : statusFilter.filter((v) => v !== s),
+                        )
+                      }
+                      className="h-4 w-4 rounded border-border"
+                    />
+                    <span className="capitalize">{s.replace("_", " ")}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+              Employment type
+            </div>
+            <div className="space-y-1.5">
+              {(["Full-time", "Part-time", "Contractor"] as const).map((t) => {
+                const checked = typeFilter.includes(t);
+                return (
+                  <label
+                    key={t}
+                    className="flex items-center gap-2 text-sm py-1 cursor-pointer hover:bg-muted/40 rounded-md px-2 -mx-2"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) =>
+                        setTypeFilter(
+                          e.target.checked ? [...typeFilter, t] : typeFilter.filter((v) => v !== t),
+                        )
+                      }
+                      className="h-4 w-4 rounded border-border"
+                    />
+                    <span>{t}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex justify-between gap-2 pt-2 border-t">
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={activeFilterCount === 0}
+              onClick={() => {
+                setStatusFilter([]);
+                setTypeFilter([]);
+              }}
+            >
+              Clear
+            </Button>
+            <Button size="sm" onClick={() => setFiltersOpen(false)}>
+              Done
+            </Button>
+          </div>
+        </div>
+      </SidePanel>
 
       <EmployeePanel
         employee={selected ? (list.find((x) => x.id === selected.id) ?? selected) : null}
@@ -496,14 +676,11 @@ function EmployeePanel({
             </div>
           </div>
           <div className="flex gap-2 mb-5">
-            <Button
-              size="sm"
-              variant="outline"
-              className="flex-1 press-scale"
-              onClick={() => toast.success(`Email drafted to ${employee.name}`)}
-            >
-              <Mail className="h-3.5 w-3.5 mr-1.5" />
-              Email
+            <Button size="sm" variant="outline" className="flex-1 press-scale" asChild>
+              <a href={`mailto:${employee.email}`}>
+                <Mail className="h-3.5 w-3.5 mr-1.5" />
+                Email
+              </a>
             </Button>
             <Button
               size="sm"

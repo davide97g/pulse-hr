@@ -9,8 +9,16 @@ type Phase = "warm" | "waking" | "error";
 
 const GRACE_MS = 2000;
 
+const skipBoot = (() => {
+  try {
+    return typeof window !== "undefined" && window.localStorage.getItem("pulse.skipBoot") === "1";
+  } catch {
+    return false;
+  }
+})();
+
 export function ServerBoot({ children }: { children: ReactNode }) {
-  const alreadyBooted = useRef(hasBooted());
+  const alreadyBooted = useRef(skipBoot || hasBooted());
   const [phase, setPhase] = useState<Phase>(() => (alreadyBooted.current ? "warm" : "warm"));
   const [attempt, setAttempt] = useState(0);
   const [elapsed, setElapsed] = useState(0);

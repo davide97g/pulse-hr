@@ -23,7 +23,7 @@ const faq = [
   },
   {
     q: "Can I self-host the whole thing?",
-    a: "Yes. The platform is a Bun workspace you can clone and run with `bun install && bun run build`. A reference Docker Compose setup and a Helm chart for Kubernetes are in the repo. The only component you cannot self-host is the managed payroll filing rails (F24, Form 941, HMRC PAYE, etc.) — those integrate with tax authorities on our side because running them yourself means becoming a licensed payroll processor.",
+    a: "Yes. The platform is a Bun workspace you can clone and run with `bun install && bun run build`. A reference Docker Compose setup and a Helm chart for Kubernetes are in the repo — every module runs on your infrastructure with no external dependency on us.",
   },
   {
     q: "Do I have to credit Pulse if I fork?",

@@ -13,11 +13,18 @@ export interface SecurityPrefs {
   ipAllowlist: boolean;
 }
 
+export interface LocalePrefs {
+  language: string;
+  timezone: string;
+  dateFormat: string;
+}
+
 export interface CompanySettings {
   legal: string;
   country: string;
   currency: string;
   security: SecurityPrefs;
+  locale: LocalePrefs;
 }
 
 const DEFAULTS: CompanySettings = {
@@ -29,6 +36,11 @@ const DEFAULTS: CompanySettings = {
     sso: true,
     sessionTimeout: false,
     ipAllowlist: false,
+  },
+  locale: {
+    language: "en-US",
+    timezone: "America/Los_Angeles",
+    dateFormat: "YYYY-MM-DD",
   },
 };
 
@@ -53,6 +65,7 @@ function read(): CompanySettings {
       ...DEFAULTS,
       ...parsed,
       security: { ...DEFAULTS.security, ...(parsed.security ?? {}) },
+      locale: { ...DEFAULTS.locale, ...(parsed.locale ?? {}) },
     };
   } catch {
     return DEFAULTS;
@@ -85,12 +98,18 @@ function persist(next: CompanySettings) {
   for (const l of listeners) l();
 }
 
-export function updateCompanySettings(patch: Partial<Omit<CompanySettings, "security">>) {
+export function updateCompanySettings(
+  patch: Partial<Omit<CompanySettings, "security" | "locale">>,
+) {
   persist({ ...cache, ...patch });
 }
 
 export function updateSecurity(patch: Partial<SecurityPrefs>) {
   persist({ ...cache, security: { ...cache.security, ...patch } });
+}
+
+export function updateLocale(patch: Partial<LocalePrefs>) {
+  persist({ ...cache, locale: { ...cache.locale, ...patch } });
 }
 
 export function useCompanySettings(): CompanySettings {

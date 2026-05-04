@@ -1,0 +1,401 @@
+{
+  "$schema": "../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "employee",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1"
+  },
+  "setup": {
+    "url": "{{BASE_URL}}/login",
+    "steps": [
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "zoom",
+        "selector": "input[type=email]",
+        "scale": 1.8,
+        "duration": 180
+      },
+      {
+        "action": "type",
+        "selector": "input[type=email]",
+        "text": "{{TEST_EMAIL}}",
+        "delay": 12
+      },
+      {
+        "action": "wait",
+        "ms": 400,
+        "waitFor": "input[type=password]",
+        "timeout": 15000
+      },
+      {
+        "action": "zoom",
+        "selector": "input[type=password]",
+        "scale": 1.8,
+        "duration": 180
+      },
+      {
+        "action": "type",
+        "selector": "input[type=password]",
+        "text": "{{TEST_PASSWORD}}",
+        "delay": 12
+      },
+      {
+        "action": "click",
+        "selector": "button[type=submit]",
+        "zoom": 1.8
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 1600
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Admin')",
+        "zoom": 2
+      },
+      {
+        "action": "wait",
+        "ms": 150
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Continue')",
+        "zoom": 2
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Hire faster')",
+        "zoom": 2
+      },
+      {
+        "action": "wait",
+        "ms": 120
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Retain top talent')",
+        "zoom": 2
+      },
+      {
+        "action": "wait",
+        "ms": 120
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Boost engagement')",
+        "zoom": 2
+      },
+      {
+        "action": "wait",
+        "ms": 120
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Continue')",
+        "zoom": 2
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "zoom",
+        "selector": "#ws-name",
+        "scale": 1.8,
+        "duration": 180
+      },
+      {
+        "action": "fill",
+        "selector": "#ws-name",
+        "text": ""
+      },
+      {
+        "action": "type",
+        "selector": "#ws-name",
+        "text": "Bitrock",
+        "delay": 18
+      },
+      {
+        "action": "wait",
+        "ms": 150
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Continue')",
+        "zoom": 2
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "zoom",
+        "selector": "#col-0",
+        "scale": 1.6,
+        "duration": 180
+      },
+      {
+        "action": "type",
+        "selector": "#col-0",
+        "text": "Niccolò Naso",
+        "delay": 14
+      },
+      {
+        "action": "wait",
+        "ms": 80
+      },
+      {
+        "action": "type",
+        "selector": "#col-1",
+        "text": "Yi Zhang",
+        "delay": 14
+      },
+      {
+        "action": "wait",
+        "ms": 80
+      },
+      {
+        "action": "type",
+        "selector": "#col-2",
+        "text": "Andrea Mazza",
+        "delay": 14
+      },
+      {
+        "action": "wait",
+        "ms": 200
+      },
+      {
+        "action": "click",
+        "selector": "button:has-text('Create workspace')",
+        "zoom": 2
+      },
+      {
+        "action": "zoom",
+        "scale": 1,
+        "duration": 80
+      },
+      {
+        "action": "wait",
+        "ms": 1600
+      },
+      {
+        "action": "wait",
+        "ms": 400,
+        "waitFor": "main",
+        "timeout": 10000
+      }
+    ]
+  },
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 250,
+      "waitFor": "main",
+      "timeout": 10000
+    },
+    {
+      "action": "click",
+      "selector": "[data-tour=\"sidebar-help\"]",
+      "timeout": 8000,
+      "pauseAfter": 120,
+      "zoom": 2
+    },
+    {
+      "action": "wait",
+      "ms": 220
+    },
+    {
+      "action": "screenshot",
+      "name": "01-help-tours-menu",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=menu] [role=menuitem]:has-text('Welcome to Pulse HR')",
+      "timeout": 8000,
+      "pauseAfter": 120,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 420
+    },
+    {
+      "action": "screenshot",
+      "name": "02-tour-intro-welcome",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 520
+    },
+    {
+      "action": "screenshot",
+      "name": "03-tour-sidebar-nav",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 440
+    },
+    {
+      "action": "screenshot",
+      "name": "04-tour-global-search",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 360
+    },
+    {
+      "action": "screenshot",
+      "name": "05-tour-status-log",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 300
+    },
+    {
+      "action": "screenshot",
+      "name": "06-tour-quick-actions",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 240
+    },
+    {
+      "action": "screenshot",
+      "name": "07-tour-notifications",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "screenshot",
+      "name": "08-tour-youre-set",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Finish')",
+      "timeout": 8000,
+      "pauseAfter": 120,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 320
+    },
+    {
+      "action": "screenshot",
+      "name": "09-dashboard-after-tour",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 100
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+/*
+ * Container scale — three named widths shared across every page archetype.
+ * Each carries the canonical horizontal rhythm (mx-auto + p-4 md:p-6) so
+ * page templates stop re-deriving it.
+ */
+@layer components {
+  .container-narrow,
+  .container-default,
+  .container-wide {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1rem;
+    padding-block: 1rem;
+  }
+  @media (min-width: 768px) {
+    .container-narrow,
+    .container-default,
+    .container-wide {
+      padding-inline: 1.5rem;
+      padding-block: 1.5rem;
+    }
+  }
+
+  .container-narrow {
+    max-width: 880px;
+  }
+  .container-default {
+    max-width: 1200px;
+  }
+  .container-wide {
+    max-width: 1440px;
+  }
+}

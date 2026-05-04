@@ -1,16 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
-import {
-  Pencil,
-  Trash2,
-  Plus,
-  CheckCircle2,
-  Copy,
-  CalendarDays,
-  Bookmark,
-  Save,
-} from "lucide-react";
-import { toast } from "sonner";
+import { Pencil, Trash2, Plus, CheckCircle2, Copy, CalendarDays } from "lucide-react";
 import { Popover, PopoverContent, PopoverAnchor } from "@pulse-hr/ui/primitives/popover";
 import { Button } from "@pulse-hr/ui/primitives/button";
 import { Input } from "@pulse-hr/ui/primitives/input";
@@ -23,12 +13,7 @@ import {
   SelectValue,
 } from "@pulse-hr/ui/primitives/select";
 import { StatusBadge } from "./AppShell";
-import {
-  commesse,
-  commessaById,
-  type TimesheetEntry,
-  type TimesheetTemplate,
-} from "@/lib/mock-data";
+import { commesse, commessaById, type TimesheetEntry } from "@/lib/mock-data";
 import type { DayInfo } from "@/lib/timesheet";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +22,6 @@ interface Props {
   anchor: HTMLElement | null;
   info: DayInfo | null;
   prevDayEntries: TimesheetEntry[];
-  templates?: TimesheetTemplate[];
   onClose: () => void;
   onAdd: (data: {
     commessaId: string;
@@ -49,7 +33,6 @@ interface Props {
   onEdit: (e: TimesheetEntry) => void;
   onDelete: (id: string) => void;
   onCopyFromPrev: () => void;
-  onSaveTemplate?: (t: Omit<TimesheetTemplate, "id">) => void;
 }
 
 export function DayPeekPopover({
@@ -57,13 +40,11 @@ export function DayPeekPopover({
   anchor,
   info,
   prevDayEntries,
-  templates = [],
   onClose,
   onAdd,
   onEdit,
   onDelete,
   onCopyFromPrev,
-  onSaveTemplate,
 }: Props) {
   const [commessaId, setCommessaId] = useState(commesse[0].id);
   const [hours, setHours] = useState("4");
@@ -80,30 +61,6 @@ export function DayPeekPopover({
       setTimeout(() => firstRef.current?.focus(), 120);
     }
   }, [open, info?.iso]);
-
-  const applyTemplate = (t: TimesheetTemplate) => {
-    setCommessaId(t.commessaId);
-    setHours(String(t.hours));
-    setDescription(t.description);
-    setBillable(t.billable);
-    toast(`Template applied · ${t.name}`, { description: "Review and press Add." });
-  };
-
-  useEffect(() => {
-    if (!open || !info) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const tag = (e.target as HTMLElement | null)?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      const digit = parseInt(e.key, 10);
-      if (digit >= 1 && digit <= 9 && templates[digit - 1]) {
-        e.preventDefault();
-        applyTemplate(templates[digit - 1]);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, info?.iso, templates]);
 
   if (!info) return null;
 
@@ -207,45 +164,6 @@ export function DayPeekPopover({
           </div>
         )}
 
-        {/* Template strip */}
-        {!blocked && templates.length > 0 && (
-          <div className="px-3 py-2 border-t bg-muted/20">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <Bookmark className="h-3 w-3 text-muted-foreground" />
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                Templates
-              </span>
-              <span className="text-[10px] text-muted-foreground ml-auto">
-                press 1-{Math.min(9, templates.length)}
-              </span>
-            </div>
-            <div className="flex gap-1 flex-wrap">
-              {templates.slice(0, 9).map((t, i) => {
-                const c = commessaById(t.commessaId);
-                return (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => applyTemplate(t)}
-                    className="inline-flex items-center gap-1.5 h-7 px-2 rounded-md border text-[11px] hover:bg-muted press-scale transition-colors"
-                    title={`${t.name} · ${t.hours}h · ${c?.code ?? ""}`}
-                  >
-                    <span
-                      className="h-1.5 w-1.5 rounded-full shrink-0"
-                      style={{ backgroundColor: c?.color }}
-                    />
-                    {t.icon && <span>{t.icon}</span>}
-                    <span className="truncate max-w-[110px]">{t.name}</span>
-                    <kbd className="font-mono text-[9px] text-muted-foreground border rounded px-1 py-px bg-background">
-                      {i + 1}
-                    </kbd>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         {/* Quick add */}
         {!blocked && (
           <form
@@ -305,32 +223,6 @@ export function DayPeekPopover({
                 Billable
               </Label>
               <div className="flex gap-1">
-                {onSaveTemplate && valid && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-[11px] press-scale"
-                    onClick={() => {
-                      const name = window.prompt(
-                        "Template name",
-                        description.trim().slice(0, 40) || "Custom template",
-                      );
-                      if (!name) return;
-                      onSaveTemplate({
-                        name,
-                        commessaId,
-                        hours: Number(hours),
-                        description: description.trim(),
-                        billable,
-                      });
-                    }}
-                    title="Save current values as a template"
-                  >
-                    <Save className="h-3 w-3 mr-1" />
-                    Save as template
-                  </Button>
-                )}
                 {prevDayEntries.length > 0 && (
                   <Button
                     type="button"

@@ -1,16 +1,29 @@
 import { cn } from "@/lib/utils";
 import { MessageSquarePlus, X } from "lucide-react";
+import { useAuth } from "@clerk/react";
+import { useLoginWall } from "@/components/app/LoginWall";
 import { useCommentsOverlay } from "./CommentsOverlayProvider";
 
 export function CommentPill() {
   const { mode, enterPlacement, cancelPlacement, visible } = useCommentsOverlay();
+  const { isSignedIn } = useAuth();
+  const { require } = useLoginWall();
   const active = mode === "placing";
 
   if (!visible) return null;
 
+  const handleClick = () => {
+    if (!isSignedIn) {
+      require("comment");
+      return;
+    }
+    if (active) cancelPlacement();
+    else enterPlacement();
+  };
+
   return (
     <button
-      onClick={active ? cancelPlacement : enterPlacement}
+      onClick={handleClick}
       data-comments-ignore
       className={cn(
         "hidden lg:inline-flex fixed z-[70] bottom-5 right-5 h-11 pl-3 pr-4 items-center gap-2",

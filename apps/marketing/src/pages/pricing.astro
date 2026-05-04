@@ -5,11 +5,11 @@ import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Check, ArrowRight, Github, Server, Tag, Info } from "lucide-astro";
 
-const title = "Pricing — Pulse HR is free for the first 5, open source forever";
+const title = "Pricing — free for 5, €8/employee after, self-host €0";
 const description =
   "One transparent tier per active employee per month. Free for the first 5, forever, with every feature included. Contractors priced separately. Self-hosted is free under FSL.";
+
 const path = "/pricing";
-const keywords = "HR pricing, HRIS pricing, per-employee, free HR software, open source HR pricing";
 
 const TIERS = [
   {
@@ -29,7 +29,6 @@ const TIERS = [
       "Community support on GitHub",
     ],
     notIncluded: [
-      "Multi-country in-house payroll filing",
       "SOC 2 report under NDA",
       "Dedicated onboarding engineer",
     ],
@@ -47,8 +46,6 @@ const TIERS = [
     featured: true,
     included: [
       "Everything in Free, unlimited seats",
-      "Multi-country payroll (US · UK · IT · ES · FR · DE · IE · NL)",
-      "Statutory filings (F24, 941, PAYE, Modelo 111, URSSAF, Lohnsteuer)",
       "Tax GL + journal export (QuickBooks / Xero / SAP)",
       "SAML SSO, SCIM provisioning, audit log",
       "Priority email + Slack Connect support",
@@ -76,7 +73,6 @@ const TIERS = [
       "No per-seat fees, no license keys",
     ],
     notIncluded: [
-      "Managed payroll filing rails",
       "Commercial support SLA",
       "Uptime guarantee",
     ],
@@ -90,8 +86,8 @@ const CONTRACTOR = {
   price: "€4",
   unit: "per active contractor / month",
   points: [
-    "Anyone paid outside local payroll — freelancers, consultants, international contractors.",
-    "Full profile, time tracking and expenses; no statutory filing.",
+    "Anyone paid outside your normal employee process — freelancers, consultants, international contractors.",
+    "Full profile, time tracking and expenses.",
     "Switch the same person between contractor and employee with no data loss.",
     "Not counted toward the free-for-5 employee allowance.",
   ],
@@ -126,7 +122,7 @@ const offerCatalogLd = {
         priceCurrency: "EUR",
         referenceQuantity: { "@type": "QuantitativeValue", value: "1", unitText: "active employee / month" },
       },
-      description: "Per active employee, per month. Multi-country payroll, SSO, audit log, SOC 2.",
+      description: "Per active employee, per month. SSO, audit log, SOC 2, full API.",
       availability: "https://schema.org/InStock",
       url: "https://pulsehr.it/pricing#standard",
     },
@@ -164,7 +160,7 @@ const FAQ = [
   },
   {
     q: "Is there any feature locked behind an enterprise tier?",
-    a: "No. API, webhooks, SSO/SAML, audit logs, SCIM, the full Labs suite — all included on Free and Standard. The only difference between Free and Standard is the employee cap and the managed payroll filing rails.",
+    a: "No. API, webhooks, SSO/SAML, audit logs, SCIM, the full Labs suite — all included on Free and Standard. The only difference between Free and Standard is the employee cap.",
   },
   {
     q: "Can I mix modules? E.g. only People and Work, not Money?",
@@ -193,7 +189,7 @@ pricingFaqLd.mainEntity = FAQ.map((f) => ({
 const extraLd = [offerCatalogLd, pricingFaqLd];
 ---
 
-<BaseLayout {title} {description} {path} {keywords} {breadcrumbs} {extraLd}>
+<BaseLayout {title} {description} {path} {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main">
     <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
@@ -281,8 +277,8 @@ const extraLd = [offerCatalogLd, pricingFaqLd];
             <span class="text-white/50 font-mono text-sm">/ {CONTRACTOR.unit}</span>
           </div>
           <p class="text-white/65 leading-relaxed max-w-md m-0">
-            A separate line for anyone paid outside your local payroll —
-            freelancers, consultants, international contractors.
+            A separate line for anyone paid outside your normal employee
+            process — freelancers, consultants, international contractors.
           </p>
         </div>
         <ul class="space-y-2 list-none p-0 m-0">
@@ -306,8 +302,7 @@ const extraLd = [offerCatalogLd, pricingFaqLd];
               The software is €0. The infra under it isn't. A Pulse deployment
               for a 50-person team fits comfortably on a €20–40/month Hetzner
               box, or about $30–60/month on AWS us-east-1 (RDS + ECS + an S3
-              bucket). Add your own payroll filing rails if you want to skip
-              our managed ones.
+              bucket).
             </p>
             <p class="text-white/55 text-[13px] font-mono">
               Reference infra costs at <a href="https://github.com/davide97g/pulse-hr/tree/main/docs/self-host" class="text-[#6fd8ff] hover:underline">/docs/self-host</a> in the repo.

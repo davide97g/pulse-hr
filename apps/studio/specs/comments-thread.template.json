@@ -1,0 +1,105 @@
+{
+  "$schema": "../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{FEEDBACK_BASE_URL}}/",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "employee",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1",
+    "feedback.viewer.identity": "{\"id\":\"emp-marcus\",\"name\":\"Marcus Rivera\"}"
+  },
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "[role=article], main",
+      "timeout": 12000
+    },
+    {
+      "action": "screenshot",
+      "name": "01-board",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=article]:nth-of-type(1), main button:has-text('Open thread'):nth-of-type(1)",
+      "zoom": 1.4,
+      "pauseAfter": 700,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "input[placeholder='Reply…']",
+      "timeout": 8000
+    },
+    {
+      "action": "screenshot",
+      "name": "02-thread-open",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "selector": "input[placeholder='Reply…']",
+      "scale": 1.7,
+      "duration": 220
+    },
+    {
+      "action": "type",
+      "selector": "input[placeholder='Reply…']",
+      "text": "Strong +1 — we hit this exact thing on the close last quarter.",
+      "delay": 16
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "click",
+      "selector": "button[aria-label='Send reply']",
+      "zoom": 2,
+      "pauseAfter": 220,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 1400
+    },
+    {
+      "action": "screenshot",
+      "name": "03-reply-sent",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 300
+    }
+  ]
+}

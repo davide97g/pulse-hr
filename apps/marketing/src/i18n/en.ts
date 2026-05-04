@@ -9,7 +9,7 @@ export const en = {
     description:
       "Open-source people ops for modern teams. Built in the open, by the people who use it. Money, People and Work as three composable modules. Self-host on your own infra, or run hosted — no sales call to see the product.",
     keywords:
-      "open source HR, open source payroll, HRIS, self-hosted HR, modular HR, HR API, webhooks, time tracking, commessa, keyboard-first, PWA, FSL, public roadmap",
+      "open source HR, HRIS, self-hosted HR, modular HR, HR API, webhooks, time tracking, commessa, keyboard-first, PWA, FSL, public roadmap",
   },
 
   a11y: {
@@ -19,8 +19,8 @@ export const en = {
     pulseHomeLabel: "Pulse HR home",
     primaryNav: "Primary",
     footer: "Footer",
-    customerLogos: "Customer logos",
-    customerTestimonials: "Customer testimonials",
+    customerLogos: "Sample workspace names",
+    customerTestimonials: "Maintainer notes",
     keyStats: "Key stats",
     languageSwitcher: "Switch language",
   },
@@ -72,6 +72,40 @@ export const en = {
     switchTo: "Switch to",
   },
 
+  demoStrip: {
+    label: "Public demo notice",
+    tag: "Public demo",
+    headline: "Pulse is in demo mode.",
+    body: "The product is a frontend-only mock — every screen, every record runs in your browser. We're shipping it early to learn what people actually need before we wire up the backend. Sign in inside the app to leave feedback that goes straight to the maintainers.",
+    cta: "Open the demo",
+  },
+
+  demoNotice: {
+    eyebrow: "Status check",
+    title: {
+      before: "What you're looking at is a ",
+      italic: "demo.",
+      after: "",
+    },
+    body: "Pulse HR is currently a frontend-only mock. We deliberately ship it before the backend so the people who use HR software every day can shape what we build first. Click around, break things, then tell us what's missing — feedback is the only piece that talks to a real backend, and that's the piece we want to hear from you on.",
+    bullets: [
+      {
+        k: "Mocked end-to-end",
+        v: "Every employee, project, document and request lives in your browser. Nothing is sent to a server.",
+      },
+      {
+        k: "Open in one click",
+        v: "No signup needed to explore — spin up a workspace, pick a role, click around for as long as you like.",
+      },
+      {
+        k: "Feedback is members-only",
+        v: "Leaving a comment, voting on a Labs feature or posting on the feedback board needs a free account so we can follow up.",
+      },
+    ],
+    ctaPrimary: "Try the demo — no signup",
+    ctaSecondary: "Sign in to leave feedback",
+  },
+
   hero: {
     badge: "Open source · FSL-1.1-MIT · public beta · built in public",
     eyebrow: "Open-source people ops for modern teams",
@@ -104,7 +138,7 @@ export const en = {
   },
 
   marquee: {
-    title: "Teams on Pulse",
+    title: "Sample workspace names — not real customers",
   },
 
   stats: {
@@ -180,7 +214,7 @@ export const en = {
 
   features: {
     eyebrow: "Everything in one place",
-    title: "Nine products that feel like one.",
+    title: "Eight products that feel like one.",
     subtitle:
       "Each module is deep enough to replace a standalone tool, but they share one profile, one search, one audit log. You'll stop switching tabs — we promise.",
     items: [
@@ -188,11 +222,6 @@ export const en = {
         icon: "Clock",
         title: "Time & attendance",
         body: "Clock in from anywhere. Track hours against commesse (project codes, the way finance sees it), not just the wall clock. Manual entry, imports, approvals, overtime anomalies — all one surface.",
-      },
-      {
-        icon: "Wallet",
-        title: "Payroll that doesn't panic",
-        body: "Run multi-country payroll in minutes. F24, Form 941, HMRC PAYE. Payslips, tax filings and journal entries pushed straight to your accounting stack.",
       },
       {
         icon: "Users",
@@ -234,7 +263,7 @@ export const en = {
 
   labs: {
     eyebrow: "Labs · shipping now",
-    title: "Five bets that landed.",
+    title: "Four bets that landed.",
     subtitle:
       "Labs is where we ship the experimental stuff. Every team on Pulse gets it by default — no waiting lists, no upsells, no \"enterprise tier\" paywall.",
     badgeNew: "NEW",
@@ -244,12 +273,6 @@ export const en = {
         kind: "Team Pulse",
         tag: "Signal",
         body: "Anonymous vibe checks + weekly heatmap. See sentiment before it shows up in a 1:1.",
-      },
-      {
-        icon: "TrendingUp",
-        kind: "Commessa Forecast",
-        tag: "Scenarios",
-        body: "Scenario sliders on top of project burn. 'What if I add a designer?' answered in milliseconds.",
       },
       {
         icon: "Gift",
@@ -278,13 +301,13 @@ export const en = {
     titleItalic: "five",
     titleAfter: "points of view.",
     subtitle:
-      "Role themes aren't cosmetic. Each persona ships with its own palette, default view, and shortcut set. Engineers don't see payroll drafts. CFOs don't see sprint standups.",
+      "Role themes aren't cosmetic. Each persona ships with its own palette, default view, and shortcut set. Engineers don't see expense queues. CFOs don't see sprint standups.",
     items: [
       { k: "Employee", d: "Lime accent. Clock, leave, kudos, focus." },
       { k: "Manager", d: "Amber warmth. Approvals, team load, kudos authority." },
       { k: "HR", d: "Coral. People ops, onboarding, anomalies." },
       { k: "Admin", d: "Electric cyan. Integrations, API, audit." },
-      { k: "Finance", d: "Violet. Payroll, margins, forecast." },
+      { k: "Finance", d: "Violet. Expenses, margins, reports." },
     ],
   },
 
@@ -320,15 +343,11 @@ export const en = {
     items: [
       {
         q: "Can I import data from my current HR tool?",
-        a: "Yes. We ship one-click importers for BambooHR, Personio, Rippling, Deel and Factorial, plus a generic CSV importer with column mapping for anything else. The importer runs a dry-run first so you can fix bad rows before committing, and it preserves employee IDs so integrations keep working. Most teams migrate a full dataset — employees, payroll history, leave balances, documents — in under an hour.",
+        a: "Yes. We ship one-click importers for BambooHR, Personio, Rippling, Deel and Factorial, plus a generic CSV importer with column mapping for anything else. The importer runs a dry-run first so you can fix bad rows before committing, and it preserves employee IDs so integrations keep working. Most teams migrate a full dataset — employees, leave balances, documents — in under an hour.",
       },
       {
         q: "How is Pulse HR priced?",
-        a: "Per active employee, per month. One transparent tier with every feature included — no 'talk to sales for payroll', no upsell for Labs features, no per-seat add-ons for API access or SSO. Free for the first 5 active employees, forever. Contractors are priced differently and capped at $4 per active contractor per month. Annual billing is 15% off.",
-      },
-      {
-        q: "Which countries does payroll support?",
-        a: "We natively run payroll in the US, UK, Italy, Spain, France, Germany, Ireland and the Netherlands — all tax filings (F24, Form 941, HMRC PAYE, Modelo 111, URSSAF, Lohnsteuer) and statutory reporting included. For every other country, we integrate with Deel and Remote as contractor rails, and with local Employers of Record for full employment where needed.",
+        a: "Per active employee, per month. One transparent tier with every feature included — no 'talk to sales' gates, no upsell for Labs features, no per-seat add-ons for API access or SSO. Free for the first 5 active employees, forever. Contractors are priced differently and capped at $4 per active contractor per month. Annual billing is 15% off.",
       },
       {
         q: "Is it SOC 2 / GDPR compliant?",
@@ -336,7 +355,7 @@ export const en = {
       },
       {
         q: "Do you have an API?",
-        a: "Yes — a full REST API, webhooks on every resource event (employee.created, leave.approved, payslip.finalised, etc.), and maintained SDKs for TypeScript, Python and Go. API keys are scoped per environment with granular permissions. Full OpenAPI spec published at pulsehr.it/docs/api. Rate limits are 1,000 requests/minute on the standard tier.",
+        a: "Yes — a full REST API, webhooks on every resource event (employee.created, leave.approved, expense.approved, etc.), and maintained SDKs for TypeScript, Python and Go. API keys are scoped per environment with granular permissions. Full OpenAPI spec published at pulsehr.it/docs/api. Rate limits are 1,000 requests/minute on the standard tier.",
       },
       {
         q: "Is Pulse really open source?",
@@ -344,7 +363,7 @@ export const en = {
       },
       {
         q: "Can we self-host?",
-        a: "Yes. The whole platform ships as a Bun monorepo you can clone and run. Self-hosted deployments on Docker or Kubernetes are supported with a reference Helm chart and Terraform modules. Payroll filing connectors remain managed by Pulse (you'd need tax authority integrations otherwise), but the rest runs entirely on your infrastructure. Start at github.com/davide97g/pulse-hr.",
+        a: "Yes. The whole platform ships as a Bun monorepo you can clone and run. Self-hosted deployments on Docker or Kubernetes are supported with a reference Helm chart and Terraform modules. Everything runs entirely on your infrastructure. Start at github.com/davide97g/pulse-hr.",
       },
       {
         q: "How does the command bar (⌘J) work?",
@@ -352,7 +371,7 @@ export const en = {
       },
       {
         q: "Does Pulse work offline?",
-        a: "The whole surface installs as a PWA on macOS, Windows, iOS and Android. Recent views, timesheets and kudos drafts keep working offline and sync as soon as you're back — no 'loading…' screens at the airport or in a basement meeting room. Payroll runs and other destructive actions require a live connection and will queue if offline, so you never double-pay someone by mistake.",
+        a: "The whole surface installs as a PWA on macOS, Windows, iOS and Android. Recent views, timesheets and kudos drafts keep working offline and sync as soon as you're back — no 'loading…' screens at the airport or in a basement meeting room. Destructive actions require a live connection and queue if offline, so nothing fires twice by mistake.",
       },
     ],
   },
@@ -379,7 +398,7 @@ export const en = {
     items: [
       { k: "Agencies & consultancies", d: "Bill by project code (commessa), track utilization, close books without spreadsheets." },
       { k: "Product startups", d: "Onboard from a candidate-accepted email in one click. Equity, offers, laptops — on rails." },
-      { k: "Scale-ups (50-500)", d: "Multi-entity payroll, approval chains that match your org, reports your CFO will actually open." },
+      { k: "Scale-ups (50-500)", d: "Approval chains that match your org, multi-entity controls, reports your CFO will actually open." },
     ],
   },
 
@@ -394,7 +413,6 @@ export const en = {
       { d: "Apr 18", t: "App-wide color decluttering pass", k: "Design" },
       { d: "Apr 14", t: "Avatar hover cards + Employee Score", k: "People" },
       { d: "Apr 09", t: "Saturation tabs + Insights view", k: "Labs" },
-      { d: "Apr 02", t: "Commessa Forecast with AI scenarios", k: "Labs" },
       { d: "Mar 28", t: "Command bar ⌘J with runnable actions", k: "Keyboard" },
     ],
   },
@@ -440,7 +458,6 @@ export const en = {
     tabs: [
       { k: "dashboard", l: "Dashboard", body: "Approvals, alerts, presence and trends. The one pane your HR team opens at 9am." },
       { k: "time", l: "Time & commesse", body: "Log hours against any commessa. Budget burn, per-client profitability, exports to CSV." },
-      { k: "payroll", l: "Payroll", body: "Preview payslips before running, split employees/contractors, file F24 with one click." },
     ],
     bullets: [
       "Approvals in one click",
@@ -464,13 +481,6 @@ export const en = {
       activeClock: "Active clock",
       project: "ACM-2025-01 · Platform rebuild",
       stopCta: "Stop & log hours",
-    },
-    mockPayroll: {
-      nextRun: "Next run · April 2025",
-      employees: "12 employees · scheduled Apr 30",
-      rows: ["F24 (Italy)", "Form 941 (US)", "HMRC PAYE (UK)"],
-      pending: "pending",
-      filed: "filed",
     },
   },
 
@@ -505,7 +515,7 @@ export const en = {
     description:
       "Three independent modules — Money, People and Work — sharing one workspace, one keyboard, one API. Open source under FSL. Keyboard-first, role-themed, multi-country.",
     eyebrow: "Product tour",
-    titleLine1: "Nine products,",
+    titleLine1: "Eight products,",
     titleItalic: "one workspace",
     titleAfter: ".",
     body:
@@ -513,21 +523,21 @@ export const en = {
   },
 
   labsPage: {
-    title: "Pulse Labs — forecasting, kudos, focus & pulse tools",
+    title: "Pulse Labs — kudos, focus & pulse tools",
     description:
-      "Five Labs features shipping now: Team Pulse sentiment, Commessa Forecast scenario planning, Kudos peer recognition, Focus Mode deep work, and Saturation utilization. Included on every plan.",
+      "Four Labs features shipping now: Team Pulse sentiment, Kudos peer recognition, Focus Mode deep work, and Saturation utilization. Included on every plan.",
     eyebrow: "Labs · shipping now · free on every plan",
-    titleLine1: "The five Pulse features",
+    titleLine1: "The four Pulse features",
     titleItalic: "reinventing",
     titleAfter: " HR software.",
     body:
-      "Labs is where we ship experimental capabilities first — AI forecasting, sentiment heatmaps, peer recognition, deep-work automation and live utilization insights. No waiting lists, no upsells, no enterprise-tier paywall.",
+      "Labs is where we ship experimental capabilities first — sentiment heatmaps, peer recognition, deep-work automation and live utilization insights. No waiting lists, no upsells, no enterprise-tier paywall.",
   },
 
   changelogPage: {
     title: "Pulse HR changelog — product updates & feature shipments",
     description:
-      "Every meaningful update to the Pulse HR platform. Gantt polish, color decluttering, Employee Score, Saturation tabs, Commessa Forecast, Command bar — in reverse chronological order.",
+      "Every meaningful update to the Pulse HR platform. Gantt polish, color decluttering, Employee Score, Saturation tabs, Command bar — in reverse chronological order.",
     eyebrow: "Changelog",
     titleBefore: "What's",
     titleItalic: "shipped",
@@ -607,7 +617,6 @@ export const en = {
 
   heroNewTags: [
     "Command bar ⌘J",
-    "Commessa Forecast",
     "Saturation",
     "Team Pulse",
     "Kudos",

@@ -60,4 +60,12 @@
 
   --labs: oklch(0.78 0.19 140);
   --labs-foreground: oklch(0.14 0.01 150);
+
+  /* Role identification — stable across themes so a user's role colour stays
+   * recognisable when they switch palette. Slightly desaturated for light mode. */
+  --role-employee: oklch(0.78 0.18 135);
+  --role-manager: oklch(0.78 0.16 75);
+  --role-hr: oklch(0.72 0.17 25);
+  --role-admin: oklch(0.7 0.14 220);
+  --role-finance: oklch(0.62 0.18 305);
 }

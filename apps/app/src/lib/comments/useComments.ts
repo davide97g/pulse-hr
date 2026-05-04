@@ -120,8 +120,9 @@ export function useComments(route: string, userId: string | null) {
         setComments((prev) =>
           prev.map((c) => (c.id === commentId ? { ...c, voteScore, myVote } : c)),
         );
-      } catch {
+      } catch (err) {
         refetch();
+        throw err;
       }
     },
     [refetch],

@@ -12,6 +12,7 @@ import {
   MoreHorizontal,
   Play,
   Pause,
+  Pencil,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@pulse-hr/ui/primitives/card";
@@ -69,6 +70,8 @@ function Developers() {
   const [newKeyOpen, setNewKeyOpen] = useState(false);
   const [newHookOpen, setNewHookOpen] = useState(false);
   const [newFieldOpen, setNewFieldOpen] = useState(false);
+  const [editField, setEditField] = useState<CustomField | null>(null);
+  const [editKey, setEditKey] = useState<ApiKey | null>(null);
   const [deleteKey, setDeleteKey] = useState<ApiKey | null>(null);
   const [tab, setTab] = useUrlParam("tab", "keys");
 
@@ -83,14 +86,11 @@ function Developers() {
         title="Developers"
         description="API keys, webhooks and custom workflows"
         actions={
-          <Button
-            size="sm"
-            variant="outline"
-            className="press-scale"
-            onClick={() => toast("API docs", { description: "Opening developer reference" })}
-          >
-            <Code2 className="h-4 w-4 mr-1.5" />
-            API docs
+          <Button size="sm" variant="outline" className="press-scale" asChild>
+            <a href="https://api.pulsehr.it/docs" target="_blank" rel="noreferrer">
+              <Code2 className="h-4 w-4 mr-1.5" />
+              API docs
+            </a>
           </Button>
         }
       />
@@ -187,6 +187,15 @@ function Developers() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setEditKey(k)}
+                      title="Edit"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="h-8 w-8 text-destructive hover:bg-destructive/10"
                       onClick={() => setDeleteKey(k)}
                     >
@@ -245,7 +254,14 @@ function Developers() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            onClick={() => toast.success("Test ping sent — HTTP 200")}
+                            onClick={() => {
+                              webhooksTable.update(w.id, {
+                                deliveries: (w.deliveries ?? 0) + 1,
+                              });
+                              toast.success("Test ping sent", {
+                                description: `${w.url} · HTTP 200`,
+                              });
+                            }}
                           >
                             <Play className="h-4 w-4 mr-2" />
                             Send test event
@@ -340,7 +356,7 @@ function Developers() {
                       <div className="text-xs text-muted-foreground">{f.type}</div>
                     </div>
                     <div className="flex gap-1">
-                      <Button variant="ghost" size="sm" onClick={() => toast(`Editing ${f.name}`)}>
+                      <Button variant="ghost" size="sm" onClick={() => setEditField(f)}>
                         Edit
                       </Button>
                       <Button
@@ -432,6 +448,51 @@ function Developers() {
               setNewFieldOpen(false);
             }}
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!editField} onOpenChange={(o) => !o && setEditField(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit custom field</DialogTitle>
+          </DialogHeader>
+          {editField && (
+            <NewFieldForm
+              key={editField.id}
+              initial={{
+                name: editField.name,
+                type: editField.type,
+                required: editField.required,
+              }}
+              submitLabel="Save changes"
+              onCancel={() => setEditField(null)}
+              onSave={(d) => {
+                customFieldsTable.update(editField.id, d);
+                toast.success("Field updated");
+                setEditField(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!editKey} onOpenChange={(o) => !o && setEditKey(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit API key</DialogTitle>
+          </DialogHeader>
+          {editKey && (
+            <EditKeyForm
+              key={editKey.id}
+              initial={{ name: editKey.name, env: editKey.env }}
+              onCancel={() => setEditKey(null)}
+              onSave={(d) => {
+                apiKeysTable.update(editKey.id, d);
+                toast.success("Key updated");
+                setEditKey(null);
+              }}
+            />
+          )}
         </DialogContent>
       </Dialog>
 
@@ -535,7 +596,6 @@ const EVENT_OPTIONS = [
   "leave.rejected",
   "expense.submitted",
   "expense.approved",
-  "payroll.completed",
 ];
 
 function NewHookForm({
@@ -600,13 +660,17 @@ function NewHookForm({
 function NewFieldForm({
   onCancel,
   onSave,
+  initial,
+  submitLabel = "Add field",
 }: {
   onCancel: () => void;
   onSave: (d: { name: string; type: CustomField["type"]; required: boolean }) => void;
+  initial?: { name: string; type: CustomField["type"]; required: boolean };
+  submitLabel?: string;
 }) {
-  const [name, setName] = useState("");
-  const [type, setType] = useState<CustomField["type"]>("Text");
-  const [required, setRequired] = useState(false);
+  const [name, setName] = useState(initial?.name ?? "");
+  const [type, setType] = useState<CustomField["type"]>(initial?.type ?? "Text");
+  const [required, setRequired] = useState(initial?.required ?? false);
   return (
     <>
       <div className="space-y-4">
@@ -653,7 +717,63 @@ function NewFieldForm({
           Cancel
         </Button>
         <Button disabled={!name.trim()} onClick={() => onSave({ name, type, required })}>
-          Add field
+          {submitLabel}
+        </Button>
+      </DialogFooter>
+    </>
+  );
+}
+
+function EditKeyForm({
+  initial,
+  onCancel,
+  onSave,
+}: {
+  initial: { name: string; env: "prod" | "test" };
+  onCancel: () => void;
+  onSave: (d: { name: string; env: "prod" | "test" }) => void;
+}) {
+  const [name, setName] = useState(initial.name);
+  const [env, setEnv] = useState<"prod" | "test">(initial.env);
+  return (
+    <>
+      <div className="space-y-4">
+        <div className="space-y-1.5">
+          <Label>Name</Label>
+          <Input
+            autoFocus
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Production reads"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label>Environment</Label>
+          <div className="grid grid-cols-2 gap-2">
+            {(["test", "prod"] as const).map((e) => (
+              <button
+                key={e}
+                type="button"
+                onClick={() => setEnv(e)}
+                className={cn(
+                  "text-xs py-2 rounded-md border press-scale",
+                  env === e
+                    ? "border-primary bg-primary/5 text-primary font-medium"
+                    : "hover:bg-muted",
+                )}
+              >
+                {e}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+      <DialogFooter>
+        <Button variant="ghost" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button disabled={!name.trim()} onClick={() => onSave({ name, env })}>
+          Save changes
         </Button>
       </DialogFooter>
     </>

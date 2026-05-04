@@ -1,6 +1,6 @@
 {
   "name": "@workflows-people/app",
-  "version": "0.6.0",
+  "version": "0.8.0",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -51,6 +51,7 @@
     "@tanstack/react-router": "^1.168.0",
     "@tanstack/react-start": "^1.167.14",
     "@tanstack/router-plugin": "^1.167.10",
+    "@vercel/analytics": "^2.0.1",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

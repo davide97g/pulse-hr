@@ -13,7 +13,7 @@ const path = "/roadmap";
 const NOW = [
   {
     t: "MCP server (read-only)",
-    d: "A Model Context Protocol server exposing employees, commesse, timesheets, expenses and payroll runs as resources. Enables Claude/Copilot/Cursor to ground on your tenant data.",
+    d: "A Model Context Protocol server exposing employees, commesse, timesheets and expenses as resources. Enables Claude/Copilot/Cursor to ground on your tenant data.",
     tag: "agents",
   },
   {
@@ -45,19 +45,9 @@ const NEXT = [
     tag: "ecosystem",
   },
   {
-    t: "Commessa Forecast v2 with cash-flow projection",
-    d: "Layer cash-in/cash-out on top of the current utilisation forecast. Scenario sliders move payroll, hiring, and collection dates together.",
-    tag: "money",
-  },
-  {
     t: "Native iOS + Android apps",
     d: "Native shells around the PWA with biometric unlock and background sync for expense photos. Ships via App Store / Play Store; PWA remains the default.",
     tag: "mobile",
-  },
-  {
-    t: "Multi-entity + group payroll",
-    d: "Run payroll across multiple legal entities under one workspace. Ops-intensive compliance surface — worth doing right rather than fast.",
-    tag: "money",
   },
 ];
 
@@ -82,18 +72,12 @@ const LATER = [
     d: "Not just outbound identity federation — let enterprises push employee lifecycle events into Pulse from Okta / Entra ID / JumpCloud.",
     tag: "enterprise",
   },
-  {
-    t: "Deeper EU payroll (AT, BE, PT, PL, SE)",
-    d: "We natively cover 8 countries; these five are the most asked about. Roadmap rather than commitment — each one is 6+ months of compliance work.",
-    tag: "money",
-  },
 ];
 
 const NOT_DOING = [
   "Closed-source enterprise edition with extra features. No.",
   "Per-API-call pricing for the REST API. Included on every tier.",
   "LLM-generated \"AI Copilot\" in place of the local intent parser. Reliability > marketing.",
-  "50-country in-house payroll — we'll partner with EORs for the long tail instead.",
 ];
 
 const LANES = [
