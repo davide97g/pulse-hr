@@ -66,7 +66,7 @@ const TOPIC_ROOMS: {
   {
     topic: "status",
     label: "Status",
-    description: "Plan, progress, and next moves.",
+    description: "Progress, priorities, and next moves.",
     placeholder: "Log current state, next move, or blocker...",
     modalPrompt: "What changed, what is next, and anything blocked?",
     fields: [

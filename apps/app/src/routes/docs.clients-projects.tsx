@@ -33,8 +33,7 @@ function ClientsProjectsDoc() {
       <Section title="Hierarchy">
         <p>
           Everything rolls up from <b>Client → Project → Activity</b>. A client is the billing
-          entity; projects are the engagements under it; activities are the planning units inside a
-          project.
+          entity; projects are the engagements under it; activities are the work units inside a project.
         </p>
         <p>
           Create clients and projects from the{" "}

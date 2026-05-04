@@ -21,15 +21,14 @@ import {
 import {
   employees,
   employeeById,
-  planById,
+  projectById,
   type Activity,
   type ActivityStatus,
+  type Commessa,
   type IntegrationProvider,
-  type Plan,
 } from "@/lib/mock-data";
 import { useAllocations } from "@/lib/tables/allocations";
 import { useActivities } from "@/lib/tables/activities";
-import { usePlans } from "@/lib/tables/plans";
 import { employeeCapacityRow } from "@/lib/capacity";
 import { cn } from "@/lib/utils";
 
@@ -40,63 +39,62 @@ export function ActivityDialog({
   onClose,
   onSave,
   initial,
-  planId,
+  projectId,
   defaultStatus,
 }: {
   open: boolean;
   onClose: () => void;
   onSave: (a: Activity) => void;
   initial: Activity | null;
-  planId: string;
+  projectId: string;
   defaultStatus?: ActivityStatus;
 }) {
   const allocations = useAllocations();
   const activities = useActivities();
-  const plans = usePlans();
 
-  const plan: Plan | undefined = useMemo(
-    () => plans.find((p) => p.id === planId) ?? planById(planId),
-    [plans, planId],
+  const project: Commessa | undefined = useMemo(
+    () => projectById(projectId),
+    [projectId],
   );
 
-  const [draft, setDraft] = useState<Activity>(() => blankActivity(planId, defaultStatus, plan));
+  const [draft, setDraft] = useState<Activity>(() => blankActivity(projectId, defaultStatus, project));
   useEffect(() => {
-    if (open) setDraft(initial ?? blankActivity(planId, defaultStatus, plan));
-  }, [open, initial, planId, defaultStatus, plan]);
+    if (open) setDraft(initial ?? blankActivity(projectId, defaultStatus, project));
+  }, [open, initial, projectId, defaultStatus, project]);
 
   const set = <K extends keyof Activity>(k: K, v: Activity[K]) =>
     setDraft((d) => ({ ...d, [k]: v }));
 
   // Pool of candidate assignees: employees who have any allocation on this project
   const candidatePool = useMemo(() => {
-    if (!plan) return employees;
+    if (!project) return employees;
     const allocated = new Set(
-      allocations.filter((a) => a.projectId === plan.projectId).map((a) => a.employeeId),
+      allocations.filter((a) => a.projectId === project.id).map((a) => a.employeeId),
     );
     return employees.filter((e) => allocated.has(e.id) || e.id === draft.assigneeId);
-  }, [plan, allocations, draft.assigneeId]);
+  }, [project, allocations, draft.assigneeId]);
 
-  const windowStart = draft.startDate || plan?.startDate || "";
-  const windowEnd = draft.endDate || plan?.endDate || "";
+  const windowStart = draft.startDate || project?.startDate || "";
+  const windowEnd = draft.endDate || project?.endDate || "";
 
   const capByEmployee = useMemo(() => {
-    if (!plan || !windowStart || !windowEnd) return new Map<string, ReturnType<typeof employeeCapacityRow>>();
+    if (!project || !windowStart || !windowEnd) return new Map<string, ReturnType<typeof employeeCapacityRow>>();
     const map = new Map<string, ReturnType<typeof employeeCapacityRow>>();
     for (const e of candidatePool) {
       map.set(
         e.id,
-        employeeCapacityRow(e.id, plan.projectId, windowStart, windowEnd, {
+        employeeCapacityRow(e.id, project.id, windowStart, windowEnd, {
           excludeActivityId: initial?.id,
           activities,
-          plans,
           allocations,
         }),
       );
     }
     return map;
-  }, [plan, candidatePool, windowStart, windowEnd, activities, plans, allocations, initial?.id]);
+  }, [project, candidatePool, windowStart, windowEnd, activities, allocations, initial?.id]);
 
   const selectedRow = draft.assigneeId ? capByEmployee.get(draft.assigneeId) : null;
+  const selectedAssignee = draft.assigneeId ? employeeById(draft.assigneeId) : null;
   const newAssignedHours = (selectedRow?.assignedHours ?? 0) + draft.estimateHours;
   const overAlloc = selectedRow ? newAssignedHours > selectedRow.capacityHours : false;
   const overByHours = selectedRow ? newAssignedHours - selectedRow.capacityHours : 0;
@@ -219,8 +217,8 @@ export function ActivityDialog({
               {overAlloc && <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />}
               <div>
                 <div>
-                  {employeeById(draft.assigneeId!)?.name} on{" "}
-                  <span className="font-mono">{plan?.projectId}</span> for {windowStart || "—"} →{" "}
+                  {selectedAssignee?.name ?? "Selected employee"} on{" "}
+                  <span className="font-mono">{project?.code ?? projectId}</span> for {windowStart || "—"} →{" "}
                   {windowEnd || "—"}: {selectedRow.assignedHours.toFixed(0)}h booked of{" "}
                   {selectedRow.capacityHours.toFixed(0)}h capacity.
                 </div>
@@ -295,16 +293,16 @@ export function ActivityDialog({
   );
 }
 
-function blankActivity(planId: string, status: ActivityStatus = "todo", plan?: Plan): Activity {
+function blankActivity(projectId: string, status: ActivityStatus = "todo", project?: Commessa): Activity {
   return {
     id: `ac${Date.now()}`,
-    planId,
+    projectId,
     title: "",
     description: "",
     status,
     estimateHours: 8,
-    startDate: plan?.startDate,
-    endDate: plan?.endDate,
+    startDate: project?.startDate,
+    endDate: project?.endDate,
     dependencies: [],
     order: 100,
   };

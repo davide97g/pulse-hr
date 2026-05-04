@@ -4,7 +4,6 @@ import {
   ListChecks,
   Search,
   Briefcase,
-  Layers,
   Plus,
   MoreHorizontal,
   Pencil,
@@ -38,7 +37,6 @@ import {
   AlertDialogTitle,
 } from "@pulse-hr/ui/primitives/alert-dialog";
 import { activitiesTable, useActivities } from "@/lib/tables/activities";
-import { usePlans } from "@/lib/tables/plans";
 import { useCommesse } from "@/lib/tables/commesse";
 import {
   employeeById,
@@ -53,7 +51,6 @@ type ActivitiesSearch = {
   assignee?: string;
   status?: ActivityStatus;
   project?: string;
-  plan?: string;
   scope?: "mine" | "all";
   period?: "week" | "month" | "quarter" | "all";
 };
@@ -61,16 +58,15 @@ type ActivitiesSearch = {
 const STATUSES: ActivityStatus[] = ["todo", "in_progress", "review", "done", "blocked"];
 
 export const Route = createFileRoute("/activities")({
-  head: () => ({ meta: [{ title: "Activities — Pulse HR" }] }),
   validateSearch: (s: Record<string, unknown>): ActivitiesSearch => ({
     q: typeof s.q === "string" ? s.q : undefined,
     assignee: typeof s.assignee === "string" ? s.assignee : undefined,
     status: typeof s.status === "string" ? (s.status as ActivityStatus) : undefined,
     project: typeof s.project === "string" ? s.project : undefined,
-    plan: typeof s.plan === "string" ? s.plan : undefined,
     scope: (s.scope as ActivitiesSearch["scope"]) || undefined,
     period: (s.period as ActivitiesSearch["period"]) || undefined,
   }),
+  head: () => ({ meta: [{ title: "Activities — Pulse HR" }] }),
   component: ActivitiesPage,
 });
 
@@ -81,7 +77,6 @@ function ActivitiesPage() {
     nav({ search: (prev) => ({ ...prev, ...patch }) });
 
   const activities = useActivities();
-  const plans = usePlans();
   const projects = useCommesse();
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Activity | "new" | null>(null);
@@ -94,6 +89,7 @@ function ActivitiesPage() {
 
   // First-employee fallback for "Mine" filter — no real "current user" in mock.
   const me = employees[0];
+  const meId = me?.id;
   const scope = search.scope ?? "mine";
   const period = search.period ?? "month";
   const q = search.q ?? "";
@@ -120,13 +116,9 @@ function ActivitiesPage() {
     return activities
       .filter((a) => {
         if (search.status && a.status !== search.status) return false;
-        if (search.plan && a.planId !== search.plan) return false;
-        if (search.project) {
-          const plan = plans.find((p) => p.id === a.planId);
-          if (!plan || plan.projectId !== search.project) return false;
-        }
+        if (search.project && a.projectId !== search.project) return false;
         if (search.assignee && a.assigneeId !== search.assignee) return false;
-        if (scope === "mine" && a.assigneeId !== me?.id) return false;
+        if (scope === "mine" && a.assigneeId !== meId) return false;
         if (periodWindow) {
           const start = a.startDate ?? "";
           const end = a.endDate ?? "";
@@ -142,18 +134,18 @@ function ActivitiesPage() {
         return true;
       })
       .sort((a, b) => (a.endDate ?? "").localeCompare(b.endDate ?? ""));
-  }, [activities, plans, search, scope, periodWindow, q, me?.id]);
+  }, [activities, search, scope, periodWindow, q, meId]);
 
   return (
     <div className="p-4 md:p-6 fade-in space-y-5">
       <PageHeader
         title="Activities"
-        description="Every activity across all plans and projects."
+        description="Every activity across all projects."
         actions={
           <Button
             size="sm"
             className="press-scale"
-            disabled={plans.length === 0}
+            disabled={projects.length === 0}
             onClick={() => setEditing("new")}
           >
             <Plus className="h-4 w-4 mr-1.5" />
@@ -184,9 +176,7 @@ function ActivitiesPage() {
           <select
             className="h-9 px-3 text-sm bg-background border rounded-md"
             value={search.project ?? ""}
-            onChange={(e) =>
-              setSearch({ project: e.target.value || undefined, plan: undefined })
-            }
+            onChange={(e) => setSearch({ project: e.target.value || undefined })}
           >
             <option value="">All projects</option>
             {projects.map((p) => (
@@ -252,7 +242,7 @@ function ActivitiesPage() {
               <thead className="text-xs text-muted-foreground bg-muted/40">
                 <tr>
                   <th className="text-left font-medium px-5 py-2.5">Activity</th>
-                  <th className="text-left font-medium px-3 py-2.5">Plan / Project</th>
+                  <th className="text-left font-medium px-3 py-2.5">Project</th>
                   <th className="text-left font-medium px-3 py-2.5">Assignee</th>
                   <th className="text-left font-medium px-3 py-2.5">Status</th>
                   <th className="text-right font-medium px-3 py-2.5">Hours</th>
@@ -262,19 +252,18 @@ function ActivitiesPage() {
               </thead>
               <tbody className="stagger-in">
                 {filtered.map((a) => {
-                  const plan = plans.find((p) => p.id === a.planId);
-                  const project = plan ? projects.find((pr) => pr.id === plan.projectId) : null;
+                  const project = projects.find((pr) => pr.id === a.projectId);
                   const assignee = a.assigneeId ? employeeById(a.assigneeId) : null;
                   return (
                     <tr
                       key={a.id}
                       className={cn("border-t hover:bg-muted/30 cursor-pointer")}
                       onClick={() => {
-                        if (project && plan)
+                        if (project)
                           nav({
-                            to: "/projects/$projectId/plans/$planId",
-                            params: { projectId: project.id, planId: plan.id },
-                            search: { tab: "activities" },
+                            to: "/projects/$projectId",
+                            params: { projectId: project.id },
+                            search: { section: "activities" },
                           });
                       }}
                     >
@@ -287,10 +276,6 @@ function ActivitiesPage() {
                         )}
                       </td>
                       <td className="px-3 py-3 text-xs">
-                        <div className="flex items-center gap-1.5">
-                          <Layers className="h-3 w-3 text-muted-foreground" />
-                          <span>{plan?.name ?? "—"}</span>
-                        </div>
                         {project && (
                           <Link
                             to="/projects/$projectId"
@@ -326,10 +311,14 @@ function ActivitiesPage() {
                       <td className="px-3 py-3 text-right tabular-nums text-xs">
                         {a.endDate ?? "—"}
                       </td>
-                      <td className="px-2" onClick={(ev) => ev.stopPropagation()}>
+                      <td className="px-2">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <button className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground">
+                            <button
+                              type="button"
+                              className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground"
+                              onClick={(ev) => ev.stopPropagation()}
+                            >
                               <MoreHorizontal className="h-4 w-4" />
                             </button>
                           </DropdownMenuTrigger>
@@ -367,7 +356,7 @@ function ActivitiesPage() {
         {editing !== null && (
           <ActivityForm
             initial={editing === "new" ? null : editing}
-            plans={plans}
+            projects={projects}
             onCancel={() => setEditing(null)}
             onSave={(data) => {
               if (editing === "new") {
@@ -423,7 +412,7 @@ function ActivitiesPage() {
 }
 
 interface ActivityFormData {
-  planId: string;
+  projectId: string;
   title: string;
   description?: string;
   status: ActivityStatus;
@@ -436,16 +425,16 @@ interface ActivityFormData {
 
 function ActivityForm({
   initial,
-  plans,
+  projects,
   onCancel,
   onSave,
 }: {
   initial: Activity | null;
-  plans: { id: string; name: string; projectId: string }[];
+  projects: { id: string; name: string }[];
   onCancel: () => void;
   onSave: (data: ActivityFormData) => void;
 }) {
-  const [planId, setPlanId] = useState(initial?.planId ?? plans[0]?.id ?? "");
+  const [projectId, setProjectId] = useState(initial?.projectId ?? projects[0]?.id ?? "");
   const [title, setTitle] = useState(initial?.title ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [status, setStatus] = useState<ActivityStatus>(initial?.status ?? "todo");
@@ -454,7 +443,7 @@ function ActivityForm({
   const [endDate, setEndDate] = useState(initial?.endDate ?? "");
   const [estimateHours, setEstimateHours] = useState(initial?.estimateHours ?? 4);
 
-  const valid = planId && title.trim().length > 0 && estimateHours > 0;
+  const valid = projectId && title.trim().length > 0 && estimateHours > 0;
 
   return (
     <div className="space-y-4">
@@ -480,13 +469,13 @@ function ActivityForm({
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label>Plan</Label>
+          <Label>Project</Label>
           <select
             className="h-9 w-full px-3 text-sm bg-background border rounded-md"
-            value={planId}
-            onChange={(e) => setPlanId(e.target.value)}
+            value={projectId}
+            onChange={(e) => setProjectId(e.target.value)}
           >
-            {plans.map((p) => (
+            {projects.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name}
               </option>
@@ -562,7 +551,7 @@ function ActivityForm({
           disabled={!valid}
           onClick={() =>
             onSave({
-              planId,
+              projectId,
               title: title.trim(),
               description: description.trim() || undefined,
               status,

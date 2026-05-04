@@ -42,7 +42,6 @@ import "@/lib/tables/onboardingWorkflows";
 import "@/lib/tables/oneOnOnes";
 import "@/lib/tables/payrollRuns";
 import "@/lib/tables/payslips";
-import "@/lib/tables/plans";
 import "@/lib/tables/pulseEntries";
 import "@/lib/tables/roles";
 import "@/lib/tables/seasonalChallenges";
