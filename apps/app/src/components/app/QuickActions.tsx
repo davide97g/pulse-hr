@@ -6,7 +6,8 @@ import { Input } from "@pulse-hr/ui/primitives/input";
 import { Label } from "@pulse-hr/ui/primitives/label";
 import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import { Avatar } from "@/components/app/AppShell";
-import { employees, employeeById } from "@/lib/mock-data";
+import { employees, employeeById, type JobPosting } from "@/lib/mock-data";
+import { jobPostingsTable } from "@/lib/tables/jobPostings";
 import { employeesTable, makeEmployee } from "@/lib/tables/employees";
 import { leaveTable } from "@/lib/tables/leave";
 import { expensesTable } from "@/lib/tables/expenses";
@@ -83,17 +84,21 @@ function Footer({
   onCancel,
   onSubmit,
   label = "Submit",
+  disabled,
 }: {
   onCancel: () => void;
   onSubmit: () => void;
   label?: string;
+  disabled?: boolean;
 }) {
   return (
     <div className="px-5 py-3 border-t flex justify-end gap-2 sticky bottom-0 bg-card">
       <Button variant="ghost" onClick={onCancel}>
         Cancel
       </Button>
-      <Button onClick={onSubmit}>{label}</Button>
+      <Button onClick={onSubmit} disabled={disabled}>
+        {label}
+      </Button>
     </div>
   );
 }
@@ -643,53 +648,112 @@ function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
 }
 
 function PostJobForm({ onDone }: { onDone: () => void }) {
+  const [title, setTitle] = useState("");
+  const [department, setDepartment] = useState("Engineering");
+  const [location, setLocation] = useState("Remote — EU");
+  const [type, setType] = useState<JobPosting["type"]>("Full-time");
+  const [salary, setSalary] = useState("");
+  const [owner, setOwner] = useState("Sarah Chen");
+  const [description, setDescription] = useState("");
+  const valid = title.trim().length > 0 && description.trim().length > 0;
+
   const submit = () => {
-    toast.success("Job posted", {
-      description: "Live on careers page in a few seconds.",
+    if (!valid) return;
+    const j: JobPosting = {
+      title: title.trim(),
+      department: department.trim() || "Engineering",
+      location: location.trim() || "Remote",
+      type,
+      salary: salary.trim(),
+      owner: owner.trim() || "Sarah Chen",
+      description: description.trim(),
+      id: `j-${Date.now()}`,
+      applicants: 0,
+      posted: new Date().toISOString().slice(0, 10),
+      status: "draft",
+    };
+    jobPostingsTable.add(j);
+    toast.success("Job created", {
+      description: "Saved as draft. Publish from Recruiting when ready.",
       icon: <Briefcase className="h-4 w-4" />,
     });
     onDone();
   };
+
   return (
     <>
       <FormBody>
         <div className="space-y-1.5">
           <Label>Job title</Label>
-          <Input placeholder="Senior Frontend Engineer" />
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Senior Frontend Engineer"
+          />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Department</Label>
-            <Input placeholder="Engineering" />
+            <Input
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              placeholder="Engineering"
+            />
           </div>
           <div className="space-y-1.5">
             <Label>Location</Label>
-            <Input placeholder="Remote — EU" />
+            <Input
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Remote — EU"
+            />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Employment</Label>
-            <Input defaultValue="Full-time" />
+            <div className="flex gap-1.5">
+              {(["Full-time", "Part-time", "Contractor"] as const).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setType(t)}
+                  className={cn(
+                    "flex-1 text-xs py-2 rounded-md border press-scale",
+                    type === t
+                      ? "border-primary bg-primary/5 text-primary font-medium"
+                      : "hover:bg-muted",
+                  )}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="space-y-1.5">
             <Label>Salary range</Label>
-            <Input placeholder="$80k – $110k" />
+            <Input
+              value={salary}
+              onChange={(e) => setSalary(e.target.value)}
+              placeholder="$80k – $110k"
+            />
           </div>
         </div>
         <div className="space-y-1.5">
           <Label>Description</Label>
-          <Textarea rows={5} placeholder="About the role…" />
+          <Textarea
+            rows={5}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="About the role…"
+          />
         </div>
         <div className="space-y-1.5">
           <Label>Hiring manager</Label>
-          <div className="flex items-center gap-2 p-2 border rounded-md">
-            <Avatar initials="SC" color="oklch(0.7 0.15 30)" size={24} />
-            <span className="text-sm">Sarah Chen</span>
-          </div>
+          <Input value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="Name" />
         </div>
       </FormBody>
-      <Footer onCancel={onDone} onSubmit={submit} label="Publish job" />
+      <Footer onCancel={onDone} onSubmit={submit} label="Save draft" disabled={!valid} />
     </>
   );
 }

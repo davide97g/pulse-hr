@@ -74,13 +74,13 @@ export const Route = createFileRoute("/people")({
   component: People,
 });
 
-interface PeopleView {
+type PeopleView = Record<string, unknown> & {
   q: string;
   dept: string;
   tab: string;
   status: string[];
   type: string[];
-}
+};
 
 function People() {
   const views = useSavedViews<PeopleView>("people", {
@@ -279,9 +279,19 @@ function People() {
       </Card>
 
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList>
-          <TabsTrigger value="list">List</TabsTrigger>
-          <TabsTrigger value="grid">Cards</TabsTrigger>
+        <TabsList className="bg-muted/80">
+          <TabsTrigger
+            value="list"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+          >
+            List
+          </TabsTrigger>
+          <TabsTrigger
+            value="grid"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+          >
+            Cards
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="mt-4">
@@ -390,8 +400,7 @@ function People() {
                                 toast(`Started offboarding for ${e.name}`, {
                                   action: {
                                     label: "Undo",
-                                    onClick: () =>
-                                      employeesTable.update(e.id, { status: prior }),
+                                    onClick: () => employeesTable.update(e.id, { status: prior }),
                                   },
                                 });
                               }}
@@ -507,9 +516,7 @@ function People() {
       >
         <div className="space-y-6">
           <div>
-            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
-              Status
-            </div>
+            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Status</div>
             <div className="space-y-1.5">
               {(["active", "remote", "on_leave", "offboarding"] as const).map((s) => {
                 const checked = statusFilter.includes(s);
@@ -553,9 +560,7 @@ function People() {
                       checked={checked}
                       onChange={(e) =>
                         setTypeFilter(
-                          e.target.checked
-                            ? [...typeFilter, t]
-                            : typeFilter.filter((v) => v !== t),
+                          e.target.checked ? [...typeFilter, t] : typeFilter.filter((v) => v !== t),
                         )
                       }
                       className="h-4 w-4 rounded border-border"

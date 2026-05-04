@@ -40,7 +40,6 @@ import {
 import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import {
   employees,
-  employeeLogHealth,
   type LogMessage,
   type ManagerAsk,
   type LogSentiment,
@@ -48,6 +47,8 @@ import {
 } from "@/lib/mock-data";
 import { logMessagesTable, useLogMessages } from "@/lib/tables/logMessages";
 import { managerAsksTable, useManagerAsks } from "@/lib/tables/managerAsks";
+import { useEmployee } from "@/lib/tables/employees";
+import { computeRecap } from "@/lib/log-recap";
 import { PRESETS, type LogPreset } from "@/lib/log-presets";
 import { QuickTopicChips } from "./QuickTopicChips";
 import { PinnedAskCard } from "./PinnedAskCard";
@@ -70,9 +71,18 @@ const TOPIC_ROOMS: {
     placeholder: "Log current state, next move, or blocker...",
     modalPrompt: "What changed, what is next, and anything blocked?",
     fields: [
-      { key: "current", label: "Current state", placeholder: "Where does the work stand right now?" },
+      {
+        key: "current",
+        label: "Current state",
+        placeholder: "Where does the work stand right now?",
+      },
       { key: "next", label: "Next move", placeholder: "What will you do next?" },
-      { key: "blocker", label: "Blocker or risk", placeholder: "Anything blocked or at risk?", optional: true },
+      {
+        key: "blocker",
+        label: "Blocker or risk",
+        placeholder: "Anything blocked or at risk?",
+        optional: true,
+      },
     ],
   },
   {
@@ -96,7 +106,12 @@ const TOPIC_ROOMS: {
     fields: [
       { key: "pain", label: "Pain point", placeholder: "What is heavier than it should be?" },
       { key: "impact", label: "Impact", placeholder: "How is it affecting your work?" },
-      { key: "help", label: "Help needed", placeholder: "What would reduce the friction?", optional: true },
+      {
+        key: "help",
+        label: "Help needed",
+        placeholder: "What would reduce the friction?",
+        optional: true,
+      },
     ],
   },
   {
@@ -169,10 +184,9 @@ function workflowById(id?: string): LogPreset | undefined {
   return id ? PRESETS.find((preset) => preset.id === id) : undefined;
 }
 
-function workflowPatch(workflowChoice: WorkflowChoice): Pick<
-  LogMessage,
-  "logKind" | "workflowId" | "workflowLabel"
-> {
+function workflowPatch(
+  workflowChoice: WorkflowChoice,
+): Pick<LogMessage, "logKind" | "workflowId" | "workflowLabel"> {
   if (workflowChoice === "generic") {
     return { logKind: "generic", workflowId: undefined, workflowLabel: undefined };
   }
@@ -220,19 +234,19 @@ function composeLogText(room: (typeof TOPIC_ROOMS)[number], values: TemplateValu
 export function EmployeeLogView() {
   const allMsgs = useLogMessages();
   const allAsks = useManagerAsks();
+  const me = useEmployee(ME_ID);
   const msgs = useMemo(() => allMsgs.filter((m) => m.employeeId === ME_ID), [allMsgs]);
   const asks = useMemo(
     () => allAsks.filter((a) => a.employeeId === ME_ID && a.status === "pending"),
     [allAsks],
   );
+  const recap = useMemo(() => computeRecap(me?.name ?? "You", msgs), [msgs, me?.name]);
   const [activeTopic, setActiveTopic] = useState<Exclude<LogTopic, "freeform">>("status");
   const [logDialogOpen, setLogDialogOpen] = useState(false);
   const [editingLog, setEditingLog] = useState<LogMessage | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<LogMessage | null>(null);
   const [workflowChoice, setWorkflowChoice] = useState<WorkflowChoice>("generic");
   const activeRoom = TOPIC_ROOMS.find((r) => r.topic === activeTopic) ?? TOPIC_ROOMS[0];
-
-  const health = employeeLogHealth.find((h) => h.employeeId === ME_ID);
 
   const roomMsgs = useMemo(
     () => msgs.filter((m) => m.topic === activeTopic && m.role === "employee"),
@@ -245,7 +259,9 @@ export function EmployeeLogView() {
   const topicCounts = useMemo(
     () =>
       TOPIC_ROOMS.reduce<Partial<Record<LogTopic, number>>>((acc, room) => {
-        acc[room.topic] = msgs.filter((m) => m.topic === room.topic && m.role === "employee").length;
+        acc[room.topic] = msgs.filter(
+          (m) => m.topic === room.topic && m.role === "employee",
+        ).length;
         return acc;
       }, {}),
     [msgs],
@@ -256,8 +272,7 @@ export function EmployeeLogView() {
         if (room.topic === activeTopic) return [];
         const items = msgs.filter((m) => m.topic === room.topic && m.role === "employee");
         const last = items.reduce<LogMessage | undefined>(
-          (latest, item) =>
-            !latest || item.createdAt > latest.createdAt ? item : latest,
+          (latest, item) => (!latest || item.createdAt > latest.createdAt ? item : latest),
           undefined,
         );
         return [{ room, count: items.length, last }];
@@ -453,21 +468,23 @@ export function EmployeeLogView() {
           <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
             <Sparkles className="h-3.5 w-3.5" /> Your recap
           </div>
-          <p className="mt-2 text-sm">{health?.recap ?? "Not enough data yet."}</p>
+          <p className="mt-2 text-sm">
+            {recap.messageCount === 0
+              ? "Not enough data yet. Log a thought to see your recap here."
+              : recap.summary}
+          </p>
         </div>
-        {health && (
-          <div className="rounded-xl border bg-card p-4">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
-              How you've been
-            </div>
-            <SentimentRadar values={health.dimensions} size={180} />
+        <div className="rounded-xl border bg-card p-4">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+            How you've been
           </div>
-        )}
+          <SentimentRadar values={recap.dimensions} size={180} />
+        </div>
         <div className="rounded-xl border bg-card p-4">
           <div className="text-xs uppercase tracking-wide text-muted-foreground">
             14-day sentiment
           </div>
-          <Sparkline values={health?.sparkline ?? []} />
+          <Sparkline values={recap.sparkline} />
         </div>
         <div className="rounded-xl border bg-card p-4 text-sm">
           <div className="text-xs uppercase tracking-wide text-muted-foreground">Open asks</div>
@@ -569,7 +586,11 @@ function StructuredLogTemplate({
       <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
         <div className="grid gap-3">
           {room.fields.map((field) => (
-            <label key={field.key} htmlFor={`log-${room.topic}-${field.key}`} className="space-y-1.5">
+            <label
+              key={field.key}
+              htmlFor={`log-${room.topic}-${field.key}`}
+              className="space-y-1.5"
+            >
               <span className="flex items-center gap-1.5 text-sm font-medium">
                 {field.label}
                 {field.optional && (
@@ -676,7 +697,13 @@ function LogHistoryPanel({
                       </span>
                     )}
                   </div>
-                  <p className={expanded ? "mt-1 whitespace-pre-line text-sm leading-relaxed" : "mt-1 line-clamp-3 text-xs leading-relaxed"}>
+                  <p
+                    className={
+                      expanded
+                        ? "mt-1 whitespace-pre-line text-sm leading-relaxed"
+                        : "mt-1 line-clamp-3 text-xs leading-relaxed"
+                    }
+                  >
                     {log.text}
                   </p>
                 </div>
@@ -824,9 +851,7 @@ function LogEntryDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div className="rounded-xl border bg-muted/30 p-3">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground">
-              Context
-            </div>
+            <div className="text-xs uppercase tracking-wide text-muted-foreground">Context</div>
             <p className="mt-1 text-sm">{room.description}</p>
           </div>
           <div className="space-y-2">
@@ -867,9 +892,7 @@ function LogEntryDialog({
                 <span className="text-sm font-medium">
                   {field.label}
                   {field.optional && (
-                    <span className="ml-1 text-xs font-normal text-muted-foreground">
-                      optional
-                    </span>
+                    <span className="ml-1 text-xs font-normal text-muted-foreground">optional</span>
                   )}
                 </span>
                 <Textarea
