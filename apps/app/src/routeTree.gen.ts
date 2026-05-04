@@ -59,6 +59,7 @@ import { Route as DocsClientsProjectsRouteImport } from './routes/docs.clients-p
 import { Route as CommentIdRouteImport } from './routes/comment.$id'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as AdminModulesRouteImport } from './routes/admin.modules'
+import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
 import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$officeId.$roomId'
 
 const WelcomeRoute = WelcomeRouteImport.update({
@@ -311,6 +312,11 @@ const AdminModulesRoute = AdminModulesRouteImport.update({
   path: '/admin/modules',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ActivitiesActivityIdRoute = ActivitiesActivityIdRouteImport.update({
+  id: '/activities_/$activityId',
+  path: '/activities/$activityId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OfficesOfficeIdRoomIdRoute = OfficesOfficeIdRoomIdRouteImport.update({
   id: '/$roomId',
   path: '/$roomId',
@@ -350,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
+  '/activities/$activityId': typeof ActivitiesActivityIdRoute
   '/admin/modules': typeof AdminModulesRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/comment/$id': typeof CommentIdRoute
@@ -400,6 +407,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
+  '/activities/$activityId': typeof ActivitiesActivityIdRoute
   '/admin/modules': typeof AdminModulesRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/comment/$id': typeof CommentIdRoute
@@ -454,6 +462,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
+  '/activities_/$activityId': typeof ActivitiesActivityIdRoute
   '/admin/modules': typeof AdminModulesRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/comment/$id': typeof CommentIdRoute
@@ -509,6 +518,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
+    | '/activities/$activityId'
     | '/admin/modules'
     | '/clients/$clientId'
     | '/comment/$id'
@@ -559,6 +569,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
+    | '/activities/$activityId'
     | '/admin/modules'
     | '/clients/$clientId'
     | '/comment/$id'
@@ -612,6 +623,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/time'
     | '/welcome'
+    | '/activities_/$activityId'
     | '/admin/modules'
     | '/clients/$clientId'
     | '/comment/$id'
@@ -666,6 +678,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TimeRoute: typeof TimeRoute
   WelcomeRoute: typeof WelcomeRoute
+  ActivitiesActivityIdRoute: typeof ActivitiesActivityIdRoute
   AdminModulesRoute: typeof AdminModulesRoute
   CommentIdRoute: typeof CommentIdRoute
   PeopleEmployeeIdRoute: typeof PeopleEmployeeIdRoute
@@ -1026,6 +1039,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminModulesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/activities_/$activityId': {
+      id: '/activities_/$activityId'
+      path: '/activities/$activityId'
+      fullPath: '/activities/$activityId'
+      preLoaderRoute: typeof ActivitiesActivityIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/offices/$officeId/$roomId': {
       id: '/offices/$officeId/$roomId'
       path: '/$roomId'
@@ -1139,6 +1159,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TimeRoute: TimeRoute,
   WelcomeRoute: WelcomeRoute,
+  ActivitiesActivityIdRoute: ActivitiesActivityIdRoute,
   AdminModulesRoute: AdminModulesRoute,
   CommentIdRoute: CommentIdRoute,
   PeopleEmployeeIdRoute: PeopleEmployeeIdRoute,

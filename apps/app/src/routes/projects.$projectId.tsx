@@ -383,6 +383,12 @@ function ProjectDetail() {
           <ActivityBoard
             projectId={project.id}
             activities={projectActs}
+            onActivityOpen={(activity) =>
+              nav({
+                to: "/activities/$activityId",
+                params: { activityId: activity.id },
+              })
+            }
             onChange={(next) => {
               const others = activitiesTable.getAll().filter((a) => a.projectId !== project.id);
               activitiesTable.replace([...others, ...next]);
@@ -398,7 +404,16 @@ function ProjectDetail() {
           <div className="text-xs text-muted-foreground">
             Weekly timeline of scheduled activities for this project, with dependency arrows.
           </div>
-          <ProjectActivitiesGantt project={project} activities={projectActs} />
+          <ProjectActivitiesGantt
+            project={project}
+            activities={projectActs}
+            onActivityClick={(activity) =>
+              nav({
+                to: "/activities/$activityId",
+                params: { activityId: activity.id },
+              })
+            }
+          />
         </TabsContent>
 
         <TabsContent value="integrations" className="pt-5 space-y-4">

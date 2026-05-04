@@ -29,10 +29,11 @@ import {
 } from "@/lib/mock-data";
 import { useAllocations } from "@/lib/tables/allocations";
 import { useActivities } from "@/lib/tables/activities";
+import { activityStatusLabel, activityStatusOptions } from "@/lib/activity-status";
 import { employeeCapacityRow } from "@/lib/capacity";
 import { cn } from "@/lib/utils";
 
-const STATUSES: ActivityStatus[] = ["todo", "in_progress", "review", "done", "blocked"];
+const STATUSES: ActivityStatus[] = activityStatusOptions;
 
 export function ActivityDialog({
   open,
@@ -170,7 +171,7 @@ export function ActivityDialog({
                 <SelectContent>
                   {STATUSES.map((s) => (
                     <SelectItem key={s} value={s}>
-                      {s}
+                      {activityStatusLabel(s)}
                     </SelectItem>
                   ))}
                 </SelectContent>

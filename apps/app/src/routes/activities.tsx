@@ -38,6 +38,7 @@ import {
 } from "@pulse-hr/ui/primitives/alert-dialog";
 import { activitiesTable, useActivities } from "@/lib/tables/activities";
 import { useCommesse } from "@/lib/tables/commesse";
+import { activityStatusLabel, activityStatusOptions } from "@/lib/activity-status";
 import {
   employeeById,
   employees,
@@ -55,7 +56,7 @@ type ActivitiesSearch = {
   period?: "week" | "month" | "quarter" | "all";
 };
 
-const STATUSES: ActivityStatus[] = ["todo", "in_progress", "review", "done", "blocked"];
+const STATUSES: ActivityStatus[] = activityStatusOptions;
 
 export const Route = createFileRoute("/activities")({
   validateSearch: (s: Record<string, unknown>): ActivitiesSearch => ({
@@ -197,7 +198,7 @@ function ActivitiesPage() {
             <option value="">All statuses</option>
             {STATUSES.map((s) => (
               <option key={s} value={s}>
-                {s}
+                {activityStatusLabel(s)}
               </option>
             ))}
           </select>
@@ -259,12 +260,10 @@ function ActivitiesPage() {
                       key={a.id}
                       className={cn("border-t hover:bg-muted/30 cursor-pointer")}
                       onClick={() => {
-                        if (project)
-                          nav({
-                            to: "/projects/$projectId",
-                            params: { projectId: project.id },
-                            search: { section: "activities" },
-                          });
+                        nav({
+                          to: "/activities/$activityId",
+                          params: { activityId: a.id },
+                        });
                       }}
                     >
                       <td className="px-5 py-3">
@@ -491,7 +490,7 @@ function ActivityForm({
           >
             {STATUSES.map((s) => (
               <option key={s} value={s}>
-                {s}
+                {activityStatusLabel(s)}
               </option>
             ))}
           </select>

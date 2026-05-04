@@ -7,6 +7,7 @@ export type GanttBar = {
   end: string; // ISO YYYY-MM-DD
   label: string;
   subtitle?: string;
+  details?: { label: string; value: React.ReactNode }[];
   color: string;
   progress?: number; // 0–1 overlay
   onClick?: () => void;
@@ -181,12 +182,26 @@ export function Gantt({
                               {bar.subtitle}
                             </div>
                           )}
+                          {bar.details?.map((detail) => (
+                            <div
+                              key={detail.label}
+                              className="flex items-center justify-between gap-3 py-0.5"
+                            >
+                              <span className="text-muted-foreground">{detail.label}</span>
+                              <span className="font-medium text-right">{detail.value}</span>
+                            </div>
+                          ))}
                           <div className="font-mono tabular-nums text-[11px] text-muted-foreground">
                             {bar.start} → {bar.end}
                           </div>
                           {typeof bar.progress === "number" && (
                             <div className="mt-1 text-[11px] tabular-nums">
                               Progress: {Math.round(bar.progress * 100)}%
+                            </div>
+                          )}
+                          {bar.onClick && (
+                            <div className="mt-2 text-[11px] text-primary">
+                              Click to open activity details
                             </div>
                           )}
                         </div>
@@ -200,6 +215,7 @@ export function Gantt({
             {/* Dependency arrows (simple straight connectors) */}
             {dependencies.length > 0 && (
               <svg
+                aria-hidden="true"
                 className="absolute inset-0 pointer-events-none"
                 width="100%"
                 height="100%"

@@ -18,24 +18,31 @@ import { Avatar, StatusBadge } from "@/components/app/AppShell";
 import { IntegrationBadge } from "./IntegrationBadge";
 import { ActivityDialog } from "./ActivityDialog";
 import { employeeById, type Activity, type ActivityStatus } from "@/lib/mock-data";
+import { activityStatusMeta } from "@/lib/activity-status";
 import { cn } from "@/lib/utils";
 
 const COLUMNS: { id: ActivityStatus; label: string; tone: string }[] = [
-  { id: "todo", label: "To do", tone: "var(--muted-foreground)" },
-  { id: "in_progress", label: "In progress", tone: "var(--info)" },
-  { id: "review", label: "Review", tone: "var(--warning)" },
-  { id: "done", label: "Done", tone: "var(--success)" },
-  { id: "blocked", label: "Blocked", tone: "var(--destructive)" },
+  { id: "todo", label: activityStatusMeta.todo.label, tone: activityStatusMeta.todo.tone },
+  {
+    id: "in_progress",
+    label: activityStatusMeta.in_progress.label,
+    tone: activityStatusMeta.in_progress.tone,
+  },
+  { id: "review", label: activityStatusMeta.review.label, tone: activityStatusMeta.review.tone },
+  { id: "done", label: activityStatusMeta.done.label, tone: activityStatusMeta.done.tone },
+  { id: "blocked", label: activityStatusMeta.blocked.label, tone: activityStatusMeta.blocked.tone },
 ];
 
 export function ActivityBoard({
   projectId,
   activities,
   onChange,
+  onActivityOpen,
 }: {
   projectId: string;
   activities: Activity[];
   onChange: (next: Activity[]) => void;
+  onActivityOpen?: (activity: Activity) => void;
 }) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [dialog, setDialog] = useState<{
@@ -112,6 +119,7 @@ export function ActivityBoard({
               onAdd={() => setDialog({ open: true, initial: null, defaultStatus: col.id })}
               onEdit={(a) => setDialog({ open: true, initial: a })}
               onRemove={remove}
+              onOpen={onActivityOpen}
             />
           ))}
         </div>
@@ -139,6 +147,7 @@ function Column({
   onAdd,
   onEdit,
   onRemove,
+  onOpen,
 }: {
   columnId: ActivityStatus;
   label: string;
@@ -147,6 +156,7 @@ function Column({
   onAdd: () => void;
   onEdit: (a: Activity) => void;
   onRemove: (a: Activity) => void;
+  onOpen?: (a: Activity) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: columnId });
   return (
@@ -177,6 +187,7 @@ function Column({
             <DraggableCard
               key={a.id}
               activity={a}
+              onOpen={() => onOpen?.(a)}
               onEdit={() => onEdit(a)}
               onRemove={() => onRemove(a)}
             />
@@ -189,10 +200,12 @@ function Column({
 
 function DraggableCard({
   activity,
+  onOpen,
   onEdit,
   onRemove,
 }: {
   activity: Activity;
+  onOpen?: () => void;
   onEdit: () => void;
   onRemove: () => void;
 }) {
@@ -204,18 +217,20 @@ function DraggableCard({
       {...listeners}
       className={cn("cursor-grab active:cursor-grabbing", isDragging && "opacity-30")}
     >
-      <Card activity={activity} onEdit={onEdit} onRemove={onRemove} />
+      <Card activity={activity} onOpen={onOpen} onEdit={onEdit} onRemove={onRemove} />
     </div>
   );
 }
 
 function Card({
   activity,
+  onOpen,
   onEdit,
   onRemove,
   dragging,
 }: {
   activity: Activity;
+  onOpen?: () => void;
   onEdit?: () => void;
   onRemove?: () => void;
   dragging?: boolean;
@@ -229,7 +244,57 @@ function Card({
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <div className="font-medium text-sm leading-tight flex-1">{activity.title}</div>
+        <button
+          type="button"
+          className={cn(
+            "min-w-0 flex-1 text-left rounded-sm",
+            onOpen && "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          )}
+          onClick={onOpen}
+          disabled={!onOpen}
+        >
+          <div className="font-medium text-sm leading-tight">{activity.title}</div>
+          {activity.description && (
+            <div className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
+              {activity.description}
+            </div>
+          )}
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
+            {assignee ? (
+              <span className="inline-flex items-center gap-1 text-[10px]">
+                <Avatar
+                  initials={assignee.initials}
+                  color={assignee.avatarColor}
+                  size={18}
+                  employeeId={assignee.id}
+                />
+                {assignee.name.split(" ")[0]}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
+                <User className="h-3 w-3" />
+                Unassigned
+              </span>
+            )}
+            {activity.endDate && (
+              <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
+                <Calendar className="h-3 w-3" />
+                {activity.endDate.slice(5)}
+              </span>
+            )}
+            {activity.ticketLink && (
+              <IntegrationBadge
+                provider={activity.ticketLink.provider}
+                issueKey={activity.ticketLink.key}
+              />
+            )}
+          </div>
+          {activity.status === "blocked" && (
+            <div className="mt-2">
+              <StatusBadge status="blocked" />
+            </div>
+          )}
+        </button>
         <div className="flex items-center gap-1 shrink-0">
           {onEdit && (
             <button
@@ -259,46 +324,6 @@ function Card({
           )}
         </div>
       </div>
-      {activity.description && (
-        <div className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
-          {activity.description}
-        </div>
-      )}
-      <div className="flex items-center gap-2 mt-2 flex-wrap">
-        {assignee ? (
-          <span className="inline-flex items-center gap-1 text-[10px]">
-            <Avatar
-              initials={assignee.initials}
-              color={assignee.avatarColor}
-              size={18}
-              employeeId={assignee.id}
-            />
-            {assignee.name.split(" ")[0]}
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
-            <User className="h-3 w-3" />
-            Unassigned
-          </span>
-        )}
-        {activity.endDate && (
-          <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
-            <Calendar className="h-3 w-3" />
-            {activity.endDate.slice(5)}
-          </span>
-        )}
-        {activity.ticketLink && (
-          <IntegrationBadge
-            provider={activity.ticketLink.provider}
-            issueKey={activity.ticketLink.key}
-          />
-        )}
-      </div>
-      {activity.status === "blocked" && (
-        <div className="mt-2">
-          <StatusBadge status="blocked" />
-        </div>
-      )}
     </div>
   );
 }

@@ -1,13 +1,6 @@
 import { Gantt, type GanttRow, type GanttDependency } from "./Gantt";
-import type { Activity, Commessa } from "@/lib/mock-data";
-
-const statusTone: Record<Activity["status"], string> = {
-  todo: "var(--muted-foreground)",
-  in_progress: "var(--info)",
-  review: "var(--warning)",
-  done: "var(--success)",
-  blocked: "var(--destructive)",
-};
+import { activityStatusMeta } from "@/lib/activity-status";
+import { employeeById, type Activity, type Commessa } from "@/lib/mock-data";
 
 export function ProjectActivitiesGantt({
   project,
@@ -18,31 +11,36 @@ export function ProjectActivitiesGantt({
   activities: Activity[];
   onActivityClick?: (a: Activity) => void;
 }) {
-  const datedActivities = activities.filter((a) => a.startDate && a.endDate);
-  const rows: GanttRow[] = datedActivities.map((a) => ({
-    id: a.id,
-    label: a.title,
-    sublabel: a.status,
-    bars: [
-      {
-        id: a.id,
-        start: a.startDate!,
-        end: a.endDate!,
-        label: a.title,
-        subtitle: a.status,
-        color: statusTone[a.status],
-        progress:
-          a.status === "done"
-            ? 1
-            : a.status === "in_progress"
-              ? 0.5
-              : a.status === "review"
-                ? 0.8
-                : 0,
-        onClick: onActivityClick ? () => onActivityClick(a) : undefined,
-      },
-    ],
-  }));
+  const datedActivities = activities.filter(
+    (a): a is Activity & { startDate: string; endDate: string } =>
+      Boolean(a.startDate && a.endDate),
+  );
+  const rows: GanttRow[] = datedActivities.map((a) => {
+    const status = activityStatusMeta[a.status];
+    const assignee = a.assigneeId ? employeeById(a.assigneeId) : null;
+
+    return {
+      id: a.id,
+      label: a.title,
+      sublabel: status.label,
+      bars: [
+        {
+          id: a.id,
+          start: a.startDate,
+          end: a.endDate,
+          label: a.title,
+          subtitle: status.ganttLabel,
+          details: [
+            { label: "Status", value: status.label },
+            { label: "Assigned to", value: assignee?.name ?? "Unassigned" },
+          ],
+          color: status.tone,
+          progress: status.progress,
+          onClick: onActivityClick ? () => onActivityClick(a) : undefined,
+        },
+      ],
+    };
+  });
   const dependencies: GanttDependency[] = activities.flatMap((a) =>
     (a.dependencies ?? []).map((dep) => ({ from: dep, to: a.id })),
   );
