@@ -1,8 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
 import { EmployeeRecapCard } from "@/components/log/EmployeeRecapCard";
-import { employees, employeeLogHealth, managerAsks, logSessions } from "@/lib/mock-data";
+import type { EmployeeLogHealth } from "@/lib/mock-data";
+import { useEmployees } from "@/lib/tables/employees";
+import { useManagerAsks } from "@/lib/tables/managerAsks";
+import { useLogSessions } from "@/lib/tables/logSessions";
+import { useLogMessages } from "@/lib/tables/logMessages";
+import { computeRecap } from "@/lib/log-recap";
 
 export const Route = createFileRoute("/log/$employeeId")({
   head: ({ params }) => ({ meta: [{ title: `Recap — ${params.employeeId} — Pulse HR` }] }),
@@ -11,10 +17,43 @@ export const Route = createFileRoute("/log/$employeeId")({
 
 function LogEmployeeRoute() {
   const { employeeId } = Route.useParams();
+  const employees = useEmployees();
+  const allAsks = useManagerAsks();
+  const allSessions = useLogSessions();
+  const allMsgs = useLogMessages();
   const employee = employees.find((e) => e.id === employeeId);
-  const health = employeeLogHealth.find((h) => h.employeeId === employeeId);
-  const asks = managerAsks.filter((a) => a.employeeId === employeeId);
-  const sessions = logSessions.filter((s) => s.employeeId === employeeId);
+  const asks = useMemo(() => allAsks.filter((a) => a.employeeId === employeeId), [allAsks, employeeId]);
+  const sessions = useMemo(
+    () => allSessions.filter((s) => s.employeeId === employeeId),
+    [allSessions, employeeId],
+  );
+  const msgs = useMemo(() => allMsgs.filter((m) => m.employeeId === employeeId), [allMsgs, employeeId]);
+  const recap = useMemo(
+    () => computeRecap(employee?.name ?? "Employee", msgs),
+    [employee?.name, msgs],
+  );
+  const health: EmployeeLogHealth | null = employee
+    ? {
+        employeeId: employee.id,
+        score: recap.score,
+        trend: recap.trend,
+        lastLogAt: recap.lastLogAt,
+        lastSentiment: recap.lastSentiment,
+        openAsks: asks.filter((a) => a.status === "pending").length,
+        recap: recap.summary,
+        recapUpdatedAt: recap.recapUpdatedAt,
+        sparkline: recap.sparkline,
+        recapTopics: recap.topics,
+        topicContribution: recap.topicContribution,
+        dimensions: recap.dimensions,
+        dailyMeans: recap.dailyMeans,
+        messageCount: recap.messageCount,
+        confidence: recap.confidence,
+        managerSummary: recap.managerSummary,
+        drivers: recap.drivers,
+        suggestedActions: recap.suggestedActions,
+      }
+    : null;
 
   if (!employee || !health) {
     return (
