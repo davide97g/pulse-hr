@@ -93,6 +93,7 @@ import {
   OVERRIDE_ROLES,
   useEffectiveRole,
   useIsEffectiveAdmin,
+  useIsRealAdmin,
   useRoleOverride,
   useWorkspacePersona,
 } from "@/lib/role-override";
@@ -174,6 +175,7 @@ function AppShellInner() {
   const location = useLocation();
   const appShellNav = useNavigate();
   const admin = useIsEffectiveAdmin();
+  const realAdmin = useIsRealAdmin();
   const effectiveRole = useEffectiveRole();
   const { isFeatureEnabled, roleFeatures } = useSidebarFeatures();
   const roleAllowed = useMemo(
@@ -182,7 +184,7 @@ function AppShellInner() {
   );
   const hasOpenManagerAsks = useMemo(() => managerAsks.some((a) => a.status === "pending"), []);
   const groups = useMemo(() => {
-    const raw = buildSidebarNavGroups(hasOpenManagerAsks, admin);
+    const raw = buildSidebarNavGroups(hasOpenManagerAsks, realAdmin);
     return raw
       .map((g) => ({
         ...g,
@@ -193,7 +195,7 @@ function AppShellInner() {
         }),
       }))
       .filter((g) => g.items.length > 0);
-  }, [hasOpenManagerAsks, admin, roleAllowed, isFeatureEnabled]);
+  }, [hasOpenManagerAsks, realAdmin, admin, roleAllowed, isFeatureEnabled]);
   useTrackPageViews();
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;

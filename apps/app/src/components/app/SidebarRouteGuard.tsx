@@ -1,6 +1,6 @@
 import { useUser } from "@clerk/react";
 import { Navigate, useLocation } from "@tanstack/react-router";
-import { useEffectiveRole, useIsEffectiveAdmin } from "@/lib/role-override";
+import { useEffectiveRole, useIsEffectiveAdmin, useIsRealAdmin } from "@/lib/role-override";
 import { featuresForRole } from "@/lib/role-features";
 import {
   ADMIN_MODULES_PATH,
@@ -18,6 +18,7 @@ export function SidebarRouteGuard({ children }: { children: React.ReactNode }) {
   const { isLoaded } = useUser();
   const { enabled, roleFeatures } = useSidebarFeatures();
   const admin = useIsEffectiveAdmin();
+  const realAdmin = useIsRealAdmin();
   const role = useEffectiveRole();
   const roleAllowed = featuresForRole(role, roleFeatures);
 
@@ -32,7 +33,7 @@ export function SidebarRouteGuard({ children }: { children: React.ReactNode }) {
   const onAdminPage =
     pathname === ADMIN_MODULES_PATH ||
     pathname.startsWith(`${ADMIN_MODULES_PATH}/`);
-  if (onAdminPage && !admin) {
+  if (onAdminPage && !realAdmin) {
     return <Navigate to="/" replace />;
   }
 

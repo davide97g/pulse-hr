@@ -7,7 +7,7 @@ import { Checkbox } from "@pulse-hr/ui/primitives/checkbox";
 import { Label } from "@pulse-hr/ui/primitives/label";
 import { Button } from "@pulse-hr/ui/primitives/button";
 import { PageHeader } from "@/components/app/AppShell";
-import { useIsEffectiveAdmin, type Role } from "@/lib/role-override";
+import { useIsRealAdmin, type Role } from "@/lib/role-override";
 import {
   defaultSidebarFeaturesEnabled,
   SIDEBAR_FEATURE_LABELS,
@@ -36,7 +36,7 @@ const SCOPES: { id: Scope; label: string; hint: string }[] = [
 
 function AdminModules() {
   const { isLoaded } = useUser();
-  const admin = useIsEffectiveAdmin();
+  const admin = useIsRealAdmin();
   const {
     enabled,
     setEnabled,
