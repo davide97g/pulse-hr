@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Coins, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@pulse-hr/ui/primitives/button";
@@ -35,16 +35,23 @@ export function CompanyProfileForm({
   onSkipped,
   submitLabel = "Complete & double my voting power",
   showSkip = true,
+  initialDraft,
 }: {
   onSubmitted?: () => void;
   onSkipped?: () => void;
   submitLabel?: string;
   showSkip?: boolean;
+  initialDraft?: CompanyProfileDraft;
 }) {
   const { submitProfile, skipProfile } = useCompanyProfileStore();
-  const [draft, setDraft] = useState<CompanyProfileDraft>(EMPTY_DRAFT);
+  const [draft, setDraft] = useState<CompanyProfileDraft>(initialDraft ?? EMPTY_DRAFT);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setDraft(initialDraft ?? EMPTY_DRAFT);
+    setErrors({});
+  }, [initialDraft]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,10 +64,16 @@ export function CompanyProfileForm({
         return;
       }
       setErrors({});
-      toast.success(`Voting power doubled to ${VOTING_POWER_BASELINE * 2}`, {
-        description: "Thanks for sharing — your answers help us tune Pulse.",
-        icon: <Coins className="h-4 w-4" />,
-      });
+      if (res.granted) {
+        toast.success(`Voting power doubled to ${VOTING_POWER_BASELINE * 2}`, {
+          description: "Thanks for sharing — your answers help us tune Pulse.",
+          icon: <Coins className="h-4 w-4" />,
+        });
+      } else {
+        toast.success("Answers updated", {
+          description: "Your profile is updated. No additional voting power was granted.",
+        });
+      }
       onSubmitted?.();
     } finally {
       setLoading(false);

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Coins, Sparkles, TrendingUp } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Coins, Pencil, Sparkles, TrendingUp } from "lucide-react";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Button } from "@pulse-hr/ui/primitives/button";
 import {
@@ -28,6 +28,18 @@ function VotingPowerPage() {
   const boosted = power.power > power.baseline;
   const multiplier = power.baseline > 0 ? (power.power / power.baseline).toFixed(2) : "1.00";
   const completed = profile?.fullyAnswered === true;
+  const initialDraft = useMemo(
+    () =>
+      profile
+        ? {
+            companyName: profile.companyName,
+            website: profile.website,
+            size: profile.size,
+            industry: profile.industry,
+          }
+        : undefined,
+    [profile],
+  );
 
   return (
     <div className="p-4 md:p-6 max-w-[1100px] mx-auto fade-in">
@@ -73,12 +85,23 @@ function VotingPowerPage() {
                 </div>
               </div>
             </div>
-            {!completed && (
-              <Button className="mt-5 press-scale" onClick={() => setOpen(true)}>
-                <Coins className="h-4 w-4 mr-1.5" />
-                Complete company profile
-              </Button>
-            )}
+            <Button
+              className="mt-5 press-scale"
+              variant={completed ? "outline" : "default"}
+              onClick={() => setOpen(true)}
+            >
+              {completed ? (
+                <>
+                  <Pencil className="h-4 w-4 mr-1.5" />
+                  Redo questionnaire
+                </>
+              ) : (
+                <>
+                  <Coins className="h-4 w-4 mr-1.5" />
+                  Complete company profile
+                </>
+              )}
+            </Button>
           </div>
           <div className="rounded-md border p-4 bg-background/60 max-w-sm text-xs text-muted-foreground leading-relaxed">
             <div className="font-medium text-foreground mb-1">How to earn</div>
@@ -134,12 +157,19 @@ function VotingPowerPage() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Tell us about your company</DialogTitle>
+            <DialogTitle>{completed ? "Update company profile" : "Tell us about your company"}</DialogTitle>
             <DialogDescription>
-              Four quick questions. Skip anytime — baseline voting power stays at {power.baseline}.
+              {completed
+                ? "You can change your answers anytime. Completing again will not grant extra voting power."
+                : `Four quick questions. Skip anytime — baseline voting power stays at ${power.baseline}.`}
             </DialogDescription>
           </DialogHeader>
-          <CompanyProfileForm onSubmitted={() => setOpen(false)} onSkipped={() => setOpen(false)} />
+          <CompanyProfileForm
+            initialDraft={initialDraft}
+            submitLabel={completed ? "Save answers" : undefined}
+            onSubmitted={() => setOpen(false)}
+            onSkipped={() => setOpen(false)}
+          />
         </DialogContent>
       </Dialog>
     </div>

@@ -63,7 +63,9 @@ interface CompanyProfileContextValue {
   loading: boolean;
   submitProfile: (
     draft: CompanyProfileDraft,
-  ) => Promise<{ ok: true } | { ok: false; errors: Record<string, string> }>;
+  ) => Promise<
+    { ok: true; granted: boolean } | { ok: false; errors: Record<string, string> }
+  >;
   skipProfile: () => Promise<void>;
   /**
    * Optimistically nudge `power.power` by `delta` (positive = grant/refund,
@@ -177,20 +179,28 @@ export function CompanyProfileProvider({ children }: { children: ReactNode }) {
         return { ok: false, errors: localValidation.errors as Record<string, string> };
       }
 
+      const alreadyCompleted =
+        profile?.fullyAnswered === true ||
+        power.history.some((h) => h.reason === REASON_COMPANY_PROFILE);
+      const grantDelta = alreadyCompleted ? 0 : VOTING_POWER_QUESTIONNAIRE_GRANT;
+
       // Optimistic update so the chip/banner update immediately. The
       // questionnaire grant is +VOTING_POWER_QUESTIONNAIRE_GRANT (boost above
       // baseline; weekly refill won't top this back up).
       const optimisticPower: VotingPower = {
         ...power,
-        power: power.power + VOTING_POWER_QUESTIONNAIRE_GRANT,
-        history: [
-          {
-            delta: VOTING_POWER_QUESTIONNAIRE_GRANT,
-            reason: REASON_COMPANY_PROFILE,
-            at: new Date().toISOString(),
-          },
-          ...power.history,
-        ],
+        power: power.power + grantDelta,
+        history:
+          grantDelta > 0
+            ? [
+                {
+                  delta: grantDelta,
+                  reason: REASON_COMPANY_PROFILE,
+                  at: new Date().toISOString(),
+                },
+                ...power.history,
+              ]
+            : power.history,
       };
       const optimisticProfile: CompanyProfile = {
         userId,
@@ -204,7 +214,7 @@ export function CompanyProfileProvider({ children }: { children: ReactNode }) {
       setProfile(optimisticProfile);
       setPower(optimisticPower);
 
-      if (!isSignedIn) return { ok: true };
+      if (!isSignedIn) return { ok: true, granted: grantDelta > 0 };
 
       try {
         const token = await getToken();
@@ -234,9 +244,9 @@ export function CompanyProfileProvider({ children }: { children: ReactNode }) {
         /* keep optimistic state */
       }
 
-      return { ok: true };
+      return { ok: true, granted: grantDelta > 0 };
     },
-    [getToken, isSignedIn, power, userId],
+    [getToken, isSignedIn, power, profile?.fullyAnswered, userId],
   );
 
   const skipProfile = useCallback(async () => {
