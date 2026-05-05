@@ -161,7 +161,7 @@ function VotingPowerPage() {
             <DialogDescription>
               {completed
                 ? "You can change your answers anytime. Completing again will not grant extra voting power."
-                : `Four quick questions. Skip anytime — baseline voting power stays at ${power.baseline}.`}
+                : `Five quick questions. Skip anytime — baseline voting power stays at ${power.baseline}.`}
             </DialogDescription>
           </DialogHeader>
           <CompanyProfileForm

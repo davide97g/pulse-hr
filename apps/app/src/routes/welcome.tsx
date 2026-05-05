@@ -4,21 +4,9 @@ import { useUser } from "@clerk/react";
 import {
   ArrowLeft,
   ArrowRight,
-  Briefcase,
   Check,
-  ClipboardList,
-  Coins,
-  FlaskConical,
   Loader2,
-  Rocket,
-  Shield,
   Sparkles,
-  Target,
-  TrendingUp,
-  UserPlus,
-  Users,
-  UsersRound,
-  Wallet,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@pulse-hr/ui/primitives/card";
@@ -26,7 +14,7 @@ import { Button } from "@pulse-hr/ui/primitives/button";
 import { Input } from "@pulse-hr/ui/primitives/input";
 import { Label } from "@pulse-hr/ui/primitives/label";
 import { DEFAULT_WORKSPACE_NAME, createWorkspace, useWorkspaceStatus } from "@/lib/workspace";
-import { setWorkspaceRole, type WorkspaceRole } from "@/lib/workspace-role";
+import { setWorkspaceRole } from "@/lib/workspace-role";
 import { employeesTable, makeEmployee } from "@/lib/tables/employees";
 import { cn } from "@/lib/utils";
 
@@ -35,32 +23,7 @@ export const Route = createFileRoute("/welcome")({
   component: Welcome,
 });
 
-type OnboardingRole = WorkspaceRole;
-
-const ROLES: {
-  id: OnboardingRole;
-  label: string;
-  desc: string;
-  icon: React.ComponentType<{ className?: string }>;
-}[] = [
-  { id: "admin", label: "Admin", desc: "Workspace owner, full access", icon: Shield },
-  { id: "hr", label: "HR / People ops", desc: "Hiring, onboarding, growth", icon: UsersRound },
-  { id: "manager", label: "Manager", desc: "Team, time, projects", icon: Briefcase },
-  { id: "finance", label: "Finance", desc: "Expenses, reports, budgets", icon: Wallet },
-  { id: "employee", label: "Employee", desc: "Day-to-day contributor view", icon: Users },
-];
-
-const GOALS = [
-  { id: "hire", label: "Hire faster", icon: UserPlus },
-  { id: "retain", label: "Retain top talent", icon: Sparkles },
-  { id: "automate", label: "Automate HR ops", icon: Rocket },
-  { id: "budget", label: "Control budget & margin", icon: Coins },
-  { id: "engage", label: "Boost engagement", icon: TrendingUp },
-  { id: "compliance", label: "Stay compliant", icon: ClipboardList },
-  { id: "capacity", label: "Balance capacity", icon: Target },
-] as const;
-
-type Step = 0 | 1 | 2 | 3;
+type Step = 0 | 1;
 
 function Welcome() {
   const navigate = useNavigate();
@@ -68,10 +31,6 @@ function Welcome() {
   const { user } = useUser();
 
   const [step, setStep] = useState<Step>(0);
-  // Default to admin: every user owns the demo workspace they're about to
-  // create — they can preview as another role later via the topbar switcher.
-  const [role, setRole] = useState<OnboardingRole | null>("admin");
-  const [goals, setGoals] = useState<Set<string>>(new Set());
   const [name, setName] = useState(DEFAULT_WORKSPACE_NAME);
   const [colleagues, setColleagues] = useState<string[]>(["", "", ""]);
   const [creating, setCreating] = useState(false);
@@ -80,41 +39,21 @@ function Welcome() {
     if (status.ready) navigate({ to: "/", replace: true });
   }, [status.ready, navigate]);
 
-  const canNext =
-    step === 0
-      ? role !== null
-      : step === 1
-        ? goals.size > 0
-        : step === 2
-          ? name.trim().length > 1
-          : true;
-
-  const toggleGoal = (id: string) =>
-    setGoals((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  const canNext = step === 0 ? name.trim().length > 1 : true;
 
   const finish = async () => {
-    if (creating || !role) return;
+    if (creating) return;
     setCreating(true);
 
     const cleanColleagues = colleagues.map((c) => c.trim()).filter(Boolean);
 
-    // Onboarding answers (goals, workspace name, colleagues) are demo-only
-    // metadata so we keep them on Clerk's `unsafeMetadata` for cross-device
-    // hydration. The chosen `role` deliberately does NOT go there — it's a
-    // workspace persona, not a real Clerk role, and `unsafeMetadata` is
-    // user-writable so granting admin from the browser would be a real
-    // privilege escalation.
+    // Onboarding answers (workspace name, colleagues) are demo-only metadata
+    // so we keep them on Clerk's `unsafeMetadata` for cross-device hydration.
     try {
       if (user) {
         await user.update({
           unsafeMetadata: {
             ...(user.unsafeMetadata ?? {}),
-            goals: Array.from(goals),
             workspaceName: name.trim() || DEFAULT_WORKSPACE_NAME,
             colleagues: cleanColleagues,
           },
@@ -126,9 +65,9 @@ function Welcome() {
 
     try {
       createWorkspace(name);
-      // Save the workspace persona AFTER createWorkspace — that call
-      // initializes the per-user namespace the role lives under.
-      setWorkspaceRole(role);
+      // New workspaces start as admin by default.
+      // Users can switch persona later from profile role switcher.
+      setWorkspaceRole("admin");
       if (cleanColleagues.length) {
         const today = new Date().toISOString().slice(0, 10);
         for (const cname of cleanColleagues) {
@@ -162,7 +101,6 @@ function Welcome() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
       <Card className="w-full max-w-2xl p-8 fade-in">
-        <DemoBanner />
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-primary/10 text-primary inline-flex items-center justify-center">
             <Sparkles className="h-5 w-5" />
@@ -172,8 +110,6 @@ function Welcome() {
             <p className="text-sm text-muted-foreground">
               {
                 [
-                  "Pick the role that best fits you.",
-                  "What do you want to get out of Pulse?",
                   "Name your workspace.",
                   "Add a few teammates (optional).",
                 ][step]
@@ -185,10 +121,8 @@ function Welcome() {
         <Stepper step={step} />
 
         <div className="mt-6 min-h-[260px]">
-          {step === 0 && <RoleStep role={role} onPick={setRole} />}
-          {step === 1 && <GoalsStep selected={goals} onToggle={toggleGoal} />}
-          {step === 2 && <WorkspaceStep value={name} onChange={setName} disabled={creating} />}
-          {step === 3 && (
+          {step === 0 && <WorkspaceStep value={name} onChange={setName} disabled={creating} />}
+          {step === 1 && (
             <ColleaguesStep
               values={colleagues}
               onChange={(i, v) =>
@@ -207,7 +141,7 @@ function Welcome() {
           >
             <ArrowLeft className="h-4 w-4 mr-1.5" /> Back
           </Button>
-          {step < 3 ? (
+          {step < 1 ? (
             <Button
               type="button"
               className="press-scale"
@@ -229,9 +163,7 @@ function Welcome() {
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Creating workspace…
                 </>
               ) : (
-                <>
-                  Create workspace <Check className="h-4 w-4 ml-1.5" />
-                </>
+                <>Create workspace <Check className="h-4 w-4 ml-1.5" /></>
               )}
             </Button>
           )}
@@ -241,33 +173,10 @@ function Welcome() {
   );
 }
 
-function DemoBanner() {
-  return (
-    <div className="mb-6 rounded-md border border-warning/30 bg-warning/10 p-3.5 flex items-start gap-3">
-      <div className="h-8 w-8 rounded-md bg-warning/20 text-warning grid place-items-center shrink-0">
-        <FlaskConical className="h-4 w-4" />
-      </div>
-      <div className="flex-1">
-        <div className="text-sm font-medium text-foreground flex items-center gap-2">
-          Demo workspace
-          <span className="text-[10px] font-semibold uppercase tracking-wide rounded-full bg-warning/20 text-warning px-2 py-0.5">
-            Frontend-only mock
-          </span>
-        </div>
-        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-          Pulse HR is shipping early as a fully-mocked demo so we can shape v1 around real feedback.
-          Every employee, project and payslip lives in your browser. Click around, then sign in and
-          drop a note in the Feedback area — that's the only piece wired up to a real backend.
-        </p>
-      </div>
-    </div>
-  );
-}
-
 function Stepper({ step }: { step: Step }) {
   return (
     <div className="mt-6 flex items-center gap-2">
-      {[0, 1, 2, 3].map((n) => (
+      {[0, 1].map((n) => (
         <div key={n} className="flex items-center gap-2 flex-1">
           <div
             className={cn(
@@ -281,92 +190,9 @@ function Stepper({ step }: { step: Step }) {
           >
             {n < step ? <Check className="h-3 w-3" /> : n + 1}
           </div>
-          {n !== 3 && <div className={cn("h-px flex-1", n < step ? "bg-success" : "bg-border")} />}
+          {n !== 1 && <div className={cn("h-px flex-1", n < step ? "bg-success" : "bg-border")} />}
         </div>
       ))}
-    </div>
-  );
-}
-
-function RoleStep({
-  role,
-  onPick,
-}: {
-  role: OnboardingRole | null;
-  onPick: (r: OnboardingRole) => void;
-}) {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-      {ROLES.map((r) => {
-        const Icon = r.icon;
-        const active = role === r.id;
-        return (
-          <button
-            key={r.id}
-            type="button"
-            onClick={() => onPick(r.id)}
-            className={cn(
-              "p-4 rounded-md border text-left press-scale transition-colors flex items-start gap-3",
-              active ? "border-primary bg-primary/5" : "hover:bg-muted/40",
-            )}
-          >
-            <Icon
-              className={cn("h-5 w-5 mt-0.5", active ? "text-primary" : "text-muted-foreground")}
-            />
-            <div>
-              <div className="text-sm font-medium">{r.label}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">{r.desc}</div>
-            </div>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-function GoalsStep({
-  selected,
-  onToggle,
-}: {
-  selected: Set<string>;
-  onToggle: (id: string) => void;
-}) {
-  return (
-    <div>
-      <div className="text-xs text-muted-foreground mb-3">Pick one or more.</div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {GOALS.map((g) => {
-          const Icon = g.icon;
-          const active = selected.has(g.id);
-          return (
-            <button
-              key={g.id}
-              type="button"
-              onClick={() => onToggle(g.id)}
-              className={cn(
-                "p-3 rounded-md border text-left press-scale transition-colors flex items-center gap-3",
-                active ? "border-primary bg-primary/5" : "hover:bg-muted/40",
-              )}
-            >
-              <Icon
-                className={cn(
-                  "h-4 w-4 shrink-0",
-                  active ? "text-primary" : "text-muted-foreground",
-                )}
-              />
-              <div className="text-sm flex-1">{g.label}</div>
-              <div
-                className={cn(
-                  "h-4 w-4 rounded-sm border grid place-items-center transition-colors",
-                  active ? "bg-primary border-primary text-primary-foreground" : "border-border",
-                )}
-              >
-                {active && <Check className="h-3 w-3" />}
-              </div>
-            </button>
-          );
-        })}
-      </div>
     </div>
   );
 }
