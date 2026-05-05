@@ -13,7 +13,12 @@ import { Card } from "@pulse-hr/ui/primitives/card";
 import { Button } from "@pulse-hr/ui/primitives/button";
 import { Input } from "@pulse-hr/ui/primitives/input";
 import { Label } from "@pulse-hr/ui/primitives/label";
-import { DEFAULT_WORKSPACE_NAME, createWorkspace, useWorkspaceStatus } from "@/lib/workspace";
+import {
+  DEFAULT_WORKSPACE_NAME,
+  createWorkspace,
+  personalizeWorkspaceOwner,
+  useWorkspaceStatus,
+} from "@/lib/workspace";
 import { setWorkspaceRole } from "@/lib/workspace-role";
 import { employeesTable, makeEmployee } from "@/lib/tables/employees";
 import { cn } from "@/lib/utils";
@@ -41,6 +46,14 @@ function Welcome() {
 
   const canNext = step === 0 ? name.trim().length > 1 : true;
 
+  const currentUserName = (
+    user?.fullName ||
+    `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() ||
+    user?.username ||
+    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
+    ""
+  ).trim();
+
   const finish = async () => {
     if (creating) return;
     setCreating(true);
@@ -65,6 +78,7 @@ function Welcome() {
 
     try {
       createWorkspace(name);
+      personalizeWorkspaceOwner(currentUserName);
       // New workspaces start as admin by default.
       // Users can switch persona later from profile role switcher.
       setWorkspaceRole("admin");

@@ -17,6 +17,7 @@ import { useSyncExternalStore } from "react";
 export const SCHEMA_VERSION = 2;
 export const DEFAULT_WORKSPACE_NAME = "Acme";
 export const ANON_USER_ID = "__anon__";
+export const SEEDED_OWNER_NAME = "Sarah Chen";
 const ROOT = "pulse.ws";
 
 // ── Current user ─────────────────────────────────────────────────────
@@ -138,6 +139,50 @@ export function createWorkspace(name: string = DEFAULT_WORKSPACE_NAME) {
   } catch (err) {
     console.warn("createWorkspace: localStorage write failed", err);
   }
+  notifyStatus();
+}
+
+function replaceStringDeep(value: unknown, from: string, to: string): unknown {
+  if (typeof value === "string") return value === from ? to : value;
+  if (Array.isArray(value)) return value.map((item) => replaceStringDeep(item, from, to));
+  if (!value || typeof value !== "object") return value;
+  const out: Record<string, unknown> = {};
+  for (const [key, nested] of Object.entries(value)) {
+    out[key] = replaceStringDeep(nested, from, to);
+  }
+  return out;
+}
+
+/**
+ * Rewrites seeded owner placeholders inside the current namespace so the
+ * default "me" identity reflects the signed-in user.
+ */
+export function personalizeWorkspaceOwner(ownerName: string) {
+  const ns = getNamespace();
+  const target = ownerName.trim();
+  if (!ns || !target || target === SEEDED_OWNER_NAME) return;
+  const prefix = `${ns}.`;
+  const keys: string[] = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(prefix)) keys.push(k);
+    }
+    for (const key of keys) {
+      const raw = localStorage.getItem(key);
+      if (!raw) continue;
+      try {
+        const parsed = JSON.parse(raw) as unknown;
+        const replaced = replaceStringDeep(parsed, SEEDED_OWNER_NAME, target);
+        localStorage.setItem(key, JSON.stringify(replaced));
+      } catch {
+        // Ignore non-JSON entries (workspace metadata keys are plain strings).
+      }
+    }
+  } catch (err) {
+    console.warn("personalizeWorkspaceOwner: localStorage rewrite failed", err);
+  }
+  for (const t of registry.values()) t.hydrate();
   notifyStatus();
 }
 
