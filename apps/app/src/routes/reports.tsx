@@ -197,8 +197,14 @@ function Reports() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title="Reports & analytics"
-        description="Configurable dashboards across HR, time and money"
+        eyebrow="INSIGHTS · REPORT & ANALITICA"
+        title={
+          <>
+            I <span className="spark-mark">numeri</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Dashboard configurabili: HR, tempo, money."
         actions={
           <>
             <Button

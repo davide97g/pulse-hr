@@ -124,7 +124,16 @@ function Settings() {
 
   return (
     <div className="p-4 md:p-6 max-w-[1100px] mx-auto fade-in">
-      <PageHeader title="Settings" description="Company configuration, roles and integrations" />
+      <PageHeader
+        eyebrow="WORKSPACE · IMPOSTAZIONI"
+        title={
+          <>
+            <span className="spark-mark">Settings</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Configurazione azienda, ruoli, integrazioni."
+      />
 
       <Tabs value={tab} onValueChange={setTab} orientation="horizontal">
         <TabsList>

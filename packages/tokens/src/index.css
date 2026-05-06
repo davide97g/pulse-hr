@@ -17,5 +17,6 @@
 @import "./base.css";
 @import "./tokens.css";
 @import "./typography.css";
+@import "./editorial.css";
 @import "./containers.css";
 @import "./motion.css";

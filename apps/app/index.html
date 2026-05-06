@@ -41,14 +41,15 @@
       }
     </style>
     <script>
-      // Flash-prevention: set the theme on <html> before React paints. Default
-      // is the signature lime-on-near-black "employee" palette; every theme
-      // except "light" is dark-mode.
+      // Flash-prevention: set the theme on <html> before React paints. Two
+      // themes only — light and dark — both with lime as the spark.
       (function () {
         try {
-          var t = localStorage.getItem("pulse.theme") || "employee";
+          var stored = localStorage.getItem("pulse.theme");
+          var t = stored === "light" || stored === "dark" ? stored : "dark";
           document.documentElement.dataset.theme = t;
-          if (t !== "light") document.documentElement.classList.add("dark");
+          document.documentElement.dataset.density = "comfortable";
+          if (t === "dark") document.documentElement.classList.add("dark");
         } catch (e) {}
       })();
     </script>

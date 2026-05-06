@@ -97,14 +97,18 @@ function Saturation() {
         <div className="iridescent-border rounded-xl p-[1px] mb-6">
           <div className="rounded-[11px] bg-card/80 backdrop-blur px-5 py-4">
             <PageHeader
-              title={
-                <span className="flex items-center gap-2">
-                  <Gauge className="h-5 w-5" />
-                  Saturation
-                  <NewBadge />
-                </span>
+              eyebrow={
+                <>
+                  INSIGHTS · SATURAZIONE · CARICO TEAM <NewBadge />
+                </>
               }
-              description="How busy the org is, who is leaning in, and what each hour returns in €."
+              title={
+                <>
+                  <span className="spark-mark">Saturazione</span>
+                  <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+                </>
+              }
+              description="Quanto è carica l'organizzazione, chi spinge, quanto rende ogni ora in €."
             />
           </div>
         </div>

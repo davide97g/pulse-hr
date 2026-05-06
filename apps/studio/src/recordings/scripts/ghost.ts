@@ -41,7 +41,7 @@ async function main() {
   await ctx.addInitScript((idJson: string) => {
     try {
       window.localStorage.setItem("feedback.viewer.identity", idJson);
-      window.localStorage.setItem("pulse.theme", "employee");
+      window.localStorage.setItem("pulse.theme", "dark");
       window.localStorage.setItem("pulse.devBanner", "false");
     } catch {
       /* sandboxed */

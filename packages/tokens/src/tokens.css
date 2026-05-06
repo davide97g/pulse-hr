@@ -79,21 +79,10 @@ html[data-theme] {
 }
 
 @import "./themes/light.css";
-@import "./themes/_base-dark.css";
 @import "./themes/dark.css";
-@import "./themes/employee.css";
-@import "./themes/hr.css";
-@import "./themes/admin.css";
-@import "./themes/manager.css";
-@import "./themes/finance.css";
 
 /* Selection uses the active theme's primary colour. */
-html[data-theme="dark"] ::selection,
-html[data-theme="employee"] ::selection,
-html[data-theme="hr"] ::selection,
-html[data-theme="admin"] ::selection,
-html[data-theme="manager"] ::selection,
-html[data-theme="finance"] ::selection {
+html[data-theme] ::selection {
   background: var(--primary);
   color: var(--primary-foreground);
 }

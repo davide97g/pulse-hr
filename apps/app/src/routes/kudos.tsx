@@ -1,756 +1,337 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import {
-  Gift,
-  Send,
-  Sparkles,
-  Trophy,
-  Heart,
-  Zap,
-  Users,
-  Rocket,
-  ShieldCheck,
-  Search,
-  X,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-} from "lucide-react";
-import { Card } from "@pulse-hr/ui/primitives/card";
-import { Button } from "@pulse-hr/ui/primitives/button";
-import { Input } from "@pulse-hr/ui/primitives/input";
-import { Label } from "@pulse-hr/ui/primitives/label";
-import { Textarea } from "@pulse-hr/ui/primitives/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@pulse-hr/ui/primitives/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@pulse-hr/ui/primitives/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@pulse-hr/ui/primitives/dialog";
-import { PageHeader, Avatar } from "@/components/app/AppShell";
+import { EditorialPill } from "@pulse-hr/ui/atoms/EditorialPill";
+import { Avatar } from "@/components/app/AppShell";
 import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
-import { employees, employeeById, type Kudo } from "@/lib/mock-data";
+import { employeeById, type Kudo } from "@/lib/mock-data";
 import { kudosTable, useKudos } from "@/lib/tables/kudos";
-import { isBirthday } from "@/lib/birthday";
-import { voiceBus } from "@/lib/voice-bus";
-import { Mic } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useEmployees } from "@/lib/tables/employees";
+import { useFirstName } from "@/lib/current-user";
 
 export const Route = createFileRoute("/kudos")({
   head: () => ({ meta: [{ title: "Kudos — Pulse HR" }] }),
-  component: Kudos,
+  component: KudosPage,
 });
 
-const ME = "e1";
+const TAGS: Kudo["tag"][] = ["teamwork", "craft", "impact", "courage", "kindness"];
+const TAG_LABEL: Record<Kudo["tag"], string> = {
+  teamwork: "TEAMWORK",
+  craft: "CRAFT",
+  impact: "IMPACT",
+  courage: "COURAGE",
+  kindness: "KINDNESS",
+};
 
-const TAGS: {
-  v: Kudo["tag"];
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  color: string;
-}[] = [
-  { v: "teamwork", label: "Teamwork", icon: Users, color: "oklch(0.6 0.16 220)" },
-  { v: "craft", label: "Craft", icon: Sparkles, color: "oklch(0.65 0.18 340)" },
-  { v: "impact", label: "Impact", icon: Rocket, color: "oklch(0.7 0.15 30)" },
-  { v: "courage", label: "Courage", icon: ShieldCheck, color: "oklch(0.75 0.15 75)" },
-  { v: "kindness", label: "Kindness", icon: Heart, color: "oklch(0.65 0.15 155)" },
-];
-const tagMeta = (v: Kudo["tag"]) => TAGS.find((t) => t.v === v)!;
+function shortDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const months = ["GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"];
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return `${String(d.getDate()).padStart(2, "0")} ${months[d.getMonth()]} · ${hh}:${mm}`;
+}
 
-function Kudos() {
+function KudosPage() {
+  const employees = useEmployees();
   const feed = useKudos();
-  const [editKudo, setEditKudo] = useState<Kudo | null>(null);
-  const [editMessage, setEditMessage] = useState("");
-  const [feedQuery, setFeedQuery] = useState("");
-  const [feedTags, setFeedTags] = useState<Set<Kudo["tag"]>>(new Set());
-  const [toId, setToId] = useState<string>("e2");
-  const [amount, setAmount] = useState(25);
+  const firstName = useFirstName();
+
+  const [recipient, setRecipient] = useState<string>("");
+  const [amount, setAmount] = useState(5);
   const [tag, setTag] = useState<Kudo["tag"]>("craft");
   const [message, setMessage] = useState("");
 
-  // Consume a Moments-generated draft if present.
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("pulse.kudos.draft");
-      if (!raw) return;
-      const d = JSON.parse(raw) as {
-        toId?: string;
-        message?: string;
-        tag?: Kudo["tag"];
-        amount?: number;
-      };
-      if (d.toId) setToId(d.toId);
-      if (d.message) setMessage(d.message);
-      if (d.tag) setTag(d.tag);
-      if (d.amount) setAmount(d.amount);
-      localStorage.removeItem("pulse.kudos.draft");
-    } catch {}
-  }, []);
-  const [confetti, setConfetti] = useState<{ id: number; dx: number; color: string }[]>([]);
-  const [recent, setRecent] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const raw = window.localStorage.getItem("pulse.kudos.recent");
-      return raw ? (JSON.parse(raw) as string[]) : [];
-    } catch {
-      return [];
-    }
-  });
-  const [voiceListening, setVoiceListening] = useState(false);
-
-  useEffect(() => {
-    return voiceBus.on((ev) => {
-      if (ev.kind === "draftPrompt" && ev.text && ev.source === "kudos") {
-        const raw = ev.text.trim();
-        // Name match (longest-first to prefer "Marcus Rivera" before "Marcus")
-        const sorted = [...employees].sort((a, b) => b.name.length - a.name.length);
-        const nameHit = sorted.find(
-          (e) => e.id !== ME && raw.toLowerCase().includes(e.name.toLowerCase().split(" ")[0]),
-        );
-        if (nameHit) setToId(nameHit.id);
-        // Tag match
-        const tagHit = TAGS.find((t) => raw.toLowerCase().includes(t.v));
-        if (tagHit) setTag(tagHit.v);
-        // Amount match (e.g. "25 coins")
-        const amt = raw.match(/\b(5|10|25|50)\b/);
-        if (amt) setAmount(Number(amt[1]));
-        // Strip name/tag/amount from message
-        let rest = raw;
-        if (nameHit) {
-          rest = rest.replace(new RegExp(nameHit.name, "ig"), "");
-          rest = rest.replace(new RegExp(nameHit.name.split(" ")[0], "ig"), "");
-        }
-        if (tagHit) rest = rest.replace(new RegExp(tagHit.v, "ig"), "");
-        rest = rest.replace(/\b(5|10|25|50)\b\s*(coins?)?/gi, "");
-        rest = rest.replace(/\b(kudos|to|for|tag|with|amount)\b/gi, "");
-        rest = rest.replace(/\s+/g, " ").trim();
-        if (rest) setMessage((m) => (m ? `${m} ${rest}` : rest));
-      } else if (ev.kind === "state") {
-        setVoiceListening(ev.listening);
-      }
-    });
-  }, []);
-
-  const AMOUNTS = [5, 10, 25, 50];
-
-  const board = useMemo(() => {
-    const m = new Map<string, number>();
-    feed.forEach((k) => m.set(k.toId, (m.get(k.toId) ?? 0) + k.amount));
-    return [...m.entries()]
-      .map(([id, coins]) => ({ employee: employeeById(id)!, coins }))
-      .filter((x) => x.employee)
-      .sort((a, b) => b.coins - a.coins)
-      .slice(0, 6);
+  // Leaderboard — top 4 receivers
+  const leaderboard = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const k of feed) counts.set(k.toId, (counts.get(k.toId) ?? 0) + 1);
+    return Array.from(counts.entries())
+      .map(([id, n]) => ({ employee: employeeById(id), count: n }))
+      .filter((x) => !!x.employee)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 4);
   }, [feed]);
 
-  const tagCounts = useMemo(() => {
-    return TAGS.map((t) => ({
-      ...t,
-      count: feed.filter((k) => k.tag === t.v).length,
-    }));
-  }, [feed]);
-
-  const filteredFeed = useMemo(() => {
-    const q = feedQuery.trim().toLowerCase();
-    return [...feed]
-      .filter((k) => {
-        if (feedTags.size > 0 && !feedTags.has(k.tag)) return false;
-        if (!q) return true;
-        const from = employeeById(k.fromId);
-        const to = employeeById(k.toId);
-        const hay = `${k.message} ${from?.name ?? ""} ${to?.name ?? ""} ${k.tag}`.toLowerCase();
-        return hay.includes(q);
-      })
-      .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.id.localeCompare(a.id)));
-  }, [feed, feedQuery, feedTags]);
-
-  const monthKey = new Date().toISOString().slice(0, 7);
-  const sent = feed
-    .filter((k) => k.fromId === ME && k.date.slice(0, 7) === monthKey)
-    .reduce((a, k) => a + k.amount, 0);
-  const received = feed.filter((k) => k.toId === ME).reduce((a, k) => a + k.amount, 0);
-  const MONTHLY_ALLOWANCE = 300;
-  const myBalance = Math.max(0, MONTHLY_ALLOWANCE - sent);
+  const sortedFeed = useMemo(
+    () => [...feed].sort((a, b) => (a.date > b.date ? -1 : 1)),
+    [feed],
+  );
 
   const send = () => {
-    if (!message.trim() || !toId || amount > myBalance) return;
-    kudosTable.add({
-      id: `kd-${Date.now()}`,
-      fromId: ME,
-      toId,
+    const m = message.trim();
+    if (!m) {
+      toast.error("Scrivi un messaggio");
+      return;
+    }
+    if (!recipient) {
+      toast.error("Scegli a chi mandare il kudos");
+      return;
+    }
+    const me = employees[0]?.id ?? "e1";
+    const id = `k-${Date.now()}`;
+    const newKudo: Kudo = {
+      id,
+      fromId: me,
+      toId: recipient,
       amount,
       tag,
-      message: message.trim(),
       date: new Date().toISOString().slice(0, 10),
-    });
+      message: m,
+    };
+    kudosTable.add(newKudo);
     setMessage("");
-    // Remember recent recipient (most recent first, dedupe, cap 5)
-    setRecent((prev) => {
-      const next = [toId, ...prev.filter((id) => id !== toId)].slice(0, 5);
-      try {
-        window.localStorage.setItem("pulse.kudos.recent", JSON.stringify(next));
-      } catch {
-        /* noop */
-      }
-      return next;
-    });
-    // confetti burst — theme primary + neutral, no rainbow
-    const palette = ["var(--primary)", "var(--muted-foreground)"];
-    const bursts = Array.from({ length: 18 }).map((_, i) => ({
-      id: Date.now() + i,
-      dx: (Math.random() - 0.5) * 220,
-      color: palette[i % palette.length],
-    }));
-    setConfetti((c) => [...c, ...bursts]);
-    setTimeout(() => setConfetti([]), 1500);
-    const target = employeeById(toId);
-    toast.success(`Kudos sent to ${target?.name}`, {
-      description: `${amount} coins · ${tagMeta(tag).label}`,
-      icon: <Gift className="h-4 w-4" />,
-    });
+    setRecipient("");
+    toast.success("Kudos inviato", { description: `+${amount} coin` });
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
-      <PageHeader
-        title={
-          <>
-            <span>Kudos</span>
+    <div
+      className="ph room-light fade-in"
+      style={{ padding: "32px 48px", display: "flex", flexDirection: "column", gap: 24 }}
+    >
+      {/* HERO ROW: title left + composer right */}
+      <div
+        className="grid"
+        style={{
+          gridTemplateColumns: "minmax(0,1.2fr) minmax(0,1fr)",
+          gap: 32,
+          alignItems: "end",
+        }}
+      >
+        <div>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            PEER RECOGNITION ·{" "}
+            {new Date()
+              .toLocaleDateString("it-IT", { month: "long", year: "numeric" })
+              .toUpperCase()}{" "}
             <NewBadge />
-          </>
-        }
-        description="Peer recognition that actually lands. Send coins, say why, celebrate out loud."
-      />
+          </span>
+          <h1
+            style={{
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontWeight: 400,
+              margin: "10px 0 0",
+              fontSize: "clamp(72px, 9vw, 132px)",
+              letterSpacing: "-0.045em",
+              lineHeight: 0.86,
+            }}
+          >
+            <span style={{ fontStyle: "italic" }}>Grazie</span>
+            <span style={{ color: "var(--spark)" }}>.</span>
+          </h1>
+          <p
+            style={{
+              marginTop: 18,
+              maxWidth: 480,
+              color: "var(--fg-2)",
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontStyle: "italic",
+              fontSize: 22,
+              lineHeight: 1.35,
+            }}
+          >
+            Quando qualcuno ti rende il lavoro più leggero, vale la pena dirlo. Anche per scritto,
+            {firstName ? ` ${firstName}` : ""}.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-4 mb-4">
-        {/* Sender */}
-        <Card className="p-6 relative overflow-visible">
-          <div className="relative">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-md grid place-items-center bg-primary/15 text-primary">
-                  <Gift className="h-4 w-4" />
-                </div>
-                <div>
-                  <div className="font-semibold text-sm">Send kudos</div>
-                  <div className="text-[11px] text-muted-foreground">
-                    Your balance:{" "}
-                    <span className="font-medium text-foreground tabular-nums">{myBalance}</span>{" "}
-                    coins
-                  </div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Monthly allowance
-                </div>
-                <div className="h-1.5 w-24 rounded-full bg-muted overflow-hidden mt-1">
-                  <div
-                    className="h-full rounded-full bg-primary transition-[width] duration-500"
-                    style={{ width: `${(myBalance / MONTHLY_ALLOWANCE) * 100}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <Label>To</Label>
-                {recent.length > 0 && (
-                  <div className="flex gap-1.5 overflow-x-auto scrollbar-thin -mb-0.5">
-                    {recent
-                      .map((id) => employeeById(id))
-                      .filter((e): e is NonNullable<typeof e> => !!e && e.id !== ME)
-                      .map((e) => (
-                        <button
-                          key={e.id}
-                          type="button"
-                          onClick={() => setToId(e.id)}
-                          className={cn(
-                            "shrink-0 inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border press-scale transition-colors",
-                            toId === e.id
-                              ? "border-primary bg-primary/5 text-primary font-medium"
-                              : "hover:bg-muted",
-                          )}
-                          title={`Recent: ${e.name}`}
-                        >
-                          <span
-                            className="h-4 w-4 rounded-full grid place-items-center text-[8px] font-medium text-white shrink-0"
-                            style={{ backgroundColor: e.avatarColor }}
-                          >
-                            {e.initials}
-                          </span>
-                          <span className="truncate max-w-[80px]">{e.name.split(" ")[0]}</span>
-                          {isBirthday(e) && <span>🎂</span>}
-                        </button>
-                      ))}
-                  </div>
-                )}
-                <Select value={toId} onValueChange={setToId}>
-                  <SelectTrigger className="h-10">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {employees
-                      .filter((e) => e.id !== ME)
-                      .map((e) => (
-                        <SelectItem key={e.id} value={e.id}>
-                          <span className="inline-flex items-center gap-2">
-                            <span
-                              className="h-5 w-5 rounded-full grid place-items-center text-[9px] font-medium text-white"
-                              style={{ backgroundColor: e.avatarColor }}
-                            >
-                              {e.initials}
-                            </span>
-                            {e.name}
-                            {isBirthday(e) && <span title="Birthday today">🎂</span>}·{" "}
-                            <span className="text-muted-foreground text-xs">{e.role}</span>
-                          </span>
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-                {(() => {
-                  const target = employeeById(toId);
-                  if (target && isBirthday(target)) {
-                    return (
-                      <div
-                        className="mt-1 inline-flex items-center gap-1.5 text-[11px] font-medium rounded-full px-2.5 py-1 shimmer"
-                        style={{
-                          background:
-                            "linear-gradient(90deg, oklch(0.75 0.2 85 / 0.18), oklch(0.65 0.2 340 / 0.18), oklch(0.7 0.2 200 / 0.18))",
-                          border:
-                            "1px solid color-mix(in oklch, oklch(0.75 0.2 85) 35%, transparent)",
-                        }}
-                      >
-                        🎂 Birthday boost · <span className="font-mono tabular-nums">+25% XP</span>
-                      </div>
-                    );
-                  }
-                  return null;
-                })()}
-              </div>
-
-              <div className="space-y-1.5">
-                <Label>Category</Label>
-                <div className="grid grid-cols-5 gap-1.5">
-                  {TAGS.map((t) => {
-                    const Icon = t.icon;
-                    const active = tag === t.v;
-                    return (
-                      <button
-                        key={t.v}
-                        type="button"
-                        onClick={() => setTag(t.v)}
-                        className={cn(
-                          "p-2 rounded-md border text-center press-scale transition-all",
-                          active ? "shadow-sm" : "hover:bg-muted/40",
-                        )}
-                        style={
-                          active
-                            ? {
-                                borderColor: t.color,
-                                backgroundColor: `${t.color.replace(")", " / 0.1)")}`,
-                              }
-                            : undefined
-                        }
-                      >
-                        <Icon
-                          className="h-4 w-4 mx-auto"
-                          style={{ color: active ? t.color : undefined }}
-                        />
-                        <div className="text-[10px] mt-1">{t.label}</div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <Label>Amount</Label>
-                <div className="grid grid-cols-4 gap-1.5">
-                  {AMOUNTS.map((a) => (
-                    <button
-                      key={a}
-                      type="button"
-                      onClick={() => setAmount(a)}
-                      disabled={a > myBalance}
-                      className={cn(
-                        "py-2.5 rounded-md border font-mono text-sm tabular-nums press-scale transition-colors disabled:opacity-40 disabled:cursor-not-allowed",
-                        amount === a
-                          ? "border-primary bg-primary/5 text-primary font-semibold"
-                          : "hover:bg-muted",
-                      )}
-                    >
-                      {a} 🪙
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <Label>Message</Label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      voiceBus.requestSource("kudos");
-                      voiceBus.emit({ kind: "toggle" });
-                    }}
-                    className={cn(
-                      "inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border press-scale transition-colors",
-                      voiceListening
-                        ? "bg-destructive/10 border-destructive/40 text-destructive"
-                        : "hover:border-primary/40 hover:text-primary",
-                    )}
-                    title="Dictate (⌘⇧.)"
-                  >
-                    <Mic className="h-3 w-3" />
-                    {voiceListening ? "Listening…" : "Dictate"}
-                  </button>
-                </div>
-                <Textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder={`Tell ${employeeById(toId)?.name.split(" ")[0] ?? "them"} why you're grateful — or dictate "kudos to Marcus craft tokens work".`}
-                  rows={3}
-                  maxLength={200}
-                />
-                <div className="text-[11px] text-muted-foreground text-right">
-                  {message.length}/200
-                </div>
-              </div>
-
-              <div className="relative">
-                <Button
-                  onClick={send}
-                  disabled={!message.trim() || !toId || amount > myBalance}
-                  className="w-full press-scale relative"
-                  size="lg"
-                >
-                  <Send className="h-4 w-4 mr-2" /> Send {amount} coins
-                </Button>
-                {confetti.map((c) => (
-                  <span
-                    key={c.id}
-                    className="confetti-piece left-1/2 top-1/2 rounded-sm"
-                    style={
-                      {
-                        backgroundColor: c.color,
-                        ["--dx" as keyof React.CSSProperties]: `${c.dx}px`,
-                      } as React.CSSProperties
-                    }
-                  />
-                ))}
-              </div>
-            </div>
+        {/* Composer card */}
+        <div
+          style={{
+            border: "1px solid var(--line-strong)",
+            borderRadius: 16,
+            padding: "18px 22px",
+            background: "var(--bg)",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}
+        >
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            NUOVO KUDOS
+          </span>
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="A chi vuoi dire grazie oggi?"
+            rows={2}
+            style={{
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontStyle: "italic",
+              fontSize: 20,
+              lineHeight: 1.4,
+              color: "var(--fg)",
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              resize: "none",
+              padding: 0,
+            }}
+          />
+          <div className="flex gap-2 items-center flex-wrap">
+            <select
+              value={recipient}
+              onChange={(e) => setRecipient(e.target.value)}
+              className="pill pill-ghost pill-sm"
+              style={{ paddingRight: 28, maxWidth: 180 }}
+            >
+              <option value="">@persona</option>
+              {employees.map((e) => (
+                <option key={e.id} value={e.id}>
+                  {e.name}
+                </option>
+              ))}
+            </select>
+            <select
+              value={tag}
+              onChange={(e) => setTag(e.target.value as Kudo["tag"])}
+              className="pill pill-ghost pill-sm"
+              style={{ paddingRight: 28 }}
+            >
+              {TAGS.map((t) => (
+                <option key={t} value={t}>
+                  #{TAG_LABEL[t].toLowerCase()}
+                </option>
+              ))}
+            </select>
+            <select
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+              className="pill pill-ghost pill-sm"
+              style={{ paddingRight: 28 }}
+            >
+              {[3, 5, 10, 25].map((n) => (
+                <option key={n} value={n}>
+                  +{n} coin
+                </option>
+              ))}
+            </select>
+            <span style={{ flex: 1 }} />
+            <EditorialPill kind="spark" size="sm" arrow onClick={send}>
+              Pubblica
+            </EditorialPill>
           </div>
-        </Card>
-
-        {/* Leaderboard + stats */}
-        <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-3">
-            <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                Sent this month
-              </div>
-              <div className="text-2xl font-display mt-1 tabular-nums">{sent} 🪙</div>
-            </Card>
-            <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                Received
-              </div>
-              <div className="text-2xl font-display mt-1 tabular-nums">{received} 🪙</div>
-            </Card>
-            <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                <Zap className="h-3 w-3" />
-                Streak
-              </div>
-              <div className="text-2xl font-display mt-1 tabular-nums">6 weeks</div>
-            </Card>
-          </div>
-
-          <Card className="p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <Trophy className="h-4 w-4 text-warning" />
-              <div className="font-semibold text-sm">Top recipients this month</div>
-            </div>
-            <div className="space-y-2 stagger-in">
-              {board.map((r, i) => {
-                const maxCoins = board[0].coins;
-                return (
-                  <div key={r.employee.id} className="flex items-center gap-3 group">
-                    <div
-                      className={cn(
-                        "w-6 text-center font-mono text-xs tabular-nums",
-                        i === 0
-                          ? "text-warning font-bold"
-                          : i < 3
-                            ? "font-semibold"
-                            : "text-muted-foreground",
-                      )}
-                    >
-                      #{i + 1}
-                    </div>
-                    <Avatar
-                      initials={r.employee.initials}
-                      color={r.employee.avatarColor}
-                      size={32}
-                      employeeId={r.employee.id}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium truncate">{r.employee.name}</div>
-                      <div className="h-1.5 rounded-full bg-muted mt-1 overflow-hidden">
-                        <div
-                          className={cn(
-                            "h-full rounded-full transition-[width] duration-700",
-                            i === 0 ? "bg-primary" : "bg-muted-foreground/40",
-                          )}
-                          style={{ width: `${(r.coins / maxCoins) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-                    <div className="text-sm font-semibold tabular-nums">{r.coins} 🪙</div>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
-
-          <Card className="p-5">
-            <div className="font-semibold text-sm mb-3">Team values in action</div>
-            <div className="grid grid-cols-5 gap-2">
-              {tagCounts.map((t) => {
-                const Icon = t.icon;
-                return (
-                  <div key={t.v} className="p-3 rounded-md border text-center">
-                    <Icon className="h-4 w-4 mx-auto" style={{ color: t.color }} />
-                    <div className="text-lg font-semibold mt-1 tabular-nums">{t.count}</div>
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                      {t.label}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
         </div>
       </div>
 
-      {/* Feed */}
-      <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
-        <div className="px-5 py-4 border-b flex items-center justify-between gap-3 flex-wrap">
-          <div className="font-semibold text-sm">Kudos feed</div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="relative">
-              <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={feedQuery}
-                onChange={(e) => setFeedQuery(e.target.value)}
-                placeholder="Search messages, names…"
-                className="h-8 w-[220px] pl-8 text-xs"
-              />
-              {feedQuery && (
-                <button
-                  type="button"
-                  onClick={() => setFeedQuery("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  aria-label="Clear search"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              )}
-            </div>
-            <div className="flex items-center gap-1 flex-wrap">
-              {TAGS.map((t) => {
-                const Icon = t.icon;
-                const active = feedTags.has(t.v);
-                return (
-                  <button
-                    key={t.v}
-                    type="button"
-                    onClick={() =>
-                      setFeedTags((prev) => {
-                        const next = new Set(prev);
-                        if (next.has(t.v)) next.delete(t.v);
-                        else next.add(t.v);
-                        return next;
-                      })
-                    }
-                    className={cn(
-                      "inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full border press-scale transition-colors",
-                      active ? "font-medium" : "text-muted-foreground hover:bg-muted",
-                    )}
-                    style={
-                      active
-                        ? {
-                            borderColor: t.color,
-                            color: t.color,
-                            backgroundColor: `${t.color.replace(")", " / 0.08)")}`,
-                          }
-                        : undefined
-                    }
-                  >
-                    <Icon className="h-3 w-3" />
-                    {t.label}
-                  </button>
-                );
-              })}
-              {feedTags.size > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setFeedTags(new Set())}
-                  className="text-[11px] text-muted-foreground hover:text-foreground px-1.5"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="divide-y stagger-in">
-          {filteredFeed.length === 0 ? (
-            <div className="px-5 py-10 text-center text-sm text-muted-foreground">
-              No kudos match your filters.
-            </div>
-          ) : null}
-          {filteredFeed.map((k) => {
-            const from = employeeById(k.fromId);
-            const to = employeeById(k.toId);
-            if (!from || !to) return null;
-            const t = tagMeta(k.tag);
-            const Icon = t.icon;
-            return (
-              <div
-                key={k.id}
-                className="px-5 py-4 flex items-start gap-3 hover:bg-muted/30 transition-colors"
-              >
-                <Avatar
-                  initials={from.initials}
-                  color={from.avatarColor}
-                  size={36}
-                  employeeId={from.id}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm flex items-center gap-1.5 flex-wrap">
-                    <span className="font-semibold">{from.name}</span>
-                    <span className="text-muted-foreground">sent</span>
-                    <span className="font-semibold">{to.name}</span>
-                    <span
-                      className="inline-flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded-md border"
-                      style={{
-                        borderColor: `${t.color.replace(")", " / 0.5)")}`,
-                        color: t.color,
-                        backgroundColor: `${t.color.replace(")", " / 0.06)")}`,
-                      }}
-                    >
-                      <Icon className="h-3 w-3" />
-                      {t.label}
-                    </span>
-                    <span className="ml-auto text-sm font-semibold tabular-nums">
-                      {k.amount} 🪙
-                    </span>
-                    {from.id === ME && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button
-                            className="h-7 w-7 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground"
-                            aria-label="Kudo actions"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setEditKudo(k);
-                              setEditMessage(k.message);
-                            }}
-                          >
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Edit message
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-destructive"
-                            onClick={() => {
-                              const snap = k;
-                              kudosTable.remove(k.id);
-                              toast("Kudo deleted", {
-                                action: {
-                                  label: "Undo",
-                                  onClick: () => kudosTable.add(snap),
-                                },
-                              });
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </div>
-                  <div className="text-sm mt-1.5">"{k.message}"</div>
-                  <div className="text-[11px] text-muted-foreground mt-1 tabular-nums">
-                    {k.date}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </Card>
-
-      <Dialog open={!!editKudo} onOpenChange={(o) => !o && setEditKudo(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit kudo</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-1.5">
-            <Label htmlFor="kudo-msg">Message</Label>
-            <Textarea
-              id="kudo-msg"
-              rows={4}
-              value={editMessage}
-              onChange={(e) => setEditMessage(e.target.value)}
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setEditKudo(null)}>
-              Cancel
-            </Button>
-            <Button
-              disabled={!editMessage.trim()}
-              onClick={() => {
-                if (!editKudo) return;
-                kudosTable.update(editKudo.id, { message: editMessage.trim() });
-                toast.success("Kudo updated");
-                setEditKudo(null);
+      {/* Leaderboard strip — 4-up */}
+      <div
+        className="grid"
+        style={{
+          gridTemplateColumns: "repeat(4, 1fr)",
+          border: "1px solid var(--line)",
+          borderRadius: 14,
+          overflow: "hidden",
+        }}
+      >
+        {leaderboard.map((row, i) => {
+          const isLeader = i === 0;
+          return (
+            <div
+              key={row.employee!.id}
+              className="flex items-center gap-3.5"
+              style={{
+                padding: "16px 20px",
+                borderRight: i < leaderboard.length - 1 ? "1px solid var(--line)" : "none",
               }}
             >
-              Save
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+              <Avatar size={26} initials={row.employee!.initials} color={row.employee!.avatarColor} />
+              <div className="min-w-0">
+                <div
+                  className="truncate"
+                  style={{
+                    fontFamily: "Fraunces, ui-serif, serif",
+                    fontStyle: isLeader ? "italic" : "normal",
+                    fontSize: 22,
+                    letterSpacing: "-0.02em",
+                  }}
+                >
+                  {row.employee!.name}
+                </div>
+                <span
+                  className="t-mono"
+                  style={{ color: isLeader ? "var(--spark)" : "var(--muted-foreground)" }}
+                >
+                  {row.count} ricevuti
+                </span>
+              </div>
+            </div>
+          );
+        })}
+        {leaderboard.length === 0 && (
+          <div
+            className="t-mono"
+            style={{ padding: "24px", color: "var(--muted-foreground)", gridColumn: "span 4" }}
+          >
+            Nessun kudos ancora — sii il primo a dire grazie.
+          </div>
+        )}
+      </div>
+
+      {/* Kudos cards — 2-col citations */}
+      <div
+        className="grid"
+        style={{
+          gridTemplateColumns: "repeat(auto-fit, minmax(440px, 1fr))",
+          gap: 16,
+        }}
+      >
+        {sortedFeed.slice(0, 12).map((k) => {
+          const from = employeeById(k.fromId);
+          const to = employeeById(k.toId);
+          if (!from || !to) return null;
+          return (
+            <article
+              key={k.id}
+              style={{
+                border: "1px solid var(--line)",
+                borderRadius: 18,
+                padding: "22px 26px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+                background: "var(--bg)",
+              }}
+            >
+              <div className="flex items-center gap-3 flex-wrap">
+                <Avatar size={26} initials={from.initials} color={from.avatarColor} />
+                <span style={{ fontWeight: 600 }}>{from.name.split(" ")[0]}</span>
+                <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                  →
+                </span>
+                <Avatar size={26} initials={to.initials} color={to.avatarColor} />
+                <span style={{ fontWeight: 600 }}>{to.name.split(" ")[0]}</span>
+                <span style={{ flex: 1 }} />
+                <span className="t-mono" style={{ color: "var(--spark)" }}>
+                  +{k.amount}
+                </span>
+              </div>
+              <p
+                style={{
+                  margin: 0,
+                  fontFamily: "Fraunces, ui-serif, serif",
+                  fontStyle: "italic",
+                  fontSize: 22,
+                  lineHeight: 1.4,
+                  color: "var(--fg)",
+                  letterSpacing: "-0.005em",
+                }}
+              >
+                «{k.message}»
+              </p>
+              <div className="flex items-center justify-between mt-auto">
+                <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                  #{TAG_LABEL[k.tag]}
+                </span>
+                <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                  {shortDate(k.date)}
+                </span>
+              </div>
+            </article>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -93,8 +93,14 @@ function Marketplace() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title="Marketplace"
-        description="Extend Pulse HR with apps, integrations and workflows"
+        eyebrow="WORKSPACE · MARKETPLACE · APP & INTEGRAZIONI"
+        title={
+          <>
+            Estendi <span className="spark-mark">Pulse</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="App, integrazioni, workflow."
       />
 
       <div className="flex items-center gap-2 flex-wrap mb-5">

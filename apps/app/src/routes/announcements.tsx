@@ -140,8 +140,14 @@ function Announcements() {
       className="fade-in"
       header={
         <PageHeader
-          title="Announcements"
-          description="Company-wide updates from leadership and HR"
+          eyebrow="PEOPLE · COMUNICAZIONI · DAL LEADERSHIP TEAM"
+          title={
+            <>
+              <span className="spark-mark">Annunci</span>
+              <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+            </>
+          }
+          description="Aggiornamenti aziendali da leadership e HR."
           actions={
             <Button size="sm" className="press-scale" onClick={() => setComposeOpen(true)}>
               <Plus className="h-4 w-4 mr-1.5" />

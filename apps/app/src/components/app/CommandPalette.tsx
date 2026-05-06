@@ -159,15 +159,31 @@ export function CommandPalette({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="p-0 max-w-xl gap-0 overflow-hidden top-[20%] translate-y-0 [&>button.absolute]:hidden">
-        <div className="flex items-center border-b px-3">
-          <Sparkles className="h-4 w-4 text-primary shrink-0" />
+      <DialogContent
+        className="p-0 max-w-xl gap-0 overflow-hidden top-[18%] translate-y-0 glass [&>button.absolute]:hidden"
+        style={{ borderRadius: 18 }}
+      >
+        <div
+          className="flex items-center px-4"
+          style={{ borderBottom: "1px solid var(--line)" }}
+        >
+          <Search
+            className="h-4 w-4 shrink-0"
+            style={{ color: "var(--muted-foreground)" }}
+          />
           <Input
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Ask or jump to… try ‘4h migration yesterday’"
-            className="border-0 focus-visible:ring-0 shadow-none h-12"
+            placeholder="Ask or jump to…"
+            className="border-0 focus-visible:ring-0 shadow-none h-14 text-lg"
+            style={{
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontStyle: "italic",
+              letterSpacing: "-0.015em",
+              fontSize: 22,
+              background: "transparent",
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && intents[0]) {
                 e.preventDefault();
@@ -176,7 +192,10 @@ export function CommandPalette({
             }}
           />
           <NewBadge />
-          <kbd className="ml-2 text-[10px] font-mono text-muted-foreground border rounded px-1.5 py-0.5">
+          <kbd
+            className="ml-2 t-mono-sm border rounded px-1.5 py-0.5"
+            style={{ color: "var(--muted-foreground)", borderColor: "var(--line)" }}
+          >
             ESC
           </kbd>
         </div>
@@ -309,8 +328,8 @@ export function CommandPalette({
 
 function Section({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="mb-1">
-      <div className="px-2 py-1.5 text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+    <div className="mb-2">
+      <div className="px-2 py-1.5 t-mono" style={{ color: "var(--muted-foreground)" }}>
         {label}
       </div>
       <div>{children}</div>

@@ -124,7 +124,13 @@ function AdminModules() {
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto fade-in">
       <PageHeader
-        title="Modules"
+        eyebrow="ADMIN · VISIBILITÀ MODULI"
+        title={
+          <>
+            <span className="spark-mark">Moduli</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
         description={description}
         actions={
           <Button type="button" variant="outline" size="sm" onClick={enableAll}>

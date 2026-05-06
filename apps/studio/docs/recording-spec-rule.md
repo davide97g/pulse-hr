@@ -36,7 +36,7 @@ Campi tipici (vedi `focus.template.json` come riferimento “completo”):
 - **`chrome`** — `true` o `{ "url": true, "title": "…" }` per barra finestra stile desktop.
 - **`background`** — Gradiente/solido, padding, `borderRadius` attorno alla finestra.
 - **`cursor`** — `true` o oggetto opzioni cursore (testreel).
-- **`localStorage`** — Oggetto chiave/valore iniettato prima del run (es. tema: `"pulse.theme": "employee"`).
+- **`localStorage`** — Oggetto chiave/valore iniettato prima del run (es. tema: `"pulse.theme": "dark"`).
 
 Altri campi ammessi dallo schema: `waitForSelector`, `speed`, `outputFormat`, `setup`, ecc. Non aggiungere proprietà non previste dallo schema (`additionalProperties: false`).
 

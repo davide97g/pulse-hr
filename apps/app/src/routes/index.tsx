@@ -1,466 +1,243 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Check,
-  X,
-  Clock,
-  Users,
-  AlertTriangle,
-  TrendingUp,
-  Calendar,
-  FileCheck2,
-  ShieldAlert,
-} from "lucide-react";
-import { Card } from "@pulse-hr/ui/primitives/card";
-import { Button } from "@pulse-hr/ui/primitives/button";
-import { Avatar, PageHeader } from "@/components/app/AppShell";
-import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
-import { StatCard } from "@pulse-hr/ui/atoms/StatCard";
-import { DashboardLayout } from "@pulse-hr/ui/atoms/DashboardLayout";
-import { Heart, Gift, Focus as FocusIcon, Sparkles as SparkIcon } from "lucide-react";
-import { MomentsCard } from "@/components/app/MomentsCard";
-import { SwipeRow } from "@/components/app/SwipeRow";
+import { EditorialPage } from "@/components/app/layouts/EditorialPage";
+import { ModuleSpread } from "@pulse-hr/ui/atoms/ModuleSpread";
+import { EditorialPill } from "@pulse-hr/ui/atoms/EditorialPill";
+import { Eyebrow } from "@pulse-hr/ui/atoms/Eyebrow";
 import { CompanyProfileBanner } from "@/components/app/CompanyProfileBanner";
-import { announcements, employeeLogHealth, managerAsks } from "@/lib/mock-data";
-import { useEmployees, employeeById } from "@/lib/tables/employees";
-import { useLeaveRequests, leaveTable } from "@/lib/tables/leave";
+import { commesse, managerAsks, payrollRuns } from "@/lib/mock-data";
+import { useEmployees } from "@/lib/tables/employees";
+import { useLeaveRequests } from "@/lib/tables/leave";
 import { useExpenses } from "@/lib/tables/expenses";
-import { useGreeting } from "@/lib/current-user";
-import { useEffectiveRole } from "@/lib/role-override";
+import { useFirstName } from "@/lib/current-user";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [{ title: "Dashboard — Pulse HR" }] }),
   component: Dashboard,
 });
 
+const WEEKDAYS_IT = ["DOMENICA", "LUNEDÌ", "MARTEDÌ", "MERCOLEDÌ", "GIOVEDÌ", "VENERDÌ", "SABATO"];
+const MONTHS_IT = [
+  "GENNAIO",
+  "FEBBRAIO",
+  "MARZO",
+  "APRILE",
+  "MAGGIO",
+  "GIUGNO",
+  "LUGLIO",
+  "AGOSTO",
+  "SETTEMBRE",
+  "OTTOBRE",
+  "NOVEMBRE",
+  "DICEMBRE",
+];
+
+function getISOWeek(d: Date): number {
+  const target = new Date(d.valueOf());
+  const dayNr = (d.getDay() + 6) % 7;
+  target.setDate(target.getDate() - dayNr + 3);
+  const firstThursday = new Date(target.getFullYear(), 0, 4);
+  return (
+    1 +
+    Math.round(
+      ((target.getTime() - firstThursday.getTime()) / 86_400_000 -
+        3 +
+        ((firstThursday.getDay() + 6) % 7)) /
+        7,
+    )
+  );
+}
+
 function Dashboard() {
   const employees = useEmployees();
   const leaveRequests = useLeaveRequests();
   const expenses = useExpenses();
+  const firstName = useFirstName();
+  const navigate = useNavigate();
+
   const pendingLeaves = leaveRequests.filter((l) => l.status === "pending");
   const pendingExpenses = expenses.filter((e) => e.status === "pending");
-  const greeting = useGreeting();
-  const role = useEffectiveRole();
-  const showManagerPulse = role === "admin" || role === "hr" || role === "manager";
+  const onboardingCount = employees.filter(
+    (e) => e.status === "onboarding" || e.status === "remote",
+  ).length;
+  const onLeaveCount = employees.filter((e) => e.status === "on_leave").length;
+  const openAsks = managerAsks.filter((a) => a.status === "pending").length;
+
+  const activeCommesse = commesse.filter((c) => c.status === "active");
+  const saturationFor = (c: (typeof commesse)[number]) =>
+    c.budgetHours > 0 ? c.burnedHours / c.budgetHours : 0;
+  const saturated = activeCommesse.filter((c) => saturationFor(c) >= 0.8);
+  const atRisk = activeCommesse.filter(
+    (c) => saturationFor(c) >= 0.7 && saturationFor(c) < 0.8,
+  );
+  const avgSaturation = Math.round(
+    (activeCommesse.reduce((s, c) => s + saturationFor(c), 0) /
+      Math.max(activeCommesse.length, 1)) *
+      100,
+  );
+  const weekHours = useMemo(
+    () => Math.round(activeCommesse.reduce((s, c) => s + Math.min(c.budgetHours, 40), 0) * 0.6),
+    [activeCommesse],
+  );
+
+  const upcomingPayroll =
+    payrollRuns.find((r) => r.status === "scheduled" || r.status === "draft") ?? payrollRuns[0];
+  const expensesAmount = pendingExpenses.reduce((s, e) => s + (e.amount ?? 0), 0);
+
+  const now = new Date();
+  const date = `${WEEKDAYS_IT[now.getDay()]} — ${now.getDate()} ${MONTHS_IT[now.getMonth()]} ${now.getFullYear()}`;
+  const week = `WEEK ${getISOWeek(now)}`;
+  const onlineCount = Math.max(employees.length - onLeaveCount - 2, 0);
 
   return (
-    <DashboardLayout
-      className="fade-in"
-      header={
-        <PageHeader
-          title={greeting}
-          description="Here's what needs your attention today."
-          actions={
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/calendar">
-                <Calendar className="h-4 w-4 mr-1.5" /> Today
-              </Link>
-            </Button>
+    <EditorialPage
+      eyebrow={
+        <Eyebrow
+          tag={
+            <span className="tag-spark">
+              <span className="dot" style={{ background: "var(--spark-ink)", boxShadow: "none" }} />{" "}
+              {onlineCount} ONLINE
+            </span>
           }
-        />
+          note={pendingLeaves.length ? `· ${pendingLeaves.length} APPROVAZIONI APERTE` : undefined}
+        >
+          {date} · {week}
+        </Eyebrow>
+      }
+      actions={
+        <>
+          <EditorialPill kind="ghost" size="sm" onClick={() => navigate({ to: "/reports" })}>
+            Esporta
+          </EditorialPill>
+          <EditorialPill
+            kind="spark"
+            size="sm"
+            arrow
+            onClick={() => navigate({ to: "/projects" })}
+          >
+            + Nuova commessa
+          </EditorialPill>
+        </>
+      }
+      title={
+        <>
+          Buongiorno,
+          <br />
+          <span style={{ fontStyle: "italic" }} className="spark-mark">
+            {firstName}
+          </span>
+          <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+        </>
+      }
+      summary={
+        <>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            SOMMARIO · 03 MODULI
+          </span>
+          <p className="t-body-lg" style={{ marginTop: 8, color: "var(--fg-2)" }}>
+            Hai{" "}
+            <strong style={{ fontWeight: 600 }}>
+              {pendingLeaves.length + pendingExpenses.length} approvazioni
+            </strong>{" "}
+            in coda
+            {saturated.length > 0 && (
+              <>
+                ,{" "}
+                <span className="spark-mark" style={{ fontWeight: 600 }}>
+                  {saturated.length} commess
+                  {saturated.length === 1 ? "a è" : "e sono"} a saturazione
+                </span>
+              </>
+            )}
+            {upcomingPayroll && <>, run {upcomingPayroll.period} in revisione</>}.
+          </p>
+        </>
       }
     >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <ModuleSpread
+          eyebrow="01 · PEOPLE"
+          kicker="Persone, leave, kudos"
+          big={String(employees.length)}
+          bigCaption="dipendenti attivi"
+          metrics={[
+            [`+${onboardingCount}`, "in onboarding", onboardingCount > 0],
+            [String(pendingLeaves.length), "leave aperte"],
+            [String(openAsks), "manager asks"],
+          ]}
+          footer={
+            onLeaveCount === 0
+              ? "Tutti operativi questa settimana"
+              : `${onLeaveCount} in leave questa settimana`
+          }
+          onViewAll={() => navigate({ to: "/people" })}
+        />
+        <ModuleSpread
+          eyebrow="02 · WORK"
+          kicker="Commesse, focus, forecast"
+          big={String(avgSaturation)}
+          bigBlend
+          bigCaption="% saturazione"
+          metrics={[
+            [String(activeCommesse.length), "commesse attive"],
+            [`${weekHours}h`, "questa settimana"],
+            [String(atRisk.length + saturated.length), "in rischio", saturated.length > 0],
+          ]}
+          footer="Saturazione team in salita di 4 punti"
+          attention={saturated[0]?.code}
+          onViewAll={() => navigate({ to: "/projects" })}
+        />
+        <ModuleSpread
+          eyebrow="03 · MONEY"
+          kicker="Payroll, spese, fatture"
+          big={upcomingPayroll ? `€ ${(upcomingPayroll.gross / 1000).toFixed(0)}k` : "—"}
+          bigCaption={`payroll ${upcomingPayroll?.period ?? "—"}`}
+          metrics={[
+            [
+              upcomingPayroll
+                ? new Date(upcomingPayroll.date).toLocaleDateString("it-IT", {
+                    day: "numeric",
+                    month: "short",
+                  })
+                : "—",
+              "run prevista",
+              true,
+            ],
+            [`€ ${(expensesAmount / 1000).toFixed(1)}k`, "spese da approvare"],
+            [String(pendingExpenses.length), "anomalie"],
+          ]}
+          footer={`In revisione · ${employees[0]?.name ?? "—"}`}
+          cta={upcomingPayroll?.status === "scheduled" || upcomingPayroll?.status === "draft"}
+          ctaLabel="Approva run"
+          onCta={() => navigate({ to: "/payroll" })}
+          onViewAll={() => navigate({ to: "/payroll" })}
+        />
+      </div>
+
       <CompanyProfileBanner />
 
-      {/* Labs spotlight */}
-      <div className="relative rounded-xl iridescent-border bg-gradient-to-br from-primary/[0.05] via-transparent to-transparent p-5 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04] grid-bg pointer-events-none" aria-hidden />
-        <div className="relative flex items-start justify-between gap-4 flex-wrap">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] uppercase tracking-[0.2em] font-semibold text-[color:var(--labs)] inline-flex items-center gap-1.5">
-                <SparkIcon className="h-3.5 w-3.5" />
-                What's new in Pulse
-              </span>
-              <NewBadge />
-            </div>
-            <div className="text-display max-w-xl">
-              Five Labs features are live — ask Copilot with{" "}
-              <kbd className="font-mono text-[11px] border rounded px-1.5 py-0.5 bg-background">
-                ⌘J
-              </kbd>
-              , or jump straight in.
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-2 w-full md:w-auto">
-            <LabsChip to="/log" icon={<Heart className="h-3.5 w-3.5" />} label="Status Log" />
-            <LabsChip to="/kudos" icon={<Gift className="h-3.5 w-3.5" />} label="Kudos" />
-            <LabsChip to="/focus" icon={<FocusIcon className="h-3.5 w-3.5" />} label="Focus Mode" />
-          </div>
+      <div
+        className="solid-card flex items-center justify-between p-5 mt-2"
+        style={{ borderRadius: 18 }}
+      >
+        <div className="flex flex-col gap-1">
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            FORECAST · {activeCommesse[0]?.code ?? "—"}
+          </span>
+          <span
+            style={{
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontSize: 22,
+              fontStyle: "italic",
+            }}
+          >
+            Burn projection a fine quarter
+          </span>
         </div>
+        <Link to="/forecast" className="pill pill-ghost pill-sm">
+          Apri forecast →
+        </Link>
       </div>
-
-      {/* KPI cards — action centers */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatCard
-          size="lg"
-          icon={<FileCheck2 />}
-          label="Pending approvals"
-          value={pendingLeaves.length + pendingExpenses.length}
-          delta={`${pendingLeaves.length} leave • ${pendingExpenses.length} expense`}
-          action={
-            <Link
-              to="/leave"
-              className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
-            >
-              Review →
-            </Link>
-          }
-        />
-        <StatCard
-          size="lg"
-          icon={<Users />}
-          label="Headcount"
-          value={employees.length}
-          delta={
-            <span className="inline-flex items-center gap-1">
-              <ArrowUpRight className="h-3 w-3" /> +2 this month
-            </span>
-          }
-          deltaTone="positive"
-          action={
-            <Link
-              to="/people"
-              className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
-            >
-              View →
-            </Link>
-          }
-        />
-        <StatCard
-          size="lg"
-          icon={<Clock />}
-          label="Overtime hours"
-          value="42h"
-          delta={
-            <span className="inline-flex items-center gap-1">
-              <ArrowUpRight className="h-3 w-3" /> +18% vs last week
-            </span>
-          }
-          deltaTone="negative"
-          accent
-          action={
-            <Link
-              to="/time"
-              className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-4 hover:underline"
-            >
-              Details →
-            </Link>
-          }
-        />
-      </div>
-
-      {showManagerPulse && <ManagerPulseOverview />}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Approvals queue */}
-        <Card className="lg:col-span-2 p-0 overflow-hidden">
-          <div className="px-5 py-4 border-b flex items-center justify-between">
-            <div>
-              <div className="font-semibold text-sm">Approvals queue</div>
-              <div className="text-xs text-muted-foreground mt-0.5">
-                Inline approve or reject — no page reloads
-              </div>
-            </div>
-            <Link
-              to="/leave"
-              className="text-xs text-muted-foreground hover:text-foreground font-medium underline-offset-4 hover:underline"
-            >
-              See all
-            </Link>
-          </div>
-          <div className="divide-y">
-            {pendingLeaves.map((l) => {
-              const emp = employeeById(l.employeeId);
-              if (!emp) return null;
-              const decide = (status: "approved" | "rejected") =>
-                leaveTable.update(l.id, { status });
-              return (
-                <SwipeRow
-                  key={l.id}
-                  onApprove={() => decide("approved")}
-                  onReject={() => decide("rejected")}
-                >
-                  <div className="px-5 py-3.5 flex items-center gap-3 hover:bg-muted/40 transition-colors">
-                    <Avatar
-                      initials={emp.initials}
-                      color={emp.avatarColor}
-                      size={36}
-                      employeeId={emp.id}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium truncate">{emp.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {l.type} • {l.days} day{l.days > 1 ? "s" : ""} • {l.from} → {l.to}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        onClick={() => decide("rejected")}
-                      >
-                        <X className="h-4 w-4 mr-1" /> Reject
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="h-8 px-3 bg-success text-success-foreground hover:bg-success/90"
-                        onClick={() => decide("approved")}
-                      >
-                        <Check className="h-4 w-4 mr-1" /> Approve
-                      </Button>
-                    </div>
-                  </div>
-                </SwipeRow>
-              );
-            })}
-          </div>
-          <div className="px-5 py-2 border-t text-[11px] text-muted-foreground md:hidden">
-            Tip · swipe right to approve, left to reject.
-          </div>
-        </Card>
-
-        {/* Right column */}
-        <div className="space-y-4">
-          <Card className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="font-semibold text-sm">Today's presence</div>
-              <div className="text-xs text-muted-foreground">{employees.length} employees</div>
-            </div>
-            <div className="flex items-end gap-3">
-              <div>
-                <div className="text-3xl font-semibold">9</div>
-                <div className="text-xs text-muted-foreground">Clocked in</div>
-              </div>
-              <div className="h-10 w-px bg-border" />
-              <div>
-                <div className="text-3xl font-semibold">2</div>
-                <div className="text-xs text-muted-foreground">On leave</div>
-              </div>
-              <div className="h-10 w-px bg-border" />
-              <div>
-                <div className="text-3xl font-semibold text-muted-foreground">1</div>
-                <div className="text-xs text-muted-foreground">Absent</div>
-              </div>
-            </div>
-            <div className="mt-4 h-2 rounded-full bg-muted overflow-hidden flex">
-              <div className="bg-success/80 h-full" style={{ width: "75%" }} />
-              <div className="bg-muted-foreground/50 h-full" style={{ width: "17%" }} />
-              <div className="bg-muted-foreground/25 h-full" style={{ width: "8%" }} />
-            </div>
-            <Button variant="outline" size="sm" className="w-full mt-4" asChild>
-              <Link to="/calendar">
-                View attendance <ArrowRight className="h-3.5 w-3.5 ml-1" />
-              </Link>
-            </Button>
-          </Card>
-
-          <Card className="p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle className="h-4 w-4 text-warning" />
-              <div className="font-semibold text-sm">Anomalies detected</div>
-            </div>
-            <div className="space-y-2.5 text-sm">
-              <div className="flex items-start gap-2">
-                <TrendingUp className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
-                <div className="flex-1">
-                  Engineering overtime up <strong>18%</strong> this week.
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <Calendar className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
-                <div className="flex-1">
-                  Overlapping leave: <strong>Sales team</strong> May 10–17.
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </div>
-
-      {/* Lower row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
-        <div className="lg:col-span-2 space-y-4">
-          <MomentsCard />
-          <Card className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="font-semibold text-sm">Headcount trend</div>
-              <div className="text-xs text-muted-foreground">Last 6 months</div>
-            </div>
-            <MiniChart />
-          </Card>
-        </div>
-
-        <Card className="p-0">
-          <div className="px-5 py-4 border-b flex items-center justify-between">
-            <div className="font-semibold text-sm">Announcements</div>
-            <Link
-              to="/announcements"
-              className="text-xs text-muted-foreground hover:text-foreground font-medium underline-offset-4 hover:underline"
-            >
-              All
-            </Link>
-          </div>
-          <div className="divide-y">
-            {announcements.slice(0, 3).map((a) => (
-              <div key={a.id} className="px-5 py-3.5 hover:bg-muted/40 cursor-pointer">
-                <div className="text-sm font-medium">{a.title}</div>
-                <div className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{a.body}</div>
-                <div className="text-[11px] text-muted-foreground mt-1.5">
-                  {a.author} • {a.time}
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-    </DashboardLayout>
-  );
-}
-
-function ManagerPulseOverview() {
-  const rows = useMemo(() => employeeLogHealth, []);
-  const avgScore = Math.round(avg(rows.map((h) => h.score)));
-  const atRisk = rows.filter(
-    (h) => h.trend === "down" || h.score < 55 || h.dimensions.stress > 0.4,
-  ).length;
-  const openAsks = managerAsks.filter((a) => a.status === "pending").length;
-  const topDriver = rows
-    .flatMap((h) => h.drivers)
-    .reduce<(typeof rows)[number]["drivers"][number] | undefined>(
-      (best, driver) =>
-        !best || Math.abs(driver.value) > Math.abs(best.value) ? driver : best,
-      undefined,
-    );
-
-  return (
-    <Card className="overflow-hidden p-0">
-      <div className="grid gap-0 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="relative p-5">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.08] via-transparent to-transparent" />
-          <div className="relative flex items-start justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                <Heart className="h-3.5 w-3.5 text-primary" />
-                Manager pulse
-              </div>
-              <h2 className="mt-2 font-display text-2xl">Team signal at a glance</h2>
-              <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-                Status Log summaries, sentiment trends, and manager asks. Raw employee chats stay
-                private.
-              </p>
-            </div>
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/log" search={{ view: "team" }}>
-                Open pulse <ArrowRight className="ml-1 h-3.5 w-3.5" />
-              </Link>
-            </Button>
-          </div>
-          <div className="relative mt-5 grid gap-3 sm:grid-cols-3">
-            <PulseMetric label="Avg score" value={`${avgScore}`} sub="team health" />
-            <PulseMetric label="At risk" value={`${atRisk}`} sub="needs attention" danger={atRisk > 0} />
-            <PulseMetric label="Open asks" value={`${openAsks}`} sub="awaiting reply" />
-          </div>
-        </div>
-        <div className="border-t bg-muted/20 p-5 lg:border-l lg:border-t-0">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <ShieldAlert className="h-4 w-4 text-warning" />
-            Strongest signal
-          </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {topDriver
-              ? `${topDriver.label}: ${topDriver.value > 0 ? "+" : ""}${topDriver.value.toFixed(2)}`
-              : "No signal yet."}
-          </p>
-          <div className="mt-4 space-y-2">
-            {rows.slice(0, 3).map((health) => {
-              const emp = employeeById(health.employeeId);
-              if (!emp) return null;
-              return (
-                <Link
-                  key={health.employeeId}
-                  to="/log/$employeeId"
-                  params={{ employeeId: health.employeeId }}
-                  className="flex items-center justify-between rounded-lg border bg-background/70 px-3 py-2 text-sm transition hover:bg-background"
-                >
-                  <span className="truncate">{emp.name}</span>
-                  <span className="text-xs text-muted-foreground">{health.trend}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-function PulseMetric({
-  label,
-  value,
-  sub,
-  danger,
-}: {
-  label: string;
-  value: string;
-  sub: string;
-  danger?: boolean;
-}) {
-  return (
-    <div className="rounded-xl border bg-background/75 p-3">
-      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className={danger ? "mt-1 font-display text-3xl text-destructive" : "mt-1 font-display text-3xl"}>
-        {value}
-      </div>
-      <div className="text-xs text-muted-foreground">{sub}</div>
-    </div>
-  );
-}
-
-function avg(xs: number[]): number {
-  return xs.length ? xs.reduce((s, x) => s + x, 0) / xs.length : 0;
-}
-
-function LabsChip({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
-  return (
-    <Link
-      to={to}
-      className="group inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border bg-background/80 hover:bg-background hover:border-[color:var(--labs)]/40 transition-colors press-scale text-xs font-medium"
-    >
-      <span className="text-muted-foreground group-hover:text-[color:var(--labs)] transition-colors">
-        {icon}
-      </span>
-      <span>{label}</span>
-      <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-    </Link>
-  );
-}
-
-function MiniChart() {
-  const data = [9, 9, 10, 10, 11, 12];
-  const labels = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"];
-  const max = 14;
-  return (
-    <div className="flex items-end gap-3 h-40">
-      {data.map((v, i) => (
-        <div key={labels[i]} className="flex-1 flex flex-col items-center gap-2">
-          <div className="flex-1 w-full flex items-end">
-            <div
-              className="w-full rounded-t-md bg-muted hover:bg-muted/70 transition-colors relative group"
-              style={{ height: `${(v / max) * 100}%` }}
-            >
-              <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-foreground text-background text-[10px] px-1.5 py-0.5 rounded">
-                {v}
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-foreground/80 rounded-t-md" />
-            </div>
-          </div>
-          <div className="text-[11px] text-muted-foreground">{labels[i]}</div>
-        </div>
-      ))}
-    </div>
+    </EditorialPage>
   );
 }

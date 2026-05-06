@@ -222,8 +222,14 @@ function Recruiting() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title="Recruiting"
-        description={`${openRoles} open role${openRoles === 1 ? "" : "s"} · ${candidates.length} candidates in pipeline`}
+        eyebrow={`PEOPLE · RECRUITING · ${openRoles} POSIZIONI APERTE · ${candidates.length} IN PIPELINE`}
+        title={
+          <>
+            Chi <span className="spark-mark">arriva</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Posizioni aperte, candidati, pipeline e offerte."
         actions={
           <>
             <Button

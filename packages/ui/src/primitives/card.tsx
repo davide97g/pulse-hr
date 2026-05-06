@@ -2,11 +2,18 @@ import * as React from "react";
 
 import { cn } from "../lib/cn";
 
+// Editorial Card — hairline border, no drop shadow. The Editorial design
+// system explicitly avoids drop shadows; depth comes from the 1px line and
+// surface contrast.
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("rounded-xl border bg-card text-card-foreground shadow", className)}
+      className={cn(
+        "rounded-2xl border text-card-foreground",
+        className,
+      )}
+      style={{ background: "var(--bg-2)", borderColor: "var(--line)", ...props.style }}
       {...props}
     />
   ),

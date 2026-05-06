@@ -1,1280 +1,1360 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Play,
-  Square,
-  MapPin,
-  Smartphone,
-  Wifi,
-  Plus,
-  Pencil,
-  Trash2,
-  Copy,
-  CalendarDays,
-  Briefcase,
-  Timer,
-  CheckCircle2,
-  Send,
-  Circle,
-  Clock,
-  Search,
-  SlidersHorizontal,
-  Users,
-  Wand2,
-  ChevronDown,
-  Zap,
-} from "lucide-react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Card } from "@pulse-hr/ui/primitives/card";
-import { Button } from "@pulse-hr/ui/primitives/button";
-import { Input } from "@pulse-hr/ui/primitives/input";
-import { Label } from "@pulse-hr/ui/primitives/label";
-import { Textarea } from "@pulse-hr/ui/primitives/textarea";
-import { Switch } from "@pulse-hr/ui/primitives/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@pulse-hr/ui/primitives/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@pulse-hr/ui/primitives/tabs";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@pulse-hr/ui/primitives/alert-dialog";
-import { PageHeader, Avatar, StatusBadge } from "@/components/app/AppShell";
-import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
-import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
-import { SkeletonRows } from "@pulse-hr/ui/atoms/SkeletonList";
-import { TimesheetCalendar } from "@/components/app/TimesheetCalendar";
+import { EditorialPage } from "@/components/app/layouts/EditorialPage";
+import { EditorialPill } from "@pulse-hr/ui/atoms/EditorialPill";
+import { Eyebrow } from "@pulse-hr/ui/atoms/Eyebrow";
+import { AvatarDisplay } from "@pulse-hr/ui/atoms/AvatarDisplay";
 import { TimesheetAutofillDialog } from "@/components/app/TimesheetAutofillDialog";
-import { useWorkspace } from "@/components/app/WorkspaceContext";
-import { useBulkSelect, BulkBar, RowCheckbox, HeaderCheckbox } from "@/components/app/bulk";
-import { useSavedViews } from "@/lib/useSavedViews";
-import { SavedViewsBar } from "@/components/app/SavedViewsBar";
-import { useUrlParam } from "@/lib/useUrlParam";
-import {
-  employees,
-  commesse,
-  commessaById,
-  type TimesheetEntry,
-} from "@/lib/mock-data";
-import { timesheetEntriesTable, useTimesheetEntries } from "@/lib/tables/timesheetEntries";
-import {
-  timesheetTemplatesTable,
-  useTimesheetTemplates,
-} from "@/lib/tables/timesheetTemplates";
-import {
-  clearActiveClock,
-  elapsedSeconds,
-  startActiveClock,
-  useActiveClock,
-} from "@/lib/active-clock";
-import { cn } from "@/lib/utils";
+import { useEmployees } from "@/lib/tables/employees";
+import { useTimesheetEntries } from "@/lib/tables/timesheetEntries";
+import { commesse } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/time")({
   head: () => ({ meta: [{ title: "Time & attendance — Pulse HR" }] }),
-  validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
-  component: Time,
+  component: TimePage,
 });
 
-const ME = "e1";
+const WEEKDAY_HEAD = ["DOM", "LUN", "MAR", "MER", "GIO", "VEN", "SAB"];
+const WEEKDAY_FULL = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+const MONTHS_IT = [
+  "gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno",
+  "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre",
+];
+const MONTHS_IT_UPPER = MONTHS_IT.map((m) => m.toUpperCase());
 
-function Time() {
-  const activeClock = useActiveClock();
-  const clockedIn = !!activeClock;
-  const [nowTick, setNowTick] = useState(() => Date.now());
-  const seconds = elapsedSeconds(activeClock, nowTick);
-  const [logNowOpen, setLogNowOpen] = useState(false);
-  const workspace = useWorkspace();
-  const activeCommessa = workspace.activeCommessaId;
-  const setActiveCommessa = workspace.setActiveCommessaId;
-  const [loading, setLoading] = useState(true);
+const HOLIDAYS_IT_2026: Record<string, string> = {
+  "2026-01-01": "Capodanno",
+  "2026-01-06": "Epifania",
+  "2026-04-06": "Pasquetta",
+  "2026-04-25": "Liberazione",
+  "2026-05-01": "Festa del Lavoro",
+  "2026-06-02": "Repubblica",
+  "2026-08-15": "Ferragosto",
+  "2026-11-01": "Ognissanti",
+  "2026-12-08": "Immacolata",
+  "2026-12-25": "Natale",
+  "2026-12-26": "S. Stefano",
+};
 
+type DayRecord = {
+  date: string;
+  day: number;
+  weekday: number;
+  isWeekend: boolean;
+  target: number;
+  logged: number;
+  leave: "leave" | "holiday" | null;
+  label: string | null;
+  breakdown: { commessaId: string; code: string; name: string; hours: number }[];
+};
+
+function ymd(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function fmtHours(h: number): string {
+  if (!h) return "—";
+  return Number.isInteger(h) ? `${h}h` : `${h.toFixed(1)}h`;
+}
+
+type Tab = "calendar" | "mine" | "commessa" | "team";
+
+function TimePage() {
+  const employees = useEmployees();
   const entries = useTimesheetEntries();
-  const templates = useTimesheetTemplates();
-  const [editEntry, setEditEntry] = useState<TimesheetEntry | "new" | null>(null);
-  const [toDelete, setToDelete] = useState<TimesheetEntry | null>(null);
-  const [inlineEdit, setInlineEdit] = useState<{
-    id: string;
-    field: "hours" | "description";
-    draft: string;
-  } | null>(null);
-  const [smartFillOpen, setSmartFillOpen] = useState(false);
-  const acceptAutofill = (rows: Omit<TimesheetEntry, "id" | "status" | "employeeId">[]) => {
-    if (rows.length === 0) {
-      setSmartFillOpen(false);
-      return;
-    }
-    const prepared = rows.map((r) => ({
-      ...r,
-      id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      employeeId: ME,
-      status: "draft" as const,
-    }));
-    for (const p of prepared) timesheetEntriesTable.add(p);
-    setSmartFillOpen(false);
-    toast.success(`Smart-filled ${prepared.length} entr${prepared.length === 1 ? "y" : "ies"}`, {
-      description: "Saved as drafts — review and submit.",
-      icon: <Send className="h-4 w-4" />,
-      action: {
-        label: "Undo",
-        onClick: () => {
-          for (const p of prepared) timesheetEntriesTable.remove(p.id);
-        },
-      },
-    });
-  };
-  const timeViews = useSavedViews<{ q: string; filterCommessa: string; filterStatus: string }>(
-    "time-timesheet",
-    {
-      defaults: { q: "", filterCommessa: "all", filterStatus: "all" },
-      schema: { q: "string", filterCommessa: "string", filterStatus: "string" },
-    },
+
+  const [employeeId, setEmployeeId] = useState(() => employees[0]?.id ?? "");
+  const [cursor, setCursor] = useState(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() };
+  });
+  const [tab, setTab] = useState<Tab>("calendar");
+  const [openDay, setOpenDay] = useState<number | null>(null);
+  const [autofillOpen, setAutofillOpen] = useState(false);
+
+  const employee = useMemo(
+    () => employees.find((e) => e.id === employeeId) ?? employees[0],
+    [employeeId, employees],
   );
-  const q = timeViews.state.q;
-  const filterCommessa = timeViews.state.filterCommessa || "all";
-  const filterStatus = timeViews.state.filterStatus || "all";
-  const setQ = (v: string) => timeViews.setState({ q: v });
-  const setFilterCommessa = (v: string) => timeViews.setState({ filterCommessa: v });
-  const setFilterStatus = (v: string) => timeViews.setState({ filterStatus: v });
-  const [tab, setTab] = useUrlParam("tab", "calendar");
 
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 520);
-    return () => clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
-    if (!clockedIn) return;
-    const i = setInterval(() => setNowTick(Date.now()), 1000);
-    return () => clearInterval(i);
-  }, [clockedIn]);
-
-  const fmt = (s: number) =>
-    `${Math.floor(s / 3600)
-      .toString()
-      .padStart(2, "0")}:${Math.floor((s % 3600) / 60)
-      .toString()
-      .padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
-
-  const myEntries = useMemo(() => entries.filter((e) => e.employeeId === ME), [entries]);
-  const filteredEntries = useMemo(() => {
-    return myEntries.filter((e) => {
-      if (filterCommessa !== "all" && e.commessaId !== filterCommessa) return false;
-      if (filterStatus !== "all" && e.status !== filterStatus) return false;
-      if (q && !e.description.toLowerCase().includes(q.toLowerCase())) return false;
-      return true;
-    });
-  }, [myEntries, filterCommessa, filterStatus, q]);
-
-  const weekTotal = useMemo(() => myEntries.reduce((acc, e) => acc + e.hours, 0), [myEntries]);
-  const byCommessa = useMemo(() => {
-    const map = new Map<string, number>();
-    myEntries.forEach((e) => map.set(e.commessaId, (map.get(e.commessaId) ?? 0) + e.hours));
-    return [...map.entries()]
-      .map(([id, hours]) => ({ commessa: commessaById(id)!, hours }))
-      .filter((x) => x.commessa)
-      .sort((a, b) => b.hours - a.hours);
-  }, [myEntries]);
-
-  const stopClockAndLog = () => {
-    const clockCommessa = activeClock?.commessaId ?? activeCommessa;
-    if (seconds < 30) {
-      clearActiveClock();
-      toast("Clock stopped", { description: "Session too short to save." });
-      return;
-    }
-    const hours = Math.max(0.1, Math.round((seconds / 3600) * 100) / 100);
-    const c = commessaById(clockCommessa)!;
-    const newEntry: TimesheetEntry = {
-      id: `t-${Date.now()}`,
-      employeeId: ME,
-      commessaId: clockCommessa,
-      date: new Date().toISOString().slice(0, 10),
-      hours,
-      description: `Tracked time on ${c.name}`,
-      billable: true,
-      status: "draft",
-    };
-    timesheetEntriesTable.add(newEntry);
-    clearActiveClock();
-    toast.success(`Logged ${hours}h to ${c.code}`, {
-      description: "Saved as draft in your timesheet.",
-      icon: <Timer className="h-4 w-4" />,
-    });
-  };
-
-  const saveEntry = (data: Omit<TimesheetEntry, "id" | "employeeId" | "status">, id?: string) => {
-    if (id) {
-      timesheetEntriesTable.update(id, data);
-      toast.success("Entry updated");
-    } else {
-      const newEntry: TimesheetEntry = {
-        ...data,
-        id: `t-${Date.now()}`,
-        employeeId: ME,
-        status: "draft",
-      };
-      timesheetEntriesTable.add(newEntry);
-      toast.success("Entry added", {
-        description: `${data.hours}h logged to ${commessaById(data.commessaId)?.code}`,
+  const monthDays = useMemo<DayRecord[]>(() => {
+    const daysInMonth = new Date(cursor.year, cursor.month + 1, 0).getDate();
+    const records: DayRecord[] = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(cursor.year, cursor.month, d);
+      const weekday = date.getDay();
+      const isWeekend = weekday === 0 || weekday === 6;
+      const dateStr = ymd(date);
+      const dayEntries = entries.filter(
+        (e) => e.employeeId === employeeId && e.date === dateStr,
+      );
+      const logged = dayEntries.reduce((s, e) => s + e.hours, 0);
+      const breakdown = dayEntries.map((e) => {
+        const c = commesse.find((c) => c.id === e.commessaId);
+        return {
+          commessaId: e.commessaId,
+          code: c?.code ?? e.commessaId,
+          name: c?.name ?? "—",
+          hours: e.hours,
+        };
+      });
+      const holiday = HOLIDAYS_IT_2026[dateStr];
+      const leave = holiday ? ("holiday" as const) : null;
+      records.push({
+        date: dateStr,
+        day: d,
+        weekday,
+        isWeekend,
+        target: holiday || isWeekend ? 0 : 8,
+        logged,
+        leave,
+        label: holiday ?? null,
+        breakdown,
       });
     }
-  };
+    return records;
+  }, [cursor, entries, employeeId]);
 
-  const deleteEntry = (id: string) => {
-    const snap = timesheetEntriesTable.getAll().find((e) => e.id === id);
-    timesheetEntriesTable.remove(id);
-    toast("Entry deleted", {
-      description: "Hours removed from your timesheet.",
-      icon: <Trash2 className="h-4 w-4" />,
-      action: snap ? { label: "Undo", onClick: () => timesheetEntriesTable.add(snap) } : undefined,
+  const today = useMemo(() => {
+    const now = new Date();
+    if (now.getFullYear() !== cursor.year || now.getMonth() !== cursor.month) return -1;
+    return now.getDate();
+  }, [cursor]);
+
+  const workdays = monthDays.filter((d) => d.target > 0).length;
+  const filled = monthDays.filter((d) => d.target > 0 && d.logged >= d.target).length;
+  const totalLogged = monthDays.reduce((s, d) => s + d.logged, 0);
+  const totalTarget = workdays * 8;
+  const missingDays = monthDays
+    .filter((d) => d.target > 0 && d.logged < d.target && (today < 0 || d.day <= today))
+    .map((d) => d.day);
+  const leaveDays = monthDays.filter((d) => d.leave === "leave").length;
+  const holidayDays = monthDays.filter((d) => d.leave === "holiday").length;
+  const fillPct = workdays ? Math.round((filled / workdays) * 100) : 0;
+
+  const firstWeekday = new Date(cursor.year, cursor.month, 1).getDay();
+  const cells: (DayRecord | null)[] = [];
+  for (let i = 0; i < firstWeekday; i++) cells.push(null);
+  monthDays.forEach((d) => cells.push(d));
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const monthLabel = MONTHS_IT_UPPER[cursor.month];
+  const monthLower = MONTHS_IT[cursor.month];
+
+  const goPrev = () =>
+    setCursor((c) => {
+      const m = c.month === 0 ? 11 : c.month - 1;
+      const y = c.month === 0 ? c.year - 1 : c.year;
+      return { year: y, month: m };
     });
+  const goNext = () =>
+    setCursor((c) => {
+      const m = c.month === 11 ? 0 : c.month + 1;
+      const y = c.month === 11 ? c.year + 1 : c.year;
+      return { year: y, month: m };
+    });
+
+  const jumpToFirstMissing = () => {
+    if (missingDays.length > 0) setOpenDay(missingDays[0]);
   };
 
-  const duplicate = (e: TimesheetEntry) => {
-    const copy = { ...e, id: `t-${Date.now()}`, status: "draft" as const };
-    timesheetEntriesTable.add(copy);
-    toast.success("Entry duplicated");
-  };
-
-  const submitDrafts = () => {
-    const drafts = myEntries.filter((e) => e.status === "draft");
-    if (!drafts.length) {
-      toast("No drafts", { description: "Nothing pending submission." });
-      return;
+  const totalsByCommessa = useMemo(() => {
+    const map = new Map<string, { code: string; name: string; hours: number }>();
+    for (const d of monthDays) {
+      for (const b of d.breakdown) {
+        const cur = map.get(b.commessaId);
+        if (cur) cur.hours += b.hours;
+        else map.set(b.commessaId, { code: b.code, name: b.name, hours: b.hours });
+      }
     }
-    for (const d of drafts) timesheetEntriesTable.update(d.id, { status: "submitted" });
-    toast.success(`Submitted ${drafts.length} entr${drafts.length > 1 ? "ies" : "y"}`, {
-      description: "Sent to your manager for approval.",
-      icon: <Send className="h-4 w-4" />,
-    });
-  };
-
-  const bulk = useBulkSelect(filteredEntries);
-
-  const bulkSubmit = () => {
-    const ids = [...bulk.selected];
-    for (const id of ids) {
-      const e = timesheetEntriesTable.getAll().find((x) => x.id === id);
-      if (e && e.status === "draft") timesheetEntriesTable.update(id, { status: "submitted" });
-    }
-    bulk.clear();
-    toast.success(`Submitted ${ids.length} entr${ids.length === 1 ? "y" : "ies"}`, {
-      description: "Sent to your manager for approval.",
-      icon: <Send className="h-4 w-4" />,
-    });
-  };
-  const bulkDuplicate = () => {
-    const rows = bulk.selectedRows;
-    for (const r of rows) {
-      timesheetEntriesTable.add({
-        ...r,
-        id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-        status: "draft",
-      });
-    }
-    bulk.clear();
-    toast.success(`Duplicated ${rows.length} entr${rows.length === 1 ? "y" : "ies"}`);
-  };
-  const bulkDelete = () => {
-    const rows = bulk.selectedRows;
-    for (const r of rows) timesheetEntriesTable.remove(r.id);
-    bulk.clear();
-    toast(`Deleted ${rows.length} entr${rows.length === 1 ? "y" : "ies"}`, {
-      action: {
-        label: "Undo",
-        onClick: () => {
-          for (const r of rows) timesheetEntriesTable.add(r);
-        },
-      },
-    });
-  };
-
-  // Clear selection whenever filters change the list identity
-  useEffect(() => {
-    bulk.clear(); /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, [filterCommessa, filterStatus, q]);
-
-  const activeC = commessaById(activeClock?.commessaId ?? activeCommessa);
+    return Array.from(map.values()).sort((a, b) => b.hours - a.hours);
+  }, [monthDays]);
 
   return (
-    <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
-      <PageHeader
-        title="Time & attendance"
-        description="Track presence, log hours against commesse, and submit your timesheet."
-        actions={
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              className={cn("press-scale", logNowOpen && "border-primary text-primary")}
-              onClick={() => setLogNowOpen((o) => !o)}
-              aria-expanded={logNowOpen}
-            >
-              <Zap className="h-4 w-4 mr-1.5" /> Log now
-              {clockedIn && (
-                <span
-                  className="ml-1.5 h-1.5 w-1.5 rounded-full bg-success pulse-dot"
-                  aria-label="clocked in"
-                />
-              )}
-              <ChevronDown
-                className={cn("h-3.5 w-3.5 ml-1 transition-transform", logNowOpen && "rotate-180")}
-              />
-            </Button>
-            <Button variant="outline" size="sm" className="press-scale" onClick={submitDrafts}>
-              <Send className="h-4 w-4 mr-1.5" /> Submit drafts
-            </Button>
-            <Button size="sm" className="press-scale" onClick={() => setEditEntry("new")}>
-              <Plus className="h-4 w-4 mr-1.5" /> New entry
-            </Button>
-          </>
-        }
-      />
-
-      {/* Clock + week summary — collapsed by default, opens via "Log now" */}
-      <div
-        className={cn(
-          "grid grid-cols-1 lg:grid-cols-3 gap-4 overflow-hidden transition-all duration-300 ease-out",
-          logNowOpen
-            ? "max-h-[1200px] opacity-100 mb-4"
-            : "max-h-0 opacity-0 mb-0 pointer-events-none",
-        )}
-        aria-hidden={!logNowOpen}
-      >
-        <Card className="p-6 lg:col-span-1 relative overflow-hidden">
-          <div
-            className="absolute inset-0 opacity-[0.08] grid-bg pointer-events-none"
-            aria-hidden
-          />
-          <div
-            className="absolute -top-12 -right-12 h-40 w-40 rounded-full blur-3xl pointer-events-none"
-            style={{ backgroundColor: activeC?.color, opacity: 0.18 }}
-            aria-hidden
-          />
-
-          <div className="relative">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                Your clock
-              </div>
-              {clockedIn && (
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-success">
-                  <span className="h-1.5 w-1.5 rounded-full bg-success pulse-dot" />
-                  LIVE
-                </span>
-              )}
-            </div>
-            <div className="text-[40px] leading-none font-mono font-semibold tabular-nums">
-              {fmt(seconds)}
-            </div>
-            <div className="text-xs text-muted-foreground mt-1">
-              {clockedIn ? (
-                <>
-                  Working on <span className="font-medium text-foreground">{activeC?.code}</span> ·{" "}
-                  {activeC?.name}
-                </>
-              ) : (
-                "Not clocked in"
-              )}
-            </div>
-
-            <div className="mt-4 space-y-2">
-              <Label className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                Active commessa
-              </Label>
-              <Select value={activeCommessa} onValueChange={setActiveCommessa}>
-                <SelectTrigger className="h-9">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {commesse
-                    .filter((c) => c.status === "active")
-                    .map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        <span className="inline-flex items-center gap-2">
-                          <span
-                            className="h-2 w-2 rounded-full"
-                            style={{ backgroundColor: c.color }}
-                          />
-                          <span className="font-medium">{c.code}</span>
-                          <span className="text-muted-foreground">· {c.name}</span>
-                        </span>
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Button
-              onClick={() => (clockedIn ? stopClockAndLog() : startActiveClock(activeCommessa))}
-              className={cn(
-                "w-full mt-4 press-scale transition-colors",
-                clockedIn
-                  ? "bg-destructive hover:bg-destructive/90 text-white"
-                  : "bg-success hover:bg-success/90 text-white",
-              )}
-            >
-              {clockedIn ? (
-                <>
-                  <Square className="h-4 w-4 mr-1.5" /> Stop & log hours
-                </>
-              ) : (
-                <>
-                  <Play className="h-4 w-4 mr-1.5" /> Clock in
-                </>
-              )}
-            </Button>
-
-            <div className="grid grid-cols-3 gap-2 mt-4">
-              {[
-                { i: MapPin, l: "GPS" },
-                { i: Smartphone, l: "NFC" },
-                { i: Wifi, l: "QR" },
-              ].map(({ i: Icon, l }) => (
-                <button
-                  key={l}
-                  onClick={() =>
-                    toast(`${l} check-in ready`, { description: "Point-of-presence verified." })
-                  }
-                  className="text-center p-2 rounded-md bg-background border hover:border-primary hover:bg-primary/5 transition-colors press-scale"
-                >
-                  <Icon className="h-3.5 w-3.5 mx-auto text-muted-foreground" />
-                  <div className="text-[10px] mt-1">{l}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-5 lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <div className="font-semibold text-sm">This week</div>
-            <div className="text-xs text-muted-foreground">Mon – Sun</div>
-          </div>
-          <div className="grid grid-cols-7 gap-2">
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => {
-              const hours = [8.2, 7.9, 8.5, 9.1, 8.0, 0, 0][i];
-              const max = 10;
-              const isToday = i === 3;
-              return (
-                <div key={d} className="flex flex-col items-center group">
-                  <div
-                    className={cn(
-                      "text-[11px] mb-2",
-                      isToday ? "text-foreground font-medium" : "text-muted-foreground",
-                    )}
-                  >
-                    {d}
-                  </div>
-                  <div className="h-32 w-full bg-muted/40 rounded-md flex items-end p-1 relative overflow-hidden">
-                    <div
-                      className={cn(
-                        "w-full rounded transition-all duration-500 ease-out",
-                        isToday ? "bg-primary" : "bg-primary/60 group-hover:bg-primary/80",
-                      )}
-                      style={{ height: hours ? `${(hours / max) * 100}%` : "4px" }}
-                    />
-                    {isToday && (
-                      <div className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
-                    )}
-                  </div>
-                  <div className="text-xs font-medium mt-2 tabular-nums">
-                    {hours ? `${hours.toFixed(1)}h` : "—"}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-4 pt-4 border-t grid grid-cols-3 gap-4">
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                Logged
-              </div>
-              <div className="text-lg font-semibold tabular-nums">{weekTotal.toFixed(1)}h</div>
-            </div>
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                Target
-              </div>
-              <div className="text-lg font-semibold tabular-nums">40.0h</div>
-            </div>
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                Variance
-              </div>
-              <div
-                className={cn(
-                  "text-lg font-semibold tabular-nums",
-                  weekTotal >= 40 ? "text-success" : "text-warning",
-                )}
-              >
-                {weekTotal >= 40 ? "+" : ""}
-                {(weekTotal - 40).toFixed(1)}h
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      <Tabs value={tab} onValueChange={setTab}>
-        <TabsList>
-          <TabsTrigger value="calendar">
-            <CalendarDays className="h-3.5 w-3.5 mr-1.5" />
-            Calendar
-          </TabsTrigger>
-          <TabsTrigger value="timesheet">
-            <Clock className="h-3.5 w-3.5 mr-1.5" />
-            My timesheet
-          </TabsTrigger>
-          <TabsTrigger value="commesse">
-            <Briefcase className="h-3.5 w-3.5 mr-1.5" />
-            By commessa
-          </TabsTrigger>
-          <TabsTrigger value="team">
-            <Users className="h-3.5 w-3.5 mr-1.5" />
-            Team presence
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="calendar" className="mt-4">
-          <TimesheetCalendar
-            entries={entries}
-            templates={templates}
-            onSaveTemplate={(t) => {
-              timesheetTemplatesTable.add(t);
-              toast.success(`Template "${t.name}" saved`);
-            }}
-            onDeleteTemplate={(id) => {
-              timesheetTemplatesTable.remove(id);
-              toast("Template removed");
-            }}
-            onAdd={(data) => saveEntry(data)}
-            onAddMany={(rows) => {
-              const prepared = rows.map((r) => ({
-                ...r,
-                id: `t-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-                employeeId: ME,
-                status: "draft" as const,
-              }));
-              for (const p of prepared) timesheetEntriesTable.add(p);
-              toast.success(`Added ${rows.length} entr${rows.length === 1 ? "y" : "ies"}`, {
-                description: "Saved as drafts.",
-                icon: <Send className="h-4 w-4" />,
-                action: {
-                  label: "Undo",
-                  onClick: () => {
-                    for (const p of prepared) timesheetEntriesTable.remove(p.id);
-                  },
-                },
-              });
-            }}
-            onEdit={(e) => setEditEntry(e)}
-            onDelete={(id) => timesheetEntriesTable.remove(id)}
-          />
-        </TabsContent>
-
-        {/* Timesheet CRUD */}
-        <TabsContent value="timesheet" className="mt-4">
-          <SavedViewsBar
-            savedViews={timeViews.savedViews}
-            activeViewId={timeViews.activeViewId}
-            isDirty={timeViews.isDirty}
-            shareUrl={timeViews.shareUrl}
-            onApply={timeViews.apply}
-            onSave={timeViews.save}
-            onRemove={timeViews.remove}
-            onRename={timeViews.rename}
-            onReset={timeViews.reset}
-            placeholder="Filter + save — your draft-queue view stays one click away."
-          />
-
-          <Card className="p-3 mb-3 flex items-center gap-2 flex-wrap">
-            <div className="relative flex-1 min-w-[220px]">
-              <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Search description…"
-                className="pl-8 h-9"
-              />
-            </div>
-            <Select value={filterCommessa} onValueChange={setFilterCommessa}>
-              <SelectTrigger className="h-9 w-[220px]">
-                <SlidersHorizontal className="h-3.5 w-3.5 mr-1.5" />
-                <SelectValue placeholder="Commessa" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All commesse</SelectItem>
-                {commesse.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    <span className="inline-flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: c.color }} />
-                      {c.code}
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="h-9 w-[160px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="submitted">Submitted</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-9 gap-1.5 press-scale"
-              onClick={() => setSmartFillOpen(true)}
-              title="Generate a draft week from your calendar + focus sessions"
-            >
-              <Wand2 className="h-3.5 w-3.5 text-primary" />
-              Smart fill
-            </Button>
-          </Card>
-
-          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
-            {loading ? (
-              <SkeletonRows rows={5} />
-            ) : filteredEntries.length === 0 ? (
-              <EmptyState
-                icon={<Timer className="h-6 w-6" />}
-                title={myEntries.length === 0 ? "No hours logged yet" : "No entries match"}
-                description={
-                  myEntries.length === 0
-                    ? "Start the clock above or add a manual entry against a commessa."
-                    : "Try clearing the filters or searching by description."
-                }
-                action={
-                  <div className="flex gap-2">
-                    {myEntries.length > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setQ("");
-                          setFilterCommessa("all");
-                          setFilterStatus("all");
-                        }}
-                      >
-                        Clear filters
-                      </Button>
-                    )}
-                    <Button size="sm" onClick={() => setEditEntry("new")}>
-                      <Plus className="h-4 w-4 mr-1.5" /> New entry
-                    </Button>
-                  </div>
-                }
-              />
+    <EditorialPage
+      eyebrow={
+        <Eyebrow
+          tag={
+            missingDays.length > 0 ? (
+              <span className="tag-attention">⚠ {missingDays.length} GIORNI MANCANTI</span>
             ) : (
+              <span className="tag-spark">
+                <span className="dot" style={{ background: "var(--spark-ink)", boxShadow: "none" }} />
+                ALLINEATO
+              </span>
+            )
+          }
+          note={`· ${employee?.name ?? "—"}`}
+        >
+          TIME &amp; ATTENDANCE · CALENDARIO · {monthLabel} {cursor.year}
+        </Eyebrow>
+      }
+      actions={
+        <>
+          <select
+            value={employeeId}
+            onChange={(e) => setEmployeeId(e.target.value)}
+            className="pill pill-ghost pill-sm"
+            style={{ paddingRight: 28 }}
+          >
+            {employees.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.name}
+              </option>
+            ))}
+          </select>
+          <EditorialPill kind="ghost" size="sm" onClick={goPrev}>
+            ←
+          </EditorialPill>
+          <EditorialPill kind="ghost" size="sm" onClick={goNext}>
+            →
+          </EditorialPill>
+          <EditorialPill kind="ghost" size="sm" onClick={() => setAutofillOpen(true)}>
+            ⚡ Auto-fill
+          </EditorialPill>
+          <EditorialPill kind="spark" size="sm" arrow onClick={() => setOpenDay(today > 0 ? today : 1)}>
+            + Voce
+          </EditorialPill>
+        </>
+      }
+      title={
+        <>
+          Presenze
+          <span style={{ fontStyle: "italic" }}>, ora</span>
+          <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+        </>
+      }
+      italic={false}
+      summary={
+        <>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            SOMMARIO · {monthLabel} {cursor.year}
+          </span>
+          <p className="t-body-lg" style={{ marginTop: 8, color: "var(--fg-2)" }}>
+            <strong style={{ fontWeight: 600 }}>{totalLogged.toFixed(0)}h</strong> registrate su{" "}
+            <strong style={{ fontWeight: 600 }}>{totalTarget}h</strong> attese.
+            {missingDays.length > 0 && (
               <>
-                <div className="px-5 py-3 border-b flex items-center gap-3 bg-muted/30">
-                  <HeaderCheckbox
-                    allSelected={bulk.allSelected}
-                    someSelected={bulk.someSelected}
-                    onToggle={() => bulk.toggleAll()}
-                  />
-                  <div className="text-xs text-muted-foreground">
-                    {bulk.count > 0 ? (
-                      <>
-                        {bulk.count} of {filteredEntries.length} selected
-                      </>
-                    ) : (
-                      <>
-                        {filteredEntries.length} entr{filteredEntries.length === 1 ? "y" : "ies"} ·
-                        <span className="ml-1 font-medium text-foreground tabular-nums">
-                          {filteredEntries.reduce((a, e) => a + e.hours, 0).toFixed(1)}h
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <ul className="divide-y stagger-in">
-                  {filteredEntries.map((e) => {
-                    const c = commessaById(e.commessaId)!;
-                    const selected = bulk.isSelected(e.id);
-                    const isEditingHours = inlineEdit?.id === e.id && inlineEdit.field === "hours";
-                    const isEditingDesc =
-                      inlineEdit?.id === e.id && inlineEdit.field === "description";
-                    const commitEdit = () => {
-                      if (!inlineEdit || inlineEdit.id !== e.id) return;
-                      if (inlineEdit.field === "hours") {
-                        const next = Number(inlineEdit.draft);
-                        if (
-                          Number.isFinite(next) &&
-                          next >= 0.25 &&
-                          next <= 24 &&
-                          next !== e.hours
-                        ) {
-                          timesheetEntriesTable.update(e.id, { hours: next });
-                          toast.success("Hours updated", {
-                            description: `${next.toFixed(1)}h on ${c.code}`,
-                          });
-                        }
-                      } else if (inlineEdit.field === "description") {
-                        const next = inlineEdit.draft.trim();
-                        if (next && next !== e.description) {
-                          timesheetEntriesTable.update(e.id, { description: next });
-                          toast.success("Description updated");
-                        }
-                      }
-                      setInlineEdit(null);
-                    };
-                    const cancelEdit = () => setInlineEdit(null);
-                    return (
-                      <li
-                        key={e.id}
-                        className={`group px-5 py-3 flex items-center gap-3 hover:bg-muted/40 transition-colors ${selected ? "bg-primary/[0.04]" : ""}`}
-                      >
-                        <RowCheckbox
-                          checked={selected}
-                          onChange={() => bulk.toggle(e.id)}
-                          visibleWhen={bulk.count > 0 ? "always" : "hover-or-selected"}
-                        />
-                        <div
-                          className="relative h-9 w-1 rounded-full"
-                          style={{ backgroundColor: c.color }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[11px] font-mono tracking-wide px-1.5 py-0.5 rounded border bg-muted/60">
-                              {c.code}
-                            </span>
-                            {isEditingDesc ? (
-                              <input
-                                autoFocus
-                                type="text"
-                                value={inlineEdit.draft}
-                                onChange={(ev) =>
-                                  setInlineEdit({ ...inlineEdit, draft: ev.target.value })
-                                }
-                                onBlur={commitEdit}
-                                onKeyDown={(ev) => {
-                                  if (ev.key === "Enter") {
-                                    ev.preventDefault();
-                                    commitEdit();
-                                  } else if (ev.key === "Escape") {
-                                    ev.preventDefault();
-                                    cancelEdit();
-                                  }
-                                }}
-                                className="flex-1 min-w-0 text-sm font-medium bg-background border rounded px-1.5 py-0.5 focus:outline-none focus:ring-2 focus:ring-primary/40"
-                              />
-                            ) : (
-                              <div
-                                className="text-sm font-medium truncate cursor-text rounded px-0.5 hover:bg-muted/60"
-                                title="Double-click to edit"
-                                onDoubleClick={() =>
-                                  setInlineEdit({
-                                    id: e.id,
-                                    field: "description",
-                                    draft: e.description,
-                                  })
-                                }
-                              >
-                                {e.description}
-                              </div>
-                            )}
-                            {!e.billable && (
-                              <span className="text-[10px] uppercase tracking-wider text-muted-foreground border rounded px-1 py-px">
-                                internal
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-xs text-muted-foreground mt-0.5">
-                            {c.name} · {e.date}
-                          </div>
-                        </div>
-                        <div className="text-right hidden sm:block">
-                          {isEditingHours ? (
-                            <input
-                              autoFocus
-                              type="number"
-                              step="0.25"
-                              min="0.25"
-                              max="24"
-                              value={inlineEdit.draft}
-                              onChange={(ev) =>
-                                setInlineEdit({ ...inlineEdit, draft: ev.target.value })
-                              }
-                              onBlur={commitEdit}
-                              onKeyDown={(ev) => {
-                                if (ev.key === "Enter") {
-                                  ev.preventDefault();
-                                  commitEdit();
-                                } else if (ev.key === "Escape") {
-                                  ev.preventDefault();
-                                  cancelEdit();
-                                }
-                              }}
-                              className="w-16 text-right text-sm font-semibold tabular-nums bg-background border rounded px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-primary/40"
-                            />
-                          ) : (
-                            <button
-                              type="button"
-                              onDoubleClick={() =>
-                                setInlineEdit({
-                                  id: e.id,
-                                  field: "hours",
-                                  draft: e.hours.toFixed(2),
-                                })
-                              }
-                              title="Double-click to edit hours"
-                              className="text-sm font-semibold tabular-nums rounded px-1 hover:bg-muted/60 cursor-text"
-                            >
-                              {e.hours.toFixed(1)}h
-                            </button>
-                          )}
-                          <div className="mt-0.5">
-                            <StatusBadge status={e.status} />
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-8 w-8"
-                            onClick={() => duplicate(e)}
-                            title="Duplicate"
-                          >
-                            <Copy className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-8 w-8"
-                            onClick={() => setEditEntry(e)}
-                            title="Edit"
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                            onClick={() => setToDelete(e)}
-                            title="Delete"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-                <BulkBar
-                  count={bulk.count}
-                  onClear={bulk.clear}
-                  noun="entry"
-                  actions={[
-                    {
-                      label: "Submit drafts",
-                      icon: <Send className="h-3.5 w-3.5" />,
-                      onClick: bulkSubmit,
-                      tone: "success",
-                      disabled: bulk.selectedRows.every((r) => r.status !== "draft"),
-                    },
-                    {
-                      label: "Duplicate",
-                      icon: <Copy className="h-3.5 w-3.5" />,
-                      onClick: bulkDuplicate,
-                    },
-                    {
-                      label: "Delete",
-                      icon: <Trash2 className="h-3.5 w-3.5" />,
-                      onClick: bulkDelete,
-                      tone: "destructive",
-                    },
-                  ]}
-                />
+                {" "}
+                <span className="spark-mark" style={{ fontWeight: 600 }}>
+                  {missingDays.length} giorni da riempire
+                </span>
               </>
             )}
-          </Card>
-        </TabsContent>
-
-        {/* Commesse roll-up */}
-        <TabsContent value="commesse" className="mt-4">
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Card key={i} className="p-5 space-y-3">
-                  <div className="h-4 w-[50%] shimmer rounded" />
-                  <div className="h-3 w-[70%] shimmer rounded" />
-                  <div className="h-2 w-full shimmer rounded" />
-                </Card>
-              ))}
-            </div>
-          ) : byCommessa.length === 0 ? (
-            <EmptyState
-              icon={<Briefcase className="h-6 w-6" />}
-              title="No hours per commessa yet"
-              description="Log your first entry to see commessa roll-ups here."
-              action={
-                <Button size="sm" onClick={() => setEditEntry("new")}>
-                  <Plus className="h-4 w-4 mr-1.5" />
-                  New entry
-                </Button>
-              }
-            />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 stagger-in">
-              {byCommessa.map(({ commessa: c, hours }) => {
-                const pct = Math.min(100, Math.round((c.burnedHours / c.budgetHours) * 100));
-                const over = c.burnedHours > c.budgetHours;
-                return (
-                  <Card key={c.id} className="p-5 hover:shadow-md transition-shadow">
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="h-2.5 w-2.5 rounded-full"
-                            style={{ backgroundColor: c.color }}
-                          />
-                          <span className="text-[11px] font-mono tracking-wide px-1.5 py-0.5 rounded border bg-muted/60">
-                            {c.code}
-                          </span>
-                          <StatusBadge
-                            status={
-                              c.status === "on_hold"
-                                ? "pending"
-                                : c.status === "closed"
-                                  ? "rejected"
-                                  : "active"
-                            }
-                          />
-                        </div>
-                        <div className="font-semibold mt-2 truncate">{c.name}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {c.client} · {c.manager}
-                        </div>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                          Yours
-                        </div>
-                        <div className="text-lg font-semibold tabular-nums">
-                          {hours.toFixed(1)}h
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
-                      <span>Budget burn</span>
-                      <span
-                        className={cn(
-                          "tabular-nums font-medium",
-                          over ? "text-destructive" : "text-foreground",
-                        )}
-                      >
-                        {c.burnedHours} / {c.budgetHours}h · {pct}%
-                      </span>
-                    </div>
-                    <div className="h-2 rounded-full bg-muted overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-[width] duration-700"
-                        style={{
-                          width: `${pct}%`,
-                          backgroundColor: over ? "var(--color-destructive)" : c.color,
-                        }}
-                      />
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="team" className="mt-4">
-          <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
-            <div className="px-5 py-4 border-b">
-              <div className="font-semibold text-sm">Live attendance</div>
-              <div className="text-xs text-muted-foreground">
-                Real-time presence across the company
-              </div>
-            </div>
-            {loading ? (
-              <SkeletonRows rows={6} />
-            ) : (
-              <table className="w-full text-sm">
-                <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
-                  <tr>
-                    <th className="text-left font-medium px-4 py-2.5">Employee</th>
-                    <th className="text-left font-medium px-4 py-2.5">Clock in</th>
-                    <th className="text-left font-medium px-4 py-2.5">Hours today</th>
-                    <th className="text-left font-medium px-4 py-2.5">Method</th>
-                    <th className="text-left font-medium px-4 py-2.5">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="stagger-in">
-                  {employees.slice(0, 8).map((e, i) => {
-                    const status = i === 3 ? "on_leave" : i === 6 ? "on_leave" : "active";
-                    return (
-                      <tr key={e.id} className="border-t hover:bg-muted/40">
-                        <td className="px-4 py-2.5">
-                          <div className="flex items-center gap-2.5">
-                            <Avatar
-                              initials={e.initials}
-                              color={e.avatarColor}
-                              size={28}
-                              employeeId={e.id}
-                            />
-                            <div>
-                              <div className="font-medium">{e.name}</div>
-                              <div className="text-xs text-muted-foreground">{e.department}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-2.5 text-muted-foreground">
-                          {status === "on_leave"
-                            ? "—"
-                            : `0${8 + (i % 2)}:${String(15 + i * 3).padStart(2, "0")}`}
-                        </td>
-                        <td className="px-4 py-2.5 font-medium tabular-nums">
-                          {status === "on_leave" ? "—" : `${(7 + i * 0.3).toFixed(1)}h`}
-                        </td>
-                        <td className="px-4 py-2.5 text-muted-foreground text-xs">
-                          {["GPS", "NFC", "Web", "QR"][i % 4]}
-                        </td>
-                        <td className="px-4 py-2.5">
-                          <StatusBadge status={status} />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            )}
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      <TimesheetAutofillDialog
-        open={smartFillOpen}
-        onClose={() => setSmartFillOpen(false)}
-        entries={entries}
-        employeeId={ME}
-        onAccept={acceptAutofill}
-      />
-
-      <SidePanel
-        open={editEntry !== null}
-        onClose={() => setEditEntry(null)}
-        width={520}
-        title={editEntry === "new" ? "New timesheet entry" : "Edit entry"}
-      >
-        {editEntry !== null && (
-          <EntryForm
-            entry={editEntry === "new" ? null : editEntry}
-            onCancel={() => setEditEntry(null)}
-            onSave={(data) => {
-              saveEntry(data, editEntry === "new" ? undefined : editEntry.id);
-              setEditEntry(null);
+            .
+          </p>
+        </>
+      }
+    >
+      {/* Tabs */}
+      <div className="flex gap-1" style={{ borderBottom: "1px solid var(--line)" }}>
+        {(
+          [
+            ["calendar", "Calendar"],
+            ["mine", "My timesheet"],
+            ["commessa", "By commessa"],
+            ["team", "Team presence"],
+          ] as [Tab, string][]
+        ).map(([k, l]) => (
+          <button
+            key={k}
+            onClick={() => setTab(k)}
+            className="press-scale"
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              padding: "10px 14px",
+              marginBottom: -1,
+              borderBottom: `2px solid ${tab === k ? "var(--spark)" : "transparent"}`,
+              fontFamily: "Geist, ui-sans-serif, sans-serif",
+              fontSize: 13,
+              fontWeight: tab === k ? 600 : 400,
+              letterSpacing: "-0.01em",
+              color: tab === k ? "var(--fg)" : "var(--muted-foreground)",
             }}
-          />
-        )}
-      </SidePanel>
+          >
+            {l}
+          </button>
+        ))}
+      </div>
 
-      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete timesheet entry?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {toDelete && (
-                <>
-                  {toDelete.hours.toFixed(1)}h on{" "}
-                  <span className="font-medium">{commessaById(toDelete.commessaId)?.code}</span> (
-                  {toDelete.date}) will be permanently removed.
-                </>
+      {/* KPI strip */}
+      <div className="solid-card flex" style={{ borderRadius: 14 }}>
+        <Kpi
+          label="LOGGED / TARGET"
+          big={
+            <>
+              <span>{totalLogged.toFixed(0)}</span>
+              <span style={{ color: "var(--muted-foreground)" }}> / {totalTarget}h</span>
+            </>
+          }
+          sub={`${totalTarget}h ATTESI · ${totalTarget - totalLogged > 0 ? "−" : "+"}${Math.abs(totalTarget - totalLogged).toFixed(0)}h`}
+        />
+        <Kpi
+          label="FILL %"
+          big={`${fillPct}%`}
+          sub={`${filled}/${workdays} GIORNI COMPLETI`}
+          accent={fillPct >= 80 ? "var(--spark)" : "var(--fg)"}
+        />
+        <Kpi
+          label="MISSING"
+          big={
+            <>
+              <span>{missingDays.length}</span>
+              {missingDays.length > 0 && (
+                <span style={{ color: "var(--spark)", fontSize: 24, marginLeft: 8 }}>●</span>
               )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => {
-                if (toDelete) deleteEntry(toDelete.id);
-                setToDelete(null);
-              }}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </>
+          }
+          sub={missingDays.length > 0 ? "VAI AL PRIMO →" : "TUTTO IN REGOLA"}
+          action={missingDays.length > 0 ? jumpToFirstMissing : undefined}
+        />
+        <Kpi
+          last
+          label="LEAVE + HOLIDAYS"
+          big={`${leaveDays + holidayDays}`}
+          sub={`${leaveDays} FERIE · ${holidayDays} FESTIVI`}
+        />
+      </div>
+
+      {tab === "calendar" && (
+        <CalendarGrid cells={cells} weeks={cells.length / 7} today={today} onPickDay={setOpenDay} />
+      )}
+      {tab === "mine" && <MineTable monthDays={monthDays} today={today} />}
+      {tab === "commessa" && <ByCommessa totals={totalsByCommessa} month={monthLabel} />}
+      {tab === "team" && <TeamPresence employees={employees} entries={entries} cursor={cursor} />}
+
+      {tab === "calendar" && missingDays.length > 0 && (
+        <div
+          className="flex items-center gap-3 px-4 py-3"
+          style={{
+            border: "1px solid var(--line-strong)",
+            borderLeft: "3px solid var(--spark)",
+            borderRadius: 10,
+            background: "var(--bg-2)",
+          }}
+        >
+          <span className="t-mono" style={{ color: "var(--spark)" }}>
+            !
+          </span>
+          <span className="text-sm">
+            Hai <b>{missingDays.length} giorni mancanti</b> questo mese.
+          </span>
+          <span style={{ flex: 1 }} />
+          <div className="flex gap-1.5 flex-wrap">
+            {missingDays.slice(0, 4).map((d) => (
+              <button
+                key={d}
+                onClick={() => setOpenDay(d)}
+                className="t-mono"
+                style={{
+                  padding: "5px 10px",
+                  borderRadius: 999,
+                  border: "1px solid var(--line-strong)",
+                  background: "transparent",
+                  color: "var(--fg)",
+                  cursor: "pointer",
+                }}
+              >
+                {monthLabel.slice(0, 3)} {d}
+              </button>
+            ))}
+            {missingDays.length > 4 && (
+              <span className="t-mono self-center" style={{ color: "var(--muted-foreground)" }}>
+                +{missingDays.length - 4}
+              </span>
+            )}
+          </div>
+          <EditorialPill
+            kind="spark"
+            size="sm"
+            onClick={() => {
+              setAutofillOpen(true);
+              toast.success("Auto-fill avviato", { description: "Compilazione in corso." });
+            }}
+          >
+            ⚡ Riempi tutto
+          </EditorialPill>
+        </div>
+      )}
+
+      {openDay != null && (
+        <DayDrawer
+          rec={monthDays.find((d) => d.day === openDay)!}
+          monthLower={monthLower}
+          onClose={() => setOpenDay(null)}
+        />
+      )}
+
+      <TimesheetAutofillDialog open={autofillOpen} onOpenChange={setAutofillOpen} />
+    </EditorialPage>
+  );
+}
+
+function Kpi({
+  label,
+  big,
+  sub,
+  accent,
+  action,
+  last,
+}: {
+  label: string;
+  big: React.ReactNode;
+  sub: string;
+  accent?: string;
+  action?: () => void;
+  last?: boolean;
+}) {
+  return (
+    <div
+      className="flex flex-col gap-1.5"
+      style={{
+        flex: 1,
+        padding: "16px 20px",
+        borderRight: last ? "none" : "1px solid var(--line)",
+      }}
+    >
+      <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+        {label}
+      </span>
+      <span
+        className="t-num"
+        style={{
+          fontSize: 36,
+          letterSpacing: "-0.04em",
+          lineHeight: 1,
+          color: accent ?? "var(--fg)",
+        }}
+      >
+        {big}
+      </span>
+      <span
+        className="t-mono"
+        style={{
+          color: action ? "var(--spark)" : "var(--muted-foreground)",
+          cursor: action ? "pointer" : "default",
+        }}
+        onClick={action}
+      >
+        {sub}
+      </span>
     </div>
   );
 }
 
-function EntryForm({
-  entry,
-  onCancel,
-  onSave,
+function CalendarGrid({
+  cells,
+  weeks,
+  today,
+  onPickDay,
 }: {
-  entry: TimesheetEntry | null;
-  onCancel: () => void;
-  onSave: (data: Omit<TimesheetEntry, "id" | "employeeId" | "status">) => void;
+  cells: (DayRecord | null)[];
+  weeks: number;
+  today: number;
+  onPickDay: (d: number) => void;
 }) {
-  const [date, setDate] = useState(entry?.date ?? new Date().toISOString().slice(0, 10));
-  const [commessaId, setCommessaId] = useState(entry?.commessaId ?? commesse[0].id);
-  const [hours, setHours] = useState(String(entry?.hours ?? 1));
-  const [description, setDescription] = useState(entry?.description ?? "");
-  const [billable, setBillable] = useState(entry?.billable ?? true);
-  const firstFieldRef = useRef<HTMLInputElement>(null);
+  return (
+    <div
+      className="solid-card overflow-hidden flex flex-col"
+      style={{ borderRadius: 14, minHeight: 480 }}
+    >
+      <div
+        className="grid"
+        style={{
+          gridTemplateColumns: "repeat(7, 1fr)",
+          background: "var(--bg-2)",
+          borderBottom: "1px solid var(--line-strong)",
+        }}
+      >
+        {WEEKDAY_HEAD.map((d, i) => (
+          <div
+            key={i}
+            style={{
+              padding: "10px 14px",
+              borderRight: i < 6 ? "1px solid var(--line)" : "none",
+            }}
+          >
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              {d}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div
+        className="flex-1 grid"
+        style={{
+          gridTemplateColumns: "repeat(7, 1fr)",
+          gridTemplateRows: `repeat(${weeks}, minmax(96px, 1fr))`,
+        }}
+      >
+        {cells.map((d, i) => (
+          <DayCell key={i} d={d} idx={i} today={today} onPickDay={onPickDay} />
+        ))}
+      </div>
+    </div>
+  );
+}
 
-  useEffect(() => {
-    const t = setTimeout(() => firstFieldRef.current?.focus(), 180);
-    return () => clearTimeout(t);
-  }, []);
+function DayCell({
+  d,
+  idx,
+  today,
+  onPickDay,
+}: {
+  d: DayRecord | null;
+  idx: number;
+  today: number;
+  onPickDay: (day: number) => void;
+}) {
+  const wd = idx % 7;
+  if (!d) {
+    return (
+      <div
+        style={{
+          borderRight: wd < 6 ? "1px solid var(--line)" : "none",
+          borderBottom: "1px solid var(--line)",
+          background: "var(--bg-2)",
+          opacity: 0.4,
+        }}
+      />
+    );
+  }
+  const missing = d.target > 0 && d.logged < d.target && (today < 0 || d.day <= today);
+  const complete = d.target > 0 && d.logged >= d.target;
+  const isLeave = d.leave === "leave" || d.leave === "holiday";
+  const isToday = d.day === today;
 
-  const c = commessaById(commessaId);
-  const h = Number(hours);
-  const valid = !!c && h > 0 && h <= 24 && description.trim().length > 0;
+  let stripe = "transparent";
+  if (complete) stripe = "var(--spark)";
+  else if (missing) stripe = "color-mix(in oklch, var(--fg) 35%, transparent)";
+
+  let bg = "var(--bg)";
+  if (d.isWeekend) bg = "var(--bg-2)";
+  if (isLeave) bg = "var(--bg-3)";
 
   return (
-    <>
-      <div className="p-5 space-y-4">
-        <div className="flex items-center gap-3 p-3 rounded-md bg-muted/40">
-          <div className="h-9 w-9 rounded-md bg-primary/10 text-primary flex items-center justify-center">
-            <Timer className="h-4 w-4" />
-          </div>
-          <div className="text-sm">
-            <div className="font-medium">Log hours to a commessa</div>
-            <div className="text-xs text-muted-foreground">
-              Drafts can be edited before submission.
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label>Commessa</Label>
-          <Select value={commessaId} onValueChange={setCommessaId}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {commesse.map((cm) => (
-                <SelectItem key={cm.id} value={cm.id} disabled={cm.status === "closed"}>
-                  <span className="inline-flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: cm.color }} />
-                    <span className="font-mono text-xs">{cm.code}</span>
-                    <span className="text-muted-foreground">· {cm.name}</span>
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {c && (
-            <div className="text-xs text-muted-foreground flex items-center justify-between pt-1">
-              <span>
-                {c.client} · Lead {c.manager}
-              </span>
-              <span className="tabular-nums">
-                {c.burnedHours} / {c.budgetHours}h budget
-              </span>
-            </div>
+    <button
+      onClick={() => onPickDay(d.day)}
+      className="text-left flex flex-col gap-1.5"
+      style={{
+        position: "relative",
+        borderRight: wd < 6 ? "1px solid var(--line)" : "none",
+        borderBottom: "1px solid var(--line)",
+        padding: "10px 12px",
+        background: bg,
+        cursor: "pointer",
+        outline: isToday ? "1.5px solid var(--spark)" : "none",
+        outlineOffset: -2,
+        minHeight: 0,
+        overflow: "hidden",
+      }}
+    >
+      <span
+        aria-hidden
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 3,
+          background: stripe,
+        }}
+      />
+      <div className="flex items-baseline justify-between">
+        <span
+          className="t-num"
+          style={{
+            fontSize: 22,
+            letterSpacing: "-0.02em",
+            color: isToday
+              ? "var(--spark)"
+              : isLeave
+                ? "var(--fg-2)"
+                : d.isWeekend
+                  ? "var(--muted-foreground)"
+                  : "var(--fg)",
+          }}
+        >
+          {d.day}
+        </span>
+        {isToday && <span className="dot" aria-hidden />}
+      </div>
+      {isLeave && (
+        <span
+          className="t-mono"
+          style={{
+            color: d.leave === "holiday" ? "var(--spark)" : "var(--fg-2)",
+            fontSize: 9,
+          }}
+        >
+          {d.leave === "holiday" ? "★ FESTIVO" : "▲ FERIE"}
+        </span>
+      )}
+      {!isLeave && d.target > 0 && (
+        <div className="flex items-baseline justify-between gap-1.5" style={{ marginTop: "auto" }}>
+          <span
+            className="t-num"
+            style={{
+              fontSize: 16,
+              letterSpacing: "-0.02em",
+              color: complete
+                ? "var(--spark)"
+                : missing
+                  ? "var(--fg)"
+                  : "var(--muted-foreground)",
+            }}
+          >
+            {d.logged > 0 ? d.logged.toFixed(d.logged % 1 === 0 ? 0 : 1) : "—"}
+            <span className="t-mono" style={{ color: "var(--muted-foreground)", marginLeft: 2 }}>
+              /{d.target}
+            </span>
+          </span>
+          {missing && (
+            <span className="t-mono" style={{ color: "var(--spark)", fontSize: 9 }}>
+              !
+            </span>
           )}
         </div>
+      )}
+      {isLeave && d.label && (
+        <span
+          className="t-body-lg"
+          style={{
+            fontFamily: "Fraunces, ui-serif, serif",
+            fontStyle: "italic",
+            fontSize: 13,
+            color: "var(--fg-2)",
+            marginTop: "auto",
+          }}
+        >
+          {d.label}
+        </span>
+      )}
+    </button>
+  );
+}
 
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <Label>Date</Label>
-            <Input
-              ref={firstFieldRef}
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
+function MineTable({ monthDays, today }: { monthDays: DayRecord[]; today: number }) {
+  return (
+    <div className="solid-card overflow-hidden" style={{ borderRadius: 14 }}>
+      <div
+        className="grid t-mono"
+        style={{
+          gridTemplateColumns: "60px 60px 1fr 100px 100px 110px 1fr",
+          background: "var(--bg-2)",
+          borderBottom: "1px solid var(--line-strong)",
+          color: "var(--muted-foreground)",
+        }}
+      >
+        {["GIORNO", "DOW", "STATO", "LOGGED", "TARGET", "DELTA", "COMMESSE"].map((h, i) => (
+          <div
+            key={i}
+            style={{
+              padding: "12px 14px",
+              borderRight: i < 6 ? "1px solid var(--line)" : "none",
+            }}
+          >
+            {h}
           </div>
-          <div className="space-y-1.5">
-            <Label>Hours</Label>
-            <Input
-              type="number"
-              step="0.25"
-              min="0.25"
-              max="24"
-              value={hours}
-              onChange={(e) => setHours(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label>Description</Label>
-          <Textarea
-            rows={3}
-            placeholder="What did you work on?"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
-
-        <div className="flex items-center justify-between rounded-md border p-3">
-          <div>
-            <div className="text-sm font-medium">Billable time</div>
-            <div className="text-xs text-muted-foreground">
-              Uncheck for internal work not billed to client.
-            </div>
-          </div>
-          <Switch checked={billable} onCheckedChange={setBillable} />
-        </div>
-
-        <div className="flex gap-2 pt-1">
-          {[1, 2, 4, 8].map((v) => (
-            <button
-              key={v}
-              onClick={() => setHours(String(v))}
-              className="flex-1 text-xs py-1.5 rounded-md border hover:bg-muted press-scale"
-              type="button"
+        ))}
+      </div>
+      <div className="max-h-[560px] overflow-auto">
+        {monthDays.map((d) => {
+          const isLeave = d.leave != null;
+          const complete = d.target > 0 && d.logged >= d.target;
+          const missing = d.target > 0 && d.logged < d.target && (today < 0 || d.day <= today);
+          const delta = d.logged - d.target;
+          return (
+            <div
+              key={d.date}
+              className="grid"
+              style={{
+                gridTemplateColumns: "60px 60px 1fr 100px 100px 110px 1fr",
+                borderBottom: "1px solid var(--line)",
+                alignItems: "center",
+                background: d.isWeekend ? "var(--bg-2)" : "transparent",
+                opacity: !d.isWeekend || isLeave || d.logged > 0 ? 1 : 0.65,
+              }}
             >
-              {v}h
-            </button>
+              <div style={{ padding: "12px 14px", borderRight: "1px solid var(--line)" }}>
+                <span
+                  className="t-num"
+                  style={{
+                    fontSize: 18,
+                    letterSpacing: "-0.02em",
+                    color: d.day === today ? "var(--spark)" : "var(--fg)",
+                  }}
+                >
+                  {d.day}
+                </span>
+              </div>
+              <div style={{ padding: "12px 14px", borderRight: "1px solid var(--line)" }}>
+                <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                  {WEEKDAY_HEAD[d.weekday]}
+                </span>
+              </div>
+              <div style={{ padding: "12px 14px", borderRight: "1px solid var(--line)" }}>
+                <span
+                  className="t-mono"
+                  style={{
+                    color: complete
+                      ? "var(--spark)"
+                      : missing
+                        ? "var(--fg)"
+                        : isLeave
+                          ? "var(--fg-2)"
+                          : "var(--muted-foreground)",
+                  }}
+                >
+                  {isLeave
+                    ? d.leave === "holiday"
+                      ? `★ FESTIVO · ${d.label}`
+                      : `▲ FERIE · ${d.label ?? ""}`
+                    : d.isWeekend
+                      ? "○ WEEKEND"
+                      : complete
+                        ? "● COMPLETO"
+                        : missing
+                          ? "▲ MANCANTE"
+                          : "○ FUTURO"}
+                </span>
+              </div>
+              <div
+                style={{
+                  padding: "12px 14px",
+                  textAlign: "right",
+                  borderRight: "1px solid var(--line)",
+                }}
+              >
+                <span
+                  className="t-num"
+                  style={{ fontSize: 16, color: complete ? "var(--spark)" : "var(--fg)" }}
+                >
+                  {fmtHours(d.logged)}
+                </span>
+              </div>
+              <div
+                style={{
+                  padding: "12px 14px",
+                  textAlign: "right",
+                  borderRight: "1px solid var(--line)",
+                }}
+              >
+                <span className="t-num" style={{ fontSize: 16, color: "var(--muted-foreground)" }}>
+                  {d.target ? `${d.target}h` : "—"}
+                </span>
+              </div>
+              <div
+                style={{
+                  padding: "12px 14px",
+                  textAlign: "right",
+                  borderRight: "1px solid var(--line)",
+                }}
+              >
+                <span
+                  className="t-num"
+                  style={{
+                    fontSize: 16,
+                    color:
+                      delta < 0
+                        ? "var(--fg)"
+                        : delta > 0
+                          ? "var(--spark)"
+                          : "var(--muted-foreground)",
+                  }}
+                >
+                  {d.target ? `${delta >= 0 ? "+" : ""}${delta.toFixed(0)}h` : "—"}
+                </span>
+              </div>
+              <div className="flex gap-1.5 flex-wrap" style={{ padding: "12px 14px" }}>
+                {d.breakdown.map((b, i) => (
+                  <span
+                    key={i}
+                    className="t-mono"
+                    style={{
+                      padding: "3px 8px",
+                      borderRadius: 4,
+                      border: "1px solid var(--line)",
+                      color: "var(--fg-2)",
+                      fontSize: 10,
+                    }}
+                  >
+                    {b.code} · {b.hours}h
+                  </span>
+                ))}
+                {d.breakdown.length === 0 && !isLeave && (
+                  <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                    —
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ByCommessa({
+  totals,
+  month,
+}: {
+  totals: { code: string; name: string; hours: number }[];
+  month: string;
+}) {
+  const grand = totals.reduce((s, r) => s + r.hours, 0);
+  const max = totals.reduce((m, r) => Math.max(m, r.hours), 0) || 1;
+  const top = totals[0];
+  const topPct = top ? Math.round((top.hours / Math.max(grand, 1)) * 100) : 0;
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-5">
+      <div className="solid-card flex flex-col gap-4 p-6" style={{ borderRadius: 14 }}>
+        <div className="flex items-baseline justify-between">
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            ORE PER COMMESSA · {month}
+          </span>
+          <span className="t-num" style={{ fontSize: 28, letterSpacing: "-0.03em" }}>
+            {grand.toFixed(1)}h
+          </span>
+        </div>
+        <div className="divider-strong" />
+        <div className="flex flex-col gap-4 mt-1">
+          {totals.length === 0 && (
+            <span
+              style={{
+                color: "var(--muted-foreground)",
+                fontStyle: "italic",
+                fontFamily: "Fraunces, ui-serif, serif",
+              }}
+            >
+              Nessuna ora registrata questo mese.
+            </span>
+          )}
+          {totals.map((r, i) => (
+            <div key={r.code} className="flex flex-col gap-1.5">
+              <div className="flex items-baseline justify-between">
+                <div className="flex items-baseline gap-3">
+                  <span
+                    className="t-mono"
+                    style={{ color: i === 0 ? "var(--spark)" : "var(--fg)" }}
+                  >
+                    {r.code}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "Fraunces, ui-serif, serif",
+                      fontStyle: "italic",
+                      fontSize: 18,
+                      color: "var(--fg-2)",
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {r.name}
+                  </span>
+                </div>
+                <span className="t-num" style={{ fontSize: 22, letterSpacing: "-0.02em" }}>
+                  {r.hours.toFixed(1)}h
+                </span>
+              </div>
+              <div
+                style={{
+                  height: 6,
+                  borderRadius: 3,
+                  background: "var(--bg-2)",
+                  border: "1px solid var(--line)",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    width: `${(r.hours / max) * 100}%`,
+                    height: "100%",
+                    background: i === 0 ? "var(--spark)" : "var(--fg)",
+                  }}
+                />
+              </div>
+            </div>
           ))}
         </div>
       </div>
-
-      <div className="px-5 py-3 border-t flex justify-between items-center sticky bottom-0 bg-card">
-        <div className="text-xs text-muted-foreground">
-          {valid ? (
-            <span className="inline-flex items-center gap-1.5 text-success">
-              <CheckCircle2 className="h-3.5 w-3.5" /> Ready to save
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5">
-              <Circle className="h-3.5 w-3.5" /> Fill required fields
-            </span>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <Button variant="ghost" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button
-            disabled={!valid}
-            onClick={() =>
-              onSave({ date, commessaId, hours: h, description: description.trim(), billable })
-            }
+      <div
+        className="solid-card flex flex-col gap-3 p-6"
+        style={{ borderRadius: 14, background: "var(--bg-2)" }}
+      >
+        <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+          DISTRIBUZIONE
+        </span>
+        {top ? (
+          <h3
+            style={{
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: 32,
+              letterSpacing: "-0.025em",
+              lineHeight: 1.05,
+              margin: 0,
+            }}
           >
-            {entry ? "Save changes" : "Add entry"}
-          </Button>
+            {top.name} tiene il {topPct}%<span style={{ color: "var(--spark)" }}>.</span>
+          </h3>
+        ) : (
+          <h3
+            style={{
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontStyle: "italic",
+              fontSize: 28,
+              margin: 0,
+            }}
+          >
+            Nessuna distribuzione.
+          </h3>
+        )}
+        <p style={{ margin: 0, color: "var(--fg-2)", fontSize: 14, lineHeight: 1.55 }}>
+          Le ore più alte concentrano l'attenzione del mese. Mantenere bilanciato il portafoglio
+          aiuta a evitare saturazioni su singole commesse.
+        </p>
+        <div className="mt-auto flex gap-2">
+          <EditorialPill kind="ghost" size="sm">
+            ↗ Esporta CSV
+          </EditorialPill>
+          <EditorialPill kind="ghost" size="sm">
+            ⏵ Forecast
+          </EditorialPill>
         </div>
       </div>
+    </div>
+  );
+}
+
+function TeamPresence({
+  employees,
+  entries,
+  cursor,
+}: {
+  employees: ReturnType<typeof useEmployees>;
+  entries: ReturnType<typeof useTimesheetEntries>;
+  cursor: { year: number; month: number };
+}) {
+  const today = new Date();
+  const todayStr =
+    today.getFullYear() === cursor.year && today.getMonth() === cursor.month
+      ? ymd(today)
+      : ymd(new Date(cursor.year, cursor.month, 1));
+
+  const stateMeta: Record<string, [string, string]> = {
+    active: ["IN UFFICIO", "var(--spark)"],
+    remote: ["REMOTE", "var(--fg)"],
+    on_leave: ["FERIE", "var(--muted-foreground)"],
+    onboarding: ["ONBOARDING", "var(--fg-2)"],
+    offboarding: ["OFFBOARDING", "var(--muted-foreground)"],
+  };
+
+  const counts = employees.reduce<Record<string, number>>((m, e) => {
+    m[e.status] = (m[e.status] ?? 0) + 1;
+    return m;
+  }, {});
+
+  const hoursToday = (eId: string) =>
+    entries
+      .filter((e) => e.employeeId === eId && e.date === todayStr)
+      .reduce((s, e) => s + e.hours, 0);
+
+  return (
+    <div className="flex flex-col gap-3.5">
+      <div className="flex gap-2.5 flex-wrap">
+        {Object.entries(counts).map(([k, n]) => (
+          <div
+            key={k}
+            className="flex items-baseline gap-2.5"
+            style={{
+              padding: "10px 14px",
+              borderRadius: 10,
+              border: "1px solid var(--line)",
+              background: "var(--bg)",
+            }}
+          >
+            <span
+              className="t-num"
+              style={{
+                fontSize: 22,
+                letterSpacing: "-0.02em",
+                color: stateMeta[k]?.[1] ?? "var(--fg)",
+              }}
+            >
+              {n}
+            </span>
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              {stateMeta[k]?.[0] ?? k.toUpperCase()}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="solid-card overflow-hidden" style={{ borderRadius: 14 }}>
+        <div
+          className="grid t-mono"
+          style={{
+            gridTemplateColumns: "1fr 160px 1fr 120px",
+            background: "var(--bg-2)",
+            borderBottom: "1px solid var(--line-strong)",
+            color: "var(--muted-foreground)",
+            position: "sticky",
+            top: 0,
+          }}
+        >
+          {["PERSONA", "STATO", "RUOLO", "ORE OGGI"].map((h, i) => (
+            <div
+              key={i}
+              style={{
+                padding: "12px 16px",
+                borderRight: i < 3 ? "1px solid var(--line)" : "none",
+              }}
+            >
+              {h}
+            </div>
+          ))}
+        </div>
+        <div className="max-h-[480px] overflow-auto">
+          {employees.map((e) => {
+            const onLeave = e.status === "on_leave";
+            return (
+              <div
+                key={e.id}
+                className="grid"
+                style={{
+                  gridTemplateColumns: "1fr 160px 1fr 120px",
+                  alignItems: "center",
+                  borderBottom: "1px solid var(--line)",
+                }}
+              >
+                <div
+                  className="flex items-center gap-3"
+                  style={{ padding: "14px 16px", borderRight: "1px solid var(--line)" }}
+                >
+                  <AvatarDisplay initials={e.initials} size="sm" />
+                  <span
+                    style={{
+                      fontFamily: "Fraunces, ui-serif, serif",
+                      fontSize: 18,
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {e.name}
+                  </span>
+                </div>
+                <div style={{ padding: "14px 16px", borderRight: "1px solid var(--line)" }}>
+                  <span
+                    className="t-mono"
+                    style={{ color: stateMeta[e.status]?.[1] ?? "var(--fg)" }}
+                  >
+                    {stateMeta[e.status]?.[0] ?? e.status.toUpperCase()}
+                  </span>
+                </div>
+                <div style={{ padding: "14px 16px", borderRight: "1px solid var(--line)" }}>
+                  <span
+                    style={{
+                      fontFamily: "Fraunces, ui-serif, serif",
+                      fontStyle: "italic",
+                      fontSize: 16,
+                      color: "var(--fg-2)",
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {e.role}
+                  </span>
+                </div>
+                <div style={{ padding: "14px 16px", textAlign: "right" }}>
+                  <span
+                    className="t-num"
+                    style={{
+                      fontSize: 18,
+                      letterSpacing: "-0.02em",
+                      color: onLeave ? "var(--muted-foreground)" : "var(--fg)",
+                    }}
+                  >
+                    {onLeave ? "—" : `${hoursToday(e.id)}h`}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DayDrawer({
+  rec,
+  monthLower,
+  onClose,
+}: {
+  rec: DayRecord;
+  monthLower: string;
+  onClose: () => void;
+}) {
+  const isLeave = rec.leave != null;
+  const wdName = WEEKDAY_FULL[rec.weekday];
+  return (
+    <>
+      <div
+        onClick={onClose}
+        className="fixed inset-0 z-40"
+        style={{
+          background: "color-mix(in oklch, var(--bg) 70%, transparent)",
+          backdropFilter: "blur(2px)",
+        }}
+      />
+      <aside
+        className="fade-up fixed top-0 right-0 bottom-0 flex flex-col gap-4 overflow-auto z-50"
+        style={{
+          width: 460,
+          maxWidth: "100vw",
+          background: "var(--bg)",
+          borderLeft: "1px solid var(--line-strong)",
+          padding: "28px 32px",
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            {wdName.toUpperCase()} · {monthLower.toUpperCase()}
+          </span>
+          <button
+            onClick={onClose}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "var(--muted-foreground)",
+              cursor: "pointer",
+              fontSize: 18,
+              lineHeight: 1,
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        <h2
+          style={{
+            fontFamily: "Fraunces, ui-serif, serif",
+            fontWeight: 400,
+            fontSize: 96,
+            lineHeight: 0.86,
+            letterSpacing: "-0.045em",
+            margin: 0,
+          }}
+        >
+          <span style={{ fontStyle: "italic" }}>{rec.day}</span>
+          <span style={{ color: "var(--spark)" }}>.</span>
+          <span
+            style={{
+              marginLeft: 14,
+              fontSize: 28,
+              color: "var(--muted-foreground)",
+              letterSpacing: "-0.02em",
+              verticalAlign: "middle",
+            }}
+          >
+            {monthLower}
+          </span>
+        </h2>
+
+        {!isLeave && rec.target > 0 && (
+          <div
+            className="flex gap-6 items-baseline"
+            style={{ paddingBottom: 14, borderBottom: "1px solid var(--line)" }}
+          >
+            <div className="flex flex-col gap-0.5">
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                LOGGED
+              </span>
+              <span
+                className="t-num"
+                style={{
+                  fontSize: 32,
+                  letterSpacing: "-0.03em",
+                  color: rec.logged >= rec.target ? "var(--spark)" : "var(--fg)",
+                }}
+              >
+                {rec.logged.toFixed(rec.logged % 1 === 0 ? 0 : 1)}h
+              </span>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                TARGET
+              </span>
+              <span
+                className="t-num"
+                style={{
+                  fontSize: 32,
+                  letterSpacing: "-0.03em",
+                  color: "var(--muted-foreground)",
+                }}
+              >
+                {rec.target}h
+              </span>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                STATO
+              </span>
+              <span
+                className="t-mono"
+                style={{
+                  color: rec.logged >= rec.target ? "var(--spark)" : "var(--fg)",
+                }}
+              >
+                {rec.logged >= rec.target ? "● COMPLETO" : "○ DA RIEMPIRE"}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {isLeave && (
+          <div
+            className="px-4 py-4 rounded-xl"
+            style={{ background: "var(--bg-2)", border: "1px solid var(--line)" }}
+          >
+            <span
+              className="t-mono"
+              style={{
+                color: rec.leave === "holiday" ? "var(--spark)" : "var(--muted-foreground)",
+              }}
+            >
+              {rec.leave === "holiday" ? "★ FESTIVITÀ" : "▲ FERIE APPROVATE"}
+            </span>
+            <p
+              style={{
+                margin: "6px 0 0",
+                fontFamily: "Fraunces, ui-serif, serif",
+                fontStyle: "italic",
+                fontSize: 22,
+                lineHeight: 1.1,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              {rec.label}
+            </p>
+          </div>
+        )}
+
+        {!isLeave && (
+          <div className="flex flex-col gap-2.5">
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              ORE PER COMMESSA
+            </span>
+            {rec.breakdown.length > 0 ? (
+              rec.breakdown.map((b, i) => (
+                <div
+                  key={i}
+                  className="grid items-center gap-3.5"
+                  style={{
+                    gridTemplateColumns: "auto 1fr auto",
+                    padding: "10px 0",
+                    borderBottom: "1px solid var(--line)",
+                  }}
+                >
+                  <span className="t-mono" style={{ color: "var(--fg)" }}>
+                    {b.code}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "Fraunces, ui-serif, serif",
+                      fontStyle: "italic",
+                      fontSize: 16,
+                      color: "var(--fg-2)",
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {b.name}
+                  </span>
+                  <span className="t-num" style={{ fontSize: 18, letterSpacing: "-0.02em" }}>
+                    {b.hours.toFixed(b.hours % 1 === 0 ? 0 : 1)}h
+                  </span>
+                </div>
+              ))
+            ) : (
+              <div
+                style={{
+                  padding: "20px 0",
+                  borderTop: "1px solid var(--line)",
+                  borderBottom: "1px solid var(--line)",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Fraunces, ui-serif, serif",
+                    fontStyle: "italic",
+                    fontSize: 17,
+                    color: "var(--muted-foreground)",
+                  }}
+                >
+                  Nessuna ora registrata. Inizia digitando il codice della commessa.
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {!isLeave && (
+          <div
+            className="flex flex-col gap-2.5 mt-auto"
+            style={{ paddingTop: 14, borderTop: "1px solid var(--line)" }}
+          >
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              AGGIUNGI VOCE
+            </span>
+            <div className="grid gap-2" style={{ gridTemplateColumns: "1fr 80px" }}>
+              <div
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: 10,
+                  border: "1px solid var(--line-strong)",
+                  color: "var(--muted-foreground)",
+                  fontFamily: "Fraunces, ui-serif, serif",
+                  fontStyle: "italic",
+                  fontSize: 16,
+                }}
+              >
+                Codice commessa…
+              </div>
+              <div
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: 10,
+                  border: "1px solid var(--line-strong)",
+                  color: "var(--muted-foreground)",
+                  fontFamily: "JetBrains Mono, ui-monospace, monospace",
+                  fontSize: 13,
+                  textAlign: "right",
+                }}
+              >
+                0.0h
+              </div>
+            </div>
+            <div className="flex gap-1.5">
+              <EditorialPill kind="ghost" size="sm">
+                ⌘D Duplica ieri
+              </EditorialPill>
+              <span style={{ flex: 1 }} />
+              <EditorialPill
+                kind="spark"
+                size="sm"
+                onClick={() => {
+                  toast.success("Voce aggiunta", { description: `${rec.date}` });
+                  onClose();
+                }}
+              >
+                + Aggiungi
+              </EditorialPill>
+            </div>
+          </div>
+        )}
+      </aside>
     </>
   );
 }

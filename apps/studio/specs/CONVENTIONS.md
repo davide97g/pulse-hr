@@ -26,7 +26,7 @@ Inject before first paint via `localStorage`:
 
 ```json
 "localStorage": {
-  "pulse.theme": "employee",
+  "pulse.theme": "dark",
   "pulse.devBanner": "false",
   "pulse.tours.completed": "[\"all\"]"
 }

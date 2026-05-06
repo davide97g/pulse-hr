@@ -269,21 +269,25 @@ function AppShellInner() {
       className="flex h-screen w-full bg-background text-foreground overflow-hidden"
       style={{ ["--topbar-height" as string]: "3.5rem" }}
     >
-      {/* Sidebar — desktop only */}
+      {/* Sidebar — desktop only · Editorial */}
       <aside
         className={cn(
-          "hidden lg:flex flex-col border-r bg-sidebar transition-[width] duration-200 shrink-0",
-          collapsed ? "w-[60px]" : "w-[240px]",
+          "hidden lg:flex flex-col border-r transition-[width] duration-200 shrink-0",
+          collapsed ? "w-[64px]" : "w-[220px]",
         )}
+        style={{ borderColor: "var(--line)", background: "var(--bg)" }}
       >
-        <div className="h-14 flex items-center gap-2 px-3 border-b">
-          <BrandMark size="md" />
+        <div
+          className="h-14 flex items-center gap-2 px-4"
+          style={{ borderBottom: "1px solid var(--line)" }}
+        >
+          <BrandMark size="md" wordmark={!collapsed} />
           {!collapsed && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 text-sm font-semibold hover:bg-sidebar-accent rounded-md px-1.5 py-1 -ml-1 min-w-0">
+                <button className="flex items-center gap-1 text-[11px] font-mono uppercase tracking-[0.06em] text-muted-foreground hover:text-foreground rounded-md px-1.5 py-1 min-w-0">
                   <span className="truncate">{workspace.name}</span>
-                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <ChevronDown className="h-3 w-3 shrink-0" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56">
@@ -311,13 +315,13 @@ function AppShellInner() {
         <TooltipProvider delayDuration={200} skipDelayDuration={100}>
           <nav
             data-tour="sidebar-nav"
-            className="flex-1 overflow-y-auto scroll-fade py-3 px-2"
-            style={{ ["--fade-bg" as string]: "var(--sidebar)" }}
+            className="flex-1 overflow-y-auto scroll-fade py-5 px-3"
+            style={{ ["--fade-bg" as string]: "var(--bg)" }}
           >
             {groups.map((group) => (
-              <div key={group.label} className="mb-4">
+              <div key={group.label} className="mb-6">
                 {!collapsed && (
-                  <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                  <div className="px-2 mb-2 t-mono" style={{ color: "var(--muted-foreground)" }}>
                     {group.label}
                   </div>
                 )}
@@ -333,29 +337,39 @@ function AppShellInner() {
                         : location.pathname.startsWith(item.to);
                     const Icon = item.icon;
                     const className = cn(
-                      "group flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm transition-colors relative",
-                      active
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent/60",
+                      "group flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors relative",
+                      active ? "font-semibold" : "hover:bg-muted/40",
                       collapsed && "justify-center",
                     );
+                    const linkStyle = active
+                      ? {
+                          color: "var(--bg)",
+                          background: "var(--fg)",
+                          boxShadow: "inset 3px 0 0 0 var(--spark)",
+                        }
+                      : { color: "var(--muted-foreground)" };
                     const inner = (
                       <>
                         <Icon className="h-4 w-4 shrink-0" />
                         {!collapsed && <span className="truncate flex-1">{item.label}</span>}
-                        {!collapsed && item.unreadDot && (
+                        {!collapsed && active && <span className="dot" aria-hidden />}
+                        {!collapsed && !active && item.unreadDot && (
                           <span
-                            className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
+                            className="h-1.5 w-1.5 rounded-full pulse-dot"
+                            style={{ background: "var(--spark)" }}
                             aria-label="Unread"
                           />
                         )}
                         {collapsed && item.unreadDot && (
-                          <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary pulse-dot" />
+                          <span
+                            className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full pulse-dot"
+                            style={{ background: "var(--spark)" }}
+                          />
                         )}
                       </>
                     );
                     const node = item.external ? (
-                      <a href={item.to} className={className}>
+                      <a href={item.to} className={className} style={linkStyle}>
                         {inner}
                       </a>
                     ) : (
@@ -363,6 +377,7 @@ function AppShellInner() {
                         to={item.to}
                         id={item.to === "/focus" ? "nav-focus" : undefined}
                         className={className}
+                        style={linkStyle}
                       >
                         {inner}
                       </Link>
@@ -379,14 +394,15 @@ function AppShellInner() {
           </nav>
         </TooltipProvider>
 
-        <div className="border-t p-2 space-y-1">
+        <div className="p-3 space-y-2" style={{ borderTop: "1px solid var(--line)" }}>
           <button
             type="button"
             onClick={() => setCollapsed((v) => !v)}
             className={cn(
-              "w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors",
+              "w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm hover:bg-muted/40 transition-colors",
               collapsed && "justify-center",
             )}
+            style={{ color: "var(--muted-foreground)" }}
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             aria-pressed={collapsed}
@@ -402,12 +418,14 @@ function AppShellInner() {
           </button>
           <div
             className={cn(
-              "text-[10px] text-sidebar-foreground/40 font-mono tabular-nums select-none",
-              collapsed ? "text-center" : "px-2",
+              "t-mono-sm flex items-center gap-1.5 select-none",
+              collapsed && "justify-center",
             )}
+            style={{ color: "var(--muted-foreground)", padding: collapsed ? 0 : "0 8px" }}
             title={`Pulse HR build v${APP_VERSION}`}
           >
-            v{APP_VERSION}
+            <span className="dot" aria-hidden />
+            {!collapsed && <span>v{APP_VERSION} · LIVE</span>}
           </div>
         </div>
       </aside>
@@ -466,23 +484,32 @@ function AppShellInner() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Mobile nav drawer */}
+      {/* Mobile nav drawer · Editorial */}
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-        <SheetContent side="left" className="p-0 w-[84%] max-w-[300px] bg-sidebar">
-          <div className="h-14 flex items-center gap-2 px-3 border-b">
-            <BrandMark size="md" />
-            <span className="text-sm font-semibold">{workspace.name}</span>
+        <SheetContent
+          side="left"
+          className="p-0 w-[84%] max-w-[300px]"
+          style={{ background: "var(--bg)" }}
+        >
+          <div
+            className="h-14 flex items-center gap-2 px-4"
+            style={{ borderBottom: "1px solid var(--line)" }}
+          >
+            <BrandMark size="md" wordmark={!collapsed} />
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              {workspace.name}
+            </span>
           </div>
-          <div className="px-3 py-3 border-b">
+          <div className="px-4 py-3" style={{ borderBottom: "1px solid var(--line)" }}>
             <ThemeSwitcher />
           </div>
           <nav
-            className="overflow-y-auto scroll-fade py-3 px-2 h-[calc(100%-6.75rem)]"
-            style={{ ["--fade-bg" as string]: "var(--sidebar)" }}
+            className="overflow-y-auto scroll-fade py-5 px-3 h-[calc(100%-6.75rem)]"
+            style={{ ["--fade-bg" as string]: "var(--bg)" }}
           >
             {groups.map((group) => (
-              <div key={group.label} className="mb-4">
-                <div className="px-2 mb-1 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+              <div key={group.label} className="mb-6">
+                <div className="px-2 mb-2 t-mono" style={{ color: "var(--muted-foreground)" }}>
                   {group.label}
                 </div>
                 <div className="space-y-0.5">
@@ -497,18 +524,24 @@ function AppShellInner() {
                         : location.pathname.startsWith(item.to);
                     const Icon = item.icon;
                     const className = cn(
-                      "flex items-center gap-2.5 px-2 py-2 rounded-md text-sm transition-colors",
-                      active
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent/60",
+                      "flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors relative",
+                      active ? "font-semibold" : "hover:bg-muted/40",
                     );
+                    const linkStyle = active
+                      ? {
+                          color: "var(--bg)",
+                          background: "var(--fg)",
+                          boxShadow: "inset 3px 0 0 0 var(--spark)",
+                        }
+                      : { color: "var(--muted-foreground)" };
                     const inner = (
                       <>
                         <Icon className="h-4 w-4 shrink-0" />
                         <span className="truncate flex-1">{item.label}</span>
                         {item.unreadDot && (
                           <span
-                            className="h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
+                            className="h-1.5 w-1.5 rounded-full pulse-dot"
+                            style={{ background: "var(--spark)" }}
                             aria-label="Unread"
                           />
                         )}
@@ -516,13 +549,13 @@ function AppShellInner() {
                     );
                     if (item.external) {
                       return (
-                        <a key={item.to} href={item.to} className={className}>
+                        <a key={item.to} href={item.to} className={className} style={linkStyle}>
                           {inner}
                         </a>
                       );
                     }
                     return (
-                      <Link key={item.to} to={item.to} className={className}>
+                      <Link key={item.to} to={item.to} className={className} style={linkStyle}>
                         {inner}
                       </Link>
                     );
@@ -603,20 +636,66 @@ function CommentsVisibilityToggle() {
   );
 }
 
+const SECTION_BY_PATH: Record<string, string> = {
+  "/": "DASHBOARD",
+  "/people": "PERSONE",
+  "/onboarding": "ONBOARDING",
+  "/kudos": "KUDOS",
+  "/log": "STATUS LOG",
+  "/growth": "GROWTH",
+  "/time": "TIMESHEET",
+  "/projects": "COMMESSE",
+  "/clients": "CLIENTI",
+  "/forecast": "FORECAST",
+  "/focus": "FOCUS",
+  "/activities": "ACTIVITIES",
+  "/calendar": "CALENDAR",
+  "/leave": "LEAVE",
+  "/documents": "DOCUMENTS",
+  "/offices": "OFFICES",
+  "/payroll": "PAYROLL",
+  "/expenses": "SPESE",
+  "/reports": "REPORTS",
+  "/saturation": "SATURAZIONE",
+  "/settings": "SETTINGS",
+  "/profile": "PROFILE",
+  "/welcome": "WELCOME",
+  "/marketplace": "MARKETPLACE",
+  "/developers": "DEVELOPERS",
+  "/docs": "DOCS",
+  "/announcements": "ANNOUNCEMENTS",
+  "/recruiting": "RECRUITING",
+  "/org": "ORG CHART",
+  "/moments": "MOMENTI",
+};
+
+function sectionForPath(pathname: string): string {
+  for (const key of Object.keys(SECTION_BY_PATH).sort((a, b) => b.length - a.length)) {
+    if (key === "/") continue;
+    if (pathname === key || pathname.startsWith(key + "/")) return SECTION_BY_PATH[key];
+  }
+  return SECTION_BY_PATH["/"];
+}
+
 function Topbar({
   onOpenPalette,
   onOpenLog,
   onOpenMobileNav,
-  showFeedbackLink,
 }: {
   onOpenPalette: () => void;
   onOpenLog: () => void;
   onOpenMobileNav: () => void;
-  showFeedbackLink: boolean;
+  /** Kept for API compat; feedback link now lives in the avatar menu. */
+  showFeedbackLink?: boolean;
 }) {
   const { notifications, unreadCount, markRead, markAllRead } = useNotifications();
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
+  const location = useLocation();
+  const section = sectionForPath(location.pathname);
+  const { isSignedIn: signedInForFeedback } = useAuth();
+  const { require: requireLogin } = useLoginWall();
+  const { visible: commentsVisible, toggleVisibility: toggleComments } = useCommentsOverlay();
   const { user } = useUser();
   const { isSignedIn } = useAuth();
   const { signOut } = useClerk();
@@ -643,7 +722,14 @@ function Topbar({
     navigate({ to: "/login", search: {}, replace: true });
   };
   return (
-    <header className="h-14 border-b bg-background/80 backdrop-blur flex items-center px-3 md:px-4 gap-2 md:gap-3 shrink-0">
+    <header
+      className="h-14 flex items-center px-4 md:px-6 gap-3 shrink-0"
+      style={{
+        borderBottom: "1px solid var(--line)",
+        background: "color-mix(in oklch, var(--bg) 80%, transparent)",
+        backdropFilter: "blur(12px)",
+      }}
+    >
       <button
         onClick={onOpenMobileNav}
         className="lg:hidden h-9 w-9 rounded-md hover:bg-muted flex items-center justify-center shrink-0"
@@ -652,97 +738,53 @@ function Topbar({
         <Menu className="h-5 w-5" />
       </button>
 
-      <button
-        data-tour="topbar-search"
-        onClick={onOpenPalette}
-        className="relative flex-1 max-w-2xl text-left flex items-center h-9 px-3 rounded-md bg-muted/50 hover:bg-muted text-sm text-muted-foreground min-w-0"
+      <span
+        className="t-mono shrink-0 hidden sm:inline"
+        style={{ color: "var(--muted-foreground)" }}
       >
-        <Search className="h-4 w-4 mr-2 shrink-0" />
-        <span className="truncate">
-          <span className="hidden sm:inline">Search employees, documents, requests…</span>
-          <span className="sm:hidden">Search…</span>
-        </span>
-        <kbd className="hidden md:inline-flex ml-auto h-5 px-1.5 items-center rounded border bg-background text-[10px] font-mono">
-          ⌘K
-        </kbd>
-      </button>
+        {section}
+      </span>
 
       <div className="flex-1" />
 
-      {showFeedbackLink && <FeedbackLink />}
-      <CommentsVisibilityToggle />
-      <VotingPowerChip />
-      <div data-tour="topbar-status-log" className="hidden md:inline-flex">
-        <button
-          onClick={onOpenLog}
-          className="group relative inline-flex items-center gap-2 h-9 px-3 rounded-md border bg-background/80 hover:bg-muted text-sm press-scale"
-        >
-          <Sparkles className="h-4 w-4 text-[color:var(--labs)]" />
-          <span className="font-medium">Status Log</span>
-          <NewBadge />
-          <kbd className="hidden md:inline-flex h-5 px-1.5 items-center rounded border bg-muted text-[10px] font-mono">
-            ⌘J
-          </kbd>
-        </button>
-      </div>
       <button
-        onClick={onOpenLog}
-        className="md:hidden h-9 w-9 rounded-md border bg-background/80 hover:bg-muted flex items-center justify-center"
-        aria-label="Status Log"
+        data-tour="topbar-search"
+        onClick={onOpenPalette}
+        className="pill pill-ghost pill-sm hidden md:inline-flex"
+        style={{ color: "var(--muted-foreground)" }}
       >
-        <Sparkles className="h-4 w-4 text-[color:var(--labs)]" />
+        <Search className="h-3.5 w-3.5" />
+        <span>⌘K · CERCA</span>
+      </button>
+      <button
+        onClick={onOpenPalette}
+        className="md:hidden h-9 w-9 rounded-md border flex items-center justify-center"
+        style={{ borderColor: "var(--line-strong)" }}
+        aria-label="Search"
+      >
+        <Search className="h-4 w-4" />
       </button>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button data-tour="topbar-new" size="sm" className="h-9 gap-1.5 px-2.5 md:px-3">
-            <Plus className="h-4 w-4" />
-            <span className="hidden md:inline">New</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Quick actions</DropdownMenuLabel>
-          {quickActionsForRole(effectiveRole).map((entry, i) => {
-            const Icon = entry.icon;
-            if (entry.kind === "action") {
-              return (
-                <DropdownMenuItem key={entry.id} onClick={() => openAction(entry.id)}>
-                  <Icon className="h-4 w-4 mr-2" />
-                  {entry.label}
-                </DropdownMenuItem>
-              );
-            }
-            if (entry.kind === "nav") {
-              return (
-                <DropdownMenuItem key={entry.to} onClick={() => navigate({ to: entry.to })}>
-                  <Icon className="h-4 w-4 mr-2" />
-                  {entry.label}
-                </DropdownMenuItem>
-              );
-            }
-            return (
-              <div key={`auto-${i}`}>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => {
-                    toast.success("Automation triggered", {
-                      description: `Running '${entry.description}'`,
-                    });
-                    navigate({ to: "/developers" });
-                  }}
-                >
-                  <Icon className="h-4 w-4 mr-2" />
-                  {entry.label}
-                </DropdownMenuItem>
-              </div>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <div className="hidden md:block">
-        <ThemeSwitcher compact />
-      </div>
+      <button
+        data-tour="topbar-status-log"
+        onClick={onOpenLog}
+        className="pill pill-spark pill-sm hidden sm:inline-flex"
+      >
+        <Sparkles className="h-3.5 w-3.5" />
+        <span>⌘J Copilot</span>
+      </button>
+      <button
+        onClick={onOpenLog}
+        className="sm:hidden h-9 w-9 rounded-full pill-spark flex items-center justify-center"
+        style={{
+          background: "var(--spark)",
+          color: "var(--spark-ink)",
+          padding: 0,
+        }}
+        aria-label="Copilot"
+      >
+        <Sparkles className="h-4 w-4" />
+      </button>
 
       <Popover>
         <PopoverTrigger asChild>
@@ -835,86 +877,131 @@ function Topbar({
           <ChevronRight className="h-4 w-4" />
         </Button>
       ) : (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button className="flex items-center gap-2 h-9 pl-1 pr-2 rounded-md hover:bg-muted">
-            {user?.imageUrl ? (
-              <img
-                src={user.imageUrl}
-                alt={displayName}
-                className={cn("h-7 w-7 rounded-full object-cover", isAdmin && "ring-1 ring-border")}
-              />
-            ) : (
-              <div
-                className={cn(
-                  "h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-medium",
-                  isAdmin && "ring-1 ring-border",
-                )}
-                style={{ backgroundColor: "oklch(0.6 0.16 220)" }}
-              >
-                {initials.toUpperCase().slice(0, 2) || "?"}
-              </div>
-            )}
-            <div className="hidden md:block text-left max-w-[140px]">
-              <div className="text-xs font-medium leading-tight truncate">{displayName}</div>
-              <div className="text-[10px] text-muted-foreground leading-tight truncate">
-                {displayRole || displayEmail || "Pulse HR workspace"}
-              </div>
-            </div>
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel className="truncate">{displayName}</DropdownMenuLabel>
-          <DropdownMenuItem asChild>
-            <Link to="/profile">Profile</Link>
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <span className="flex-1">Switch role</span>
-              {override && (
-                <span className="ml-2 text-[10px] uppercase tracking-wide text-muted-foreground">
-                  {override}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-2 h-9 pl-1 pr-2 rounded-full hover:bg-muted/40">
+              {user?.imageUrl ? (
+                <img
+                  src={user.imageUrl}
+                  alt={displayName}
+                  className={cn("h-7 w-7 rounded-full object-cover", isAdmin && "ring-1 ring-border")}
+                />
+              ) : (
+                <span className={cn("ph-avatar ph-avatar-sm", isAdmin && "ring-1 ring-border")}>
+                  {initials.toUpperCase().slice(0, 2) || "?"}
                 </span>
               )}
-            </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent className="w-44">
-              <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                View as
-              </DropdownMenuLabel>
-              <DropdownMenuItem
-                onSelect={() => {
-                  setOverride(null);
-                  toast.success(`Showing as ${savedRoleLabel}`, {
-                    description: "Your saved workspace role.",
-                  });
-                }}
-              >
-                <span className="flex-1">{savedRoleLabel}</span>
-                {!override && <span className="text-xs text-muted-foreground">current</span>}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {OVERRIDE_ROLES.map((r) => (
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuLabel className="truncate">
+              <div className="text-sm font-semibold truncate">{displayName}</div>
+              <div className="text-[11px] font-normal text-muted-foreground truncate">
+                {displayRole || displayEmail || "Pulse HR workspace"}
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link to="/profile">Profile</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/settings">Settings</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); toggleComments(); }}>
+              {commentsVisible ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
+              {commentsVisible ? "Hide comments" : "Show comments"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault();
+                if (!signedInForFeedback) {
+                  requireLogin("feedback");
+                  return;
+                }
+                window.open(FEEDBACK_URL, "_blank");
+              }}
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Feedback board
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault();
+                navigate({ to: "/moments" });
+              }}
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              Moments
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault();
+                openAction("add-employee");
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Quick action…
+            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <span className="flex-1">Switch role</span>
+                {override && (
+                  <span className="ml-2 text-[10px] uppercase tracking-wide text-muted-foreground">
+                    {override}
+                  </span>
+                )}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="w-44">
+                <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                  View as
+                </DropdownMenuLabel>
                 <DropdownMenuItem
-                  key={r}
                   onSelect={() => {
-                    setOverride(r);
-                    toast.success(`Viewing as ${r}`, {
-                      description: "You can switch back any time.",
+                    setOverride(null);
+                    toast.success(`Showing as ${savedRoleLabel}`, {
+                      description: "Your saved workspace role.",
                     });
                   }}
                 >
-                  <span className="flex-1 capitalize">{r}</span>
-                  {effectiveRole === r && (
-                    <span className="text-xs text-muted-foreground">current</span>
-                  )}
+                  <span className="flex-1">{savedRoleLabel}</span>
+                  {!override && <span className="text-xs text-muted-foreground">current</span>}
                 </DropdownMenuItem>
-              ))}
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+                <DropdownMenuSeparator />
+                {OVERRIDE_ROLES.map((r) => (
+                  <DropdownMenuItem
+                    key={r}
+                    onSelect={() => {
+                      setOverride(r);
+                      toast.success(`Viewing as ${r}`, {
+                        description: "You can switch back any time.",
+                      });
+                    }}
+                  >
+                    <span className="flex-1 capitalize">{r}</span>
+                    {effectiveRole === r && (
+                      <span className="text-xs text-muted-foreground">current</span>
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <div className="px-2 py-1.5 flex items-center justify-between gap-2">
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                THEME
+              </span>
+              <ThemeSwitcher compact />
+            </div>
+            <div className="px-2 pb-1.5 flex items-center justify-between gap-2">
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                VOTING POWER
+              </span>
+              <VotingPowerChip />
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onSelect={handleSignOut}>Sign out</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </header>
   );
@@ -985,23 +1072,31 @@ export function StatusBadge({ status }: { status: string }) {
 
 export function Avatar({
   initials,
-  color,
+  // Tinted per-user colour preserved for callers that pass it (e.g. mock data).
+  // Editorial mode ignores it and uses ink/paper inversion for visual cohesion.
+  color: _color,
   size = 32,
   employeeId,
 }: {
   initials: string;
-  color: string;
+  color?: string;
   size?: number;
   /** When provided, the avatar becomes a hover card trigger with a mini profile. */
   employeeId?: string;
 }) {
+  void _color;
   const visual = (
-    <div
-      className="rounded-full flex items-center justify-center font-medium shrink-0 text-[color:var(--avatar-ink)]"
-      style={{ backgroundColor: color, width: size, height: size, fontSize: size * 0.4 }}
+    <span
+      className="ph-avatar"
+      style={{
+        width: size,
+        height: size,
+        minWidth: size,
+        fontSize: Math.max(8, size * 0.36),
+      }}
     >
       {initials}
-    </div>
+    </span>
   );
   if (!employeeId) return visual;
   return <EmployeeHoverCard employeeId={employeeId}>{visual}</EmployeeHoverCard>;

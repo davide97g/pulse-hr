@@ -29,7 +29,7 @@ export function DashboardLayout({
   className,
 }: DashboardLayoutProps) {
   return (
-    <div className={cn(CONTAINER[width], "space-y-6", className)}>
+    <div className={cn(CONTAINER[width], "space-y-8", className)}>
       {header}
       {kpis}
       {children}

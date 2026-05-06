@@ -140,8 +140,14 @@ function ActivitiesPage() {
   return (
     <div className="p-4 md:p-6 fade-in space-y-5">
       <PageHeader
-        title="Activities"
-        description="Every activity across all projects."
+        eyebrow="WORK · ATTIVITÀ · CRONOLOGIA"
+        title={
+          <>
+            Quello che <span className="spark-mark">accade</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Ogni attività, su ogni commessa."
         actions={
           <Button
             size="sm"

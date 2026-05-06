@@ -18,12 +18,16 @@
     font-weight: 500;
   }
 
+  /* Editorial-by-default: italic Fraunces, scaled down from .t-h1-it but
+   * still anchors a page. Override with `editorial` mode on PageHeader for
+   * the full magazine-spread display scale. */
   .text-page-title {
     font-family: var(--font-display, "Fraunces", ui-serif, serif);
-    font-size: 1.375rem; /* 22px — slightly larger than text-xl for serif balance */
-    line-height: 1.2;
-    letter-spacing: -0.015em;
-    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    font-weight: 400;
   }
 
   .text-section {
@@ -66,6 +70,103 @@
   }
 
   .text-numeric {
+    font-family: var(--font-display, "Fraunces", ui-serif, serif);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* ==========================================================
+   * Editorial scale — oversized hero typography for the new
+   * Editorial design system. Use sparingly, one display per
+   * spread. The .t-* prefix is reserved for editorial classes
+   * to avoid collision with the .text-* legacy scale.
+   * ========================================================== */
+
+  .t-display {
+    font-family: var(--font-display, "Fraunces", ui-serif, serif);
+    font-weight: 400;
+    font-size: clamp(72px, 10vw, 168px);
+    line-height: 0.88;
+    letter-spacing: -0.04em;
+  }
+  .t-display-it {
+    font-family: var(--font-display, "Fraunces", ui-serif, serif);
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(72px, 10vw, 168px);
+    line-height: 0.88;
+    letter-spacing: -0.045em;
+  }
+
+  .t-h1 {
+    font-family: var(--font-display, "Fraunces", ui-serif, serif);
+    font-weight: 400;
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+  }
+  .t-h1-it {
+    font-family: var(--font-display, "Fraunces", ui-serif, serif);
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+  }
+
+  .t-h2 {
+    font-family: var(--font-display, "Fraunces", ui-serif, serif);
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+  }
+  .t-h2-it {
+    font-family: var(--font-display, "Fraunces", ui-serif, serif);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 32px;
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+  }
+
+  .t-h3-sans {
+    font-family: var(
+      --font-sans,
+      "Geist",
+      ui-sans-serif,
+      system-ui,
+      sans-serif
+    );
+    font-weight: 800;
+    font-size: 24px;
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+  }
+
+  .t-body-lg {
+    font-family: var(--font-sans, "Geist", ui-sans-serif, system-ui, sans-serif);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .t-mono {
+    font-family: var(--font-mono, "JetBrains Mono", ui-monospace, monospace);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .t-mono-sm {
+    font-family: var(--font-mono, "JetBrains Mono", ui-monospace, monospace);
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .t-num {
     font-family: var(--font-display, "Fraunces", ui-serif, serif);
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";

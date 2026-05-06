@@ -24,7 +24,7 @@
     "transitionMs": 320
   },
   "localStorage": {
-    "pulse.theme": "employee",
+    "pulse.theme": "dark",
     "pulse.devBanner": "false",
     "pulse.tours.completed": "[\"all\"]",
     "pulse.skipBoot": "1"

@@ -198,8 +198,9 @@ function People() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title="People"
-        description={`${list.length} employees across ${departments.length} departments`}
+        eyebrow={`PEOPLE · ${list.length} ATTIVE · ${departments.length} REPARTI`}
+        title="Persone"
+        description="Vista lista — filtra per ruolo, reparto, stato."
         actions={
           <>
             <Button

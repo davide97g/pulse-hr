@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Card } from "../primitives/card";
 import { cn } from "../lib/cn";
 
-export type StatCardSize = "sm" | "md" | "lg";
+export type StatCardSize = "sm" | "md" | "lg" | "editorial";
 export type StatCardVariant = "card" | "bare";
 export type StatCardDeltaTone = "positive" | "negative" | "neutral";
 
@@ -23,18 +23,21 @@ const SIZE_PADDING: Record<StatCardSize, string> = {
   sm: "p-3",
   md: "p-4",
   lg: "p-5",
+  editorial: "p-6",
 };
 
 const VALUE_CLASS: Record<StatCardSize, string> = {
   sm: "text-base font-semibold tabular-nums",
   md: "text-2xl text-numeric",
   lg: "text-display",
+  editorial: "t-num text-[96px] leading-[0.9] tracking-[-0.04em]",
 };
 
 const ICON_CLASS: Record<StatCardSize, string> = {
   sm: "h-3 w-3",
   md: "h-4 w-4",
   lg: "h-5 w-5",
+  editorial: "h-5 w-5",
 };
 
 const DELTA_TONE: Record<StatCardDeltaTone, string> = {

@@ -171,8 +171,14 @@ function Onboarding() {
   return (
     <div className="p-4 md:p-6 max-w-[1200px] mx-auto fade-in">
       <PageHeader
-        title="Onboarding & offboarding"
-        description="Active people workflows — track every step for new hires and leavers"
+        eyebrow="PEOPLE · ONBOARDING & OFFBOARDING"
+        title={
+          <>
+            Entrate <span className="spark-mark">e uscite</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Workflow attivi — ogni step per nuovi ingressi e cambi di ruolo."
         actions={
           <Button size="sm" className="press-scale" onClick={() => setNewWorkflowOpen(true)}>
             <Plus className="h-4 w-4 mr-1.5" />

@@ -9,15 +9,23 @@
   .container-wide {
     width: 100%;
     margin-inline: auto;
-    padding-inline: 1rem;
-    padding-block: 1rem;
+    padding-inline: 1.25rem;
+    padding-block: 1.5rem;
   }
   @media (min-width: 768px) {
     .container-narrow,
     .container-default,
     .container-wide {
-      padding-inline: 1.5rem;
-      padding-block: 1.5rem;
+      padding-inline: 2rem;
+      padding-block: 2rem;
+    }
+  }
+  @media (min-width: 1280px) {
+    .container-narrow,
+    .container-default,
+    .container-wide {
+      padding-inline: 3rem;
+      padding-block: 2.5rem;
     }
   }
 

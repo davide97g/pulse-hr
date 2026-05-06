@@ -2,7 +2,6 @@ import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
   Users,
-  Briefcase,
   BarChart3,
   Settings,
   Clock,
@@ -10,9 +9,7 @@ import {
   CalendarDays,
   FileText,
   Receipt,
-  Network,
   GraduationCap,
-  Megaphone,
   Puzzle,
   Code2,
   BookOpen,
@@ -20,12 +17,13 @@ import {
   Gift,
   Focus,
   Trophy,
-  Gauge,
-  Briefcase as BriefcaseIcon,
+  Briefcase,
   Building2,
   PanelLeft,
   LifeBuoy,
   ListChecks,
+  Wallet,
+  TrendingUp,
 } from "lucide-react";
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
 import { ADMIN_MODULES_PATH } from "@/lib/sidebar-features";
@@ -49,54 +47,47 @@ export type SidebarNavItem = {
 
 export type SidebarNavGroup = { label: string; items: SidebarNavItem[]; accent?: boolean };
 
+/**
+ * Editorial sidebar — three groups (PEOPLE / WORK / MONEY) plus a collapsed
+ * Workspace footer. Pages without an editorial counterpart (Marketplace,
+ * Developers, Docs, Settings, Modules, Help) live behind the avatar dropdown
+ * so they don't compete with day-to-day work in the sidebar.
+ */
 export function buildSidebarNavGroups(
   hasOpenManagerAsks: boolean,
   includeAdminVisibilityLink: boolean,
 ): SidebarNavGroup[] {
   const groups: SidebarNavGroup[] = [
     {
-      label: "Overview",
+      label: "People",
       items: [
         { to: "/", label: "Dashboard", icon: LayoutDashboard, featureId: "dashboard" },
+        { to: "/people", label: "Persone", icon: Users, featureId: "people" },
         {
-          to: "/announcements",
-          label: "Announcements",
-          icon: Megaphone,
-          featureId: "announcements",
+          to: "/onboarding",
+          label: "Onboarding",
+          icon: GraduationCap,
+          featureId: "onboarding",
         },
-      ],
-    },
-    {
-      label: "Pulse",
-      items: [
+        { to: "/kudos", label: "Kudos", icon: Gift, featureId: "kudos" },
         {
           to: "/log",
-          label: "Status Log",
+          label: "Status log",
           icon: MessagesSquare,
           featureId: "log",
           unreadDot: hasOpenManagerAsks,
         },
-        { to: "/focus", label: "Focus Mode", icon: Focus, featureId: "focus" },
         { to: "/growth", label: "Growth", icon: Trophy, featureId: "growth" },
-        { to: "/kudos", label: "Kudos", icon: Gift, featureId: "kudos" },
-      ],
-    },
-    {
-      label: "People",
-      items: [
-        { to: "/people", label: "Employees", icon: Users, featureId: "people" },
-        { to: "/org", label: "Org chart", icon: Network, featureId: "org" },
-        { to: "/recruiting", label: "Recruiting", icon: Briefcase, featureId: "recruiting" },
-        { to: "/onboarding", label: "Onboarding", icon: GraduationCap, featureId: "onboarding" },
       ],
     },
     {
       label: "Work",
       items: [
-        { to: "/clients", label: "Clients", icon: Building2, featureId: "clients" },
-        { to: "/projects", label: "Projects", icon: BriefcaseIcon, featureId: "clients" },
+        { to: "/time", label: "Timesheet", icon: Clock, featureId: "time" },
+        { to: "/projects", label: "Commesse", icon: Briefcase, featureId: "clients" },
+        { to: "/forecast", label: "Forecast", icon: TrendingUp, featureId: "clients" },
+        { to: "/focus", label: "Focus", icon: Focus, featureId: "focus" },
         { to: "/activities", label: "Activities", icon: ListChecks, featureId: "clients" },
-        { to: "/time", label: "Time & attendance", icon: Clock, featureId: "time" },
         { to: "/calendar", label: "Calendar", icon: CalendarDays, featureId: "calendar" },
         { to: "/leave", label: "Leave", icon: Calendar, featureId: "leave" },
         { to: "/documents", label: "Documents", icon: FileText, featureId: "documents" },
@@ -106,53 +97,45 @@ export function buildSidebarNavGroups(
     {
       label: "Money",
       items: [
-        { to: "/expenses", label: "Expenses", icon: Receipt, featureId: "expenses" },
-      ],
-    },
-    {
-      label: "Insights",
-      items: [
-        { to: "/reports", label: "Reports", icon: BarChart3, featureId: "reports" },
-        {
-          to: "/saturation",
-          label: "Saturation",
-          icon: Gauge,
-          featureId: "saturation",
-        },
-      ],
-    },
-    {
-      label: "Workspace",
-      items: [
-        { to: "/marketplace", label: "Marketplace", icon: Puzzle, featureId: "marketplace" },
-        { to: "/developers", label: "Developers", icon: Code2, featureId: "developers" },
-        { to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" },
+        { to: "/payroll", label: "Payroll", icon: Wallet, featureId: "expenses" },
+        { to: "/expenses", label: "Spese", icon: Receipt, featureId: "expenses" },
       ],
     },
   ];
 
-  const ws = groups.find((g) => g.label === "Workspace");
-  if (ws) {
-    if (includeAdminVisibilityLink) {
-      ws.items.push({
-        to: ADMIN_MODULES_PATH,
-        label: "Modules",
-        icon: PanelLeft,
-      });
-    }
-    ws.items.push({
-      to: "#help",
-      label: "Help & tours",
-      icon: LifeBuoy,
-      kind: "tours",
-    });
-    ws.items.push({
-      to: "/settings",
-      label: "Settings",
-      icon: Settings,
-      featureId: "settings",
+  // Workspace section — collapsed at the bottom, secondary tools that the
+  // Editorial design pushes out of the primary nav. Items still register so
+  // ⌘K, the avatar menu, and direct links continue to work.
+  const workspace: SidebarNavGroup = {
+    label: "Workspace",
+    items: [
+      { to: "/reports", label: "Reports", icon: BarChart3, featureId: "reports" },
+      { to: "/marketplace", label: "Marketplace", icon: Puzzle, featureId: "marketplace" },
+      { to: "/developers", label: "Developers", icon: Code2, featureId: "developers" },
+      { to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" },
+    ],
+  };
+
+  if (includeAdminVisibilityLink) {
+    workspace.items.push({
+      to: ADMIN_MODULES_PATH,
+      label: "Modules",
+      icon: PanelLeft,
     });
   }
+  workspace.items.push({
+    to: "#help",
+    label: "Help & tours",
+    icon: LifeBuoy,
+    kind: "tours",
+  });
+  workspace.items.push({
+    to: "/settings",
+    label: "Settings",
+    icon: Settings,
+    featureId: "settings",
+  });
 
+  groups.push(workspace);
   return groups;
 }

@@ -1,8 +1,0 @@
-/* Employee — the signature landing palette: lime on near-black. Default theme. */
-html[data-theme="employee"] {
-  --primary: oklch(0.88 0.22 130);
-  --primary-foreground: oklch(0.14 0.006 280);
-  --ring: oklch(0.88 0.22 130);
-  --accent: oklch(0.28 0.06 130);
-  --accent-foreground: oklch(0.96 0.012 95);
-}

@@ -187,13 +187,22 @@ function Leave() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title="Leave"
-        description="Manage leave requests, balances and the team calendar"
+        eyebrow="PEOPLE · LEAVE & PERMESSI"
+        title={
+          <>
+            <span className="spark-mark">Riposo</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Richieste, saldi, calendario del team."
         actions={
-          <Button size="sm" onClick={() => openAction("request-leave")}>
-            <Plus className="h-4 w-4 mr-1.5" />
-            Request leave
-          </Button>
+          <button
+            type="button"
+            onClick={() => openAction("request-leave")}
+            className="pill pill-spark pill-sm"
+          >
+            + Richiedi <span className="arr">→</span>
+          </button>
         }
       />
 

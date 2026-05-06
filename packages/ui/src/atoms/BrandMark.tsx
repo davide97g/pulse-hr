@@ -3,6 +3,8 @@ import { cn } from "../lib/cn";
 type Props = {
   size?: "sm" | "md" | "lg";
   className?: string;
+  /** When true, render the italic "pulse·hr" wordmark instead of the SVG ring. */
+  wordmark?: boolean;
 };
 
 const BOX: Record<NonNullable<Props["size"]>, string> = {
@@ -11,17 +13,43 @@ const BOX: Record<NonNullable<Props["size"]>, string> = {
   lg: "h-10 w-10",
 };
 
+const WORDMARK_FONT: Record<NonNullable<Props["size"]>, number> = {
+  sm: 18,
+  md: 22,
+  lg: 28,
+};
+
 /**
- * Pulse HR brand mark — concentric rings + filled lime dot.
+ * Pulse HR brand mark.
  *
- * Canonical source: `docs/brand/logo-explorations/mark-final.svg`.
- * The marketing site (`apps/marketing/src/components/Nav.astro`) and the
- * browser favicon (`apps/app/public/icon.svg`) use the same geometry.
- *
- * Rendered inline (no background square) so the mark sits cleanly on any
- * themed surface without a lime block clashing with role tints.
+ * Two flavours:
+ *   - default: concentric SVG rings + filled lime dot (used as the small icon
+ *     in the sidebar header, favicons, marketing nav). Canonical source:
+ *     `docs/brand/logo-explorations/mark-final.svg`.
+ *   - `wordmark`: italic Fraunces "pulse·hr" — the editorial topbar wordmark.
  */
-export function BrandMark({ size = "md", className }: Props) {
+export function BrandMark({ size = "md", className, wordmark }: Props) {
+  if (wordmark) {
+    return (
+      <span
+        className={cn("inline-flex items-baseline shrink-0", className)}
+        style={{
+          fontFamily: "Fraunces, ui-serif, serif",
+          fontStyle: "italic",
+          fontWeight: 500,
+          letterSpacing: "-0.04em",
+          fontSize: WORDMARK_FONT[size],
+          lineHeight: 1,
+          color: "var(--fg)",
+        }}
+        aria-label="Pulse HR"
+      >
+        pulse
+        <span style={{ fontStyle: "normal", fontWeight: 400 }}>·</span>
+        hr
+      </span>
+    );
+  }
   return (
     <svg
       viewBox="0 0 64 64"

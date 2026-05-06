@@ -81,8 +81,13 @@ function Profile() {
   return (
     <div className="p-4 md:p-6 max-w-[1200px] mx-auto fade-in">
       <PageHeader
-        title={<span>My profile</span>}
-        description="Personal hub for your growth, time, documents, and expenses."
+        eyebrow="ME · PROFILO"
+        title={
+          <>
+            Tu<span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Hub personale: crescita, tempo, documenti, spese."
       />
 
       {/* Hero */}

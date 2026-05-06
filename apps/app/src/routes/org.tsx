@@ -18,7 +18,16 @@ function Org() {
     : employees;
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
-      <PageHeader title="Org chart" description="How your company is structured" />
+      <PageHeader
+        eyebrow="PEOPLE · ORG CHART · ALBERO"
+        title={
+          <>
+            Come <span className="spark-mark">siamo</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Chi riporta a chi, reparti, manager."
+      />
 
       <Card className="p-8 mb-6">
         <div className="flex flex-col items-center gap-8">
@@ -68,7 +77,14 @@ function Org() {
         </div>
       </Card>
 
-      <PageHeader title="Departments" />
+      <PageHeader
+        eyebrow="PEOPLE · REPARTI"
+        title={
+          <>
+            Reparti<span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {departments.map((d) => (
           <Card key={d.name} className="p-5 hover:shadow-md transition-shadow cursor-pointer">

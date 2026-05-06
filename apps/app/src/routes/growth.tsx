@@ -45,6 +45,7 @@ import {
   notesFor,
   leaderboard,
   seasonalChallengesFor,
+  LEVELS,
   type GrowthSummary,
   type StrengthTag,
   type LeaderboardEntry,
@@ -105,13 +106,20 @@ function Growth() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title={
+        eyebrow={
           <>
-            <span>Growth</span>
-            <NewBadge />
+            PEOPLE · CRESCITA · {(subject ? `${subject.employee.name.toUpperCase()} · L${subject.level.tier} → L${(subject.level.tier + 1)}` : "PERCORSO TEAM")} <NewBadge />
           </>
         }
-        description="Track progress, goals, challenges and 1:1s. Kudos and focus sessions roll up into XP and badges."
+        title={
+          <>
+            <span style={{ fontStyle: "italic" }}>Crescere</span>,
+            <br />
+            un livello alla volta
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Progressi, goal, sfide e 1:1. Kudos e sessioni di focus diventano XP e badge."
         actions={
           <div className="inline-flex rounded-md border p-0.5 bg-background">
             <button
@@ -145,6 +153,8 @@ function Growth() {
           </div>
         }
       />
+
+      <LevelPath subject={subject} />
 
       {subject ? (
         <>
@@ -1286,4 +1296,65 @@ function KudosList({ rows }: { rows: Kudo[] }) {
 
 function Empty({ label }: { label: string }) {
   return <Card className="py-12 text-center text-sm text-muted-foreground">{label}</Card>;
+}
+
+function LevelPath({ subject }: { subject: GrowthSummary | null }) {
+  // Real data: 8 LEVELS from @/lib/growth, current tier from subject.
+  const currentTier = subject?.level.tier ?? 4;
+  return (
+    <div
+      className="flex items-stretch gap-0 mt-2 mb-6 overflow-x-auto"
+      style={{ paddingBottom: 4 }}
+    >
+      {LEVELS.map((lvl) => {
+        const state =
+          lvl.tier < currentTier ? "done" : lvl.tier === currentTier ? "current" : "future";
+        const borderColor =
+          state === "done"
+            ? "var(--fg)"
+            : state === "current"
+              ? "var(--spark)"
+              : "var(--line-strong)";
+        return (
+          <div
+            key={lvl.tier}
+            className="flex flex-col gap-2 pr-3.5 min-w-[120px]"
+            style={{
+              flex: 1,
+              borderTop: `2px solid ${borderColor}`,
+              paddingTop: 12,
+            }}
+          >
+            <span
+              className="t-mono"
+              style={{
+                color:
+                  state === "current"
+                    ? "var(--spark)"
+                    : state === "future"
+                      ? "var(--muted-foreground)"
+                      : "var(--fg)",
+              }}
+            >
+              L{lvl.tier}
+            </span>
+            <span
+              style={{
+                fontFamily: "Fraunces, ui-serif, serif",
+                fontStyle: state === "current" ? "italic" : "normal",
+                fontSize: 22,
+                letterSpacing: "-0.02em",
+                color: state === "future" ? "var(--muted-foreground)" : "var(--fg)",
+              }}
+            >
+              {lvl.name}
+            </span>
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              {lvl.xpMin.toLocaleString()}–{lvl.xpMax.toLocaleString()} XP
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
 }

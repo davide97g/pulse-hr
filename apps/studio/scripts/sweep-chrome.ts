@@ -31,7 +31,7 @@ const CANONICAL_CURSOR = {
 };
 
 const CANONICAL_LOCAL_STORAGE_KEYS: Record<string, string> = {
-  "pulse.theme": "employee",
+  "pulse.theme": "dark",
   "pulse.devBanner": "false",
   "pulse.tours.completed": '["all"]',
   "pulse.skipBoot": "1",

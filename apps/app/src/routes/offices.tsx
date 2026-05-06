@@ -61,13 +61,18 @@ function OfficesRoute() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title={
+        eyebrow={
           <>
-            <span>Offices</span>
-            <NewBadge />
+            WORK · SEDI · STANZE & PRENOTAZIONI <NewBadge />
           </>
         }
-        description="Workspaces, reservations, and catalog — one place to run everything."
+        title={
+          <>
+            Quattro <span className="spark-mark">stanze</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Workspace, prenotazioni, catalogo — un solo posto per gestire tutto."
       />
 
       <Tabs value={section} onValueChange={setSection}>

@@ -43,7 +43,7 @@ export function ListLayout({
 }: ListLayoutProps) {
   return (
     <>
-      <div className={cn(CONTAINER[width], "space-y-4", className)}>
+      <div className={cn(CONTAINER[width], "space-y-6", className)}>
         {header}
         {filterBar}
         {children}

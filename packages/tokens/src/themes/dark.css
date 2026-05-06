@@ -1,6 +1,63 @@
-/* Neutral dark — indigo accent, close to the light theme's identity. */
+/*
+ * Dark theme — single dark palette with lime primary.
+ * Lime is the brand spark; foreground = near-ink for max contrast.
+ */
 html[data-theme="dark"] {
-  --primary: oklch(0.72 0.17 258);
-  --primary-foreground: oklch(0.14 0.006 280);
-  --ring: oklch(0.72 0.17 258);
+  --background: oklch(0.14 0.006 280);
+  --foreground: oklch(0.96 0.012 95);
+
+  --card: oklch(0.18 0.006 280);
+  --card-foreground: oklch(0.96 0.012 95);
+
+  --popover: oklch(0.2 0.006 280);
+  --popover-foreground: oklch(0.96 0.012 95);
+
+  --primary: oklch(0.88 0.22 130);
+  --primary-foreground: oklch(0.14 0.04 130);
+  --ring: oklch(0.88 0.22 130);
+
+  --secondary: oklch(0.22 0.008 280);
+  --secondary-foreground: oklch(0.92 0.01 95);
+
+  --muted: oklch(0.22 0.008 280);
+  --muted-foreground: oklch(0.68 0.02 260);
+
+  --accent: oklch(0.26 0.02 270);
+  --accent-foreground: oklch(0.96 0.012 95);
+
+  --destructive: oklch(0.7 0.2 25);
+  --destructive-foreground: oklch(0.15 0.008 280);
+
+  --success: oklch(0.78 0.18 150);
+  --success-foreground: oklch(0.14 0.006 280);
+
+  --warning: oklch(0.82 0.17 85);
+  --warning-foreground: oklch(0.2 0.05 85);
+
+  --info: oklch(0.75 0.15 230);
+  --info-foreground: oklch(0.14 0.006 280);
+
+  --border: oklch(1 0 0 / 0.08);
+  --input: oklch(1 0 0 / 0.1);
+
+  --sidebar: oklch(0.12 0.006 280);
+  --sidebar-foreground: oklch(0.82 0.015 95);
+  --sidebar-accent: oklch(0.22 0.012 280);
+  --sidebar-accent-foreground: oklch(0.98 0.01 95);
+  --sidebar-border: oklch(1 0 0 / 0.06);
+
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.5), 0 2px 4px oklch(0 0 0 / 0.3);
+  --shadow-panel: -8px 0 32px -8px oklch(0 0 0 / 0.6);
+  --shadow-pop: 0 8px 32px -8px oklch(0 0 0 / 0.7), 0 2px 6px oklch(0 0 0 / 0.4);
+
+  --labs: oklch(0.86 0.22 135);
+  --labs-foreground: oklch(0.14 0.006 280);
+
+  /* Role identification — stable hues for displaying user role identity
+   * (avatar accents, role chips). Independent of the visual theme. */
+  --role-employee: oklch(0.88 0.22 135);
+  --role-manager: oklch(0.84 0.17 75);
+  --role-hr: oklch(0.78 0.19 25);
+  --role-admin: oklch(0.82 0.17 220);
+  --role-finance: oklch(0.76 0.2 305);
 }

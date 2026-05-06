@@ -149,8 +149,14 @@ function Documents() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        title="Documents"
-        description="Contracts, policies, templates and e-signatures"
+        eyebrow="WORK · DOCUMENTI AZIENDALI"
+        title={
+          <>
+            <span className="spark-mark">Archivio</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Contratti, policy, template, firme elettroniche."
         actions={
           <>
             <Button

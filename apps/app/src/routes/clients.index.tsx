@@ -186,8 +186,14 @@ function ClientsPage() {
   return (
     <div className="p-4 md:p-6 fade-in space-y-5">
       <PageHeader
-        title="Clients"
-        description="Client accounts, contacts, and reference people."
+        eyebrow="WORK · CLIENTI · ANAGRAFICA"
+        title={
+          <>
+            <span className="spark-mark">Clienti</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Account, contatti, referenti."
         actions={
           <>
             <Button variant="outline" onClick={() => nav({ to: "/projects" })}>

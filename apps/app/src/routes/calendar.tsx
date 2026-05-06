@@ -301,6 +301,7 @@ function CalendarPage() {
   return (
     <div className="p-4 md:p-6 space-y-5 fade-in">
       <PageHeader
+        eyebrow="WORK · CALENDARIO · IL TUO MESE"
         title={greeting}
         description={ambient}
         actions={

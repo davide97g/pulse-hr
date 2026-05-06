@@ -185,46 +185,76 @@ function EmployeeDetailRoute() {
     navigate({ to: "/people" });
   };
 
+  const firstName = employee.name.split(" ")[0];
+  const lastName = employee.name.split(" ").slice(1).join(" ");
+
   return (
-    <div className="p-4 md:p-6 max-w-[1100px] mx-auto fade-in pb-28">
+    <div className="p-6 md:p-12 max-w-[1240px] mx-auto fade-in pb-28">
       <Link
         to="/people"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground press-scale mb-4"
+        className="inline-flex items-center gap-1.5 t-mono press-scale mb-6"
+        style={{ color: "var(--muted-foreground)" }}
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        Back to People
+        ← INDIETRO · PERSONE
       </Link>
 
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4 flex-wrap mb-6">
-        <div className="flex items-center gap-4 min-w-0">
+      {/* Editorial spread: portrait halo + display name */}
+      <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-8 md:gap-12 mb-10 items-start">
+        <div className="flex flex-col gap-4 items-start">
           <BirthdayHalo
             initials={employee.initials}
             color={employee.avatarColor}
-            size={72}
+            size={220}
             active={isBirthday(employee)}
           />
-          <div className="min-w-0">
-            <h1 className="text-2xl font-semibold tracking-tight truncate">{employee.name}</h1>
-            <div className="text-sm text-muted-foreground truncate">
-              {employee.role} · {employee.department}
-            </div>
-            <div className="mt-2 flex items-center gap-2 flex-wrap">
-              <StatusBadge status={employee.status} />
-              <span className="text-[11px] font-mono text-muted-foreground">{employee.id}</span>
-            </div>
+          <div className="flex flex-col gap-1">
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              {employee.id}
+            </span>
+            <StatusBadge status={employee.status} />
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="press-scale text-destructive hover:bg-destructive/10"
-            onClick={remove}
+        <div className="flex flex-col gap-4 min-w-0">
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            PEOPLE · SCHEDA · {employee.department.toUpperCase()}
+          </span>
+          <h1
+            className="t-display-it"
+            style={{
+              margin: 0,
+              fontSize: "clamp(64px, 9vw, 124px)",
+              wordBreak: "break-word",
+            }}
           >
-            <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-            Delete
-          </Button>
+            <span className="spark-mark">{firstName}</span>
+            <br />
+            {lastName || ""}
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </h1>
+          <p
+            className="t-body-lg"
+            style={{
+              color: "var(--fg-2)",
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontStyle: "italic",
+              fontSize: 20,
+              maxWidth: 560,
+            }}
+          >
+            {employee.role} · {employee.department} · {employee.location}
+          </p>
+          <div className="flex items-center gap-2 flex-wrap mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="press-scale text-destructive hover:bg-destructive/10"
+              onClick={remove}
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              Elimina
+            </Button>
+          </div>
         </div>
       </div>
 

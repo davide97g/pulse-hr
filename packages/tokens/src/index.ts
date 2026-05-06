@@ -75,17 +75,20 @@ export const token = {
 } as const;
 
 // ----- Themes -----
-export const THEMES = ["light", "dark", "employee", "hr", "admin", "manager", "finance"] as const;
+export const THEMES = ["light", "dark"] as const;
 export type Theme = (typeof THEMES)[number];
 
 // ----- Raw hex values for contexts that can't resolve CSS vars -----
 export const hex = {
-  // brand signature
+  // brand signature — lime is the only spark
   labs: "#b4ff39",
   labsHover: "#c6ff5a",
   ink: "#0b0b0d",
   cream: "#f2f2ee",
-  // role accents (marketing strip)
+  spark: "#b4ff39",
+  sparkInk: "#0a1400",
+  paper: "#f5f4f2",
+  // role accents (kept for role-identification chips, NOT theming)
   roleEmployee: "#b4ff39",
   roleManager: "#ffbf4a",
   roleHr: "#ff8a7a",

@@ -120,8 +120,14 @@ function ProjectsIndex() {
   return (
     <div className="p-4 md:p-6 fade-in space-y-5">
       <PageHeader
-        title="Projects"
-        description="Every active engagement across all clients."
+        eyebrow="WORK · COMMESSE · ATTIVE"
+        title={
+          <>
+            <span className="spark-mark">Commesse</span>
+            <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="Ogni engagement attivo, su tutti i clienti."
         actions={
           <Button onClick={() => setProjectForm({ open: true, initial: null })}>
             <Plus className="h-4 w-4 mr-2" />

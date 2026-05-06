@@ -180,13 +180,18 @@ function Moments() {
     return (
       <div className="p-10 max-w-2xl mx-auto text-center fade-in">
         <PageHeader
-          title={
+          eyebrow={
             <>
-              <span>Moments</span>
-              <NewBadge />
+              PEOPLE · MOMENTI · IL REEL DELLA SETTIMANA <NewBadge />
             </>
           }
-          description="A curated weekly reel of team highlights."
+          title={
+            <>
+              <span className="spark-mark">Momenti</span>
+              <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+            </>
+          }
+          description="Una curata raccolta dei migliori momenti del team."
         />
         <div className="rounded-lg border p-10 bg-card">
           <Sparkles className="h-8 w-8 mx-auto text-primary" />

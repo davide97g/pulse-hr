@@ -25,7 +25,7 @@ const preview: Preview = {
     theme: {
       name: "Theme",
       description: "Active Pulse theme",
-      defaultValue: "employee" as Theme,
+      defaultValue: "dark" as Theme,
       toolbar: {
         icon: "paintbrush",
         items: THEMES.map((t) => ({ value: t, title: t.charAt(0).toUpperCase() + t.slice(1) })),

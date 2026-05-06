@@ -31,9 +31,11 @@
     <script>
       (function () {
         try {
-          var t = localStorage.getItem("pulse.theme") || "employee";
+          var stored = localStorage.getItem("pulse.theme");
+          var t = stored === "light" || stored === "dark" ? stored : "dark";
           document.documentElement.dataset.theme = t;
-          if (t !== "light") document.documentElement.classList.add("dark");
+          document.documentElement.dataset.density = "comfortable";
+          if (t === "dark") document.documentElement.classList.add("dark");
         } catch (e) {}
       })();
     </script>

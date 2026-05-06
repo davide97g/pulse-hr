@@ -83,8 +83,13 @@ function Developers() {
   return (
     <div className="p-4 md:p-6 max-w-[1100px] mx-auto fade-in">
       <PageHeader
-        title="Developers"
-        description="API keys, webhooks and custom workflows"
+        eyebrow="WORKSPACE · DEVELOPERS · API & WEBHOOK"
+        title={
+          <>
+            Sviluppo<span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+          </>
+        }
+        description="API key, webhook, workflow custom."
         actions={
           <Button size="sm" variant="outline" className="press-scale" asChild>
             <a href="https://api.pulsehr.it/docs" target="_blank" rel="noreferrer">

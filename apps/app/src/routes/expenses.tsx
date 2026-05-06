@@ -150,8 +150,13 @@ function Expenses() {
       className="fade-in"
       header={
         <PageHeader
-          title="Expenses"
-          description="Submit, approve and reimburse expenses"
+          eyebrow="MONEY · SPESE · NOTE & RIMBORSI"
+          title={
+            <>
+              Spese<span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+            </>
+          }
+          description="Sottometti, approva, rimborsa."
           actions={
             <Button size="sm" onClick={() => openAction("submit-expense")}>
               <Plus className="h-4 w-4 mr-1.5" />
