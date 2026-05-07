@@ -1,0 +1,166 @@
+import type { LensId, MicroCardConfig } from "./types";
+
+export interface CardSignals {
+  pendingLeavesCount: number;
+  pendingLeavesToApprove: number;
+  pendingExpensesAmount: number;
+  pendingExpensesCount: number;
+  payrollAmountK: number;
+  payrollPeriod: string;
+  payrollStatus: string;
+  forecastBurnK: number;
+  forecastVsPlanPct: number;
+  forecastCommessaCode: string;
+  recruitingCandidates: number;
+  recruitingOffers: number;
+  pulseResponseRate: number;
+  pulseDeltaPp: number;
+  oneOnOneOpen: number;
+  oneOnOneLate: number;
+  kudosThisMonth: number;
+  kudosDelta: number;
+  growthOpen: number;
+  momentsToday: number;
+  timesheetsToClose: number;
+  weekNumber: number;
+  outToday: number;
+  newLeaveRequests: number;
+  meetingsToday: number;
+  meetingConflicts: number;
+  satMeanPct: number;
+  commesseAtRisk: number;
+  officesOpen: number;
+  officesTotal: number;
+  busiestOfficeName: string;
+  busiestOfficePct: number;
+}
+
+export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
+  if (lens === "sentiment") {
+    return [
+      {
+        eyebrow: "01 · PULSE",
+        title: "Survey",
+        big: `${Math.round(s.pulseResponseRate * 100)}%`,
+        caption: `tasso di risposta · ${s.pulseDeltaPp >= 0 ? "+" : ""}${s.pulseDeltaPp} vs scorso`,
+        accent: true,
+        status: "Chiude venerdì",
+        link: "/feedback",
+      },
+      {
+        eyebrow: "02 · 1-ON-1",
+        title: "Incontri",
+        big: String(s.oneOnOneOpen),
+        caption: `da pianificare · ${s.oneOnOneLate} in ritardo`,
+        link: "/people",
+      },
+      {
+        eyebrow: "03 · KUDOS",
+        title: "Grazie",
+        big: String(s.kudosThisMonth),
+        caption: `kudos questo mese · ${s.kudosDelta >= 0 ? "+" : ""}${s.kudosDelta} vs scorso`,
+        spark: true,
+        link: "/kudos",
+      },
+      {
+        eyebrow: "04 · GROWTH",
+        title: "Carriere",
+        big: String(s.growthOpen),
+        caption: "review trimestrale aperte",
+        link: "/growth",
+      },
+      {
+        eyebrow: "05 · MOMENTS",
+        title: "Auguri",
+        big: String(s.momentsToday),
+        caption: "compleanni e anniversari oggi",
+        link: "/moments",
+      },
+    ];
+  }
+
+  if (lens === "presence") {
+    return [
+      {
+        eyebrow: "01 · TIMESHEET",
+        title: "Da chiudere",
+        big: String(s.timesheetsToClose),
+        caption: `entro venerdì · week ${s.weekNumber}`,
+        accent: true,
+        status: "Solleciti pronti",
+        link: "/calendar",
+      },
+      {
+        eyebrow: "02 · LEAVE",
+        title: "Oggi fuori",
+        big: String(s.outToday),
+        caption: `ferie + malattia · ${s.newLeaveRequests} nuove richieste`,
+        link: "/leave",
+      },
+      {
+        eyebrow: "03 · CALENDAR",
+        title: "Riunioni",
+        big: String(s.meetingsToday),
+        caption: `eventi oggi · ${s.meetingConflicts} conflitti`,
+        link: "/calendar",
+      },
+      {
+        eyebrow: "04 · FORECAST",
+        title: "Saturazione",
+        big: `${s.satMeanPct}%`,
+        caption: `media team · ${s.commesseAtRisk} commesse a rischio`,
+        spark: true,
+        link: "/forecast",
+      },
+      {
+        eyebrow: "05 · OFFICES",
+        title: "Sedi",
+        big: `${s.officesOpen} / ${s.officesTotal}`,
+        caption: `tutte aperte · ${s.busiestOfficeName} al ${s.busiestOfficePct}%`,
+        link: "/offices",
+      },
+    ];
+  }
+
+  // workload (default)
+  return [
+    {
+      eyebrow: "01 · MONEY",
+      title: "Payroll",
+      big: `€ ${s.payrollAmountK}k`,
+      caption: `run di ${s.payrollPeriod} · ${s.payrollStatus}`,
+      accent: true,
+      status: "Approva entro venerdì",
+      link: "/payroll",
+    },
+    {
+      eyebrow: "02 · LEAVE",
+      title: "Riposo",
+      big: String(s.pendingLeavesCount),
+      caption: `richieste aperte · ${s.pendingLeavesToApprove} da approvare`,
+      link: "/leave",
+    },
+    {
+      eyebrow: "03 · KUDOS",
+      title: "Grazie",
+      big: String(s.kudosThisMonth),
+      caption: `kudos questo mese · ${s.kudosDelta >= 0 ? "+" : ""}${s.kudosDelta} vs scorso`,
+      spark: true,
+      link: "/kudos",
+    },
+    {
+      eyebrow: "04 · FORECAST",
+      title: "Burn",
+      big: `€ ${s.forecastBurnK}k`,
+      caption: `proiezione ${s.forecastCommessaCode} · ${s.forecastVsPlanPct >= 0 ? "+" : ""}${s.forecastVsPlanPct}% vs piano`,
+      link: "/forecast",
+    },
+    {
+      eyebrow: "05 · RECRUITING",
+      title: "Pipeline",
+      big: String(s.recruitingCandidates),
+      caption: `candidati attivi · ${s.recruitingOffers} offerte`,
+      link: "/recruiting",
+    },
+  ];
+}
