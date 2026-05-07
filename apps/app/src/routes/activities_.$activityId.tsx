@@ -1,36 +1,34 @@
-import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
-import {
-  ArrowLeft,
-  Briefcase,
-  Calendar,
-  Clock,
-  ExternalLink,
-  GitBranch,
-  Pencil,
-  User,
-} from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { ArrowLeft, ExternalLink, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { Badge } from "@pulse-hr/ui/primitives/badge";
-import { Button } from "@pulse-hr/ui/primitives/button";
-import { Card } from "@pulse-hr/ui/primitives/card";
-import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
-import { Avatar, PageHeader } from "@/components/app/AppShell";
 import { ActivityDialog } from "@/components/pm/ActivityDialog";
-import { IntegrationBadge } from "@/components/pm/IntegrationBadge";
 import { activityStatusMeta } from "@/lib/activity-status";
 import { activitiesTable, useActivities } from "@/lib/tables/activities";
 import { useProjects } from "@/lib/tables/projects";
-import { employeeById, type Activity } from "@/lib/mock-data";
+import { employeeById, type Activity, type ActivityStatus } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/activities_/$activityId")({
   head: ({ params }) => ({ meta: [{ title: `Activity ${params.activityId} — Pulse HR` }] }),
   component: ActivityDetailPage,
 });
 
+const HOURS_PER_DAY = 8;
+const fmtDays = (h: number) => {
+  const d = h / HOURS_PER_DAY;
+  return d >= 100 || Number.isInteger(d) ? `${Math.round(d)}gg` : `${d.toFixed(1)}gg`;
+};
+
+const MONTHS_IT = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+const fmtDate = (iso?: string) => {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return `${String(d.getDate()).padStart(2, "0")} ${MONTHS_IT[d.getMonth()]} ${d.getFullYear()}`;
+};
+
 function ActivityDetailPage() {
-  const { activityId } = useParams({ from: "/activities_/$activityId" });
-  const nav = useNavigate({ from: "/activities_/$activityId" });
+  const { activityId } = Route.useParams();
+  const nav = useNavigate();
   const activities = useActivities();
   const projects = useProjects();
   const [editing, setEditing] = useState(false);
@@ -41,206 +39,372 @@ function ActivityDetailPage() {
   const dependencies = activity
     ? activity.dependencies
         .map((id) => activities.find((a) => a.id === id))
-        .filter((a): a is NonNullable<typeof a> => Boolean(a))
+        .filter((a): a is Activity => Boolean(a))
     : [];
-  const dependents = activity ? activities.filter((a) => a.dependencies.includes(activity.id)) : [];
+  const dependents = activity
+    ? activities.filter((a) => a.dependencies.includes(activity.id))
+    : [];
 
   if (!activity) {
     return (
-      <div className="p-4 md:p-6">
-        <EmptyState
-          icon={<Calendar className="h-5 w-5" />}
-          title="Activity not found"
-          description="The activity may have been removed or is not available in this workspace."
-          action={
-            <Button onClick={() => nav({ to: "/activities" })}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to activities
-            </Button>
-          }
-        />
+      <div className="p-12 flex flex-col items-center gap-4 min-h-[60vh] justify-center">
+        <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+          ATTIVITÀ NON TROVATA
+        </span>
+        <button
+          type="button"
+          className="pill pill-ghost pill-sm"
+          onClick={() => nav({ to: "/activities" })}
+        >
+          <ArrowLeft className="h-3 w-3 mr-1" />
+          Torna alle attività
+        </button>
       </div>
     );
   }
 
   const statusMeta = activityStatusMeta[activity.status];
+  const status: ActivityStatus = activity.status;
 
   return (
-    <div className="p-4 md:p-6 fade-in space-y-5">
-      <Link
-        to="/activities"
-        className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-3 w-3 mr-1" />
-        All activities
-      </Link>
+    <div className="ph p-4 md:p-6 grid gap-9 min-h-[calc(100vh-3.5rem)]"
+      style={{ gridTemplateColumns: "minmax(0, 1.4fr) minmax(0, 1fr)" }}
+    >
+      {/* LEFT */}
+      <section className="flex flex-col gap-5 min-w-0">
+        <Link
+          to="/activities"
+          className="t-mono inline-flex items-center"
+          style={{
+            padding: "4px 10px",
+            borderRadius: 999,
+            border: "1px solid var(--line)",
+            color: "var(--muted-foreground)",
+            alignSelf: "flex-start",
+          }}
+        >
+          <ArrowLeft className="h-3 w-3 mr-1" />
+          ATTIVITÀ
+        </Link>
 
-      <PageHeader
-        title={
-          <span className="flex flex-wrap items-center gap-3">
-            {activity.title}
-            <Badge
-              variant="outline"
-              className="font-medium"
+        <div>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            {project?.code ?? "—"} · {statusMeta.label.toUpperCase()}
+          </span>
+          <h1
+            style={{
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontWeight: 400,
+              margin: "8px 0 0",
+              fontSize: "clamp(48px, 6vw, 64px)",
+              letterSpacing: "-0.04em",
+              lineHeight: 0.9,
+            }}
+          >
+            <span style={{ fontStyle: "italic" }}>{activity.title}</span>
+            <span style={{ color: "var(--spark)" }}>.</span>
+          </h1>
+        </div>
+
+        {activity.description && (
+          <div
+            style={{
+              border: "1px solid var(--line-strong)",
+              borderRadius: 12,
+              padding: "12px 14px",
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontStyle: "italic",
+              fontSize: 16,
+              lineHeight: 1.4,
+              color: "var(--fg-2)",
+            }}
+          >
+            {activity.description}
+          </div>
+        )}
+
+        <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
+          <div className="flex flex-col gap-1.5">
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              STATO
+            </span>
+            <div
               style={{
-                color: statusMeta.tone,
-                borderColor: `color-mix(in oklch, ${statusMeta.tone} 35%, transparent)`,
-                backgroundColor: `color-mix(in oklch, ${statusMeta.tone} 12%, transparent)`,
+                borderBottom: "1px solid var(--line-strong)",
+                paddingBottom: 8,
+                fontFamily: "Fraunces, ui-serif, serif",
+                fontSize: 22,
               }}
             >
               {statusMeta.label}
-            </Badge>
-          </span>
-        }
-        description={
-          <span className="flex flex-wrap items-center gap-2 text-xs">
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              STIMA
+            </span>
+            <div
+              style={{
+                borderBottom: "1px solid var(--line-strong)",
+                paddingBottom: 8,
+                fontFamily: "Fraunces, ui-serif, serif",
+                fontSize: 22,
+              }}
+            >
+              <span className="t-num">{fmtDays(activity.estimateHours)}</span>
+              <span
+                className="t-mono"
+                style={{ color: "var(--muted-foreground)", marginLeft: 6 }}
+              >
+                {activity.estimateHours}h
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              SCADENZA
+            </span>
+            <div
+              style={{
+                borderBottom: "1px solid var(--line-strong)",
+                paddingBottom: 8,
+                fontFamily: "JetBrains Mono, monospace",
+                fontSize: 16,
+              }}
+            >
+              {fmtDate(activity.endDate)}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 1fr" }}>
+          <div className="flex flex-col gap-1.5">
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              PROJECT
+            </span>
             {project ? (
               <Link
                 to="/projects/$projectId"
                 params={{ projectId: project.id }}
-                search={{ section: "activities" }}
-                className="inline-flex items-center gap-1 hover:underline"
+                className="flex items-center gap-2"
+                style={{
+                  borderBottom: "1px solid var(--line-strong)",
+                  paddingBottom: 8,
+                }}
               >
-                <Briefcase className="h-3 w-3" />
-                {project.name}
+                <span
+                  className="chip"
+                  style={{ border: "1px solid var(--line-strong)", background: "var(--bg-2)" }}
+                >
+                  {project.code}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "Fraunces, ui-serif, serif",
+                    fontStyle: "italic",
+                    fontSize: 18,
+                  }}
+                >
+                  {project.name}
+                </span>
               </Link>
             ) : (
-              "Project unavailable"
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                —
+              </span>
             )}
-            <span>·</span>
-            <span>{statusMeta.label}</span>
-            <span>·</span>
-            <span>{activity.estimateHours}h estimate</span>
-          </span>
-        }
-        actions={
-          <Button variant="outline" onClick={() => setEditing(true)}>
-            <Pencil className="h-4 w-4 mr-2" />
-            Edit
-          </Button>
-        }
-      />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="p-5 lg:col-span-2 space-y-5">
-          <section>
-            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
-              Description
-            </div>
-            <p className="text-sm leading-6 text-foreground">
-              {activity.description || "No description provided."}
-            </p>
-          </section>
-
-          <section>
-            <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
-              Schedule
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <DetailTile
-                icon={<Calendar className="h-4 w-4" />}
-                label="Start"
-                value={activity.startDate ?? "Unscheduled"}
-              />
-              <DetailTile
-                icon={<Calendar className="h-4 w-4" />}
-                label="End"
-                value={activity.endDate ?? "Unscheduled"}
-              />
-              <DetailTile
-                icon={<Clock className="h-4 w-4" />}
-                label="Estimate"
-                value={`${activity.estimateHours}h`}
-              />
-            </div>
-          </section>
-
-          {(dependencies.length > 0 || dependents.length > 0) && (
-            <section>
-              <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
-                Dependencies
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <DependencyList title="Waiting on" activities={dependencies} />
-                <DependencyList title="Unlocks" activities={dependents} />
-              </div>
-            </section>
-          )}
-        </Card>
-
-        <div className="space-y-4">
-          <Card className="p-5 space-y-4">
-            <div>
-              <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
-                Assignee
-              </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              ASSEGNATARIO
+            </span>
+            <div
+              className="flex items-center gap-2"
+              style={{
+                borderBottom: "1px solid var(--line-strong)",
+                paddingBottom: 8,
+              }}
+            >
               {assignee ? (
-                <div className="flex items-center gap-3">
-                  <Avatar
-                    initials={assignee.initials}
-                    color={assignee.avatarColor}
-                    size={36}
-                    employeeId={assignee.id}
-                  />
-                  <div>
-                    <div className="font-medium text-sm">{assignee.name}</div>
-                    <div className="text-xs text-muted-foreground">{assignee.role}</div>
-                  </div>
-                </div>
+                <>
+                  <span className="ph-avatar ph-avatar-xs">{assignee.initials}</span>
+                  <span
+                    style={{
+                      fontFamily: "Fraunces, ui-serif, serif",
+                      fontStyle: "italic",
+                      fontSize: 18,
+                    }}
+                  >
+                    {assignee.name}
+                  </span>
+                </>
               ) : (
-                <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                  <User className="h-4 w-4" />
-                  Unassigned
-                </div>
+                <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                  NON ASSEGNATA
+                </span>
               )}
             </div>
-
-            <div className="h-px bg-border" />
-
-            <div>
-              <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
-                Status
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ backgroundColor: statusMeta.tone }}
-                />
-                <span className="text-sm font-medium">{statusMeta.label}</span>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-5 space-y-3">
-            <div className="text-xs uppercase tracking-wide text-muted-foreground">
-              Linked work
-            </div>
-            {activity.ticketLink ? (
-              <a
-                href={activity.ticketLink.url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 text-sm hover:underline"
-              >
-                <IntegrationBadge
-                  provider={activity.ticketLink.provider}
-                  issueKey={activity.ticketLink.key}
-                />
-                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
-              </a>
-            ) : (
-              <div className="text-sm text-muted-foreground">No external issue linked.</div>
-            )}
-          </Card>
+          </div>
         </div>
-      </div>
+
+        {(dependencies.length > 0 || dependents.length > 0) && (
+          <div className="flex flex-col gap-2">
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              DIPENDENZE · {dependencies.length + dependents.length}
+            </span>
+            <div className="flex flex-col gap-1.5">
+              {dependencies.map((d) => (
+                <DepRow key={`dep-${d.id}`} kind="Aspetta" activity={d} />
+              ))}
+              {dependents.map((d) => (
+                <DepRow key={`unl-${d.id}`} kind="Sblocca" activity={d} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div
+          className="flex gap-2.5 items-center mt-2"
+          style={{ borderTop: "1px solid var(--line-strong)", paddingTop: 16 }}
+        >
+          <button
+            type="button"
+            className="pill pill-ghost"
+            onClick={() => nav({ to: "/activities" })}
+          >
+            ← Torna
+          </button>
+          <span className="flex-1" />
+          <button
+            type="button"
+            className="pill pill-dark"
+            onClick={() => setEditing(true)}
+          >
+            <Pencil className="h-3 w-3 mr-1.5" />
+            Modifica
+          </button>
+        </div>
+        {status && null}
+      </section>
+
+      {/* RIGHT */}
+      <aside
+        className="flex flex-col gap-5 min-h-0"
+        style={{ borderLeft: "1px solid var(--line)", paddingLeft: 28 }}
+      >
+        <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+          CONTESTO
+        </span>
+
+        <div className="flex flex-col gap-1.5">
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            FINESTRA
+          </span>
+          <div
+            className="t-num"
+            style={{ fontSize: 18 }}
+          >
+            {fmtDate(activity.startDate)} → {fmtDate(activity.endDate)}
+          </div>
+        </div>
+
+        {activity.ticketLink && (
+          <div className="flex flex-col gap-1.5">
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              TICKET COLLEGATO
+            </span>
+            <a
+              href={activity.ticketLink.url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2"
+              style={{
+                padding: "8px 12px",
+                border: "1px solid var(--line-strong)",
+                borderRadius: 999,
+                fontFamily: "JetBrains Mono, monospace",
+                fontSize: 11,
+                width: "fit-content",
+                color: "var(--fg)",
+              }}
+            >
+              {activity.ticketLink.provider.toUpperCase()} · {activity.ticketLink.key}
+              <ExternalLink className="h-3 w-3 text-muted-foreground" />
+            </a>
+          </div>
+        )}
+
+        {project && (
+          <div className="flex flex-col gap-1.5">
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              ALTRE ATTIVITÀ DEL PROJECT
+            </span>
+            <div className="flex flex-col gap-1.5">
+              {activities
+                .filter((a) => a.projectId === project.id && a.id !== activity.id)
+                .slice(0, 5)
+                .map((a) => {
+                  const m = activityStatusMeta[a.status];
+                  return (
+                    <Link
+                      key={a.id}
+                      to="/activities/$activityId"
+                      params={{ activityId: a.id }}
+                      className="grid gap-2 items-baseline"
+                      style={{
+                        gridTemplateColumns: "70px 1fr auto",
+                        padding: "8px 10px",
+                        border: "1px solid var(--line)",
+                        borderRadius: 10,
+                      }}
+                    >
+                      <span
+                        className="t-mono"
+                        style={{
+                          color:
+                            a.status === "blocked"
+                              ? "var(--spark)"
+                              : "var(--muted-foreground)",
+                        }}
+                      >
+                        {m.label.toUpperCase()}
+                      </span>
+                      <span
+                        className="truncate"
+                        style={{
+                          fontFamily: "Fraunces, ui-serif, serif",
+                          fontStyle: "italic",
+                          fontSize: 14,
+                        }}
+                      >
+                        {a.title}
+                      </span>
+                      <span
+                        className="t-mono"
+                        style={{ color: "var(--muted-foreground)" }}
+                      >
+                        {fmtDays(a.estimateHours)}
+                      </span>
+                    </Link>
+                  );
+                })}
+              {activities.filter((a) => a.projectId === project.id && a.id !== activity.id)
+                .length === 0 && (
+                <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                  NESSUN’ALTRA ATTIVITÀ
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </aside>
 
       <ActivityDialog
         open={editing}
         onClose={() => setEditing(false)}
         onSave={(next) => {
           activitiesTable.update(activity.id, next);
-          toast.success("Activity updated");
+          toast.success("Attività aggiornata");
         }}
         initial={activity}
         projectId={activity.projectId}
@@ -249,52 +413,39 @@ function ActivityDetailPage() {
   );
 }
 
-function DetailTile({
-  icon,
-  label,
-  value,
-}: {
-  icon: ReactNode;
-  label: string;
-  value: ReactNode;
-}) {
+function DepRow({ kind, activity }: { kind: string; activity: Activity }) {
+  const m = activityStatusMeta[activity.status];
   return (
-    <div className="rounded-md border bg-muted/30 p-3">
-      <div className="flex items-center gap-2 text-[11px] text-muted-foreground uppercase tracking-wide">
-        {icon}
-        {label}
-      </div>
-      <div className="mt-1 font-medium text-sm tabular-nums">{value}</div>
-    </div>
-  );
-}
-
-function DependencyList({ title, activities }: { title: string; activities: Activity[] }) {
-  return (
-    <div className="rounded-md border bg-muted/20 p-3">
-      <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-2">
-        {title}
-      </div>
-      {activities.length === 0 ? (
-        <div className="text-xs text-muted-foreground">None</div>
-      ) : (
-        <div className="space-y-2">
-          {activities.map((activity) => (
-            <Link
-              key={activity.id}
-              to="/activities/$activityId"
-              params={{ activityId: activity.id }}
-              className="flex items-center justify-between gap-3 text-sm rounded-md px-2 py-1.5 hover:bg-muted"
-            >
-              <span className="truncate">{activity.title}</span>
-              <Badge variant="outline" className="shrink-0 text-[10px]">
-                <GitBranch className="h-3 w-3 mr-1" />
-                {activityStatusMeta[activity.status].label}
-              </Badge>
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
+    <Link
+      to="/activities/$activityId"
+      params={{ activityId: activity.id }}
+      className="grid gap-3 items-center"
+      style={{
+        gridTemplateColumns: "70px 1fr 80px",
+        padding: "8px 10px",
+        border: "1px solid var(--line)",
+        borderRadius: 10,
+      }}
+    >
+      <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+        {kind.toUpperCase()}
+      </span>
+      <span
+        className="truncate"
+        style={{
+          fontFamily: "Fraunces, ui-serif, serif",
+          fontStyle: "italic",
+          fontSize: 15,
+        }}
+      >
+        {activity.title}
+      </span>
+      <span
+        className="t-mono"
+        style={{ color: "var(--muted-foreground)", textAlign: "right" }}
+      >
+        {m.label.toUpperCase()}
+      </span>
+    </Link>
   );
 }

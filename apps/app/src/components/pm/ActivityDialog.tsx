@@ -149,7 +149,7 @@ export function ActivityDialog({
                                 remainder < 0 ? "text-destructive" : "text-muted-foreground",
                               )}
                             >
-                              {remainder.toFixed(0)}h left
+                              {(remainder / 8).toFixed(1)}gg restanti
                             </span>
                           )}
                         </span>
@@ -196,13 +196,15 @@ export function ActivityDialog({
               />
             </div>
             <div className="grid gap-1.5">
-              <Label>Estimate (h)</Label>
+              <Label>Stima (gg)</Label>
               <Input
                 type="number"
                 min={0}
-                step={1}
-                value={draft.estimateHours}
-                onChange={(e) => set("estimateHours", Number(e.target.value) || 0)}
+                step={0.5}
+                value={(draft.estimateHours / 8).toString()}
+                onChange={(e) =>
+                  set("estimateHours", Math.max(0, Math.round(Number(e.target.value) * 8)))
+                }
               />
             </div>
           </div>
@@ -218,14 +220,14 @@ export function ActivityDialog({
               {overAlloc && <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />}
               <div>
                 <div>
-                  {selectedAssignee?.name ?? "Selected employee"} on{" "}
-                  <span className="font-mono">{project?.code ?? projectId}</span> for {windowStart || "—"} →{" "}
-                  {windowEnd || "—"}: {selectedRow.assignedHours.toFixed(0)}h booked of{" "}
-                  {selectedRow.capacityHours.toFixed(0)}h capacity.
+                  {selectedAssignee?.name ?? "Selected employee"} su{" "}
+                  <span className="font-mono">{project?.code ?? projectId}</span> per {windowStart || "—"} →{" "}
+                  {windowEnd || "—"}: {(selectedRow.assignedHours / 8).toFixed(1)}gg prenotati su{" "}
+                  {(selectedRow.capacityHours / 8).toFixed(1)}gg di capacità.
                 </div>
                 {overAlloc && (
                   <div className="mt-0.5 font-medium">
-                    Adding this activity would over-allocate by {overByHours.toFixed(0)}h.
+                    Aggiungere questa attività sovraccarica di {(overByHours / 8).toFixed(1)}gg.
                   </div>
                 )}
               </div>

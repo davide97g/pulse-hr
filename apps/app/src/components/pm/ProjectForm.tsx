@@ -195,21 +195,27 @@ export function ProjectForm({
           </div>
           <div className="grid grid-cols-[1fr_1fr_140px] gap-3">
             <div className="grid gap-1.5">
-              <Label>Budget hours</Label>
+              <Label>Stima (giorni)</Label>
               <Input
                 type="number"
                 min={0}
-                value={draft.budgetHours}
-                onChange={(e) => set("budgetHours", Number(e.target.value))}
+                step={0.5}
+                value={(draft.budgetHours / 8).toString()}
+                onChange={(e) =>
+                  set("budgetHours", Math.max(0, Math.round(Number(e.target.value) * 8)))
+                }
               />
             </div>
             <div className="grid gap-1.5">
-              <Label>Default rate (€/h)</Label>
+              <Label>Burn (giorni)</Label>
               <Input
                 type="number"
                 min={0}
-                value={draft.defaultBillableRate}
-                onChange={(e) => set("defaultBillableRate", Number(e.target.value))}
+                step={0.5}
+                value={(draft.burnedHours / 8).toString()}
+                onChange={(e) =>
+                  set("burnedHours", Math.max(0, Math.round(Number(e.target.value) * 8)))
+                }
               />
             </div>
             <div className="grid gap-1.5">
