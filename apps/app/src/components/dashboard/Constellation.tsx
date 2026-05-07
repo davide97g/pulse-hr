@@ -151,7 +151,7 @@ export function Constellation({
           style={{
             position: "relative",
             flex: 1,
-            background: dark ? "#0f0d0a" : "#fafaf6",
+            background: dark ? "var(--sidebar)" : "#fafaf6",
             border: "1px solid var(--line)",
             borderRadius: 22,
             overflow: "hidden",

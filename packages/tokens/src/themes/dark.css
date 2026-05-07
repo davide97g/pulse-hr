@@ -3,10 +3,10 @@
  * Lime is the brand spark; foreground = near-ink for max contrast.
  */
 html[data-theme="dark"] {
-  --background: oklch(0.14 0.006 280);
+  --background: oklch(0.21 0.006 280);
   --foreground: oklch(0.96 0.012 95);
 
-  --card: oklch(0.18 0.006 280);
+  --card: #111114;
   --card-foreground: oklch(0.96 0.012 95);
 
   --popover: oklch(0.2 0.006 280);
@@ -40,7 +40,7 @@ html[data-theme="dark"] {
   --border: oklch(1 0 0 / 0.08);
   --input: oklch(1 0 0 / 0.1);
 
-  --sidebar: oklch(0.12 0.006 280);
+  --sidebar: #111114;
   --sidebar-foreground: oklch(0.82 0.015 95);
   --sidebar-accent: oklch(0.22 0.012 280);
   --sidebar-accent-foreground: oklch(0.98 0.01 95);

@@ -275,7 +275,7 @@ function AppShellInner() {
           "hidden lg:flex flex-col border-r transition-[width] duration-200 shrink-0",
           collapsed ? "w-[64px]" : "w-[220px]",
         )}
-        style={{ borderColor: "var(--line)", background: "var(--bg)" }}
+        style={{ borderColor: "var(--line)", background: "var(--sidebar)" }}
       >
         <div
           className="h-14 flex items-center gap-2 px-4"
@@ -316,7 +316,7 @@ function AppShellInner() {
           <nav
             data-tour="sidebar-nav"
             className="flex-1 overflow-y-auto scroll-fade py-5 px-3"
-            style={{ ["--fade-bg" as string]: "var(--bg)" }}
+            style={{ ["--fade-bg" as string]: "var(--sidebar)" }}
           >
             {groups.map((group) => (
               <div key={group.label} className="mb-6">

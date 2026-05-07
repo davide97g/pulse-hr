@@ -1,21 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
-
-const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.pulsehr.it";
+import { ProposalEditorial } from "@/components/proposal/ProposalEditorial";
 
 export const Route = createFileRoute("/proposal/$id")({
-  head: () => ({ meta: [{ title: "Proposal — Pulse HR" }] }),
-  component: ProposalRedirect,
+  head: ({ params }) => ({ meta: [{ title: `Proposta ${params.id} — Pulse HR` }] }),
+  component: ProposalRoute,
 });
 
-function ProposalRedirect() {
+function ProposalRoute() {
   const { id } = Route.useParams();
-  useEffect(() => {
-    window.location.replace(`${FEEDBACK_URL}/proposals/${encodeURIComponent(id)}`);
-  }, [id]);
-  return (
-    <div className="flex min-h-[60vh] items-center justify-center text-sm text-muted-foreground">
-      Redirecting to Pulse Feedback…
-    </div>
-  );
+  return <ProposalEditorial id={id} />;
 }
