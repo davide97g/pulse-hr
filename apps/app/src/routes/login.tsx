@@ -207,7 +207,7 @@ function Login() {
                     description: `Check ${email} for instructions.`,
                   });
                 }}
-                className="text-xs text-muted-foreground hover:text-foreground"
+                className="text-xs text-foreground/70 hover:text-foreground"
               >
                 Forgot?
               </button>
@@ -324,7 +324,7 @@ function Login() {
         </form>
       )}
 
-      <p className="text-[11px] text-muted-foreground text-center mt-5">
+      <p className="text-[11px] text-foreground/70 text-center mt-5">
         By continuing you agree to our{" "}
         <a
           href="https://pulsehr.it/terms"

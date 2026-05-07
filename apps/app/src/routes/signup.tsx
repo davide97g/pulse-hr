@@ -376,11 +376,19 @@ function SignupSide({ stage }: { stage: Stage }) {
     <div>
       <div className="flex gap-0.5 mb-6">
         {[1, 2, 3, 4, 5].map((i) => (
-          <span key={i} className="h-1.5 w-1.5 rounded-full bg-[#b4ff39]" />
+          <span
+            key={i}
+            className="h-1.5 w-1.5 rounded-full"
+            style={{ background: "var(--spark)" }}
+          />
         ))}
       </div>
       <h2 className="font-display text-4xl leading-tight max-w-md">
-        Your workspace, <em className="italic text-[#b4ff39]">live in 60 seconds</em>.
+        Your workspace,{" "}
+        <em className="italic" style={{ color: "var(--spark)" }}>
+          live in 60 seconds
+        </em>
+        .
       </h2>
       <div className="mt-10 space-y-5 max-w-md">
         {steps.map((s, i) => {
@@ -391,28 +399,45 @@ function SignupSide({ stage }: { stage: Stage }) {
           return (
             <div
               key={s.k}
-              className={cn(
-                "flex items-start gap-4 rounded-lg p-4 transition-colors",
-                active && "bg-white/[0.04]",
-              )}
+              className="flex items-start gap-4 rounded-lg p-4 transition-colors"
+              style={
+                active
+                  ? { background: "color-mix(in oklch, var(--paper) 6%, transparent)" }
+                  : undefined
+              }
             >
               <div
-                className={cn(
-                  "h-8 w-8 rounded-md grid place-items-center text-xs font-medium shrink-0",
+                className="h-8 w-8 rounded-md grid place-items-center text-xs font-medium shrink-0"
+                style={
                   done
-                    ? "bg-[#b4ff39] text-[#0b0b0d]"
+                    ? { background: "var(--spark)", color: "var(--spark-ink)" }
                     : active
-                      ? "bg-white text-[#0b0b0d]"
-                      : "bg-white/10 text-white/70",
-                )}
+                      ? { background: "var(--paper)", color: "var(--ink)" }
+                      : {
+                          background: "color-mix(in oklch, var(--paper) 12%, transparent)",
+                          color: "color-mix(in oklch, var(--paper) 70%, transparent)",
+                        }
+                }
               >
                 {done ? <Check className="h-4 w-4" /> : i + 1}
               </div>
               <div>
-                <div className={cn("text-sm font-medium", active ? "text-white" : "text-white/80")}>
+                <div
+                  className="text-sm font-medium"
+                  style={{
+                    color: active
+                      ? "var(--paper)"
+                      : "color-mix(in oklch, var(--paper) 82%, transparent)",
+                  }}
+                >
                   {s.k}
                 </div>
-                <div className="text-xs text-white/50 mt-1 leading-relaxed">{s.d}</div>
+                <div
+                  className="text-xs mt-1 leading-relaxed"
+                  style={{ color: "color-mix(in oklch, var(--paper) 62%, transparent)" }}
+                >
+                  {s.d}
+                </div>
               </div>
             </div>
           );

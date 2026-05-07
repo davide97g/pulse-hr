@@ -1,5 +1,25 @@
 import { APP_VERSION } from "@/lib/version";
-import type { ReactNode } from "react";
+import { useLayoutEffect, type ReactNode } from "react";
+
+/**
+ * Pin <html> to dark while the auth screens are mounted, then restore the
+ * user's previous theme on unmount. Auth uses a dark editorial split that only
+ * reads correctly in dark mode (--ink stays dark, --paper stays light).
+ */
+function useForcedDarkTheme() {
+  useLayoutEffect(() => {
+    const html = document.documentElement;
+    const prevTheme = html.dataset.theme;
+    const prevDarkClass = html.classList.contains("dark");
+    html.dataset.theme = "dark";
+    html.classList.add("dark");
+    return () => {
+      if (prevTheme !== undefined) html.dataset.theme = prevTheme;
+      else delete html.dataset.theme;
+      html.classList.toggle("dark", prevDarkClass);
+    };
+  }, []);
+}
 
 export function AuthLayout({
   title,
@@ -14,6 +34,7 @@ export function AuthLayout({
   footer?: ReactNode;
   side?: ReactNode;
 }) {
+  useForcedDarkTheme();
   return (
     <div
       className="ph min-h-screen grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]"
@@ -42,7 +63,7 @@ export function AuthLayout({
           </span>
           <span
             className="t-mono"
-            style={{ color: "rgba(245,244,242,.55)" }}
+            style={{ color: "color-mix(in oklch, var(--paper) 55%, transparent)" }}
           >
             v{APP_VERSION}
           </span>
@@ -54,7 +75,7 @@ export function AuthLayout({
           className="grid gap-6"
           style={{
             gridTemplateColumns: "1fr 1fr 1fr",
-            borderTop: "1px solid rgba(255,255,255,.18)",
+            borderTop: "1px solid color-mix(in oklch, var(--paper) 18%, transparent)",
             paddingTop: 22,
           }}
         >
@@ -76,7 +97,10 @@ export function AuthLayout({
               >
                 {v}
               </div>
-              <span className="t-mono" style={{ color: "rgba(245,244,242,.55)" }}>
+              <span
+                className="t-mono"
+                style={{ color: "color-mix(in oklch, var(--paper) 55%, transparent)" }}
+              >
                 {l}
               </span>
             </div>
@@ -103,7 +127,10 @@ export function AuthLayout({
           </span>
         </div>
         <div>
-          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+          <span
+            className="t-mono"
+            style={{ color: "color-mix(in oklch, var(--foreground) 78%, transparent)" }}
+          >
             ACCEDI
           </span>
           <h1
@@ -122,7 +149,7 @@ export function AuthLayout({
           <p
             style={{
               marginTop: 12,
-              color: "var(--fg-2)",
+              color: "color-mix(in oklch, var(--foreground) 92%, transparent)",
               fontFamily: "Fraunces, ui-serif, serif",
               fontStyle: "italic",
               fontSize: 18,
@@ -139,7 +166,7 @@ export function AuthLayout({
               fontFamily: "Fraunces, ui-serif, serif",
               fontStyle: "italic",
               fontSize: 16,
-              color: "var(--muted-foreground)",
+              color: "color-mix(in oklch, var(--foreground) 80%, transparent)",
               marginTop: 8,
             }}
           >
@@ -148,7 +175,7 @@ export function AuthLayout({
         )}
         <span
           className="t-mono mt-auto"
-          style={{ color: "var(--muted-foreground)" }}
+          style={{ color: "color-mix(in oklch, var(--foreground) 65%, transparent)" }}
         >
           v{APP_VERSION}
         </span>
@@ -180,7 +207,7 @@ function DefaultEditorialHero() {
         style={{
           marginTop: 26,
           maxWidth: 460,
-          color: "rgba(245,244,242,.7)",
+          color: "color-mix(in oklch, var(--paper) 78%, transparent)",
           fontFamily: "Fraunces, ui-serif, serif",
           fontStyle: "italic",
           fontSize: 22,

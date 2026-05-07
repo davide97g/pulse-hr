@@ -53,17 +53,30 @@ const Ctx = createContext<{ theme: Theme; setTheme: (t: Theme) => void }>({
   setTheme: () => {},
 });
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => readStored());
+export function ThemeProvider({
+  children,
+  forced,
+}: {
+  children: ReactNode;
+  /** When set, locks the theme — ignores stored value and disables setTheme. */
+  forced?: Theme;
+}) {
+  const [theme, setThemeState] = useState<Theme>(() => forced ?? readStored());
 
   useEffect(() => {
-    applyTheme(theme);
-    try {
-      localStorage.setItem(STORAGE_KEY, theme);
-    } catch {}
-  }, [theme]);
+    const next = forced ?? theme;
+    applyTheme(next);
+    if (!forced) {
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch {}
+    }
+  }, [theme, forced]);
 
-  const value = useMemo(() => ({ theme, setTheme: setThemeState }), [theme]);
+  const value = useMemo(
+    () => ({ theme: forced ?? theme, setTheme: forced ? () => {} : setThemeState }),
+    [theme, forced],
+  );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

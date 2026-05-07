@@ -30,7 +30,10 @@ if (!el) throw new Error("#root not found");
 ReactDOM.createRoot(el).render(
   <React.StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-      <ThemeProvider>
+      {/* Feedback chrome uses .room-dark (an inverted dark surface that flips
+        with the host theme). To render a true-dark visual surface we lock the
+        host theme to "light" so .room-dark uses dark --ink as designed. */}
+      <ThemeProvider forced="light">
         <CookieConsentBanner />
         <Analytics />
         <RouterProvider router={router} />

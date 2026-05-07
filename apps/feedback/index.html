@@ -22,20 +22,16 @@
         background-color: #0b0b0d;
         color: #f2f2ee;
       }
-      html[data-theme="light"],
-      html[data-theme="light"] body {
-        background-color: #fafaf7;
-        color: #1a1a1d;
-      }
     </style>
     <script>
+      // Feedback always renders a dark editorial surface via `.room-dark`.
+      // That class only renders truly dark when the host theme is "light"
+      // (--ink=foreground=dark). So we lock the host to light theme.
       (function () {
         try {
-          var stored = localStorage.getItem("pulse.theme");
-          var t = stored === "light" || stored === "dark" ? stored : "dark";
-          document.documentElement.dataset.theme = t;
+          document.documentElement.dataset.theme = "light";
           document.documentElement.dataset.density = "comfortable";
-          if (t === "dark") document.documentElement.classList.add("dark");
+          document.documentElement.classList.remove("dark");
         } catch (e) {}
       })();
     </script>
