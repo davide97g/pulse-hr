@@ -24,14 +24,12 @@
       }
     </style>
     <script>
-      // Feedback always renders a dark editorial surface via `.room-dark`.
-      // That class only renders truly dark when the host theme is "light"
-      // (--ink=foreground=dark). So we lock the host to light theme.
+      // Feedback is dark-only — paint dark before React mounts.
       (function () {
         try {
-          document.documentElement.dataset.theme = "light";
+          document.documentElement.dataset.theme = "dark";
           document.documentElement.dataset.density = "comfortable";
-          document.documentElement.classList.remove("dark");
+          document.documentElement.classList.add("dark");
         } catch (e) {}
       })();
     </script>

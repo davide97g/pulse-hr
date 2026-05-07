@@ -30,10 +30,11 @@ if (!el) throw new Error("#root not found");
 ReactDOM.createRoot(el).render(
   <React.StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-      {/* Feedback chrome uses .room-dark (an inverted dark surface that flips
-        with the host theme). To render a true-dark visual surface we lock the
-        host theme to "light" so .room-dark uses dark --ink as designed. */}
-      <ThemeProvider forced="light">
+      {/* Feedback is dark-only. We lock --paper / --ink to fixed values in
+        styles.css so .room-dark and color: var(--paper) keep working
+        independently of the active palette, and force theme=dark for
+        Tailwind tokens (bg-card, bg-background, etc.). */}
+      <ThemeProvider forced="dark">
         <CookieConsentBanner />
         <Analytics />
         <RouterProvider router={router} />

@@ -6,3 +6,16 @@
 @custom-variant dark (&:is(.dark *));
 
 @import "@pulse-hr/tokens/index.css";
+
+/* Feedback is dark-only. Decouple --paper/--ink from the active palette so
+   `.room-dark` and `var(--paper)` always resolve to the editorial near-white
+   on near-black, no matter which theme is active. */
+:root,
+html[data-theme] {
+  --paper: oklch(0.96 0.012 95);
+  --paper-2: oklch(0.92 0.012 95);
+  --paper-3: oklch(0.86 0.012 95);
+  --ink: oklch(0.14 0.006 280);
+  --ink-2: oklch(0.18 0.006 280);
+  --ink-3: oklch(0.22 0.006 280);
+}

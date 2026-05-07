@@ -153,7 +153,7 @@ export function ContributionDetail({
 
   if (state === "loading") {
     return (
-      <div className="room-light p-4 md:p-6 max-w-[880px] mx-auto w-full">
+      <div className="p-4 md:p-6 max-w-[880px] mx-auto w-full">
         <div className="h-6 w-32 bg-muted rounded animate-pulse mb-4" />
         <div className="h-40 bg-muted/50 rounded-[var(--radius-md)] animate-pulse" />
       </div>
@@ -162,7 +162,7 @@ export function ContributionDetail({
 
   if (state === "not-found" || !item) {
     return (
-      <div className="room-light p-4 md:p-6 max-w-[880px] mx-auto w-full">
+      <div className="p-4 md:p-6 max-w-[880px] mx-auto w-full">
         <button
           onClick={() => navigate({ to: "/" })}
           className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground mb-4"
@@ -185,7 +185,7 @@ export function ContributionDetail({
   const pageMeta = item.kind === "comment" ? item.pageMeta : null;
 
   return (
-    <div className="room-light p-4 md:p-6 max-w-[880px] mx-auto w-full">
+    <div className="p-4 md:p-6 max-w-[880px] mx-auto w-full">
       <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
         <Link
           to="/"
