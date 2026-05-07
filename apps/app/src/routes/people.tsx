@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PeopleEditorialList } from "@/components/people/PeopleEditorialList";
+import { EmployeesView } from "@/components/people/EmployeesView";
 
 export const Route = createFileRoute("/people")({
   head: () => ({ meta: [{ title: "Persone — Pulse HR" }] }),
@@ -8,5 +8,5 @@ export const Route = createFileRoute("/people")({
 });
 
 function People() {
-  return <PeopleEditorialList />;
+  return <EmployeesView />;
 }

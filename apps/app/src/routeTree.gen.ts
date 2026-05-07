@@ -42,6 +42,7 @@ import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ProposalIdRouteImport } from './routes/proposal.$id'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
+import { Route as PeopleNewRouteImport } from './routes/people_.new'
 import { Route as PeopleEmployeeIdRouteImport } from './routes/people_.$employeeId'
 import { Route as OfficesOfficeIdRouteImport } from './routes/offices.$officeId'
 import { Route as LogRecapRouteImport } from './routes/log.recap'
@@ -55,6 +56,7 @@ import { Route as CommentIdRouteImport } from './routes/comment.$id'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 import { Route as AdminModulesRouteImport } from './routes/admin.modules'
 import { Route as ActivitiesActivityIdRouteImport } from './routes/activities_.$activityId'
+import { Route as PeopleEmployeeIdEditRouteImport } from './routes/people_.$employeeId_.edit'
 import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$officeId.$roomId'
 
 const WelcomeRoute = WelcomeRouteImport.update({
@@ -222,6 +224,11 @@ const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
   path: '/projects/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PeopleNewRoute = PeopleNewRouteImport.update({
+  id: '/people_/new',
+  path: '/people/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PeopleEmployeeIdRoute = PeopleEmployeeIdRouteImport.update({
   id: '/people_/$employeeId',
   path: '/people/$employeeId',
@@ -287,6 +294,11 @@ const ActivitiesActivityIdRoute = ActivitiesActivityIdRouteImport.update({
   path: '/activities/$activityId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PeopleEmployeeIdEditRoute = PeopleEmployeeIdEditRouteImport.update({
+  id: '/people_/$employeeId_/edit',
+  path: '/people/$employeeId/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OfficesOfficeIdRoomIdRoute = OfficesOfficeIdRoomIdRouteImport.update({
   id: '/$roomId',
   path: '/$roomId',
@@ -334,6 +346,7 @@ export interface FileRoutesByFullPath {
   '/log/recap': typeof LogRecapRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/people/$employeeId': typeof PeopleEmployeeIdRoute
+  '/people/new': typeof PeopleNewRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/proposal/$id': typeof ProposalIdRoute
   '/clients/': typeof ClientsIndexRoute
@@ -341,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/log/': typeof LogIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
+  '/people/$employeeId/edit': typeof PeopleEmployeeIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -380,6 +394,7 @@ export interface FileRoutesByTo {
   '/log/recap': typeof LogRecapRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/people/$employeeId': typeof PeopleEmployeeIdRoute
+  '/people/new': typeof PeopleNewRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/proposal/$id': typeof ProposalIdRoute
   '/clients': typeof ClientsIndexRoute
@@ -387,6 +402,7 @@ export interface FileRoutesByTo {
   '/log': typeof LogIndexRoute
   '/projects': typeof ProjectsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
+  '/people/$employeeId/edit': typeof PeopleEmployeeIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -430,6 +446,7 @@ export interface FileRoutesById {
   '/log/recap': typeof LogRecapRoute
   '/offices/$officeId': typeof OfficesOfficeIdRouteWithChildren
   '/people_/$employeeId': typeof PeopleEmployeeIdRoute
+  '/people_/new': typeof PeopleNewRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/proposal/$id': typeof ProposalIdRoute
   '/clients/': typeof ClientsIndexRoute
@@ -437,6 +454,7 @@ export interface FileRoutesById {
   '/log/': typeof LogIndexRoute
   '/projects/': typeof ProjectsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
+  '/people_/$employeeId_/edit': typeof PeopleEmployeeIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -481,6 +499,7 @@ export interface FileRouteTypes {
     | '/log/recap'
     | '/offices/$officeId'
     | '/people/$employeeId'
+    | '/people/new'
     | '/projects/$projectId'
     | '/proposal/$id'
     | '/clients/'
@@ -488,6 +507,7 @@ export interface FileRouteTypes {
     | '/log/'
     | '/projects/'
     | '/offices/$officeId/$roomId'
+    | '/people/$employeeId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -527,6 +547,7 @@ export interface FileRouteTypes {
     | '/log/recap'
     | '/offices/$officeId'
     | '/people/$employeeId'
+    | '/people/new'
     | '/projects/$projectId'
     | '/proposal/$id'
     | '/clients'
@@ -534,6 +555,7 @@ export interface FileRouteTypes {
     | '/log'
     | '/projects'
     | '/offices/$officeId/$roomId'
+    | '/people/$employeeId/edit'
   id:
     | '__root__'
     | '/'
@@ -576,6 +598,7 @@ export interface FileRouteTypes {
     | '/log/recap'
     | '/offices/$officeId'
     | '/people_/$employeeId'
+    | '/people_/new'
     | '/projects/$projectId'
     | '/proposal/$id'
     | '/clients/'
@@ -583,6 +606,7 @@ export interface FileRouteTypes {
     | '/log/'
     | '/projects/'
     | '/offices/$officeId/$roomId'
+    | '/people_/$employeeId_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -617,9 +641,11 @@ export interface RootRouteChildren {
   AdminModulesRoute: typeof AdminModulesRoute
   CommentIdRoute: typeof CommentIdRoute
   PeopleEmployeeIdRoute: typeof PeopleEmployeeIdRoute
+  PeopleNewRoute: typeof PeopleNewRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
   ProposalIdRoute: typeof ProposalIdRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
+  PeopleEmployeeIdEditRoute: typeof PeopleEmployeeIdEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -855,6 +881,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/people_/new': {
+      id: '/people_/new'
+      path: '/people/new'
+      fullPath: '/people/new'
+      preLoaderRoute: typeof PeopleNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/people_/$employeeId': {
       id: '/people_/$employeeId'
       path: '/people/$employeeId'
@@ -944,6 +977,13 @@ declare module '@tanstack/react-router' {
       path: '/activities/$activityId'
       fullPath: '/activities/$activityId'
       preLoaderRoute: typeof ActivitiesActivityIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/people_/$employeeId_/edit': {
+      id: '/people_/$employeeId_/edit'
+      path: '/people/$employeeId/edit'
+      fullPath: '/people/$employeeId/edit'
+      preLoaderRoute: typeof PeopleEmployeeIdEditRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offices/$officeId/$roomId': {
@@ -1058,9 +1098,11 @@ const rootRouteChildren: RootRouteChildren = {
   AdminModulesRoute: AdminModulesRoute,
   CommentIdRoute: CommentIdRoute,
   PeopleEmployeeIdRoute: PeopleEmployeeIdRoute,
+  PeopleNewRoute: PeopleNewRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
   ProposalIdRoute: ProposalIdRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
+  PeopleEmployeeIdEditRoute: PeopleEmployeeIdEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,47 +1,74 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { type Employee, type EmployeeStatus, departments, projects } from "@/lib/mock-data";
-import { employeesTable, useEmployee, useEmployees } from "@/lib/tables/employees";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@pulse-hr/ui/primitives/dialog";
-import { Input } from "@pulse-hr/ui/primitives/input";
-import { Label } from "@pulse-hr/ui/primitives/label";
+import { type Employee } from "@/lib/mock-data";
+import { useEmployee, useEmployees } from "@/lib/tables/employees";
 
-const STATUSES: Array<[EmployeeStatus, string]> = [
-  ["active", "Active"],
-  ["remote", "Remote"],
-  ["on_leave", "On leave"],
-  ["offboarding", "Offboarding"],
+function tenureYears(joinDate: string): number {
+  const days = (Date.now() - new Date(joinDate).getTime()) / 86_400_000;
+  return Math.max(0, days / 365.25);
+}
+
+function levelFor(salary: number): string {
+  if (salary >= 90_000) return "L5";
+  if (salary >= 70_000) return "L4";
+  if (salary >= 55_000) return "L3";
+  if (salary >= 40_000) return "L2";
+  return "L1";
+}
+
+function focusBarsFor(emp: Employee): number[] {
+  // Deterministic 12-week pseudo-series from employee id so the chart is stable.
+  const seed = Array.from(emp.id).reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const out: number[] = [];
+  for (let i = 0; i < 12; i++) {
+    out.push(28 + ((seed * (i + 7)) % 20));
+  }
+  return out;
+}
+
+function firstName(full: string): string {
+  return full.split(" ")[0] ?? full;
+}
+function lastName(full: string): string {
+  const parts = full.split(" ");
+  return parts.length > 1 ? parts.slice(1).join(" ") : "";
+}
+
+function statusInk(status: Employee["status"]): string {
+  switch (status) {
+    case "active":
+      return "var(--spark)";
+    case "remote":
+      return "var(--fg-2)";
+    case "on_leave":
+      return "var(--muted-foreground)";
+    case "offboarding":
+      return "var(--muted-foreground)";
+  }
+}
+
+const SKILL_PRESET: Array<[string, number]> = [
+  ["Design system", 92],
+  ["Visual", 88],
+  ["Research", 72],
+  ["Front-end", 54],
+  ["Leadership", 65],
 ];
 
-function seniorityFromJoin(join: string): string {
-  const j = new Date(join);
-  const now = new Date();
-  const days = Math.floor((now.getTime() - j.getTime()) / 86_400_000);
-  if (days < 30) return `${days} gg`;
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months} mesi`;
-  const y = Math.floor(months / 12);
-  const rem = months % 12;
-  return rem === 0 ? `${y} anni` : `${y}a ${rem}m`;
-}
-
-function projectFor(empId: string): string {
-  return projects.find((c) => c.ownerId === empId)?.code ?? "—";
-}
+const ACTIVITY_PRESET: Array<[string, string, "spark" | undefined]> = [
+  ["06 mag", "Kudos da Marco", "spark"],
+  ["03 mag", "Review L4 → L5", undefined],
+  ["28 apr", "Mentor di Sara", undefined],
+  ["20 apr", "Workshop DS v3", undefined],
+  ["12 apr", "1:1 con Davide", undefined],
+];
 
 export function PersonEditorialSpread({ employeeId }: { employeeId: string }) {
   const employee = useEmployee(employeeId);
   if (!employee) {
     return (
       <div className="p-12 flex items-center justify-center">
-        <div style={{ color: "var(--muted-foreground)" }} className="t-mono">
+        <div className="t-mono" style={{ color: "var(--muted-foreground)" }}>
           PERSONA NON TROVATA
         </div>
       </div>
@@ -53,93 +80,73 @@ export function PersonEditorialSpread({ employeeId }: { employeeId: string }) {
 function Spread({ employee }: { employee: Employee }) {
   const navigate = useNavigate();
   const all = useEmployees();
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState<Partial<Employee> | null>(null);
+  const idx = useMemo(() => all.findIndex((e) => e.id === employee.id), [all, employee.id]);
 
-  const idx = useMemo(
-    () => all.findIndex((e) => e.id === employee.id),
-    [all, employee.id],
-  );
+  const focus = useMemo(() => focusBarsFor(employee), [employee]);
+  const focusMax = Math.max(...focus);
+  const focusTotal = focus.reduce((a, b) => a + b, 0);
 
-  function startEdit() {
-    setDraft({
-      name: employee.name,
-      email: employee.email,
-      phone: employee.phone,
-      role: employee.role,
-      department: employee.department,
-      manager: employee.manager,
-      location: employee.location,
-      status: employee.status,
-      joinDate: employee.joinDate,
-      salary: employee.salary,
-    });
-    setEditing(true);
-  }
-
-  function commitEdit() {
-    if (!draft) return;
-    employeesTable.update(employee.id, draft);
-    setEditing(false);
-    setDraft(null);
-    toast.success(`${draft.name ?? employee.name} aggiornato`);
-  }
+  // ⌘E to edit
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "e") {
+        e.preventDefault();
+        navigate({ to: "/people/$employeeId/edit", params: { employeeId: employee.id } });
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [employee.id, navigate]);
 
   return (
     <div
-      className="ph room-light"
-      style={{
-        minHeight: "calc(100vh - 3.5rem)",
-        padding: "32px 24px",
-      }}
+      className="p-4 md:p-6"
+      style={{ minHeight: "calc(100vh - 3.5rem)" }}
     >
-      <main
-        className="grid gap-10"
+      <button
+        type="button"
+        onClick={() => navigate({ to: "/people" })}
+        className="t-mono"
         style={{
-          gridTemplateColumns: "minmax(0, 1.05fr) minmax(0, 1fr)",
+          color: "var(--muted-foreground)",
+          padding: "4px 10px",
+          borderRadius: 999,
+          border: "1px solid var(--line)",
+          background: "transparent",
+          cursor: "pointer",
+          marginBottom: 16,
+        }}
+      >
+        ← EMPLOYEES
+      </button>
+
+      <main
+        className="grid gap-8"
+        style={{
+          gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.2fr)",
           maxWidth: 1400,
           margin: "0 auto",
         }}
       >
-        {/* LEFT — portrait + meta column */}
-        <section className="flex flex-col gap-4 min-h-0">
-          <button
-            type="button"
-            onClick={() => navigate({ to: "/people" })}
-            className="t-mono self-start"
-            style={{
-              color: "var(--muted-foreground)",
-              padding: "4px 10px",
-              borderRadius: 999,
-              border: "1px solid var(--line)",
-              background: "transparent",
-              cursor: "pointer",
-            }}
-          >
-            ← PERSONE
-          </button>
-
+        {/* LEFT — portrait + meta + focus + docs */}
+        <section className="flex flex-col gap-3.5 min-h-0">
           <div
             className="placeholder-img"
-            style={{
-              width: "100%",
-              minHeight: 480,
-              borderRadius: 22,
-            }}
+            style={{ width: "100%", height: 380, borderRadius: 18 }}
           >
             <span className="cap t-mono-sm">RITRATTO · {employee.name.toUpperCase()}</span>
           </div>
 
           <div
-            className="grid gap-0 pt-4"
+            className="grid pt-3"
             style={{
               gridTemplateColumns: "1fr 1fr 1fr",
-              borderTop: "1px solid var(--line)",
+              borderTop: "1px solid var(--line-strong)",
             }}
           >
             {[
-              ["IN AZIENDA", seniorityFromJoin(employee.joinDate)],
-              ["PROJECT", projectFor(employee.id)],
+              ["TENURE", `${tenureYears(employee.joinDate).toFixed(1)} a`],
+              ["LIVELLO", levelFor(employee.salary)],
               ["MANAGER", employee.manager ?? "—"],
             ].map(([l, v], i) => (
               <div
@@ -154,33 +161,122 @@ function Spread({ employee }: { employee: Employee }) {
                 </span>
                 <div
                   className="t-num"
-                  style={{ fontSize: 22, marginTop: 6, letterSpacing: "-0.02em" }}
+                  style={{ fontSize: 22, marginTop: 4, letterSpacing: "-0.02em" }}
                 >
                   {v}
                 </div>
               </div>
             ))}
           </div>
+
+          {/* Focus chart */}
+          <div
+            className="flex flex-col gap-2.5"
+            style={{
+              border: "1px solid var(--line)",
+              borderRadius: 14,
+              padding: "14px 16px",
+            }}
+          >
+            <div className="flex justify-between">
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                FOCUS · 12 SETT
+              </span>
+              <span className="t-mono" style={{ color: "var(--spark)" }}>
+                {focusTotal}h
+              </span>
+            </div>
+            <div className="flex items-end gap-1" style={{ height: 56 }}>
+              {focus.map((f, i) => (
+                <div
+                  key={i}
+                  style={{
+                    flex: 1,
+                    height: `${(f / focusMax) * 100}%`,
+                    background: i === focus.length - 1 ? "var(--spark)" : "var(--fg)",
+                    borderRadius: "2px 2px 0 0",
+                    minHeight: 4,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Documents */}
+          <div
+            className="flex flex-col gap-2"
+            style={{
+              border: "1px solid var(--line)",
+              borderRadius: 14,
+              padding: "14px 16px",
+            }}
+          >
+            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              DOCUMENTI · 4
+            </span>
+            {["Contratto firmato", "Codice fiscale", "IBAN aggiornato", "NDA"].map((d, i) => (
+              <div
+                key={i}
+                className="flex justify-between items-center"
+                style={{
+                  padding: "4px 0",
+                  borderTop: i === 0 ? "none" : "1px solid var(--line)",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "Fraunces, ui-serif, serif",
+                    fontStyle: "italic",
+                    fontSize: 16,
+                  }}
+                >
+                  {d}
+                </span>
+                <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                  PDF →
+                </span>
+              </div>
+            ))}
+          </div>
         </section>
 
-        {/* RIGHT — typographic spread */}
-        <section className="flex flex-col justify-between min-h-0">
+        {/* RIGHT */}
+        <section className="flex flex-col gap-4 min-h-0">
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                PERSONA · {String(idx + 1).padStart(3, "0")} / {String(all.length).padStart(3, "0")}
+                EMP · {String(idx + 1).padStart(3, "0")} / {String(all.length).padStart(3, "0")}
               </span>
               <span className="dot" />
-              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              <span className="t-mono" style={{ color: statusInk(employee.status) }}>
                 {employee.status.toUpperCase().replace("_", " ")}
               </span>
+              <span style={{ flex: 1 }} />
+              <button
+                type="button"
+                className="pill pill-ghost pill-sm"
+                onClick={() =>
+                  navigate({
+                    to: "/people/$employeeId/edit",
+                    params: { employeeId: employee.id },
+                  })
+                }
+              >
+                ⌘E Modifica
+              </button>
+              <button type="button" className="pill pill-ghost pill-sm">
+                ⌘L Leave
+              </button>
+              <button type="button" className="pill pill-dark pill-sm">
+                Avvia 1:1
+              </button>
             </div>
             <h1
               style={{
-                margin: "20px 0 0",
+                margin: "12px 0 0",
                 fontFamily: "Fraunces, ui-serif, serif",
                 fontWeight: 400,
-                fontSize: "clamp(72px, 8vw, 124px)",
+                fontSize: "clamp(64px, 7vw, 96px)",
                 lineHeight: 0.86,
                 letterSpacing: "-0.045em",
               }}
@@ -192,36 +288,35 @@ function Spread({ employee }: { employee: Employee }) {
             </h1>
             <p
               style={{
-                marginTop: 24,
+                marginTop: 18,
                 maxWidth: 480,
                 color: "var(--fg-2)",
                 fontFamily: "Fraunces, ui-serif, serif",
                 fontStyle: "italic",
-                fontSize: 22,
+                fontSize: 19,
                 lineHeight: 1.35,
                 letterSpacing: "-0.01em",
               }}
             >
-              {employee.role}, {employee.location}.
-              {employee.status === "active" && " Operativa al momento."}
-              {employee.status === "remote" && " In remoto questa settimana."}
-              {employee.status === "on_leave" && " In leave."}
-              {employee.status === "offboarding" && " In offboarding."}
+              {employee.role}, {employee.location}.{" "}
+              {tenureYears(employee.joinDate).toFixed(1)} anni in PulseHR.
+              {employee.manager ? ` Riporta a ${employee.manager}.` : ""}
             </p>
           </div>
 
           <div
-            className="grid gap-6 pt-5 mt-6"
+            className="grid pt-4"
             style={{
               gridTemplateColumns: "1fr 1fr",
+              gap: 18,
               borderTop: "1px solid var(--line-strong)",
             }}
           >
-            <DetailBlock label="RUOLO" value={employee.role} />
-            <DetailBlock label="DIPARTIMENTO" value={employee.department} />
-            <DetailBlock label="EMAIL" value={employee.email} mono />
-            <DetailBlock label="LOCATION" value={employee.location} />
-            <DetailBlock
+            <DetailField label="RUOLO" value={employee.role} />
+            <DetailField label="DIPARTIMENTO" value={employee.department} />
+            <DetailField label="EMAIL" value={employee.email} mono />
+            <DetailField label="TEL" value={employee.phone || "—"} mono />
+            <DetailField
               label="START"
               value={new Date(employee.joinDate).toLocaleDateString("it-IT", {
                 day: "2-digit",
@@ -230,108 +325,101 @@ function Spread({ employee }: { employee: Employee }) {
               })}
               mono
             />
-            <DetailBlock label="RAL" value={`€ ${employee.salary.toLocaleString("it-IT")}`} />
+            <DetailField label="LOCATION" value={employee.location} />
+            <DetailField label="RAL" value={`€ ${employee.salary.toLocaleString("it-IT")}`} />
+            <DetailField label="CONTRATTO" value={employee.employmentType} />
           </div>
 
-          <div className="flex items-center gap-2.5 mt-7 flex-wrap">
-            <button type="button" className="pill pill-dark" onClick={startEdit}>
-              Modifica scheda
-            </button>
-            <button type="button" className="pill pill-ghost">
-              Avvia 1:1
-            </button>
-            <button type="button" className="pill pill-ghost">
-              Kudos
-            </button>
-            <span className="flex-1" />
-            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              ⌘E MODIFICA · ⌘L LEAVE
-            </span>
+          {/* Skills + Activity */}
+          <div
+            className="grid pt-4"
+            style={{
+              gridTemplateColumns: "1fr 1fr",
+              gap: 16,
+              borderTop: "1px solid var(--line-strong)",
+            }}
+          >
+            <div className="flex flex-col gap-2">
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                SKILL
+              </span>
+              {SKILL_PRESET.map((s, i) => (
+                <div
+                  key={i}
+                  className="grid items-center gap-2"
+                  style={{ gridTemplateColumns: "100px 1fr 30px" }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "Fraunces, ui-serif, serif",
+                      fontStyle: "italic",
+                      fontSize: 15,
+                    }}
+                  >
+                    {s[0]}
+                  </span>
+                  <div style={{ height: 4, background: "var(--line)", borderRadius: 999 }}>
+                    <div
+                      style={{
+                        width: `${s[1]}%`,
+                        height: "100%",
+                        background: i === 0 ? "var(--spark)" : "var(--fg)",
+                        borderRadius: 999,
+                      }}
+                    />
+                  </div>
+                  <span
+                    className="t-mono"
+                    style={{ textAlign: "right", color: "var(--muted-foreground)" }}
+                  >
+                    {s[1]}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col gap-1.5 overflow-hidden">
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                ATTIVITÀ RECENTE
+              </span>
+              {ACTIVITY_PRESET.map((a, i) => (
+                <div
+                  key={i}
+                  className="grid"
+                  style={{
+                    gridTemplateColumns: "60px 1fr",
+                    gap: 10,
+                    padding: "6px 0",
+                    borderTop: i === 0 ? "none" : "1px solid var(--line)",
+                  }}
+                >
+                  <span
+                    className="t-mono"
+                    style={{ color: a[2] === "spark" ? "var(--spark)" : "var(--muted-foreground)" }}
+                  >
+                    {a[0]}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "Fraunces, ui-serif, serif",
+                      fontStyle: "italic",
+                      fontSize: 15,
+                    }}
+                  >
+                    {a[1]}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       </main>
-
-      <Dialog open={editing} onOpenChange={(o) => !o && setEditing(false)}>
-        <DialogContent className="max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Modifica scheda · {employee.name}</DialogTitle>
-          </DialogHeader>
-          {draft && (
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Nome">
-                <Input value={draft.name ?? ""} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
-              </Field>
-              <Field label="Ruolo">
-                <Input value={draft.role ?? ""} onChange={(e) => setDraft({ ...draft, role: e.target.value })} />
-              </Field>
-              <Field label="Email">
-                <Input value={draft.email ?? ""} onChange={(e) => setDraft({ ...draft, email: e.target.value })} />
-              </Field>
-              <Field label="Telefono">
-                <Input value={draft.phone ?? ""} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} />
-              </Field>
-              <Field label="Dipartimento">
-                <select
-                  value={draft.department ?? ""}
-                  onChange={(e) => setDraft({ ...draft, department: e.target.value })}
-                  className="border rounded-md p-2 bg-transparent"
-                  style={{ borderColor: "var(--line-strong)" }}
-                >
-                  {departments.map((d) => (
-                    <option key={d.name} value={d.name}>
-                      {d.name}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="Stato">
-                <select
-                  value={draft.status ?? "active"}
-                  onChange={(e) =>
-                    setDraft({ ...draft, status: e.target.value as EmployeeStatus })
-                  }
-                  className="border rounded-md p-2 bg-transparent"
-                  style={{ borderColor: "var(--line-strong)" }}
-                >
-                  {STATUSES.map(([v, l]) => (
-                    <option key={v} value={v}>
-                      {l}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="Location">
-                <Input
-                  value={draft.location ?? ""}
-                  onChange={(e) => setDraft({ ...draft, location: e.target.value })}
-                />
-              </Field>
-              <Field label="RAL">
-                <Input
-                  type="number"
-                  value={draft.salary ?? 0}
-                  onChange={(e) => setDraft({ ...draft, salary: Number(e.target.value) })}
-                />
-              </Field>
-            </div>
-          )}
-          <DialogFooter>
-            <button type="button" className="pill pill-ghost pill-sm" onClick={() => setEditing(false)}>
-              Annulla
-            </button>
-            <button type="button" className="pill pill-spark pill-sm" onClick={commitEdit}>
-              Salva
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
 
-function DetailBlock({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+function DetailField({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1">
       <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
         {label}
       </span>
@@ -347,23 +435,4 @@ function DetailBlock({ label, value, mono }: { label: string; value: string; mon
       </span>
     </div>
   );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-        {label}
-      </Label>
-      {children}
-    </div>
-  );
-}
-
-function firstName(full: string): string {
-  return full.split(" ")[0] ?? full;
-}
-function lastName(full: string): string {
-  const parts = full.split(" ");
-  return parts.length > 1 ? parts.slice(1).join(" ") : "";
 }
