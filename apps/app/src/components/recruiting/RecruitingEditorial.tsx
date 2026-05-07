@@ -1,7 +1,21 @@
 import { useMemo } from "react";
-import { useCandidates } from "@/lib/tables/candidates";
+import { toast } from "sonner";
+import { useCandidates, candidatesTable } from "@/lib/tables/candidates";
 import { useJobPostings } from "@/lib/tables/jobPostings";
 import type { Candidate } from "@/lib/mock-data";
+
+const STAGE_ORDER: Array<Candidate["stage"]> = [
+  "Applied",
+  "Screen",
+  "Interview",
+  "Offer",
+  "Hired",
+];
+
+function nextStage(s: Candidate["stage"]): Candidate["stage"] | null {
+  const i = STAGE_ORDER.indexOf(s);
+  return i >= 0 && i < STAGE_ORDER.length - 1 ? STAGE_ORDER[i + 1] : null;
+}
 
 const STAGES: Array<{
   id: Candidate["stage"];
@@ -106,52 +120,107 @@ export function RecruitingEditorial() {
                 </div>
               </div>
               <div className="flex-1 min-h-0 overflow-auto flex flex-col gap-2 pr-1 pb-1">
-                {list.slice(0, 6).map((cand) => (
-                  <article
-                    key={cand.id}
-                    style={{
-                      border: `1px solid ${s.color === "spark" ? "var(--spark)" : "var(--line)"}`,
-                      borderRadius: 12,
-                      padding: "12px 14px",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 8,
-                      background:
-                        s.color === "spark"
-                          ? "color-mix(in oklch, var(--spark) 5%, transparent)"
-                          : "var(--bg)",
-                    }}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span className="ph-avatar ph-avatar-sm">{cand.initials}</span>
-                      <div className="min-w-0">
-                        <div
-                          style={{
-                            fontFamily: "Fraunces, ui-serif, serif",
-                            fontStyle: "italic",
-                            fontSize: 17,
-                            letterSpacing: "-0.01em",
-                            lineHeight: 1.05,
-                          }}
-                        >
-                          {cand.name}
-                        </div>
-                        <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                          {cand.role.toUpperCase()}
-                        </span>
-                      </div>
-                    </div>
-                    <span
-                      className="t-mono"
+                {list.slice(0, 6).map((cand) => {
+                  const next = nextStage(cand.stage);
+                  return (
+                    <article
+                      key={cand.id}
                       style={{
-                        color:
-                          s.color === "spark" ? "var(--spark)" : "var(--muted-foreground)",
+                        border: `1px solid ${s.color === "spark" ? "var(--spark)" : "var(--line)"}`,
+                        borderRadius: 12,
+                        padding: "12px 14px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 8,
+                        background:
+                          s.color === "spark"
+                            ? "color-mix(in oklch, var(--spark) 5%, transparent)"
+                            : "var(--bg)",
                       }}
                     >
-                      {relativeFromIso(cand.appliedDate)}
-                    </span>
-                  </article>
-                ))}
+                      <div className="flex items-center gap-2.5">
+                        <span className="ph-avatar ph-avatar-sm">{cand.initials}</span>
+                        <div className="min-w-0">
+                          <div
+                            style={{
+                              fontFamily: "Fraunces, ui-serif, serif",
+                              fontStyle: "italic",
+                              fontSize: 17,
+                              letterSpacing: "-0.01em",
+                              lineHeight: 1.05,
+                            }}
+                          >
+                            {cand.name}
+                          </div>
+                          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                            {cand.role.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="t-mono"
+                          style={{
+                            color:
+                              s.color === "spark" ? "var(--spark)" : "var(--muted-foreground)",
+                          }}
+                        >
+                          {relativeFromIso(cand.appliedDate)}
+                        </span>
+                        <span style={{ flex: 1 }} />
+                        {next && (
+                          <button
+                            type="button"
+                            className="t-mono"
+                            onClick={() => {
+                              const prev = cand.stage;
+                              candidatesTable.update(cand.id, { stage: next });
+                              toast(`${cand.name} → ${next}`, {
+                                action: {
+                                  label: "Annulla",
+                                  onClick: () =>
+                                    candidatesTable.update(cand.id, { stage: prev }),
+                                },
+                              });
+                            }}
+                            style={{
+                              color: "var(--spark)",
+                              background: "transparent",
+                              border: "none",
+                              cursor: "pointer",
+                              padding: 0,
+                            }}
+                          >
+                            → {next}
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          className="t-mono"
+                          onClick={() => {
+                            candidatesTable.remove(cand.id);
+                            toast("Candidato rimosso", {
+                              action: {
+                                label: "Annulla",
+                                onClick: () => candidatesTable.add(cand),
+                              },
+                            });
+                          }}
+                          style={{
+                            color: "var(--muted-foreground)",
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                            padding: 0,
+                          }}
+                          aria-label="Rimuovi"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
                 {list.length > 6 && (
                   <div
                     className="t-mono text-center py-2"

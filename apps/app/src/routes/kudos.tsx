@@ -1,11 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { KudosEditorial } from "@/components/kudos/KudosEditorial";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/kudos")({
-  head: () => ({ meta: [{ title: "Kudos — Pulse HR" }] }),
-  component: KudosPage,
+  beforeLoad: () => {
+    throw redirect({ to: "/growth", search: { tab: "kudos" } });
+  },
 });
-
-function KudosPage() {
-  return <KudosEditorial />;
-}

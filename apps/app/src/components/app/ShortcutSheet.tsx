@@ -21,9 +21,8 @@ interface Group {
 const GLOBAL: Group = {
   name: "Global",
   shortcuts: [
-    { keys: ["⌘", "K"], label: "Command palette · natural language" },
-    { keys: ["⌘", "J"], label: "Ask Pulse Copilot" },
-    { keys: ["⌘", "⇧", "."], label: "Voice dictate — insert or ask Pulse" },
+    { keys: ["⌘", "K"], label: "Command palette · jump anywhere" },
+    { keys: ["⌘", "J"], label: "Open status log" },
     { keys: ["⌘", "M"], label: "Open Moments (weekly reel)" },
     { keys: ["⌘", "B"], label: "Book a workspace (room or seat)" },
     { keys: ["⌥", "C"], label: "Switch active project" },

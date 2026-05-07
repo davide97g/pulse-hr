@@ -32,6 +32,6 @@ Not visible to them: [[Recruiting]], [[Reports]], [[Saturation]], [[Developers]]
 ## Pain points addressed
 
 - "I don't know how much vacation I have left." → balance always visible on [[Dashboard]] and [[Leave]].
-- "I forget to log my hours." → [[Status Log]] and [[Copilot]] can prompt and parse "log 4h on ACM-2025-01" in one keystroke.
+- "I forget to log my hours." → [[Status Log]] and the [[Command Palette]] can prompt and parse "log 4h on ACM-2025-01" in one keystroke.
 - "I never know what's going on at the company." → [[Announcements]] and [[Moments]] surface the human signal without burying it in email.
 - "I want to recognize a teammate without making it weird." → [[Kudos]] is one click.

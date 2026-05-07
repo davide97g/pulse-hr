@@ -10,7 +10,6 @@ import {
   FileText,
   BookOpen,
   MessagesSquare,
-  Gift,
   Trophy,
   Briefcase,
   Building2,
@@ -59,7 +58,6 @@ export function buildSidebarNavGroups(
       label: "People",
       items: [
         { to: "/people", label: "Team", icon: Users, featureId: "people" },
-        { to: "/kudos", label: "Kudos", icon: Gift, featureId: "kudos" },
         {
           to: "/log",
           label: "Status log",

@@ -11,8 +11,8 @@ End-to-end: from "I want a Friday off" to "approved, see you Monday."
 
 ## Steps
 
-1. **[[Employee]] opens [[Leave]] (or hits `⌘J` and types "request leave Friday").**
-   [[Copilot]] parses the intent and pre-fills a draft [[Leave Request]].
+1. **[[Employee]] opens [[Leave]] (or hits `⌘K` and types "request leave Friday").**
+   The [[Command Palette]]'s local intent parser fills a draft [[Leave Request]].
 2. **Employee picks type and granularity.**
    Vacation / Sick / Personal / Parental. Full or half day. Italian-locale workspaces label as [[ferie]] / [[malattia]] / [[permesso]] / Parental.
 3. **Submit.**

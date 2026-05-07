@@ -368,7 +368,7 @@ export const it: Dict = {
       },
       {
         q: "Come funziona la command bar (⌘J)?",
-        a: "La command bar esegue un parser di intent locale sui dati del tuo tenant — nessuna chiamata LLM, nessun round-trip di rete, nessun training cross-tenant. Scrivi frasi naturali come 'registra 4h su NOV-07 ieri' o 'approva la spesa di Aisha', e un'euristica deterministica le mappa in azioni eseguibili con i tuoi permessi. Funzionando nel browser, va anche offline come parte della PWA. Esporremo un server MCP per veri workflow agentic in una release futura; per ora l'etichetta onesta è: una command bar keyboard-first, non un AI copilot.",
+        a: "La command bar esegue un parser di intent locale sui dati del tuo tenant — nessuna chiamata LLM, nessun round-trip di rete, nessun training cross-tenant. Scrivi frasi naturali come 'registra 4h su NOV-07 ieri' o 'approva la spesa di Aisha', e un'euristica deterministica le mappa in azioni eseguibili con i tuoi permessi. Funzionando nel browser, va anche offline come parte della PWA. Esporremo un server MCP per workflow di agenti esterni in una release futura; per ora l'etichetta onesta è: una command bar keyboard-first, senza AI nel loop.",
       },
       {
         q: "Pulse funziona offline?",

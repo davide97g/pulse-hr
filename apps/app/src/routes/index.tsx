@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Constellation } from "@/components/dashboard/Constellation";
-import { buildConstellationPeople, DEPT_TOTALS } from "@/components/dashboard/buildPeople";
+import { buildConstellationPeople, countByDept } from "@/components/dashboard/buildPeople";
 import { lensFor } from "@/components/dashboard/lenses";
 import { cardsFor, type CardSignals } from "@/components/dashboard/cards";
 import { useDashboardLens } from "@/components/dashboard/useDashboardLens";
@@ -219,7 +219,7 @@ function Dashboard() {
         lens={lensConfig}
         cards={cards}
         dark={dark}
-        deptCounts={DEPT_TOTALS}
+        deptCounts={countByDept(people)}
         lensSwitcher={<LensSwitcher value={lens} onChange={setLens} />}
       />
     </div>

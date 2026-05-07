@@ -3359,6 +3359,120 @@ export let growthNotesSeed: GrowthNote[] = [
   },
 ];
 
+export type AchievementTier = "bronze" | "silver" | "gold" | "platinum";
+export type AchievementCategory =
+  | "craft"
+  | "leadership"
+  | "impact"
+  | "longevity"
+  | "culture";
+export interface Achievement {
+  id: string;
+  employeeId: string;
+  title: string;
+  description?: string;
+  tier: AchievementTier;
+  category: AchievementCategory;
+  period: string;
+  awardedAt: string;
+  signature?: boolean;
+}
+
+export let achievementsSeed: Achievement[] = [
+  {
+    id: "ach1",
+    employeeId: "e2",
+    title: "Lead di un launch",
+    description: "Lead della redesign onboarding · +18% activation.",
+    tier: "gold",
+    category: "leadership",
+    period: "Q2",
+    awardedAt: "2026-05-06",
+    signature: true,
+  },
+  {
+    id: "ach2",
+    employeeId: "e1",
+    title: "10 kudos in un mese",
+    tier: "gold",
+    category: "culture",
+    period: "Mese",
+    awardedAt: "2026-05-04",
+  },
+  {
+    id: "ach3",
+    employeeId: "e3",
+    title: "1° workshop interno tenuto",
+    tier: "silver",
+    category: "leadership",
+    period: "Annuale",
+    awardedAt: "2026-05-02",
+  },
+  {
+    id: "ach4",
+    employeeId: "e2",
+    title: "Mentor di un junior",
+    tier: "silver",
+    category: "leadership",
+    period: "Q1",
+    awardedAt: "2026-04-28",
+  },
+  {
+    id: "ach5",
+    employeeId: "e1",
+    title: "30 PR review in un mese",
+    tier: "bronze",
+    category: "craft",
+    period: "Mese",
+    awardedAt: "2026-04-26",
+  },
+  {
+    id: "ach6",
+    employeeId: "e5",
+    title: "Pubblica un case study",
+    tier: "silver",
+    category: "impact",
+    period: "Q1",
+    awardedAt: "2026-04-22",
+  },
+  {
+    id: "ach7",
+    employeeId: "e1",
+    title: "5 anni in azienda",
+    tier: "platinum",
+    category: "longevity",
+    period: "Anniversario",
+    awardedAt: "2026-04-18",
+  },
+  {
+    id: "ach8",
+    employeeId: "e9",
+    title: "Bug killer — 12 fix critici",
+    tier: "bronze",
+    category: "craft",
+    period: "Trimestre",
+    awardedAt: "2026-04-14",
+  },
+  {
+    id: "ach9",
+    employeeId: "e4",
+    title: "1ª feature in produzione",
+    tier: "bronze",
+    category: "craft",
+    period: "First",
+    awardedAt: "2026-04-10",
+  },
+  {
+    id: "ach10",
+    employeeId: "e7",
+    title: "100 ore di focus",
+    tier: "silver",
+    category: "craft",
+    period: "Trimestre",
+    awardedAt: "2026-04-06",
+  },
+];
+
 export const plugins = [
   {
     id: "pg1",
@@ -3606,6 +3720,9 @@ export function __setSeasonalChallengesSeed(n: SeasonalChallenge[]) {
 }
 export function __setGrowthNotesSeed(n: GrowthNote[]) {
   growthNotesSeed = n;
+}
+export function __setAchievementsSeed(n: Achievement[]) {
+  achievementsSeed = n;
 }
 export function __setGcalEventsSeed(n: GCalEvent[]) {
   gcalEventsSeed = n;

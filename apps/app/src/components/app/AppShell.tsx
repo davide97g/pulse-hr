@@ -15,11 +15,9 @@ import { PinLayer } from "@/components/comments/PinLayer";
 import { Sheet, SheetContent } from "@pulse-hr/ui/primitives/sheet";
 import { useTrackPageViews } from "@/lib/usage-tracking";
 import { APP_VERSION } from "@/lib/version";
-import { voiceBus } from "@/lib/voice-bus";
 import { BookingDialog } from "./BookingDialog";
 import { BookingsProvider } from "./BookingsContext";
 import { CommandPalette } from "./CommandPalette";
-import { LogOverlay } from "./LogOverlay";
 import { DemoBanner } from "./DemoBanner";
 import { OfflineBanner } from "./OfflineBanner";
 import { BrandMark } from "@pulse-hr/ui/atoms/BrandMark";
@@ -31,7 +29,6 @@ import { ChangelogGate } from "./ChangelogGate";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { TourLauncher } from "./TourLauncher";
 import { TourProvider } from "./TourProvider";
-import { VoiceDock } from "./VoiceDock";
 import { VotingPowerChip } from "./VotingPowerChip";
 import {
   Briefcase,
@@ -116,12 +113,12 @@ const QUICK_ACTIONS_BY_ROLE: Record<string, QuickActionEntry[]> = {
   employee: [
     { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
     { kind: "nav", to: "/log", label: "Log status", icon: MessagesSquare },
-    { kind: "nav", to: "/kudos", label: "Give kudos", icon: Gift },
+    { kind: "nav", to: "/growth?tab=kudos", label: "Give kudos", icon: Gift },
   ],
   manager: [
     { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
     { kind: "nav", to: "/leave", label: "Review approvals", icon: Users },
-    { kind: "nav", to: "/kudos", label: "Give kudos", icon: Gift },
+    { kind: "nav", to: "/growth?tab=kudos", label: "Give kudos", icon: Gift },
   ],
   hr: [
     { kind: "action", id: "post-job", label: "Post a job", icon: Briefcase },
@@ -210,7 +207,6 @@ function AppShellInner() {
     }
   }, [collapsed]);
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [logOpen, setLogOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
@@ -232,11 +228,7 @@ function AppShellInner() {
       }
       if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === "j") {
         e.preventDefault();
-        setLogOpen(true);
-      }
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === "." || e.code === "Period")) {
-        e.preventDefault();
-        voiceBus.emit({ kind: "toggle" });
+        handlersRef.current.appShellNav({ to: "/log" });
       }
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "o") {
         e.preventDefault();
@@ -253,12 +245,6 @@ function AppShellInner() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  useEffect(() => {
-    return voiceBus.on((ev) => {
-      if (ev.kind === "draftPrompt" && ev.source === "log") setLogOpen(true);
-    });
   }, []);
 
   return (
@@ -432,7 +418,6 @@ function AppShellInner() {
         <OfflineBanner />
         <Topbar
           onOpenPalette={() => setPaletteOpen(true)}
-          onOpenLog={() => setLogOpen(true)}
           onOpenMobileNav={() => setMobileNavOpen(true)}
           // Always offer the Feedback entry-point. When the visitor is
           // anonymous, the link opens the LoginWall instead of leaving the app.
@@ -446,9 +431,7 @@ function AppShellInner() {
       </div>
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
-      <LogOverlay open={logOpen} onOpenChange={setLogOpen} />
       <ShortcutSheet />
-      <VoiceDock />
       <BookingDialog open={bookingOpen} onClose={() => setBookingOpen(false)} />
       <PinLayer />
       <CommentPill />
@@ -637,7 +620,6 @@ function CommentsVisibilityToggle() {
 const SECTION_BY_PATH: Record<string, string> = {
   "/": "DASHBOARD",
   "/people": "TEAM",
-  "/kudos": "KUDOS",
   "/log": "STATUS LOG",
   "/growth": "GROWTH",
   "/time": "TIMESHEET",
@@ -670,11 +652,9 @@ function sectionForPath(pathname: string): string {
 
 function Topbar({
   onOpenPalette,
-  onOpenLog,
   onOpenMobileNav,
 }: {
   onOpenPalette: () => void;
-  onOpenLog: () => void;
   onOpenMobileNav: () => void;
   /** Kept for API compat; feedback link now lives in the avatar menu. */
   showFeedbackLink?: boolean;
@@ -756,26 +736,23 @@ function Topbar({
         <Search className="h-4 w-4" />
       </button>
 
-      <button
+      <Link
         data-tour="topbar-status-log"
-        onClick={onOpenLog}
-        className="pill pill-spark pill-sm hidden sm:inline-flex"
+        to="/log"
+        className="pill pill-ghost pill-sm hidden sm:inline-flex"
+        style={{ color: "var(--muted-foreground)" }}
       >
-        <Sparkles className="h-3.5 w-3.5" />
-        <span>⌘J Copilot</span>
-      </button>
-      <button
-        onClick={onOpenLog}
-        className="sm:hidden h-9 w-9 rounded-full pill-spark flex items-center justify-center"
-        style={{
-          background: "var(--spark)",
-          color: "var(--spark-ink)",
-          padding: 0,
-        }}
-        aria-label="Copilot"
+        <MessagesSquare className="h-3.5 w-3.5" />
+        <span>⌘J STATUS LOG</span>
+      </Link>
+      <Link
+        to="/log"
+        className="sm:hidden h-9 w-9 rounded-md border flex items-center justify-center"
+        style={{ borderColor: "var(--line-strong)" }}
+        aria-label="Status log"
       >
-        <Sparkles className="h-4 w-4" />
-      </button>
+        <MessagesSquare className="h-4 w-4" />
+      </Link>
 
       <Popover>
         <PopoverTrigger asChild>

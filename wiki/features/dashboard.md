@@ -22,7 +22,7 @@ Everyone. The content shifts by role:
 
 - Dashboard is offline-aware — see [[PWA & Offline]]. Read-only data hydrates from local cache when the network is unavailable.
 - Dashboard surfaces a [[Demo Mode]] banner when no real workspace is connected.
-- Quick-action chips appear in the top-right (per role): "Request leave," "Log status," "Give kudos." Wired to [[Copilot]].
+- Quick-action chips appear in the top-right (per role): "Request leave," "Log status," "Give kudos." Each chip opens the relevant route or quick-action dialog.
 
 ## Related journeys
 

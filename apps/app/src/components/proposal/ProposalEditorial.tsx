@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 const PHASES: Array<{
   n: string;
@@ -192,12 +193,7 @@ export function ProposalEditorial({ id }: { id: string }) {
             BOZZA SALVATA · 09:42
           </span>
           <span className="flex-1" />
-          <button type="button" className="pill pill-ghost pill-sm">
-            Anteprima PDF
-          </button>
-          <button type="button" className="pill pill-spark pill-sm">
-            Invia → Acme <span className="arr">→</span>
-          </button>
+          <SubmitProposal />
         </div>
       </section>
     </div>
@@ -241,5 +237,35 @@ function KpiCell({
         {value}
       </div>
     </div>
+  );
+}
+
+function SubmitProposal() {
+  const [sent, setSent] = useState(false);
+  return (
+    <>
+      <button
+        type="button"
+        className="pill pill-ghost pill-sm"
+        onClick={() => toast("Anteprima non disponibile in modalità demo")}
+      >
+        Anteprima
+      </button>
+      <button
+        type="button"
+        className="pill pill-spark pill-sm"
+        disabled={sent}
+        style={{ opacity: sent ? 0.6 : 1 }}
+        onClick={() => {
+          setSent(true);
+          toast.success("Proposta inviata", {
+            description: "Acme · email scheduled",
+            action: { label: "Annulla", onClick: () => setSent(false) },
+          });
+        }}
+      >
+        {sent ? "Inviata ✓" : <>Invia → Acme <span className="arr">→</span></>}
+      </button>
+    </>
   );
 }

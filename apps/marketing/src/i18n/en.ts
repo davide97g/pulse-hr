@@ -361,7 +361,7 @@ export const en = {
       },
       {
         q: "How does the command bar (⌘J) work?",
-        a: "The command bar runs a local intent parser over your tenant's data — no LLM call, no network round-trip, no cross-tenant training. You type natural phrases like 'log 4h on NOV-07 yesterday' or 'book leave next Friday', and a deterministic heuristic maps them to runnable actions scoped to your permissions. Because it runs in the browser, it works offline as part of the PWA. We'll expose an MCP server for true agent workflows in a later release; until then, this is the honest label — a keyboard-first command bar, not an AI copilot.",
+        a: "The command bar runs a local intent parser over your tenant's data — no LLM call, no network round-trip, no cross-tenant training. You type natural phrases like 'log 4h on NOV-07 yesterday' or 'book leave next Friday', and a deterministic heuristic maps them to runnable actions scoped to your permissions. Because it runs in the browser, it works offline as part of the PWA. We'll expose an MCP server for external agent workflows in a later release; until then, the honest label is: a keyboard-first command bar — no AI in the loop.",
       },
       {
         q: "Does Pulse work offline?",

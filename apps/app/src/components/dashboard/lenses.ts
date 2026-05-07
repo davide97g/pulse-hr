@@ -92,7 +92,11 @@ export function workloadLens(dark: boolean, narrative: ReactNode, captionMono: s
     ],
     legendItem: (s) => ({ bg: satFill(s as number, dark), glow: (s as number) > 1.05 }),
     narrative,
-    actions: ["Per project", "Per skill", { spark: true, label: "Apri saturation" }],
+    actions: [
+      { label: "Progetti", to: "/projects" },
+      { label: "Reports", to: "/reports" },
+      { spark: true, label: "Apri saturation", to: "/saturation" },
+    ],
     tooltipPrimary: (p) => ({
       label: "SATURAZIONE",
       value: `${Math.round(p.sat * 100)}%`,
@@ -143,7 +147,11 @@ export function sentimentLens(dark: boolean, narrative: ReactNode, captionMono: 
     ],
     legendItem: (s) => ({ bg: sentimentFill(s as number, dark, true), glow: (s as number) < 2.2 }),
     narrative,
-    actions: ["Per dipartimento", "Trend 6 mesi", { spark: true, label: "Apri pulse survey" }],
+    actions: [
+      { label: "Status log", to: "/log" },
+      { label: "Reports", to: "/reports" },
+      { spark: true, label: "Apri growth", to: "/growth" },
+    ],
     tooltipPrimary: (p) => ({
       label: "MOOD",
       value: p.surveyResponded ? `${p.sentiment.toFixed(1)} / 5` : "no risp.",
@@ -175,7 +183,7 @@ export function presenceLens(dark: boolean, narrative: ReactNode, captionMono: s
     legendKind: "states",
     fill: (p) => presenceFill(p.presence, dark),
     ring: (p) => presenceRing(p.presence, dark),
-    glow: (p) => p.presence === "OFFICE",
+    glow: (p) => p.presence === "SICK",
     kpiValue: (people) =>
       people.filter((p) => p.presence === "OFFICE" || p.presence === "REMOTE").length,
     kpiSuffix: `/ ${"x".repeat(0)}`,
@@ -191,10 +199,14 @@ export function presenceLens(dark: boolean, narrative: ReactNode, captionMono: s
     ],
     legendItem: (state) => ({
       bg: presenceFill(state as PresenceState, dark),
-      glow: (state as PresenceState) === "OFFICE",
+      glow: (state as PresenceState) === "SICK",
     }),
     narrative,
-    actions: ["Per sede", "Settimana", { spark: true, label: "Apri attendance" }],
+    actions: [
+      { label: "Calendario", to: "/calendar" },
+      { label: "Uffici", to: "/offices" },
+      { spark: true, label: "Apri timesheet", to: "/time" },
+    ],
     tooltipPrimary: (p) => ({
       label: "STATO",
       value: presenceLabel(p.presence),

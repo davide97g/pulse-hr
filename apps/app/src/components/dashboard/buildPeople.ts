@@ -16,6 +16,18 @@ const DEPT_FROM_NAME: Record<string, DeptId> = {
   Operations: "OPS",
 };
 
+export const DEPT_KEYS: DeptId[] = ["ENG", "DESIGN", "OPS", "PEOPLE"];
+
+export function deptIdFor(department: string): DeptId {
+  return DEPT_FROM_NAME[department] ?? "OPS";
+}
+
+export function countByDept(people: ConstellationPerson[]): Record<DeptId, number> {
+  const out: Record<DeptId, number> = { ENG: 0, DESIGN: 0, OPS: 0, PEOPLE: 0 };
+  for (const p of people) out[p.dept] += 1;
+  return out;
+}
+
 const DEPT_CENTERS: Record<DeptId, [number, number]> = {
   ENG: [0, -1],
   DESIGN: [-5, 3],
@@ -58,8 +70,9 @@ interface Project {
 }
 
 /**
- * Pad employee count up to ~142 with seeded personas so the constellation
- * always reads as a full company even on a thin demo workspace.
+ * Synthetic personas used only when the workspace roster is too small to
+ * read as a company. Real employees from the table take precedence; this
+ * pool only fills the remaining slots up to a comfortable minimum.
  */
 const SYNTHETIC_NAMES: Array<{ name: string; role: string; dept: DeptId }> = [
   { name: "Davide Greco", role: "Tech Lead", dept: "ENG" },
@@ -91,7 +104,35 @@ function initialsOf(name: string): string {
     .toUpperCase();
 }
 
-const DEPT_TARGETS: Record<DeptId, number> = { ENG: 58, DESIGN: 22, OPS: 38, PEOPLE: 24 };
+const DEPT_RATIOS: Record<DeptId, number> = {
+  ENG: 58 / 142,
+  DESIGN: 22 / 142,
+  OPS: 38 / 142,
+  PEOPLE: 24 / 142,
+};
+
+/**
+ * Spread `total` headcount across the four constellation buckets using the
+ * editorial-grade ratios. Largest-remainder rounding so the parts add up to
+ * `total` exactly. Useful when you want department targets that scale with
+ * the workspace's chosen company size.
+ */
+export function deptTargetsFor(total: number): Record<DeptId, number> {
+  if (total <= 0) return { ENG: 0, DESIGN: 0, OPS: 0, PEOPLE: 0 };
+  const exact = DEPT_KEYS.map((k) => ({ k, v: DEPT_RATIOS[k] * total }));
+  const floors = exact.map((x) => ({ k: x.k, n: Math.floor(x.v), frac: x.v - Math.floor(x.v) }));
+  let used = floors.reduce((a, x) => a + x.n, 0);
+  const sorted = [...floors].sort((a, b) => b.frac - a.frac);
+  let i = 0;
+  while (used < total && i < sorted.length) {
+    sorted[i].n += 1;
+    used += 1;
+    i += 1;
+  }
+  const out: Record<DeptId, number> = { ENG: 0, DESIGN: 0, OPS: 0, PEOPLE: 0 };
+  for (const f of floors) out[f.k] = f.n;
+  return out;
+}
 
 interface RawSeed {
   id: string;
@@ -106,8 +147,15 @@ interface RawSeed {
 export function buildConstellationPeople(
   employees: Employee[],
   projects: Project[],
+  totalTarget?: number,
 ): ConstellationPerson[] {
   const rand = seeded(73);
+
+  // Targets: when an explicit total is provided, distribute it. Otherwise
+  // honour the real roster, only padding up to a comfortable minimum so a
+  // 5-person company doesn't render as a lonely cluster.
+  const target = totalTarget != null ? totalTarget : Math.max(employees.length, 0);
+  const deptTargets = deptTargetsFor(target);
 
   // Assemble pool grouped by dept, padding up to dept target with synthetic personas.
   const byDept: Record<DeptId, RawSeed[]> = { ENG: [], DESIGN: [], OPS: [], PEOPLE: [] };
@@ -124,9 +172,9 @@ export function buildConstellationPeople(
     });
   }
   let synIdx = 0;
-  for (const dept of Object.keys(DEPT_TARGETS) as DeptId[]) {
-    const target = DEPT_TARGETS[dept];
-    while (byDept[dept].length < target) {
+  for (const dept of DEPT_KEYS) {
+    const t = deptTargets[dept];
+    while (byDept[dept].length < t) {
       // Find a synthetic that matches the dept; cycle list.
       let candidate = SYNTHETIC_NAMES[synIdx % SYNTHETIC_NAMES.length];
       let guard = 0;
@@ -245,4 +293,5 @@ export function buildConstellationPeople(
   return people;
 }
 
-export const DEPT_TOTALS = DEPT_TARGETS;
+/** Legacy default, kept for callers that still want the editorial 142 mix. */
+export const DEPT_TOTALS = deptTargetsFor(142);

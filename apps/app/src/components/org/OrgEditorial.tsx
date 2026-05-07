@@ -1,6 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { useEmployees } from "@/lib/tables/employees";
 import type { Employee } from "@/lib/mock-data";
+
+type OrgView = "tree" | "list";
 
 interface Node {
   id: string;
@@ -11,6 +14,20 @@ interface Node {
 
 export function OrgEditorial() {
   const employees = useEmployees();
+  const [view, setView] = useState<OrgView>("tree");
+
+  function exportOrg() {
+    const blob = new Blob([JSON.stringify(employees, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `pulsehr-org-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Esportate ${employees.length} persone`);
+  }
 
   const tree = useMemo(() => {
     const ceo = employees.find((e) => /ceo|founder|chief/i.test(e.role)) ?? employees[0];
@@ -66,18 +83,63 @@ export function OrgEditorial() {
           </h1>
         </div>
         <div className="flex gap-2">
-          <button type="button" className="pill pill-ghost pill-sm">
+          <button
+            type="button"
+            className={view === "tree" ? "pill pill-dark pill-sm" : "pill pill-ghost pill-sm"}
+            onClick={() => setView("tree")}
+          >
             Albero
           </button>
-          <button type="button" className="pill pill-ghost pill-sm">
+          <button
+            type="button"
+            className={view === "list" ? "pill pill-dark pill-sm" : "pill pill-ghost pill-sm"}
+            onClick={() => setView("list")}
+          >
             Lista
           </button>
-          <button type="button" className="pill pill-dark pill-sm">
+          <button type="button" className="pill pill-dark pill-sm" onClick={exportOrg}>
             Esporta
           </button>
         </div>
       </div>
 
+      {view === "list" && (
+        <div
+          className="flex flex-col flex-1 min-h-0 overflow-auto"
+          style={{ border: "1px solid var(--line)", borderRadius: 14 }}
+        >
+          {employees.map((e, i) => (
+            <div
+              key={e.id}
+              className="grid items-center"
+              style={{
+                gridTemplateColumns: "32px 1fr 1fr 1fr 110px",
+                gap: 12,
+                padding: "10px 16px",
+                borderBottom: i < employees.length - 1 ? "1px solid var(--line)" : "none",
+              }}
+            >
+              <span className="ph-avatar ph-avatar-sm">{e.initials}</span>
+              <span style={{ fontWeight: 500 }}>{e.name}</span>
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                {e.role}
+              </span>
+              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+                {e.department}
+              </span>
+              <span
+                className="t-mono"
+                style={{ color: "var(--muted-foreground)", textAlign: "right" }}
+              >
+                {e.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {view === "tree" && (
+      <>
       {/* Tree */}
       <div className="flex flex-col gap-8 flex-1 min-h-0 overflow-auto pb-2">
         {/* CEO */}
@@ -193,6 +255,8 @@ export function OrgEditorial() {
           ))}
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

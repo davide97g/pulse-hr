@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { useEmployees } from "@/lib/tables/employees";
 import { useAllocations } from "@/lib/tables/allocations";
 
@@ -109,9 +110,9 @@ export function SaturationEditorial() {
           >
             Tutto il team
           </button>
-          <button type="button" className="pill pill-dark pill-sm">
+          <Link to="/projects" className="pill pill-dark pill-sm">
             Riassegna
-          </button>
+          </Link>
         </div>
       </div>
 

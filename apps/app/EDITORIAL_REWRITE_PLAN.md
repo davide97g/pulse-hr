@@ -29,7 +29,7 @@ anything they don't."
    `.pill*`, `.dot`, `.glass`, `.solid-card`, `.ph-avatar`, `.tab-row`,
    `.placeholder-img`, `.room-dark/.room-light`, density data-attrs. **Do
    not duplicate** — consume them.
-3. **Chrome stays.** AppShell sidebar/topbar/Copilot ⌘J/CommandPalette ⌘K/
+3. **Chrome stays.** AppShell sidebar/topbar/CommandPalette ⌘K/Status Log ⌘J/
    comments overlay/role-override/DemoBanner/notifications/etc. all survive
    each phase. Per-page rewrites swap **route bodies only**.
 4. **Reuse existing data hooks.** `useEmployees`, `useLeaveRequests`,

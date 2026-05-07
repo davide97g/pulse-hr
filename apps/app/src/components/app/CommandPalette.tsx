@@ -331,7 +331,7 @@ export function CommandPalette({
           style={{ borderTop: "1px solid var(--line)" }}
         >
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            ↑↓ NAVIGA · ⏎ APRI · ⌘J COPILOT
+            ↑↓ NAVIGA · ⏎ APRI · ⌘J STATUS LOG
           </span>
           <span className="t-mono" style={{ color: "var(--spark)" }}>
             · LIVE

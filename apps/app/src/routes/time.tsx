@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { EditorialPage } from "@/components/app/layouts/EditorialPage";
 import { EditorialPill } from "@pulse-hr/ui/atoms/EditorialPill";
@@ -7,8 +7,9 @@ import { Eyebrow } from "@pulse-hr/ui/atoms/Eyebrow";
 import { AvatarDisplay } from "@pulse-hr/ui/atoms/AvatarDisplay";
 import { TimesheetAutofillDialog } from "@/components/app/TimesheetAutofillDialog";
 import { useEmployees } from "@/lib/tables/employees";
-import { useTimesheetEntries } from "@/lib/tables/timesheetEntries";
-import { projects } from "@/lib/mock-data";
+import { useTimesheetEntries, timesheetEntriesTable } from "@/lib/tables/timesheetEntries";
+import { useProjects } from "@/lib/tables/projects";
+import type { Project, TimesheetEntry } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/time")({
   head: () => ({ meta: [{ title: "Time & attendance — Pulse HR" }] }),
@@ -46,7 +47,7 @@ type DayRecord = {
   logged: number;
   leave: "leave" | "holiday" | null;
   label: string | null;
-  breakdown: { projectId: string; code: string; name: string; hours: number }[];
+  breakdown: { entryId: string; projectId: string; code: string; name: string; hours: number }[];
 };
 
 function ymd(d: Date): string {
@@ -63,6 +64,7 @@ type Tab = "calendar" | "mine" | "project" | "team";
 function TimePage() {
   const employees = useEmployees();
   const entries = useTimesheetEntries();
+  const projects = useProjects();
 
   const [employeeId, setEmployeeId] = useState(() => employees[0]?.id ?? "");
   const [cursor, setCursor] = useState(() => {
@@ -93,6 +95,7 @@ function TimePage() {
       const breakdown = dayEntries.map((e) => {
         const c = projects.find((c) => c.id === e.projectId);
         return {
+          entryId: e.id,
           projectId: e.projectId,
           code: c?.code ?? e.projectId,
           name: c?.name ?? "—",
@@ -384,6 +387,9 @@ function TimePage() {
         <DayDrawer
           rec={monthDays.find((d) => d.day === openDay)!}
           monthLower={monthLower}
+          employeeId={employeeId}
+          projects={projects}
+          entries={entries}
           onClose={() => setOpenDay(null)}
         />
       )}
@@ -1091,14 +1097,138 @@ function TeamPresence({
 function DayDrawer({
   rec,
   monthLower,
+  employeeId,
+  projects,
+  entries,
   onClose,
 }: {
   rec: DayRecord;
   monthLower: string;
+  employeeId: string;
+  projects: Project[];
+  entries: TimesheetEntry[];
   onClose: () => void;
 }) {
   const isLeave = rec.leave != null;
   const wdName = WEEKDAY_FULL[rec.weekday];
+
+  const [query, setQuery] = useState("");
+  const [pickedProjectId, setPickedProjectId] = useState<string | null>(null);
+  const [hours, setHours] = useState("");
+  const [highlight, setHighlight] = useState(0);
+  const [open, setOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  const picked = useMemo(
+    () => projects.find((p) => p.id === pickedProjectId) ?? null,
+    [pickedProjectId, projects],
+  );
+
+  const matches = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const list = projects.filter((p) => p.status !== "closed" && p.status !== "done");
+    if (!q) return list.slice(0, 8);
+    return list
+      .filter(
+        (p) =>
+          p.code.toLowerCase().includes(q) ||
+          p.name.toLowerCase().includes(q) ||
+          p.client.toLowerCase().includes(q),
+      )
+      .slice(0, 8);
+  }, [query, projects]);
+
+  useEffect(() => {
+    setHighlight(0);
+  }, [query]);
+
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  function pickProject(p: Project) {
+    setPickedProjectId(p.id);
+    setQuery(`${p.code} · ${p.name}`);
+    setOpen(false);
+  }
+
+  function resetForm() {
+    setQuery("");
+    setPickedProjectId(null);
+    setHours("");
+  }
+
+  function commitEntry() {
+    if (!picked) {
+      toast.error("Seleziona una project");
+      inputRef.current?.focus();
+      return;
+    }
+    const h = Number.parseFloat(hours.replace(",", "."));
+    if (!Number.isFinite(h) || h <= 0) {
+      toast.error("Inserisci ore valide");
+      return;
+    }
+    if (h > 24) {
+      toast.error("Massimo 24h al giorno");
+      return;
+    }
+    timesheetEntriesTable.add({
+      employeeId,
+      projectId: picked.id,
+      date: rec.date,
+      hours: h,
+      description: "",
+      billable: true,
+      status: "draft",
+    });
+    toast.success("Voce aggiunta", { description: `${picked.code} · ${h}h · ${rec.date}` });
+    resetForm();
+    inputRef.current?.focus();
+  }
+
+  function removeEntry(entryId: string, code: string, hrs: number) {
+    timesheetEntriesTable.remove(entryId);
+    toast(`Rimosso ${code} · ${hrs}h`, {
+      action: {
+        label: "Annulla",
+        onClick: () => {
+          const original = entries.find((e) => e.id === entryId);
+          if (original) timesheetEntriesTable.add(original);
+        },
+      },
+    });
+  }
+
+  function duplicateYesterday() {
+    const d = new Date(rec.date);
+    d.setDate(d.getDate() - 1);
+    const prev = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const yesterdays = entries.filter((e) => e.employeeId === employeeId && e.date === prev);
+    if (yesterdays.length === 0) {
+      toast.error("Nessuna voce ieri");
+      return;
+    }
+    let added = 0;
+    for (const e of yesterdays) {
+      timesheetEntriesTable.add({
+        employeeId: e.employeeId,
+        projectId: e.projectId,
+        date: rec.date,
+        hours: e.hours,
+        description: e.description,
+        billable: e.billable,
+        status: "draft",
+      });
+      added += 1;
+    }
+    toast.success(`Duplicate ${added} voci da ieri`);
+  }
   return (
     <>
       <div
@@ -1248,12 +1378,12 @@ function DayDrawer({
               ORE PER PROJECT
             </span>
             {rec.breakdown.length > 0 ? (
-              rec.breakdown.map((b, i) => (
+              rec.breakdown.map((b) => (
                 <div
-                  key={i}
-                  className="grid items-center gap-3.5"
+                  key={b.entryId}
+                  className="grid items-center gap-3.5 group"
                   style={{
-                    gridTemplateColumns: "auto 1fr auto",
+                    gridTemplateColumns: "auto 1fr auto auto",
                     padding: "10px 0",
                     borderBottom: "1px solid var(--line)",
                   }}
@@ -1275,6 +1405,21 @@ function DayDrawer({
                   <span className="t-num" style={{ fontSize: 18, letterSpacing: "-0.02em" }}>
                     {b.hours.toFixed(b.hours % 1 === 0 ? 0 : 1)}h
                   </span>
+                  <button
+                    aria-label={`Rimuovi ${b.code}`}
+                    onClick={() => removeEntry(b.entryId, b.code, b.hours)}
+                    className="t-mono press-scale"
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      color: "var(--muted-foreground)",
+                      cursor: "pointer",
+                      fontSize: 14,
+                      padding: "2px 6px",
+                    }}
+                  >
+                    ×
+                  </button>
                 </div>
               ))
             ) : (
@@ -1308,47 +1453,174 @@ function DayDrawer({
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
               AGGIUNGI VOCE
             </span>
-            <div className="grid gap-2" style={{ gridTemplateColumns: "1fr 80px" }}>
-              <div
-                style={{
-                  padding: "10px 14px",
-                  borderRadius: 10,
-                  border: "1px solid var(--line-strong)",
-                  color: "var(--muted-foreground)",
-                  fontFamily: "Fraunces, ui-serif, serif",
-                  fontStyle: "italic",
-                  fontSize: 16,
-                }}
-              >
-                Codice project…
+            <div
+              className="grid gap-2"
+              style={{ gridTemplateColumns: "1fr 90px", position: "relative" }}
+              ref={wrapRef}
+            >
+              <div style={{ position: "relative" }}>
+                <input
+                  ref={inputRef}
+                  value={query}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setPickedProjectId(null);
+                    setOpen(true);
+                  }}
+                  onFocus={() => setOpen(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      setOpen(true);
+                      setHighlight((h) => Math.min(h + 1, matches.length - 1));
+                    } else if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      setHighlight((h) => Math.max(h - 1, 0));
+                    } else if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (open && matches[highlight]) pickProject(matches[highlight]);
+                      else if (picked) commitEntry();
+                    } else if (e.key === "Escape") {
+                      setOpen(false);
+                    } else if (e.key === "d" && (e.metaKey || e.ctrlKey)) {
+                      e.preventDefault();
+                      duplicateYesterday();
+                    }
+                  }}
+                  placeholder="Cerca codice o cliente…"
+                  spellCheck={false}
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    borderRadius: 10,
+                    border: `1px solid ${picked ? "var(--spark)" : "var(--line-strong)"}`,
+                    background: "var(--bg)",
+                    color: "var(--fg)",
+                    fontFamily: "JetBrains Mono, ui-monospace, monospace",
+                    fontSize: 13,
+                    outline: "none",
+                  }}
+                />
+                {open && matches.length > 0 && (
+                  <div
+                    role="listbox"
+                    style={{
+                      position: "absolute",
+                      bottom: "calc(100% + 6px)",
+                      left: 0,
+                      right: 0,
+                      maxHeight: 260,
+                      overflowY: "auto",
+                      background: "var(--bg)",
+                      border: "1px solid var(--line-strong)",
+                      borderRadius: 10,
+                      boxShadow: "0 8px 24px color-mix(in oklch, var(--fg) 12%, transparent)",
+                      zIndex: 60,
+                    }}
+                  >
+                    {matches.map((p, i) => (
+                      <button
+                        key={p.id}
+                        role="option"
+                        aria-selected={i === highlight}
+                        onMouseEnter={() => setHighlight(i)}
+                        onClick={() => pickProject(p)}
+                        className="text-left flex items-baseline gap-2.5"
+                        style={{
+                          width: "100%",
+                          padding: "8px 12px",
+                          background:
+                            i === highlight ? "var(--bg-2)" : "transparent",
+                          border: "none",
+                          borderBottom:
+                            i < matches.length - 1 ? "1px solid var(--line)" : "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <span className="t-mono" style={{ color: "var(--fg)" }}>
+                          {p.code}
+                        </span>
+                        <span
+                          style={{
+                            fontFamily: "Fraunces, ui-serif, serif",
+                            fontStyle: "italic",
+                            fontSize: 14,
+                            color: "var(--fg-2)",
+                            letterSpacing: "-0.01em",
+                            flex: 1,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {p.name}
+                        </span>
+                        <span
+                          className="t-mono"
+                          style={{ color: "var(--muted-foreground)", fontSize: 11 }}
+                        >
+                          {p.client}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {open && query.trim() && matches.length === 0 && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "calc(100% + 6px)",
+                      left: 0,
+                      right: 0,
+                      padding: "10px 12px",
+                      background: "var(--bg)",
+                      border: "1px solid var(--line-strong)",
+                      borderRadius: 10,
+                      color: "var(--muted-foreground)",
+                      fontFamily: "Fraunces, ui-serif, serif",
+                      fontStyle: "italic",
+                      fontSize: 14,
+                      zIndex: 60,
+                    }}
+                  >
+                    Nessuna project trovata.
+                  </div>
+                )}
               </div>
-              <div
+              <input
+                type="number"
+                inputMode="decimal"
+                step="0.25"
+                min="0"
+                max="24"
+                value={hours}
+                onChange={(e) => setHours(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitEntry();
+                  }
+                }}
+                placeholder="0.0h"
                 style={{
                   padding: "10px 14px",
                   borderRadius: 10,
                   border: "1px solid var(--line-strong)",
-                  color: "var(--muted-foreground)",
+                  background: "var(--bg)",
+                  color: "var(--fg)",
                   fontFamily: "JetBrains Mono, ui-monospace, monospace",
                   fontSize: 13,
                   textAlign: "right",
+                  outline: "none",
                 }}
-              >
-                0.0h
-              </div>
+              />
             </div>
             <div className="flex gap-1.5">
-              <EditorialPill kind="ghost" size="sm">
+              <EditorialPill kind="ghost" size="sm" onClick={duplicateYesterday}>
                 ⌘D Duplica ieri
               </EditorialPill>
               <span style={{ flex: 1 }} />
-              <EditorialPill
-                kind="spark"
-                size="sm"
-                onClick={() => {
-                  toast.success("Voce aggiunta", { description: `${rec.date}` });
-                  onClose();
-                }}
-              >
+              <EditorialPill kind="spark" size="sm" onClick={commitEntry}>
                 + Aggiungi
               </EditorialPill>
             </div>

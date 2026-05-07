@@ -14,7 +14,6 @@
     "reel:all": "bun scripts/render-reel.ts --all",
     "reel:montage": "bun scripts/render-reel.ts montage",
     "record": "bun src/recordings/scripts/run.ts",
-    "record:kudos-copilot": "bun src/recordings/scripts/run.ts kudos-copilot",
     "record:kudos-give": "bun src/recordings/scripts/run.ts kudos-give",
     "record:workspace-create": "CRED=new bun src/recordings/scripts/run.ts workspace-create",
     "record:time-attendance": "bun src/recordings/scripts/run.ts time-attendance-entry",

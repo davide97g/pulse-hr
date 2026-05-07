@@ -18,10 +18,10 @@ Pulse HR's `⌘K` (or `Ctrl+K`) fuzzy finder. The fastest way to navigate.
 - [[In-App Docs]] topics.
 - Sidebar destinations (jump to any feature without clicking).
 
-## Distinct from [[Copilot]]
+## Intent parser
 
-The command palette **navigates and finds**. Copilot **does** — it executes actions like "log 4h" or "request leave."
+Beyond fuzzy navigation, the palette also runs a deterministic local intent parser (`apps/app/src/lib/nlp.ts`) for natural-language actions like `log 4h on ACM-2025-01` or `request leave next Friday`. No LLM is involved; the parser maps phrases to runnable actions scoped by the caller's permissions.
 
 ## Related
 
-[[Copilot]] · [[Keyboard-First]]
+[[Keyboard-First]]

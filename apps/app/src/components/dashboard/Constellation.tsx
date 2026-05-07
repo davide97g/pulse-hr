@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { ConstellationPerson, DeptId, LensConfig, MicroCardConfig } from "./types";
 import { HoverCard } from "./HoverCard";
 import { DeptLabel } from "./DeptLabel";
@@ -8,8 +9,6 @@ const SIZE = 16;
 const HEX_W = SIZE * Math.sqrt(3);
 const HEX_H = SIZE * 2;
 const GAP = 1.4;
-
-const DEPT_FILTERS: Array<DeptId | "ALL"> = ["ALL", "ENG", "DESIGN", "OPS", "PEOPLE"];
 
 function ax2px(q: number, r: number) {
   return {
@@ -53,8 +52,22 @@ export function Constellation({
 }: ConstellationProps) {
   const [hover, setHover] = useState<HoverState | null>(null);
   const [filter, setFilter] = useState<DeptId | "ALL">("ALL");
+  const navigate = useNavigate();
 
   const pts = useMemo(() => people.map((p) => ax2px(p.q, p.r)), [people]);
+  const deptFilters = useMemo<Array<DeptId | "ALL">>(() => {
+    const present = (Object.entries(deptCounts) as Array<[DeptId, number]>)
+      .filter(([, count]) => count > 0)
+      .sort(([, a], [, b]) => b - a)
+      .map(([id]) => id);
+    return ["ALL", ...present];
+  }, [deptCounts]);
+  const spawnKey = lens.id;
+  const spawnDelays = useMemo(
+    () => people.map(() => Math.random() * 1500),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [spawnKey, people.length],
+  );
   const bounds = useMemo(() => {
     if (!pts.length) return { minX: 0, minY: 0, vbW: 100, vbH: 100 };
     const minX = Math.min(...pts.map((p) => p.x)) - SIZE;
@@ -79,27 +92,10 @@ export function Constellation({
         {/* Eyebrow + filter pills */}
         <div className="flex items-baseline justify-between flex-wrap gap-2">
           <div className="flex items-baseline gap-3 flex-wrap">
-            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              LENTE · {lens.eyebrow}
-            </span>
-            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              · per {lens.role}
-            </span>
-            <span className="tag-spark">
-              <span
-                style={{
-                  width: 5,
-                  height: 5,
-                  borderRadius: 999,
-                  background: "var(--spark-ink)",
-                }}
-              />{" "}
-              LIVE
-            </span>
             {lensSwitcher}
           </div>
           <div className="flex gap-2">
-            {DEPT_FILTERS.map((f) => (
+            {deptFilters.map((f) => (
               <button
                 key={f}
                 type="button"
@@ -332,19 +328,33 @@ export function Constellation({
               const glowing = lens.glow(p);
               return (
                 <g
-                  key={i}
-                  style={{ cursor: "pointer", transition: "opacity 200ms" }}
-                  opacity={dim ? 0.18 : 1}
+                  key={`${spawnKey}-${i}`}
+                  className="hex-spawn"
+                  style={{
+                    animationDelay: `${spawnDelays[i]}ms`,
+                  }}
                   onMouseEnter={() => setHover({ idx: i, person: p, x, y })}
                   onMouseLeave={() => setHover(null)}
+                  onClick={() =>
+                    navigate({ to: "/people/$employeeId", params: { employeeId: p.id } })
+                  }
                 >
-                  <path
-                    d={path}
-                    fill={fill}
-                    stroke={isHover ? "var(--spark)" : ring}
-                    strokeWidth={isHover ? 2 : ring !== "transparent" ? 1 : 0}
-                    filter={glowing ? "url(#spark-glow)" : undefined}
-                  />
+                  <g
+                    style={{
+                      cursor: "pointer",
+                      transition: "opacity 240ms ease-out, filter 240ms ease-out",
+                      filter: dim ? "blur(2.2px)" : "none",
+                    }}
+                    opacity={dim ? 0.32 : 1}
+                  >
+                    <path
+                      d={path}
+                      fill={fill}
+                      stroke={isHover ? "var(--spark)" : ring}
+                      strokeWidth={isHover ? 2 : ring !== "transparent" ? 1 : 0}
+                      filter={glowing ? "url(#spark-glow)" : undefined}
+                    />
+                  </g>
                 </g>
               );
             })}
@@ -387,17 +397,29 @@ export function Constellation({
               {lens.narrative}
             </p>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {lens.actions.map((a, i) =>
-                typeof a === "string" ? (
-                  <button key={i} type="button" className="pill pill-ghost pill-sm">
-                    {a}
+              {lens.actions.map((a, i) => {
+                if (typeof a === "string") {
+                  return (
+                    <button key={i} type="button" className="pill pill-ghost pill-sm">
+                      {a}
+                    </button>
+                  );
+                }
+                const spark = "spark" in a && a.spark;
+                const cls = spark ? "pill pill-spark pill-sm" : "pill pill-ghost pill-sm";
+                if (a.to) {
+                  return (
+                    <Link key={i} to={a.to} className={cls}>
+                      {a.label} {spark && <span className="arr">→</span>}
+                    </Link>
+                  );
+                }
+                return (
+                  <button key={i} type="button" className={cls}>
+                    {a.label} {spark && <span className="arr">→</span>}
                   </button>
-                ) : (
-                  <button key={i} type="button" className="pill pill-spark pill-sm">
-                    {a.label} <span className="arr">→</span>
-                  </button>
-                ),
-              )}
+                );
+              })}
             </div>
           </div>
         </div>

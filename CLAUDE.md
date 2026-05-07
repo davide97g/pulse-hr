@@ -72,7 +72,7 @@ TanStack Router SPA (migrated off TanStack Start SSR for Vercel). Paths below ar
 
 **Auth.** Clerk via `@clerk/react`. Login wall gates real features; the Demo banner (`DemoBanner`) appears for unauthenticated browsing. Workspace persona is split from the real Clerk role.
 
-**App shell.** `src/components/app/AppShell.tsx` owns sidebar (grouped: `Overview` / `People` / `Work` / `Money` / `Insights` / `Labs` / `Workspace`), Topbar with ⌘K (`CommandPalette`) and ⌘J (`CopilotOverlay`), and a mobile `<Sheet>` drawer. Exports `PageHeader`, `Avatar`, `StatusBadge`. `src/routes/__root.tsx` branches layout by path prefix — public prefixes `["/landing", "/login", "/signup"]` render a bare `<Outlet />`; everything else renders `<AppShell />`. Titles are kept via a `TITLE_BY_PATH` map + `useEffect`.
+**App shell.** `src/components/app/AppShell.tsx` owns sidebar (grouped: `Overview` / `People` / `Work` / `Money` / `Insights` / `Labs` / `Workspace`), Topbar with ⌘K (`CommandPalette`) and ⌘J (Status Log shortcut → `/log`), and a mobile `<Sheet>` drawer. Exports `PageHeader`, `Avatar`, `StatusBadge`. `src/routes/__root.tsx` branches layout by path prefix — public prefixes `["/landing", "/login", "/signup"]` render a bare `<Outlet />`; everything else renders `<AppShell />`. Titles are kept via a `TITLE_BY_PATH` map + `useEffect`.
 
 **Data.** Real data flows through `apps/api` via a typed client. Where the backend isn't wired yet, `src/lib/mock-data.ts` seeds local React state (employees, commesse, timesheets, leave, candidates, jobs, onboarding, docs, api keys, webhooks, audit log, and Labs data). The **`commessa`** (Italian project code) is the pivot — Time aggregates around `commessaId`.
 
@@ -84,7 +84,7 @@ TanStack Router SPA (migrated off TanStack Start SSR for Vercel). Paths below ar
 **Labs features** (NEW-badged, share visual language — iridescent border, pulse-dot, new-badge utilities):
 - `/pulse` — anonymous vibe check + heatmap
 - `/kudos` — peer coins, leaderboard, confetti (`.confetti-piece`)
-- Copilot — global ⌘J overlay (`src/components/app/Copilot.tsx`), streaming fake answers + runnable actions that toast and/or navigate.
+- `/log` — status log: deterministic per-topic forms (status / win / pain / challenge / feedback) saved through `logMessagesTable` and rendered in `EmployeeLogView` / `ManagerLogView`. No agent / no streaming reply.
 
 **PWA.** `vite-plugin-pwa` in `generateSW` mode, `autoUpdate`. Icons in `public/`. `src/main.tsx` wires `registerSW` to toast "New version available" (Reload action) and "Ready to work offline". Google Fonts runtime-cached via `CacheFirst`. SPA fallback `navigateFallback: "/index.html"`.
 

@@ -1,4 +1,6 @@
-import { useWorkspaceStatus } from "@/lib/workspace";
+import { useState } from "react";
+import { toast } from "sonner";
+import { setWorkspaceName, useWorkspaceStatus } from "@/lib/workspace";
 
 interface Item {
   label: string;
@@ -21,12 +23,27 @@ const CONTROL_LABEL: Record<Item["control"], string> = {
 
 export function SettingsEditorial() {
   const ws = useWorkspaceStatus();
+  const [draftName, setDraftName] = useState(ws.name);
+
+  function save() {
+    if (!draftName.trim()) {
+      toast.error("Il nome del workspace non può essere vuoto");
+      return;
+    }
+    setWorkspaceName(draftName.trim());
+    toast.success("Impostazioni salvate");
+  }
+
+  function reset() {
+    setDraftName(ws.name);
+    toast("Modifiche scartate");
+  }
 
   const sections: Section[] = [
     {
       label: "WORKSPACE",
       items: [
-        { label: "Nome workspace", value: ws.name, control: "edit" },
+        { label: "Nome workspace", value: draftName, control: "edit" },
         { label: "Lingua di default", value: "Italiano", control: "select" },
         { label: "Fuso orario", value: "Europe/Rome (UTC+1)", control: "select" },
         { label: "Settimana inizia", value: "Lunedì", control: "toggle" },
@@ -79,10 +96,10 @@ export function SettingsEditorial() {
           </h1>
         </div>
         <div className="flex gap-2">
-          <button type="button" className="pill pill-ghost pill-sm">
+          <button type="button" className="pill pill-ghost pill-sm" onClick={reset}>
             Reset
           </button>
-          <button type="button" className="pill pill-dark pill-sm">
+          <button type="button" className="pill pill-dark pill-sm" onClick={save}>
             Salva
           </button>
         </div>
@@ -133,15 +150,32 @@ export function SettingsEditorial() {
                   >
                     {it.label}
                   </div>
-                  <span
-                    className="t-body-sm mt-1 block"
-                    style={{
-                      color:
-                        it.control === "spark" ? "var(--spark)" : "var(--fg-2)",
-                    }}
-                  >
-                    {it.value}
-                  </span>
+                  {it.label === "Nome workspace" ? (
+                    <input
+                      value={draftName}
+                      onChange={(e) => setDraftName(e.target.value)}
+                      className="t-body-sm mt-1 block"
+                      style={{
+                        color: "var(--fg)",
+                        background: "transparent",
+                        border: "none",
+                        borderBottom: "1px solid var(--line)",
+                        padding: "4px 0",
+                        outline: "none",
+                        width: "100%",
+                      }}
+                    />
+                  ) : (
+                    <span
+                      className="t-body-sm mt-1 block"
+                      style={{
+                        color:
+                          it.control === "spark" ? "var(--spark)" : "var(--fg-2)",
+                      }}
+                    >
+                      {it.value}
+                    </span>
+                  )}
                 </div>
                 <span
                   className="t-mono"

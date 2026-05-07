@@ -1,7 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useClients } from "@/lib/tables/clients";
+import { toast } from "sonner";
+import { useClients, clientsTable } from "@/lib/tables/clients";
 import { useProjects } from "@/lib/tables/projects";
+import { ClientForm } from "@/components/pm/ClientForm";
 import type { Client } from "@/lib/mock-data";
 
 function clientInitials(name: string): string {
@@ -17,6 +19,15 @@ export function ClientsEditorial() {
   const clients = useClients();
   const projects = useProjects();
   const navigate = useNavigate();
+  const [formOpen, setFormOpen] = useState(false);
+
+  function saveClient(c: Client) {
+    const exists = clientsTable.getAll().some((x) => x.id === c.id);
+    if (exists) clientsTable.update(c.id, c);
+    else clientsTable.add(c);
+    toast.success(`Cliente “${c.name}” salvato`);
+    setFormOpen(false);
+  }
 
   const summary = useMemo(() => {
     const totalRevenue = projects.reduce((s, c) => s + c.burnedHours * (c.defaultBillableRate || 0), 0);
@@ -65,7 +76,11 @@ export function ClientsEditorial() {
           <button type="button" className="pill pill-ghost pill-sm">
             Filtri
           </button>
-          <button type="button" className="pill pill-dark pill-sm">
+          <button
+            type="button"
+            className="pill pill-dark pill-sm"
+            onClick={() => setFormOpen(true)}
+          >
             + Cliente
           </button>
         </div>
@@ -158,6 +173,12 @@ export function ClientsEditorial() {
           )}
         </div>
       </div>
+      <ClientForm
+        open={formOpen}
+        onClose={() => setFormOpen(false)}
+        onSave={saveClient}
+        initial={null}
+      />
     </div>
   );
 }

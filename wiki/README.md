@@ -15,7 +15,7 @@ If you are a non-technical reader (HR, ops, a curious customer) trying to unders
 | [`personas/`](./personas) | The five roles Pulse HR is built for (Employee, HR, Manager, Admin, Finance). |
 | [`features/`](./features) | Every product surface, one page each, in plain English. |
 | [`entities/`](./entities) | The nouns the product revolves around (Employee, Commessa, Timesheet…). |
-| [`concepts/`](./concepts) | Cross-cutting ideas (Labs, role themes, Copilot, offline mode…). |
+| [`concepts/`](./concepts) | Cross-cutting ideas (Labs, role themes, offline mode…). |
 | [`journeys/`](./journeys) | End-to-end narratives (onboard a new hire, daily status log…). |
 | [`glossary/`](./glossary) | Italian HR vocabulary glossed in English. |
 

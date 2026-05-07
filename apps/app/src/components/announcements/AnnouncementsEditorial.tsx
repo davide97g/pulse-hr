@@ -1,7 +1,11 @@
-import { useMemo } from "react";
-import { useAnnouncements } from "@/lib/tables/announcements";
-import { useEmployees } from "@/lib/tables/employees";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { useAnnouncements, announcementsTable } from "@/lib/tables/announcements";
+import { useEmployees, employeeById } from "@/lib/tables/employees";
 import type { Announcement } from "@/lib/mock-data";
+
+const ME = "e1";
 
 function authorInitials(name: string): string {
   return name
@@ -23,19 +27,46 @@ function tagFor(a: Announcement): string {
   return "WORKSPACE";
 }
 
+type FilterMode = "all" | "mine";
+
 export function AnnouncementsEditorial() {
   const announcements = useAnnouncements();
   const employees = useEmployees();
+  const [filter, setFilter] = useState<FilterMode>("all");
+  const [composerOpen, setComposerOpen] = useState(false);
+  const me = employeeById(ME);
 
   const sorted = useMemo(() => {
-    return [...announcements].sort((a, b) => {
+    const base = filter === "mine" && me ? announcements.filter((a) => a.author === me.name) : announcements;
+    return [...base].sort((a, b) => {
       if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
       return 0;
     });
-  }, [announcements]);
+  }, [announcements, filter, me]);
 
   const featured = sorted[0];
   const rest = sorted.slice(1);
+
+  function toggleReact(a: Announcement) {
+    const next = !a.youReacted;
+    const delta = next ? 1 : -1;
+    announcementsTable.update(a.id, {
+      youReacted: next,
+      reactions: Math.max(0, (a.reactions ?? 0) + delta),
+    });
+  }
+
+  function togglePin(a: Announcement) {
+    announcementsTable.update(a.id, { pinned: !a.pinned });
+    toast(a.pinned ? "Annuncio sbloccato" : "Annuncio in evidenza");
+  }
+
+  function deleteAnn(a: Announcement) {
+    announcementsTable.remove(a.id);
+    toast("Annuncio rimosso", {
+      action: { label: "Annulla", onClick: () => announcementsTable.add(a) },
+    });
+  }
 
   function findAuthor(name: string) {
     return employees.find(
@@ -65,13 +96,25 @@ export function AnnouncementsEditorial() {
           </h1>
         </div>
         <div className="flex gap-2">
-          <button type="button" className="pill pill-ghost pill-sm">
+          <button
+            type="button"
+            className={filter === "all" ? "pill pill-dark pill-sm" : "pill pill-ghost pill-sm"}
+            onClick={() => setFilter("all")}
+          >
             Tutti
           </button>
-          <button type="button" className="pill pill-ghost pill-sm">
+          <button
+            type="button"
+            className={filter === "mine" ? "pill pill-dark pill-sm" : "pill pill-ghost pill-sm"}
+            onClick={() => setFilter("mine")}
+          >
             Da te
           </button>
-          <button type="button" className="pill pill-dark pill-sm">
+          <button
+            type="button"
+            className="pill pill-spark pill-sm"
+            onClick={() => setComposerOpen(true)}
+          >
             + Annuncio
           </button>
         </div>
@@ -136,11 +179,34 @@ export function AnnouncementsEditorial() {
                 {featured.author}
               </span>
               <span className="flex-1" />
-              {featured.reactions != null && (
-                <span className="t-mono" style={{ color: "var(--spark)" }}>
-                  ↑ {featured.reactions}
-                </span>
-              )}
+              <button
+                type="button"
+                onClick={() => toggleReact(featured)}
+                className="t-mono"
+                style={{
+                  color: featured.youReacted ? "var(--spark)" : "var(--muted-foreground)",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+              >
+                ↑ {featured.reactions ?? 0}
+              </button>
+              <button
+                type="button"
+                onClick={() => togglePin(featured)}
+                className="t-mono"
+                style={{
+                  color: featured.pinned ? "var(--spark)" : "var(--muted-foreground)",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+              >
+                {featured.pinned ? "● PIN" : "○ PIN"}
+              </button>
               {featured.comments && (
                 <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
                   · {featured.comments.length} risposte
@@ -156,6 +222,12 @@ export function AnnouncementsEditorial() {
           </div>
         </article>
       )}
+
+      <AnnouncementComposer
+        open={composerOpen}
+        onClose={() => setComposerOpen(false)}
+        author={me?.name ?? "Tu"}
+      />
 
       {rest.length > 0 && (
         <div
@@ -223,11 +295,35 @@ export function AnnouncementsEditorial() {
                     {it.author}
                   </span>
                   <span className="flex-1" />
-                  {it.reactions != null && (
-                    <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                      ↑ {it.reactions}
-                    </span>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => toggleReact(it)}
+                    className="t-mono"
+                    style={{
+                      color: it.youReacted ? "var(--spark)" : "var(--muted-foreground)",
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                  >
+                    ↑ {it.reactions ?? 0}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => deleteAnn(it)}
+                    className="t-mono"
+                    style={{
+                      color: "var(--muted-foreground)",
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
+                    aria-label="Rimuovi"
+                  >
+                    ×
+                  </button>
                 </div>
                 {void author}
               </article>
@@ -236,5 +332,117 @@ export function AnnouncementsEditorial() {
         </div>
       )}
     </div>
+  );
+}
+
+function AnnouncementComposer({
+  open,
+  onClose,
+  author,
+}: {
+  open: boolean;
+  onClose: () => void;
+  author: string;
+}) {
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [pinned, setPinned] = useState(false);
+
+  function publish() {
+    if (!title.trim() || !body.trim()) {
+      toast.error("Titolo e corpo sono obbligatori");
+      return;
+    }
+    const a: Announcement = {
+      id: `an-${Date.now()}`,
+      author,
+      title: title.trim(),
+      body: body.trim(),
+      time: new Date().toLocaleDateString("it-IT", { day: "2-digit", month: "short" }),
+      pinned,
+      reactions: 0,
+      youReacted: false,
+    };
+    announcementsTable.add(a);
+    toast.success("Annuncio pubblicato", {
+      action: { label: "Annulla", onClick: () => announcementsTable.remove(a.id) },
+    });
+    setTitle("");
+    setBody("");
+    setPinned(false);
+    onClose();
+  }
+
+  return (
+    <SidePanel open={open} onClose={onClose} title="Nuovo annuncio" width={560}>
+      <div className="p-5 flex flex-col gap-4">
+        <label className="flex flex-col gap-1.5">
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            TITOLO
+          </span>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Cosa vuoi annunciare?"
+            style={{
+              padding: "10px 0",
+              border: "none",
+              borderBottom: "1px solid var(--line-strong)",
+              background: "transparent",
+              color: "var(--fg)",
+              fontFamily: '"Fraunces", ui-serif, serif',
+              fontStyle: "italic",
+              fontSize: 26,
+              letterSpacing: "-0.02em",
+              outline: "none",
+            }}
+          />
+        </label>
+        <label className="flex flex-col gap-1.5">
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            CORPO
+          </span>
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            rows={6}
+            placeholder="Tre frasi al massimo. Concrete."
+            style={{
+              padding: "12px 14px",
+              border: "1px solid var(--line-strong)",
+              borderRadius: 12,
+              background: "transparent",
+              color: "var(--fg)",
+              fontFamily: '"Fraunces", ui-serif, serif',
+              fontStyle: "italic",
+              fontSize: 16,
+              lineHeight: 1.4,
+              resize: "vertical",
+            }}
+          />
+        </label>
+        <label className="flex items-center gap-2 t-mono" style={{ color: "var(--muted-foreground)" }}>
+          <input
+            type="checkbox"
+            checked={pinned}
+            onChange={(e) => setPinned(e.target.checked)}
+          />
+          METTI IN EVIDENZA
+        </label>
+        <div className="flex gap-2 mt-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="pill pill-ghost pill-sm"
+          >
+            Annulla
+          </button>
+          <span className="flex-1" />
+          <button type="button" onClick={publish} className="pill pill-spark pill-sm">
+            Pubblica →
+          </button>
+        </div>
+      </div>
+    </SidePanel>
   );
 }

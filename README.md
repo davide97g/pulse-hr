@@ -38,7 +38,7 @@ Most HR software treats your team as rows in a CRM. Pulse treats them as people,
 - 🔓 **Truly open source** — full source on GitHub under [FSL-1.1-MIT](./LICENSE). Read it, run it, fork it. Converts to plain MIT after two years.
 - 🧩 **Modular by design** — **Money**, **People** and **Work** are three independent products that share one workspace, one keyboard, one API. Adopt one, skip the others.
 - ⌨️ **Keyboard-first** — `⌘K` fuzzy search, `⌘J` command bar, 40+ shortcuts. Every workflow reachable without a mouse.
-- 🧪 **Labs that ship** — anonymous team Pulse, commessa Forecast, peer Kudos, deep-work Focus, ⌘J Copilot. Real features, real users, in the open.
+- 🧪 **Labs that ship** — anonymous team Pulse, commessa Forecast, peer Kudos, deep-work Focus. Real features, real users, in the open.
 - 🪜 **Project-first time tracking** — `commessa` (project code) is a first-class concept across timesheets, forecasting, focus and saturation reporting.
 - 📡 **API + webhooks on every event** — REST endpoints + webhook fan-out for proposals, comments, votes, time entries, payroll runs.
 - 📱 **PWA-ready** — installs on macOS, Windows, iOS, Android. Drafts and recent views work offline, sync on reconnect.
@@ -68,7 +68,6 @@ Experimental surfaces with the [Labs visual language](apps/app/src/styles.css) (
 | **Forecast** | Commessa burn projection with scenario sliders |
 | **Kudos** | Peer coins, leaderboard, confetti |
 | **Focus** | Deep-work timer with auto-decline |
-| **Copilot** | Global ⌘J overlay, streaming answers, runnable actions |
 | **Voting Power** | Earn, spend and refill power on the [feedback board](https://feedback.pulsehr.it) — see [v0.7.0](./CHANGELOG.md#070--2026-04-25--voting-power-with-a-real-economy) |
 
 ---

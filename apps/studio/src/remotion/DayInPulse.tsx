@@ -6,14 +6,13 @@ import { Timesheet } from "./scenes/Timesheet";
 import { Forecast } from "./scenes/Forecast";
 import { Kudos } from "./scenes/Kudos";
 import { Focus } from "./scenes/Focus";
-import { Copilot } from "./scenes/Copilot";
 import { Snap } from "./scenes/Snap";
 import { Grid } from "./components/Grid";
 import { Wordmark } from "./components/Wordmark";
 
 /**
- * "Un giorno in Pulse" — 12s · 30fps · 360 frames at 1280×720.
- * Seven scenes narrate the daily loop of a services team on Pulse HR.
+ * "Un giorno in Pulse" — 30fps at 1280×720.
+ * Six scenes narrate the daily loop of a services team on Pulse HR.
  */
 export const DayInPulse: React.FC = () => {
   return (
@@ -44,9 +43,6 @@ export const DayInPulse: React.FC = () => {
           </Series.Sequence>
           <Series.Sequence durationInFrames={50} offset={-8} name="Focus">
             <Focus />
-          </Series.Sequence>
-          <Series.Sequence durationInFrames={65} offset={-8} name="Copilot">
-            <Copilot />
           </Series.Sequence>
           <Series.Sequence durationInFrames={65} offset={-8} name="Snap">
             <Snap />

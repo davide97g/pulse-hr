@@ -128,7 +128,7 @@ export function TimesheetCalendar({
     return [];
   }, [selectedInfo, entries]);
 
-  // External triggers (Command Palette, Copilot)
+  // External triggers (Command Palette)
   useEffect(() => {
     const onAutofill = () => setAutofillOpen(true);
     const onBulk = (e: Event) => {

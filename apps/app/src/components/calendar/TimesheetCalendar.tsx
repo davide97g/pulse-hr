@@ -217,9 +217,9 @@ export function TimesheetCalendar() {
           <Link to="/time" className="pill pill-ghost pill-sm">
             ⚡ Log now
           </Link>
-          <button type="button" className="pill pill-spark pill-sm">
+          <Link to="/time" search={{ tab: "mine" }} className="pill pill-spark pill-sm">
             + Nuova voce <span className="arr">→</span>
-          </button>
+          </Link>
         </div>
       </div>
 

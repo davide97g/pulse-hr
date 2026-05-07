@@ -12,7 +12,7 @@ Usa questo documento quando crei o modifichi JSON di recording in `apps/app/reco
 | Credenziali        | `apps/app/test.credentials.json` (`email`, `password`) — sostituiti in compile come `{{TEST_EMAIL}}` / `{{TEST_PASSWORD}}` |
 | Base URL app       | `{{BASE_URL}}` (default `http://localhost:5173`; override con env `BASE_URL`)                                              |
 
-Il nome dello spec (`focus`, `kudos-copilot`, …) deve coincidere con il file `specs/<nome>.template.json`.
+Il nome dello spec (`focus`, `kudos-give`, …) deve coincidere con il file `specs/<nome>.template.json`.
 
 ### Placeholder supportati da `scripts/run.ts`
 

@@ -22,7 +22,7 @@ Where hours get logged against a [[Commessa]]. The single source of truth that f
 ## Notable behaviors
 
 - **Day view + week view.** Drag time blocks onto [[Commessa]]e. Half-day [[permesso]] entries flow through here too.
-- **[[Copilot]] hooks.** "log 4h on ACM-2025-01" parsed in one keystroke.
+- **Local intent parser.** "log 4h on ACM-2025-01" is parsed deterministically by `lib/nlp.ts` from the [[Command Palette]] — no LLM in the loop.
 -  
 - **Offline.** Edits made offline sync when reconnected — see [[PWA & Offline]].
 - **Lock window.** Once a  run is closed for the period, entries within that window go read-only.

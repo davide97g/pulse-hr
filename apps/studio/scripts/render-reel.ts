@@ -21,7 +21,6 @@ const entry = resolve(studioDir, "src", "remotion", "index.ts");
 
 const FLOWS = [
   "kudos-give",
-  "kudos-copilot",
   "workspace-create",
   "time-attendance-entry",
   "growth-checks",

@@ -136,7 +136,22 @@ export function PeopleEditorialList() {
               minWidth: 160,
             }}
           />
-          <button type="button" className="pill pill-ghost pill-sm">
+          <button
+            type="button"
+            className="pill pill-ghost pill-sm"
+            onClick={() => {
+              const blob = new Blob([JSON.stringify(filtered, null, 2)], {
+                type: "application/json",
+              });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `pulsehr-people-${new Date().toISOString().slice(0, 10)}.json`;
+              a.click();
+              URL.revokeObjectURL(url);
+              toast.success(`Esportate ${filtered.length} persone`);
+            }}
+          >
             Esporta
           </button>
           <button type="button" className="pill pill-dark pill-sm" onClick={() => openAction("add-employee")}>

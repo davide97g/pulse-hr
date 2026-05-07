@@ -87,7 +87,7 @@ Each move is a concrete departure from what's currently in the repo. Implementat
 - `.shimmer` used as feature-card decoration — keep only for skeletons.
 - `.stagger-in` cascades — content arrives in one fade, not a wave.
 - `.confetti-piece` on kudos — replace with a single pulse-dot burst.
-- `.typing-dot` triple-dot on Copilot — replace with a single shimmer line.
+- `.typing-dot` triple-dot indicator — replace with a single shimmer line.
 
 **Replaced with one quiet system:**
 
@@ -123,7 +123,7 @@ This is the **single biggest feel change**. Every floating surface (cards, popov
 
 ```css
 /* The canonical floating-surface class.
-   Applies to Card, Popover, Dialog, Sheet, CommandPalette, Copilot, Dropdown, Tooltip.
+   Applies to Card, Popover, Dialog, Sheet, CommandPalette, Dropdown, Tooltip.
 */
 .surface-float {
   background: color-mix(in oklch, var(--background) 82%, transparent);
@@ -139,7 +139,7 @@ This is the **single biggest feel change**. Every floating surface (cards, popov
     0 8px 16px -8px color-mix(in oklch, black 40%, transparent);
 }
 
-/* Variant for deeply-floating elements (command bar, copilot overlay) —
+/* Variant for deeply-floating elements (command bar, full-screen modals) —
    stronger blur, larger ambient glow, larger radius. */
 .surface-float-lg {
   background: color-mix(in oklch, var(--background) 72%, transparent);
@@ -320,7 +320,7 @@ The `.surface-float` class from §2.3. Cards, popovers, dropdown menus, tooltips
 
 ### Tier 3 — Float-lg
 
-The `.surface-float-lg` class. Reserved for the **star** overlays: the ⌘K command palette, the ⌘J Copilot overlay, a full-screen modal dialog. Stronger blur, larger radius, deeper glow. These are the moments that should feel the most "floating" — they're the brand's signature UI gesture.
+The `.surface-float-lg` class. Reserved for the **star** overlays: the ⌘K command palette, a full-screen modal dialog. Stronger blur, larger radius, deeper glow. These are the moments that should feel the most "floating" — they're the brand's signature UI gesture.
 
 | Tier | Example                      | Blur  | Border              | Glow            | Radius |
 |------|------------------------------|-------|---------------------|------------------|--------|
@@ -381,7 +381,7 @@ Not a full migration plan, but a sequence that de-risks the aesthetic shift:
 **Phase 2 — surface system (2–3 days):**
 1. Add `.surface-float` and `.surface-float-lg` utilities.
 2. Migrate shadcn `Card`, `Popover`, `DropdownMenu`, `Tooltip`, `Sheet`, `Dialog` to use them.
-3. Upgrade `CommandPalette` and `CopilotOverlay` to `.surface-float-lg`.
+3. Upgrade `CommandPalette` to `.surface-float-lg`.
 4. Fallback path for non-blur-supporting browsers (solid bg).
 
 **Phase 3 — typography + motion (1–2 days):**
@@ -418,7 +418,7 @@ Flagging honestly, same style as `foundation.md` §15:
 - **Role chip shape.** Dot + monospace label is the proposed default. But on dense tables (e.g., employee list), do chips take too much room? Consider a 6px-dot-only variant for row contexts.
 - **Glass color temperature.** The ambient glow tint is lime by default. Does it ever shift? (e.g., coral in HR-context overlays, or is that too clever?)
 - **Contrast under blur.** AA compliance requires empirical testing with real content behind glass surfaces. Budget a day for this per `design:accessibility-review`.
-- **Labs group visual.** Labs features (Pulse, Forecast, Kudos, Focus, Copilot) currently share the `iridescent-border` as a visual group. What's the replacement? Proposed: a subtle 1px lime top-border + the `chip-new` label in the card corner. Needs a mock.
+- **Labs group visual.** Labs features (Pulse, Forecast, Kudos, Focus) currently share the `iridescent-border` as a visual group. What's the replacement? Proposed: a subtle 1px lime top-border + the `chip-new` label in the card corner. Needs a mock.
 - **Mobile breakpoints & density.** Editorial-big H1 at 128px needs aggressive `clamp()`. Sidebar sheet drawer — glass or solid on mobile?
 - **Animation on reduced-motion.** Every utility above needs a `@media (prefers-reduced-motion: reduce)` path. Currently `styles.css` doesn't have one. Budget a half-day.
 

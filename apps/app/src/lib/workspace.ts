@@ -14,11 +14,19 @@
  */
 import { useSyncExternalStore } from "react";
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 export const DEFAULT_WORKSPACE_NAME = "Acme";
 export const ANON_USER_ID = "__anon__";
 export const SEEDED_OWNER_NAME = "Sarah Chen";
 const ROOT = "pulse.ws";
+
+export type CompanySize = "small" | "medium" | "large";
+export const COMPANY_SIZE_HEADCOUNT: Record<CompanySize, number> = {
+  small: 10,
+  medium: 25,
+  large: 100,
+};
+export const DEFAULT_COMPANY_SIZE: CompanySize = "medium";
 
 // ── Current user ─────────────────────────────────────────────────────
 let currentUserId: string | null = null;
@@ -100,6 +108,33 @@ export function needsResetForSchema(): boolean {
   if (!isWorkspaceReady()) return false;
   const v = storedSchemaVersion();
   return v != null && v !== SCHEMA_VERSION;
+}
+
+export function getCompanySize(): CompanySize {
+  const k = metaKey("companySize");
+  if (!k) return DEFAULT_COMPANY_SIZE;
+  try {
+    const v = localStorage.getItem(k);
+    if (v === "small" || v === "medium" || v === "large") return v;
+  } catch {
+    // fall through
+  }
+  return DEFAULT_COMPANY_SIZE;
+}
+
+export function getCompanyHeadcount(): number {
+  return COMPANY_SIZE_HEADCOUNT[getCompanySize()];
+}
+
+export function setCompanySize(size: CompanySize) {
+  const k = metaKey("companySize");
+  if (!k) return;
+  try {
+    localStorage.setItem(k, size);
+  } catch (err) {
+    console.warn("setCompanySize: write failed", err);
+  }
+  notifyStatus();
 }
 
 export function getWorkspaceName(): string {
@@ -229,15 +264,22 @@ export interface WorkspaceStatus {
   needsReset: boolean;
   /** User-chosen display name for this demo workspace. */
   name: string;
+  /** User-chosen company size bucket — drives headcount and density. */
+  companySize: CompanySize;
+  /** Headcount target derived from companySize. */
+  headcount: number;
 }
 
 function snapshotStatus(): WorkspaceStatus {
+  const size = getCompanySize();
   return {
     hasUser: currentUserId != null && currentUserId !== ANON_USER_ID,
     hasAnyUser: currentUserId != null,
     ready: isWorkspaceReady(),
     needsReset: needsResetForSchema(),
     name: getWorkspaceName(),
+    companySize: size,
+    headcount: COMPANY_SIZE_HEADCOUNT[size],
   };
 }
 

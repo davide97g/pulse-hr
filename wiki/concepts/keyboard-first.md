@@ -12,7 +12,7 @@ Pulse HR is designed so a keyboard-only user can navigate and act faster than a 
 ## Core shortcuts
 
 - `⌘K` / `Ctrl+K` → [[Command Palette]] (find anything).
-- `⌘J` / `Ctrl+J` → [[Copilot]] (do anything).
+- `⌘J` / `Ctrl+J` → open the [[Status Log]].
 - `⌘\` / `Ctrl+\` → toggle the sidebar.
 - `?` → open the shortcut sheet.
 - Per-route shortcuts (e.g. `n` to add a new record on a list page).

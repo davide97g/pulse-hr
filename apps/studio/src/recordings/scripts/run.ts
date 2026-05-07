@@ -28,7 +28,7 @@ import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const studioDir = resolve(__dirname, "..", "..", "..");
 const appDir = resolve(studioDir, "..", "app");
-const specName = process.argv[2] ?? "kudos-copilot";
+const specName = process.argv[2] ?? "kudos-give";
 const format = process.env.FORMAT ?? "mp4";
 const baseUrl = process.env.BASE_URL ?? "http://localhost:5173";
 const feedbackBaseUrl = process.env.FEEDBACK_BASE_URL ?? "http://localhost:5174";

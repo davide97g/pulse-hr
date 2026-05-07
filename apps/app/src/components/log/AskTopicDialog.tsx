@@ -78,7 +78,7 @@ export function AskTopicDialog({
             <Label>Prompt</Label>
             <Textarea
               rows={3}
-              placeholder="What should the agent ask them?"
+              placeholder="What question should we put in front of them?"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
             />

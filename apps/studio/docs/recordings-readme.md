@@ -32,9 +32,9 @@ bun run dev                          # Vite on :5173
 Terminal B — record:
 
 ```bash
-bun run demo:record                  # from repo root (runs kudos-copilot by default)
+bun run demo:record                  # from repo root (runs kudos-give by default)
 # or directly:
-cd apps/app/recordings && bun scripts/run.ts kudos-copilot
+cd apps/app/recordings && bun scripts/run.ts kudos-give
 ```
 
 Env overrides:
@@ -47,4 +47,4 @@ Outputs land in `apps/app/recordings/output/`.
 
 ## Specs available
 
-- `kudos-copilot` — logs in, opens ⌘J and fires a log-hours intent, then navigates to `/kudos` and sends a kudo with confetti. ~45s.
+- `kudos-give` — logs in, navigates to `/kudos` and sends a kudo with confetti. ~30s.

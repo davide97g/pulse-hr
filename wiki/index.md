@@ -67,7 +67,6 @@ Use this as your starting point: scan the relevant section, click into the pages
 ## Concepts
 
 - [Command Palette](concepts/command-palette.md) — ⌘K finder for navigation.
-- [Copilot](concepts/copilot.md) — ⌘J natural-language action overlay.
 - [Demo Mode](concepts/demo-mode.md) — frontend-only mockup state.
 - [Keyboard-First](concepts/keyboard-first.md) — design stance; shortcut catalog.
 - [Labs](concepts/labs.md) — experimental shelf with NEW-badged features.

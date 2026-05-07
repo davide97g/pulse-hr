@@ -23,7 +23,7 @@ Each app owns its own `vercel.json` / deploy pipeline. Only the product + API ar
 
 - **Stack:** React 19, Vite, Tailwind 4, shadcn/ui.
 - **Router:** TanStack Router, file-based (`src/routes/*.tsx`), auto-codesplit. `routeTree.gen.ts` is generated — never hand-edit.
-- **Shell:** `src/components/app/AppShell.tsx` — sidebar (grouped nav: Overview / People / Work / Money / Insights / Labs / Workspace), topbar with ⌘K command palette and ⌘J Copilot overlay.
+- **Shell:** `src/components/app/AppShell.tsx` — sidebar (grouped nav: Overview / People / Work / Money / Insights / Labs / Workspace), topbar with ⌘K command palette and ⌘J Status Log shortcut (navigates to `/log`).
 - **State:** in-memory from `src/lib/mock-data.ts` where the backend isn't wired yet. Real data flows through `apps/api` via a typed client.
 - **Theme:** 7 themes (`light`, `dark`, + role variants). Tokens in `src/styles.css` under `html[data-theme="…"]`. Flash-prevention IIFE in `index.html`.
 - **PWA:** `vite-plugin-pwa` in `generateSW` mode.
@@ -44,7 +44,7 @@ Experiments share a visual language (iridescent border, pulse-dot, new-badge):
 
 - `/pulse` — anonymous vibe check + heatmap
 - `/kudos` — peer coins + leaderboard + confetti
-- Copilot — global ⌘J overlay, streaming answers, runnable actions
+- `/log` — status log: deterministic per-topic forms (status / win / pain / challenge / feedback)
 
 ## Domain model
 

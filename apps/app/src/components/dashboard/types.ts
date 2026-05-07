@@ -62,7 +62,7 @@ export interface LensConfig {
   statTriad: (people: ConstellationPerson[]) => Array<[string, number, boolean]>;
   legendItem: (entry: number | PresenceState) => { bg: string; glow: boolean };
   narrative: ReactNode;
-  actions: Array<string | { spark: true; label: string }>;
+  actions: Array<string | { spark: true; label: string; to?: string } | { label: string; to: string }>;
   tooltipPrimary: (p: ConstellationPerson) => { label: string; value: string; accent: boolean };
   tooltipSecondary: (p: ConstellationPerson) => { label: string; value: string };
 }
