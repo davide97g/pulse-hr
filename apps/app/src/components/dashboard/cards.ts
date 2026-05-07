@@ -3,14 +3,6 @@ import type { LensId, MicroCardConfig } from "./types";
 export interface CardSignals {
   pendingLeavesCount: number;
   pendingLeavesToApprove: number;
-  pendingExpensesAmount: number;
-  pendingExpensesCount: number;
-  payrollAmountK: number;
-  payrollPeriod: string;
-  payrollStatus: string;
-  forecastBurnK: number;
-  forecastVsPlanPct: number;
-  forecastCommessaCode: string;
   recruitingCandidates: number;
   recruitingOffers: number;
   pulseResponseRate: number;
@@ -28,7 +20,7 @@ export interface CardSignals {
   meetingsToday: number;
   meetingConflicts: number;
   satMeanPct: number;
-  commesseAtRisk: number;
+  projectsAtRisk: number;
   officesOpen: number;
   officesTotal: number;
   busiestOfficeName: string;
@@ -105,12 +97,12 @@ export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
         link: "/calendar",
       },
       {
-        eyebrow: "04 · FORECAST",
+        eyebrow: "04 · SATURATION",
         title: "Saturazione",
         big: `${s.satMeanPct}%`,
-        caption: `media team · ${s.commesseAtRisk} commesse a rischio`,
+        caption: `media team · ${s.projectsAtRisk} projects a rischio`,
         spark: true,
-        link: "/forecast",
+        link: "/saturation",
       },
       {
         eyebrow: "05 · OFFICES",
@@ -125,23 +117,15 @@ export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
   // workload (default)
   return [
     {
-      eyebrow: "01 · MONEY",
-      title: "Payroll",
-      big: `€ ${s.payrollAmountK}k`,
-      caption: `run di ${s.payrollPeriod} · ${s.payrollStatus}`,
-      accent: true,
-      status: "Approva entro venerdì",
-      link: "/payroll",
-    },
-    {
-      eyebrow: "02 · LEAVE",
+      eyebrow: "01 · LEAVE",
       title: "Riposo",
       big: String(s.pendingLeavesCount),
       caption: `richieste aperte · ${s.pendingLeavesToApprove} da approvare`,
+      accent: true,
       link: "/leave",
     },
     {
-      eyebrow: "03 · KUDOS",
+      eyebrow: "02 · KUDOS",
       title: "Grazie",
       big: String(s.kudosThisMonth),
       caption: `kudos questo mese · ${s.kudosDelta >= 0 ? "+" : ""}${s.kudosDelta} vs scorso`,
@@ -149,14 +133,7 @@ export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
       link: "/kudos",
     },
     {
-      eyebrow: "04 · FORECAST",
-      title: "Burn",
-      big: `€ ${s.forecastBurnK}k`,
-      caption: `proiezione ${s.forecastCommessaCode} · ${s.forecastVsPlanPct >= 0 ? "+" : ""}${s.forecastVsPlanPct}% vs piano`,
-      link: "/forecast",
-    },
-    {
-      eyebrow: "05 · RECRUITING",
+      eyebrow: "03 · RECRUITING",
       title: "Pipeline",
       big: String(s.recruitingCandidates),
       caption: `candidati attivi · ${s.recruitingOffers} offerte`,

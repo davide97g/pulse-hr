@@ -20,8 +20,8 @@ The external parties [[Commessa]]e are billed against. Each client groups one or
 
 - A client page lists every [[Commessa]] grouped under it, with budget burn and current allocation.
 - Contacts on the client side (name, email, role) live on the client record.
-- Click into a [[Commessa]] from the client page to see allocation, hours, and [[Forecast]].
+- Click into a [[Commessa]] from the client page to see allocation, hours, and .
 
 ## Related journeys
 
-[[Monthly Payroll Run]]
+

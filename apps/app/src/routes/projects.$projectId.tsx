@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ProjectEditorial } from "@/components/projects/ProjectEditorial";
 
 export const Route = createFileRoute("/projects/$projectId")({
-  head: ({ params }) => ({ meta: [{ title: `Commessa ${params.projectId} — Pulse HR` }] }),
+  head: ({ params }) => ({ meta: [{ title: `Project ${params.projectId} — Pulse HR` }] }),
   component: ProjectDetailRoute,
 });
 

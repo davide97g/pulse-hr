@@ -393,75 +393,6 @@ export function __setLeaveRequests(next: LeaveRequest[]) {
   leaveRequests = next;
 }
 
-export interface Expense {
-  id: string;
-  employeeId: string;
-  description: string;
-  category: "Travel" | "Meals" | "Software" | "Equipment";
-  amount: number;
-  currency: "USD" | "EUR" | "GBP";
-  date: string;
-  status: "pending" | "approved" | "reimbursed" | "rejected";
-}
-
-export let expenses: Expense[] = [
-  {
-    id: "x1",
-    employeeId: "e6",
-    description: "Client dinner — Acme Corp",
-    category: "Meals",
-    amount: 184.5,
-    currency: "USD",
-    date: "2026-04-12",
-    status: "pending",
-  },
-  {
-    id: "x2",
-    employeeId: "e2",
-    description: "Figma annual license",
-    category: "Software",
-    amount: 180,
-    currency: "USD",
-    date: "2026-04-08",
-    status: "approved",
-  },
-  {
-    id: "x3",
-    employeeId: "e7",
-    description: "Flight TYO → SFO",
-    category: "Travel",
-    amount: 1240,
-    currency: "USD",
-    date: "2026-04-02",
-    status: "reimbursed",
-  },
-  {
-    id: "x4",
-    employeeId: "e9",
-    description: "Standing desk",
-    category: "Equipment",
-    amount: 620,
-    currency: "USD",
-    date: "2026-04-14",
-    status: "pending",
-  },
-  {
-    id: "x5",
-    employeeId: "e3",
-    description: "Team offsite — London",
-    category: "Travel",
-    amount: 890,
-    currency: "GBP",
-    date: "2026-04-05",
-    status: "approved",
-  },
-];
-
-export const expensesSeed: Expense[] = expenses;
-export function __setExpenses(next: Expense[]) {
-  expenses = next;
-}
-
 export interface Scorecard {
   id: string;
   title: string;
@@ -502,54 +433,6 @@ export let candidates: Candidate[] = cnames.map(([n, r], i) => ({
   appliedDate: `2026-04-${String(14 - i).padStart(2, "0")}`,
   rating: 3 + ((i * 7) % 3),
 }));
-
-export interface PayrollRun {
-  id: string;
-  period: string;
-  status: "draft" | "processing" | "completed" | "scheduled";
-  employees: number;
-  gross: number;
-  net: number;
-  date: string;
-}
-export let payrollRuns: PayrollRun[] = [
-  {
-    id: "p1",
-    period: "April 2026",
-    status: "scheduled",
-    employees: 12,
-    gross: 124500,
-    net: 89200,
-    date: "2026-04-30",
-  },
-  {
-    id: "p2",
-    period: "March 2026",
-    status: "completed",
-    employees: 12,
-    gross: 122100,
-    net: 87800,
-    date: "2026-03-31",
-  },
-  {
-    id: "p3",
-    period: "February 2026",
-    status: "completed",
-    employees: 11,
-    gross: 115400,
-    net: 83100,
-    date: "2026-02-28",
-  },
-  {
-    id: "p4",
-    period: "January 2026",
-    status: "completed",
-    employees: 11,
-    gross: 114800,
-    net: 82700,
-    date: "2026-01-31",
-  },
-];
 
 export type Vibe = "amazing" | "good" | "meh" | "rough" | "awful";
 export interface PulseEntry {
@@ -1354,287 +1237,6 @@ export let kudosSeed: Kudo[] = [
   },
 ];
 
-export interface FocusSession {
-  id: string;
-  employeeId: string;
-  date: string;
-  startedAt: string; // HH:MM
-  durationMin: number;
-  commessaId: string;
-  note?: string;
-  meetingsDeclined: number;
-}
-export let focusSessionsSeed: FocusSession[] = [
-  // e1 — Sarah
-  {
-    id: "fs1",
-    employeeId: "e1",
-    date: "2026-04-17",
-    startedAt: "09:00",
-    durationMin: 90,
-    commessaId: "cm1",
-    meetingsDeclined: 2,
-    note: "Migration script v3",
-  },
-  {
-    id: "fs2",
-    employeeId: "e1",
-    date: "2026-04-17",
-    startedAt: "14:00",
-    durationMin: 60,
-    commessaId: "cm1",
-    meetingsDeclined: 1,
-  },
-  {
-    id: "fs3",
-    employeeId: "e1",
-    date: "2026-04-16",
-    startedAt: "10:00",
-    durationMin: 90,
-    commessaId: "cm3",
-    meetingsDeclined: 3,
-    note: "Design token audit",
-  },
-  {
-    id: "fs4",
-    employeeId: "e1",
-    date: "2026-04-15",
-    startedAt: "09:30",
-    durationMin: 120,
-    commessaId: "cm1",
-    meetingsDeclined: 2,
-  },
-  {
-    id: "fs5",
-    employeeId: "e1",
-    date: "2026-04-14",
-    startedAt: "13:00",
-    durationMin: 60,
-    commessaId: "cm2",
-    meetingsDeclined: 0,
-  },
-  {
-    id: "fs6",
-    employeeId: "e1",
-    date: "2026-04-10",
-    startedAt: "09:00",
-    durationMin: 90,
-    commessaId: "cm1",
-    meetingsDeclined: 2,
-  },
-  {
-    id: "fs7",
-    employeeId: "e1",
-    date: "2026-04-03",
-    startedAt: "09:00",
-    durationMin: 90,
-    commessaId: "cm1",
-    meetingsDeclined: 1,
-  },
-  // e2 — Marcus
-  {
-    id: "fs8",
-    employeeId: "e2",
-    date: "2026-04-17",
-    startedAt: "10:30",
-    durationMin: 120,
-    commessaId: "cm3",
-    meetingsDeclined: 3,
-    note: "Onboarding polish",
-  },
-  {
-    id: "fs9",
-    employeeId: "e2",
-    date: "2026-04-15",
-    startedAt: "14:00",
-    durationMin: 90,
-    commessaId: "cm3",
-    meetingsDeclined: 2,
-  },
-  {
-    id: "fs10",
-    employeeId: "e2",
-    date: "2026-04-09",
-    startedAt: "10:00",
-    durationMin: 90,
-    commessaId: "cm3",
-    meetingsDeclined: 2,
-  },
-  {
-    id: "fs11",
-    employeeId: "e2",
-    date: "2026-04-02",
-    startedAt: "10:00",
-    durationMin: 120,
-    commessaId: "cm3",
-    meetingsDeclined: 3,
-  },
-  // e4 — Tom
-  {
-    id: "fs12",
-    employeeId: "e4",
-    date: "2026-04-15",
-    startedAt: "09:00",
-    durationMin: 90,
-    commessaId: "cm2",
-    meetingsDeclined: 1,
-    note: "Cache layer",
-  },
-  {
-    id: "fs13",
-    employeeId: "e4",
-    date: "2026-04-10",
-    startedAt: "09:00",
-    durationMin: 120,
-    commessaId: "cm2",
-    meetingsDeclined: 2,
-  },
-  // e7 — Yuki
-  {
-    id: "fs14",
-    employeeId: "e7",
-    date: "2026-04-16",
-    startedAt: "09:00",
-    durationMin: 60,
-    commessaId: "cm2",
-    meetingsDeclined: 1,
-    note: "Roadmap review",
-  },
-  {
-    id: "fs15",
-    employeeId: "e7",
-    date: "2026-04-14",
-    startedAt: "14:00",
-    durationMin: 90,
-    commessaId: "cm2",
-    meetingsDeclined: 2,
-  },
-  {
-    id: "fs16",
-    employeeId: "e7",
-    date: "2026-04-07",
-    startedAt: "09:00",
-    durationMin: 90,
-    commessaId: "cm2",
-    meetingsDeclined: 2,
-  },
-  // e9 — Noah
-  {
-    id: "fs17",
-    employeeId: "e9",
-    date: "2026-04-17",
-    startedAt: "10:00",
-    durationMin: 120,
-    commessaId: "cm1",
-    meetingsDeclined: 3,
-    note: "Perf pass",
-  },
-  {
-    id: "fs18",
-    employeeId: "e9",
-    date: "2026-04-15",
-    startedAt: "09:30",
-    durationMin: 90,
-    commessaId: "cm1",
-    meetingsDeclined: 2,
-  },
-  {
-    id: "fs19",
-    employeeId: "e9",
-    date: "2026-04-14",
-    startedAt: "14:00",
-    durationMin: 60,
-    commessaId: "cm1",
-    meetingsDeclined: 1,
-  },
-  {
-    id: "fs20",
-    employeeId: "e9",
-    date: "2026-04-08",
-    startedAt: "09:00",
-    durationMin: 120,
-    commessaId: "cm1",
-    meetingsDeclined: 3,
-  },
-  {
-    id: "fs21",
-    employeeId: "e9",
-    date: "2026-04-01",
-    startedAt: "09:00",
-    durationMin: 90,
-    commessaId: "cm1",
-    meetingsDeclined: 2,
-  },
-  // e10 — Fatima
-  {
-    id: "fs22",
-    employeeId: "e10",
-    date: "2026-04-16",
-    startedAt: "11:00",
-    durationMin: 60,
-    commessaId: "cm2",
-    meetingsDeclined: 1,
-    note: "Cohort analysis",
-  },
-  {
-    id: "fs23",
-    employeeId: "e10",
-    date: "2026-04-09",
-    startedAt: "10:00",
-    durationMin: 90,
-    commessaId: "cm2",
-    meetingsDeclined: 2,
-  },
-  // e3 — Aisha
-  {
-    id: "fs24",
-    employeeId: "e3",
-    date: "2026-04-15",
-    startedAt: "09:00",
-    durationMin: 60,
-    commessaId: "cm4",
-    meetingsDeclined: 1,
-  },
-  {
-    id: "fs25",
-    employeeId: "e3",
-    date: "2026-04-08",
-    startedAt: "09:00",
-    durationMin: 60,
-    commessaId: "cm4",
-    meetingsDeclined: 1,
-  },
-];
-
-export interface Payslip {
-  id: string;
-  runId: string;
-  employeeId: string;
-  gross: number;
-  net: number;
-  tax: number;
-  benefits: number;
-  status: "pending" | "paid" | "hold";
-}
-export let payslips: Payslip[] = payrollRuns.flatMap((r) =>
-  employees.slice(0, r.employees).map((e, i) => ({
-    id: `${r.id}-${e.id}`,
-    runId: r.id,
-    employeeId: e.id,
-    gross: Math.round(e.salary / 12),
-    net: Math.round((e.salary / 12) * 0.72),
-    tax: Math.round((e.salary / 12) * 0.22),
-    benefits: Math.round((e.salary / 12) * 0.06),
-    status:
-      r.status === "completed"
-        ? "paid"
-        : r.status === "processing"
-          ? "pending"
-          : i % 9 === 0
-            ? "hold"
-            : "pending",
-  })),
-);
 
 export interface JobPosting {
   id: string;
@@ -1946,15 +1548,6 @@ export let docsSeed: Doc[] = [
     status: "draft",
     owner: "Olivia Brown",
   },
-  {
-    id: "d7",
-    name: "Expense policy 2026",
-    folder: "Policies",
-    size: "96 KB",
-    updated: "1mo ago",
-    status: "approved",
-    owner: "Lina Rossi",
-  },
 ];
 
 export interface ApiKey {
@@ -2009,13 +1602,6 @@ export let webhooksSeed: Webhook[] = [
     status: "active",
     deliveries: 842,
   },
-  {
-    id: "w3",
-    url: "https://internal.acme.co/expenses",
-    events: ["expense.approved"],
-    status: "pending",
-    deliveries: 0,
-  },
 ];
 
 export interface CustomField {
@@ -2048,7 +1634,7 @@ export let rolesSeed: RoleRecord[] = [
   {
     id: "r2",
     name: "HR Manager",
-    desc: "Manage employees, expenses, and reports",
+    desc: "Manage employees and reports",
     count: 3,
     color: "oklch(0.6 0.16 220)",
   },
@@ -2062,7 +1648,7 @@ export let rolesSeed: RoleRecord[] = [
   {
     id: "r4",
     name: "Employee",
-    desc: "Personal data, time, leave, expenses",
+    desc: "Personal data, time, leave",
     count: 12,
     color: "oklch(0.52 0.02 258)",
   },
@@ -2138,14 +1724,6 @@ export let notifications: Notification[] = [
     unread: true,
   },
   {
-    id: "n2",
-    title: "Expense over threshold",
-    desc: "Noah Williams submitted $620 equipment",
-    time: "1h ago",
-    type: "alert",
-    unread: true,
-  },
-  {
     id: "n3",
     title: "Month-end close scheduled",
     desc: "April 2026 close will execute Apr 30",
@@ -2197,14 +1775,6 @@ export let announcements: Announcement[] = [
     title: "All-hands moved to Thursday",
     body: "This week's all-hands is moved to Thursday at 4pm CET.",
     time: "1d ago",
-    pinned: false,
-  },
-  {
-    id: "a3",
-    author: "Lina Rossi",
-    title: "Expense policy update",
-    body: "New expense limits for travel apply starting May 1. See policy doc.",
-    time: "3d ago",
     pinned: false,
   },
 ];
@@ -2352,12 +1922,7 @@ export let clients: Client[] = [
 
 export const clientById = (id: string) => clients.find((c) => c.id === id);
 
-/**
- * Commessa = Project. The legacy name `Commessa` is kept because Time and Focus
- * routes already reference it; the new Clients/Projects feature treats each commessa
- * as a project with a `clientId` FK and extended PM metadata.
- */
-export interface Commessa {
+export interface Project {
   id: string;
   code: string;
   name: string;
@@ -2378,9 +1943,7 @@ export interface Commessa {
   referenceContactId: string | null;
 }
 
-export type Project = Commessa;
-
-export let commesse: Commessa[] = [
+export let projects: Project[] = [
   {
     id: "cm1",
     code: "ACM-2025-01",
@@ -2497,8 +2060,7 @@ export let commesse: Commessa[] = [
   },
 ];
 
-export const commessaById = (id: string) => commesse.find((c) => c.id === id);
-export const projectById = commessaById;
+export const projectById = (id: string) => projects.find((c) => c.id === id);
 
 export interface Allocation {
   id: string;
@@ -2912,7 +2474,7 @@ export let activities: Activity[] = [
   {
     id: "ac15",
     projectId: "cm4",
-    title: "Expense approval workflow",
+    title: "Approval workflow",
     description: "Multi-step approval with audit log.",
     status: "in_progress",
     assigneeId: "e3",
@@ -3115,7 +2677,7 @@ export type TimesheetEntryStatus = "draft" | "submitted" | "approved" | "rejecte
 export interface TimesheetEntry {
   id: string;
   employeeId: string;
-  commessaId: string;
+  projectId: string;
   date: string;
   hours: number;
   description: string;
@@ -3130,7 +2692,7 @@ export interface CalendarEvent {
   endedAt: string;
   title: string;
   attendees?: string[];
-  commessaHint?: string; // commessaId or fragment to match
+  projectHint?: string; // projectId or fragment to match
 }
 /**
  * Synthetic "Google Calendar" events spanning recent weeks.
@@ -3144,7 +2706,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "10:00",
     title: "Migration standup",
     attendees: ["e1", "e9", "e4"],
-    commessaHint: "cm1",
+    projectHint: "cm1",
   },
   {
     id: "ev-101",
@@ -3153,7 +2715,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "12:00",
     title: "Cutover rehearsal",
     attendees: ["e1", "e9"],
-    commessaHint: "cm1",
+    projectHint: "cm1",
   },
   {
     id: "ev-102",
@@ -3162,7 +2724,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "15:00",
     title: "Mobile onboarding spec review",
     attendees: ["e1", "e7"],
-    commessaHint: "cm2",
+    projectHint: "cm2",
   },
   {
     id: "ev-103",
@@ -3171,7 +2733,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "17:00",
     title: "Deep work — API contract",
     attendees: ["e1"],
-    commessaHint: "cm2",
+    projectHint: "cm2",
   },
   {
     id: "ev-110",
@@ -3180,7 +2742,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "09:30",
     title: "All-hands",
     attendees: ["e1", "e3"],
-    commessaHint: "cm4",
+    projectHint: "cm4",
   },
   {
     id: "ev-111",
@@ -3189,7 +2751,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "12:00",
     title: "Design tokens sync",
     attendees: ["e1", "e2"],
-    commessaHint: "cm3",
+    projectHint: "cm3",
   },
   {
     id: "ev-112",
@@ -3198,7 +2760,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "17:00",
     title: "Migration pairing — Noah",
     attendees: ["e1", "e9"],
-    commessaHint: "cm1",
+    projectHint: "cm1",
   },
   {
     id: "ev-120",
@@ -3207,7 +2769,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "10:00",
     title: "Incident post-mortem",
     attendees: ["e1", "e9", "e11"],
-    commessaHint: "cm1",
+    projectHint: "cm1",
   },
   {
     id: "ev-121",
@@ -3216,7 +2778,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "12:00",
     title: "Interview — senior engineer",
     attendees: ["e1", "e3", "e8"],
-    commessaHint: "cm4",
+    projectHint: "cm4",
   },
   {
     id: "ev-122",
@@ -3225,7 +2787,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "16:00",
     title: "Analytics ingestion spike",
     attendees: ["e1", "e10"],
-    commessaHint: "cm6",
+    projectHint: "cm6",
   },
   {
     id: "ev-130",
@@ -3234,7 +2796,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "11:00",
     title: "Platform roadmap refinement",
     attendees: ["e1", "e7", "e9"],
-    commessaHint: "cm1",
+    projectHint: "cm1",
   },
   {
     id: "ev-131",
@@ -3243,7 +2805,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "12:30",
     title: "Design critique",
     attendees: ["e1", "e2"],
-    commessaHint: "cm3",
+    projectHint: "cm3",
   },
   {
     id: "ev-132",
@@ -3252,7 +2814,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "17:00",
     title: "Mobile onboarding API implementation",
     attendees: ["e1", "e9"],
-    commessaHint: "cm2",
+    projectHint: "cm2",
   },
   {
     id: "ev-140",
@@ -3261,7 +2823,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "10:30",
     title: "Sprint review",
     attendees: ["e1", "e3", "e7"],
-    commessaHint: "cm4",
+    projectHint: "cm4",
   },
   {
     id: "ev-141",
@@ -3270,7 +2832,7 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "12:30",
     title: "Retro + planning",
     attendees: ["e1", "e3"],
-    commessaHint: "cm4",
+    projectHint: "cm4",
   },
   {
     id: "ev-142",
@@ -3279,14 +2841,14 @@ export let mockCalendarEvents: CalendarEvent[] = [
     endedAt: "17:00",
     title: "Migration cutover dry-run",
     attendees: ["e1", "e9", "e4"],
-    commessaHint: "cm1",
+    projectHint: "cm1",
   },
 ];
 
 export interface TimesheetTemplate {
   id: string;
   name: string;
-  commessaId: string;
+  projectId: string;
   hours: number;
   description: string;
   billable: boolean;
@@ -3296,7 +2858,7 @@ export const timesheetTemplatesSeed: TimesheetTemplate[] = [
   {
     id: "tt1",
     name: "Deep work — migration",
-    commessaId: "cm1",
+    projectId: "cm1",
     hours: 8,
     description: "Migration workstream",
     billable: true,
@@ -3305,7 +2867,7 @@ export const timesheetTemplatesSeed: TimesheetTemplate[] = [
   {
     id: "tt2",
     name: "Mobile API pairing",
-    commessaId: "cm2",
+    projectId: "cm2",
     hours: 4,
     description: "Mobile onboarding API pairing",
     billable: true,
@@ -3314,7 +2876,7 @@ export const timesheetTemplatesSeed: TimesheetTemplate[] = [
   {
     id: "tt3",
     name: "Design system audit",
-    commessaId: "cm3",
+    projectId: "cm3",
     hours: 4,
     description: "Design tokens + component audit",
     billable: true,
@@ -3323,7 +2885,7 @@ export const timesheetTemplatesSeed: TimesheetTemplate[] = [
   {
     id: "tt4",
     name: "Internal / HR sync",
-    commessaId: "cm4",
+    projectId: "cm4",
     hours: 1,
     description: "HR + internal coordination",
     billable: false,
@@ -3332,7 +2894,7 @@ export const timesheetTemplatesSeed: TimesheetTemplate[] = [
   {
     id: "tt5",
     name: "Full day · analytics",
-    commessaId: "cm6",
+    projectId: "cm6",
     hours: 8,
     description: "Analytics dashboards",
     billable: true,
@@ -3345,7 +2907,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t1",
     employeeId: "e1",
-    commessaId: "cm1",
+    projectId: "cm1",
     date: "2026-04-14",
     hours: 7.5,
     description: "API schema review + sprint planning",
@@ -3355,7 +2917,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t2",
     employeeId: "e1",
-    commessaId: "cm4",
+    projectId: "cm4",
     date: "2026-04-14",
     hours: 0.5,
     description: "1:1 with Aisha",
@@ -3365,7 +2927,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t3",
     employeeId: "e1",
-    commessaId: "cm1",
+    projectId: "cm1",
     date: "2026-04-15",
     hours: 8,
     description: "Migration dry-run on staging",
@@ -3375,7 +2937,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t4",
     employeeId: "e1",
-    commessaId: "cm2",
+    projectId: "cm2",
     date: "2026-04-16",
     hours: 4,
     description: "Mobile sign-up flow spec",
@@ -3385,7 +2947,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t5",
     employeeId: "e1",
-    commessaId: "cm3",
+    projectId: "cm3",
     date: "2026-04-16",
     hours: 4,
     description: "Token audit for v2",
@@ -3395,7 +2957,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t6",
     employeeId: "e1",
-    commessaId: "cm6",
+    projectId: "cm6",
     date: "2026-04-17",
     hours: 6,
     description: "Dashboard wireframes review",
@@ -3407,7 +2969,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t10",
     employeeId: "e1",
-    commessaId: "cm1",
+    projectId: "cm1",
     date: "2026-04-01",
     hours: 8,
     description: "Quarter kickoff + architecture review",
@@ -3417,7 +2979,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t11",
     employeeId: "e1",
-    commessaId: "cm1",
+    projectId: "cm1",
     date: "2026-04-02",
     hours: 7,
     description: "Migration rollback plan",
@@ -3427,7 +2989,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t12",
     employeeId: "e1",
-    commessaId: "cm4",
+    projectId: "cm4",
     date: "2026-04-02",
     hours: 1,
     description: "HR weekly sync",
@@ -3437,7 +2999,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t13",
     employeeId: "e1",
-    commessaId: "cm1",
+    projectId: "cm1",
     date: "2026-04-03",
     hours: 5,
     description: "Staging smoke tests",
@@ -3447,7 +3009,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t14",
     employeeId: "e1",
-    commessaId: "cm2",
+    projectId: "cm2",
     date: "2026-04-06",
     hours: 8,
     description: "Mobile onboarding API contract",
@@ -3457,7 +3019,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t15",
     employeeId: "e1",
-    commessaId: "cm3",
+    projectId: "cm3",
     date: "2026-04-07",
     hours: 4,
     description: "Design tokens audit",
@@ -3467,7 +3029,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t16",
     employeeId: "e1",
-    commessaId: "cm1",
+    projectId: "cm1",
     date: "2026-04-07",
     hours: 4,
     description: "Pairing with Noah on migration",
@@ -3477,7 +3039,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t17",
     employeeId: "e1",
-    commessaId: "cm1",
+    projectId: "cm1",
     date: "2026-04-08",
     hours: 8,
     description: "Cutover dry-run",
@@ -3487,7 +3049,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t18",
     employeeId: "e1",
-    commessaId: "cm6",
+    projectId: "cm6",
     date: "2026-04-13",
     hours: 6,
     description: "Analytics ingestion spike",
@@ -3497,7 +3059,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t19",
     employeeId: "e1",
-    commessaId: "cm2",
+    projectId: "cm2",
     date: "2026-04-14",
     hours: 8,
     description: "Mobile auth flow implementation",
@@ -3507,7 +3069,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t20",
     employeeId: "e1",
-    commessaId: "cm1",
+    projectId: "cm1",
     date: "2026-04-15",
     hours: 3,
     description: "Incident post-mortem",
@@ -3517,7 +3079,7 @@ export let timesheetEntries: TimesheetEntry[] = [
   {
     id: "t21",
     employeeId: "e1",
-    commessaId: "cm4",
+    projectId: "cm4",
     date: "2026-04-15",
     hours: 2,
     description: "Interview loop — senior eng",
@@ -3672,7 +3234,7 @@ export let goalsSeed: Goal[] = [
     employeeId: "e9",
     quarter: "Q2 2026",
     title: "Become cutover lead",
-    metric: "Own 2 commesse rollouts",
+    metric: "Own 2 projects rollouts",
     target: "2 rollouts",
     progress: 30,
     status: "active",
@@ -3897,22 +3459,6 @@ export let seasonalChallengesSeed: SeasonalChallenge[] = [
     ],
   },
   {
-    id: "sc-month-2",
-    period: "monthly",
-    title: "Focus Forty",
-    description: "Log 40 hours of deep-work focus sessions this month.",
-    emoji: "🎯",
-    xpReward: 300,
-    startDate: "2026-04-01",
-    endDate: "2026-04-30",
-    participants: [
-      { employeeId: "e9", progress: 28 },
-      { employeeId: "e1", progress: 24 },
-      { employeeId: "e2", progress: 18 },
-      { employeeId: "e7", progress: 12 },
-    ],
-  },
-  {
     id: "sc-year-1",
     period: "yearly",
     title: "Year of Craft",
@@ -4010,7 +3556,7 @@ export const plugins = [
   {
     id: "pg3",
     name: "QuickBooks",
-    desc: "Push expense journal entries automatically.",
+    desc: "Push journal entries automatically.",
     category: "Accounting",
     installed: false,
     icon: "📊",
@@ -4074,7 +3620,7 @@ export interface GCalEvent {
   /** Employee ids — used to render attendee avatars. */
   attendees: string[];
   location?: string;
-  commessaId?: string;
+  projectId?: string;
   source: GCalEventSource;
   status: GCalEventStatus;
   description?: string;
@@ -4092,7 +3638,7 @@ export let gcalEventsSeed: GCalEvent[] = [
     end: "2026-04-20T10:00:00",
     attendees: ["e1", "e2", "e3", "e7"],
     location: "Meet — /standup-platform",
-    commessaId: "cm1",
+    projectId: "cm1",
     source: "google",
     status: "confirmed",
     description: "Quick round-robin on sprint progress.",
@@ -4104,7 +3650,7 @@ export let gcalEventsSeed: GCalEvent[] = [
     end: "2026-04-20T15:00:00",
     attendees: ["e1", "e2"],
     location: "Room Nebula",
-    commessaId: "cm1",
+    projectId: "cm1",
     source: "google",
     status: "confirmed",
   },
@@ -4124,7 +3670,7 @@ export let gcalEventsSeed: GCalEvent[] = [
     start: "2026-04-22T15:00:00",
     end: "2026-04-22T16:30:00",
     attendees: ["e1", "e2", "e3", "e7", "e4"],
-    commessaId: "cm2",
+    projectId: "cm2",
     source: "google",
     status: "confirmed",
   },
@@ -4135,20 +3681,9 @@ export let gcalEventsSeed: GCalEvent[] = [
     end: "2026-04-23T11:00:00",
     attendees: ["e7", "e1"],
     location: "Meet — /nova-weekly",
-    commessaId: "cm2",
+    projectId: "cm2",
     source: "google",
     status: "confirmed",
-  },
-  {
-    id: "gc-6",
-    title: "Focus block — design system",
-    start: "2026-04-23T14:00:00",
-    end: "2026-04-23T17:00:00",
-    attendees: ["e2"],
-    commessaId: "cm3",
-    source: "pulse",
-    status: "tentative",
-    description: "Auto-created from Focus Mode.",
   },
   {
     id: "gc-7",
@@ -4161,7 +3696,7 @@ export let gcalEventsSeed: GCalEvent[] = [
   },
   {
     id: "gc-8",
-    title: "Kickoff — new commessa",
+    title: "Kickoff — new project",
     start: "2026-04-27T09:00:00",
     end: "2026-04-27T10:30:00",
     attendees: ["e1", "e2", "e7"],
@@ -4177,9 +3712,6 @@ export let gcalEventsSeed: GCalEvent[] = [
 export function __setCandidates(n: Candidate[]) {
   candidates = n;
 }
-export function __setPayrollRuns(n: PayrollRun[]) {
-  payrollRuns = n;
-}
 export function __setPulseEntries(n: PulseEntry[]) {
   pulseEntries = n;
 }
@@ -4194,12 +3726,6 @@ export function __setManagerAsks(n: ManagerAsk[]) {
 }
 export function __setKudosSeed(n: Kudo[]) {
   kudosSeed = n;
-}
-export function __setFocusSessionsSeed(n: FocusSession[]) {
-  focusSessionsSeed = n;
-}
-export function __setPayslips(n: Payslip[]) {
-  payslips = n;
 }
 export function __setJobPostings(n: JobPosting[]) {
   jobPostings = n;
@@ -4231,8 +3757,8 @@ export function __setNotifications(n: Notification[]) {
 export function __setClients(n: Client[]) {
   clients = n;
 }
-export function __setCommesse(n: Commessa[]) {
-  commesse = n;
+export function __setProjects(n: Project[]) {
+  projects = n;
 }
 export function __setAllocations(n: Allocation[]) {
   allocations = n;

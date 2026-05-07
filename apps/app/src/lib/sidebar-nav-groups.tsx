@@ -10,20 +10,15 @@ import {
   FileText,
   Receipt,
   GraduationCap,
-  Puzzle,
-  Code2,
   BookOpen,
   MessagesSquare,
   Gift,
-  Focus,
   Trophy,
   Briefcase,
   Building2,
   PanelLeft,
   LifeBuoy,
   ListChecks,
-  Wallet,
-  TrendingUp,
 } from "lucide-react";
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
 import { ADMIN_MODULES_PATH } from "@/lib/sidebar-features";
@@ -84,21 +79,12 @@ export function buildSidebarNavGroups(
       label: "Work",
       items: [
         { to: "/time", label: "Timesheet", icon: Clock, featureId: "time" },
-        { to: "/projects", label: "Commesse", icon: Briefcase, featureId: "clients" },
-        { to: "/forecast", label: "Forecast", icon: TrendingUp, featureId: "clients" },
-        { to: "/focus", label: "Focus", icon: Focus, featureId: "focus" },
+        { to: "/projects", label: "Projects", icon: Briefcase, featureId: "clients" },
         { to: "/activities", label: "Activities", icon: ListChecks, featureId: "clients" },
         { to: "/calendar", label: "Calendar", icon: CalendarDays, featureId: "calendar" },
         { to: "/leave", label: "Leave", icon: Calendar, featureId: "leave" },
         { to: "/documents", label: "Documents", icon: FileText, featureId: "documents" },
         { to: "/offices", label: "Offices", icon: Building2, featureId: "offices" },
-      ],
-    },
-    {
-      label: "Money",
-      items: [
-        { to: "/payroll", label: "Payroll", icon: Wallet, featureId: "expenses" },
-        { to: "/expenses", label: "Spese", icon: Receipt, featureId: "expenses" },
       ],
     },
   ];
@@ -110,8 +96,6 @@ export function buildSidebarNavGroups(
     label: "Workspace",
     items: [
       { to: "/reports", label: "Reports", icon: BarChart3, featureId: "reports" },
-      { to: "/marketplace", label: "Marketplace", icon: Puzzle, featureId: "marketplace" },
-      { to: "/developers", label: "Developers", icon: Code2, featureId: "developers" },
       { to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" },
     ],
   };

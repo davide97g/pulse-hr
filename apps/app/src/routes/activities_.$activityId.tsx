@@ -20,7 +20,7 @@ import { ActivityDialog } from "@/components/pm/ActivityDialog";
 import { IntegrationBadge } from "@/components/pm/IntegrationBadge";
 import { activityStatusMeta } from "@/lib/activity-status";
 import { activitiesTable, useActivities } from "@/lib/tables/activities";
-import { useCommesse } from "@/lib/tables/commesse";
+import { useProjects } from "@/lib/tables/projects";
 import { employeeById, type Activity } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/activities_/$activityId")({
@@ -32,7 +32,7 @@ function ActivityDetailPage() {
   const { activityId } = useParams({ from: "/activities_/$activityId" });
   const nav = useNavigate({ from: "/activities_/$activityId" });
   const activities = useActivities();
-  const projects = useCommesse();
+  const projects = useProjects();
   const [editing, setEditing] = useState(false);
 
   const activity = activities.find((a) => a.id === activityId);

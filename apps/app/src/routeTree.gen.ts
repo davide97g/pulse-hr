@@ -18,7 +18,6 @@ import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RecruitingRouteImport } from './routes/recruiting'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PeopleRouteImport } from './routes/people'
-import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as OrgRouteImport } from './routes/org'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as OfficesRouteImport } from './routes/offices'
@@ -29,10 +28,7 @@ import { Route as LogRouteImport } from './routes/log'
 import { Route as LeaveRouteImport } from './routes/leave'
 import { Route as KudosRouteImport } from './routes/kudos'
 import { Route as GrowthRouteImport } from './routes/growth'
-import { Route as ForecastRouteImport } from './routes/forecast'
-import { Route as FocusRouteImport } from './routes/focus'
 import { Route as FeedbackRouteImport } from './routes/feedback'
-import { Route as ExpensesRouteImport } from './routes/expenses'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DevelopersRouteImport } from './routes/developers'
@@ -107,11 +103,6 @@ const PeopleRoute = PeopleRouteImport.update({
   path: '/people',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PayrollRoute = PayrollRouteImport.update({
-  id: '/payroll',
-  path: '/payroll',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const OrgRoute = OrgRouteImport.update({
   id: '/org',
   path: '/org',
@@ -162,24 +153,9 @@ const GrowthRoute = GrowthRouteImport.update({
   path: '/growth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ForecastRoute = ForecastRouteImport.update({
-  id: '/forecast',
-  path: '/forecast',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FocusRoute = FocusRouteImport.update({
-  id: '/focus',
-  path: '/focus',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const FeedbackRoute = FeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExpensesRoute = ExpensesRouteImport.update({
-  id: '/expenses',
-  path: '/expenses',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocumentsRoute = DocumentsRouteImport.update({
@@ -332,10 +308,7 @@ export interface FileRoutesByFullPath {
   '/developers': typeof DevelopersRoute
   '/docs': typeof DocsRouteWithChildren
   '/documents': typeof DocumentsRoute
-  '/expenses': typeof ExpensesRoute
   '/feedback': typeof FeedbackRoute
-  '/focus': typeof FocusRoute
-  '/forecast': typeof ForecastRoute
   '/growth': typeof GrowthRoute
   '/kudos': typeof KudosRoute
   '/leave': typeof LeaveRoute
@@ -346,7 +319,6 @@ export interface FileRoutesByFullPath {
   '/offices': typeof OfficesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
-  '/payroll': typeof PayrollRoute
   '/people': typeof PeopleRoute
   '/profile': typeof ProfileRoute
   '/recruiting': typeof RecruitingRoute
@@ -384,10 +356,7 @@ export interface FileRoutesByTo {
   '/calendar': typeof CalendarRoute
   '/developers': typeof DevelopersRoute
   '/documents': typeof DocumentsRoute
-  '/expenses': typeof ExpensesRoute
   '/feedback': typeof FeedbackRoute
-  '/focus': typeof FocusRoute
-  '/forecast': typeof ForecastRoute
   '/growth': typeof GrowthRoute
   '/kudos': typeof KudosRoute
   '/leave': typeof LeaveRoute
@@ -397,7 +366,6 @@ export interface FileRoutesByTo {
   '/offices': typeof OfficesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
-  '/payroll': typeof PayrollRoute
   '/people': typeof PeopleRoute
   '/profile': typeof ProfileRoute
   '/recruiting': typeof RecruitingRoute
@@ -438,10 +406,7 @@ export interface FileRoutesById {
   '/developers': typeof DevelopersRoute
   '/docs': typeof DocsRouteWithChildren
   '/documents': typeof DocumentsRoute
-  '/expenses': typeof ExpensesRoute
   '/feedback': typeof FeedbackRoute
-  '/focus': typeof FocusRoute
-  '/forecast': typeof ForecastRoute
   '/growth': typeof GrowthRoute
   '/kudos': typeof KudosRoute
   '/leave': typeof LeaveRoute
@@ -452,7 +417,6 @@ export interface FileRoutesById {
   '/offices': typeof OfficesRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
-  '/payroll': typeof PayrollRoute
   '/people': typeof PeopleRoute
   '/profile': typeof ProfileRoute
   '/recruiting': typeof RecruitingRoute
@@ -494,10 +458,7 @@ export interface FileRouteTypes {
     | '/developers'
     | '/docs'
     | '/documents'
-    | '/expenses'
     | '/feedback'
-    | '/focus'
-    | '/forecast'
     | '/growth'
     | '/kudos'
     | '/leave'
@@ -508,7 +469,6 @@ export interface FileRouteTypes {
     | '/offices'
     | '/onboarding'
     | '/org'
-    | '/payroll'
     | '/people'
     | '/profile'
     | '/recruiting'
@@ -546,10 +506,7 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/developers'
     | '/documents'
-    | '/expenses'
     | '/feedback'
-    | '/focus'
-    | '/forecast'
     | '/growth'
     | '/kudos'
     | '/leave'
@@ -559,7 +516,6 @@ export interface FileRouteTypes {
     | '/offices'
     | '/onboarding'
     | '/org'
-    | '/payroll'
     | '/people'
     | '/profile'
     | '/recruiting'
@@ -599,10 +555,7 @@ export interface FileRouteTypes {
     | '/developers'
     | '/docs'
     | '/documents'
-    | '/expenses'
     | '/feedback'
-    | '/focus'
-    | '/forecast'
     | '/growth'
     | '/kudos'
     | '/leave'
@@ -613,7 +566,6 @@ export interface FileRouteTypes {
     | '/offices'
     | '/onboarding'
     | '/org'
-    | '/payroll'
     | '/people'
     | '/profile'
     | '/recruiting'
@@ -654,10 +606,7 @@ export interface RootRouteChildren {
   DevelopersRoute: typeof DevelopersRoute
   DocsRoute: typeof DocsRouteWithChildren
   DocumentsRoute: typeof DocumentsRoute
-  ExpensesRoute: typeof ExpensesRoute
   FeedbackRoute: typeof FeedbackRoute
-  FocusRoute: typeof FocusRoute
-  ForecastRoute: typeof ForecastRoute
   GrowthRoute: typeof GrowthRoute
   KudosRoute: typeof KudosRoute
   LeaveRoute: typeof LeaveRoute
@@ -668,7 +617,6 @@ export interface RootRouteChildren {
   OfficesRoute: typeof OfficesRouteWithChildren
   OnboardingRoute: typeof OnboardingRoute
   OrgRoute: typeof OrgRoute
-  PayrollRoute: typeof PayrollRoute
   PeopleRoute: typeof PeopleRoute
   ProfileRoute: typeof ProfileRoute
   RecruitingRoute: typeof RecruitingRoute
@@ -752,13 +700,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PeopleRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/payroll': {
-      id: '/payroll'
-      path: '/payroll'
-      fullPath: '/payroll'
-      preLoaderRoute: typeof PayrollRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/org': {
       id: '/org'
       path: '/org'
@@ -829,32 +770,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GrowthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/forecast': {
-      id: '/forecast'
-      path: '/forecast'
-      fullPath: '/forecast'
-      preLoaderRoute: typeof ForecastRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/focus': {
-      id: '/focus'
-      path: '/focus'
-      fullPath: '/focus'
-      preLoaderRoute: typeof FocusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/feedback': {
       id: '/feedback'
       path: '/feedback'
       fullPath: '/feedback'
       preLoaderRoute: typeof FeedbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/expenses': {
-      id: '/expenses'
-      path: '/expenses'
-      fullPath: '/expenses'
-      preLoaderRoute: typeof ExpensesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/documents': {
@@ -1135,10 +1055,7 @@ const rootRouteChildren: RootRouteChildren = {
   DevelopersRoute: DevelopersRoute,
   DocsRoute: DocsRouteWithChildren,
   DocumentsRoute: DocumentsRoute,
-  ExpensesRoute: ExpensesRoute,
   FeedbackRoute: FeedbackRoute,
-  FocusRoute: FocusRoute,
-  ForecastRoute: ForecastRoute,
   GrowthRoute: GrowthRoute,
   KudosRoute: KudosRoute,
   LeaveRoute: LeaveRoute,
@@ -1149,7 +1066,6 @@ const rootRouteChildren: RootRouteChildren = {
   OfficesRoute: OfficesRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
   OrgRoute: OrgRoute,
-  PayrollRoute: PayrollRoute,
   PeopleRoute: PeopleRoute,
   ProfileRoute: ProfileRoute,
   RecruitingRoute: RecruitingRoute,

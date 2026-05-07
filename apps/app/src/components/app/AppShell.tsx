@@ -108,20 +108,18 @@ const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL ?? "https://feedback.puls
 const SIDEBAR_COLLAPSED_KEY = "pulse.sidebarCollapsed.v1";
 
 type QuickActionEntry =
-  | { kind: "action"; id: "add-employee" | "request-leave" | "submit-expense" | "post-job" | "run-payroll"; label: string; icon: LucideIcon }
+  | { kind: "action"; id: "add-employee" | "request-leave" | "post-job"; label: string; icon: LucideIcon }
   | { kind: "nav"; to: string; label: string; icon: LucideIcon }
   | { kind: "automation"; label: string; icon: LucideIcon; description: string };
 
 const QUICK_ACTIONS_BY_ROLE: Record<string, QuickActionEntry[]> = {
   employee: [
     { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
-    { kind: "action", id: "submit-expense", label: "Submit expense", icon: Receipt },
     { kind: "nav", to: "/log", label: "Log status", icon: MessagesSquare },
     { kind: "nav", to: "/kudos", label: "Give kudos", icon: Gift },
   ],
   manager: [
     { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
-    { kind: "action", id: "submit-expense", label: "Submit expense", icon: Receipt },
     { kind: "nav", to: "/leave", label: "Review approvals", icon: Users },
     { kind: "nav", to: "/kudos", label: "Give kudos", icon: Gift },
   ],
@@ -132,7 +130,6 @@ const QUICK_ACTIONS_BY_ROLE: Record<string, QuickActionEntry[]> = {
     { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
   ],
   finance: [
-    { kind: "action", id: "submit-expense", label: "Submit expense", icon: Receipt },
     { kind: "nav", to: "/reports", label: "Open reports", icon: BarChart3 },
     { kind: "action", id: "request-leave", label: "Request leave", icon: Calendar },
   ],
@@ -375,7 +372,6 @@ function AppShellInner() {
                     ) : (
                       <Link
                         to={item.to}
-                        id={item.to === "/focus" ? "nav-focus" : undefined}
                         className={className}
                         style={linkStyle}
                       >
@@ -644,24 +640,18 @@ const SECTION_BY_PATH: Record<string, string> = {
   "/log": "STATUS LOG",
   "/growth": "GROWTH",
   "/time": "TIMESHEET",
-  "/projects": "COMMESSE",
+  "/projects": "PROJECTS",
   "/clients": "CLIENTI",
-  "/forecast": "FORECAST",
-  "/focus": "FOCUS",
   "/activities": "ACTIVITIES",
   "/calendar": "CALENDAR",
   "/leave": "LEAVE",
   "/documents": "DOCUMENTS",
   "/offices": "OFFICES",
-  "/payroll": "PAYROLL",
-  "/expenses": "SPESE",
   "/reports": "REPORTS",
   "/saturation": "SATURAZIONE",
   "/settings": "SETTINGS",
   "/profile": "PROFILE",
   "/welcome": "WELCOME",
-  "/marketplace": "MARKETPLACE",
-  "/developers": "DEVELOPERS",
   "/docs": "DOCS",
   "/announcements": "ANNOUNCEMENTS",
   "/recruiting": "RECRUITING",

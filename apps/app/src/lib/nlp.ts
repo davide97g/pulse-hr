@@ -1,10 +1,9 @@
 import { addDays, format, nextFriday, nextMonday, parseISO, startOfDay, subDays } from "date-fns";
-import { commesse, employees, leaveRequests, expenses } from "./mock-data";
+import { projects, employees, leaveRequests } from "./mock-data";
 
 export type IntentKind =
   | "log-hours"
   | "book-leave"
-  | "approve-expense"
   | "add-employee"
   | "fill-missing"
   | "open-autofill"
@@ -84,10 +83,10 @@ function parseDayCount(s: string): number | null {
 }
 
 // ── fuzzy match helpers ────────────────────────────────────────────────
-function bestCommessa(q: string) {
+function bestProject(q: string) {
   const s = normalize(q);
   let best: { id: string; score: number } | null = null;
-  for (const c of commesse) {
+  for (const c of projects) {
     const haystack = `${c.code} ${c.name} ${c.client}`.toLowerCase();
     if (haystack.includes(s)) {
       const score = s.length / haystack.length;
@@ -152,16 +151,16 @@ export function parseCommand(input: string, opts: { today?: Date } = {}): Parsed
       .replace(/\b(log|add|yesterday|today|tomorrow|for|on|against|to|hours?)\b/g, " ")
       .replace(new RegExp(`\\b(${dateTokens.join("|")})\\b`, "g"), " ")
       .trim();
-    const match = rest ? bestCommessa(rest) : null;
+    const match = rest ? bestProject(rest) : null;
     out.push({
       kind: "log-hours",
       verb: "Log hours",
-      label: `Log ${hours}h to ${match ? commesse.find((c) => c.id === match.id)!.code : commesse[0].code}`,
+      label: `Log ${hours}h to ${match ? projects.find((c) => c.id === match.id)!.code : projects[0].code}`,
       detail: `${date ? format(date, "EEE, MMM d") : "today"} · ${rest || "draft description"}`,
       args: {
         hours,
         date: format(date ?? today, "yyyy-MM-dd"),
-        commessaId: match?.id ?? commesse[0].id,
+        projectId: match?.id ?? projects[0].id,
         description: rest || "Logged via quick command",
       },
       confidence: 0.7 + (match ? 0.2 : 0),
@@ -210,34 +209,6 @@ export function parseCommand(input: string, opts: { today?: Date } = {}): Parsed
     });
   }
 
-  // approve-expense: "approve emma expense", "approve 184"
-  if (/\bapprove\b/.test(s)) {
-    const money = s.match(/\$?(\d+(?:\.\d+)?)/);
-    const target = s
-      .replace(/\bapprove\b/, "")
-      .replace(/\bexpense[s]?\b/, "")
-      .replace(/\$?\d+(?:\.\d+)?/, "")
-      .trim();
-    const emp = target ? bestEmployee(target) : null;
-    const match = emp
-      ? expenses.find((x) => x.employeeId === emp.id && x.status === "pending")
-      : money
-        ? expenses.find(
-            (x) => x.status === "pending" && Math.abs(x.amount - parseFloat(money[1])) < 1,
-          )
-        : expenses.find((x) => x.status === "pending");
-    if (match) {
-      out.push({
-        kind: "approve-expense",
-        verb: "Approve expense",
-        label: `Approve "${match.description}"`,
-        detail: `$${match.amount} · submitted ${match.date}`,
-        args: { expenseId: match.id },
-        confidence: 0.8,
-      });
-    }
-  }
-
   // add-employee: "add emma wilson senior engineer"
   if (/\b(add|hire|onboard|new hire)\b/.test(s)) {
     const rest = s.replace(/\b(add|hire|onboard|new hire|employee)\b/g, "").trim();
@@ -281,8 +252,8 @@ export function parseCommand(input: string, opts: { today?: Date } = {}): Parsed
 }
 
 // ── formatting helpers exposed to the UI ───────────────────────────────
-export function formatCommessaRef(id: string): string {
-  const c = commesse.find((x) => x.id === id);
+export function formatProjectRef(id: string): string {
+  const c = projects.find((x) => x.id === id);
   return c ? `${c.code} · ${c.name}` : id;
 }
 

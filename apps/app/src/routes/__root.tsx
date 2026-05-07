@@ -15,7 +15,6 @@ import { trackGaPageViewIfConsented } from "@/lib/ga";
 // route mounts and consumers can rely on hooks/imports working at first paint.
 import "@/lib/tables/employees";
 import "@/lib/tables/leave";
-import "@/lib/tables/expenses";
 import "@/lib/tables/activities";
 import "@/lib/tables/allocations";
 import "@/lib/tables/announcements";
@@ -24,10 +23,9 @@ import "@/lib/tables/auditLog";
 import "@/lib/tables/candidates";
 import "@/lib/tables/challenges";
 import "@/lib/tables/clients";
-import "@/lib/tables/commesse";
+import "@/lib/tables/projects";
 import "@/lib/tables/customFields";
 import "@/lib/tables/docs";
-import "@/lib/tables/focusSessions";
 import "@/lib/tables/gcalEvents";
 import "@/lib/tables/goals";
 import "@/lib/tables/growthNotes";
@@ -40,8 +38,6 @@ import "@/lib/tables/mockCalendarEvents";
 import "@/lib/tables/notifications";
 import "@/lib/tables/onboardingWorkflows";
 import "@/lib/tables/oneOnOnes";
-import "@/lib/tables/payrollRuns";
-import "@/lib/tables/payslips";
 import "@/lib/tables/pulseEntries";
 import "@/lib/tables/roles";
 import "@/lib/tables/seasonalChallenges";
@@ -86,14 +82,10 @@ const TITLE_BY_PATH: Record<string, string> = {
   "/calendar": "Calendar — Pulse HR",
   "/leave": "Leave — Pulse HR",
   "/documents": "Documents — Pulse HR",
-  "/expenses": "Expenses — Pulse HR",
   "/reports": "Reports — Pulse HR",
-  "/marketplace": "Marketplace — Pulse HR",
-  "/developers": "Developers — Pulse HR",
   "/settings": "Settings — Pulse HR",
   "/announcements": "Announcements — Pulse HR",
   "/kudos": "Kudos — Pulse HR",
-  "/focus": "Focus Mode — Pulse HR",
   "/feedback": "Feedback — Pulse",
   "/welcome": "Welcome — Pulse HR",
   "/admin/modules": "Modules — Pulse HR",

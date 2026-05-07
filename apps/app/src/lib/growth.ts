@@ -4,7 +4,6 @@ import {
   oneOnOnesSeed,
   growthNotesSeed,
   kudosSeed,
-  focusSessionsSeed,
   seasonalChallengesSeed,
   employees,
   type Employee,
@@ -40,7 +39,6 @@ export const LEVELS: Level[] = [
 // ── XP derivation ──────────────────────────────────────────────────────
 export interface XpBreakdown {
   kudos: number;
-  focus: number;
   goals: number;
   challenges: number;
   oneOnOnes: number;
@@ -49,23 +47,20 @@ export interface XpBreakdown {
 
 export function computeXp(employeeId: string): XpBreakdown {
   const kudos = kudosSeed.filter((k) => k.toId === employeeId);
-  const focus = focusSessionsSeed.filter((f) => f.employeeId === employeeId);
   const goals = goalsSeed.filter((g) => g.employeeId === employeeId);
   const challenges = challengesSeed.filter((c) => c.employeeId === employeeId);
   const oneOnOnes = oneOnOnesSeed.filter((o) => o.employeeId === employeeId);
 
   const kudosXp = kudos.reduce((acc, k) => acc + k.amount, 0); // 1 coin = 1 xp
-  const focusXp = focus.length * 5;
   const goalsXp = goals.filter((g) => g.status === "hit").length * 100;
   const challengesXp = challenges
     .filter((c) => c.status === "succeeded")
     .reduce((acc, c) => acc + c.xpReward, 0);
   const oneOnOnesXp = oneOnOnes.length * 10;
 
-  const total = kudosXp + focusXp + goalsXp + challengesXp + oneOnOnesXp;
+  const total = kudosXp + goalsXp + challengesXp + oneOnOnesXp;
   return {
     kudos: kudosXp,
-    focus: focusXp,
     goals: goalsXp,
     challenges: challengesXp,
     oneOnOnes: oneOnOnesXp,
@@ -97,7 +92,6 @@ export function badgesFor(employeeId: string): Badge[] {
   const kudosIn = kudosSeed.filter((k) => k.toId === employeeId);
   const distinctGivers = new Set(kudosIn.map((k) => k.fromId)).size;
   const kudosOut = kudosSeed.filter((k) => k.fromId === employeeId);
-  const focus = focusSessionsSeed.filter((f) => f.employeeId === employeeId);
   const goalsHit = goalsSeed.filter(
     (g) => g.employeeId === employeeId && g.status === "hit",
   ).length;
@@ -136,14 +130,6 @@ export function badgesFor(employeeId: string): Badge[] {
       emoji: "🧭",
       desc: "Give 10+ kudos.",
       have: kudosOut.length,
-      need: 10,
-    },
-    {
-      id: "flow-state",
-      name: "Flow state",
-      emoji: "🎯",
-      desc: "Log 10 focus sessions.",
-      have: focus.length,
       need: 10,
     },
     {
@@ -210,9 +196,6 @@ export function activityStreakWeeks(employeeId: string): number {
   kudosSeed
     .filter((k) => k.toId === employeeId || k.fromId === employeeId)
     .forEach((k) => dates.push(new Date(k.date)));
-  focusSessionsSeed
-    .filter((f) => f.employeeId === employeeId)
-    .forEach((f) => dates.push(new Date(f.date)));
   oneOnOnesSeed
     .filter((o) => o.employeeId === employeeId)
     .forEach((o) => dates.push(new Date(o.date)));
@@ -270,7 +253,6 @@ export function growthSummaryFor(employeeId: string): GrowthSummary | null {
   // last activity
   const dates: string[] = [];
   kudosSeed.filter((k) => k.toId === employeeId).forEach((k) => dates.push(k.date));
-  focusSessionsSeed.filter((f) => f.employeeId === employeeId).forEach((f) => dates.push(f.date));
   oneOnOnesSeed.filter((o) => o.employeeId === employeeId).forEach((o) => dates.push(o.date));
   const lastActivityAt = dates.sort().at(-1);
 
@@ -308,9 +290,6 @@ export function xpInRange(employeeId: string, from: Date, to: Date): number {
   const kudos = kudosSeed
     .filter((k) => k.toId === employeeId && inRange(k.date, from, to))
     .reduce((a, k) => a + k.amount, 0);
-  const focus =
-    focusSessionsSeed.filter((f) => f.employeeId === employeeId && inRange(f.date, from, to))
-      .length * 5;
   const challenges = challengesSeed
     .filter(
       (c) => c.employeeId === employeeId && c.status === "succeeded" && inRange(c.dueAt, from, to),
@@ -323,7 +302,7 @@ export function xpInRange(employeeId: string, from: Date, to: Date): number {
   const oneOnOnes =
     oneOnOnesSeed.filter((o) => o.employeeId === employeeId && inRange(o.date, from, to)).length *
     10;
-  return kudos + focus + challenges + goals + oneOnOnes;
+  return kudos + challenges + goals + oneOnOnes;
 }
 
 export interface LeaderboardEntry {
@@ -331,7 +310,6 @@ export interface LeaderboardEntry {
   xp: number;
   rank: number;
   kudos: number;
-  focusSessions: number;
 }
 
 /** `now` is overridable for testing; defaults to today. */
@@ -356,9 +334,6 @@ export function leaderboard(period: SeasonalPeriod, now: Date = new Date()): Lea
       employee: e,
       xp: xpInRange(e.id, from, to),
       kudos: kudosSeed.filter((k) => k.toId === e.id && inRange(k.date, from, to)).length,
-      focusSessions: focusSessionsSeed.filter(
-        (f) => f.employeeId === e.id && inRange(f.date, from, to),
-      ).length,
     }))
     .sort((a, b) => b.xp - a.xp)
     .map((row, i) => ({ ...row, rank: i + 1 }));

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { type Employee, type EmployeeStatus, departments, commesse } from "@/lib/mock-data";
+import { type Employee, type EmployeeStatus, departments, projects } from "@/lib/mock-data";
 import { employeesTable, useEmployee, useEmployees } from "@/lib/tables/employees";
 import {
   Dialog,
@@ -33,7 +33,7 @@ function seniorityFromJoin(join: string): string {
 }
 
 function projectFor(empId: string): string {
-  return commesse.find((c) => c.ownerId === empId)?.code ?? "—";
+  return projects.find((c) => c.ownerId === empId)?.code ?? "—";
 }
 
 export function PersonEditorialSpread({ employeeId }: { employeeId: string }) {
@@ -139,7 +139,7 @@ function Spread({ employee }: { employee: Employee }) {
           >
             {[
               ["IN AZIENDA", seniorityFromJoin(employee.joinDate)],
-              ["COMMESSA", projectFor(employee.id)],
+              ["PROJECT", projectFor(employee.id)],
               ["MANAGER", employee.manager ?? "—"],
             ].map(([l, v], i) => (
               <div

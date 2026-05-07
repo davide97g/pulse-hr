@@ -2,7 +2,7 @@ import {
   activities,
   allocations,
   clients,
-  commesse,
+  projects,
   employees,
   employeeById,
   clientById,
@@ -11,7 +11,7 @@ import {
   type Activity,
   type Allocation,
   type Client,
-  type Commessa,
+  type Project,
   type Employee,
 } from "./mock-data";
 
@@ -21,12 +21,12 @@ const HOURS_PER_WEEK = 40;
 export const employeeCostRate = (e: Employee): number => e.salary / FTE_HOURS_PER_YEAR;
 export const employeeAnnualCost = (e: Employee): number => e.salary;
 
-export function clientName(project: Commessa, clientList: Client[] = clients): string {
+export function clientName(project: Project, clientList: Client[] = clients): string {
   const c = clientList.find((x) => x.id === project.clientId);
   return c?.name ?? project.client;
 }
 
-export function getClientProjects(clientId: string, list: Commessa[] = commesse): Commessa[] {
+export function getClientProjects(clientId: string, list: Project[] = projects): Project[] {
   return list.filter((p) => p.clientId === clientId);
 }
 
@@ -56,7 +56,7 @@ export function allocationCost(a: Allocation, weeks: number, emp?: Employee): nu
   return allocationHours(a, weeks) * employeeCostRate(e);
 }
 
-export function allocationRevenue(a: Allocation, weeks: number, project?: Commessa): number {
+export function allocationRevenue(a: Allocation, weeks: number, project?: Project): number {
   const p = project ?? projectById(a.projectId);
   if (!p) return 0;
   const rate = a.billableRate ?? p.defaultBillableRate;
@@ -73,7 +73,7 @@ export interface ProjectMargin {
 }
 
 /** Margin over [project.startDate, min(today, project.endDate)]. */
-export function projectMargin(project: Commessa, today = new Date()): ProjectMargin {
+export function projectMargin(project: Project, today = new Date()): ProjectMargin {
   const team = projectTeam(project.id);
   const todayISO = today.toISOString().slice(0, 10);
   let revenue = 0;

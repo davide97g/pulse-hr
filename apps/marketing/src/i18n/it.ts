@@ -288,12 +288,6 @@ export const it: Dict = {
         body: "Coin peer-to-peer con una motivazione, coriandoli inclusi. Le classifiche si resettano settimanale, mensile e annuale.",
       },
       {
-        icon: "Target",
-        kind: "Focus Mode",
-        tag: "Profondità",
-        body: "Timer deep-work che declina automaticamente le riunioni, aggiorna lo stato e registra la sessione nel timesheet.",
-      },
-      {
         icon: "Gauge",
         kind: "Saturation",
         tag: "Carico",
@@ -310,7 +304,7 @@ export const it: Dict = {
     subtitle:
       "I temi per ruolo non sono cosmetica. Ogni persona ha la sua palette, la sua vista di default e il suo set di shortcut. Gli engineer non vedono le code di spese. I CFO non vedono gli standup di sprint.",
     items: [
-      { k: "Employee", d: "Accento lime. Timbra, ferie, kudos, focus." },
+      { k: "Employee", d: "Accento lime. Timbra, ferie, kudos." },
       { k: "Manager", d: "Tono ambra. Approvazioni, carico team, autorità kudos." },
       { k: "HR", d: "Corallo. People ops, onboarding, anomalie." },
       { k: "Admin", d: "Ciano elettrico. Integrazioni, API, audit." },
@@ -362,7 +356,7 @@ export const it: Dict = {
       },
       {
         q: "C'è un'API?",
-        a: "Sì — un'API REST completa, webhook su ogni evento (employee.created, leave.approved, expense.approved, ecc.) e SDK mantenuti per TypeScript, Python e Go. Le chiavi API sono scoped per ambiente con permessi granulari. Spec OpenAPI completa su pulsehr.it/docs/api. Il rate limit è 1.000 richieste/minuto sul tier standard.",
+        a: "Sì — un'API REST completa, webhook su ogni evento (employee.created, leave.approved, ecc.) e SDK mantenuti per TypeScript, Python e Go. Le chiavi API sono scoped per ambiente con permessi granulari. Spec OpenAPI completa su pulsehr.it/docs/api. Il rate limit è 1.000 richieste/minuto sul tier standard.",
       },
       {
         q: "Pulse è davvero open source?",
@@ -532,9 +526,9 @@ export const it: Dict = {
   },
 
   labsPage: {
-    title: "Pulse Labs — kudos, focus e tool di pulse",
+    title: "Pulse Labs — kudos e tool di pulse",
     description:
-      "Quattro feature Labs già disponibili: sentiment di Team Pulse, riconoscimenti Kudos, Focus Mode per il deep work e utilizzo Saturation. Incluse in ogni piano.",
+      "Tre feature Labs già disponibili: sentiment di Team Pulse, riconoscimenti Kudos e utilizzo Saturation. Incluse in ogni piano.",
     eyebrow: "Labs · già disponibile · incluso in ogni piano",
     titleLine1: "Le quattro feature Pulse",
     titleItalic: "che reinventano",
@@ -629,7 +623,6 @@ export const it: Dict = {
     "Saturation",
     "Team Pulse",
     "Kudos",
-    "Focus Mode",
     "Open source",
   ],
 };

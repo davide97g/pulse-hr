@@ -63,7 +63,7 @@ export const TOURS: Tour[] = [
       {
         target: "topbar-new",
         title: "Quick actions",
-        body: "Add an employee, request leave, submit an expense, or post a job — without leaving the page you're on.",
+        body: "Add an employee, request leave, or post a job — without leaving the page you're on.",
         placement: "bottom",
       },
       {
@@ -81,21 +81,21 @@ export const TOURS: Tour[] = [
   },
   {
     id: "time-tracking",
-    name: "Log time on a commessa",
-    summary: "Timesheets, the commessa pin, autofill, and submitting the week.",
+    name: "Log time on a project",
+    summary: "Timesheets, the project pin, autofill, and submitting the week.",
     workflow: "Work",
     duration: "2 min",
     steps: [
       {
         title: "Time & attendance",
-        body: "Log hours against commesse (project codes). We'll walk through the essentials.",
+        body: "Log hours against projects (project codes). We'll walk through the essentials.",
         route: "/time",
         docHref: "/docs/clients-projects",
       },
       {
-        target: "topbar-commessa-pin",
-        title: "Active commessa pin",
-        body: "Pin the commessa you're working on and new entries default to it. The pin follows you between Time and Focus.",
+        target: "topbar-project-pin",
+        title: "Active project pin",
+        body: "Pin the project you're working on and new entries default to it.",
         placement: "bottom",
       },
       {
@@ -124,7 +124,7 @@ export const TOURS: Tour[] = [
     steps: [
       {
         title: "Clients & Projects",
-        body: "The commessa hub. Browse clients, drill into projects, see who's allocated and what's at risk.",
+        body: "The project hub. Browse clients, drill into projects, see who's allocated and what's at risk.",
         route: "/clients",
         docHref: "/docs/clients-projects",
       },
@@ -164,21 +164,15 @@ export const TOURS: Tour[] = [
     ],
   },
   {
-    id: "labs-focus",
-    name: "Highlights: Focus, Kudos, Saturation",
-    summary:
-      "The newest surfaces — deep-work timer, peer coins, and team saturation.",
+    id: "labs-highlights",
+    name: "Highlights: Kudos, Saturation",
+    summary: "The newest surfaces — peer coins and team saturation.",
     workflow: "Highlights",
     duration: "2 min",
     steps: [
       {
         title: "Highlights",
         body: "Recent features scattered across Me and Insights — all tagged with a pulsing 'new' dot in the sidebar.",
-      },
-      {
-        title: "Focus Mode",
-        body: "Start a deep-work session tied to a commessa. We auto-decline interruptions and log the time when you finish.",
-        route: "/focus",
       },
       {
         title: "Kudos",

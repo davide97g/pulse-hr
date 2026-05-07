@@ -3,11 +3,11 @@ import { Command, ChevronDown, Check, Search, Briefcase } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@pulse-hr/ui/primitives/popover";
 import { Input } from "@pulse-hr/ui/primitives/input";
 import { useWorkspace } from "./WorkspaceContext";
-import { commesse } from "@/lib/mock-data";
+import { projects } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
-export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
-  const { activeCommessaId, setActiveCommessaId, activeCommessa } = useWorkspace();
+export function ActiveProjectPin({ compact }: { compact?: boolean }) {
+  const { activeProjectId, setActiveProjectId, activeProject } = useWorkspace();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,7 +29,7 @@ export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
     else setQ("");
   }, [open]);
 
-  const active = commesse.filter((c) => c.status !== "closed");
+  const active = projects.filter((c) => c.status !== "closed");
   const matches = q
     ? active.filter(
         (c) =>
@@ -40,7 +40,7 @@ export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
     : active;
 
   const pick = (id: string) => {
-    setActiveCommessaId(id);
+    setActiveProjectId(id);
     setOpen(false);
   };
 
@@ -52,18 +52,18 @@ export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
             "inline-flex items-center gap-2 h-9 rounded-md border hover:bg-muted transition-colors press-scale text-xs",
             compact ? "px-2" : "px-2.5",
           )}
-          title="Active commessa · Alt+C"
+          title="Active project · Alt+C"
         >
           <span
             className="h-2.5 w-2.5 rounded-full shrink-0"
             style={{
-              backgroundColor: activeCommessa?.color,
-              boxShadow: activeCommessa ? `0 0 6px ${activeCommessa.color}80` : undefined,
+              backgroundColor: activeProject?.color,
+              boxShadow: activeProject ? `0 0 6px ${activeProject.color}80` : undefined,
             }}
           />
           {!compact && (
             <span className="font-mono text-[11px] truncate max-w-[120px]">
-              {activeCommessa?.code ?? "No commessa"}
+              {activeProject?.code ?? "No project"}
             </span>
           )}
           <ChevronDown className="h-3 w-3 text-muted-foreground" />
@@ -73,7 +73,7 @@ export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
         <div className="px-3 py-2 border-b flex items-center gap-2">
           <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
           <div className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
-            Active commessa
+            Active project
           </div>
           <kbd className="ml-auto text-[10px] font-mono border rounded px-1.5 py-0.5 bg-muted/50">
             ⌥C
@@ -100,7 +100,7 @@ export function ActiveCommessaPin({ compact }: { compact?: boolean }) {
             <div className="px-4 py-6 text-xs text-muted-foreground text-center">No matches.</div>
           ) : (
             matches.map((c, i) => {
-              const isActive = c.id === activeCommessaId;
+              const isActive = c.id === activeProjectId;
               return (
                 <button
                   key={c.id}

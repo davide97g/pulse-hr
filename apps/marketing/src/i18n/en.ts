@@ -251,7 +251,7 @@ export const en = {
       {
         icon: "Sparkles",
         title: "Command bar (⌘J)",
-        body: "Type what you want — 'log 4h on NOV-07', 'approve Aisha's expense', 'book leave next Friday'. A local intent parser turns natural phrases into runnable actions. No LLM call, no data leaving your tenant. Works offline.",
+        body: "Type what you want — 'log 4h on NOV-07', 'book leave next Friday'. A local intent parser turns natural phrases into runnable actions. No LLM call, no data leaving your tenant. Works offline.",
       },
       {
         icon: "Trophy",
@@ -281,12 +281,6 @@ export const en = {
         body: "Peer coins with reasons attached, confetti included. Leaderboards reset weekly, monthly and yearly.",
       },
       {
-        icon: "Target",
-        kind: "Focus Mode",
-        tag: "Depth",
-        body: "Deep-work timer that auto-declines meetings, posts a status, and logs the session to your timesheet.",
-      },
-      {
         icon: "Gauge",
         kind: "Saturation",
         tag: "Load",
@@ -301,13 +295,13 @@ export const en = {
     titleItalic: "five",
     titleAfter: "points of view.",
     subtitle:
-      "Role themes aren't cosmetic. Each persona ships with its own palette, default view, and shortcut set. Engineers don't see expense queues. CFOs don't see sprint standups.",
+      "Role themes aren't cosmetic. Each persona ships with its own palette, default view, and shortcut set. CFOs don't see sprint standups.",
     items: [
-      { k: "Employee", d: "Lime accent. Clock, leave, kudos, focus." },
+      { k: "Employee", d: "Lime accent. Clock, leave, kudos." },
       { k: "Manager", d: "Amber warmth. Approvals, team load, kudos authority." },
       { k: "HR", d: "Coral. People ops, onboarding, anomalies." },
       { k: "Admin", d: "Electric cyan. Integrations, API, audit." },
-      { k: "Finance", d: "Violet. Expenses, margins, reports." },
+      { k: "Finance", d: "Violet. Margins, reports." },
     ],
   },
 
@@ -355,7 +349,7 @@ export const en = {
       },
       {
         q: "Do you have an API?",
-        a: "Yes — a full REST API, webhooks on every resource event (employee.created, leave.approved, expense.approved, etc.), and maintained SDKs for TypeScript, Python and Go. API keys are scoped per environment with granular permissions. Full OpenAPI spec published at pulsehr.it/docs/api. Rate limits are 1,000 requests/minute on the standard tier.",
+        a: "Yes — a full REST API, webhooks on every resource event (employee.created, leave.approved, etc.), and maintained SDKs for TypeScript, Python and Go. API keys are scoped per environment with granular permissions. Full OpenAPI spec published at pulsehr.it/docs/api. Rate limits are 1,000 requests/minute on the standard tier.",
       },
       {
         q: "Is Pulse really open source?",
@@ -367,7 +361,7 @@ export const en = {
       },
       {
         q: "How does the command bar (⌘J) work?",
-        a: "The command bar runs a local intent parser over your tenant's data — no LLM call, no network round-trip, no cross-tenant training. You type natural phrases like 'log 4h on NOV-07 yesterday' or 'approve Aisha's expense', and a deterministic heuristic maps them to runnable actions scoped to your permissions. Because it runs in the browser, it works offline as part of the PWA. We'll expose an MCP server for true agent workflows in a later release; until then, this is the honest label — a keyboard-first command bar, not an AI copilot.",
+        a: "The command bar runs a local intent parser over your tenant's data — no LLM call, no network round-trip, no cross-tenant training. You type natural phrases like 'log 4h on NOV-07 yesterday' or 'book leave next Friday', and a deterministic heuristic maps them to runnable actions scoped to your permissions. Because it runs in the browser, it works offline as part of the PWA. We'll expose an MCP server for true agent workflows in a later release; until then, this is the honest label — a keyboard-first command bar, not an AI copilot.",
       },
       {
         q: "Does Pulse work offline?",
@@ -523,9 +517,9 @@ export const en = {
   },
 
   labsPage: {
-    title: "Pulse Labs — kudos, focus & pulse tools",
+    title: "Pulse Labs — kudos & pulse tools",
     description:
-      "Four Labs features shipping now: Team Pulse sentiment, Kudos peer recognition, Focus Mode deep work, and Saturation utilization. Included on every plan.",
+      "Three Labs features shipping now: Team Pulse sentiment, Kudos peer recognition, and Saturation utilization. Included on every plan.",
     eyebrow: "Labs · shipping now · free on every plan",
     titleLine1: "The four Pulse features",
     titleItalic: "reinventing",
@@ -620,7 +614,6 @@ export const en = {
     "Saturation",
     "Team Pulse",
     "Kudos",
-    "Focus Mode",
     "Open source",
   ] as string[],
 };

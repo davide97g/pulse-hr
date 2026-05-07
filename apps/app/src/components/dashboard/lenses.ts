@@ -92,7 +92,7 @@ export function workloadLens(dark: boolean, narrative: ReactNode, captionMono: s
     ],
     legendItem: (s) => ({ bg: satFill(s as number, dark), glow: (s as number) > 1.05 }),
     narrative,
-    actions: ["Per commessa", "Per skill", { spark: true, label: "Apri saturation" }],
+    actions: ["Per project", "Per skill", { spark: true, label: "Apri saturation" }],
     tooltipPrimary: (p) => ({
       label: "SATURAZIONE",
       value: `${Math.round(p.sat * 100)}%`,

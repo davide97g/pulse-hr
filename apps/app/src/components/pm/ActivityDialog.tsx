@@ -24,7 +24,7 @@ import {
   projectById,
   type Activity,
   type ActivityStatus,
-  type Commessa,
+  type Project,
   type IntegrationProvider,
 } from "@/lib/mock-data";
 import { useAllocations } from "@/lib/tables/allocations";
@@ -53,7 +53,7 @@ export function ActivityDialog({
   const allocations = useAllocations();
   const activities = useActivities();
 
-  const project: Commessa | undefined = useMemo(
+  const project: Project | undefined = useMemo(
     () => projectById(projectId),
     [projectId],
   );
@@ -294,7 +294,7 @@ export function ActivityDialog({
   );
 }
 
-function blankActivity(projectId: string, status: ActivityStatus = "todo", project?: Commessa): Activity {
+function blankActivity(projectId: string, status: ActivityStatus = "todo", project?: Project): Activity {
   return {
     id: `ac${Date.now()}`,
     projectId,

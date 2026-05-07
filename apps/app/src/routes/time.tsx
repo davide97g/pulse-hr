@@ -8,7 +8,7 @@ import { AvatarDisplay } from "@pulse-hr/ui/atoms/AvatarDisplay";
 import { TimesheetAutofillDialog } from "@/components/app/TimesheetAutofillDialog";
 import { useEmployees } from "@/lib/tables/employees";
 import { useTimesheetEntries } from "@/lib/tables/timesheetEntries";
-import { commesse } from "@/lib/mock-data";
+import { projects } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/time")({
   head: () => ({ meta: [{ title: "Time & attendance — Pulse HR" }] }),
@@ -46,7 +46,7 @@ type DayRecord = {
   logged: number;
   leave: "leave" | "holiday" | null;
   label: string | null;
-  breakdown: { commessaId: string; code: string; name: string; hours: number }[];
+  breakdown: { projectId: string; code: string; name: string; hours: number }[];
 };
 
 function ymd(d: Date): string {
@@ -58,7 +58,7 @@ function fmtHours(h: number): string {
   return Number.isInteger(h) ? `${h}h` : `${h.toFixed(1)}h`;
 }
 
-type Tab = "calendar" | "mine" | "commessa" | "team";
+type Tab = "calendar" | "mine" | "project" | "team";
 
 function TimePage() {
   const employees = useEmployees();
@@ -91,10 +91,10 @@ function TimePage() {
       );
       const logged = dayEntries.reduce((s, e) => s + e.hours, 0);
       const breakdown = dayEntries.map((e) => {
-        const c = commesse.find((c) => c.id === e.commessaId);
+        const c = projects.find((c) => c.id === e.projectId);
         return {
-          commessaId: e.commessaId,
-          code: c?.code ?? e.commessaId,
+          projectId: e.projectId,
+          code: c?.code ?? e.projectId,
           name: c?.name ?? "—",
           hours: e.hours,
         };
@@ -159,13 +159,13 @@ function TimePage() {
     if (missingDays.length > 0) setOpenDay(missingDays[0]);
   };
 
-  const totalsByCommessa = useMemo(() => {
+  const totalsByProject = useMemo(() => {
     const map = new Map<string, { code: string; name: string; hours: number }>();
     for (const d of monthDays) {
       for (const b of d.breakdown) {
-        const cur = map.get(b.commessaId);
+        const cur = map.get(b.projectId);
         if (cur) cur.hours += b.hours;
-        else map.set(b.commessaId, { code: b.code, name: b.name, hours: b.hours });
+        else map.set(b.projectId, { code: b.code, name: b.name, hours: b.hours });
       }
     }
     return Array.from(map.values()).sort((a, b) => b.hours - a.hours);
@@ -253,7 +253,7 @@ function TimePage() {
           [
             ["calendar", "Calendar"],
             ["mine", "My timesheet"],
-            ["commessa", "By commessa"],
+            ["project", "By project"],
             ["team", "Team presence"],
           ] as [Tab, string][]
         ).map(([k, l]) => (
@@ -323,7 +323,7 @@ function TimePage() {
         <CalendarGrid cells={cells} weeks={cells.length / 7} today={today} onPickDay={setOpenDay} />
       )}
       {tab === "mine" && <MineTable monthDays={monthDays} today={today} />}
-      {tab === "commessa" && <ByCommessa totals={totalsByCommessa} month={monthLabel} />}
+      {tab === "project" && <ByProject totals={totalsByProject} month={monthLabel} />}
       {tab === "team" && <TeamPresence employees={employees} entries={entries} cursor={cursor} />}
 
       {tab === "calendar" && missingDays.length > 0 && (
@@ -649,7 +649,7 @@ function MineTable({ monthDays, today }: { monthDays: DayRecord[]; today: number
           color: "var(--muted-foreground)",
         }}
       >
-        {["GIORNO", "DOW", "STATO", "LOGGED", "TARGET", "DELTA", "COMMESSE"].map((h, i) => (
+        {["GIORNO", "DOW", "STATO", "LOGGED", "TARGET", "DELTA", "PROJECTS"].map((h, i) => (
           <div
             key={i}
             style={{
@@ -799,7 +799,7 @@ function MineTable({ monthDays, today }: { monthDays: DayRecord[]; today: number
   );
 }
 
-function ByCommessa({
+function ByProject({
   totals,
   month,
 }: {
@@ -815,7 +815,7 @@ function ByCommessa({
       <div className="solid-card flex flex-col gap-4 p-6" style={{ borderRadius: 14 }}>
         <div className="flex items-baseline justify-between">
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            ORE PER COMMESSA · {month}
+            ORE PER PROJECT · {month}
           </span>
           <span className="t-num" style={{ fontSize: 28, letterSpacing: "-0.03em" }}>
             {grand.toFixed(1)}h
@@ -916,7 +916,7 @@ function ByCommessa({
         )}
         <p style={{ margin: 0, color: "var(--fg-2)", fontSize: 14, lineHeight: 1.55 }}>
           Le ore più alte concentrano l'attenzione del mese. Mantenere bilanciato il portafoglio
-          aiuta a evitare saturazioni su singole commesse.
+          aiuta a evitare saturazioni su singole projects.
         </p>
         <div className="mt-auto flex gap-2">
           <EditorialPill kind="ghost" size="sm">
@@ -1245,7 +1245,7 @@ function DayDrawer({
         {!isLeave && (
           <div className="flex flex-col gap-2.5">
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              ORE PER COMMESSA
+              ORE PER PROJECT
             </span>
             {rec.breakdown.length > 0 ? (
               rec.breakdown.map((b, i) => (
@@ -1293,7 +1293,7 @@ function DayDrawer({
                     color: "var(--muted-foreground)",
                   }}
                 >
-                  Nessuna ora registrata. Inizia digitando il codice della commessa.
+                  Nessuna ora registrata. Inizia digitando il codice della project.
                 </span>
               </div>
             )}
@@ -1320,7 +1320,7 @@ function DayDrawer({
                   fontSize: 16,
                 }}
               >
-                Codice commessa…
+                Codice project…
               </div>
               <div
                 style={{

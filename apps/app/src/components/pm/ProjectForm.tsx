@@ -16,12 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@pulse-hr/ui/primitives/select";
-import type { Commessa, ProjectStatus } from "@/lib/mock-data";
+import type { Project, ProjectStatus } from "@/lib/mock-data";
 import { clients as clientSeed, employees, employeeById } from "@/lib/mock-data";
 
 const STATUSES: ProjectStatus[] = ["draft", "active", "on_hold", "at_risk", "done", "closed"];
 
-function blankProject(lockedClientId?: string): Commessa {
+function blankProject(lockedClientId?: string): Project {
   const defaultClientId = lockedClientId ?? clientSeed[0]?.id ?? "";
   const client = clientSeed.find((c) => c.id === defaultClientId);
   return {
@@ -54,18 +54,18 @@ export function ProjectForm({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (p: Commessa) => void;
-  initial?: Commessa | null;
+  onSave: (p: Project) => void;
+  initial?: Project | null;
   lockedClientId?: string;
 }) {
   const isEdit = !!initial;
-  const [draft, setDraft] = useState<Commessa>(() => initial ?? blankProject(lockedClientId));
+  const [draft, setDraft] = useState<Project>(() => initial ?? blankProject(lockedClientId));
 
   useEffect(() => {
     if (open) setDraft(initial ?? blankProject(lockedClientId));
   }, [open, initial, lockedClientId]);
 
-  const set = <K extends keyof Commessa>(k: K, v: Commessa[K]) =>
+  const set = <K extends keyof Project>(k: K, v: Project[K]) =>
     setDraft((d) => ({ ...d, [k]: v }));
 
   const selectedClient = useMemo(

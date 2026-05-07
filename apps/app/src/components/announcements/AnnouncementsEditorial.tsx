@@ -19,7 +19,7 @@ function tagFor(a: Announcement): string {
   if (/release|launch|v\d|prodott|ship|version/.test(t)) return "PRODOTTO";
   if (/welcome|hire|joining|new|nuovo|onbo/.test(t)) return "PERSONE";
   if (/all-?hands|event|meet|all-hand/.test(t)) return "EVENTO";
-  if (/expense|payroll|finance|budget/.test(t)) return "FINANCE";
+  if (/finance|budget/.test(t)) return "FINANCE";
   return "WORKSPACE";
 }
 

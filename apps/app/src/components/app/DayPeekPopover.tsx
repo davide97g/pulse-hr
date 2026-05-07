@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@pulse-hr/ui/primitives/select";
 import { StatusBadge } from "./AppShell";
-import { commesse, commessaById, type TimesheetEntry } from "@/lib/mock-data";
+import { projects, projectById, type TimesheetEntry } from "@/lib/mock-data";
 import type { DayInfo } from "@/lib/timesheet";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +24,7 @@ interface Props {
   prevDayEntries: TimesheetEntry[];
   onClose: () => void;
   onAdd: (data: {
-    commessaId: string;
+    projectId: string;
     hours: number;
     description: string;
     billable: boolean;
@@ -46,7 +46,7 @@ export function DayPeekPopover({
   onDelete,
   onCopyFromPrev,
 }: Props) {
-  const [commessaId, setCommessaId] = useState(commesse[0].id);
+  const [projectId, setProjectId] = useState(projects[0].id);
   const [hours, setHours] = useState("4");
   const [description, setDescription] = useState("");
   const [billable, setBillable] = useState(true);
@@ -54,7 +54,7 @@ export function DayPeekPopover({
 
   useEffect(() => {
     if (open && info) {
-      setCommessaId(commesse[0].id);
+      setProjectId(projects[0].id);
       setHours("4");
       setDescription("");
       setBillable(true);
@@ -70,7 +70,7 @@ export function DayPeekPopover({
   const submit = () => {
     if (!valid) return;
     onAdd({
-      commessaId,
+      projectId,
       hours: Number(hours),
       description: description.trim(),
       billable,
@@ -126,7 +126,7 @@ export function DayPeekPopover({
         {info.entries.length > 0 && (
           <div className="divide-y max-h-[180px] overflow-y-auto scrollbar-thin">
             {info.entries.map((e) => {
-              const c = commessaById(e.commessaId);
+              const c = projectById(e.projectId);
               return (
                 <div
                   key={e.id}
@@ -174,12 +174,12 @@ export function DayPeekPopover({
             className="p-3 border-t bg-muted/20 space-y-2"
           >
             <div className="grid grid-cols-[1fr_72px] gap-2">
-              <Select value={commessaId} onValueChange={setCommessaId}>
+              <Select value={projectId} onValueChange={setProjectId}>
                 <SelectTrigger className="h-8 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {commesse
+                  {projects
                     .filter((c) => c.status === "active")
                     .map((c) => (
                       <SelectItem key={c.id} value={c.id}>

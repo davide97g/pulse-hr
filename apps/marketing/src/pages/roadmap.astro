@@ -13,7 +13,7 @@ const path = "/roadmap";
 const NOW = [
   {
     t: "MCP server (read-only)",
-    d: "A Model Context Protocol server exposing employees, commesse, timesheets and expenses as resources. Enables Claude/Copilot/Cursor to ground on your tenant data.",
+    d: "A Model Context Protocol server exposing employees, commesse and timesheets as resources. Enables Claude/Copilot/Cursor to ground on your tenant data.",
     tag: "agents",
   },
   {
@@ -46,7 +46,7 @@ const NEXT = [
   },
   {
     t: "Native iOS + Android apps",
-    d: "Native shells around the PWA with biometric unlock and background sync for expense photos. Ships via App Store / Play Store; PWA remains the default.",
+    d: "Native shells around the PWA with biometric unlock and background sync. Ships via App Store / Play Store; PWA remains the default.",
     tag: "mobile",
   },
 ];
@@ -54,12 +54,12 @@ const NEXT = [
 const LATER = [
   {
     t: "Agent-native workflows (write actions via MCP)",
-    d: "Once the read-only MCP server has settled, extend to write actions — approve expense, book leave, draft offer letter. Gated behind explicit per-tool permissions.",
+    d: "Once the read-only MCP server has settled, extend to write actions — book leave, draft offer letter, post a job. Gated behind explicit per-tool permissions.",
     tag: "agents",
   },
   {
     t: "BYO-LLM for anomaly detection",
-    d: "Optional plug-in: route expense/timesheet anomalies through your own Azure OpenAI or Bedrock tenant. No data leaves your network.",
+    d: "Optional plug-in: route timesheet anomalies through your own Azure OpenAI or Bedrock tenant. No data leaves your network.",
     tag: "ai",
   },
   {

@@ -23,7 +23,7 @@ End-to-end: from "I want a Friday off" to "approved, see you Monday."
    - The [[Calendar]] slot turns solid for the team to see.
    - [[Saturation]] for the period drops the employee's capacity.
    - The employee's leave balance decrements.
-   - The next [[Payroll Run]] picks it up automatically.
+   - The next  picks it up automatically.
 
 ## Personas involved
 

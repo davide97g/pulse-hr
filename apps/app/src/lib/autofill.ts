@@ -8,20 +8,19 @@ import {
   isWeekend,
 } from "date-fns";
 import {
-  commesse,
+  projects,
   mockCalendarEvents,
-  focusSessionsSeed,
   type CalendarEvent,
   type TimesheetEntry,
 } from "./mock-data";
 import { getWeekStartsOn } from "./timesheet";
 
-export type AutofillSource = "calendar" | "focus" | "gap";
+export type AutofillSource = "calendar" | "gap";
 
 export interface AutofillDraft {
   tempId: string;
   date: string; // YYYY-MM-DD
-  commessaId: string;
+  projectId: string;
   hours: number;
   description: string;
   billable: boolean;
@@ -38,13 +37,13 @@ function eventHours(ev: CalendarEvent): number {
   return Math.round((mins / 60) * 4) / 4;
 }
 
-// Resolve a commessaHint ("cm1", partial name) to a concrete commessa id.
-function resolveCommessa(hint: string | undefined, fallbackId: string): string {
+// Resolve a projectHint ("cm1", partial name) to a concrete project id.
+function resolveProject(hint: string | undefined, fallbackId: string): string {
   if (!hint) return fallbackId;
-  const direct = commesse.find((c) => c.id === hint);
+  const direct = projects.find((c) => c.id === hint);
   if (direct) return direct.id;
   const lower = hint.toLowerCase();
-  const fuzzy = commesse.find(
+  const fuzzy = projects.find(
     (c) => c.name.toLowerCase().includes(lower) || c.code.toLowerCase().includes(lower),
   );
   return fuzzy?.id ?? fallbackId;
@@ -52,7 +51,7 @@ function resolveCommessa(hint: string | undefined, fallbackId: string): string {
 
 export interface GenerateOptions {
   targetHoursPerDay?: number;
-  defaultCommessaId?: string;
+  defaultProjectId?: string;
   existingEntries?: TimesheetEntry[];
   today?: Date;
 }
@@ -68,7 +67,7 @@ export function generateWeekDraft(
   opts: GenerateOptions = {},
 ): AutofillDraft[] {
   const target = opts.targetHoursPerDay ?? 8;
-  const fallback = opts.defaultCommessaId ?? commesse[0].id;
+  const fallback = opts.defaultProjectId ?? projects[0].id;
   const wso = getWeekStartsOn();
   const weekStart = startOfWeek(anchor, { weekStartsOn: wso });
   const weekEnd = endOfWeek(anchor, { weekStartsOn: wso });
@@ -93,14 +92,14 @@ export function generateWeekDraft(
     let booked = 0;
     for (const ev of dayEvents) {
       const hrs = eventHours(ev);
-      const commessaId = resolveCommessa(ev.commessaHint, fallback);
+      const projectId = resolveProject(ev.projectHint, fallback);
       drafts.push({
         tempId: nextId(),
         date: iso,
-        commessaId,
+        projectId,
         hours: hrs,
         description: ev.title,
-        billable: commessaId !== "cm4", // internal commessa → non-billable
+        billable: projectId !== "cm4", // internal project → non-billable
         source: "calendar",
         confidence: 0.9,
         eventIds: [ev.id],
@@ -108,29 +107,13 @@ export function generateWeekDraft(
       booked += hrs;
     }
 
-    // 2) Pull focus sessions for the day
-    const focus = focusSessionsSeed.filter((f) => f.employeeId === employeeId && f.date === iso);
-    for (const f of focus) {
-      drafts.push({
-        tempId: nextId(),
-        date: iso,
-        commessaId: f.commessaId,
-        hours: Math.round((f.durationMin / 60) * 4) / 4,
-        description: f.note ?? "Focused work",
-        billable: true,
-        source: "focus",
-        confidence: 0.85,
-      });
-      booked += f.durationMin / 60;
-    }
-
-    // 3) Fill the gap up to target with a single low-confidence guess
+    // 2) Fill the gap up to target with a single low-confidence guess
     const gap = target - booked;
     if (gap >= 1) {
       drafts.push({
         tempId: nextId(),
         date: iso,
-        commessaId: fallback,
+        projectId: fallback,
         hours: Math.round(gap * 4) / 4,
         description: "Deep work — filling gap",
         billable: true,

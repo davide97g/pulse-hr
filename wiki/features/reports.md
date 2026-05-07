@@ -14,7 +14,7 @@ The aggregate-numbers surface. Headcount, cost-per-hire, turnover, [[Commessa]] 
 
 ## Key entities
 
-[[Employee]] · [[Commessa]] · [[Payroll Run]] · [[Timesheet Entry]] · [[Leave Request]]
+[[Employee]] · [[Commessa]] · [[Timesheet Entry]] · [[Leave Request]]
 
 ## Notable behaviors
 
@@ -24,4 +24,4 @@ The aggregate-numbers surface. Headcount, cost-per-hire, turnover, [[Commessa]] 
 
 ## Related journeys
 
-[[Monthly Payroll Run]]
+

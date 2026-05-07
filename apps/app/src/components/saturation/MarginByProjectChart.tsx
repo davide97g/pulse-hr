@@ -11,7 +11,7 @@ import {
   LabelList,
 } from "recharts";
 import { Card } from "@pulse-hr/ui/primitives/card";
-import { commesse } from "@/lib/mock-data";
+import { projects } from "@/lib/mock-data";
 import { projectMargin } from "@/lib/projects";
 
 const fmt = (n: number) => {
@@ -24,7 +24,7 @@ const fmt = (n: number) => {
 export function MarginByProjectChart() {
   const data = useMemo(
     () =>
-      commesse
+      projects
         .map((p) => {
           const m = projectMargin(p);
           return {

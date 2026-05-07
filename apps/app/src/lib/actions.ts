@@ -10,7 +10,7 @@ import type { NavigateOptions } from "@tanstack/react-router";
 export interface ActionCtx {
   navigate: (opts: NavigateOptions) => void;
   openQuickAction?: (
-    id: "add-employee" | "request-leave" | "submit-expense" | "post-job" | "run-payroll",
+    id: "add-employee" | "request-leave" | "post-job",
   ) => void;
 }
 
@@ -31,21 +31,6 @@ export interface CopilotAnswer {
 export function answerFor(prompt: string): CopilotAnswer {
   const q = prompt.toLowerCase();
 
-  if (q.includes("expense")) {
-    return {
-      text:
-        "I found 2 pending expenses under $200: Client dinner ($184.50) and Figma license ($180). " +
-        "Bulk-approving them will notify the owners and move both to reimbursement.",
-      actions: [
-        {
-          label: "Approve both",
-          run: () => toast.success("2 expenses approved · $364.50 queued for reimbursement"),
-        },
-        { label: "Open expenses", run: (ctx) => ctx.navigate({ to: "/expenses" }) },
-      ],
-    };
-  }
-
   if (q.includes("overlapping") || q.includes("leave")) {
     return {
       text:
@@ -62,7 +47,7 @@ export function answerFor(prompt: string): CopilotAnswer {
     return {
       text:
         "1 anomaly this week: Engineering overtime up 18% week-over-week, concentrated in the " +
-        "migration commessa (ACM-2025-01). No over-threshold expenses detected.",
+        "migration project (ACM-2025-01).",
       actions: [
         { label: "Open time page", run: (ctx) => ctx.navigate({ to: "/time" }) },
         { label: "Notify Sarah Chen", run: () => toast.success("DM drafted to Sarah Chen") },
@@ -82,10 +67,10 @@ export function answerFor(prompt: string): CopilotAnswer {
     };
   }
 
-  if (q.includes("budget") || q.includes("commessa")) {
+  if (q.includes("budget") || q.includes("project")) {
     return {
       text:
-        "Two commesse are over budget this month: LGO-2024-12 Legacy migration (101%) and " +
+        "Two projects are over budget this month: LGO-2024-12 Legacy migration (101%) and " +
         "BCO-2025-03 Design system v2 (83%, trending over).",
       actions: [{ label: "Open clients", run: (ctx) => ctx.navigate({ to: "/clients" }) }],
     };
@@ -106,7 +91,7 @@ export function answerFor(prompt: string): CopilotAnswer {
   if (q.includes("draft my week") || q.includes("auto") || q.includes("autofill")) {
     return {
       text:
-        "I can draft your week from your calendar and focus sessions — about 32h across Mon–Fri. " +
+        "I can draft your week from your calendar — about 32h across Mon–Fri. " +
         "Review each row before accepting.",
       actions: [
         {

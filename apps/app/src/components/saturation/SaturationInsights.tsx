@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Badge } from "@pulse-hr/ui/primitives/badge";
-import { commesse, employees, clients, employeeById } from "@/lib/mock-data";
+import { projects, employees, clients, employeeById } from "@/lib/mock-data";
 import { projectMargin, personWeeklyLoad, weekRange } from "@/lib/projects";
 import { cn } from "@/lib/utils";
 
@@ -178,7 +178,7 @@ function computeInsights(): Insight[] {
   const today = new Date();
 
   // 1. Projects with negative/low margin
-  for (const p of commesse) {
+  for (const p of projects) {
     const m = projectMargin(p, today);
     if (p.defaultBillableRate === 0) continue; // internal, skip margin checks
     if (m.revenue > 0 && m.margin < 0) {
@@ -207,7 +207,7 @@ function computeInsights(): Insight[] {
   }
 
   // 2. Budget burn over 100%
-  for (const p of commesse) {
+  for (const p of projects) {
     const burnPct = (p.burnedHours / Math.max(1, p.budgetHours)) * 100;
     if (burnPct > 100) {
       out.push({
@@ -226,7 +226,7 @@ function computeInsights(): Insight[] {
   }
 
   // 3. At-risk or on-hold projects
-  for (const p of commesse) {
+  for (const p of projects) {
     if (p.status === "at_risk") {
       out.push({
         id: `status-risk-${p.id}`,

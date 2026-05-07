@@ -41,8 +41,8 @@ import {
   type DayStatus,
 } from "@/lib/timesheet";
 import {
-  commesse,
-  commessaById,
+  projects,
+  projectById,
   employees,
   employeeById,
   type TimesheetEntry,
@@ -84,7 +84,7 @@ export function TimesheetCalendar({
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkMode, setBulkMode] = useState<Mode>("copy-week");
   const [autofillOpen, setAutofillOpen] = useState(false);
-  const [commessaFilter, setCommessaFilter] = useState<string | null>(null);
+  const [projectFilter, setProjectFilter] = useState<string | null>(null);
   const [legendOpen, setLegendOpen] = useState(false);
 
   const weekdays = useMemo(() => weekdayLabels(), []);
@@ -294,20 +294,20 @@ export function TimesheetCalendar({
               />
             </div>
 
-            {stats.byCommessa.length > 0 && (
+            {stats.byProject.length > 0 && (
               <div className="mt-3 pt-3 border-t flex items-center gap-2 flex-wrap">
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" /> Top commesse
+                  <TrendingUp className="h-3 w-3" /> Top projects
                 </span>
-                {stats.byCommessa.slice(0, 4).map((c) => (
+                {stats.byProject.slice(0, 4).map((c) => (
                   <button
-                    key={c.commessaId}
+                    key={c.projectId}
                     onClick={() =>
-                      setCommessaFilter(commessaFilter === c.commessaId ? null : c.commessaId)
+                      setProjectFilter(projectFilter === c.projectId ? null : c.projectId)
                     }
                     className={cn(
                       "inline-flex items-center gap-1.5 px-2 py-1 rounded border text-xs transition-colors press-scale",
-                      commessaFilter === c.commessaId
+                      projectFilter === c.projectId
                         ? "bg-primary/10 border-primary/40"
                         : "hover:bg-muted/40",
                     )}
@@ -317,9 +317,9 @@ export function TimesheetCalendar({
                     <span className="tabular-nums font-medium">{c.hours.toFixed(0)}h</span>
                   </button>
                 ))}
-                {commessaFilter && (
+                {projectFilter && (
                   <button
-                    onClick={() => setCommessaFilter(null)}
+                    onClick={() => setProjectFilter(null)}
                     className="text-[10px] text-muted-foreground hover:text-foreground underline"
                   >
                     clear
@@ -361,7 +361,7 @@ export function TimesheetCalendar({
                       selected={selectedDay === info.iso}
                       inRange={selectedRange.some((d) => isSameDay(d, info.date))}
                       tabIndex={i === 0 ? 0 : -1}
-                      commessaFilter={commessaFilter}
+                      projectFilter={projectFilter}
                       onClick={(e) => handleCellClick(info, e, e.currentTarget as HTMLElement)}
                     />
                   </div>
@@ -434,7 +434,7 @@ export function TimesheetCalendar({
           if (!selectedInfo) return;
           prevDayEntries.forEach((r) =>
             onAdd({
-              commessaId: r.commessaId,
+              projectId: r.projectId,
               date: selectedInfo.iso,
               hours: r.hours,
               description: r.description,

@@ -7,8 +7,7 @@ import { cardsFor, type CardSignals } from "@/components/dashboard/cards";
 import { useDashboardLens } from "@/components/dashboard/useDashboardLens";
 import type { LensId } from "@/components/dashboard/types";
 import {
-  commesse,
-  payrollRuns,
+  projects,
   candidates,
   kudosSeed,
   oneOnOnesSeed,
@@ -18,7 +17,6 @@ import {
 import { offices } from "@/lib/offices";
 import { useEmployees } from "@/lib/tables/employees";
 import { useLeaveRequests } from "@/lib/tables/leave";
-import { useExpenses } from "@/lib/tables/expenses";
 import { useTheme } from "@pulse-hr/ui/theme";
 import { THEMES } from "@pulse-hr/ui/theme";
 
@@ -70,13 +68,12 @@ function getISOWeek(d: Date): number {
 function Dashboard() {
   const employees = useEmployees();
   const leaveRequests = useLeaveRequests();
-  const expenses = useExpenses();
   const { lens, setLens } = useDashboardLens();
   const { theme } = useTheme();
   const dark = (THEMES.find((t) => t.id === theme)?.mode ?? "dark") === "dark";
 
   const people = useMemo(
-    () => buildConstellationPeople(employees, commesse),
+    () => buildConstellationPeople(employees, projects),
     [employees],
   );
 
@@ -84,29 +81,20 @@ function Dashboard() {
     const now = new Date();
     const today = now.toISOString().slice(0, 10);
     const pendingLeaves = leaveRequests.filter((l) => l.status === "pending");
-    const pendingExpenses = expenses.filter((e) => e.status === "pending");
-    const upcomingPayroll =
-      payrollRuns.find((r) => r.status === "scheduled" || r.status === "draft") ??
-      payrollRuns[0];
-    const expensesAmount = pendingExpenses.reduce((s, e) => s + (e.amount ?? 0), 0);
-    const activeCommesse = commesse.filter((c) => c.status === "active");
-    const sat = activeCommesse.length
-      ? activeCommesse.reduce(
+    const activeProjects = projects.filter((c) => c.status === "active");
+    const sat = activeProjects.length
+      ? activeProjects.reduce(
           (s, c) => s + (c.budgetHours > 0 ? c.burnedHours / c.budgetHours : 0),
           0,
-        ) / activeCommesse.length
+        ) / activeProjects.length
       : 0;
-    const atRiskCount = activeCommesse.filter(
+    const atRiskCount = activeProjects.filter(
       (c) => c.budgetHours > 0 && c.burnedHours / c.budgetHours >= 0.8,
     ).length;
-    const sortedByBurn = [...activeCommesse]
+    const sortedByBurn = [...activeProjects]
       .filter((c) => c.budgetHours > 0)
       .sort((a, b) => b.burnedHours / b.budgetHours - a.burnedHours / a.budgetHours);
     const top = sortedByBurn[0];
-    const burnK = top ? Math.round(top.burnedHours * 0.12) : 0;
-    const planPct = top
-      ? Math.round((top.burnedHours / top.budgetHours - 1) * 100)
-      : 0;
     const candidatesActive = candidates.filter((c) => c.stage !== "Hired").length;
     const offers = candidates.filter((c) => c.stage === "Offer").length;
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -126,22 +114,11 @@ function Dashboard() {
     const busiest = offices[0];
     void managerAsks;
     void today;
+    void top;
 
     return {
       pendingLeavesCount: pendingLeaves.length,
       pendingLeavesToApprove: pendingLeaves.length,
-      pendingExpensesAmount: Math.round(expensesAmount),
-      pendingExpensesCount: pendingExpenses.length,
-      payrollAmountK: upcomingPayroll ? Math.round(upcomingPayroll.gross / 1000) : 0,
-      payrollPeriod: upcomingPayroll?.period ?? "—",
-      payrollStatus: upcomingPayroll
-        ? upcomingPayroll.status === "scheduled" || upcomingPayroll.status === "draft"
-          ? "in revisione"
-          : upcomingPayroll.status
-        : "—",
-      forecastBurnK: burnK,
-      forecastVsPlanPct: planPct,
-      forecastCommessaCode: top?.code ?? "—",
       recruitingCandidates: candidatesActive,
       recruitingOffers: offers,
       pulseResponseRate: 0.87,
@@ -159,15 +136,23 @@ function Dashboard() {
       meetingsToday: 23,
       meetingConflicts: 2,
       satMeanPct: Math.round(sat * 100),
-      commesseAtRisk: atRiskCount,
+      projectsAtRisk: atRiskCount,
       officesOpen,
       officesTotal: offices.length || 0,
       busiestOfficeName: busiest?.name?.split(",")[0] ?? "—",
       busiestOfficePct: 92,
     };
-  }, [employees, leaveRequests, expenses]);
+  }, [employees, leaveRequests]);
 
   const cards = useMemo(() => cardsFor(lens, signals), [lens, signals]);
+
+  const topProjectCode = useMemo(() => {
+    const active = projects.filter((c) => c.status === "active" && c.budgetHours > 0);
+    const sorted = [...active].sort(
+      (a, b) => b.burnedHours / b.budgetHours - a.burnedHours / a.budgetHours,
+    );
+    return sorted[0]?.code ?? "—";
+  }, []);
 
   const captionMono = useMemo(() => {
     const now = new Date();
@@ -182,7 +167,7 @@ function Dashboard() {
     if (lens === "presence") {
       return `${wd} ${day} ${m} · ${hh}:${mm} · TIMBRATURE LIVE`;
     }
-    return `${people.length} PERSONE · ${commesse.length} COMMESSE · ${day} ${m}, ${hh}:${mm}`;
+    return `${people.length} PERSONE · ${projects.length} PROJECTS · ${day} ${m}, ${hh}:${mm}`;
   }, [lens, people.length, signals.weekNumber]);
 
   const narrative = useMemo(() => {
@@ -211,11 +196,11 @@ function Dashboard() {
       <>
         {over === 0 ? "Nessuno" : `${over} person${over === 1 ? "a" : "e"}`} sopra capacità,
         principalmente su{" "}
-        <strong style={{ fontStyle: "normal" }}>{signals.forecastCommessaCode}</strong>. Il resto
+        <strong style={{ fontStyle: "normal" }}>{topProjectCode}</strong>. Il resto
         del corpo lavora a un ritmo <span className="spark-mark">sostenibile</span>.
       </>
     );
-  }, [lens, people, signals.forecastCommessaCode]);
+  }, [lens, people, topProjectCode]);
 
   const lensConfig = useMemo(
     () =>

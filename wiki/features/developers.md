@@ -19,6 +19,6 @@ API keys, webhooks, custom fields. The surface for power users and integrators.
 ## Notable behaviors
 
 - **API keys.** Issue, rotate, revoke. Scoped permissions.
-- **Webhooks.** Subscribe to events (employee created, leave approved, payroll completed).
+- **Webhooks.** Subscribe to events (employee created, leave approved).
 - **Custom fields.** Extend [[Employee]], [[Commessa]], and a few other entities with workspace-specific fields.
 - **Audit log.** Every config change is recorded with actor + timestamp.

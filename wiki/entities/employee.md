@@ -6,7 +6,7 @@ last_updated: 2026-04-26
 
 # Employee
 
-A person on payroll. The most-referenced entity in the wiki.
+A person on the company roster. The most-referenced entity in the wiki.
 
 ## Definition
 
@@ -21,7 +21,7 @@ A record with a name, email, role title, [[Department]], optional manager, locat
 
 ## Connected entities
 
-- Has many [[Timesheet Entry]]s, [[Leave Request]]s, [[Expense]]s.
+- Has many [[Timesheet Entry]]s, [[Leave Request]]s.
 - Has many [[Kudo]]s (sent and received).
 - Has one or more [[Allocation]]s to [[Commessa]]e.
 - Has a [[Log Session]] history (their [[Status Log]]).
@@ -30,4 +30,4 @@ A record with a name, email, role title, [[Department]], optional manager, locat
 
 ## Where it appears
 
-[[Employees]] · [[Org Chart]] · [[Dashboard]] · [[Status Log]] · [[Time Tracking]] · [[Leave]] · [[Payroll]] · [[Expenses]] · [[Recruiting]] · [[Onboarding]] · [[Documents]] · [[Moments]]
+[[Employees]] · [[Org Chart]] · [[Dashboard]] · [[Status Log]] · [[Time Tracking]] · [[Leave]] · [[Recruiting]] · [[Onboarding]] · [[Documents]] · [[Moments]]

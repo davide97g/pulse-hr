@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { clientsTable, useClients } from "@/lib/tables/clients";
-import { commesseTable, useCommesse } from "@/lib/tables/commesse";
+import { projectsTable, useProjects } from "@/lib/tables/projects";
 import { allocationsTable } from "@/lib/tables/allocations";
 import { activitiesTable } from "@/lib/tables/activities";
 import { toast } from "sonner";
@@ -43,7 +43,7 @@ import {
   employeeById,
   primaryContact,
   type Client,
-  type Commessa,
+  type Project,
 } from "@/lib/mock-data";
 import { clientMargin, projectTeam } from "@/lib/projects";
 import { cn } from "@/lib/utils";
@@ -78,7 +78,7 @@ function ClientDetail() {
     });
 
   const clients = useClients();
-  const projects = useCommesse();
+  const projects = useProjects();
   const [editOpen, setEditOpen] = useState(false);
   const [projectForm, setProjectForm] = useState(false);
   const [toDelete, setToDelete] = useState(false);
@@ -121,20 +121,20 @@ function ClientDetail() {
     clientsTable.update(next.id, next);
     toast.success(`Client “${next.name}” saved`);
   };
-  const saveProject = (next: Commessa) => {
-    const exists = commesseTable.getAll().some((p) => p.id === next.id);
-    if (exists) commesseTable.update(next.id, next);
-    else commesseTable.add(next);
+  const saveProject = (next: Project) => {
+    const exists = projectsTable.getAll().some((p) => p.id === next.id);
+    if (exists) projectsTable.update(next.id, next);
+    else projectsTable.add(next);
     toast.success(`Project “${next.name}” saved`);
   };
   const removeClient = () => {
     const snapshot = client;
-    const relatedProjects = commesseTable.getAll().filter((p) => p.clientId === snapshot.id);
+    const relatedProjects = projectsTable.getAll().filter((p) => p.clientId === snapshot.id);
     const projectIds = new Set(relatedProjects.map((p) => p.id));
     const relatedAllocations = allocationsTable.getAll().filter((a) => projectIds.has(a.projectId));
     const relatedActivities = activitiesTable.getAll().filter((a) => projectIds.has(a.projectId));
     clientsTable.remove(snapshot.id);
-    for (const p of relatedProjects) commesseTable.remove(p.id);
+    for (const p of relatedProjects) projectsTable.remove(p.id);
     for (const a of relatedAllocations) allocationsTable.remove(a.id);
     for (const a of relatedActivities) activitiesTable.remove(a.id);
     toast(`Removed ${snapshot.name}`, {
@@ -145,7 +145,7 @@ function ClientDetail() {
         label: "Undo",
         onClick: () => {
           clientsTable.add(snapshot);
-          for (const p of relatedProjects) commesseTable.add(p);
+          for (const p of relatedProjects) projectsTable.add(p);
           for (const a of relatedAllocations) allocationsTable.add(a);
           for (const a of relatedActivities) activitiesTable.add(a);
         },

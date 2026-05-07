@@ -1,45 +1,45 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { commesse, commessaById, type Commessa } from "@/lib/mock-data";
+import { projects, projectById, type Project } from "@/lib/mock-data";
 
-const STORAGE_KEY = "pulse.activeCommessa";
+const STORAGE_KEY = "pulse.activeProject";
 
 interface WorkspaceCtx {
-  activeCommessaId: string;
-  setActiveCommessaId: (id: string) => void;
-  activeCommessa: Commessa | undefined;
+  activeProjectId: string;
+  setActiveProjectId: (id: string) => void;
+  activeProject: Project | undefined;
 }
 
 const Ctx = createContext<WorkspaceCtx>({
-  activeCommessaId: commesse[0].id,
-  setActiveCommessaId: () => {},
-  activeCommessa: commesse[0],
+  activeProjectId: projects[0].id,
+  setActiveProjectId: () => {},
+  activeProject: projects[0],
 });
 
 function readStored(): string {
-  if (typeof window === "undefined") return commesse[0].id;
+  if (typeof window === "undefined") return projects[0].id;
   try {
     const v = localStorage.getItem(STORAGE_KEY);
-    if (v && commesse.some((c) => c.id === v)) return v;
+    if (v && projects.some((c) => c.id === v)) return v;
   } catch {}
-  return commesse[0].id;
+  return projects[0].id;
 }
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
-  const [activeCommessaId, setActiveCommessaId] = useState(() => readStored());
+  const [activeProjectId, setActiveProjectId] = useState(() => readStored());
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, activeCommessaId);
+      localStorage.setItem(STORAGE_KEY, activeProjectId);
     } catch {}
-  }, [activeCommessaId]);
+  }, [activeProjectId]);
 
   const value = useMemo<WorkspaceCtx>(
     () => ({
-      activeCommessaId,
-      setActiveCommessaId,
-      activeCommessa: commessaById(activeCommessaId),
+      activeProjectId,
+      setActiveProjectId,
+      activeProject: projectById(activeProjectId),
     }),
-    [activeCommessaId],
+    [activeProjectId],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

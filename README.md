@@ -52,15 +52,11 @@ Most HR software treats your team as rows in a CRM. Pulse treats them as people,
 
 ### 🟣 People
 
-Employees, roles, leave, expenses, recruiting pipeline, onboarding workflows, docs, announcements, kudos.
+Employees, roles, leave, recruiting pipeline, onboarding workflows, docs, announcements, kudos.
 
 ### 🟢 Work
 
 Commesse (projects), timesheets, focus sessions, deep-work timer with auto-decline, forecast & burn projection with scenario sliders, saturation reporting (utilisation trend, project margins, employee value).
-
-### 🟡 Money
-
-Payroll runs, payslips, expense approvals, multi-country setup primitives. Built around Italian commessa accounting from day one.
 
 ### 🧪 Labs
 

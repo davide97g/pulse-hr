@@ -15,7 +15,7 @@ export const Route = createFileRoute("/docs/employee-score")({
   component: EmployeeScoreDoc,
 });
 
-const ORDER: FactorKey[] = ["delivery", "utilization", "value", "recognition", "focus", "billable"];
+const ORDER: FactorKey[] = ["delivery", "utilization", "value", "recognition", "billable"];
 
 const TIPS: Record<FactorKey, { how: string; gotcha?: string }> = {
   delivery: {
@@ -33,9 +33,6 @@ const TIPS: Record<FactorKey, { how: string; gotcha?: string }> = {
   },
   recognition: {
     how: "Kudos received and given in the last 60 days. Receiving weighs 4x more than giving, but giving still counts — pay the kindness forward.",
-  },
-  focus: {
-    how: "Log focus sessions in Focus Mode. 8 sessions in the last 30 days = 100. Short sprints still count.",
   },
   billable: {
     how: "Share of timesheet hours flagged billable. Internal sync calls and HR rituals lower this — that's fine for support roles, where the factor is dropped.",
@@ -59,7 +56,7 @@ function EmployeeScoreDoc() {
         </div>
         <p className="text-sm leading-relaxed mt-3">
           We compute the score as a{" "}
-          <span className="font-mono bg-muted px-1 py-0.5 rounded">weighted average</span> of six
+          <span className="font-mono bg-muted px-1 py-0.5 rounded">weighted average</span> of five
           factors — each normalised to 0–100 before weighting. Factors that can't be measured for a
           given person (e.g. billable ratio for an internal-only role) are dropped and the remaining
           weights are rescaled, so every person has a comparable number without forced data.
@@ -70,11 +67,10 @@ function EmployeeScoreDoc() {
         <div className="text-sm font-semibold mb-2">The formula</div>
         <Card className="p-5 font-mono text-xs leading-relaxed overflow-x-auto">
           <div className="whitespace-pre">
-            {`score = 0.25·Delivery
+            {`score = 0.30·Delivery
       + 0.20·Utilization
-      + 0.20·Value
+      + 0.25·Value
       + 0.15·Recognition
-      + 0.10·Focus
       + 0.10·Billable
 
 grade  85–100 → exceptional
@@ -142,7 +138,7 @@ grade  85–100 → exceptional
         <div className="space-y-2">
           <Faq q="Is this used for reviews or compensation?">
             No. The score is a workspace-health signal, not a performance review. It reflects
-            conditions people are working under (load, recognition, focus time) as much as
+            conditions people are working under (load, recognition) as much as
             individual output, and changes week to week as context shifts.
           </Faq>
           <Faq q="Why does it change so much week over week?">

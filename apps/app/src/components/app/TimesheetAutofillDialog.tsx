@@ -8,7 +8,6 @@ import {
   Check,
   X,
   Wand2,
-  Focus,
   CalendarRange,
 } from "lucide-react";
 import {
@@ -30,7 +29,7 @@ import {
 } from "@pulse-hr/ui/primitives/select";
 import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
 import { useWorkspace } from "./WorkspaceContext";
-import { commesse, commessaById, type TimesheetEntry } from "@/lib/mock-data";
+import { projects, projectById, type TimesheetEntry } from "@/lib/mock-data";
 import {
   generateWeekDraft,
   weekLabel,
@@ -63,7 +62,7 @@ export function TimesheetAutofillDialog({
 
   const regenerate = (a: Date) => {
     const rows = generateWeekDraft(a, employeeId, {
-      defaultCommessaId: workspace.activeCommessaId,
+      defaultProjectId: workspace.activeProjectId,
       existingEntries: entries,
     });
     setDrafts(rows);
@@ -111,7 +110,7 @@ export function TimesheetAutofillDialog({
 
   const accept = () => {
     const rows = selectedRows.map((d) => ({
-      commessaId: d.commessaId,
+      projectId: d.projectId,
       date: d.date,
       hours: d.hours,
       description: d.description,
@@ -133,7 +132,7 @@ export function TimesheetAutofillDialog({
             <NewBadge />
           </DialogTitle>
           <DialogDescription>
-            Generated from your calendar and focus sessions. Review each row, then accept the ones
+            Generated from your calendar. Review each row, then accept the ones
             you want to log.
           </DialogDescription>
         </DialogHeader>
@@ -251,7 +250,7 @@ function DraftRow({
   onToggle: () => void;
   onChange: (patch: Partial<AutofillDraft>) => void;
 }) {
-  const c = commessaById(draft.commessaId);
+  const c = projectById(draft.projectId);
   return (
     <div
       className={cn(
@@ -278,12 +277,12 @@ function DraftRow({
         />
         <div className="flex items-center gap-2 flex-wrap">
           <SourceBadge source={draft.source} confidence={draft.confidence} />
-          <Select value={draft.commessaId} onValueChange={(v) => onChange({ commessaId: v })}>
+          <Select value={draft.projectId} onValueChange={(v) => onChange({ projectId: v })}>
             <SelectTrigger className="h-7 w-[180px] text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {commesse.map((cm) => (
+              {projects.map((cm) => (
                 <SelectItem key={cm.id} value={cm.id}>
                   <span className="inline-flex items-center gap-1.5 text-xs">
                     <span
@@ -319,11 +318,6 @@ function SourceBadge({ source, confidence }: { source: AutofillSource; confidenc
       label: "Calendar",
       cls: "bg-info/10 text-info border-info/30",
       icon: <CalendarDays className="h-3 w-3" />,
-    },
-    focus: {
-      label: "Focus",
-      cls: "bg-success/10 text-success border-success/30",
-      icon: <Focus className="h-3 w-3" />,
     },
     gap: {
       label: "AI guess",

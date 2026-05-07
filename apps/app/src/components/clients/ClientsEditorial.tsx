@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useClients } from "@/lib/tables/clients";
-import { useCommesse } from "@/lib/tables/commesse";
+import { useProjects } from "@/lib/tables/projects";
 import type { Client } from "@/lib/mock-data";
 
 function clientInitials(name: string): string {
@@ -15,30 +15,30 @@ function clientInitials(name: string): string {
 
 export function ClientsEditorial() {
   const clients = useClients();
-  const commesse = useCommesse();
+  const projects = useProjects();
   const navigate = useNavigate();
 
   const summary = useMemo(() => {
-    const totalRevenue = commesse.reduce((s, c) => s + c.burnedHours * (c.defaultBillableRate || 0), 0);
+    const totalRevenue = projects.reduce((s, c) => s + c.burnedHours * (c.defaultBillableRate || 0), 0);
     return {
       activeClients: clients.length,
       revenueK: Math.round(totalRevenue / 1000),
     };
-  }, [clients, commesse]);
+  }, [clients, projects]);
 
   const rows = useMemo(() => {
     return clients.map((c) => {
-      const projects = commesse.filter((p) => p.clientId === c.id);
-      const revenue = projects.reduce((s, p) => s + p.burnedHours * (p.defaultBillableRate || 0), 0);
-      const atRisk = projects.some((p) => p.status === "at_risk");
+      const clientProjects = projects.filter((p) => p.clientId === c.id);
+      const revenue = clientProjects.reduce((s, p) => s + p.burnedHours * (p.defaultBillableRate || 0), 0);
+      const atRisk = clientProjects.some((p) => p.status === "at_risk");
       return {
         client: c,
-        projects: projects.length,
+        projects: clientProjects.length,
         revenueK: Math.round(revenue / 1000),
         status: atRisk ? "REV" : "OK",
       };
     });
-  }, [clients, commesse]);
+  }, [clients, projects]);
 
   return (
     <div className="ph p-4 md:p-6 flex flex-col gap-6 min-h-[calc(100vh-3.5rem)]">
@@ -94,7 +94,7 @@ export function ClientsEditorial() {
           <span></span>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>CLIENTE</span>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>SETTORE</span>
-          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>COMMESSE</span>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>PROJECTS</span>
           <span className="t-mono" style={{ color: "var(--muted-foreground)", textAlign: "right" }}>FATTURATO</span>
           <span className="t-mono" style={{ color: "var(--muted-foreground)", textAlign: "right" }}>STATO</span>
         </div>

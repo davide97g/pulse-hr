@@ -18,15 +18,15 @@ An [[Employee]], a [[Commessa]], a date, a duration in hours (often quarter-hour
 `draft` → entered but not submitted.
 `submitted` → ready for manager review.
 `approved` → reviewed and good.
-`locked` → captured by a closed [[Payroll Run]]; immutable.
+`locked` → captured by a closed ; immutable.
 
 ## Connected entities
 
 - Belongs to an [[Employee]] and a [[Commessa]].
-- Aggregated into [[Payslip]]s by [[Payroll Run]]s.
-- Counted against [[Saturation]] and [[Forecast]] burn.
-- Can originate from a [[Focus Session]] (one-click conversion).
+- Aggregated into s by s.
+- Counted against [[Saturation]] and  burn.
+- Can originate from a  (one-click conversion).
 
 ## Where it appears
 
-[[Time Tracking]] · [[Payroll]] · [[Reports]] · [[Forecast]]
+[[Time Tracking]] · [[Reports]]

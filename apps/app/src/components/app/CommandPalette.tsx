@@ -22,7 +22,7 @@ import { Dialog, DialogContent } from "@pulse-hr/ui/primitives/dialog";
 import { Input } from "@pulse-hr/ui/primitives/input";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { employees, commesse } from "@/lib/mock-data";
+import { employees, projects } from "@/lib/mock-data";
 import { useQuickAction } from "./QuickActions";
 import { useNewProposal } from "@/components/proposals/ProposalProvider";
 import { NewBadge } from "@pulse-hr/ui/atoms/NewBadge";
@@ -34,14 +34,12 @@ const NAV_ITEMS: { label: string; to: string; icon: typeof User }[] = [
   { label: "Employees", to: "/people", icon: Users },
   { label: "Time & attendance", to: "/time", icon: Clock },
   { label: "Leave", to: "/leave", icon: Calendar },
-  { label: "Expenses", to: "/expenses", icon: Receipt },
   { label: "Documents", to: "/documents", icon: FileText },
 ];
 
 const ACTIONS = [
   { label: "Add employee", id: "add-employee", icon: User },
   { label: "Request leave", id: "request-leave", icon: Calendar },
-  { label: "Submit expense", id: "submit-expense", icon: Receipt },
   { label: "Post a job", id: "post-job", icon: Briefcase },
 ] as const;
 
@@ -119,8 +117,8 @@ export function CommandPalette({
   const runIntent = (intent: ParsedIntent) => {
     switch (intent.kind) {
       case "log-hours": {
-        const commessa = commesse.find((c) => c.id === intent.args.commessaId);
-        toast.success(`${intent.args.hours}h logged to ${commessa?.code}`, {
+        const project = projects.find((c) => c.id === intent.args.projectId);
+        toast.success(`${intent.args.hours}h logged to ${project?.code}`, {
           description: `${intent.args.date} · ${intent.args.description}`,
           icon: <CheckCircle2 className="h-4 w-4" />,
         });
@@ -129,14 +127,6 @@ export function CommandPalette({
       }
       case "book-leave":
         act("request-leave");
-        return;
-      case "approve-expense":
-        toast.success("Expense approved", {
-          description: String(intent.label)
-            .replace(/^Approve "/, "")
-            .replace(/"$/, ""),
-        });
-        go("/expenses");
         return;
       case "add-employee":
         act("add-employee");
@@ -160,13 +150,25 @@ export function CommandPalette({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="p-0 max-w-xl gap-0 overflow-hidden top-[18%] translate-y-0 glass [&>button.absolute]:hidden"
-        style={{ borderRadius: 18 }}
+        className="p-0 gap-0 overflow-hidden top-[14%] translate-y-0 glass [&>button.absolute]:hidden ph-cmdk"
+        style={{
+          borderRadius: 22,
+          maxWidth: "min(720px, calc(100vw - 32px))",
+          width: "100%",
+          backdropFilter: "blur(40px) saturate(180%)",
+          background: "var(--glass-bg)",
+          border: "1px solid var(--glass-border)",
+          boxShadow:
+            "0 80px 160px -40px color-mix(in oklch, var(--spark) 22%, transparent), 0 24px 48px -12px rgba(0,0,0,0.3)",
+        }}
       >
         <div
-          className="flex items-center px-4"
+          className="flex items-center gap-3.5 px-6"
           style={{ borderBottom: "1px solid var(--line)" }}
         >
+          <span className="t-mono shrink-0" style={{ color: "var(--muted-foreground)" }}>
+            ⌘K
+          </span>
           <Search
             className="h-4 w-4 shrink-0"
             style={{ color: "var(--muted-foreground)" }}
@@ -175,14 +177,16 @@ export function CommandPalette({
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Ask or jump to…"
-            className="border-0 focus-visible:ring-0 shadow-none h-14 text-lg"
+            placeholder="Cerca o digita un comando…"
+            className="border-0 focus-visible:ring-0 shadow-none h-16 px-0"
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontStyle: "italic",
-              letterSpacing: "-0.015em",
-              fontSize: 22,
+              letterSpacing: "-0.02em",
+              fontSize: 28,
               background: "transparent",
+              color: "var(--fg)",
+              caretColor: "var(--spark)",
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && intents[0]) {
@@ -193,8 +197,13 @@ export function CommandPalette({
           />
           <NewBadge />
           <kbd
-            className="ml-2 t-mono-sm border rounded px-1.5 py-0.5"
-            style={{ color: "var(--muted-foreground)", borderColor: "var(--line)" }}
+            className="ml-2 t-mono"
+            style={{
+              color: "var(--muted-foreground)",
+              border: "1px solid var(--line)",
+              padding: "4px 8px",
+              borderRadius: 6,
+            }}
           >
             ESC
           </kbd>
@@ -295,8 +304,7 @@ export function CommandPalette({
             actions.length === 0 &&
             navItems.length === 0 && (
               <div className="py-12 text-center text-sm text-muted-foreground">
-                No results for "{q}". Try "4h migration yesterday", "book friday off" or "approve
-                emma expense".
+                No results for "{q}". Try "4h migration yesterday" or "book friday off".
               </div>
             )}
           {!q && (
@@ -312,14 +320,22 @@ export function CommandPalette({
                   · <span className="font-mono">book friday off</span>
                 </li>
                 <li>
-                  · <span className="font-mono">approve emma expense</span>
-                </li>
-                <li>
                   · <span className="font-mono">draft my week</span>
                 </li>
               </ul>
             </div>
           )}
+        </div>
+        <div
+          className="flex items-center justify-between px-6 py-2.5"
+          style={{ borderTop: "1px solid var(--line)" }}
+        >
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            ↑↓ NAVIGA · ⏎ APRI · ⌘J COPILOT
+          </span>
+          <span className="t-mono" style={{ color: "var(--spark)" }}>
+            · LIVE
+          </span>
         </div>
       </DialogContent>
     </Dialog>
@@ -351,12 +367,24 @@ function Item({
   return (
     <button
       onClick={onSelect}
-      className="w-full flex items-center gap-3 px-2 py-2 rounded-md hover:bg-muted text-left"
+      className="w-full flex items-center gap-3.5 px-3 py-2.5 rounded-[10px] text-left transition-colors hover:bg-[color-mix(in_oklch,var(--spark)_8%,transparent)] hover:border-[color-mix(in_oklch,var(--spark)_40%,transparent)]"
+      style={{ border: "1px solid transparent" }}
     >
-      <div className="text-muted-foreground">{icon}</div>
-      <div className="flex-1 min-w-0">
-        <div className="text-sm">{label}</div>
-        {desc && <div className="text-xs text-muted-foreground truncate">{desc}</div>}
+      <div style={{ width: 24, color: "var(--muted-foreground)", textAlign: "center" }}>
+        {icon}
+      </div>
+      <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+        <span className="t-body" style={{ fontWeight: 500, color: "var(--fg)" }}>
+          {label}
+        </span>
+        {desc && (
+          <span
+            className="t-body truncate"
+            style={{ color: "var(--muted-foreground)", fontSize: 12 }}
+          >
+            {desc}
+          </span>
+        )}
       </div>
     </button>
   );
@@ -375,9 +403,16 @@ function IntentItem({
     <button
       onClick={onRun}
       className={cn(
-        "w-full flex items-start gap-3 px-2 py-2.5 rounded-md text-left transition-colors press-scale",
-        primary ? "bg-primary/5 hover:bg-primary/10 ring-1 ring-primary/20" : "hover:bg-muted",
+        "w-full flex items-start gap-3.5 px-3 py-2.5 rounded-[10px] text-left transition-colors press-scale",
       )}
+      style={{
+        background: primary
+          ? "color-mix(in oklch, var(--spark) 12%, transparent)"
+          : "transparent",
+        border: primary
+          ? "1px solid color-mix(in oklch, var(--spark) 50%, transparent)"
+          : "1px solid transparent",
+      }}
     >
       <div
         className={cn(

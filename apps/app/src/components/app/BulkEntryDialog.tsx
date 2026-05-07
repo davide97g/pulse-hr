@@ -31,8 +31,8 @@ import {
   SelectValue,
 } from "@pulse-hr/ui/primitives/select";
 import {
-  commesse,
-  commessaById,
+  projects,
+  projectById,
   type TimesheetEntry,
   type TimesheetTemplate,
 } from "@/lib/mock-data";
@@ -42,7 +42,7 @@ import { cn } from "@/lib/utils";
 type Mode = "copy-week" | "fill-missing" | "apply-range";
 
 interface Template {
-  commessaId: string;
+  projectId: string;
   hours: number;
   description: string;
   billable: boolean;
@@ -74,7 +74,7 @@ export function BulkEntryDialog({
   onSubmitBatch,
 }: Props) {
   const [template, setTemplate] = useState<Template>({
-    commessaId: commesse[0].id,
+    projectId: projects[0].id,
     hours: 8,
     description: "",
     billable: true,
@@ -127,7 +127,7 @@ export function BulkEntryDialog({
         const d = parseISO(r.date);
         d.setDate(d.getDate() + shift);
         return {
-          commessaId: r.commessaId,
+          projectId: r.projectId,
           date: format(d, "yyyy-MM-dd"),
           hours: r.hours,
           description: r.description,
@@ -138,7 +138,7 @@ export function BulkEntryDialog({
     } else if (mode === "fill-missing") {
       if (!templateValid) return;
       const rows = missingDays.map((d) => ({
-        commessaId: template.commessaId,
+        projectId: template.projectId,
         date: format(d, "yyyy-MM-dd"),
         hours: template.hours,
         description: template.description.trim(),
@@ -148,7 +148,7 @@ export function BulkEntryDialog({
     } else if (mode === "apply-range") {
       if (!templateValid || applyDays.length === 0) return;
       const rows = applyDays.map((d) => ({
-        commessaId: template.commessaId,
+        projectId: template.projectId,
         date: format(d, "yyyy-MM-dd"),
         hours: template.hours,
         description: template.description.trim(),
@@ -204,7 +204,7 @@ export function BulkEntryDialog({
                 count={copyWeek.rows.length}
                 rows={copyWeek.rows.map((r) => ({
                   date: format(new Date(parseISO(r.date).getTime() + 7 * 86400000), "yyyy-MM-dd"),
-                  commessaId: r.commessaId,
+                  projectId: r.projectId,
                   hours: r.hours,
                   description: r.description,
                 }))}
@@ -318,7 +318,7 @@ function TemplateForm({
               const p = presets.find((x) => x.id === id);
               if (!p) return;
               onChange({
-                commessaId: p.commessaId,
+                projectId: p.projectId,
                 hours: p.hours,
                 description: p.description,
                 billable: p.billable,
@@ -344,14 +344,14 @@ function TemplateForm({
       </div>
       <div className="grid grid-cols-[1fr_90px] gap-2">
         <Select
-          value={template.commessaId}
-          onValueChange={(v) => onChange({ ...template, commessaId: v })}
+          value={template.projectId}
+          onValueChange={(v) => onChange({ ...template, projectId: v })}
         >
           <SelectTrigger className="h-9">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {commesse.map((c) => (
+            {projects.map((c) => (
               <SelectItem key={c.id} value={c.id}>
                 <span className="inline-flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: c.color }} />
@@ -412,7 +412,7 @@ function PreviewTable({
   rows,
   count,
 }: {
-  rows: { date: string; commessaId: string; hours: number; description: string }[];
+  rows: { date: string; projectId: string; hours: number; description: string }[];
   count: number;
 }) {
   return (
@@ -421,13 +421,13 @@ function PreviewTable({
         <thead className="bg-muted/40 text-[10px] uppercase tracking-wider text-muted-foreground sticky top-0">
           <tr>
             <th className="text-left px-3 py-1.5">Date</th>
-            <th className="text-left px-3 py-1.5">Commessa</th>
+            <th className="text-left px-3 py-1.5">Project</th>
             <th className="text-right px-3 py-1.5">Hours</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r, i) => {
-            const c = commessaById(r.commessaId);
+            const c = projectById(r.projectId);
             return (
               <tr key={i} className="border-t">
                 <td className="px-3 py-1.5 font-mono tabular-nums">{r.date}</td>

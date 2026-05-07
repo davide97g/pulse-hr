@@ -22,7 +22,7 @@ A visual tree of who reports to whom. Built from the `manager` field on each [[E
 ## Notable behaviors
 
 - Click a node → opens the person's profile.
-- Online / offline / focus indicators surface from [[Focus Mode]] and [[Status Log]] presence.
+- Online / offline / focus indicators surface from  and [[Status Log]] presence.
 - Org chart filters by [[Department]].
 
 ## Related journeys

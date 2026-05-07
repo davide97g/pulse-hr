@@ -23,7 +23,7 @@ Electric cyan accent (`#6fd8ff`) on a cool-dark surface. Signals "system."
 
 ## Features they touch
 
-Everything. Admin is the only role with no feature gates. In particular: [[Modules]], [[Marketplace]], [[Developers]], [[Settings]], plus full visibility into [[Recruiting]], [[Payroll]], [[Reports]], and [[Forecast]].
+Everything. Admin is the only role with no feature gates. In particular: [[Modules]], [[Marketplace]], [[Developers]], [[Settings]], plus full visibility into [[Recruiting]] and [[Reports]].
 
 ## Pain points addressed
 

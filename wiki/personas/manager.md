@@ -15,7 +15,7 @@ Amber accent (`#ffbf4a`) on a warm-dark surface. Signals "team responsibility."
 ## What they do daily in Pulse
 
 - Open [[Dashboard]] for the team snapshot — pending [[Leave Request]]s, [[Saturation]] for the week, mid-sprint asks.
-- Approve / reject [[Leave Request]]s and [[Expense]]s from direct reports.
+- Approve / reject [[Leave Request]]s and  from direct reports.
 - Read the manager-summary side of [[Status Log]] — sentiment trend per report, open asks, who hasn't logged this week.
 - Send a [[Manager Ask]] when they need a specific signal ("how did the ACME demo feel?").
 - Check [[Saturation]] before assigning new work.
@@ -24,9 +24,9 @@ Amber accent (`#ffbf4a`) on a warm-dark surface. Signals "team responsibility."
 
 ## Features they touch
 
-[[Dashboard]] · [[Announcements]] · [[Status Log]] · [[Focus Mode]] · [[Kudos]] · [[Employees]] · [[Org Chart]] · [[Time Tracking]] · [[Calendar]] · [[Leave]] · [[Clients]] · [[Projects]] · [[Saturation]] · [[In-App Docs]]
+[[Dashboard]] · [[Announcements]] · [[Status Log]] · [[Kudos]] · [[Employees]] · [[Org Chart]] · [[Time Tracking]] · [[Calendar]] · [[Leave]] · [[Clients]] · [[Projects]] · [[Saturation]] · [[In-App Docs]]
 
-Don't see: [[Recruiting]] (HR owns), [[Payroll]] / [[Reports]] / [[Expenses]] in aggregate (Finance owns), [[Documents]], [[Onboarding]].
+Don't see: [[Recruiting]] (HR owns), [[Reports]] /  in aggregate (Finance owns), [[Documents]], [[Onboarding]].
 
 ## Pain points addressed
 

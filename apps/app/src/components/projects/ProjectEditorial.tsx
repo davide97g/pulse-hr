@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useCommesse } from "@/lib/tables/commesse";
+import { useProjects } from "@/lib/tables/projects";
 import { useAllocations } from "@/lib/tables/allocations";
 import { useEmployees, employeeById } from "@/lib/tables/employees";
-import { clientById, type Commessa } from "@/lib/mock-data";
+import { clientById, type Project } from "@/lib/mock-data";
 
 const MONTHS_IT_SHORT = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
 
@@ -14,10 +14,10 @@ function fmtDate(iso: string): string {
 
 export function ProjectEditorial({ projectId }: { projectId: string }) {
   const navigate = useNavigate();
-  const commesse = useCommesse();
+  const projects = useProjects();
   const allocations = useAllocations();
   const employees = useEmployees();
-  const project = commesse.find((c) => c.id === projectId);
+  const project = projects.find((c) => c.id === projectId);
 
   const team = useMemo(() => {
     if (!project) return [];
@@ -33,7 +33,7 @@ function Spread({
   project,
   team,
 }: {
-  project: Commessa;
+  project: Project;
   team: ReturnType<typeof useEmployees>;
 }) {
   const navigate = useNavigate();
@@ -69,11 +69,11 @@ function Spread({
               alignSelf: "flex-start",
             }}
           >
-            ← COMMESSE
+            ← PROJECTS
           </button>
           <div className="flex gap-3 items-center mt-4">
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              COMMESSA · {project.code}
+              PROJECT · {project.code}
             </span>
             <span className="dot" />
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
@@ -191,10 +191,10 @@ function NotFound({ onBack }: { onBack: () => void }) {
   return (
     <div className="p-12 flex flex-col items-center gap-4 min-h-[60vh] justify-center">
       <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-        COMMESSA NON TROVATA
+        PROJECT NON TROVATA
       </span>
       <button type="button" className="pill pill-ghost pill-sm" onClick={onBack}>
-        ← Torna alle commesse
+        ← Torna alle projects
       </button>
     </div>
   );

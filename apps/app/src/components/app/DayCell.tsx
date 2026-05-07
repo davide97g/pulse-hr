@@ -4,7 +4,7 @@ import { Umbrella, Thermometer, PartyPopper, Sprout, UserRound, AlertCircle } fr
 import { Tooltip, TooltipContent, TooltipTrigger } from "@pulse-hr/ui/primitives/tooltip";
 import { cn } from "@/lib/utils";
 import type { DayInfo, DayStatus } from "@/lib/timesheet";
-import { commessaById } from "@/lib/mock-data";
+import { projectById } from "@/lib/mock-data";
 
 const STATUS_BG: Record<DayStatus, string> = {
   filled: "bg-success/10 hover:bg-success/15 border-success/20",
@@ -40,7 +40,7 @@ interface Props {
   onKeyDown?: (e: React.KeyboardEvent) => void;
   onFocus?: () => void;
   dim?: boolean;
-  commessaFilter?: string | null;
+  projectFilter?: string | null;
 }
 
 export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
@@ -54,7 +54,7 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
     onKeyDown,
     onFocus,
     dim,
-    commessaFilter,
+    projectFilter,
   },
   ref,
 ) {
@@ -63,12 +63,12 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
   const icon = STATUS_ICON[info.status];
 
   const matchesFilter =
-    !commessaFilter || info.entries.some((e) => e.commessaId === commessaFilter);
+    !projectFilter || info.entries.some((e) => e.projectId === projectFilter);
   const muted = dim || !info.inMonth || !matchesFilter;
 
-  // Unique commesse used this day, up to 4 dots
-  const commesse = Array.from(new Set(info.entries.map((e) => e.commessaId)))
-    .map((id) => commessaById(id))
+  // Unique projects used this day, up to 4 dots
+  const projects = Array.from(new Set(info.entries.map((e) => e.projectId)))
+    .map((id) => projectById(id))
     .filter((x): x is NonNullable<typeof x> => !!x)
     .slice(0, 4);
 
@@ -131,8 +131,8 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
         </div>
       )}
 
-      {/* Bottom row: hours + commessa dots */}
-      {(info.hours > 0 || commesse.length > 0) && (
+      {/* Bottom row: hours + project dots */}
+      {(info.hours > 0 || projects.length > 0) && (
         <div className="absolute bottom-1.5 left-2 right-2 flex items-end justify-between gap-1">
           {info.hours > 0 ? (
             <span className="font-mono text-sm tabular-nums font-medium leading-none">
@@ -142,9 +142,9 @@ export const DayCell = forwardRef<HTMLButtonElement, Props>(function DayCell(
           ) : (
             <span />
           )}
-          {commesse.length > 0 && (
+          {projects.length > 0 && (
             <span className="flex gap-0.5">
-              {commesse.map((c) => (
+              {projects.map((c) => (
                 <span
                   key={c.id}
                   className="h-2 w-2 rounded-full"
@@ -224,7 +224,7 @@ function HoverSummary({ info }: { info: DayInfo }) {
       {info.entries.length > 0 && (
         <ul className="max-h-[220px] overflow-y-auto scrollbar-thin divide-y">
           {info.entries.map((e) => {
-            const c = commessaById(e.commessaId);
+            const c = projectById(e.projectId);
             return (
               <li key={e.id} className="px-3 py-2 flex items-start gap-2">
                 <span

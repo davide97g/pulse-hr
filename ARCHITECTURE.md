@@ -32,7 +32,7 @@ Each app owns its own `vercel.json` / deploy pipeline. Only the product + API ar
 
 - **Stack:** Bun runtime + Hono.
 - **Role:** serves `/api/*` for the product. Long-running server — no cold starts.
-- **Domain:** employees, commesse (projects), timesheets, leave, expenses, payroll runs, payslips, candidates, jobs, onboarding, docs, api keys, webhooks, audit log, plus Labs data (pulse, kudos, focus, forecast).
+- **Domain:** employees, commesse (projects), timesheets, leave, candidates, jobs, onboarding, docs, api keys, webhooks, audit log, plus Labs data (pulse, kudos).
 
 ## Marketing (`apps/marketing`)
 
@@ -40,17 +40,15 @@ Astro static site. Content lives in `src/data/*.ts` and `src/pages/*.astro`. Shi
 
 ## Labs
 
-Five experiments share a visual language (iridescent border, pulse-dot, new-badge):
+Experiments share a visual language (iridescent border, pulse-dot, new-badge):
 
 - `/pulse` — anonymous vibe check + heatmap
-- `/forecast` — commessa burn projection
 - `/kudos` — peer coins + leaderboard + confetti
-- `/focus` — deep-work timer with auto-decline
 - Copilot — global ⌘J overlay, streaming answers, runnable actions
 
 ## Domain model
 
-The **`commessa`** (Italian for project code) is the pivot: Time, Forecast, and Focus all aggregate around `commessaId`. All domain types live in `packages/shared`.
+The **`commessa`** (Italian for project code) is the pivot: Time aggregates around `commessaId`. All domain types live in `packages/shared`.
 
 ## Deployment
 

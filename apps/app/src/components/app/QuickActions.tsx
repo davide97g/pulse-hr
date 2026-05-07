@@ -1,43 +1,37 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { format, parseISO } from "date-fns";
+import { Avatar } from "@/components/app/AppShell";
+import { computeLeaveDays, type CoverageForDate, coverageForRange } from "@/lib/leave";
+import { employeeById, type JobPosting } from "@/lib/mock-data";
+import { employeesTable, makeEmployee } from "@/lib/tables/employees";
+import { jobPostingsTable } from "@/lib/tables/jobPostings";
+import { leaveTable } from "@/lib/tables/leave";
+import { cn } from "@/lib/utils";
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { Button } from "@pulse-hr/ui/primitives/button";
 import { Input } from "@pulse-hr/ui/primitives/input";
 import { Label } from "@pulse-hr/ui/primitives/label";
 import { Textarea } from "@pulse-hr/ui/primitives/textarea";
-import { Avatar } from "@/components/app/AppShell";
-import { employees, employeeById, type JobPosting } from "@/lib/mock-data";
-import { jobPostingsTable } from "@/lib/tables/jobPostings";
-import { employeesTable, makeEmployee } from "@/lib/tables/employees";
-import { leaveTable } from "@/lib/tables/leave";
-import { expensesTable } from "@/lib/tables/expenses";
-import { coverageForRange, computeLeaveDays, type CoverageForDate } from "@/lib/leave";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { format, parseISO } from "date-fns";
 import {
-  Calendar,
-  Receipt,
-  UserPlus,
   Briefcase,
-  Check,
-  CalendarRange,
+  Calendar,
   CalendarClock,
-  Users,
-  Sparkles,
+  CalendarRange,
+  UserPlus,
+  Users
 } from "lucide-react";
+import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 type ActionId =
   | "add-employee"
   | "request-leave"
-  | "submit-expense"
   | "post-job"
-  | "run-payroll"
   | null;
 
 interface Ctx {
   open: (id: ActionId) => void;
 }
-const QuickActionCtx = createContext<Ctx>({ open: () => {} });
+const QuickActionCtx = createContext<Ctx>({ open: () => { } });
 export const useQuickAction = () => useContext(QuickActionCtx);
 
 export function QuickActionProvider({ children }: { children: ReactNode }) {
@@ -59,19 +53,8 @@ export function QuickActionProvider({ children }: { children: ReactNode }) {
       >
         <RequestLeaveForm onDone={close} />
       </SidePanel>
-      <SidePanel
-        open={active === "submit-expense"}
-        onClose={close}
-        title="Submit expense"
-        width={480}
-      >
-        <SubmitExpenseForm onDone={close} />
-      </SidePanel>
       <SidePanel open={active === "post-job"} onClose={close} title="Post a job" width={520}>
         <PostJobForm onDone={close} />
-      </SidePanel>
-      <SidePanel open={active === "run-payroll"} onClose={close} title="Run payroll" width={520}>
-        <RunPayrollForm onDone={close} />
       </SidePanel>
     </QuickActionCtx.Provider>
   );
@@ -461,191 +444,6 @@ function CoveragePreview({
   );
 }
 
-const OCR_SAMPLES: {
-  description: string;
-  amount: string;
-  currency: string;
-  category: string;
-  date: string;
-  vendor: string;
-}[] = [
-  {
-    description: "Client dinner · Acme Corp",
-    amount: "184.50",
-    currency: "USD",
-    category: "Meals",
-    date: "2026-04-17",
-    vendor: "Osteria Milano",
-  },
-  {
-    description: "Figma annual license",
-    amount: "180.00",
-    currency: "USD",
-    category: "Software",
-    date: "2026-04-15",
-    vendor: "Figma Inc.",
-  },
-  {
-    description: "Standing desk · Jarvis",
-    amount: "620.00",
-    currency: "USD",
-    category: "Equipment",
-    date: "2026-04-12",
-    vendor: "Fully",
-  },
-  {
-    description: "Flight MXP → SFO",
-    amount: "1240.00",
-    currency: "USD",
-    category: "Travel",
-    date: "2026-04-02",
-    vendor: "Delta",
-  },
-];
-
-function SubmitExpenseForm({ onDone }: { onDone: () => void }) {
-  const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState("USD");
-  const [cat, setCat] = useState("Travel");
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [ocr, setOcr] = useState<{ vendor: string; confidence: number } | null>(null);
-  const [scanning, setScanning] = useState(false);
-
-  const runOcr = () => {
-    setScanning(true);
-    setOcr(null);
-    setTimeout(() => {
-      const sample = OCR_SAMPLES[Math.floor(Math.random() * OCR_SAMPLES.length)];
-      setDescription(sample.description);
-      setAmount(sample.amount);
-      setCurrency(sample.currency);
-      setCat(sample.category);
-      setDate(sample.date);
-      setOcr({ vendor: sample.vendor, confidence: Math.floor(88 + Math.random() * 10) });
-      setScanning(false);
-      toast.success("Receipt scanned", {
-        description: `${sample.vendor} · ${sample.currency} ${sample.amount}`,
-        icon: <Sparkles className="h-4 w-4" />,
-      });
-    }, 1100);
-  };
-
-  const submit = () => {
-    if (!description.trim()) {
-      toast.error("Description is required");
-      return;
-    }
-    expensesTable.add({
-      employeeId: ME_ID,
-      description: description.trim(),
-      amount: Number(amount) || 0,
-      currency: (currency as "USD" | "EUR" | "GBP") || "USD",
-      category: cat as "Travel" | "Meals" | "Software" | "Equipment",
-      date,
-      status: "pending",
-    });
-    toast.success("Expense submitted", {
-      description: "Sent to manager for review.",
-      icon: <Receipt className="h-4 w-4" />,
-    });
-    onDone();
-  };
-
-  return (
-    <>
-      <FormBody>
-        <div className="space-y-1.5">
-          <Label>Receipt</Label>
-          <button
-            type="button"
-            onClick={runOcr}
-            disabled={scanning}
-            className={cn(
-              "w-full border-2 border-dashed rounded-md p-5 text-center hover:bg-muted/40 press-scale transition-colors relative overflow-hidden",
-              scanning && "pointer-events-none",
-            )}
-          >
-            {scanning ? (
-              <div className="flex flex-col items-center gap-2 py-2">
-                <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                <div className="text-sm font-medium">Scanning receipt…</div>
-                <div className="text-[11px] text-muted-foreground">
-                  Extracting vendor, amount, and date
-                </div>
-              </div>
-            ) : ocr ? (
-              <div className="flex flex-col items-center gap-1 py-2">
-                <div className="text-2xl">🧾</div>
-                <div className="text-sm font-medium inline-flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-primary" />
-                  Parsed · {ocr.vendor}
-                </div>
-                <div className="text-[11px] text-muted-foreground">
-                  AI confidence {ocr.confidence}% · click to re-scan
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-1 py-2">
-                <div className="text-2xl">📎</div>
-                <div className="text-sm font-medium inline-flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-primary" />
-                  Drop receipt — AI fills the form
-                </div>
-                <div className="text-[11px] text-muted-foreground">
-                  PDF, JPG up to 10MB · OCR preview
-                </div>
-              </div>
-            )}
-          </button>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label>Description</Label>
-          <Input
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Client dinner"
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <Label>Amount</Label>
-            <Input
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="150.00"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label>Currency</Label>
-            <Input value={currency} onChange={(e) => setCurrency(e.target.value)} />
-          </div>
-        </div>
-        <div className="space-y-1.5">
-          <Label>Category</Label>
-          <div className="grid grid-cols-4 gap-1.5">
-            {["Travel", "Meals", "Software", "Equipment"].map((c) => (
-              <button
-                key={c}
-                type="button"
-                onClick={() => setCat(c)}
-                className={`text-xs py-2 rounded-md border press-scale ${cat === c ? "border-primary bg-primary/5 text-primary font-medium" : "hover:bg-muted"}`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="space-y-1.5">
-          <Label>Date</Label>
-          <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-        </div>
-      </FormBody>
-      <Footer onCancel={onDone} onSubmit={submit} label="Submit for approval" />
-    </>
-  );
-}
 
 function PostJobForm({ onDone }: { onDone: () => void }) {
   const [title, setTitle] = useState("");
@@ -758,84 +556,3 @@ function PostJobForm({ onDone }: { onDone: () => void }) {
   );
 }
 
-function RunPayrollForm({ onDone }: { onDone: () => void }) {
-  const [step, setStep] = useState<"review" | "processing" | "done">("review");
-  const start = () => {
-    setStep("processing");
-    setTimeout(() => {
-      setStep("done");
-      toast.success("Payroll completed", { description: "12 employees paid • $89,200 total" });
-    }, 2200);
-  };
-  return (
-    <div className="p-5">
-      {step === "review" && (
-        <>
-          <div className="rounded-md border p-4 mb-4">
-            <div className="text-xs uppercase tracking-wider text-muted-foreground">Period</div>
-            <div className="text-lg font-semibold">April 2025</div>
-            <div className="grid grid-cols-3 gap-3 mt-3 text-center">
-              <div>
-                <div className="text-xl font-semibold">12</div>
-                <div className="text-xs text-muted-foreground">Employees</div>
-              </div>
-              <div>
-                <div className="text-xl font-semibold">$124.5k</div>
-                <div className="text-xs text-muted-foreground">Gross</div>
-              </div>
-              <div>
-                <div className="text-xl font-semibold">$89.2k</div>
-                <div className="text-xs text-muted-foreground">Net</div>
-              </div>
-            </div>
-          </div>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-            Includes
-          </div>
-          <div className="space-y-1.5 mb-5">
-            {[
-              "Withholding tax",
-              "Social security",
-              "Pension contributions",
-              "F24 module (Italy)",
-            ].map((s) => (
-              <div key={s} className="flex items-center gap-2 text-sm">
-                <Check className="h-3.5 w-3.5 text-success" />
-                {s}
-              </div>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <Button variant="ghost" className="flex-1" onClick={onDone}>
-              Cancel
-            </Button>
-            <Button className="flex-1" onClick={start}>
-              Run payroll
-            </Button>
-          </div>
-        </>
-      )}
-      {step === "processing" && (
-        <div className="py-12 text-center">
-          <div className="h-12 w-12 mx-auto rounded-full border-4 border-primary border-t-transparent animate-spin mb-4" />
-          <div className="font-semibold">Processing payroll…</div>
-          <div className="text-sm text-muted-foreground mt-1">
-            Calculating taxes and net pay for 12 employees
-          </div>
-        </div>
-      )}
-      {step === "done" && (
-        <div className="py-12 text-center">
-          <div className="h-14 w-14 mx-auto rounded-full bg-success text-white flex items-center justify-center mb-4">
-            <Check className="h-7 w-7" />
-          </div>
-          <div className="font-semibold text-lg">Payroll completed</div>
-          <div className="text-sm text-muted-foreground mt-1">$89,200 paid to 12 employees</div>
-          <Button className="mt-5" onClick={onDone}>
-            Done
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-}

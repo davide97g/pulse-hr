@@ -6,7 +6,7 @@ last_updated: 2026-04-26
 
 # Employee
 
-The default persona. Anyone on payroll who isn't managing people, running HR, finance, or admin. Engineers, designers, salespeople, analysts.
+The default persona. Anyone on the company roster who isn't managing people, running HR, finance, or admin. Engineers, designers, salespeople, analysts.
 
 ## Theme
 
@@ -17,18 +17,17 @@ Signature lime accent (`#b4ff39`) on a near-black surface. The "Employee" theme 
 - Open [[Dashboard]] for their personal snapshot — leave balance, today's calendar, kudos received, open asks from their manager.
 - Log hours against a [[Commessa]] in [[Time Tracking]].
 - Submit [[Leave Request]]s for vacation, sick days, or half-day [[permesso]].
-- File [[Expense]]s with a receipt.
+- File  with a receipt.
 - Have a daily [[Status Log]] conversation with the AI agent — vents, wins, blockers. Manager only sees the summary, not the raw text.
-- Drop into [[Focus Mode]] for deep work; meetings auto-decline.
 - Send and receive [[Kudo]]s with a one-liner reason.
 - Read company-wide [[Announcements]] from HR.
 - Browse the [[Org Chart]] to find a colleague.
 
 ## Features they touch
 
-[[Dashboard]] · [[Announcements]] · [[Status Log]] · [[Focus Mode]] · [[Kudos]] · [[Employees]] · [[Org Chart]] · [[Time Tracking]] · [[Calendar]] · [[Leave]] · [[Documents]] · [[Expenses]] · [[Moments]] · [[In-App Docs]]
+[[Dashboard]] · [[Announcements]] · [[Status Log]] · [[Kudos]] · [[Employees]] · [[Org Chart]] · [[Time Tracking]] · [[Calendar]] · [[Leave]] · [[Documents]] · [[Moments]] · [[In-App Docs]]
 
-Not visible to them: [[Recruiting]], [[Payroll]], [[Reports]], [[Saturation]], [[Forecast]], [[Developers]], [[Marketplace]], [[Settings]] (except their own profile).
+Not visible to them: [[Recruiting]], [[Reports]], [[Saturation]], [[Developers]], [[Marketplace]], [[Settings]] (except their own profile).
 
 ## Pain points addressed
 

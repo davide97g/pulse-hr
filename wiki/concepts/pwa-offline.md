@@ -18,7 +18,7 @@ Pulse HR is a Progressive Web App. It installs on macOS, Windows, iOS, and Andro
 
 ## Online-only surfaces
 
-- [[Payroll]] runs.
+-  runs.
 - [[Recruiting]] stage moves (touches external integrations).
 - Destructive actions on shared records.
 - Anything that would create a sync conflict.

@@ -5,7 +5,7 @@ import { useLeaveRequests } from "@/lib/tables/leave";
 import { useTimesheetEntries } from "@/lib/tables/timesheetEntries";
 import {
   holidaysSeed,
-  commesse,
+  projects,
   type Holiday,
   type LeaveRequest,
   type TimesheetEntry,
@@ -29,7 +29,7 @@ const MONTHS_IT = [
 ];
 const WEEKDAYS_IT = ["DOM", "LUN", "MAR", "MER", "GIO", "VEN", "SAB"];
 
-type TabId = "calendar" | "mine" | "commessa" | "team";
+type TabId = "calendar" | "mine" | "project" | "team";
 
 interface DayState {
   day: number;
@@ -183,7 +183,7 @@ export function TimesheetCalendar() {
               lineHeight: 1.45,
             }}
           >
-            Traccia le ore, registra contro le commesse, manda il timesheet per approvazione. Una
+            Traccia le ore, registra contro le projects, manda il timesheet per approvazione. Una
             pagina per il mese.
           </p>
         </div>
@@ -232,7 +232,7 @@ export function TimesheetCalendar() {
           [
             ["calendar", "Calendar"],
             ["mine", "My timesheet"],
-            ["commessa", "By commessa"],
+            ["project", "By project"],
             ["team", "Team presence"],
           ] as Array<[TabId, string]>
         ).map(([k, l]) => {
@@ -329,7 +329,7 @@ export function TimesheetCalendar() {
         <CalendarGrid month={monthMeta} onPickDay={(d) => setOpenDay(d)} />
       )}
       {tab === "mine" && <MineTable days={monthMeta.days} entries={timesheetEntries} />}
-      {tab === "commessa" && <CommessaTab entries={timesheetEntries} />}
+      {tab === "project" && <ProjectTab entries={timesheetEntries} />}
       {tab === "team" && <TeamTab employees={employees} leave={leaveRequests} />}
 
       {tab === "calendar" && kpis.missing.length > 0 && (
@@ -625,12 +625,12 @@ function MineTable({ days, entries }: { days: DayState[]; entries: TimesheetEntr
         }
       >
         <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>DATA</span>
-        <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>COMMESSA</span>
+        <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>PROJECT</span>
         <span className="t-mono" style={{ color: "var(--muted-foreground)", textAlign: "right" }}>ORE</span>
         <span className="t-mono" style={{ color: "var(--muted-foreground)", textAlign: "right" }}>STATO</span>
       </div>
       {mine.slice(0, 60).map((e) => {
-        const c = commesse.find((x) => x.id === e.commessaId);
+        const c = projects.find((x) => x.id === e.projectId);
         return (
           <div
             key={e.id}
@@ -671,15 +671,15 @@ function MineTable({ days, entries }: { days: DayState[]; entries: TimesheetEntr
   );
 }
 
-function CommessaTab({ entries }: { entries: TimesheetEntry[] }) {
+function ProjectTab({ entries }: { entries: TimesheetEntry[] }) {
   const totals = useMemo(() => {
     const m = new Map<string, number>();
     for (const e of entries.filter((x) => x.employeeId === ME)) {
-      m.set(e.commessaId, (m.get(e.commessaId) ?? 0) + e.hours);
+      m.set(e.projectId, (m.get(e.projectId) ?? 0) + e.hours);
     }
     return Array.from(m.entries())
-      .map(([commessaId, hours]) => {
-        const c = commesse.find((x) => x.id === commessaId);
+      .map(([projectId, hours]) => {
+        const c = projects.find((x) => x.id === projectId);
         return { code: c?.code ?? "—", name: c?.name ?? "—", hours };
       })
       .sort((a, b) => b.hours - a.hours);
@@ -906,7 +906,7 @@ function DayDrawerBody({ day, entries }: { day: DayState; entries: TimesheetEntr
         </div>
       ) : (
         entries.map((e) => {
-          const c = commesse.find((x) => x.id === e.commessaId);
+          const c = projects.find((x) => x.id === e.projectId);
           return (
             <div key={e.id} className="flex items-baseline justify-between">
               <div className="flex flex-col">

@@ -16,7 +16,7 @@ If you are a non-technical reader (HR, ops, a curious customer) trying to unders
 | [`features/`](./features) | Every product surface, one page each, in plain English. |
 | [`entities/`](./entities) | The nouns the product revolves around (Employee, Commessa, Timesheet…). |
 | [`concepts/`](./concepts) | Cross-cutting ideas (Labs, role themes, Copilot, offline mode…). |
-| [`journeys/`](./journeys) | End-to-end narratives (onboard a new hire, run payroll, submit an expense…). |
+| [`journeys/`](./journeys) | End-to-end narratives (onboard a new hire, daily status log…). |
 | [`glossary/`](./glossary) | Italian HR vocabulary glossed in English. |
 
 The [`index.md`](./index.md) is the catalog of every page with a one-line summary. The [`log.md`](./log.md) is the chronological record of when each ingest, query, or lint happened.

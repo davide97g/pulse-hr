@@ -19,5 +19,5 @@ Everyone (their own settings). [[Admin]] for workspace-wide settings.
 ## Notable behaviors
 
 - **Theme switcher.** Pick from [[Role Themes]] — light, dark, employee, hr, manager, admin, finance.
-- **Locale.** English / Italian. Italian unlocks [[busta paga]] / [[ferie]] / [[permesso]] terminology.
+- **Locale.** English / Italian. Italian unlocks  / [[ferie]] / [[permesso]] terminology.
 - **Workspace reset.** Wipe local-only state for [[Demo Mode]] and start over.

@@ -1,13 +1,13 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Gantt, type GanttRow } from "./Gantt";
-import type { Commessa } from "@/lib/mock-data";
+import type { Project } from "@/lib/mock-data";
 
 export function ClientProjectsGantt({
   projects,
   rangeStart,
   rangeEnd,
 }: {
-  projects: Commessa[];
+  projects: Project[];
   rangeStart: string;
   rangeEnd: string;
 }) {

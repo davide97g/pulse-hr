@@ -2,7 +2,6 @@ import {
   employees,
   kudosSeed,
   oneOnOnesSeed,
-  expenses as expensesSeed,
   leaveRequests,
   employeeById,
 } from "./mock-data";
@@ -76,28 +75,7 @@ export function buildNudges(now: Date = new Date()): Nudge[] {
     });
   }
 
-  // 3) Pending approvals — expenses under $100 or leaves awaiting decision.
-  const smallExpenses = expensesSeed.filter((x) => x.status === "pending" && x.amount < 100).length;
-  const totalSmall = expensesSeed.filter((x) => x.status === "pending").length;
-  if (smallExpenses > 0) {
-    nudges.push({
-      id: "small-expenses",
-      emoji: "🧾",
-      headline: `Approve ${smallExpenses} expense${smallExpenses === 1 ? "" : "s"} under $100`,
-      prompt: `Approve all pending expenses under $100 from this week.`,
-      score: 70 + smallExpenses * 2,
-    });
-  } else if (totalSmall > 0) {
-    nudges.push({
-      id: "expenses",
-      emoji: "🧾",
-      headline: `Review ${totalSmall} pending expense${totalSmall === 1 ? "" : "s"}`,
-      prompt: `Summarize the pending expenses and flag anything unusual.`,
-      score: 60,
-    });
-  }
-
-  // 4) Top kudos giver recently — suggest reciprocating.
+  // 3) Top kudos giver recently — suggest reciprocating.
   const recentCutoff = new Date(now);
   recentCutoff.setDate(recentCutoff.getDate() - 14);
   const givers = new Map<string, number>();

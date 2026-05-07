@@ -11,9 +11,7 @@ The experimental shelf. Features ship to Labs first — visible to anyone with t
 ## What's in Labs (today)
 
 - [[Pulse]] — anonymous weekly vibe heatmap.
-- [[Forecast]] — scenario-modeled commessa burn projection.
 - [[Kudos]] — peer recognition coins.
-- [[Focus Mode]] — deep-work timer with auto-decline.
 - [[Saturation]] — when used as the look-ahead capacity projection (the current-week heatmap is in Insights).
 
 ## How Labs is signaled

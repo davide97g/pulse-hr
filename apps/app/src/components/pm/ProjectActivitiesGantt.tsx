@@ -1,13 +1,13 @@
 import { Gantt, type GanttRow, type GanttDependency } from "./Gantt";
 import { activityStatusMeta } from "@/lib/activity-status";
-import { employeeById, type Activity, type Commessa } from "@/lib/mock-data";
+import { employeeById, type Activity, type Project } from "@/lib/mock-data";
 
 export function ProjectActivitiesGantt({
   project,
   activities,
   onActivityClick,
 }: {
-  project: Commessa;
+  project: Project;
   activities: Activity[];
   onActivityClick?: (a: Activity) => void;
 }) {

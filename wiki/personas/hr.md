@@ -27,7 +27,7 @@ Coral accent (`#ff8a7a`) on a warm-dark surface. Signals "human" — softer than
 
 [[Dashboard]] · [[Announcements]] · [[Status Log]] · [[Growth]] · [[Kudos]] · [[Employees]] · [[Org Chart]] · [[Recruiting]] · [[Onboarding]] · [[Leave]] · [[Documents]] · [[Saturation]] · [[Settings]] · [[In-App Docs]]
 
-Don't typically see: [[Time Tracking]] (it's a manager/employee surface), [[Expenses]], [[Payroll]] (Finance owns it), [[Forecast]].
+Don't typically see: [[Time Tracking]] (it's a manager/employee surface) (Finance owns it).
 
 ## Pain points addressed
 

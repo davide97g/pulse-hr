@@ -28,7 +28,7 @@ import {
   employeeById,
   type Allocation,
   type AllocationType,
-  type Commessa,
+  type Project,
 } from "@/lib/mock-data";
 import { employeeCostRate } from "@/lib/projects";
 import { cn } from "@/lib/utils";
@@ -48,7 +48,7 @@ export function TeamPanel({
   team,
   onChange,
 }: {
-  project: Commessa;
+  project: Project;
   team: Allocation[];
   onChange: (next: Allocation[]) => void;
 }) {
@@ -282,7 +282,7 @@ function AllocationFormDialog({
   onClose: () => void;
   onSave: (a: Allocation) => void;
   initial: Allocation | null;
-  project: Commessa;
+  project: Project;
 }) {
   const [draft, setDraft] = useState<Allocation>(
     initial ?? {

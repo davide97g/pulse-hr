@@ -1,5 +1,5 @@
 import { Gantt, type GanttRow } from "./Gantt";
-import { allocations, commesse, employees, employeeById, projectById } from "@/lib/mock-data";
+import { allocations, projects, employees, employeeById, projectById } from "@/lib/mock-data";
 
 export function AllocationGantt({
   rangeStart,
@@ -26,7 +26,7 @@ export function AllocationGantt({
       label: emp?.name ?? empId,
       sublabel: emp?.role,
       bars: allocs.map((a) => {
-        const p = projectById(a.projectId) ?? commesse.find((c) => c.id === a.projectId);
+        const p = projectById(a.projectId) ?? projects.find((c) => c.id === a.projectId);
         return {
           id: a.id,
           start: a.startDate,

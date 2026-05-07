@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useLogSessions } from "@/lib/tables/logSessions";
 import { useLogMessages } from "@/lib/tables/logMessages";
 import { useEmployees, employeeById } from "@/lib/tables/employees";
-import { commesse } from "@/lib/mock-data";
+import { projects } from "@/lib/mock-data";
 
 const ME = "e1";
 
@@ -154,7 +154,7 @@ export function StatusLogEditorial() {
             const summary = s.summary ?? s.managerSummary ?? "";
             const project =
               s.topics
-                .map((t) => commesse.find((c) => c.name.toLowerCase().includes(t.toLowerCase()))?.code)
+                .map((t) => projects.find((c) => c.name.toLowerCase().includes(t.toLowerCase()))?.code)
                 .find((x) => x) ?? s.topics[0]?.toUpperCase() ?? "—";
             const isHero = i === 0;
             return (

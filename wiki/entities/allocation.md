@@ -15,8 +15,8 @@ An [[Employee]], a [[Commessa]], a role on the project (dev, design, pm, qa, ops
 ## Connected entities
 
 - Connects an [[Employee]] to a [[Commessa]].
-- Drives the [[Saturation]] heatmap and the [[Forecast]] projection.
+- Drives the [[Saturation]] heatmap and the  projection.
 
 ## Where it appears
 
-[[Projects]] · [[Saturation]] · [[Forecast]]
+[[Projects]] · [[Saturation]]

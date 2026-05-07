@@ -21,7 +21,7 @@ A heatmap of how loaded each [[Employee]] is. Built from [[Allocation]]s, [[Time
 - **Per-person.** Bands: under-utilized, healthy, hot, burning. Color-coded.
 - **At-risk projects.** [[Commessa]]e where the lead is in the burning band trigger a flag.
 - **Look-ahead.** Saturation projects forward 4 weeks based on current allocations + scheduled [[Leave Request]]s.
-- Dual-listed in the wiki — appears as both an Insights surface and a [[Labs]] feature in the product. The Labs framing is the experimental forecasting layer; the Insights framing is the current-week heatmap.
+- Dual-listed in the wiki — appears as both an Insights surface and a [[Labs]] feature in the product. The Labs framing is the experimental capacity layer; the Insights framing is the current-week heatmap.
 
 ## Related journeys
 

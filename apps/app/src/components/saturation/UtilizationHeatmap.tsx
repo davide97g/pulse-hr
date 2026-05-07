@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Card } from "@pulse-hr/ui/primitives/card";
 import { Avatar } from "@/components/app/AppShell";
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
-import { employees, allocations, commesse, employeeById } from "@/lib/mock-data";
+import { employees, allocations, projects, employeeById } from "@/lib/mock-data";
 import { personWeeklyLoad, weekRange } from "@/lib/projects";
 import { cn } from "@/lib/utils";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
@@ -159,7 +159,7 @@ export function UtilizationHeatmap({
             <div className="text-sm text-muted-foreground">No active allocations in this week.</div>
           ) : (
             selectedAllocs.map((a) => {
-              const p = commesse.find((x) => x.id === a.projectId);
+              const p = projects.find((x) => x.id === a.projectId);
               return (
                 <div key={a.id} className="flex items-center gap-3 text-sm border rounded-md p-3">
                   <div

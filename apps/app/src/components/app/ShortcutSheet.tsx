@@ -26,7 +26,7 @@ const GLOBAL: Group = {
     { keys: ["⌘", "⇧", "."], label: "Voice dictate — insert or ask Pulse" },
     { keys: ["⌘", "M"], label: "Open Moments (weekly reel)" },
     { keys: ["⌘", "B"], label: "Book a workspace (room or seat)" },
-    { keys: ["⌥", "C"], label: "Switch active commessa" },
+    { keys: ["⌥", "C"], label: "Switch active project" },
     { keys: ["?"], label: "Show keyboard shortcuts" },
     { keys: ["Esc"], label: "Close overlay / deselect" },
   ],
@@ -44,12 +44,6 @@ const GROUPS_BY_PATH: Record<string, Group[]> = {
       ],
     },
   ],
-  "/focus": [
-    {
-      name: "Focus mode",
-      shortcuts: [{ keys: ["Space"], label: "Start / pause session" }],
-    },
-  ],
   "/kudos": [
     {
       name: "Kudos",
@@ -63,17 +57,6 @@ const GROUPS_BY_PATH: Record<string, Group[]> = {
         { keys: ["Tab"], label: "Focus next pending request" },
         { keys: ["a"], label: "Approve focused request" },
         { keys: ["r"], label: "Reject focused request" },
-        { keys: ["⇧", "A"], label: "Approve all pending in view" },
-      ],
-    },
-  ],
-  "/expenses": [
-    {
-      name: "Expenses",
-      shortcuts: [
-        { keys: ["Tab"], label: "Focus next pending expense" },
-        { keys: ["a"], label: "Approve focused expense" },
-        { keys: ["r"], label: "Reject focused expense" },
         { keys: ["⇧", "A"], label: "Approve all pending in view" },
       ],
     },

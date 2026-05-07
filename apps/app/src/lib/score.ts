@@ -1,7 +1,6 @@
 import {
   allocations,
   employees,
-  focusSessionsSeed,
   goalsSeed,
   kudosSeed,
   timesheetEntries,
@@ -10,12 +9,12 @@ import {
 import { personWeeklyLoad, personValue } from "./projects";
 
 /**
- * Employee Score — 0..100, weighted average of six factors.
+ * Employee Score — 0..100, weighted average of five factors.
  * Factors are each normalised to 0..100 before weighting so a person
  * who is strong on some dimensions and average on others still scores well.
  *
- *   Score = 0.25·Delivery + 0.20·Utilization + 0.20·Value
- *         + 0.15·Recognition + 0.10·Focus + 0.10·Billable
+ *   Score = 0.30·Delivery + 0.20·Utilization + 0.25·Value
+ *         + 0.15·Recognition + 0.10·Billable
  *
  * Values that can't be computed (e.g. billable for internal-only roles)
  * are dropped and the remaining weights rescaled, so every person has a
@@ -36,7 +35,6 @@ export type FactorKey =
   | "utilization"
   | "value"
   | "recognition"
-  | "focus"
   | "billable"
   | "logFreshness";
 
@@ -53,11 +51,10 @@ export interface EmployeeScore {
 }
 
 export const SCORE_WEIGHTS: Record<FactorKey, number> = {
-  delivery: 0.25,
+  delivery: 0.3,
   utilization: 0.2,
-  value: 0.2,
+  value: 0.25,
   recognition: 0.15,
-  focus: 0.1,
   billable: 0.1,
   logFreshness: 0, // opt-in via ScoreOptions; default weight is 0
 };
@@ -67,7 +64,6 @@ export const FACTOR_LABELS: Record<FactorKey, string> = {
   utilization: "Utilization",
   value: "Value",
   recognition: "Recognition",
-  focus: "Focus",
   billable: "Billable",
   logFreshness: "Log Freshness",
 };
@@ -79,7 +75,6 @@ export const FACTOR_DESCRIPTIONS: Record<FactorKey, string> = {
   value:
     "Profit per hour delivered, normalised against the team. Rewards people whose allocations actually make margin.",
   recognition: "Kudos received and given in the last 60 days, normalised against peers.",
-  focus: "Count of focus sessions in the last 30 days — proxy for deep work discipline.",
   billable:
     "Share of tracked hours that are billable to clients — skipped for internal-only roles.",
   logFreshness:
@@ -94,15 +89,14 @@ export function computeEmployeeScore(employeeId: string, opts?: ScoreOptions): E
 
   const useFreshness = opts?.includeLogFreshness === true && typeof opts?.logFreshness === "number";
 
-  // When freshness is opted in, shave 5 off focus + 5 off billable and
+  // When freshness is opted in, shave 5 off delivery + 5 off billable and
   // give 10 to logFreshness. Otherwise keep the original weights exactly.
   const weights: Record<FactorKey, number> = useFreshness
     ? {
         delivery: 0.25,
         utilization: 0.2,
-        value: 0.2,
+        value: 0.25,
         recognition: 0.15,
-        focus: 0.05,
         billable: 0.05,
         logFreshness: 0.1,
       }
@@ -111,7 +105,6 @@ export function computeEmployeeScore(employeeId: string, opts?: ScoreOptions): E
         utilization: SCORE_WEIGHTS.utilization,
         value: SCORE_WEIGHTS.value,
         recognition: SCORE_WEIGHTS.recognition,
-        focus: SCORE_WEIGHTS.focus,
         billable: SCORE_WEIGHTS.billable,
         logFreshness: 0,
       };
@@ -121,7 +114,6 @@ export function computeEmployeeScore(employeeId: string, opts?: ScoreOptions): E
     withWeight(utilizationFactor(emp), weights.utilization),
     withWeight(valueFactor(emp), weights.value),
     withWeight(recognitionFactor(emp), weights.recognition),
-    withWeight(focusFactor(emp), weights.focus),
     withWeight(billableFactor(emp), weights.billable),
   ];
 
@@ -260,32 +252,6 @@ function recognitionFactor(e: Employee): FactorBreakdown {
     value: clamp(Math.round(norm)),
     weight: SCORE_WEIGHTS.recognition,
     detail: `${received} coins received · ${given} coins given in last 60d.`,
-  };
-}
-
-function focusFactor(e: Employee): FactorBreakdown {
-  const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
-  const mine = focusSessionsSeed.filter(
-    (f) => f.employeeId === e.id && new Date(f.date).getTime() >= cutoff,
-  );
-  if (mine.length === 0) {
-    return {
-      key: "focus",
-      label: FACTOR_LABELS.focus,
-      value: 50,
-      weight: SCORE_WEIGHTS.focus,
-      detail: "No focus sessions in the last 30 days.",
-      missing: true,
-    };
-  }
-  // 8 sessions/month = 100
-  const v = Math.min(100, (mine.length / 8) * 100);
-  return {
-    key: "focus",
-    label: FACTOR_LABELS.focus,
-    value: clamp(Math.round(v)),
-    weight: SCORE_WEIGHTS.focus,
-    detail: `${mine.length} focus session(s) in last 30 days.`,
   };
 }
 

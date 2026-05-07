@@ -18,7 +18,7 @@ const RESOURCES = [
   },
   {
     name: "commesse",
-    desc: "Italian for 'project codes'. Every hour, expense and allocation rolls up to a commessa.",
+    desc: "Italian for 'project codes'. Every hour and allocation rolls up to a commessa.",
     fields: ["id", "code", "name", "client_id", "owner_id", "budget_hours", "budget_amount", "rate_card", "start_date", "end_date", "status"],
     methods: ["GET /v1/commesse", "GET /v1/commesse/{id}", "POST /v1/commesse", "PATCH /v1/commesse/{id}"],
     events: ["commessa.created", "commessa.updated", "commessa.closed"],
@@ -29,13 +29,6 @@ const RESOURCES = [
     fields: ["id", "employee_id", "week_start", "status", "total_hours", "billable_hours", "entries[]"],
     methods: ["GET /v1/timesheets", "GET /v1/timesheets/{id}", "POST /v1/timesheets/{id}:submit", "POST /v1/timesheets/{id}:approve"],
     events: ["timesheet.submitted", "timesheet.approved", "timesheet.rejected"],
-  },
-  {
-    name: "expenses",
-    desc: "Expense claim with receipt and approval chain. Integrates with QuickBooks / Xero journal push.",
-    fields: ["id", "employee_id", "amount", "currency", "category", "commessa_id", "receipt_url", "status", "approver_id"],
-    methods: ["GET /v1/expenses", "POST /v1/expenses", "POST /v1/expenses/{id}:approve", "POST /v1/expenses/{id}:reject"],
-    events: ["expense.submitted", "expense.approved", "expense.rejected", "expense.posted_to_gl"],
   },
   {
     name: "leave",
@@ -111,7 +104,7 @@ const extraLd = [apiDocLd];
       All requests authenticate with a Bearer token. Mint keys in
       <code class="font-mono text-[13px] text-[#b4ff39]">/developers</code> inside the app.
       Keys carry a scope (<code class="font-mono text-[13px]">read:*</code>,
-      <code class="font-mono text-[13px]">write:expenses</code>, …) and an environment
+      <code class="font-mono text-[13px]">write:leave</code>, …) and an environment
       (<code class="font-mono text-[13px]">pk_live_*</code> or <code class="font-mono text-[13px]">pk_test_*</code>).
     </p>
   </div>
@@ -253,15 +246,15 @@ const extraLd = [apiDocLd];
   <div class="rounded-2xl border border-white/10 bg-[#0b0b0d] p-5 mb-10 overflow-x-auto">
     <pre class="m-0 font-mono text-[13px] text-white/85">{`POST https://your.app/pulse/hook
 Content-Type: application/json
-X-Pulse-Event: expense.approved
+X-Pulse-Event: leave.approved
 X-Pulse-Signature: t=1745148720,v1=9f8a…
 X-Pulse-Delivery: del_01HR3…
 
 {
   "id": "evt_01HR3…",
-  "type": "expense.approved",
+  "type": "leave.approved",
   "created_at": "2026-04-20T10:12:03Z",
-  "data": { /* full expense payload */ }
+  "data": { /* full leave payload */ }
 }`}</pre>
   </div>
 
@@ -296,14 +289,12 @@ const { data } = await pulse.employees.list({
   limit: 100,
 });
 
-// Submit an expense on behalf of an employee
-await pulse.expenses.create({
+// Submit a leave request on behalf of an employee
+await pulse.leave.create({
   employee_id: "emp_01HR3…",
-  amount: 42.5,
-  currency: "EUR",
-  commessa_id: "com_01HR2…",
-  category: "travel",
-  receipt_url: "s3://pulse-receipts/…",
+  kind: "PTO",
+  start_date: "2026-05-12",
+  end_date: "2026-05-16",
 });`}</pre>
     </div>
   </section>

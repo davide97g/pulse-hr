@@ -16,14 +16,12 @@ const shortcuts = [
   { k: "⌘⇧.", n: "Start voice",       d: "Dictate into any input via Web Speech API." },
   { k: "G P", n: "Go to People",      d: "Navigate to /people without a mouse." },
   { k: "G T", n: "Go to Time",        d: "Navigate to /time." },
-  { k: "G $", n: "Go to Expenses",    d: "Navigate to /expenses." },
   { k: "N",   n: "New (context-aware)", d: "In /people: new employee. In /time: new entry. Etc." },
   { k: "?",   n: "Show all shortcuts", d: "Cheat-sheet overlay, always up to date." },
 ];
 
 const commands = [
   { in: "log 4h on NOV-2025-07 yesterday, feature work", out: "log-hours · 4h · NOV-2025-07 · Apr 19 · feature · confidence 0.94" },
-  { in: "approve Aisha's last expense",                  out: "approve-expense · employee=Aisha Patel · confidence 0.88" },
   { in: "book leave next Friday, PTO",                   out: "book-leave · 2026-04-24 · kind=PTO · confidence 0.91" },
   { in: "add employee Marco Rossi, Milan, contractor",   out: "add-employee · Marco Rossi · Milan · contractor · confidence 0.82" },
   { in: "fill missing hours for this week",              out: "fill-missing · scope=this-week · confidence 0.96" },

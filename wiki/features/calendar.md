@@ -6,7 +6,7 @@ last_updated: 2026-04-26
 
 # Calendar
 
-The team calendar. Shows out-of-office, approved [[Leave Request]]s, [[Focus Mode]] blocks, and (optionally) bookings from [[Offices]].
+The team calendar. Shows out-of-office, approved [[Leave Request]]s blocks, and (optionally) bookings from [[Offices]].
 
 ## Who uses it
 
@@ -14,7 +14,7 @@ The team calendar. Shows out-of-office, approved [[Leave Request]]s, [[Focus Mod
 
 ## Key entities
 
-[[Leave Request]] · [[Focus Session]] · [[Employee]]
+[[Leave Request]] · [[Employee]]
 
 ## Notable behaviors
 

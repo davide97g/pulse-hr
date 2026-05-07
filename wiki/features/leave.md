@@ -13,7 +13,7 @@ Vacation, sick days, personal time, and parental leave. The Italian-flavored var
 - [[Employee]] requests leave; sees their balance.
 - [[Manager]] approves / rejects requests for their reports.
 - [[HR]] has org-wide visibility and override authority.
-- [[Finance]] cares about the impact on [[Payslip]] calculations.
+- [[Finance]] cares about the impact on  calculations.
 
 ## Key entities
 

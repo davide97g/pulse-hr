@@ -599,8 +599,6 @@ const EVENT_OPTIONS = [
   "leave.requested",
   "leave.approved",
   "leave.rejected",
-  "expense.submitted",
-  "expense.approved",
 ];
 
 function NewHookForm({

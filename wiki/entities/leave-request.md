@@ -16,15 +16,15 @@ An [[Employee]], a type ([[ferie]] / [[malattia]] / [[permesso]] / Parental), a 
 ## Lifecycle / states
 
 `pending` → submitted, awaiting approval.
-`approved` → green-lit; flows into [[Calendar]] and [[Payslip]] calculations.
+`approved` → green-lit; flows into [[Calendar]] and  calculations.
 `rejected` → declined with a reason.
 
 ## Connected entities
 
 - Belongs to an [[Employee]].
 - Approved by an [[Employee]] (manager) or by [[HR]].
-- Reduces capacity in [[Saturation]] and adjusts the next [[Payslip]].
+- Reduces capacity in [[Saturation]] and adjusts the next .
 
 ## Where it appears
 
-[[Leave]] · [[Calendar]] · [[Dashboard]] · [[Payroll]] · [[Saturation]]
+[[Leave]] · [[Calendar]] · [[Dashboard]] · [[Saturation]]

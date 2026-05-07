@@ -6,7 +6,7 @@ last_updated: 2026-04-26
 
 # Marketplace
 
-The integrations index. Slack, Google Calendar, identity providers (SSO), accounting tools, payroll providers — anything that plugs into Pulse HR.
+The integrations index. Slack, Google Calendar, identity providers (SSO), accounting tools — anything that plugs into Pulse HR.
 
 ## Who uses it
 

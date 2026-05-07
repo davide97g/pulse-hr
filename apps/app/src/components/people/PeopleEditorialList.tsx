@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useEmployees, employeesTable } from "@/lib/tables/employees";
 import { type Employee } from "@/lib/mock-data";
-import { commesse } from "@/lib/mock-data";
+import { projects } from "@/lib/mock-data";
 import { useQuickAction } from "@/components/app/QuickActions";
 import { useUrlParam } from "@/lib/useUrlParam";
 import {
@@ -44,7 +44,7 @@ function statusMono(status: Employee["status"]): { label: string; color: string 
 }
 
 function projectFor(empId: string): string {
-  const owned = commesse.find((c) => c.ownerId === empId);
+  const owned = projects.find((c) => c.ownerId === empId);
   return owned?.code ?? "—";
 }
 
@@ -204,7 +204,7 @@ export function PeopleEditorialList() {
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>NOME</span>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>RUOLO</span>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>DIPARTIMENTO</span>
-          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>COMMESSA</span>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>PROJECT</span>
           <span className="t-mono" style={{ color: "var(--muted-foreground)", textAlign: "right" }}>
             ANZIANITÀ
           </span>

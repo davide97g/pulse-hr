@@ -19,7 +19,7 @@ import { enUS, enGB, it, fr, es, de, ptBR, ja, zhCN } from "date-fns/locale";
 import {
   holidaysSeed,
   leaveRequests as leaveSeed,
-  commessaById,
+  projectById,
   type TimesheetEntry,
   type LeaveRequest,
   type Holiday,
@@ -161,7 +161,7 @@ export interface MonthStats {
   leaveDays: number;
   holidayDays: number;
   fillPct: number;
-  byCommessa: { commessaId: string; hours: number; color: string; code: string }[];
+  byProject: { projectId: string; hours: number; color: string; code: string }[];
 }
 
 export function getMonthStats(
@@ -180,7 +180,7 @@ export function getMonthStats(
     missingDays = 0,
     leaveDays = 0,
     holidayDays = 0;
-  const hoursByCommessa = new Map<string, number>();
+  const hoursByProject = new Map<string, number>();
 
   for (const d of days) {
     const info = getDayInfo(d, employeeId, entries, month, opts);
@@ -200,19 +200,19 @@ export function getMonthStats(
     }
     if (info.status === "future" && !isWeekend(d)) workdays++;
     for (const e of info.entries) {
-      hoursByCommessa.set(e.commessaId, (hoursByCommessa.get(e.commessaId) ?? 0) + e.hours);
+      hoursByProject.set(e.projectId, (hoursByProject.get(e.projectId) ?? 0) + e.hours);
     }
   }
 
-  const logged = [...hoursByCommessa.values()].reduce((a, b) => a + b, 0);
+  const logged = [...hoursByProject.values()].reduce((a, b) => a + b, 0);
   const target = workdays * TARGET_HOURS_PER_DAY;
   const variance = logged - target;
   const fillPct = workdays === 0 ? 0 : Math.round((filledDays / workdays) * 100);
 
-  const byCommessa = [...hoursByCommessa.entries()]
-    .map(([commessaId, hours]) => {
-      const c = commessaById(commessaId);
-      return { commessaId, hours, color: c?.color ?? "var(--muted)", code: c?.code ?? commessaId };
+  const byProject = [...hoursByProject.entries()]
+    .map(([projectId, hours]) => {
+      const c = projectById(projectId);
+      return { projectId, hours, color: c?.color ?? "var(--muted)", code: c?.code ?? projectId };
     })
     .sort((a, b) => b.hours - a.hours);
 
@@ -227,7 +227,7 @@ export function getMonthStats(
     leaveDays,
     holidayDays,
     fillPct,
-    byCommessa,
+    byProject,
   };
 }
 
@@ -285,7 +285,7 @@ export function synthesizeTeamEntries(employeeIds: string[], month: Date): Times
   const start = startOfMonth(month);
   const end = endOfMonth(month);
   const days = eachDayOfInterval({ start, end });
-  const commesse = ["cm1", "cm2", "cm3", "cm4", "cm6"];
+  const projects = ["cm1", "cm2", "cm3", "cm4", "cm6"];
   let uid = 0;
   employeeIds.forEach((eid, idx) => {
     for (const d of days) {
@@ -293,12 +293,12 @@ export function synthesizeTeamEntries(employeeIds: string[], month: Date): Times
       // Seeded pseudorandom: some days missing, some partial, most filled
       const seed = (parseInt(eid.replace(/\D/g, ""), 10) * 13 + d.getDate() * 7) % 10;
       if (seed < 1) continue; // missing
-      const c = commesse[(idx + d.getDate()) % commesse.length];
+      const c = projects[(idx + d.getDate()) % projects.length];
       const hours = seed < 3 ? 4 : seed < 5 ? 6 : 8;
       out.push({
         id: `team-${eid}-${format(d, "yyyyMMdd")}-${++uid}`,
         employeeId: eid,
-        commessaId: c,
+        projectId: c,
         date: format(d, "yyyy-MM-dd"),
         hours,
         description: "Synthetic",

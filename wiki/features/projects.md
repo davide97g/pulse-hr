@@ -26,4 +26,4 @@ The detailed view of a single [[Commessa]]. Where you allocate people, plan scop
 
 ## Related journeys
 
-[[Monthly Payroll Run]]
+

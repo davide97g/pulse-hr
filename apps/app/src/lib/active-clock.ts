@@ -8,7 +8,7 @@ import { getNamespace } from "./workspace";
 
 export interface ActiveClock {
   startedAt: string;
-  commessaId: string;
+  projectId: string;
 }
 
 const SUFFIX = "activeClock";
@@ -52,10 +52,10 @@ export function getActiveClock(): ActiveClock | null {
   return cache;
 }
 
-export function startActiveClock(commessaId: string) {
+export function startActiveClock(projectId: string) {
   const k = storageKey();
   if (!k) return;
-  const next: ActiveClock = { startedAt: new Date().toISOString(), commessaId };
+  const next: ActiveClock = { startedAt: new Date().toISOString(), projectId };
   try {
     localStorage.setItem(k, JSON.stringify(next));
   } catch {
