@@ -36,7 +36,6 @@ import "@/lib/tables/logSessions";
 import "@/lib/tables/managerAsks";
 import "@/lib/tables/mockCalendarEvents";
 import "@/lib/tables/notifications";
-import "@/lib/tables/onboardingWorkflows";
 import "@/lib/tables/oneOnOnes";
 import "@/lib/tables/pulseEntries";
 import "@/lib/tables/roles";
@@ -77,7 +76,6 @@ const TITLE_BY_PATH: Record<string, string> = {
   "/people": "Employees — Pulse HR",
   "/org": "Org chart — Pulse HR",
   "/recruiting": "Recruiting — Pulse HR",
-  "/onboarding": "Onboarding — Pulse HR",
   "/time": "Time & attendance — Pulse HR",
   "/calendar": "Calendar — Pulse HR",
   "/leave": "Leave — Pulse HR",

@@ -143,7 +143,7 @@ export const TOURS: Tour[] = [
   {
     id: "recruiting",
     name: "Move a candidate through the pipeline",
-    summary: "Kanban stages, candidate profiles, and turning a hire into onboarding.",
+    summary: "Kanban stages, candidate profiles, and turning a hire into an active employee.",
     workflow: "People",
     duration: "2 min",
     steps: [
@@ -159,7 +159,7 @@ export const TOURS: Tour[] = [
       },
       {
         title: "Hire & handoff",
-        body: "Marking a candidate as hired seeds an onboarding workflow — /onboarding picks it up with a default checklist.",
+        body: "Marking a candidate as hired adds them to /people as an active employee.",
       },
     ],
   },

@@ -115,13 +115,6 @@ export function WelcomeEditorial() {
             >
               Inizia <span className="arr">→</span>
             </button>
-            <button
-              type="button"
-              className="pill pill-ghost"
-              onClick={() => navigate({ to: "/onboarding" })}
-            >
-              Setup workspace
-            </button>
             <span className="flex-1" />
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
               ⌘K CERCA · ⌘J COPILOT

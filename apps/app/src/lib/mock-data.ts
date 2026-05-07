@@ -1306,183 +1306,6 @@ export let jobPostings: JobPosting[] = [
   },
 ];
 
-export interface OnboardingTask {
-  id: string;
-  label: string;
-  done: boolean;
-  owner: string;
-  due?: string;
-  category: "Paperwork" | "Access" | "People" | "Training";
-}
-
-export interface OnboardingWorkflow {
-  id: string;
-  name: string;
-  role: string;
-  startDate: string;
-  type: "onboarding" | "offboarding";
-  initials: string;
-  color: string;
-  tasks: OnboardingTask[];
-}
-export let onboardingWorkflows: OnboardingWorkflow[] = [
-  {
-    id: "ow1",
-    name: "Emma Wilson",
-    role: "Senior Engineer",
-    startDate: "2026-05-06",
-    type: "onboarding",
-    initials: "EW",
-    color: "oklch(0.7 0.15 30)",
-    tasks: [
-      {
-        id: "t1",
-        label: "Send offer letter",
-        done: true,
-        owner: "Aisha Patel",
-        category: "Paperwork",
-        due: "2026-04-18",
-      },
-      {
-        id: "t2",
-        label: "Run background check",
-        done: true,
-        owner: "Olivia Brown",
-        category: "Paperwork",
-        due: "2026-04-22",
-      },
-      {
-        id: "t3",
-        label: "Order laptop & equipment",
-        done: true,
-        owner: "IT Team",
-        category: "Access",
-        due: "2026-04-25",
-      },
-      {
-        id: "t4",
-        label: "Set up email & accounts",
-        done: false,
-        owner: "IT Team",
-        category: "Access",
-        due: "2026-05-02",
-      },
-      {
-        id: "t5",
-        label: "Schedule welcome call",
-        done: false,
-        owner: "Sarah Chen",
-        category: "People",
-        due: "2026-05-05",
-      },
-      {
-        id: "t6",
-        label: "Sign employment contract",
-        done: false,
-        owner: "Emma Wilson",
-        category: "Paperwork",
-        due: "2026-05-06",
-      },
-      {
-        id: "t7",
-        label: "Complete tax forms",
-        done: false,
-        owner: "Emma Wilson",
-        category: "Paperwork",
-        due: "2026-05-06",
-      },
-      {
-        id: "t8",
-        label: "First-week training plan",
-        done: false,
-        owner: "Aisha Patel",
-        category: "Training",
-        due: "2026-05-13",
-      },
-    ],
-  },
-  {
-    id: "ow2",
-    name: "James Liu",
-    role: "Senior Engineer",
-    startDate: "2026-06-02",
-    type: "onboarding",
-    initials: "JL",
-    color: "oklch(0.6 0.16 220)",
-    tasks: [
-      {
-        id: "t1",
-        label: "Offer accepted",
-        done: true,
-        owner: "Aisha Patel",
-        category: "Paperwork",
-      },
-      {
-        id: "t2",
-        label: "Background check",
-        done: false,
-        owner: "Olivia Brown",
-        category: "Paperwork",
-      },
-    ],
-  },
-  {
-    id: "ow3",
-    name: "Sofia Garcia",
-    role: "Product Designer",
-    startDate: "2026-05-19",
-    type: "onboarding",
-    initials: "SG",
-    color: "oklch(0.65 0.18 340)",
-    tasks: [
-      {
-        id: "t1",
-        label: "Offer accepted",
-        done: true,
-        owner: "Olivia Brown",
-        category: "Paperwork",
-      },
-      {
-        id: "t2",
-        label: "Background check",
-        done: true,
-        owner: "Olivia Brown",
-        category: "Paperwork",
-      },
-      { id: "t3", label: "Order laptop", done: true, owner: "IT Team", category: "Access" },
-      { id: "t4", label: "Access to Figma org", done: false, owner: "IT Team", category: "Access" },
-      {
-        id: "t5",
-        label: "Design onboarding brief",
-        done: false,
-        owner: "Marcus Rivera",
-        category: "Training",
-      },
-    ],
-  },
-  {
-    id: "ow4",
-    name: "Greg Holland",
-    role: "DevOps Engineer",
-    startDate: "2026-04-30",
-    type: "offboarding",
-    initials: "GH",
-    color: "oklch(0.7 0.13 110)",
-    tasks: [
-      { id: "t1", label: "Exit interview", done: true, owner: "Aisha Patel", category: "People" },
-      {
-        id: "t2",
-        label: "Revoke production SSH",
-        done: true,
-        owner: "IT Team",
-        category: "Access",
-      },
-      { id: "t3", label: "Return laptop", done: false, owner: "Greg Holland", category: "Access" },
-      { id: "t4", label: "Final settlement", done: false, owner: "Lina Rossi", category: "Paperwork" },
-    ],
-  },
-];
-
 export interface Doc {
   id: string;
   name: string;
@@ -1741,8 +1564,8 @@ export let notifications: Notification[] = [
   },
   {
     id: "n5",
-    title: "Onboarding task assigned",
-    desc: "Send laptop to new hire",
+    title: "New hire equipment ready",
+    desc: "Laptop prepared for Emma Wilson",
     time: "2d ago",
     type: "info",
     unread: false,
@@ -3729,9 +3552,6 @@ export function __setKudosSeed(n: Kudo[]) {
 }
 export function __setJobPostings(n: JobPosting[]) {
   jobPostings = n;
-}
-export function __setOnboardingWorkflows(n: OnboardingWorkflow[]) {
-  onboardingWorkflows = n;
 }
 export function __setDocsSeed(n: Doc[]) {
   docsSeed = n;

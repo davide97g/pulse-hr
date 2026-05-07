@@ -315,9 +315,9 @@ function AppShellInner() {
             className="flex-1 overflow-y-auto scroll-fade py-5 px-3"
             style={{ ["--fade-bg" as string]: "var(--sidebar)" }}
           >
-            {groups.map((group) => (
-              <div key={group.label} className="mb-6">
-                {!collapsed && (
+            {groups.map((group, groupIndex) => (
+              <div key={group.label || `group-${groupIndex}`} className="mb-6">
+                {!collapsed && group.label && (
                   <div className="px-2 mb-2 t-mono" style={{ color: "var(--muted-foreground)" }}>
                     {group.label}
                   </div>
@@ -503,11 +503,13 @@ function AppShellInner() {
             className="overflow-y-auto scroll-fade py-5 px-3 h-[calc(100%-6.75rem)]"
             style={{ ["--fade-bg" as string]: "var(--bg)" }}
           >
-            {groups.map((group) => (
-              <div key={group.label} className="mb-6">
-                <div className="px-2 mb-2 t-mono" style={{ color: "var(--muted-foreground)" }}>
-                  {group.label}
-                </div>
+            {groups.map((group, groupIndex) => (
+              <div key={group.label || `group-${groupIndex}`} className="mb-6">
+                {group.label && (
+                  <div className="px-2 mb-2 t-mono" style={{ color: "var(--muted-foreground)" }}>
+                    {group.label}
+                  </div>
+                )}
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
                     if (item.kind === "tours") {
@@ -634,8 +636,7 @@ function CommentsVisibilityToggle() {
 
 const SECTION_BY_PATH: Record<string, string> = {
   "/": "DASHBOARD",
-  "/people": "PERSONE",
-  "/onboarding": "ONBOARDING",
+  "/people": "TEAM",
   "/kudos": "KUDOS",
   "/log": "STATUS LOG",
   "/growth": "GROWTH",

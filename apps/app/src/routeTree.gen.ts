@@ -19,7 +19,6 @@ import { Route as RecruitingRouteImport } from './routes/recruiting'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PeopleRouteImport } from './routes/people'
 import { Route as OrgRouteImport } from './routes/org'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as OfficesRouteImport } from './routes/offices'
 import { Route as MomentsRouteImport } from './routes/moments'
 import { Route as MarketplaceRouteImport } from './routes/marketplace'
@@ -106,11 +105,6 @@ const PeopleRoute = PeopleRouteImport.update({
 const OrgRoute = OrgRouteImport.update({
   id: '/org',
   path: '/org',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfficesRoute = OfficesRouteImport.update({
@@ -317,7 +311,6 @@ export interface FileRoutesByFullPath {
   '/marketplace': typeof MarketplaceRoute
   '/moments': typeof MomentsRoute
   '/offices': typeof OfficesRouteWithChildren
-  '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/people': typeof PeopleRoute
   '/profile': typeof ProfileRoute
@@ -364,7 +357,6 @@ export interface FileRoutesByTo {
   '/marketplace': typeof MarketplaceRoute
   '/moments': typeof MomentsRoute
   '/offices': typeof OfficesRouteWithChildren
-  '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/people': typeof PeopleRoute
   '/profile': typeof ProfileRoute
@@ -415,7 +407,6 @@ export interface FileRoutesById {
   '/marketplace': typeof MarketplaceRoute
   '/moments': typeof MomentsRoute
   '/offices': typeof OfficesRouteWithChildren
-  '/onboarding': typeof OnboardingRoute
   '/org': typeof OrgRoute
   '/people': typeof PeopleRoute
   '/profile': typeof ProfileRoute
@@ -467,7 +458,6 @@ export interface FileRouteTypes {
     | '/marketplace'
     | '/moments'
     | '/offices'
-    | '/onboarding'
     | '/org'
     | '/people'
     | '/profile'
@@ -514,7 +504,6 @@ export interface FileRouteTypes {
     | '/marketplace'
     | '/moments'
     | '/offices'
-    | '/onboarding'
     | '/org'
     | '/people'
     | '/profile'
@@ -564,7 +553,6 @@ export interface FileRouteTypes {
     | '/marketplace'
     | '/moments'
     | '/offices'
-    | '/onboarding'
     | '/org'
     | '/people'
     | '/profile'
@@ -615,7 +603,6 @@ export interface RootRouteChildren {
   MarketplaceRoute: typeof MarketplaceRoute
   MomentsRoute: typeof MomentsRoute
   OfficesRoute: typeof OfficesRouteWithChildren
-  OnboardingRoute: typeof OnboardingRoute
   OrgRoute: typeof OrgRoute
   PeopleRoute: typeof PeopleRoute
   ProfileRoute: typeof ProfileRoute
@@ -705,13 +692,6 @@ declare module '@tanstack/react-router' {
       path: '/org'
       fullPath: '/org'
       preLoaderRoute: typeof OrgRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offices': {
@@ -1064,7 +1044,6 @@ const rootRouteChildren: RootRouteChildren = {
   MarketplaceRoute: MarketplaceRoute,
   MomentsRoute: MomentsRoute,
   OfficesRoute: OfficesRouteWithChildren,
-  OnboardingRoute: OnboardingRoute,
   OrgRoute: OrgRoute,
   PeopleRoute: PeopleRoute,
   ProfileRoute: ProfileRoute,

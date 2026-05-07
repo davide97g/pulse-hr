@@ -58,7 +58,7 @@ export function answerFor(prompt: string): CopilotAnswer {
   if (q.includes("welcome") || q.includes("draft")) {
     return {
       text:
-        "Drafted:\n\n“Hi Emma, welcome to Acme! Your first-day checklist is in Pulse HR at /onboarding. " +
+        "Drafted:\n\n“Hi Emma, welcome to Acme! " +
         "Sarah will reach out to schedule your welcome call on May 6. Can't wait to meet you.”",
       actions: [
         { label: "Open in composer", run: () => toast.success("Email draft opened") },

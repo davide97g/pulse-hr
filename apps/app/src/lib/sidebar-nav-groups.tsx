@@ -8,8 +8,6 @@ import {
   Calendar,
   CalendarDays,
   FileText,
-  Receipt,
-  GraduationCap,
   BookOpen,
   MessagesSquare,
   Gift,
@@ -43,10 +41,10 @@ export type SidebarNavItem = {
 export type SidebarNavGroup = { label: string; items: SidebarNavItem[]; accent?: boolean };
 
 /**
- * Editorial sidebar — three groups (PEOPLE / WORK / MONEY) plus a collapsed
- * Workspace footer. Pages without an editorial counterpart (Marketplace,
- * Developers, Docs, Settings, Modules, Help) live behind the avatar dropdown
- * so they don't compete with day-to-day work in the sidebar.
+ * Editorial sidebar — Dashboard sits unlabelled at the top, then PEOPLE / TIME
+ * / WORK / OTHER, with a collapsed Workspace footer for Docs, Help, Settings.
+ * Pages without an editorial counterpart (Marketplace, Developers, Modules)
+ * live behind the avatar dropdown so they don't compete with day-to-day work.
  */
 export function buildSidebarNavGroups(
   hasOpenManagerAsks: boolean,
@@ -54,16 +52,13 @@ export function buildSidebarNavGroups(
 ): SidebarNavGroup[] {
   const groups: SidebarNavGroup[] = [
     {
+      label: "",
+      items: [{ to: "/", label: "Dashboard", icon: LayoutDashboard, featureId: "dashboard" }],
+    },
+    {
       label: "People",
       items: [
-        { to: "/", label: "Dashboard", icon: LayoutDashboard, featureId: "dashboard" },
-        { to: "/people", label: "Persone", icon: Users, featureId: "people" },
-        {
-          to: "/onboarding",
-          label: "Onboarding",
-          icon: GraduationCap,
-          featureId: "onboarding",
-        },
+        { to: "/people", label: "Team", icon: Users, featureId: "people" },
         { to: "/kudos", label: "Kudos", icon: Gift, featureId: "kudos" },
         {
           to: "/log",
@@ -76,15 +71,26 @@ export function buildSidebarNavGroups(
       ],
     },
     {
-      label: "Work",
+      label: "Time",
       items: [
         { to: "/time", label: "Timesheet", icon: Clock, featureId: "time" },
+        { to: "/leave", label: "Leave", icon: Calendar, featureId: "leave" },
+        { to: "/calendar", label: "Calendar", icon: CalendarDays, featureId: "calendar" },
+      ],
+    },
+    {
+      label: "Work",
+      items: [
         { to: "/projects", label: "Projects", icon: Briefcase, featureId: "clients" },
         { to: "/activities", label: "Activities", icon: ListChecks, featureId: "clients" },
-        { to: "/calendar", label: "Calendar", icon: CalendarDays, featureId: "calendar" },
-        { to: "/leave", label: "Leave", icon: Calendar, featureId: "leave" },
-        { to: "/documents", label: "Documents", icon: FileText, featureId: "documents" },
+      ],
+    },
+    {
+      label: "Other",
+      items: [
         { to: "/offices", label: "Offices", icon: Building2, featureId: "offices" },
+        { to: "/reports", label: "Reports", icon: BarChart3, featureId: "reports" },
+        { to: "/documents", label: "Documents", icon: FileText, featureId: "documents" },
       ],
     },
   ];
@@ -94,10 +100,7 @@ export function buildSidebarNavGroups(
   // ⌘K, the avatar menu, and direct links continue to work.
   const workspace: SidebarNavGroup = {
     label: "Workspace",
-    items: [
-      { to: "/reports", label: "Reports", icon: BarChart3, featureId: "reports" },
-      { to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" },
-    ],
+    items: [{ to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" }],
   };
 
   if (includeAdminVisibilityLink) {

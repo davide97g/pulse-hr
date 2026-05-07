@@ -15,7 +15,6 @@ const ALLOW: Record<Exclude<Role, "admin">, SidebarFeatureId[]> = {
     "people",
     "org",
     "recruiting",
-    "onboarding",
     "leave",
     "documents",
     "growth",
