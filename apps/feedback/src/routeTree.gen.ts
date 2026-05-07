@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as VotingPowerRouteImport } from './routes/voting-power'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProposalsIdRouteImport } from './routes/proposals.$id'
 import { Route as CommentsIdRouteImport } from './routes/comments.$id'
 
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VotingPowerRoute = VotingPowerRouteImport.update({
   id: '/voting-power',
   path: '/voting-power',
@@ -38,12 +44,14 @@ const CommentsIdRoute = CommentsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/voting-power': typeof VotingPowerRoute
+  '/welcome': typeof WelcomeRoute
   '/comments/$id': typeof CommentsIdRoute
   '/proposals/$id': typeof ProposalsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/voting-power': typeof VotingPowerRoute
+  '/welcome': typeof WelcomeRoute
   '/comments/$id': typeof CommentsIdRoute
   '/proposals/$id': typeof ProposalsIdRoute
 }
@@ -51,26 +59,46 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/voting-power': typeof VotingPowerRoute
+  '/welcome': typeof WelcomeRoute
   '/comments/$id': typeof CommentsIdRoute
   '/proposals/$id': typeof ProposalsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/voting-power' | '/comments/$id' | '/proposals/$id'
+  fullPaths:
+    | '/'
+    | '/voting-power'
+    | '/welcome'
+    | '/comments/$id'
+    | '/proposals/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/voting-power' | '/comments/$id' | '/proposals/$id'
-  id: '__root__' | '/' | '/voting-power' | '/comments/$id' | '/proposals/$id'
+  to: '/' | '/voting-power' | '/welcome' | '/comments/$id' | '/proposals/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/voting-power'
+    | '/welcome'
+    | '/comments/$id'
+    | '/proposals/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   VotingPowerRoute: typeof VotingPowerRoute
+  WelcomeRoute: typeof WelcomeRoute
   CommentsIdRoute: typeof CommentsIdRoute
   ProposalsIdRoute: typeof ProposalsIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/voting-power': {
       id: '/voting-power'
       path: '/voting-power'
@@ -105,6 +133,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   VotingPowerRoute: VotingPowerRoute,
+  WelcomeRoute: WelcomeRoute,
   CommentsIdRoute: CommentsIdRoute,
   ProposalsIdRoute: ProposalsIdRoute,
 }

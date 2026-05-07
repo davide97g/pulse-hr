@@ -1,7 +1,9 @@
 import { useUser, useClerk } from "@clerk/react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { ArrowLeft, Coins, LayoutGrid, LogOut } from "lucide-react";
+import { ArrowLeft, Coins, LayoutGrid, LogOut, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsEffectiveAdmin } from "@/lib/role-override";
+import { AuthorAvatar } from "./shared";
 
 const APP_URL = import.meta.env.VITE_APP_URL ?? "https://app.pulsehr.it";
 
@@ -11,87 +13,79 @@ export function FeedbackShell({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   const onBoard = pathname === "/";
   const onVoting = pathname === "/voting-power";
+  const admin = useIsEffectiveAdmin();
   const displayName =
     user?.fullName || user?.firstName || user?.primaryEmailAddress?.emailAddress || "Signed in";
-  const initials =
-    (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") ||
-    displayName.slice(0, 2).toUpperCase();
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{
-        background:
-          "radial-gradient(1200px 600px at 85% -20%, color-mix(in oklch, var(--primary) 18%, transparent), transparent 60%), var(--background)",
-      }}
-    >
-      <header className="h-14 border-b bg-background/70 backdrop-blur flex items-center px-4 md:px-6 gap-3 shrink-0">
+    <div className="room-dark min-h-screen flex flex-col bg-[#0a0907] text-[var(--paper)]">
+      <header
+        className="h-14 flex items-center px-4 md:px-6 gap-3 shrink-0 sticky top-0 z-30
+                   border-b border-white/5 bg-[#0a0907]/85 backdrop-blur-md"
+      >
         <a
           href={APP_URL}
-          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground press-scale"
+          className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.12em] uppercase font-mono text-white/55 hover:text-white press-scale"
           title="Back to Pulse"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3 w-3" />
           <span className="hidden sm:inline">Back to Pulse</span>
         </a>
-        <div className="mx-2 h-5 w-px bg-border" />
-        <div className="flex items-baseline gap-2 min-w-0">
-          <span className="font-display text-lg tracking-tight leading-none">Pulse</span>
+        <span className="mx-1 h-4 w-px bg-white/10" />
+        <Link to="/" className="flex items-baseline gap-2 min-w-0">
+          <span className="font-display text-lg tracking-[-0.02em] leading-none">Pulse</span>
           <span
-            className="inline-block h-1.5 w-1.5 rounded-full bg-primary pulse-dot"
             aria-hidden
+            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--spark)] pulse-dot"
+            style={{ boxShadow: "0 0 12px var(--spark)" }}
           />
-          <span className="font-display text-lg tracking-tight leading-none text-primary">
+          <span className="font-display text-lg tracking-[-0.02em] leading-none text-[var(--spark)]">
             Feedback
           </span>
-        </div>
+          <span className="ml-1.5 hidden sm:inline-flex h-[18px] items-center px-1.5 rounded-full bg-[var(--spark)]/12 text-[var(--spark)] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold">
+            Labs · Beta
+          </span>
+        </Link>
         <div className="flex-1" />
         <nav className="flex items-center gap-1.5">
           <Link
             to="/"
             className={cn(
-              "h-9 inline-flex items-center gap-1.5 px-2.5 rounded-md border text-sm press-scale transition-colors",
+              "h-8 inline-flex items-center gap-1.5 px-3 rounded-md border text-xs font-medium press-scale transition-colors",
               onBoard
-                ? "bg-muted text-foreground border-border"
-                : "bg-background/80 text-muted-foreground hover:bg-muted hover:text-foreground",
+                ? "bg-white/8 text-white border-white/10"
+                : "bg-transparent text-white/55 border-transparent hover:text-white hover:bg-white/5",
             )}
             title="Feature board"
           >
-            <LayoutGrid className="h-4 w-4" />
-            <span className="hidden md:inline font-medium">Board</span>
+            <LayoutGrid className="h-3.5 w-3.5" />
+            <span className="hidden md:inline">Board</span>
           </Link>
           <Link
             to="/voting-power"
             className={cn(
-              "h-9 inline-flex items-center gap-1.5 px-2.5 rounded-md border text-sm press-scale transition-colors",
+              "h-8 inline-flex items-center gap-1.5 px-3 rounded-md border text-xs font-medium press-scale transition-colors",
               onVoting
-                ? "bg-[color:var(--labs)]/15 text-[color:var(--labs)] border-[color:var(--labs)]/40"
-                : "bg-background/80 text-muted-foreground hover:bg-muted hover:text-foreground",
+                ? "bg-[var(--spark)]/10 text-[var(--spark)] border-[var(--spark)]/40"
+                : "bg-transparent text-[var(--spark)]/85 border-[var(--spark)]/30 hover:bg-[var(--spark)]/10",
             )}
             title="Voting power"
           >
-            <Coins className="h-4 w-4" />
-            <span className="hidden md:inline font-medium">Voting Power</span>
+            <Coins className="h-3.5 w-3.5" />
+            <span className="hidden md:inline">Voting Power</span>
           </Link>
-          <div className="mx-1.5 h-5 w-px bg-border" />
+          {admin && (
+            <span className="ml-1 hidden md:inline-flex items-center gap-1 h-7 px-2.5 rounded-full bg-[var(--spark)]/10 text-[var(--spark)] border border-[var(--spark)]/25 text-[10px] font-mono tracking-[0.12em] uppercase">
+              <ShieldCheck className="h-3 w-3" />
+              Admin
+            </span>
+          )}
+          <span className="mx-1 h-5 w-px bg-white/10" />
         </nav>
         {user && (
           <div className="flex items-center gap-2">
-            <div className="hidden md:flex items-center gap-2">
-              {user.imageUrl ? (
-                <img
-                  src={user.imageUrl}
-                  alt={displayName}
-                  className="h-7 w-7 rounded-full object-cover"
-                />
-              ) : (
-                <div
-                  className="h-7 w-7 rounded-full flex items-center justify-center text-white text-xs font-medium"
-                  style={{ backgroundColor: "oklch(0.6 0.16 220)" }}
-                >
-                  {initials.toUpperCase().slice(0, 2) || "?"}
-                </div>
-              )}
+            <div className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/5">
+              <AuthorAvatar name={displayName} avatarUrl={user.imageUrl ?? null} size={22} />
               <div className="text-xs font-medium max-w-[160px] truncate">{displayName}</div>
             </div>
             <button
@@ -99,14 +93,11 @@ export function FeedbackShell({ children }: { children: React.ReactNode }) {
                 await signOut();
                 window.location.assign(`${APP_URL}/login`);
               }}
-              className={cn(
-                "h-9 w-9 md:w-auto md:px-2.5 inline-flex items-center justify-center gap-1.5 rounded-md",
-                "border bg-background/80 hover:bg-muted text-xs text-muted-foreground",
-              )}
+              className="h-8 w-8 md:w-auto md:px-2.5 inline-flex items-center justify-center gap-1.5 rounded-md border border-white/10 bg-transparent hover:bg-white/5 text-[11px] text-white/60"
               title="Sign out"
               aria-label="Sign out"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-3.5 w-3.5" />
               <span className="hidden md:inline">Sign out</span>
             </button>
           </div>
@@ -117,7 +108,7 @@ export function FeedbackShell({ children }: { children: React.ReactNode }) {
           children
         ) : (
           <div className="flex flex-1 items-center justify-center min-h-[40vh]">
-            <div className="h-6 w-6 rounded-full border-2 border-muted-foreground/30 border-t-foreground animate-spin" />
+            <div className="h-6 w-6 rounded-full border-2 border-white/15 border-t-white animate-spin" />
           </div>
         )}
       </main>

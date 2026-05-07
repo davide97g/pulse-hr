@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ChevronRight, Trophy, Users } from "lucide-react";
+import { ChevronRight, Trophy } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   DndContext,
@@ -24,7 +24,6 @@ import {
   Send,
   Plus,
   Lightbulb,
-  Sparkles,
   MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -50,6 +49,8 @@ import {
   KindBadge,
   KIND_META,
   itemKind,
+  AuthorAvatar,
+  initialsFor,
   type BoardItemKind as SharedBoardItemKind,
 } from "@/components/feedback/shared";
 
@@ -61,12 +62,17 @@ export const Route = createFileRoute("/")({
   component: FeedbackBoard,
 });
 
-const COLUMNS: { status: CommentStatus; label: string; accent: string }[] = [
-  { status: "open", label: "Open", accent: "bg-primary" },
-  { status: "triaged", label: "Triaged", accent: "bg-info" },
-  { status: "planned", label: "Planned", accent: "bg-warning" },
-  { status: "shipped", label: "Shipped", accent: "bg-success" },
-  { status: "wont_do", label: "Won't do", accent: "bg-muted-foreground" },
+const COLUMNS: { status: CommentStatus; label: string; accent: string; dot: string }[] = [
+  { status: "open", label: "Open", accent: "bg-[#86efac]", dot: "#86efac" },
+  { status: "triaged", label: "Triaged", accent: "bg-[#93c5fd]", dot: "#93c5fd" },
+  { status: "planned", label: "Planned", accent: "bg-[#fde047]", dot: "#fde047" },
+  { status: "shipped", label: "Shipped", accent: "bg-[var(--spark)]", dot: "var(--spark)" },
+  {
+    status: "wont_do",
+    label: "Won't do",
+    accent: "bg-white/40",
+    dot: "rgba(255,255,255,.45)",
+  },
 ];
 
 type BoardItemKind = SharedBoardItemKind;
@@ -342,46 +348,50 @@ function FeedbackBoard() {
     query !== "" || routeFilter !== "" || activeTags.size > 0 || activeKinds.size > 0;
 
   return (
-    <div className="p-4 md:p-6 max-w-[1400px] mx-auto w-full">
-      <div className="mb-5 flex items-end justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="text-2xl font-display tracking-tight">Feedback</h1>
-          <p className="text-sm text-muted-foreground mt-1 max-w-[560px]">
+    <div className="px-4 md:px-14 py-6 md:py-8 max-w-[1440px] mx-auto w-full">
+      {/* Hero */}
+      <div className="flex items-end justify-between gap-8 mb-7 flex-wrap">
+        <div className="flex-1 min-w-0">
+          <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--spark)] mb-2.5 inline-flex items-center gap-1.5">
+            <span
+              className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--spark)] pulse-dot"
+              style={{ boxShadow: "0 0 8px var(--spark)" }}
+            />
+            Live wall · Bitrock
+          </div>
+          <h1 className="font-display font-light text-5xl md:text-[80px] leading-[0.88] tracking-[-0.045em] mb-3.5">
+            Feedback<span className="text-[var(--spark)]">.</span>
+          </h1>
+          <p className="text-sm text-white/65 leading-[1.5] max-w-[560px]">
             Every pin and proposal lands here. Upvote what matters, reply to what you recognize.{" "}
             {admin ? (
-              <span className="text-foreground">Drag cards between columns to triage.</span>
+              <span className="text-white/90">Drag cards between columns to triage.</span>
             ) : (
               <>Admins move cards as they move through triage.</>
             )}{" "}
-            <span className="text-muted-foreground">
-              Press{" "}
-              <kbd className="inline-flex h-4 px-1 items-center rounded border bg-muted text-[10px] font-mono align-[1px]">
-                ⌘⇧O
-              </kbd>{" "}
-              to propose.
-            </span>
+            Press{" "}
+            <kbd className="px-1.5 py-0.5 rounded border border-white/20 font-mono text-[11px] align-[1px]">
+              ⌘⇧O
+            </kbd>{" "}
+            to propose.
           </p>
         </div>
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="flex items-center gap-5 flex-wrap">
           {admin && (
-            <span className="inline-flex items-center gap-1.5 h-6 px-2 rounded-full bg-primary/10 text-primary font-medium">
+            <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-[var(--spark)]/10 text-[var(--spark)] border border-[var(--spark)]/25 font-mono text-[10px] tracking-[0.12em] uppercase">
               <ShieldCheck className="h-3.5 w-3.5" />
               Admin
             </span>
           )}
-          <span className="inline-flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" /> {totals.open} open
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-warning" /> {totals.planned} planned
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-success" /> {totals.shipped} shipped
-          </span>
+          <HeroStat label="open" value={totals.open} dot="#86efac" />
+          <HeroStat label="triaged" value={totals.triaged} dot="#93c5fd" />
+          <HeroStat label="planned" value={totals.planned} dot="#fde047" />
+          <HeroStat label="shipped" value={totals.shipped} dot="var(--spark)" glow />
           <button
             type="button"
             onClick={openProposal}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium press-scale hover:bg-primary/90"
+            className="h-11 px-6 rounded-full bg-[var(--spark)] text-[#0a1400] font-bold text-[13px] press-scale flex items-center gap-2"
+            style={{ boxShadow: "0 12px 28px -10px var(--spark)" }}
           >
             <Plus className="h-3.5 w-3.5" />
             Propose
@@ -401,7 +411,7 @@ function FeedbackBoard() {
       {tab === "contributors" ? (
         <ContributorsPanel items={allItems} loaded={loaded} currentUserId={user?.id ?? null} />
       ) : !loaded ? (
-        <div className="text-sm text-muted-foreground">Loading board…</div>
+        <div className="text-sm text-white/55">Loading board…</div>
       ) : totalAllUnfiltered === 0 ? (
         <EmptyState onPropose={openProposal} />
       ) : (
@@ -444,9 +454,21 @@ function FeedbackBoard() {
             filterActive={filterActive}
           />
           {totalAll === 0 ? (
-            <div className="rounded-[var(--radius-md)] border border-dashed bg-background/50 p-8 text-center text-sm text-muted-foreground">
+            <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-10 text-center text-sm text-white/55">
               Nothing matches these filters.
             </div>
+          ) : tab === "proposals" ? (
+            <ProposalsList
+              items={[
+                ...filteredBoard.open,
+                ...filteredBoard.triaged,
+                ...filteredBoard.planned,
+                ...filteredBoard.shipped,
+                ...filteredBoard.wont_do,
+              ]}
+              onVote={applyVote}
+              onOpenThread={setThreadId}
+            />
           ) : (
             <DndContext
               sensors={sensors}
@@ -454,7 +476,7 @@ function FeedbackBoard() {
               onDragCancel={() => setDraggingId(null)}
               onDragEnd={onDragEnd}
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3.5">
                 {COLUMNS.map((col) => (
                   <Column
                     key={col.status}
@@ -525,55 +547,52 @@ function FilterBar({
   filterActive: boolean;
 }) {
   return (
-    <div className="mb-4 rounded-[var(--radius-md)] border bg-background p-3 space-y-2">
+    <div className="mb-4 space-y-3">
       {kinds.length > 0 && (
-      <div className="flex items-center gap-1.5 flex-wrap">
-        {kinds.map((k) => {
-          const meta = KIND_META[k];
-          const Icon = meta.icon;
-          const active = activeKinds.has(k);
-          const count = kindCounts[k];
-          return (
-            <button
-              key={k}
-              type="button"
-              onClick={() => onToggleKind(k)}
-              aria-pressed={active}
-              className={cn(
-                "inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full border text-xs font-medium transition-colors press-scale",
-                active ? meta.cls : "bg-background hover:bg-muted text-muted-foreground",
-              )}
-            >
-              <Icon className="h-3.5 w-3.5" />
-              {meta.plural}
-              <span
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {kinds.map((k) => {
+            const meta = KIND_META[k];
+            const Icon = meta.icon;
+            const active = activeKinds.has(k);
+            const count = kindCounts[k];
+            return (
+              <button
+                key={k}
+                type="button"
+                onClick={() => onToggleKind(k)}
+                aria-pressed={active}
                 className={cn(
-                  "ml-0.5 tabular-nums",
-                  active ? "opacity-80" : "opacity-60",
+                  "inline-flex items-center gap-1.5 h-7 px-3 rounded-full border text-xs font-medium press-scale",
+                  active
+                    ? "bg-[var(--spark)] text-[#0a1400] border-[var(--spark)] font-bold"
+                    : "bg-white/5 text-white/85 border-white/10 hover:bg-white/8",
                 )}
               >
-                {count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+                <Icon className="h-3.5 w-3.5" />
+                {meta.plural}
+                <span className="ml-0.5 font-mono text-[10px] tabular-nums opacity-70">
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       )}
-      <div className="flex items-center gap-2 flex-wrap">
-        <label className="relative flex items-center h-9 flex-1 min-w-[220px]">
-          <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
+      <div className="flex items-center gap-2.5 flex-wrap">
+        <label className="relative flex items-center h-10 flex-1 min-w-[220px]">
+          <Search className="absolute left-3.5 h-3.5 w-3.5 text-white/40" />
           <input
             value={query}
             onChange={(e) => onQuery(e.target.value)}
             placeholder="Search body, title or author…"
-            className="w-full h-9 pl-8 pr-2 rounded-md bg-muted/40 text-sm outline-none placeholder:text-muted-foreground"
+            className="w-full h-10 pl-10 pr-3 rounded-xl bg-white/4 border border-white/8 text-sm outline-none placeholder:text-white/40 focus:border-[var(--spark)]/30"
           />
         </label>
         {routes.length > 0 && (
           <select
             value={routeFilter}
             onChange={(e) => onRouteFilter(e.target.value)}
-            className="h-9 px-2 rounded-md border bg-background text-sm font-mono text-muted-foreground"
+            className="h-10 px-3 rounded-xl border border-white/8 bg-white/4 text-sm font-mono text-white/85 outline-none"
           >
             <option value="">All routes</option>
             {routes.map((r) => (
@@ -587,7 +606,7 @@ function FilterBar({
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center gap-1 h-9 px-2.5 rounded-md text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
+            className="inline-flex items-center gap-1 h-10 px-3 rounded-xl text-xs text-white/55 hover:text-white hover:bg-white/5 border border-transparent"
           >
             <XIcon className="h-3.5 w-3.5" />
             Clear
@@ -595,7 +614,7 @@ function FilterBar({
         )}
       </div>
       {tags.length > 0 && (
-        <div className="flex items-center flex-wrap gap-1">
+        <div className="flex items-center flex-wrap gap-1.5">
           {tags.map(({ tag, count }) => {
             const active = activeTags.has(tag);
             return (
@@ -604,14 +623,14 @@ function FilterBar({
                 key={tag}
                 onClick={() => onToggleTag(tag)}
                 className={cn(
-                  "inline-flex items-center h-6 px-2 rounded-full text-[11px] border transition-colors",
+                  "inline-flex items-center h-7 px-2.5 rounded-full text-[11px] border transition-colors",
                   active
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-muted border-transparent hover:bg-muted/70",
+                    ? "bg-[var(--spark)] text-[#0a1400] border-[var(--spark)] font-bold"
+                    : "bg-white/5 border-transparent text-white/85 hover:bg-white/8",
                 )}
               >
                 {tag}
-                <span className="ml-1 opacity-60">{count}</span>
+                <span className="ml-1.5 font-mono text-[9px] opacity-60">{count}</span>
               </button>
             );
           })}
@@ -628,39 +647,58 @@ function Column({
   onVote,
   onOpenThread,
 }: {
-  column: { status: CommentStatus; label: string; accent: string };
+  column: { status: CommentStatus; label: string; accent: string; dot: string };
   items: BoardItem[];
   admin: boolean;
   onVote: (id: string, kind: BoardItem["kind"], value: -1 | 0 | 1) => Promise<void>;
   onOpenThread: (id: string) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.status });
+  const isShipped = column.status === "shipped";
+  const isWontdo = column.status === "wont_do";
   return (
-    <div ref={setNodeRef} className="flex flex-col min-w-0">
-      <div className="flex items-center gap-2 mb-2 px-1">
-        <span className={cn("h-2 w-2 rounded-full", column.accent)} />
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+    <div className="flex flex-col min-w-0">
+      <div className="flex items-center gap-2 mb-3 px-1">
+        <span
+          className="h-1.5 w-1.5 rounded-full"
+          style={{
+            background: column.dot,
+            boxShadow: isShipped ? "0 0 10px var(--spark)" : undefined,
+          }}
+        />
+        <h2
+          className={cn(
+            "font-mono text-[10px] tracking-[0.12em] uppercase",
+            isShipped ? "text-[var(--spark)]" : "text-[var(--paper)]",
+          )}
+        >
           {column.label}
         </h2>
-        <span className="text-xs text-muted-foreground tabular-nums">{items.length}</span>
+        <span className="font-display text-lg text-white/70 tabular-nums">{items.length}</span>
       </div>
       <div
+        ref={setNodeRef}
         className={cn(
-          "flex-1 space-y-2 rounded-[var(--radius-md)] transition-colors min-h-[120px] p-0.5",
-          isOver && "bg-primary/5 outline outline-2 outline-dashed outline-primary/30",
+          "flex-1 space-y-2 rounded-2xl transition-colors min-h-[300px] p-1.5 border border-dashed border-transparent",
+          isShipped && "bg-[var(--spark)]/[0.03] border-[var(--spark)]/10 border-solid",
+          isWontdo && "bg-white/[0.02]",
+          isOver && "bg-[var(--spark)]/8 border-[var(--spark)]/30 border-solid",
         )}
       >
-        {items.map((c) => (
+        {items.map((c, i) => (
           <DraggableCard
             key={c.id}
             item={c}
             admin={admin}
             onVote={onVote}
             onOpenThread={onOpenThread}
+            tilt={i === 0 && column.status === "open"}
           />
         ))}
         {items.length === 0 && (
-          <div className="text-xs text-muted-foreground/60 px-1 py-3 italic">nothing here yet</div>
+          <div className="text-[11px] text-white/30 px-2 py-8 italic text-center">
+            nothing here yet
+          </div>
         )}
       </div>
     </div>
@@ -672,11 +710,13 @@ function DraggableCard({
   admin,
   onVote,
   onOpenThread,
+  tilt,
 }: {
   item: BoardItem;
   admin: boolean;
   onVote: (id: string, kind: BoardItem["kind"], value: -1 | 0 | 1) => Promise<void>;
   onOpenThread: (id: string) => void;
+  tilt?: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: item.id,
@@ -684,7 +724,9 @@ function DraggableCard({
   });
   const style = transform
     ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` }
-    : undefined;
+    : tilt
+      ? { transform: "rotate(-0.4deg)" }
+      : undefined;
   return (
     <div
       ref={setNodeRef}
@@ -727,15 +769,10 @@ function FeedbackCard({
   admin: boolean;
   isOverlay?: boolean;
 }) {
-  const initials =
-    item.author.name
-      .split(" ")
-      .map((s) => s[0])
-      .filter(Boolean)
-      .join("")
-      .slice(0, 2)
-      .toUpperCase() || "?";
   const isProposal = item.kind === "proposal";
+  const isShipped = item.status === "shipped";
+  const isHot = item.voteScore >= 20;
+  const kindLabel = itemKind(item).toUpperCase();
   return (
     <article
       role="button"
@@ -754,14 +791,23 @@ function FeedbackCard({
         }
       }}
       className={cn(
-        "group rounded-[var(--radius-md)] border bg-card p-3 text-left",
+        "group rounded-2xl border p-3.5 text-left",
         !isOverlay &&
-          "stagger-in cursor-pointer hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:border-primary/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
-        isOverlay && "shadow-[0_16px_40px_rgba(0,0,0,0.2)] rotate-[1.5deg]",
+          "stagger-in cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--spark)]/40",
+        isOverlay && "shadow-[0_16px_40px_rgba(0,0,0,0.5)] rotate-[1.5deg]",
       )}
+      style={{
+        background: isHot
+          ? "color-mix(in oklch, var(--spark) 10%, #14120e)"
+          : "rgba(20,18,14,.75)",
+        borderColor: isHot ? "rgba(180,255,57,.3)" : "rgba(255,255,255,.07)",
+      }}
     >
-      <div className="flex items-start gap-2">
-        <div data-card-stop className="flex flex-col items-center gap-0.5 shrink-0">
+      <div className="grid grid-cols-[auto_1fr_auto] items-start gap-3">
+        <div
+          data-card-stop
+          className="flex flex-col items-center gap-0.5 shrink-0 pt-0.5 min-w-[26px]"
+        >
           <button
             type="button"
             onClick={(e) => {
@@ -769,14 +815,19 @@ function FeedbackCard({
               onVote(item.myVote === 1 ? 0 : 1);
             }}
             className={cn(
-              "h-6 w-6 rounded hover:bg-muted flex items-center justify-center",
-              item.myVote === 1 && "text-primary",
+              "h-5 w-5 flex items-center justify-center hover:text-[var(--spark)]",
+              item.myVote === 1 ? "text-[var(--spark)] opacity-100" : "opacity-40",
             )}
             aria-label="Upvote"
           >
-            <ChevronUp className="h-4 w-4" />
+            <ChevronUp className="h-3.5 w-3.5" />
           </button>
-          <span className="text-xs font-semibold tabular-nums">{item.voteScore}</span>
+          <span
+            className="font-display text-[16px] leading-none tabular-nums"
+            style={{ color: isHot ? "var(--spark)" : "var(--paper)" }}
+          >
+            {item.voteScore}
+          </span>
           <button
             type="button"
             onClick={(e) => {
@@ -784,37 +835,52 @@ function FeedbackCard({
               onVote(item.myVote === -1 ? 0 : -1);
             }}
             className={cn(
-              "h-6 w-6 rounded hover:bg-muted flex items-center justify-center",
-              item.myVote === -1 && "text-destructive",
+              "h-5 w-5 flex items-center justify-center hover:text-red-400",
+              item.myVote === -1 ? "text-red-400 opacity-100" : "opacity-25",
             )}
             aria-label="Downvote"
           >
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="h-3.5 w-3.5" />
           </button>
         </div>
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0">
           {item.kind === "comment" && item.screenshotUrl && (
             <img
               src={item.screenshotUrl}
               alt=""
-              className="w-full h-20 object-cover object-top rounded-sm border mb-2"
+              className="w-full h-20 object-cover object-top rounded-md border border-white/8 mb-2"
             />
           )}
           {isProposal && (
-            <p className="text-sm font-semibold leading-snug line-clamp-2 break-words mb-0.5">
+            <p className="text-[13px] font-semibold leading-snug line-clamp-2 break-words mb-1">
               {(item as BoardItem & { kind: "proposal" }).title}
             </p>
           )}
           <p
             className={cn(
-              "text-sm leading-snug break-words",
-              isProposal ? "line-clamp-2 text-muted-foreground" : "line-clamp-3",
+              "text-[13px] leading-[1.4] break-words",
+              isProposal ? "line-clamp-2 text-white/65" : "line-clamp-3 text-white/90",
+              isShipped && "line-through opacity-60",
             )}
           >
             {item.body}
           </p>
-          <div className="mt-2 flex items-center flex-wrap gap-1.5">
-            <KindBadge kind={itemKind(item)} />
+          <div className="mt-2.5 flex items-center flex-wrap gap-1.5">
+            <span
+              className="px-2 py-0.5 rounded-full font-mono text-[8px] font-bold tracking-[0.1em]"
+              style={{
+                background: isHot ? "var(--spark)" : "rgba(255,255,255,.08)",
+                color: isHot
+                  ? "#0a1400"
+                  : kindLabel === "IDEA"
+                    ? "var(--spark)"
+                    : kindLabel === "IMPROVEMENT"
+                      ? "#fde047"
+                      : "#93c5fd",
+              }}
+            >
+              ● {kindLabel}
+            </span>
             {item.kind === "comment" && (
               <a
                 data-card-stop
@@ -822,54 +888,39 @@ function FeedbackCard({
                 target="_blank"
                 rel="noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] font-mono text-muted-foreground hover:text-foreground hover:border-primary/50"
+                className="inline-flex items-center gap-1 h-5 px-1.5 rounded border border-white/8 bg-white/4 text-[9px] font-mono text-white/65 hover:text-white hover:border-[var(--spark)]/40"
                 title={`Open ${item.route} with this thread`}
               >
-                <ExternalLink className="h-3 w-3" />
+                <ExternalLink className="h-2.5 w-2.5" />
                 {item.route}
               </a>
             )}
-            <span
-              className="inline-flex items-center gap-1 h-5 px-1.5 rounded border bg-background text-[10px] text-muted-foreground"
-              title={
-                item.replies.length === 1
-                  ? "1 comment"
-                  : `${item.replies.length} comments`
-              }
-              aria-label={
-                item.replies.length === 1
-                  ? "1 comment"
-                  : `${item.replies.length} comments`
-              }
-            >
-              <MessageSquare className="h-3 w-3" />
+            <span className="inline-flex items-center gap-1 h-5 px-1.5 rounded border border-white/8 bg-white/4 text-[9px] font-mono text-white/65">
+              <MessageSquare className="h-2.5 w-2.5" />
               {item.replies.length}
             </span>
             {item.kind === "comment" &&
-              item.tags.slice(0, 3).map((t) => (
+              item.tags.slice(0, 2).map((t) => (
                 <span
                   key={t}
-                  className="inline-flex items-center h-5 px-1.5 rounded-full bg-muted text-[10px]"
+                  className="inline-flex items-center h-5 px-1.5 rounded-full bg-white/6 text-[9px] text-white/70"
                 >
                   {t}
                 </span>
               ))}
           </div>
-          <div className="mt-2 flex items-center text-[11px] text-muted-foreground">
+          <div className="mt-2.5 pt-2.5 border-t border-dashed border-white/6 flex items-center justify-between text-[10px] text-white/55">
             <div className="flex items-center gap-1.5 min-w-0">
-              {item.author.avatarUrl ? (
-                <img
-                  src={item.author.avatarUrl}
-                  alt=""
-                  className="h-4 w-4 rounded-full object-cover"
-                />
-              ) : (
-                <span className="h-4 w-4 rounded-full text-[8px] font-semibold flex items-center justify-center text-white bg-gradient-to-br from-[#8b5cf6] via-[#ec4899] to-[#f59e0b]">
-                  {initials}
-                </span>
-              )}
+              <AuthorAvatar
+                name={item.author.name}
+                avatarUrl={item.author.avatarUrl}
+                size={14}
+              />
               <span className="truncate">{item.author.name}</span>
             </div>
+            <span className="font-mono text-[9px] text-white/40">
+              {shortDate(item.createdAt)}
+            </span>
           </div>
         </div>
         {admin && (
@@ -877,7 +928,7 @@ function FeedbackCard({
             type="button"
             data-card-stop
             className={cn(
-              "h-6 w-5 -mr-1 shrink-0 flex items-center justify-center text-muted-foreground cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity",
+              "h-6 w-5 -mr-1 shrink-0 flex items-center justify-center text-white/40 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity",
               isOverlay && "opacity-100",
             )}
             aria-label="Drag to change status"
@@ -887,11 +938,217 @@ function FeedbackCard({
               e.stopPropagation();
             }}
           >
-            <GripVertical className="h-4 w-4" />
+            <GripVertical className="h-3.5 w-3.5" />
           </button>
         )}
       </div>
     </article>
+  );
+}
+
+function shortDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
+
+function ProposalsList({
+  items,
+  onVote,
+  onOpenThread,
+}: {
+  items: BoardItem[];
+  onVote: (id: string, kind: BoardItem["kind"], value: -1 | 0 | 1) => Promise<void>;
+  onOpenThread: (id: string) => void;
+}) {
+  if (items.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-10 text-center text-sm text-white/55">
+        No proposals match these filters.
+      </div>
+    );
+  }
+  return (
+    <div className="grid grid-cols-1 gap-2.5">
+      {items.map((p) => (
+        <ProposalRow
+          key={p.id}
+          item={p}
+          onVote={(v) => onVote(p.id, p.kind, v)}
+          onOpenThread={() => onOpenThread(p.id)}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ProposalRow({
+  item,
+  onVote,
+  onOpenThread,
+}: {
+  item: BoardItem;
+  onVote: (value: -1 | 0 | 1) => void;
+  onOpenThread: () => void;
+}) {
+  const isHot = item.voteScore >= 30;
+  const kindLabel = itemKind(item).toUpperCase();
+  const kindFg =
+    kindLabel === "IDEA" ? "var(--spark)" : kindLabel === "IMPROVEMENT" ? "#fde047" : "#93c5fd";
+  const statusColor =
+    item.status === "open"
+      ? "#86efac"
+      : item.status === "triaged"
+        ? "#93c5fd"
+        : item.status === "planned"
+          ? "#fde047"
+          : item.status === "shipped"
+            ? "var(--spark)"
+            : "rgba(255,255,255,.4)";
+  const statusLabel = COLUMNS.find((c) => c.status === item.status)?.label ?? item.status;
+  const title = item.kind === "proposal" ? item.title : item.body.split("\n")[0]?.slice(0, 80);
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={(e) => {
+        const t = e.target as HTMLElement | null;
+        if (t?.closest("[data-card-stop]")) return;
+        onOpenThread();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpenThread();
+        }
+      }}
+      className="grid grid-cols-[80px_1fr_auto] gap-6 items-center rounded-2xl border p-5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--spark)]/40 transition-colors hover:bg-white/[0.02]"
+      style={{
+        background: isHot
+          ? "color-mix(in oklch, var(--spark) 8%, #14120e)"
+          : "rgba(20,18,14,.6)",
+        borderColor: isHot ? "rgba(180,255,57,.25)" : "rgba(255,255,255,.07)",
+      }}
+    >
+      <div
+        data-card-stop
+        className="text-center border-r border-white/8 pr-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={() => onVote(item.myVote === 1 ? 0 : 1)}
+          className={cn(
+            "flex items-center justify-center w-full mb-1 hover:text-[var(--spark)]",
+            item.myVote === 1 ? "text-[var(--spark)] opacity-100" : "opacity-40",
+          )}
+          aria-label="Upvote"
+        >
+          <ChevronUp className="h-3.5 w-3.5" />
+        </button>
+        <div
+          className="font-display text-[36px] leading-none tabular-nums my-0.5"
+          style={{ color: isHot ? "var(--spark)" : "var(--paper)" }}
+        >
+          {item.voteScore}
+        </div>
+        <button
+          type="button"
+          onClick={() => onVote(item.myVote === -1 ? 0 : -1)}
+          className={cn(
+            "flex items-center justify-center w-full mt-1 hover:text-red-400",
+            item.myVote === -1 ? "text-red-400 opacity-100" : "opacity-25",
+          )}
+          aria-label="Downvote"
+        >
+          <ChevronDown className="h-3.5 w-3.5" />
+        </button>
+      </div>
+      <div className="min-w-0">
+        <div className="flex items-center gap-2.5 mb-2 flex-wrap">
+          <span
+            className="px-2 py-0.5 rounded-full font-mono text-[9px] tracking-[0.1em] font-bold"
+            style={{
+              background: isHot ? "var(--spark)" : "rgba(255,255,255,.08)",
+              color: isHot ? "#0a1400" : kindFg,
+            }}
+          >
+            ● {kindLabel}
+          </span>
+          <span
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-mono text-[9px] tracking-[0.1em] font-bold border"
+            style={{
+              borderColor: statusColor as string,
+              color: statusColor as string,
+              background: "rgba(255,255,255,.04)",
+            }}
+          >
+            <span
+              className="h-1 w-1 rounded-full"
+              style={{
+                background: statusColor as string,
+                boxShadow:
+                  item.status === "shipped" ? "0 0 8px var(--spark)" : undefined,
+              }}
+            />
+            {statusLabel.toUpperCase()}
+          </span>
+          {item.kind === "comment" && (
+            <span className="font-mono text-[10px] text-white/50">↗ {item.route}</span>
+          )}
+          {item.kind === "comment" &&
+            item.tags.slice(0, 2).map((t) => (
+              <span
+                key={t}
+                className="px-2 py-0.5 rounded-full bg-white/5 text-[10px] text-white/65"
+              >
+                {t}
+              </span>
+            ))}
+        </div>
+        <div className="font-display text-[22px] leading-[1.15] tracking-[-0.01em] mb-1.5 line-clamp-1">
+          {title}
+        </div>
+        <div className="text-[13px] text-white/65 leading-[1.5] line-clamp-2">{item.body}</div>
+        <div className="mt-2.5 flex items-center gap-3.5 text-[11px] text-white/55">
+          <div className="flex items-center gap-1.5">
+            <AuthorAvatar
+              name={item.author.name}
+              avatarUrl={item.author.avatarUrl}
+              size={16}
+            />
+            <span>{item.author.name}</span>
+          </div>
+          <span className="text-white/25">·</span>
+          <span>{shortDate(item.createdAt)}</span>
+          <span className="text-white/25">·</span>
+          <span className="inline-flex items-center gap-1">
+            <MessageSquare className="h-3 w-3" />
+            {item.replies.length}
+            {item.replies.length === 1 ? " reply" : " replies"}
+          </span>
+        </div>
+      </div>
+      <div data-card-stop className="flex items-center gap-2.5">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onVote(item.myVote === 1 ? 0 : 1);
+          }}
+          className={cn(
+            "h-10 w-10 rounded-full border flex items-center justify-center transition-colors press-scale",
+            item.myVote === 1
+              ? "bg-[var(--spark)] text-[#0a1400] border-[var(--spark)]"
+              : "bg-white/5 text-[var(--paper)] border-white/10 hover:bg-white/8",
+          )}
+          aria-label="Upvote"
+        >
+          <ChevronUp className="h-4 w-4" />
+        </button>
+        <ChevronRight className="h-4 w-4 text-white/35" />
+      </div>
+    </div>
   );
 }
 
@@ -1139,6 +1396,39 @@ function labelFor(status: CommentStatus): string {
   return COLUMNS.find((c) => c.status === status)?.label ?? status;
 }
 
+function HeroStat({
+  label,
+  value,
+  dot,
+  glow,
+}: {
+  label: string;
+  value: number;
+  dot: string;
+  glow?: boolean;
+}) {
+  return (
+    <div className="inline-flex items-center gap-2">
+      <span
+        className="h-1.5 w-1.5 rounded-full"
+        style={{
+          background: dot,
+          boxShadow: glow ? `0 0 10px ${dot}` : undefined,
+        }}
+      />
+      <span className="text-xs text-white/75">
+        <span
+          className="font-display text-lg tabular-nums mr-1"
+          style={{ color: glow ? "var(--spark)" : "var(--paper)" }}
+        >
+          {value}
+        </span>
+        {label}
+      </span>
+    </div>
+  );
+}
+
 function TabBar({
   tab,
   onTab,
@@ -1159,7 +1449,7 @@ function TabBar({
     { value: "contributors", label: "Contributors", icon: Trophy },
   ];
   return (
-    <div className="mb-4 flex items-center gap-1 border-b">
+    <div className="mb-6 flex items-center gap-9 border-b border-white/6">
       {TABS.map((t) => {
         const Icon = t.icon;
         const active = tab === t.value;
@@ -1170,28 +1460,36 @@ function TabBar({
             onClick={() => onTab(t.value)}
             aria-pressed={active}
             className={cn(
-              "relative inline-flex items-center gap-2 h-10 px-3 text-sm font-medium transition-colors",
-              active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+              "relative inline-flex items-center gap-2 pt-2.5 pb-3.5 text-sm transition-colors",
+              active
+                ? "text-[var(--paper)] font-semibold"
+                : "text-white/45 hover:text-white/80 font-normal",
             )}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-3.5 w-3.5" />
             {t.label}
             {typeof t.count === "number" && (
               <span
                 className={cn(
-                  "ml-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full px-1 text-[10px] font-semibold tabular-nums",
-                  active ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground",
+                  "ml-0.5 inline-flex items-center justify-center min-w-[20px] h-[18px] rounded-full px-1.5 font-mono text-[9px] font-semibold tabular-nums",
+                  active
+                    ? "bg-[var(--spark)] text-[#0a1400]"
+                    : "bg-white/8 text-white/55",
                 )}
               >
                 {t.count}
               </span>
             )}
             {active && (
-              <span className="absolute left-2 right-2 -bottom-px h-[2px] rounded-t bg-primary" />
+              <span className="absolute left-0 right-0 -bottom-px h-[2px] bg-[var(--spark)]" />
             )}
           </button>
         );
       })}
+      <div className="flex-1" />
+      <span className="hidden md:inline-block font-mono text-[10px] tracking-[0.12em] uppercase text-white/40 pb-3.5">
+        ↻ syncing every 15s
+      </span>
     </div>
   );
 }
@@ -1303,34 +1601,116 @@ function ContributorsPanel({
     );
   }
 
+  const top3 = contributors.slice(0, 3);
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Users className="h-3.5 w-3.5" />
-          <span>
-            {contributors.length} contributor{contributors.length === 1 ? "" : "s"}
+    <div className="space-y-6">
+      <div className="flex items-end justify-between gap-3 flex-wrap">
+        <div className="flex items-baseline gap-3.5">
+          <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-white/50">
+            {contributors.length} contributor{contributors.length === 1 ? "" : "s"} this month
+          </span>
+          <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--spark)]/70">
+            score = activity + votes ÷ 2
           </span>
           {myRank && (
-            <span className="ml-2 inline-flex items-center h-5 px-1.5 rounded-full bg-primary/10 text-primary font-medium">
-              You're #{myRank}
+            <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--spark)]">
+              you're #{myRank}
             </span>
           )}
         </div>
-        {myIndex >= 0 && (
-          <button
-            type="button"
-            onClick={showMe}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md border bg-background text-xs font-medium hover:bg-muted press-scale"
-          >
-            <Trophy className="h-3.5 w-3.5 text-primary" />
-            Show me
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {myIndex >= 0 && (
+            <button
+              type="button"
+              onClick={showMe}
+              className="h-8 px-3 rounded-full border border-white/10 bg-white/4 text-[11px] font-medium hover:bg-white/8 inline-flex items-center gap-1.5 press-scale"
+            >
+              <Trophy className="h-3.5 w-3.5 text-[var(--spark)]" />
+              Show me
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="rounded-[var(--radius-md)] border bg-background overflow-hidden">
-        <div className="grid grid-cols-[40px_1fr_80px_80px_80px_80px_auto] items-center gap-3 px-3 py-2 text-[11px] uppercase tracking-wider text-muted-foreground border-b bg-muted/30">
+      {/* Podium */}
+      {top3.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 items-end">
+          {[top3[1], top3[0], top3[2]]
+            .filter((c): c is Contributor => Boolean(c))
+            .map((c, _i) => {
+              const rank = contributors.indexOf(c) + 1;
+              const isFirst = rank === 1;
+              const medal = rank === 1 ? "🥇" : rank === 2 ? "🥈" : "🥉";
+              const h = isFirst ? 220 : rank === 2 ? 180 : 160;
+              return (
+                <button
+                  key={c.author.id}
+                  type="button"
+                  onClick={() => handleSelectContributor(c.author.id)}
+                  className="relative overflow-hidden p-6 rounded-3xl border text-left transition-transform hover:-translate-y-0.5"
+                  style={{
+                    height: h,
+                    background: isFirst
+                      ? "color-mix(in oklch, var(--spark) 18%, #14120e)"
+                      : "rgba(20,18,14,.7)",
+                    borderColor: isFirst
+                      ? "var(--spark)"
+                      : "rgba(255,255,255,.08)",
+                    boxShadow: isFirst
+                      ? "0 24px 60px -20px var(--spark)"
+                      : undefined,
+                  }}
+                >
+                  <span className="absolute top-3.5 right-3.5 text-3xl">{medal}</span>
+                  <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-white/60 mb-3.5">
+                    #{rank}
+                  </div>
+                  <div className="flex items-center gap-3 mb-3.5">
+                    <span className="block">
+                      <AuthorAvatar
+                        name={c.author.name}
+                        avatarUrl={c.author.avatarUrl}
+                        size={42}
+                      />
+                    </span>
+                    <div className="min-w-0">
+                      <div className="font-display text-[22px] leading-none tracking-[-0.01em] truncate">
+                        {c.author.name}
+                      </div>
+                      <div className="text-[11px] text-white/55 mt-1">
+                        {c.comments} comments · {c.proposals} proposals
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="absolute left-6 right-6 bottom-5 pt-3 flex items-baseline gap-2"
+                    style={{
+                      borderTop: `1px ${isFirst ? "solid" : "dashed"} rgba(255,255,255,.10)`,
+                    }}
+                  >
+                    <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-white/55">
+                      Score
+                    </span>
+                    <span
+                      className="font-display tabular-nums leading-none"
+                      style={{
+                        fontSize: isFirst ? 44 : 34,
+                        color: isFirst ? "var(--spark)" : "var(--paper)",
+                      }}
+                    >
+                      {c.score}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+        </div>
+      )}
+
+      {/* Table */}
+      <div className="rounded-2xl border border-white/8 bg-white/[0.02] overflow-hidden">
+        <div className="grid grid-cols-[60px_1fr_90px_90px_90px_110px_30px] items-center gap-3 px-5 py-3 border-b border-white/8 bg-black/30 font-mono text-[10px] tracking-[0.12em] uppercase text-white/55">
           <span>#</span>
           <span>Person</span>
           <span className="text-right">Comments</span>
@@ -1352,23 +1732,23 @@ function ContributorsPanel({
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-1">
+        <div className="flex items-center justify-center gap-1.5">
           <button
             type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="h-8 px-3 rounded-md border bg-background text-xs disabled:opacity-50 hover:bg-muted press-scale"
+            className="h-8 px-3.5 rounded-full border border-white/10 bg-white/4 text-[11px] disabled:opacity-50 hover:bg-white/8 press-scale"
           >
             Prev
           </button>
-          <span className="h-8 inline-flex items-center px-3 text-xs text-muted-foreground tabular-nums">
+          <span className="h-8 inline-flex items-center px-3 text-[11px] text-white/55 tabular-nums">
             {currentPage} / {totalPages}
           </span>
           <button
             type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="h-8 px-3 rounded-md border bg-background text-xs disabled:opacity-50 hover:bg-muted press-scale"
+            className="h-8 px-3.5 rounded-full border border-white/10 bg-white/4 text-[11px] disabled:opacity-50 hover:bg-white/8 press-scale"
           >
             Next
           </button>
@@ -1398,50 +1778,54 @@ const ContributorRow = memo(function ContributorRow({
       type="button"
       onClick={() => onSelect(c.author.id)}
       className={cn(
-        "w-full grid grid-cols-[40px_1fr_80px_80px_80px_80px_auto] items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors border-b last:border-b-0 hover:bg-muted/60",
-        isMe && "bg-primary/5",
-        isHighlighted && "ring-2 ring-primary/60 ring-inset bg-primary/10",
+        "w-full grid grid-cols-[60px_1fr_90px_90px_90px_110px_30px] items-center gap-3 px-5 py-3.5 text-left transition-colors border-b border-white/5 last:border-b-0 hover:bg-white/[0.04]",
+        isMe && "bg-[var(--spark)]/[0.04]",
+        isHighlighted && "ring-2 ring-[var(--spark)]/50 ring-inset bg-[var(--spark)]/[0.07]",
       )}
     >
-      <span
-        className={cn(
-          "font-semibold tabular-nums text-xs",
-          rank === 1 && "text-primary",
-          rank === 2 && "text-foreground/80",
-          rank === 3 && "text-warning",
-          rank > 3 && "text-muted-foreground",
-        )}
-      >
-        {rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `#${rank}`}
-      </span>
-      <span className="flex items-center gap-2 min-w-0">
-        {c.author.avatarUrl ? (
-          <img
-            src={c.author.avatarUrl}
-            alt=""
-            className="h-7 w-7 rounded-full object-cover shrink-0"
-          />
+      <span className="font-mono text-[13px]">
+        {rank === 1 ? (
+          <span className="text-lg">🥇</span>
+        ) : rank === 2 ? (
+          <span className="text-lg">🥈</span>
+        ) : rank === 3 ? (
+          <span className="text-lg">🥉</span>
         ) : (
-          <span className="h-7 w-7 rounded-full text-[10px] font-semibold flex items-center justify-center text-white shrink-0 bg-gradient-to-br from-[#8b5cf6] via-[#ec4899] to-[#f59e0b]">
-            {c.author.name
-              .split(" ")
-              .map((s) => s[0])
-              .filter(Boolean)
-              .join("")
-              .slice(0, 2)
-              .toUpperCase() || "?"}
-          </span>
+          <span className="text-white/45">#{rank}</span>
         )}
-        <span className="min-w-0 truncate font-medium">
-          {c.author.name}
-          {isMe && <span className="ml-1.5 text-[10px] font-normal text-primary">(you)</span>}
+      </span>
+      <span className="flex items-center gap-2.5 min-w-0">
+        <AuthorAvatar
+          name={c.author.name}
+          avatarUrl={c.author.avatarUrl}
+          size={30}
+        />
+        <span className="min-w-0">
+          <div className={cn("text-sm leading-tight truncate", isMe && "font-semibold")}>
+            {c.author.name}
+            {isMe && (
+              <span className="ml-1.5 text-[10px] font-normal text-[var(--spark)]">(you)</span>
+            )}
+          </div>
+          <div className="text-[10px] text-white/45 mt-0.5">{initialsFor(c.author.name)}</div>
         </span>
       </span>
-      <span className="text-right tabular-nums">{c.comments}</span>
-      <span className="text-right tabular-nums">{c.proposals}</span>
-      <span className="text-right tabular-nums">{c.replies}</span>
-      <span className="text-right tabular-nums font-semibold">{c.score}</span>
-      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      <span className="text-right font-display text-lg tabular-nums text-white/85">
+        {c.comments}
+      </span>
+      <span className="text-right font-display text-lg tabular-nums text-white/85">
+        {c.proposals}
+      </span>
+      <span className="text-right font-display text-lg tabular-nums text-white/85">
+        {c.replies}
+      </span>
+      <span
+        className="text-right font-display text-2xl tabular-nums leading-none"
+        style={{ color: rank === 1 ? "var(--spark)" : "var(--paper)" }}
+      >
+        {c.score}
+      </span>
+      <ChevronRight className="h-4 w-4 text-white/35" />
     </button>
   );
 });
@@ -1536,27 +1920,30 @@ function ContributorSheet({
 function EmptyState({ onPropose }: { onPropose: () => void }) {
   const navigate = useNavigate();
   return (
-    <div className="rounded-[var(--radius-lg)] border border-dashed bg-background/50 p-10 text-center">
-      <div className="mx-auto h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
+    <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-12 text-center">
+      <div className="mx-auto h-12 w-12 rounded-full bg-[var(--spark)]/10 text-[var(--spark)] flex items-center justify-center mb-4">
         <MessageSquare className="h-5 w-5" />
       </div>
-      <h2 className="font-display text-lg">Nothing on the board yet</h2>
-      <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
+      <h2 className="font-display text-2xl tracking-[-0.02em]">
+        Nothing on the wall <span className="italic text-[var(--spark)]">yet</span>.
+      </h2>
+      <p className="text-sm text-white/55 mt-2 max-w-sm mx-auto">
         Drop a comment pin anywhere in Pulse, or post a proposal — bug, idea, improvement.
       </p>
-      <div className="mt-4 flex items-center justify-center gap-2">
+      <div className="mt-6 flex items-center justify-center gap-2.5">
         <button
           onClick={onPropose}
-          className="inline-flex h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm press-scale"
+          className="inline-flex items-center gap-1.5 h-10 px-5 rounded-full bg-[var(--spark)] text-[#0a1400] text-[13px] font-bold press-scale"
+          style={{ boxShadow: "0 12px 28px -10px var(--spark)" }}
         >
-          <Plus className="h-4 w-4 mr-1" />
+          <Plus className="h-4 w-4" />
           New proposal
         </button>
         <button
-          onClick={() => navigate({ to: "/" })}
-          className="inline-flex h-9 px-3 rounded-md border bg-background text-sm press-scale"
+          onClick={() => navigate({ to: "/welcome" })}
+          className="inline-flex h-10 px-4 rounded-full border border-white/15 bg-transparent text-[13px] hover:bg-white/5 press-scale"
         >
-          Back to Pulse
+          Take the tour
         </button>
       </div>
     </div>
