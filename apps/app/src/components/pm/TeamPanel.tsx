@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useDraft } from "@/lib/use-draft";
 import { toast } from "sonner";
 import { Plus, Trash2, UserPlus } from "lucide-react";
 import { Card } from "@pulse-hr/ui/primitives/card";
@@ -284,7 +285,9 @@ function AllocationFormDialog({
   initial: Allocation | null;
   project: Project;
 }) {
-  const [draft, setDraft] = useState<Allocation>(
+  const draftKey = `pulsehr.draft.allocation-${initial?.id ?? `new-${project.id}`}`;
+  const { draft, setDraft, clearDraft } = useDraft<Allocation>(
+    draftKey,
     initial ?? {
       id: `al${Date.now()}`,
       projectId: project.id,
@@ -297,27 +300,8 @@ function AllocationFormDialog({
     },
   );
 
-  // Reset when opening with different initial
-  useMemo(() => {
-    if (open) {
-      setDraft(
-        initial ?? {
-          id: `al${Date.now()}`,
-          projectId: project.id,
-          employeeId: employees[0].id,
-          type: "dev",
-          percent: 50,
-          startDate: project.startDate,
-          endDate: project.endDate,
-          billableRate: undefined,
-        },
-      );
-    }
-    return null;
-  }, [open, initial?.id]);
-
   const set = <K extends keyof Allocation>(k: K, v: Allocation[K]) =>
-    setDraft((d) => ({ ...d, [k]: v }));
+    setDraft({ [k]: v } as Partial<Allocation>);
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -415,6 +399,7 @@ function AllocationFormDialog({
           <Button
             onClick={() => {
               onSave(draft);
+              clearDraft();
               onClose();
             }}
           >

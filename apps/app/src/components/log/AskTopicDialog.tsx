@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -19,6 +18,21 @@ import {
 } from "@pulse-hr/ui/primitives/select";
 import { Textarea } from "@pulse-hr/ui/primitives/textarea";
 import { employees, type ManagerAsk } from "@/lib/mock-data";
+import { useDraft } from "@/lib/use-draft";
+
+interface AskDraft {
+  topic: string;
+  prompt: string;
+  dueAt: string;
+  tone: ManagerAsk["tone"];
+}
+
+const EMPTY_ASK_DRAFT: AskDraft = {
+  topic: "",
+  prompt: "",
+  dueAt: "",
+  tone: "neutral",
+};
 
 export function AskTopicDialog({
   employeeId,
@@ -31,10 +45,11 @@ export function AskTopicDialog({
   onOpenChange: (o: boolean) => void;
   onCreate?: (ask: ManagerAsk) => void;
 }) {
-  const [topic, setTopic] = useState("");
-  const [prompt, setPrompt] = useState("");
-  const [dueAt, setDueAt] = useState("");
-  const [tone, setTone] = useState<ManagerAsk["tone"]>("neutral");
+  const { draft, setDraft, clearDraft } = useDraft<AskDraft>(
+    `pulsehr.draft.manager-ask-${employeeId}`,
+    EMPTY_ASK_DRAFT,
+  );
+  const { topic, prompt, dueAt, tone } = draft;
   const employee = employees.find((e) => e.id === employeeId);
 
   function submit() {
@@ -53,10 +68,7 @@ export function AskTopicDialog({
     onCreate?.(ask);
     toast.success(`Sent to ${employee?.name.split(" ")[0] ?? "report"}`);
     onOpenChange(false);
-    setTopic("");
-    setPrompt("");
-    setDueAt("");
-    setTone("neutral");
+    clearDraft();
   }
 
   return (
@@ -71,7 +83,7 @@ export function AskTopicDialog({
             <Input
               placeholder="Feedback on ACME demo"
               value={topic}
-              onChange={(e) => setTopic(e.target.value)}
+              onChange={(e) => setDraft({ topic: e.target.value })}
             />
           </div>
           <div className="space-y-1.5">
@@ -80,17 +92,20 @@ export function AskTopicDialog({
               rows={3}
               placeholder="What question should we put in front of them?"
               value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
+              onChange={(e) => setDraft({ prompt: e.target.value })}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label>Due</Label>
-              <Input type="date" value={dueAt} onChange={(e) => setDueAt(e.target.value)} />
+              <Input type="date" value={dueAt} onChange={(e) => setDraft({ dueAt: e.target.value })} />
             </div>
             <div className="space-y-1.5">
               <Label>Tone</Label>
-              <Select value={tone} onValueChange={(v) => setTone(v as ManagerAsk["tone"])}>
+              <Select
+                value={tone}
+                onValueChange={(v) => setDraft({ tone: v as ManagerAsk["tone"] })}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

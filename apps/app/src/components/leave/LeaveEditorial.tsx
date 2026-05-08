@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { toast } from "sonner";
 import { useLeaveRequests, leaveTable } from "@/lib/tables/leave";
 import { type LeaveRequest } from "@/lib/mock-data";
+import { useDraft } from "@/lib/use-draft";
 
 const ME = "e1";
 const VACATION_ALLOWANCE = 24;
@@ -41,8 +42,13 @@ export function LeaveEditorial() {
   const permitHours = mine.filter((l) => l.type === "Personal" && l.status === "approved").reduce((s, l) => s + l.days * 8, 0);
 
   const today = new Date().toISOString().slice(0, 10);
-  const [draft, setDraft] = useState({
-    type: "Vacation" as LeaveRequest["type"],
+  const { draft, setDraft, clearDraft } = useDraft<{
+    type: LeaveRequest["type"];
+    from: string;
+    to: string;
+    reason: string;
+  }>("pulsehr.draft.leave-new", {
+    type: "Vacation",
     from: today,
     to: today,
     reason: "",
@@ -65,7 +71,7 @@ export function LeaveEditorial() {
     };
     leaveTable.add(r);
     toast.success("Richiesta inviata", { description: "In coda di approvazione." });
-    setDraft({ type: "Vacation", from: today, to: today, reason: "" });
+    clearDraft();
   }
 
   const history = useMemo(

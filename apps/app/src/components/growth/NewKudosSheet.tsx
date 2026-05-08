@@ -1,10 +1,24 @@
-import { useState } from "react";
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { kudosTable } from "@/lib/tables/kudos";
 import { useEmployees } from "@/lib/tables/employees";
 import { Avatar } from "@/components/app/AppShell";
 import { toast } from "sonner";
 import type { Kudo } from "@/lib/mock-data";
+import { useDraft } from "@/lib/use-draft";
+
+interface KudoDraft {
+  toId: string;
+  message: string;
+  tag: Kudo["tag"];
+  amount: number;
+}
+
+const EMPTY_KUDO_DRAFT: KudoDraft = {
+  toId: "",
+  message: "",
+  tag: "craft",
+  amount: 5,
+};
 
 const TAGS: Array<[Kudo["tag"], string]> = [
   ["craft", "CRAFT"],
@@ -18,17 +32,11 @@ const COIN_OPTIONS = [5, 10, 25, 50];
 
 export function NewKudosSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const employees = useEmployees();
-  const [toId, setToId] = useState("");
-  const [message, setMessage] = useState("");
-  const [tag, setTag] = useState<Kudo["tag"]>("craft");
-  const [amount, setAmount] = useState(5);
-
-  function reset() {
-    setToId("");
-    setMessage("");
-    setTag("craft");
-    setAmount(5);
-  }
+  const { draft, setDraft, clearDraft } = useDraft<KudoDraft>(
+    "pulsehr.draft.kudos-new",
+    EMPTY_KUDO_DRAFT,
+  );
+  const { toId, message, tag, amount } = draft;
 
   function publish() {
     if (!toId || !message.trim()) {
@@ -48,7 +56,7 @@ export function NewKudosSheet({ open, onClose }: { open: boolean; onClose: () =>
     toast.success("Kudos pubblicato", {
       action: { label: "Annulla", onClick: () => kudosTable.remove(k.id) },
     });
-    reset();
+    clearDraft();
     onClose();
   }
 
@@ -63,7 +71,7 @@ export function NewKudosSheet({ open, onClose }: { open: boolean; onClose: () =>
           </span>
           <select
             value={toId}
-            onChange={(e) => setToId(e.target.value)}
+            onChange={(e) => setDraft({ toId: e.target.value })}
             className="t-mono"
             style={{
               padding: "10px 12px",
@@ -95,7 +103,7 @@ export function NewKudosSheet({ open, onClose }: { open: boolean; onClose: () =>
                 <button
                   key={id}
                   type="button"
-                  onClick={() => setTag(id)}
+                  onClick={() => setDraft({ tag: id })}
                   className="t-mono"
                   style={{
                     padding: "6px 12px",
@@ -124,7 +132,7 @@ export function NewKudosSheet({ open, onClose }: { open: boolean; onClose: () =>
                 <button
                   key={n}
                   type="button"
-                  onClick={() => setAmount(n)}
+                  onClick={() => setDraft({ amount: n })}
                   className="t-mono"
                   style={{
                     padding: "6px 12px",
@@ -150,7 +158,7 @@ export function NewKudosSheet({ open, onClose }: { open: boolean; onClose: () =>
           </span>
           <textarea
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => setDraft({ message: e.target.value })}
             placeholder="Una frase concreta. Cosa ha fatto, perché conta."
             rows={4}
             style={{

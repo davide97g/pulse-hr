@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +19,7 @@ import {
 import type { Client, ClientContact } from "@/lib/mock-data";
 import { employees } from "@/lib/mock-data";
 import { ClientContactsEditor } from "./ClientContactsEditor";
+import { useDraft } from "@/lib/use-draft";
 
 const HUES = [
   { label: "Blue", value: "oklch(0.6 0.18 258)" },
@@ -67,13 +67,14 @@ export function ClientForm({
   initial?: Client | null;
 }) {
   const isEdit = !!initial;
-  const [draft, setDraft] = useState<Client>(initial ?? blankClient());
+  const draftKey = `pulsehr.draft.client-${initial?.id ?? "new"}`;
+  const { draft, setDraft, clearDraft } = useDraft<Client>(
+    draftKey,
+    initial ?? blankClient(),
+  );
 
-  useEffect(() => {
-    if (open) setDraft(initial ?? blankClient());
-  }, [open, initial]);
-
-  const set = <K extends keyof Client>(k: K, v: Client[K]) => setDraft((d) => ({ ...d, [k]: v }));
+  const set = <K extends keyof Client>(k: K, v: Client[K]) =>
+    setDraft({ [k]: v } as Partial<Client>);
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -186,6 +187,7 @@ export function ClientForm({
           <Button
             onClick={() => {
               onSave(draft);
+              clearDraft();
               onClose();
             }}
             disabled={!draft.name.trim()}

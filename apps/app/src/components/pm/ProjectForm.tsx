@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,7 @@ import {
 } from "@pulse-hr/ui/primitives/select";
 import type { Project, ProjectStatus } from "@/lib/mock-data";
 import { clients as clientSeed, employees, employeeById } from "@/lib/mock-data";
+import { useDraft } from "@/lib/use-draft";
 
 const STATUSES: ProjectStatus[] = ["draft", "active", "on_hold", "at_risk", "done", "closed"];
 
@@ -59,14 +60,14 @@ export function ProjectForm({
   lockedClientId?: string;
 }) {
   const isEdit = !!initial;
-  const [draft, setDraft] = useState<Project>(() => initial ?? blankProject(lockedClientId));
-
-  useEffect(() => {
-    if (open) setDraft(initial ?? blankProject(lockedClientId));
-  }, [open, initial, lockedClientId]);
+  const draftKey = `pulsehr.draft.project-${initial?.id ?? "new"}`;
+  const { draft, setDraft, clearDraft } = useDraft<Project>(
+    draftKey,
+    initial ?? blankProject(lockedClientId),
+  );
 
   const set = <K extends keyof Project>(k: K, v: Project[K]) =>
-    setDraft((d) => ({ ...d, [k]: v }));
+    setDraft({ [k]: v } as Partial<Project>);
 
   const selectedClient = useMemo(
     () => clientSeed.find((c) => c.id === draft.clientId),
@@ -89,6 +90,7 @@ export function ProjectForm({
     const clientName = clientSeed.find((c) => c.id === draft.clientId)?.name ?? draft.client;
     const ownerName = employeeById(draft.ownerId)?.name ?? draft.manager;
     onSave({ ...draft, client: clientName, manager: ownerName });
+    clearDraft();
     onClose();
   };
 

@@ -3,6 +3,14 @@ import { Plus, Camera, Type, Send, Hash } from "lucide-react";
 import { useCommentsOverlay } from "./CommentsOverlayProvider";
 import { TagInput } from "./TagInput";
 import { cn } from "@/lib/utils";
+import { useDraft } from "@/lib/use-draft";
+
+interface CommentComposerDraft {
+  body: string;
+  tags: string[];
+}
+
+const EMPTY_COMMENT_DRAFT: CommentComposerDraft = { body: "", tags: [] };
 
 const COMPOSER_W = 360;
 const COMPOSER_H = 160;
@@ -17,9 +25,12 @@ export function NewCommentComposer({
   onDismiss: () => void;
 }) {
   const { submitNew, author, pendingScreenshotUrl, screenshotStatus } = useCommentsOverlay();
-  const [body, setBody] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
-  const [showTags, setShowTags] = useState(false);
+  const { draft, setDraft, clearDraft } = useDraft<CommentComposerDraft>(
+    "pulsehr.draft.comment-new",
+    EMPTY_COMMENT_DRAFT,
+  );
+  const { body, tags } = draft;
+  const [showTags, setShowTags] = useState(tags.length > 0);
   const [pending, setPending] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -60,6 +71,7 @@ export function NewCommentComposer({
     setPending(true);
     try {
       await submitNew(body, { x, y }, tags);
+      clearDraft();
     } finally {
       setPending(false);
     }
@@ -102,7 +114,7 @@ export function NewCommentComposer({
         <input
           ref={inputRef}
           value={body}
-          onChange={(e) => setBody(e.target.value)}
+          onChange={(e) => setDraft({ body: e.target.value })}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -115,7 +127,11 @@ export function NewCommentComposer({
       </div>
       {(showTags || tags.length > 0) && (
         <div className="px-3 pb-1 pt-1">
-          <TagInput tags={tags} onChange={setTags} placeholder="tag (bug, idea…)" />
+          <TagInput
+            tags={tags}
+            onChange={(next) => setDraft({ tags: next })}
+            placeholder="tag (bug, idea…)"
+          />
         </div>
       )}
       <div className="flex items-center justify-between px-2 pb-2 pt-2">

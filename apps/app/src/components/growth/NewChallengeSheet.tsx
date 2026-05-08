@@ -1,11 +1,26 @@
-import { useState } from "react";
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { challengesTable } from "@/lib/tables/challenges";
 import { useEmployees } from "@/lib/tables/employees";
 import { toast } from "sonner";
 import type { Challenge } from "@/lib/mock-data";
+import { useDraft } from "@/lib/use-draft";
 
 type ChallengeKind = "individual" | "squad" | "company";
+
+interface ChallengeDraft {
+  kind: ChallengeKind;
+  title: string;
+  description: string;
+  dueAt: string;
+  xp: number;
+  ownerId: string;
+}
+
+function defaultDueDate(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 21);
+  return d.toISOString().slice(0, 10);
+}
 
 const KINDS: Array<[ChallengeKind, string, string]> = [
   ["individual", "INDIVIDUALE", "1 persona, 1 obiettivo"],
@@ -17,23 +32,18 @@ const XP_PRESETS = [100, 200, 350, 500];
 
 export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const employees = useEmployees();
-  const [kind, setKind] = useState<ChallengeKind>("squad");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [dueAt, setDueAt] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 21);
-    return d.toISOString().slice(0, 10);
-  });
-  const [xp, setXp] = useState(200);
-  const [ownerId, setOwnerId] = useState("e1");
-
-  function reset() {
-    setKind("squad");
-    setTitle("");
-    setDescription("");
-    setXp(200);
-  }
+  const { draft, setDraft, clearDraft } = useDraft<ChallengeDraft>(
+    "pulsehr.draft.challenge-new",
+    {
+      kind: "squad",
+      title: "",
+      description: "",
+      dueAt: defaultDueDate(),
+      xp: 200,
+      ownerId: "e1",
+    },
+  );
+  const { kind, title, description, dueAt, xp, ownerId } = draft;
 
   function publish() {
     if (!title.trim()) {
@@ -56,7 +66,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
     toast.success("Challenge creata", {
       action: { label: "Annulla", onClick: () => challengesTable.remove(c.id) },
     });
-    reset();
+    clearDraft();
     onClose();
   }
 
@@ -74,7 +84,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
                 <button
                   key={id}
                   type="button"
-                  onClick={() => setKind(id)}
+                  onClick={() => setDraft({ kind: id })}
                   className="p-3.5 flex flex-col text-left"
                   style={{
                     gap: 4,
@@ -114,7 +124,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
           </span>
           <input
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => setDraft({ title: e.target.value })}
             placeholder="Migrazione DB · zero downtime"
             style={{
               borderBottom: "1px solid var(--line-strong)",
@@ -141,7 +151,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
           </span>
           <textarea
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => setDraft({ description: e.target.value })}
             placeholder="Cosa serve, come si misura, chi è coinvolto."
             rows={3}
             style={{
@@ -167,7 +177,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
             <input
               type="date"
               value={dueAt}
-              onChange={(e) => setDueAt(e.target.value)}
+              onChange={(e) => setDraft({ dueAt: e.target.value })}
               className="t-mono"
               style={{
                 padding: "10px 12px",
@@ -184,7 +194,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
             </span>
             <select
               value={ownerId}
-              onChange={(e) => setOwnerId(e.target.value)}
+              onChange={(e) => setDraft({ ownerId: e.target.value })}
               className="t-mono"
               style={{
                 padding: "10px 12px",
@@ -214,7 +224,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
                 <button
                   key={n}
                   type="button"
-                  onClick={() => setXp(n)}
+                  onClick={() => setDraft({ xp: n })}
                   className="t-mono"
                   style={{
                     padding: "6px 12px",

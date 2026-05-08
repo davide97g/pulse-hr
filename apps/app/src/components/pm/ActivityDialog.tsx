@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
+import { useDraft } from "@/lib/use-draft";
 import {
   Dialog,
   DialogContent,
@@ -58,13 +59,14 @@ export function ActivityDialog({
     [projectId],
   );
 
-  const [draft, setDraft] = useState<Activity>(() => blankActivity(projectId, defaultStatus, project));
-  useEffect(() => {
-    if (open) setDraft(initial ?? blankActivity(projectId, defaultStatus, project));
-  }, [open, initial, projectId, defaultStatus, project]);
+  const draftKey = `pulsehr.draft.activity-${initial?.id ?? `new-${projectId}`}`;
+  const { draft, setDraft, clearDraft } = useDraft<Activity>(
+    draftKey,
+    initial ?? blankActivity(projectId, defaultStatus, project),
+  );
 
   const set = <K extends keyof Activity>(k: K, v: Activity[K]) =>
-    setDraft((d) => ({ ...d, [k]: v }));
+    setDraft({ [k]: v } as Partial<Activity>);
 
   // Pool of candidate assignees: employees who have any allocation on this project
   const candidatePool = useMemo(() => {
@@ -284,6 +286,7 @@ export function ActivityDialog({
           <Button
             onClick={() => {
               onSave(draft);
+              clearDraft();
               onClose();
             }}
             disabled={!draft.title.trim()}

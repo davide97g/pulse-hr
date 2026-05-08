@@ -82,10 +82,11 @@ export interface Closure {
 }
 
 // ── Seed data (today = 2026-04-18) ─────────────────────────────────────
-// Exported as `let` to support in-app CRUD. ES-module live bindings mean
-// consumers always see the current array. Subscribe via `officesStore`
-// to trigger re-renders from React components.
-export let offices: Office[] = [
+// `*Seed` exports are the immutable initial dataset. `export let X` is the
+// live binding consumers read; it's updated by table subscribers in
+// `lib/tables/*.ts` so legacy `import { offices } from "@/lib/offices"`
+// reads still see the latest persisted rows.
+export const officesSeed: Office[] = [
   {
     id: "of-mil",
     name: "Milan HQ",
@@ -136,10 +137,13 @@ export let offices: Office[] = [
   },
 ];
 
+export let offices: Office[] = officesSeed.map((o) => ({ ...o }));
 export const officeById = (id: string) => offices.find((o) => o.id === id);
-const offices_initial = offices;
+export function __setOffices(next: Office[]) {
+  offices = next;
+}
 
-export let rooms: Room[] = [
+export const roomsSeed: Room[] = [
   // Milan
   {
     id: "rm-mil-atlas",
@@ -302,14 +306,17 @@ export let rooms: Room[] = [
   },
 ];
 
+export let rooms: Room[] = roomsSeed.map((r) => ({ ...r }));
 export const roomById = (id: string) => rooms.find((r) => r.id === id);
 export const roomsByOffice = (officeId: string) => rooms.filter((r) => r.officeId === officeId);
-const rooms_initial = rooms;
+export function __setRooms(next: Room[]) {
+  rooms = next;
+}
 
 /** Generate seats for every office based on capacity. */
 function makeSeats(): Seat[] {
   const out: Seat[] = [];
-  for (const o of offices) {
+  for (const o of officesSeed) {
     const zones = ["A", "B", "Quiet"];
     for (let i = 0; i < o.seatCapacity; i++) {
       const zone = zones[Math.floor(i / Math.ceil(o.seatCapacity / zones.length))] ?? "A";
@@ -327,8 +334,11 @@ function makeSeats(): Seat[] {
   }
   return out;
 }
-export let seats: Seat[] = makeSeats();
-const seats_initial = seats;
+export const seatsSeed: Seat[] = makeSeats();
+export let seats: Seat[] = seatsSeed.map((s) => ({ ...s }));
+export function __setSeats(next: Seat[]) {
+  seats = next;
+}
 
 export const seatById = (id: string) => seats.find((s) => s.id === id);
 export const seatsByOffice = (officeId: string) => seats.filter((s) => s.officeId === officeId);
@@ -361,7 +371,7 @@ function addDays(base: string, days: number): string {
 }
 const TODAY = "2026-04-18";
 
-export const bookings: Booking[] = [
+export const bookingsSeed: Booking[] = [
   // ── Milan room bookings ───────────────────────────────────────────
   {
     id: "bk-1",
@@ -792,8 +802,13 @@ export const bookings: Booking[] = [
   },
 ];
 
+export let bookings: Booking[] = bookingsSeed.map((b) => ({ ...b }));
+export function __setBookings(next: Booking[]) {
+  bookings = next;
+}
+
 // ── Closures (maintenance / holidays) ────────────────────────────────
-export let closures: Closure[] = [
+export const closuresSeed: Closure[] = [
   // Milan — elevator maintenance on Apr 20
   {
     id: "cl-1",
@@ -848,6 +863,10 @@ export let closures: Closure[] = [
     title: "Customer workshop",
   },
 ];
+export let closures: Closure[] = closuresSeed.map((c) => ({ ...c }));
+export function __setClosures(next: Closure[]) {
+  closures = next;
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────
 export function minutesBetween(start: string, end: string): number {
@@ -1021,101 +1040,8 @@ export function bookingsFor(
 }
 
 // ── Mutable store (for CRUD UI) ─────────────────────────────────────
-type Listener = () => void;
-const listeners = new Set<Listener>();
-let version = 0;
-function notify() {
-  version += 1;
-  listeners.forEach((l) => {
-    try {
-      l();
-    } catch (err) {
-      console.warn("officesStore listener", err);
-    }
-  });
-}
-
-function newId(prefix: string) {
-  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
-}
-
-export const officesStore = {
-  subscribe(l: Listener) {
-    listeners.add(l);
-    return () => {
-      listeners.delete(l);
-    };
-  },
-  getVersion: () => version,
-
-  // ── Offices ─────────────────────────────────────────────────────
-  addOffice(o: Omit<Office, "id">): Office {
-    const office: Office = { ...o, id: newId("of") };
-    offices = [...offices, office];
-    notify();
-    return office;
-  },
-  updateOffice(id: string, patch: Partial<Omit<Office, "id">>) {
-    offices = offices.map((o) => (o.id === id ? { ...o, ...patch } : o));
-    notify();
-  },
-  removeOffice(id: string) {
-    offices = offices.filter((o) => o.id !== id);
-    rooms = rooms.filter((r) => r.officeId !== id);
-    seats = seats.filter((s) => s.officeId !== id);
-    closures = closures.filter((c) => !(c.scopeKind === "office" && c.scopeId === id));
-    notify();
-  },
-
-  // ── Rooms ───────────────────────────────────────────────────────
-  addRoom(r: Omit<Room, "id">): Room {
-    const room: Room = { ...r, id: newId("rm") };
-    rooms = [...rooms, room];
-    notify();
-    return room;
-  },
-  updateRoom(id: string, patch: Partial<Omit<Room, "id">>) {
-    rooms = rooms.map((r) => (r.id === id ? { ...r, ...patch } : r));
-    notify();
-  },
-  removeRoom(id: string) {
-    rooms = rooms.filter((r) => r.id !== id);
-    closures = closures.filter((c) => !(c.scopeKind === "room" && c.scopeId === id));
-    notify();
-  },
-
-  // ── Seats ───────────────────────────────────────────────────────
-  addSeat(s: Omit<Seat, "id">): Seat {
-    const seat: Seat = { ...s, id: newId("st") };
-    seats = [...seats, seat];
-    notify();
-    return seat;
-  },
-  updateSeat(id: string, patch: Partial<Omit<Seat, "id">>) {
-    seats = seats.map((s) => (s.id === id ? { ...s, ...patch } : s));
-    notify();
-  },
-  removeSeat(id: string) {
-    seats = seats.filter((s) => s.id !== id);
-    notify();
-  },
-
-  // ── Closures ────────────────────────────────────────────────────
-  addClosure(c: Omit<Closure, "id">): Closure {
-    const closure: Closure = { ...c, id: newId("cl") };
-    closures = [...closures, closure];
-    notify();
-    return closure;
-  },
-  removeClosure(id: string) {
-    closures = closures.filter((c) => c.id !== id);
-    notify();
-  },
-
-  reset() {
-    offices = offices_initial;
-    rooms = rooms_initial;
-    seats = seats_initial;
-    notify();
-  },
-};
+// Re-exported from `./offices-store` so the mutators delegate to the
+// localStorage-backed tables in `./tables/{offices,rooms,seats,closures}`.
+// The re-export sits at the bottom of this file so seeds above are fully
+// defined before the table modules read them through the import cycle.
+export { officesStore } from "./offices-store";
