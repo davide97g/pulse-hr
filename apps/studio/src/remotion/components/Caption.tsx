@@ -1,9 +1,16 @@
-import { Easing, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import {
+  Easing,
+  interpolate,
+  spring,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import { color } from "../tokens";
 import { fonts } from "../fonts";
+import { tokenizeBrandText } from "./text";
 
 export interface TimedCaption {
-  /** Caption text to render. */
+  /** Caption text. Wrap a word in *asterisks* to render it in brand color. */
   text: string;
   /** Onset in milliseconds, relative to the start of the parent Sequence. */
   atMs: number;
@@ -18,7 +25,8 @@ interface Props {
   bottom?: number;
 }
 
-const FADE_MS = 280;
+const FADE_OUT_MS = 240;
+const WORD_STAGGER_MS = 55;
 
 export const Caption: React.FC<Props> = ({ cues, bottom }) => {
   const frame = useCurrentFrame();
@@ -30,10 +38,12 @@ export const Caption: React.FC<Props> = ({ cues, bottom }) => {
   if (!active) return null;
 
   const localMs = ms - active.atMs;
-  const opacity = interpolate(
+  const tokens = tokenizeBrandText(active.text);
+
+  const fadeOut = interpolate(
     localMs,
-    [0, FADE_MS, active.holdMs - FADE_MS, active.holdMs],
-    [0, 1, 1, 0],
+    [active.holdMs - FADE_OUT_MS, active.holdMs],
+    [1, 0],
     {
       easing: Easing.out(Easing.cubic),
       extrapolateLeft: "clamp",
@@ -41,15 +51,10 @@ export const Caption: React.FC<Props> = ({ cues, bottom }) => {
     },
   );
 
-  const lift = interpolate(localMs, [0, FADE_MS], [10, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
-  const fontSize = square ? 30 : 38;
-  const padX = square ? 22 : 28;
-  const padY = square ? 12 : 14;
-  const bottomPx = bottom ?? (square ? 80 : 110);
+  const fontSize = square ? 32 : 42;
+  const padX = square ? 22 : 30;
+  const padY = square ? 12 : 16;
+  const bottomPx = bottom ?? (square ? 90 : 130);
 
   return (
     <div
@@ -65,25 +70,53 @@ export const Caption: React.FC<Props> = ({ cues, bottom }) => {
     >
       <div
         style={{
-          opacity,
-          transform: `translateY(${lift}px)`,
+          opacity: fadeOut,
           padding: `${padY}px ${padX}px`,
-          borderRadius: 14,
-          backgroundColor: "rgba(10, 10, 15, 0.78)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          border: `1px solid ${color.brand}33`,
+          borderRadius: 16,
+          backgroundColor: "rgba(11, 11, 13, 0.72)",
+          backdropFilter: "blur(14px) saturate(160%)",
+          WebkitBackdropFilter: "blur(14px) saturate(160%)",
+          border: `1px solid ${color.brand}26`,
           color: color.cream,
           fontFamily: fonts.display,
+          fontWeight: 600,
           fontSize,
-          letterSpacing: "-0.01em",
-          lineHeight: 1.15,
+          letterSpacing: "-0.015em",
+          lineHeight: 1.1,
           textAlign: "center",
-          maxWidth: square ? 720 : 1100,
-          boxShadow: `0 16px 48px rgba(0,0,0,0.4), 0 0 24px ${color.brand}22`,
+          maxWidth: square ? 760 : 1180,
+          boxShadow: `0 18px 56px rgba(0,0,0,0.45), 0 0 28px ${color.brand}22`,
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "0.28em",
         }}
       >
-        {active.text}
+        {tokens.map((tok, i) => {
+          const startMs = i * WORD_STAGGER_MS;
+          const t = (localMs - startMs) / 1000;
+          const wordSpring = spring({
+            frame: t * fps,
+            fps,
+            config: { damping: 16, mass: 0.6, stiffness: 140 },
+          });
+          const lift = interpolate(wordSpring, [0, 1], [12, 0]);
+          const blur = interpolate(wordSpring, [0, 1], [6, 0]);
+          return (
+            <span
+              key={i}
+              style={{
+                display: "inline-block",
+                opacity: wordSpring,
+                transform: `translateY(${lift}px)`,
+                filter: `blur(${blur}px)`,
+                color: tok.brand ? color.brand : color.cream,
+              }}
+            >
+              {tok.text}
+            </span>
+          );
+        })}
       </div>
     </div>
   );

@@ -21,13 +21,10 @@ const entry = resolve(studioDir, "src", "remotion", "index.ts");
 
 const FLOWS = [
   "kudos-give",
-  "workspace-create",
   "time-attendance-entry",
   "growth-checks",
-  "comments-thread",
-  "feedback-live",
 ];
-const ASPECTS = ["1080", "720", "square"];
+const ASPECTS = ["1080", "shorts", "square"];
 
 const args = process.argv.slice(2);
 const all = args.length === 0 || args.includes("--all");

@@ -1,0 +1,199 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+interface AspectMeta {
+  key: "1080" | "shorts" | "square";
+  label: string;
+  ratio: string;
+  /** width/height for CSS aspect-ratio. */
+  ratioCss: string;
+}
+
+interface Reel {
+  id: string;
+  flow: "montage" | "kudos-give" | "time-attendance-entry" | "growth-checks";
+  title: string;
+  blurb: string;
+}
+
+const ASPECTS: AspectMeta[] = [
+  { key: "1080", label: "Landscape", ratio: "16:9", ratioCss: "16/9" },
+  { key: "shorts", label: "Vertical", ratio: "9:16", ratioCss: "9/16" },
+  { key: "square", label: "Square", ratio: "1:1", ratioCss: "1/1" },
+];
+
+const REELS: Reel[] = [
+  {
+    id: "montage",
+    flow: "montage",
+    title: "The whole loop, in seconds",
+    blurb: "20-second guided tour of every reel, end to end.",
+  },
+  {
+    id: "kudos-give",
+    flow: "kudos-give",
+    title: "Recognition that lands",
+    blurb: "Pick a teammate. Say why. 25 coins, sent.",
+  },
+  {
+    id: "time-attendance-entry",
+    flow: "time-attendance-entry",
+    title: "Logging time, finally fast",
+    blurb: "What you actually worked on. Hours in quarters.",
+  },
+  {
+    id: "growth-checks",
+    flow: "growth-checks",
+    title: "Growth, visible",
+    blurb: "XP, podium, week / month / year — at a glance.",
+  },
+];
+
+const reelSrc = (flow: string, aspect: string) =>
+  `/studio/reels/${flow}/${aspect}.mp4`;
+const posterSrc = (flow: string, aspect: string) =>
+  `/studio/reels/${flow}/${aspect}.jpg`;
+---
+
+<BaseLayout
+  title="Studio · Pulse HR reels"
+  description="Promo reels for Pulse HR — montage, kudos, time, growth — landscape, vertical, square."
+  path="/studio"
+  noIndex
+>
+  <Nav />
+  <main id="main">
+    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">
+        Studio · preview
+      </p>
+      <h1 class="font-display text-[56px] md:text-[80px] leading-[0.95] tracking-tight max-w-4xl">
+        Reels.<br />
+        <em class="italic text-[#b4ff39]">Twelve cuts.</em>
+      </h1>
+      <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
+        Three flows plus a montage, each in landscape, vertical, and square.
+        Videos load only when you press play — posters first.
+      </p>
+
+      <div
+        class="mt-8 inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.03] p-1"
+        role="tablist"
+        aria-label="Filter by aspect"
+        id="reel-filter"
+      >
+        <button
+          type="button"
+          class="reel-filter-btn rounded-full px-4 py-1.5 text-sm font-mono uppercase tracking-[0.2em] data-[active=true]:bg-[#b4ff39] data-[active=true]:text-black text-white/70 hover:text-white transition-colors"
+          data-filter="all"
+          data-active="true"
+        >
+          All
+        </button>
+        {
+          ASPECTS.map((a) => (
+            <button
+              type="button"
+              class="reel-filter-btn rounded-full px-4 py-1.5 text-sm font-mono uppercase tracking-[0.2em] data-[active=true]:bg-[#b4ff39] data-[active=true]:text-black text-white/70 hover:text-white transition-colors"
+              data-filter={a.key}
+            >
+              {a.label}
+            </button>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="max-w-[1280px] mx-auto px-6 pb-24 space-y-16">
+      {
+        REELS.map((reel) => (
+          <article class="space-y-5">
+            <header class="flex items-end justify-between gap-6 flex-wrap">
+              <div>
+                <h2 class="font-display text-3xl md:text-4xl tracking-tight">
+                  {reel.title}
+                </h2>
+                <p class="mt-1 text-white/60 text-base max-w-xl">
+                  {reel.blurb}
+                </p>
+              </div>
+              <span class="font-mono uppercase tracking-[0.25em] text-xs text-white/40">
+                /{reel.flow}
+              </span>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {ASPECTS.map((a) => (
+                <figure
+                  class="reel-card group rounded-2xl border border-white/10 bg-black/40 overflow-hidden transition-all hover:border-[#b4ff39]/30"
+                  data-aspect={a.key}
+                >
+                  <div
+                    class="relative bg-black"
+                    style={`aspect-ratio: ${a.ratioCss};`}
+                  >
+                    <video
+                      class="w-full h-full object-contain"
+                      preload="none"
+                      controls
+                      muted
+                      loop
+                      playsinline
+                      poster={posterSrc(reel.flow, a.key)}
+                    >
+                      <source src={reelSrc(reel.flow, a.key)} type="video/mp4" />
+                    </video>
+                  </div>
+                  <figcaption class="flex items-center justify-between px-4 py-3 text-xs font-mono uppercase tracking-[0.2em]">
+                    <span class="text-white/70">{a.label}</span>
+                    <span class="text-white/40">{a.ratio}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </article>
+        ))
+      }
+    </section>
+  </main>
+  <Footer />
+
+  <script is:inline>
+    (() => {
+      const filterBar = document.getElementById("reel-filter");
+      if (!filterBar) return;
+      const buttons = filterBar.querySelectorAll(".reel-filter-btn");
+      const cards = document.querySelectorAll(".reel-card");
+
+      const apply = (key) => {
+        cards.forEach((card) => {
+          const aspect = card.getAttribute("data-aspect");
+          const show = key === "all" || aspect === key;
+          card.classList.toggle("hidden", !show);
+        });
+        buttons.forEach((b) => {
+          b.dataset.active = b.dataset.filter === key ? "true" : "false";
+        });
+      };
+
+      buttons.forEach((b) => {
+        b.addEventListener("click", () => {
+          const key = b.dataset.filter || "all";
+          apply(key);
+        });
+      });
+
+      // Pause others when one starts playing — keeps the page calm.
+      const videos = document.querySelectorAll(".reel-card video");
+      videos.forEach((v) => {
+        v.addEventListener("play", () => {
+          videos.forEach((other) => {
+            if (other !== v && !other.paused) other.pause();
+          });
+        });
+      });
+    })();
+  </script>
+</BaseLayout>

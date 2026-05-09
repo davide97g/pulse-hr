@@ -31,55 +31,57 @@ interface ReelDescriptor {
  * Each flow declares its expected capture duration. After re-recording a flow,
  * update its `captureSeconds` to match the freshly produced clip.
  *
- * Cue lists are inlined here to keep Studio cold-start reliable; once the
- * recording pipeline emits `<spec>.captions.timed.json`, swap inline cues for
- * `import` of that file.
+ * Cue lists are inlined here to keep Studio cold-start reliable. Wrap a span
+ * in `*…*` markers to render it in the brand accent color.
  */
 const REELS: ReelDescriptor[] = [
   {
     id: "kudos-give",
-    title: "Send kudos in seconds",
+    title: "Recognition that *lands*.",
     subtitle: "Pulse HR · Kudos",
+    outroTagline: "HR you can read, fork, and run.",
     capturePath: "captures/kudos-give/clip.mp4",
     captureSeconds: 15.76,
     cues: [
-      { atMs: 600, text: "Pick a teammate", holdMs: 1800 },
-      { atMs: 3400, text: "Say what they did. Plain English.", holdMs: 2400 },
-      { atMs: 8200, text: "25 coins on the way", holdMs: 1800 },
-      { atMs: 11800, text: "Sent. Confetti optional.", holdMs: 2400 },
+      { atMs: 600, text: "Pick a teammate", holdMs: 1700 },
+      { atMs: 3400, text: "Plain English. *No forms.*", holdMs: 2400 },
+      { atMs: 8200, text: "*25 coins* on the way", holdMs: 1800 },
+      { atMs: 11800, text: "Sent. *Confetti* optional.", holdMs: 2400 },
     ],
   },
   {
     id: "time-attendance-entry",
-    title: "Log your time",
-    subtitle: "What you worked on, in seconds",
+    title: "Logging time, *finally fast*.",
+    subtitle: "Pulse HR · Time",
+    outroTagline: "HR you can read, fork, and run.",
     capturePath: "captures/time-attendance-entry/clip.mp4",
     captureSeconds: 17.48,
     cues: [
-      { atMs: 600, text: "New time entry", holdMs: 1600 },
-      { atMs: 3500, text: "What you actually worked on", holdMs: 2400 },
-      { atMs: 8500, text: "Hours, in quarters", holdMs: 1800 },
-      { atMs: 11500, text: "Logged. Weekly total updates.", holdMs: 2200 },
+      { atMs: 600, text: "New time entry", holdMs: 1500 },
+      { atMs: 3500, text: "What you *actually* worked on", holdMs: 2300 },
+      { atMs: 8500, text: "Hours. *In quarters.*", holdMs: 1700 },
+      { atMs: 11500, text: "Logged. Total *updates*.", holdMs: 2200 },
       { atMs: 14500, text: "Filled days at a glance", holdMs: 1800 },
     ],
   },
   {
     id: "growth-checks",
-    title: "Track growth at a glance",
-    subtitle: "XP, levels, prizes",
+    title: "Growth, *visible*.",
+    subtitle: "Pulse HR · Growth",
+    outroTagline: "HR you can read, fork, and run.",
     capturePath: "captures/growth-checks/clip.mp4",
     captureSeconds: 12.4,
     cues: [
-      { atMs: 600, text: "Growth at a glance", holdMs: 2000 },
-      { atMs: 4500, text: "Earn XP, climb the podium", holdMs: 2400 },
-      { atMs: 8500, text: "Switch the window — Week, Month, Year", holdMs: 2400 },
+      { atMs: 600, text: "Growth at a *glance*", holdMs: 2000 },
+      { atMs: 4500, text: "Earn XP. *Climb the podium.*", holdMs: 2400 },
+      { atMs: 8500, text: "*Week. Month. Year.*", holdMs: 2400 },
     ],
   },
 ];
 
 const ASPECTS = [
   { suffix: "1080", width: 1920, height: 1080 },
-  { suffix: "720", width: 1280, height: 720 },
+  { suffix: "shorts", width: 1080, height: 1920 },
   { suffix: "square", width: 1080, height: 1080 },
 ] as const;
 
@@ -111,28 +113,29 @@ const buildReelComposition = (
   );
 };
 
-// ─── Montage — homepage hero, ~30s tour of every reel ─────────────────────
+// ─── Montage — homepage hero, ~20s tour of every reel ─────────────────────
+const SEGMENT_SECONDS = 5;
+const SEGMENT_START_SECONDS = 2;
+
 const MONTAGE: MontageProps = {
-  introTitle: "Pulse HR — a guided tour",
-  introSubtitle: "30 seconds, the whole loop",
+  introTitle: "The whole loop, *in seconds*.",
+  introSubtitle: "Pulse HR — guided tour",
+  outroTagline: "HR you can read, fork, and run.",
   clips: REELS.map((reel) => {
-    // Each segment runs 8s starting 2s into the capture (skip the first
-    // beats so each clip lands in its meaningful state).
-    const segmentSeconds = 8;
-    const startSeconds = 2;
-    const segmentMs = segmentSeconds * 1000;
+    const segmentMs = SEGMENT_SECONDS * 1000;
     return {
       capturePath: reel.capturePath,
-      durationFrames: segmentSeconds * FPS,
-      startFrame: startSeconds * FPS,
-      label: reel.title,
+      durationFrames: SEGMENT_SECONDS * FPS,
+      startFrame: SEGMENT_START_SECONDS * FPS,
+      label: reel.title.replace(/\*/g, "").replace(/\.$/, ""),
       cues: reel.cues
-        .map((c) => ({ ...c, atMs: c.atMs - startSeconds * 1000 }))
+        .map((c) => ({ ...c, atMs: c.atMs - SEGMENT_START_SECONDS * 1000 }))
         .filter((c) => c.atMs >= 0 && c.atMs <= segmentMs - 600)
-        .slice(0, 2),
+        .slice(0, 1),
     };
   }),
 };
+
 const MONTAGE_DURATION_FRAMES =
   INTRO_DURATION_FRAMES +
   MONTAGE.clips.reduce((sum, c) => sum + c.durationFrames, 0) +

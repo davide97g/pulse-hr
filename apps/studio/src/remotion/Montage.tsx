@@ -4,6 +4,7 @@ import {
   OffthreadVideo,
   Series,
   interpolate,
+  spring,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
@@ -34,7 +35,8 @@ export interface MontageProps {
   clips: MontageClip[];
 }
 
-const SEGMENT_LABEL_DURATION = 24;
+const ENTER_FRAMES = 8;
+const EXIT_FRAMES = 8;
 
 export const Montage: React.FC<MontageProps> = ({
   introTitle,
@@ -42,9 +44,6 @@ export const Montage: React.FC<MontageProps> = ({
   outroTagline,
   clips,
 }) => {
-  const { width } = useVideoConfig();
-  const square = width <= 1080 && Math.abs(width - 1080) < 1;
-
   return (
     <AbsoluteFill
       style={{
@@ -64,14 +63,7 @@ export const Montage: React.FC<MontageProps> = ({
             durationInFrames={clip.durationFrames}
             name={`Clip-${clip.label}`}
           >
-            <AbsoluteFill>
-              <OffthreadVideo
-                src={staticFile(clip.capturePath)}
-                startFrom={clip.startFrame ?? 0}
-              />
-              <Caption cues={clip.cues ?? []} />
-              <SegmentLabel label={clip.label} square={square} />
-            </AbsoluteFill>
+            <MontageClipScene clip={clip} />
           </Series.Sequence>
         ))}
 
@@ -83,47 +75,109 @@ export const Montage: React.FC<MontageProps> = ({
   );
 };
 
-const SegmentLabel: React.FC<{ label: string; square: boolean }> = ({
-  label,
-  square,
-}) => {
+const MontageClipScene: React.FC<{ clip: MontageClip }> = ({ clip }) => {
   const frame = useCurrentFrame();
-  const opacity = interpolate(
+  const { width, fps } = useVideoConfig();
+  const square = width <= 1080 && Math.abs(width - 1080) < 1;
+
+  const enterSpring = spring({
     frame,
-    [0, 8, SEGMENT_LABEL_DURATION - 6, SEGMENT_LABEL_DURATION],
-    [0, 1, 1, 0],
+    fps,
+    durationInFrames: ENTER_FRAMES,
+    config: { damping: 16, mass: 0.7, stiffness: 130 },
+  });
+  const enterScale = interpolate(enterSpring, [0, 1], [1.05, 1]);
+  const enterBlur = interpolate(enterSpring, [0, 1], [8, 0]);
+
+  const exitProgress = interpolate(
+    frame,
+    [clip.durationFrames - EXIT_FRAMES, clip.durationFrames],
+    [0, 1],
     {
-      easing: Easing.out(Easing.cubic),
+      easing: Easing.in(Easing.cubic),
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     },
   );
-  const lift = interpolate(frame, [0, 8], [-6, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
+  const opacity = enterSpring * (1 - exitProgress);
+  const scale = enterScale * interpolate(exitProgress, [0, 1], [1, 1.04]);
+  const blur = Math.max(enterBlur, interpolate(exitProgress, [0, 1], [0, 5]));
+
+  // Label animates in fast, lingers, fades.
+  const labelSpring = spring({
+    frame: frame - 3,
+    fps,
+    config: { damping: 14, mass: 0.8, stiffness: 140 },
   });
+  const labelOpacity =
+    labelSpring *
+    interpolate(frame, [22, 30], [1, 0], {
+      easing: Easing.in(Easing.cubic),
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
+
   return (
-    <div
-      style={{
-        position: "absolute",
-        top: square ? 24 : 32,
-        left: square ? 24 : 36,
-        padding: "6px 12px",
-        borderRadius: 9999,
-        backgroundColor: "rgba(10,10,15,0.8)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        border: `1px solid ${color.brand}55`,
-        color: color.cream,
-        fontFamily: fonts.mono,
-        fontSize: square ? 11 : 12,
-        letterSpacing: "0.22em",
-        textTransform: "uppercase",
-        opacity,
-        transform: `translateY(${lift}px)`,
-      }}
-    >
-      {label}
-    </div>
+    <AbsoluteFill style={{ backgroundColor: color.ink }}>
+      <AbsoluteFill
+        style={{
+          opacity,
+          transform: `scale(${scale})`,
+          filter: `blur(${blur}px)`,
+        }}
+      >
+        <OffthreadVideo
+          src={staticFile(clip.capturePath)}
+          startFrom={clip.startFrame ?? 0}
+        />
+      </AbsoluteFill>
+
+      <AbsoluteFill
+        aria-hidden
+        style={{
+          pointerEvents: "none",
+          boxShadow: `inset 0 0 0 1px ${color.brand}14, inset 0 0 120px rgba(0,0,0,0.45)`,
+          background: `radial-gradient(ellipse 90% 80% at 50% 50%, transparent 60%, rgba(0,0,0,0.35) 100%)`,
+          opacity,
+        }}
+      />
+
+      <div
+        style={{
+          position: "absolute",
+          top: square ? 22 : 30,
+          left: square ? 22 : 32,
+          padding: "6px 12px",
+          borderRadius: 9999,
+          backgroundColor: "rgba(10,10,15,0.8)",
+          backdropFilter: "blur(12px) saturate(160%)",
+          WebkitBackdropFilter: "blur(12px) saturate(160%)",
+          border: `1px solid ${color.brand}55`,
+          color: color.cream,
+          fontFamily: fonts.mono,
+          fontSize: square ? 11 : 12,
+          letterSpacing: "0.24em",
+          textTransform: "uppercase",
+          opacity: labelOpacity,
+          transform: `translateY(${interpolate(labelSpring, [0, 1], [-8, 0])}px)`,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        <span
+          style={{
+            width: 7,
+            height: 7,
+            borderRadius: 9999,
+            backgroundColor: color.brand,
+            boxShadow: `0 0 10px ${color.brand}`,
+          }}
+        />
+        {clip.label}
+      </div>
+
+      <Caption cues={clip.cues ?? []} />
+    </AbsoluteFill>
   );
 };
