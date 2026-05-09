@@ -1,12 +1,12 @@
 ---
-import { Heart, TrendingUp, Gift, Target, Gauge } from "lucide-astro";
+import { Heart, TrendingUp, Gift, Target, Gauge, MessageSquare, Sparkles } from "lucide-astro";
 import { useI18n } from "../i18n";
 import { getLanding } from "../data/landing";
 
 const { locale, t } = useI18n(Astro);
 const { LABS } = getLanding(locale);
 
-const ICONS: Record<string, any> = { Heart, TrendingUp, Gift, Target, Gauge };
+const ICONS: Record<string, any> = { Heart, TrendingUp, Gift, Target, Gauge, MessageSquare, Sparkles };
 ---
 
 <section id="labs" class="relative max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="labs-title">

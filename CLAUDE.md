@@ -72,7 +72,9 @@ TanStack Router SPA (migrated off TanStack Start SSR for Vercel). Paths below ar
 
 **Auth.** Clerk via `@clerk/react`. Login wall gates real features; the Demo banner (`DemoBanner`) appears for unauthenticated browsing. Workspace persona is split from the real Clerk role.
 
-**App shell.** `src/components/app/AppShell.tsx` owns sidebar (grouped: `Overview` / `People` / `Work` / `Money` / `Insights` / `Labs` / `Workspace`), Topbar with ⌘K (`CommandPalette`) and ⌘J (Status Log shortcut → `/log`), and a mobile `<Sheet>` drawer. Exports `PageHeader`, `Avatar`, `StatusBadge`. `src/routes/__root.tsx` branches layout by path prefix — public prefixes `["/landing", "/login", "/signup"]` render a bare `<Outlet />`; everything else renders `<AppShell />`. Titles are kept via a `TITLE_BY_PATH` map + `useEffect`.
+**App shell.** `src/components/app/AppShell.tsx` owns sidebar (groups: unlabelled `Dashboard` / `People` / `Time` / `Work` / `Other` / collapsed `Workspace` footer — built by `src/lib/sidebar-nav-groups.tsx`), Topbar with ⌘K (`CommandPalette`) and ⌘J (Status Log shortcut → `/log`), and a mobile `<Sheet>` drawer. Exports `PageHeader`, `Avatar`, `StatusBadge`. `src/routes/__root.tsx` branches layout by path prefix — public prefixes `["/welcome", "/login", "/signup"]` render a bare `<Outlet />`; everything else renders `<AppShell />`. Titles are kept via a `TITLE_BY_PATH` map + `useEffect`.
+
+**Workspace persona vs Clerk role.** `src/lib/role-override.tsx` keeps two role concepts deliberately separate. The **real role** (Clerk `publicMetadata.role`, server-set, defaults to `"user"`) is reserved for Pulse staff. The **workspace persona** (`admin` / `hr` / `manager` / `finance` / `employee`, picked at `/welcome`, persisted at `pulse.ws.<userId>.role`, defaults to `admin` because every demo user owns their own workspace) drives sidebar groups and feature gates. The topbar "View as" dropdown sets `pulse.roleOverride` so anyone can preview the UI as another persona; admin is excluded from override choices because it's the home. Use `useEffectiveRole()` in feature code (override → persona); `useIsRealAdmin()` only for staff capabilities.
 
 **Data.** Real data flows through `apps/api` via a typed client. Where the backend isn't wired yet, `src/lib/mock-data.ts` seeds local React state (employees, commesse, timesheets, leave, candidates, jobs, onboarding, docs, api keys, webhooks, audit log, and Labs data). The **`commessa`** (Italian project code) is the pivot — Time aggregates around `commessaId`.
 
@@ -81,10 +83,12 @@ TanStack Router SPA (migrated off TanStack Start SSR for Vercel). Paths below ar
 2. `setTimeout(…, ~420ms)` loading sim → `<SkeletonRows>` / `<SkeletonCards>` → `<EmptyState>` → staggered list (`.stagger-in` CSS, nth-child animation-delay).
 3. Edits via side panel or `<Dialog>` form; delete via `<AlertDialog>` confirm + toast with `action: { label: "Undo", onClick: … }` that prepends the removed item back.
 
-**Labs features** (NEW-badged, share visual language — iridescent border, pulse-dot, new-badge utilities):
-- `/pulse` — anonymous vibe check + heatmap
-- `/kudos` — peer coins, leaderboard, confetti (`.confetti-piece`)
-- `/log` — status log: deterministic per-topic forms (status / win / pain / challenge / feedback) saved through `logMessagesTable` and rendered in `EmployeeLogView` / `ManagerLogView`. No agent / no streaming reply.
+**Labs / experimental surfaces** (NEW-badged, share visual language — iridescent border, pulse-dot, new-badge utilities). They aren't a sidebar group of their own; each lives inside the regular nav:
+- `/log` — Status Log. Index (`StatusLogEditorial`) is a public async-standup feed ("Cosa oggi?" / three lines, ⌘⏎ to publish). `/log/recap` and `/log/$employeeId` render the manager-safe sentiment recap (Energy / Engagement / Alignment / Stress, sparkline, drivers, suggested moves) — the raw chat stays with the employee. Topic chips + presets (status / win / pain / challenge / feedback) live in `EmployeeLogView` / `ManagerLogView`. No agent / no streaming reply.
+- `/growth` — five-tab hub (Overview / Achievements / Challenges / Kudos / Skill paths). The standalone `/kudos` route redirects to `/growth?tab=kudos`. Confetti (`.confetti-piece`) on send.
+- `/saturation` — utilization heatmap; allocation projection.
+- `/moments` — birthdays, anniversaries, kudos ticker.
+- `/pulse` is **not** a standalone route. `pulseEntries` is legacy seed data; the team-pulse strip surfaces inside Status Log via `components/log/TeamPulseStrip.tsx`.
 
 **PWA.** `vite-plugin-pwa` in `generateSW` mode, `autoUpdate`. Icons in `public/`. `src/main.tsx` wires `registerSW` to toast "New version available" (Reload action) and "Ready to work offline". Google Fonts runtime-cached via `CacheFirst`. SPA fallback `navigateFallback: "/index.html"`.
 
@@ -123,7 +127,7 @@ Drop new content workflows (extra compositions, vertical/social cuts, ads) into 
 
 ### Shared packages
 
-- **`@pulse-hr/tokens`** — sole source of truth for color, font, radius, motion, shadow, themes (7: `light`, `dark`, plus role variants `employee` (default), `hr`, `admin`, `manager`, `finance`). Every consumer imports `@pulse-hr/tokens/index.css` and sets `data-theme` + `class="dark"` on `<html>` (with a flash-prevention IIFE in `index.html` before React paints). See `packages/tokens/CLAUDE.md` for token-authoring rules.
+- **`@pulse-hr/tokens`** — sole source of truth for color, font, radius, motion, shadow. Two themes ship today (`packages/tokens/src/themes/{light,dark}.css`); the per-persona role variants once planned have been collapsed into a single light/dark pair. Every consumer imports `@pulse-hr/tokens/index.css` and sets `data-theme` + `class="dark"` on `<html>` (with a flash-prevention IIFE in `index.html` before React paints). Auth screens (`/login`, `/signup`) and the public feedback site lock the theme to `dark`. See `packages/tokens/CLAUDE.md` for token-authoring rules.
 - **`@pulse-hr/ui`** — primitives (shadcn, ~46), atoms (PageHeader, EmptyState, BrandMark, SidePanel, Skeletons, NewBadge, BirthdayHalo, AvatarDisplay, ParticleField), `ThemeProvider`, `cn` util, `useIsMobile`. **Subpath imports only** (`@pulse-hr/ui/primitives/button`, `@pulse-hr/ui/atoms/PageHeader`, `@pulse-hr/ui/theme`) — no top-level barrel, deliberately, for tree-shaking. See `packages/ui/CLAUDE.md` for the primitives-vs-atoms boundary and the "promote an app component to atom" workflow.
 - **`@pulse-hr/shared`** — type-only/data-only (sidebar features, tours, changelog).
 

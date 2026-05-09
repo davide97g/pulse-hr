@@ -269,22 +269,28 @@ export const en = {
     badgeNew: "NEW",
     items: [
       {
-        icon: "Heart",
-        kind: "Team Pulse",
-        tag: "Signal",
-        body: "Anonymous vibe checks + weekly heatmap. See sentiment before it shows up in a 1:1.",
+        icon: "MessageSquare",
+        kind: "Status Log",
+        tag: "Standup",
+        body: "Async morning standup in writing. Three lines per person, public team feed, manager-safe recap with sentiment dimensions. No call, no AI, no chat.",
       },
       {
         icon: "Gift",
         kind: "Kudos",
         tag: "Recognition",
-        body: "Peer coins with reasons attached, confetti included. Leaderboards reset weekly, monthly and yearly.",
+        body: "Peer coins with reasons attached, confetti included. Leaderboards reset weekly, monthly and yearly. Lives inside Growth.",
       },
       {
         icon: "Gauge",
         kind: "Saturation",
         tag: "Load",
-        body: "Utilization heatmap, cost-vs-value scatter, margin tab. Who's leaning in, what's returning in €/h.",
+        body: "Utilization heatmap and 4-week look-ahead from allocations and leave. Who's leaning in, where the bench is, what's at risk.",
+      },
+      {
+        icon: "Sparkles",
+        kind: "Moments",
+        tag: "Ritual",
+        body: "Birthdays, work anniversaries and the kudos ticker on one continuous feed. Company memory rendered as a screen.",
       },
     ],
   },
@@ -295,13 +301,13 @@ export const en = {
     titleItalic: "five",
     titleAfter: "points of view.",
     subtitle:
-      "Role themes aren't cosmetic. Each persona ships with its own palette, default view, and shortcut set. CFOs don't see sprint standups.",
+      "Each persona ships with its own sidebar groups, default view and shortcut set. Light and dark themes today; per-persona accent palettes are on the roadmap. CFOs don't see sprint standups.",
     items: [
-      { k: "Employee", d: "Lime accent. Clock, leave, kudos." },
-      { k: "Manager", d: "Amber warmth. Approvals, team load, kudos authority." },
-      { k: "HR", d: "Coral. People ops, onboarding, anomalies." },
-      { k: "Admin", d: "Electric cyan. Integrations, API, audit." },
-      { k: "Finance", d: "Violet. Margins, reports." },
+      { k: "Employee", d: "Clock in, log time, post status, send kudos." },
+      { k: "Manager", d: "Approvals, team saturation, status-log recap, kudos authority." },
+      { k: "HR", d: "People ops, onboarding, recruiting, announcements." },
+      { k: "Admin", d: "Modules, integrations, API, audit log — and \"View as\"." },
+      { k: "Finance", d: "Margins, reports, project profitability." },
     ],
   },
 
@@ -403,11 +409,11 @@ export const en = {
     titleAfter: ".",
     full: "Full changelog",
     items: [
-      { d: "Apr 19", t: "Gantt rows taller + rich hover", k: "Polish" },
-      { d: "Apr 18", t: "App-wide color decluttering pass", k: "Design" },
-      { d: "Apr 14", t: "Avatar hover cards + Employee Score", k: "People" },
-      { d: "Apr 09", t: "Saturation tabs + Insights view", k: "Labs" },
-      { d: "Mar 28", t: "Command bar ⌘J with runnable actions", k: "Keyboard" },
+      { d: "May 09", t: "Forced dark theme on auth + feedback screens", k: "Polish" },
+      { d: "May 06", t: "Sidebar collapse, theme and \"View as\" persist across reloads", k: "Workspace" },
+      { d: "Apr 30", t: "Welcome flow simplified — name + company size, no role pick", k: "Onboarding" },
+      { d: "Apr 24", t: "Topbar \"View as\" — preview the app as another persona", k: "Workspace" },
+      { d: "Apr 19", t: "Sidebar regrouped: Dashboard / People / Time / Work / Other", k: "Navigation" },
     ],
   },
 
@@ -517,15 +523,15 @@ export const en = {
   },
 
   labsPage: {
-    title: "Pulse Labs — kudos & pulse tools",
+    title: "Pulse Labs — status log, kudos, saturation, moments",
     description:
-      "Three Labs features shipping now: Team Pulse sentiment, Kudos peer recognition, and Saturation utilization. Included on every plan.",
+      "Four Labs features shipping now: Status Log (async standup + recap), Kudos peer recognition, Saturation utilization, and Moments. Included on every plan.",
     eyebrow: "Labs · shipping now · free on every plan",
     titleLine1: "The four Pulse features",
     titleItalic: "reinventing",
     titleAfter: " HR software.",
     body:
-      "Labs is where we ship experimental capabilities first — sentiment heatmaps, peer recognition, deep-work automation and live utilization insights. No waiting lists, no upsells, no enterprise-tier paywall.",
+      "Labs is where we ship experimental capabilities first — async standup with manager-safe recap, peer recognition, live utilization insights, and a company-memory feed. No waiting lists, no upsells, no enterprise-tier paywall.",
   },
 
   changelogPage: {
@@ -612,7 +618,7 @@ export const en = {
   heroNewTags: [
     "Command bar ⌘J",
     "Saturation",
-    "Team Pulse",
+    "Status Log",
     "Kudos",
     "Open source",
   ] as string[],

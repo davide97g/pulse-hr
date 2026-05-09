@@ -276,22 +276,28 @@ export const it: Dict = {
     badgeNew: "NEW",
     items: [
       {
-        icon: "Heart",
-        kind: "Team Pulse",
-        tag: "Segnale",
-        body: "Vibe check anonimi + heatmap settimanale. Vedi il sentiment prima che emerga in un 1:1.",
+        icon: "MessageSquare",
+        kind: "Status Log",
+        tag: "Standup",
+        body: "Standup asincrono per iscritto. Tre righe a testa, feed di team pubblico, recap manager-safe con dimensioni di sentiment. Niente call, niente AI, niente chat.",
       },
       {
         icon: "Gift",
         kind: "Kudos",
         tag: "Riconoscimento",
-        body: "Coin peer-to-peer con una motivazione, coriandoli inclusi. Le classifiche si resettano settimanale, mensile e annuale.",
+        body: "Coin peer-to-peer con una motivazione, coriandoli inclusi. Classifiche settimanali, mensili e annuali. Vive dentro Growth.",
       },
       {
         icon: "Gauge",
         kind: "Saturation",
         tag: "Carico",
-        body: "Heatmap di utilizzo, scatter costo-vs-valore, tab margine. Chi sta spingendo, cosa rende in €/h.",
+        body: "Heatmap di utilizzo e proiezione a 4 settimane da allocazioni e ferie. Chi sta spingendo, dov'è il bench, cosa è a rischio.",
+      },
+      {
+        icon: "Sparkles",
+        kind: "Moments",
+        tag: "Rituale",
+        body: "Compleanni, anniversari di lavoro e ticker dei kudos in un unico feed continuo. La memoria aziendale resa schermo.",
       },
     ],
   },
@@ -302,13 +308,13 @@ export const it: Dict = {
     titleItalic: "cinque",
     titleAfter: "punti di vista.",
     subtitle:
-      "I temi per ruolo non sono cosmetica. Ogni persona ha la sua palette, la sua vista di default e il suo set di shortcut. Gli engineer non vedono le code di spese. I CFO non vedono gli standup di sprint.",
+      "Ogni persona ha i suoi gruppi di sidebar, la sua vista di default e il suo set di shortcut. Tema chiaro o scuro oggi; le palette per ruolo sono in roadmap. I CFO non vedono gli standup di sprint.",
     items: [
-      { k: "Employee", d: "Accento lime. Timbra, ferie, kudos." },
-      { k: "Manager", d: "Tono ambra. Approvazioni, carico team, autorità kudos." },
-      { k: "HR", d: "Corallo. People ops, onboarding, anomalie." },
-      { k: "Admin", d: "Ciano elettrico. Integrazioni, API, audit." },
-      { k: "Finance", d: "Violetto. Spese, margini, report." },
+      { k: "Employee", d: "Timbra, registra le ore, posta lo status, manda kudos." },
+      { k: "Manager", d: "Approvazioni, saturation del team, recap dello status log, autorità sui kudos." },
+      { k: "HR", d: "People ops, onboarding, recruiting, comunicazioni." },
+      { k: "Admin", d: "Moduli, integrazioni, API, audit log — e il \"View as\"." },
+      { k: "Finance", d: "Margini, report, redditività dei progetti." },
     ],
   },
 
@@ -410,11 +416,11 @@ export const it: Dict = {
     titleAfter: ".",
     full: "Changelog completo",
     items: [
-      { d: "19 apr", t: "Righe Gantt più alte + hover ricco", k: "Polish" },
-      { d: "18 apr", t: "Pulizia colori in tutta l'app", k: "Design" },
-      { d: "14 apr", t: "Hover card avatar + Employee Score", k: "People" },
-      { d: "09 apr", t: "Tab Saturation + vista Insights", k: "Labs" },
-      { d: "28 mar", t: "Command bar ⌘J con azioni eseguibili", k: "Tastiera" },
+      { d: "09 mag", t: "Tema scuro forzato su auth + schermate feedback", k: "Polish" },
+      { d: "06 mag", t: "Sidebar collassata, tema e \"View as\" persistono al refresh", k: "Workspace" },
+      { d: "30 apr", t: "Flow di Welcome semplificato — nome + dimensione, niente scelta ruolo", k: "Onboarding" },
+      { d: "24 apr", t: "\"View as\" in topbar — anteprima dell'app come un'altra persona", k: "Workspace" },
+      { d: "19 apr", t: "Sidebar regroupata: Dashboard / People / Time / Work / Other", k: "Navigazione" },
     ],
   },
 
@@ -526,15 +532,15 @@ export const it: Dict = {
   },
 
   labsPage: {
-    title: "Pulse Labs — kudos e tool di pulse",
+    title: "Pulse Labs — status log, kudos, saturation, moments",
     description:
-      "Tre feature Labs già disponibili: sentiment di Team Pulse, riconoscimenti Kudos e utilizzo Saturation. Incluse in ogni piano.",
+      "Quattro feature Labs già disponibili: Status Log (standup asincrono + recap), riconoscimenti Kudos, utilizzo Saturation e Moments. Incluse in ogni piano.",
     eyebrow: "Labs · già disponibile · incluso in ogni piano",
     titleLine1: "Le quattro feature Pulse",
     titleItalic: "che reinventano",
     titleAfter: " il software HR.",
     body:
-      "Labs è dove spediamo prima le capacità sperimentali — heatmap di sentiment, riconoscimenti peer, automazione deep-work e insight live di utilizzo. Niente liste d'attesa, niente upsell, niente paywall enterprise-tier.",
+      "Labs è dove spediamo prima le capacità sperimentali — standup asincrono con recap manager-safe, riconoscimenti peer, insight live di utilizzo e un feed di memoria aziendale. Niente liste d'attesa, niente upsell, niente paywall enterprise-tier.",
   },
 
   changelogPage: {
@@ -621,7 +627,7 @@ export const it: Dict = {
   heroNewTags: [
     "Command bar ⌘J",
     "Saturation",
-    "Team Pulse",
+    "Status Log",
     "Kudos",
     "Open source",
   ],

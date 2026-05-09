@@ -1,30 +1,33 @@
 ---
 type: concept
-aliases: [Role Themes]
+aliases: [Role Themes, Themes]
 tags: [concept, design]
-last_updated: 2026-04-26
+last_updated: 2026-05-09
 ---
 
 # Role Themes
 
-Pulse HR ships seven themes — light, dark, and one variant per role: employee, hr, manager, admin, finance. Switching role doesn't just gate features (see [[Modules]]) — it re-skins the app so the persona's daily surface feels distinct.
+Pulse HR ships **two** themes today: light and dark. The five-persona accent palette that earlier marketing and wiki pages described (a unique colour per role) is currently aspirational — only the persona-level *navigation*, *feature gating* and *default landing screen* differ between roles. Visual chrome stays the same.
 
-## Accent colors
+## Themes that ship
 
-| Role | Accent | Vibe |
+| Theme | Source | Notes |
 |---|---|---|
-| [[Employee]] | Lime `#b4ff39` | The default — fresh, focused. |
-| [[HR]] | Coral `#ff8a7a` | Human, warm. |
-| [[Manager]] | Amber `#ffbf4a` | Responsibility, warmth. |
-| [[Admin]] | Cyan `#6fd8ff` | Systems, control. |
-| [[Finance]] | Violet `#c48fff` | Fiscal calm. |
+| **light** | `packages/tokens/src/themes/light.css` | Off-white surface, lime spark accent. |
+| **dark** | `packages/tokens/src/themes/dark.css` | Default — near-black surface, lime spark accent. |
 
-## Scope
+[[Settings]] toggles between them. `/login`, `/signup` and the public [[Feedback]] site lock to dark.
 
-- Theme is selected per [[Employee]] (saved in [[Settings]]).
-- [[Admin]] can override their own role to **view as** another role — the UI re-skins and the sidebar filters down to that role's allowed features.
-- Light vs. dark and the role variant are orthogonal; you can have "HR theme on dark surface" or "HR theme on light."
+## What changes per persona
+
+Even without a per-role palette, the persona shift is real:
+
+- **[[Employee]]** lands on [[Dashboard]]; sees [[Status Log]], [[Time Tracking]], [[Leave]], [[Kudos]] (under [[Growth]]).
+- **[[Manager]]** adds [[Saturation]] and [[Org Chart]]; sees the team-feed and recap views in [[Status Log]].
+- **[[HR]]** unlocks [[Recruiting]], [[Announcements]], [[Documents]] templates and [[Onboarding]] workflows.
+- **[[Admin]]** sees everything plus [[Modules]] and [[Developers]].
+- **[[Finance]]** focuses on [[Reports]] and [[Clients]].
 
 ## Where it embodies
 
-[[Settings]] · [[Modules]] (admin role override) · every screen
+[[Settings]] · [[Modules]] · [[Role Override]] (topbar "View as") · every screen.

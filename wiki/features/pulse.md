@@ -1,18 +1,17 @@
 ---
 type: feature
-tags: [feature, labs, insights]
-last_updated: 2026-04-26
+tags: [feature, pulse, people]
+last_updated: 2026-05-09
 ---
 
 # Pulse
 
-Anonymous weekly vibe check. Each [[Employee]] picks an emoji-style sentiment (amazing / good / meh / rough / awful), optionally tags it (workload, team, tools, growth, other), optionally adds an anonymous note. The result is an org-wide sentiment heatmap.
+A team-wide vibe strip — a single row of weekly sentiment cells, by department or role — that lives **inside [[Status Log]]**. There is no standalone Pulse screen anymore; the strip surfaces the same heatmap the manager view used to dedicate a page to.
 
 ## Who uses it
 
-- Everyone submits.
-- [[HR]] and [[Manager]] read the aggregate heatmap and trend.
-- The wiki distinguishes this **Pulse** (anonymous heatmap) from [[Status Log]] (named, AI-conversational, manager-summary).
+- [[Employee]] glances at it before posting their own status — peer signal as social context.
+- [[Manager]] and [[HR]] read the strip together with the [[Status Log]] feed and the per-employee recap. The aggregation is intentionally low-resolution so individuals can't be re-identified.
 
 ## Key entities
 
@@ -20,11 +19,11 @@ Anonymous weekly vibe check. Each [[Employee]] picks an emoji-style sentiment (a
 
 ## Notable behaviors
 
-- **Anonymous by design.** No employee-id ever attaches to an entry. Aggregation happens at department and org level only.
-- **Threshold.** A department needs ≥3 respondents in a window before the heatmap shows anything; otherwise re-identification risk is too high.
-- **Heatmap surface.** [[HR]] uses Pulse + [[Status Log]] together — Pulse for the org pulse, Status Log for individual signal.
-- Part of [[Labs]].
+- **Aggregated only.** Cells render the average of contributors in a department or team for a window; no employee-id ever attaches to a cell.
+- **Threshold.** A bucket needs ≥3 respondents before it shows a value; otherwise the cell is dimmed with a "not enough signal" hint.
+- **Lives inside the log.** The strip is a component (`TeamPulseStrip`), not a route. The old `/pulse` URL is not wired up.
+- Counted as part of [[Labs]] because the framing — anonymous vibe heatmap distinct from the named feed — is still finding its shape.
 
 ## Related journeys
 
-[[Quarterly Pulse Cycle]]
+[[Daily Status Log]] · [[Quarterly Pulse Cycle]]

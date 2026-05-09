@@ -41,6 +41,7 @@ Use this as your starting point: scan the relevant section, click into the pages
 - [Settings](features/settings.md) — workspace and personal preferences.
 - [Status Log](features/status-log.md) — daily AI conversation; manager sees only the summary.
 - [Time Tracking](features/time-tracking.md) — log hours against a commessa.
+- [Welcome](features/welcome.md) — first-run editorial; names the workspace, seeds the roster.
 
 ## Entities
 
@@ -72,7 +73,9 @@ Use this as your starting point: scan the relevant section, click into the pages
 - [Labs](concepts/labs.md) — experimental shelf with NEW-badged features.
 - [Open Source Positioning](concepts/open-source-positioning.md) — why Pulse HR ships in public.
 - [PWA & Offline](concepts/pwa-offline.md) — installable, offline-capable surfaces.
-- [Role Themes](concepts/role-themes.md) — seven themes; per-role color and override.
+- [Role Override](concepts/role-override.md) — topbar "View as"; preview the workspace as another persona.
+- [Role Themes](concepts/role-themes.md) — light and dark; the per-role palette is aspirational.
+- [Signed-Out Gate](concepts/signed-out-gate.md) — public vs gated routes; how the demo lets visitors in.
 
 ## Journeys
 
@@ -84,9 +87,13 @@ Use this as your starting point: scan the relevant section, click into the pages
 
 ## Glossary
 
+- [allocation](glossary/allocation.md) — percentage of an employee's time committed to a commessa.
 - [badge](glossary/badge.md) — clock-in / clock-out (Italian usage of an English loanword).
 - [commessa](glossary/commessa.md) — billable project code; the pivot entity.
 - [ferie](glossary/ferie.md) — annual paid vacation.
+- [kudos](glossary/kudos.md) — peer recognition coin.
 - [malattia](glossary/malattia.md) — sick leave.
 - [permesso](glossary/permesso.md) — short personal leave; half-day absences.
+- [persona](glossary/persona.md) — workspace-local role (admin / hr / manager / finance / employee), separate from Clerk role.
 - [ROL](glossary/rol.md) — banked hour-leave (*Riduzione Orario di Lavoro*).
+- [timesheet](glossary/timesheet.md) — running record of hours by commessa.
