@@ -3,6 +3,6 @@
 .cursor
 .skills
 skills-lock.json
-docs
+/docs
 **/dist
 **/node_modules
