@@ -34,33 +34,33 @@ export function SignedOutGate() {
   const onSignIn = () => window.location.assign(buildLoginUrl());
 
   return (
-    <div className="room-dark relative min-h-screen overflow-hidden bg-[#0a0907] text-[var(--paper)]">
+    <div className="room-dark relative min-h-dvh md:overflow-hidden bg-[#0a0907] text-[var(--paper)] flex flex-col pl-safe pr-safe">
       {/* Top bar */}
-      <div className="absolute inset-x-0 top-0 h-16 px-7 z-10 flex items-center justify-between border-b border-white/5 bg-[#0a0907]/85 backdrop-blur-md">
-        <div className="flex items-center gap-3.5">
+      <div className="md:absolute md:inset-x-0 md:top-0 md:h-16 md:px-7 md:z-10 px-4 z-30 sticky top-0 pt-safe flex items-center justify-between border-b border-white/5 bg-[#0a0907]/90 backdrop-blur-md">
+        <div className="h-14 md:h-16 flex items-center gap-3 md:gap-3.5 min-w-0">
           <a
             href={APP_URL}
-            className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.12em] uppercase font-mono text-white/55 hover:text-white"
+            className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.12em] uppercase font-mono text-white/55 hover:text-white tap-target no-tap-highlight h-9"
           >
-            <ArrowLeft className="h-3 w-3" />
-            Back to Pulse
+            <ArrowLeft className="h-3 w-3 shrink-0" />
+            <span className="hidden sm:inline">Back to Pulse</span>
           </a>
-          <span className="h-4 w-px bg-white/10" />
-          <div className="flex items-baseline gap-2">
+          <span className="h-4 w-px bg-white/10 hidden sm:block" />
+          <div className="flex items-baseline gap-2 min-w-0">
             <span className="font-display text-lg tracking-[-0.02em]">Pulse</span>
             <span
-              className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--spark)]"
+              className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--spark)] shrink-0"
               style={{ boxShadow: "0 0 12px var(--spark)" }}
             />
             <span className="font-display text-lg tracking-[-0.02em] text-[var(--spark)]">
               Feedback
             </span>
-            <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-[var(--spark)]/12 text-[var(--spark)] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold">
+            <span className="ml-1.5 hidden sm:inline px-1.5 py-0.5 rounded-full bg-[var(--spark)]/12 text-[var(--spark)] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold">
               Labs · Beta
             </span>
           </div>
         </div>
-        <span className="text-[10px] tracking-[0.12em] uppercase font-mono text-white/40">
+        <span className="text-[10px] tracking-[0.12em] uppercase font-mono text-white/40 hidden sm:inline">
           not signed in
         </span>
       </div>
@@ -105,15 +105,16 @@ export function SignedOutGate() {
         })}
       </div>
 
-      {/* Center modal */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-[min(520px,92vw)] p-10 md:p-12 rounded-3xl border border-white/8 backdrop-blur-2xl"
+      {/* Center modal — flows in document on mobile, absolute-centered on md+ */}
+      <div className="md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-20 w-full md:w-[min(520px,92vw)] mx-auto md:mx-0 my-auto p-6 sm:p-8 md:p-12 md:rounded-3xl md:border md:border-white/8 md:backdrop-blur-2xl flex-1 md:flex-none flex flex-col justify-center"
         style={{
           background: "linear-gradient(180deg, rgba(20,18,14,.92), rgba(10,9,7,.92))",
           boxShadow:
             "0 60px 120px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(180,255,57,.08)",
         }}
       >
-        <div className="flex items-center gap-2.5 mb-9">
+        <div className="max-w-md mx-auto md:mx-0 w-full">
+        <div className="flex items-center gap-2.5 mb-7 md:mb-9">
           <span
             className="h-2 w-2 rounded-full bg-[var(--spark)]"
             style={{ boxShadow: "0 0 16px var(--spark)" }}
@@ -123,16 +124,14 @@ export function SignedOutGate() {
           </span>
         </div>
 
-        <h1
-          className="font-display font-light text-5xl md:text-[68px] leading-[0.86] tracking-[-0.045em] mb-2"
-        >
+        <h1 className="font-display font-light text-[clamp(40px,11vw,68px)] leading-[0.88] tracking-[-0.045em] mb-2">
           The wall
           <br />
           <span className="italic font-light text-[var(--spark)] tracking-[-0.05em]">
             that listens.
           </span>
         </h1>
-        <p className="text-sm md:text-[14px] leading-[1.55] text-white/60 mt-5 mb-9 max-w-[380px]">
+        <p className="text-[13px] sm:text-sm md:text-[14px] leading-[1.55] text-white/60 mt-5 mb-7 md:mb-9 max-w-[380px]">
           Every pin, every proposal, every "this is broken" — collected, voted on, shipped or
           quietly killed. Sign in with your work email.
         </p>
@@ -140,7 +139,7 @@ export function SignedOutGate() {
         <button
           type="button"
           onClick={onSignIn}
-          className="w-full h-[52px] rounded-xl bg-[var(--spark)] text-[#0a1400] text-sm font-bold tracking-tight press-scale flex items-center justify-center gap-2"
+          className="w-full h-[52px] rounded-xl bg-[var(--spark)] text-[#0a1400] text-sm font-bold tracking-tight press-scale flex items-center justify-center gap-2 tap-target no-tap-highlight"
           style={{ boxShadow: "0 14px 30px -10px var(--spark)" }}
         >
           Sign in →
@@ -156,12 +155,12 @@ export function SignedOutGate() {
 
         <a
           href={`${APP_URL}/signup`}
-          className="block text-center h-12 rounded-xl border border-white/10 bg-white/5 text-[13px] leading-[48px] hover:bg-white/8"
+          className="block text-center h-12 rounded-xl border border-white/10 bg-white/5 text-[13px] leading-[48px] hover:bg-white/8 tap-target no-tap-highlight"
         >
           Create an account →
         </a>
 
-        <div className="mt-8 pt-5 border-t border-white/5 flex items-center justify-between">
+        <div className="mt-7 md:mt-8 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-white/40">
             Bitrock · Workspace
           </span>
@@ -170,17 +169,18 @@ export function SignedOutGate() {
             <span className="text-[var(--spark)] cursor-pointer">Ask your admin →</span>
           </span>
         </div>
+        </div>
       </div>
 
       {/* Bottom strip */}
-      <div className="absolute inset-x-0 bottom-0 h-12 z-10 px-6 border-t border-white/5 bg-black/40 flex items-center justify-center gap-6 text-[10px] tracking-[0.12em] uppercase font-mono">
+      <div className="md:absolute md:inset-x-0 md:bottom-0 md:h-12 md:z-10 md:px-6 px-4 py-3 md:py-0 pb-safe border-t border-white/5 bg-black/40 flex items-center justify-center gap-3 md:gap-6 text-[9px] md:text-[10px] tracking-[0.12em] uppercase font-mono flex-wrap">
         <span className="text-white/55">247 proposals</span>
         <span className="text-white/15">·</span>
         <span className="text-white/55">1.2K votes this week</span>
-        <span className="text-white/15">·</span>
-        <span className="text-white/55">34 shipped</span>
-        <span className="text-white/15">·</span>
-        <span className="text-[var(--spark)]">↓ scroll once you're in</span>
+        <span className="text-white/15 hidden md:inline">·</span>
+        <span className="text-white/55 hidden md:inline">34 shipped</span>
+        <span className="text-white/15 hidden md:inline">·</span>
+        <span className="text-[var(--spark)] hidden md:inline">↓ scroll once you're in</span>
       </div>
     </div>
   );

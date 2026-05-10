@@ -20,7 +20,7 @@ export function CookieConsentBanner() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-[60] border-t border-border bg-card/95 p-4 text-card-foreground shadow-lg backdrop-blur supports-[backdrop-filter]:bg-card/80 md:px-6"
+      className="fixed bottom-0 left-0 right-0 z-[60] border-t border-border bg-card/95 p-4 pb-safe-4 pl-safe pr-safe text-card-foreground shadow-lg backdrop-blur supports-[backdrop-filter]:bg-card/80 md:px-6"
       role="region"
       aria-label="Cookie preferences"
     >

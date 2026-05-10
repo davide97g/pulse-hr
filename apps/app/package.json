@@ -1,6 +1,6 @@
 {
   "name": "@workflows-people/app",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -83,14 +83,14 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
+    "@vitejs/plugin-react": "^5.0.0",
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^15.15.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1",
-    "vite": "^8.0.9",
+    "vite": "^7.1.0",
     "vite-plugin-pwa": "^1.2.0"
   }
 }

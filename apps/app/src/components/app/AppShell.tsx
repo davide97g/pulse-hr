@@ -249,7 +249,7 @@ function AppShellInner() {
 
   return (
     <div
-      className="flex h-screen w-full bg-background text-foreground overflow-hidden"
+      className="flex h-dvh w-full bg-background text-foreground overflow-hidden pt-safe pb-safe pl-safe pr-safe"
       style={{ ["--topbar-height" as string]: "3.5rem" }}
     >
       {/* Sidebar — desktop only · Editorial */}
@@ -467,23 +467,23 @@ function AppShellInner() {
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
         <SheetContent
           side="left"
-          className="p-0 w-[84%] max-w-[300px]"
+          className="p-0 w-[88%] max-w-[340px] flex flex-col"
           style={{ background: "var(--bg)" }}
         >
           <div
-            className="h-14 flex items-center gap-2 px-4"
+            className="h-14 flex items-center gap-2 px-4 shrink-0"
             style={{ borderBottom: "1px solid var(--line)" }}
           >
-            <BrandMark size="md" wordmark={!collapsed} />
-            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            <BrandMark size="md" wordmark />
+            <span className="t-mono ml-1 truncate" style={{ color: "var(--muted-foreground)" }}>
               {workspace.name}
             </span>
           </div>
-          <div className="px-4 py-3" style={{ borderBottom: "1px solid var(--line)" }}>
+          <div className="px-4 py-3 shrink-0" style={{ borderBottom: "1px solid var(--line)" }}>
             <ThemeSwitcher />
           </div>
           <nav
-            className="overflow-y-auto scroll-fade py-5 px-3 h-[calc(100%-6.75rem)]"
+            className="flex-1 overflow-y-auto scroll-fade py-5 px-3 overscroll-contain"
             style={{ ["--fade-bg" as string]: "var(--bg)" }}
           >
             {groups.map((group, groupIndex) => (
@@ -505,7 +505,7 @@ function AppShellInner() {
                         : location.pathname.startsWith(item.to);
                     const Icon = item.icon;
                     const className = cn(
-                      "flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors relative",
+                      "flex items-center gap-3 px-3 py-3 rounded-md text-sm transition-colors relative tap-target no-tap-highlight",
                       active ? "font-semibold" : "hover:bg-muted/40",
                     );
                     const linkStyle = active
@@ -694,7 +694,7 @@ function Topbar({
   };
   return (
     <header
-      className="h-14 flex items-center px-4 md:px-6 gap-3 shrink-0"
+      className="h-14 flex items-center px-3 md:px-6 gap-1.5 sm:gap-2 md:gap-3 shrink-0"
       style={{
         borderBottom: "1px solid var(--line)",
         background: "color-mix(in oklch, var(--bg) 80%, transparent)",
@@ -703,7 +703,7 @@ function Topbar({
     >
       <button
         onClick={onOpenMobileNav}
-        className="lg:hidden h-9 w-9 rounded-md hover:bg-muted flex items-center justify-center shrink-0"
+        className="lg:hidden h-10 w-10 -ml-1 rounded-md hover:bg-muted flex items-center justify-center shrink-0 tap-target no-tap-highlight"
         aria-label="Open menu"
       >
         <Menu className="h-5 w-5" />
@@ -729,7 +729,7 @@ function Topbar({
       </button>
       <button
         onClick={onOpenPalette}
-        className="md:hidden h-9 w-9 rounded-md border flex items-center justify-center"
+        className="md:hidden h-10 w-10 rounded-md border flex items-center justify-center tap-target no-tap-highlight"
         style={{ borderColor: "var(--line-strong)" }}
         aria-label="Search"
       >
@@ -747,7 +747,7 @@ function Topbar({
       </Link>
       <Link
         to="/log"
-        className="sm:hidden h-9 w-9 rounded-md border flex items-center justify-center"
+        className="sm:hidden h-10 w-10 rounded-md border flex items-center justify-center tap-target no-tap-highlight"
         style={{ borderColor: "var(--line-strong)" }}
         aria-label="Status log"
       >

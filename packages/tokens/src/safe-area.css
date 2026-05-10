@@ -1,0 +1,142 @@
+/*
+ * Safe-area + viewport utilities — single source for PWA inset handling.
+ *
+ * iOS (notch / home indicator) and Android (gesture bar / status bar) expose
+ * env(safe-area-inset-*). We surface them as utilities and as named CSS
+ * variables so non-utility code (style={...}) can use them too. `dvh` is the
+ * dynamic viewport height that shrinks/grows with the iOS URL bar — we
+ * prefer it over `vh` everywhere a full-bleed surface needs to behave on
+ * mobile Safari.
+ *
+ * Pre-requisite: every consuming app must include
+ *   <meta name="viewport" content="..., viewport-fit=cover" />
+ * otherwise `env()` resolves to 0 on iOS.
+ */
+
+@layer base {
+  :root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+  }
+}
+
+@layer utilities {
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .pr-safe {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .pl-safe {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+  .px-safe {
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+  .py-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .p-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+
+  /*
+   * Stack-safe variants — add the inset on top of an existing padding so the
+   * topbar / bottom bar can preserve its visual rhythm AND clear the notch.
+   * Default rhythm is reused via calc().
+   */
+  .pt-safe-2 {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
+  }
+  .pt-safe-3 {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+  }
+  .pt-safe-4 {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 1rem);
+  }
+  .pb-safe-2 {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+  }
+  .pb-safe-3 {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
+  }
+  .pb-safe-4 {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  }
+
+  .top-safe {
+    top: env(safe-area-inset-top, 0px);
+  }
+  .bottom-safe {
+    bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .right-safe {
+    right: env(safe-area-inset-right, 0px);
+  }
+  .left-safe {
+    left: env(safe-area-inset-left, 0px);
+  }
+  .mb-safe {
+    margin-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /*
+   * Dynamic viewport — `100dvh` matches the visual viewport on mobile
+   * Safari without the iOS URL bar overshoot bug. `100svh` is the smallest
+   * viewport (URL bar visible). Use `dvh` for app shells, `svh` for fixed
+   * fullscreen overlays that must never grow when the URL bar hides.
+   */
+  .h-dvh {
+    height: 100dvh;
+  }
+  .min-h-dvh {
+    min-height: 100dvh;
+  }
+  .max-h-dvh {
+    max-height: 100dvh;
+  }
+  .h-svh {
+    height: 100svh;
+  }
+  .min-h-svh {
+    min-height: 100svh;
+  }
+
+  /*
+   * Combined helpers for common mobile layout primitives. The shell uses
+   * `min-h-screen-safe` to guarantee no clip when the keyboard or URL bar
+   * collapses; bottom bars use `pb-safe` to clear the home indicator.
+   */
+  .min-h-screen-safe {
+    min-height: 100dvh;
+  }
+  .h-screen-safe {
+    height: 100dvh;
+  }
+
+  /* Bigger touch targets on coarse pointers (touch screens) — applied to
+     anything tagged `.tap-target`, which gets at least the iOS HIG-recommended
+     44×44 pt. Keeps desktop UIs untouched. */
+  @media (pointer: coarse) {
+    .tap-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+
+  /* Disable the iOS tap highlight overlay on app-shell controls; we already
+     run `.press-scale` for press feedback. */
+  .no-tap-highlight {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

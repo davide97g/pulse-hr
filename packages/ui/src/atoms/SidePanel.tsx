@@ -31,7 +31,8 @@ export function SidePanel({
       />
       <aside
         className={cn(
-          "fixed top-0 right-0 h-full max-w-[100vw] bg-card border-l z-50 flex flex-col",
+          "fixed top-0 right-0 max-w-[100vw] bg-card border-l z-50 flex flex-col panel-enter",
+          "h-dvh pt-safe pb-safe pr-safe",
         )}
         style={{ width: `min(${width}px, 100vw)`, boxShadow: "var(--shadow-panel)" }}
       >
@@ -39,12 +40,13 @@ export function SidePanel({
           <div className="font-semibold text-sm truncate">{title}</div>
           <button
             onClick={onClose}
-            className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-muted text-muted-foreground"
+            className="h-9 w-9 rounded-md flex items-center justify-center hover:bg-muted text-muted-foreground tap-target no-tap-highlight"
+            aria-label="Close panel"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto scrollbar-thin">{children}</div>
+        <div className="flex-1 overflow-y-auto scrollbar-thin overscroll-contain">{children}</div>
       </aside>
     </>
   );

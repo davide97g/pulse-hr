@@ -4,6 +4,21 @@ All notable user-facing changes to Pulse HR. Each `## version — date — "titl
 below becomes a release announcement. An optional fenced ` ```tour ` block embeds an in-app
 tour that the "What's new" prompt can launch.
 
+## 0.9.0 — 2026-05-10 — "Pulse on your phone"
+
+Pulse HR now actually works on a phone. Login, the app shell, the feedback board and the entry gate were all redesigned with mobile-first proportions, real touch targets, and proper iOS / Android safe-area handling. Installing the PWA on iOS no longer hides the topbar behind the notch or pins the home indicator under your bottom toolbar — every fixed surface respects `env(safe-area-inset-*)`, and every full-bleed layout uses dynamic-viewport heights so the iOS URL bar can come and go without breaking the page.
+
+- **Mobile-ready login + signup** — `/login` and `/signup` collapse the editorial split into a single readable column on small screens, the heading scales fluidly down to the smallest phones, and the form side is `min-h-dvh` with safe-area padding so the keyboard never punts the submit button off-screen. A small `pulse·hr · v0.9.0` chip replaces the desktop-only sidebar branding so the user always knows where they are.
+- **Mobile menu** — the app drawer is wider (88% / max 340px), uses a flex-column layout that survives URL-bar resizes, items have 44pt touch targets, and the safe-area insets are wired through the Sheet primitive so the drawer never tucks behind the notch on iOS landscape. The drawer header pins, the nav scrolls inside, and overscroll is contained so the page underneath doesn't bounce.
+- **Compact mobile topbar** — gaps shrink from 12px to 6px on the smallest phones, every icon button is now a 40px tap target with `no-tap-highlight`, and the section eyebrow stays hidden until there's room for it (`hidden sm:inline`). `⌘K`, `⌘J` and notifications all fit comfortably on a 360px screen without overlapping the avatar.
+- **Feedback board, mobile-first** — the feedback shell has a sticky `pt-safe` header with a dedicated mobile sub-row that surfaces "Board" and "Voting power" as full-width pills, so the primary destinations stop hiding behind the avatar menu. Sign-out gets an honest 36×36 touch target on mobile and stays a 32×32 chip on desktop.
+- **`SignedOutGate` redesigned for small screens** — the floating cards stay (md+ only), but on phones the gate now flows in the document: hero typography clamps to fit, the CTA stack becomes the focal point, and the bottom stat strip wraps gracefully on the smallest viewports. iPhone X and up no longer have to scroll horizontally to read the hero.
+- **PWA safe-area in tokens** — `@pulse-hr/tokens/safe-area.css` is the new canonical source for `pt-safe`, `pb-safe`, `pl-safe`, `pr-safe`, `min-h-dvh`, and the `tap-target` / `no-tap-highlight` utilities. Every shell consumes them so future routes inherit the same behaviour for free.
+- **Viewport meta hardened** — both `apps/app/index.html` and `apps/feedback/index.html` ship `viewport-fit=cover`, the right `apple-mobile-web-app-*` meta set, `format-detection=telephone=no` so phone numbers stop becoming Skype links, and a matching `color-scheme` declaration so iOS doesn't fight the dark canvas during PWA splash.
+- **Vite 7 across the SPAs** — `apps/app`, `apps/feedback`, and `apps/design` are pinned to Vite `^7.1` (with `@vitejs/plugin-react@^5`) to dodge the iOS Safari Service-Worker regressions seen on Vite 8. `vite-plugin-pwa@1.2` is unchanged and continues to drive the install banner, offline cache, and auto-update toasts.
+
+No data shape changed and no migration runs — this release is purely client-side surface work.
+
 ## 0.8.0 — 2026-04-26 — "A wiki you can read"
 
 Pulse HR now ships a public, HR-readable knowledge base at `/wiki` — an Obsidian-vault-compatible companion to the source code. Around 80 pages model the product as a product (personas, features, entities, journeys, Italian glossary) instead of as code, so a non-technical reader can learn what Pulse HR does without opening the codebase, and any LLM agent can build context for a session without re-deriving the product model from routes and mock-data every time.

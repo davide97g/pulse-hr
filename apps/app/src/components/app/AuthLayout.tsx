@@ -37,7 +37,7 @@ export function AuthLayout({
   useForcedDarkTheme();
   return (
     <div
-      className="ph min-h-screen grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]"
+      className="ph min-h-dvh grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] pt-safe pb-safe pl-safe pr-safe"
       style={{ background: "var(--bg)" }}
     >
       {/* Hero side — dark editorial */}
@@ -109,21 +109,24 @@ export function AuthLayout({
       </aside>
 
       {/* Form side */}
-      <main
-        className="flex flex-col justify-center"
-        style={{ padding: "56px clamp(24px, 5vw, 80px)", gap: 24 }}
-      >
-        <div className="lg:hidden flex items-center gap-3 mb-2">
+      <main className="flex flex-col justify-center min-h-dvh px-6 py-8 sm:px-10 sm:py-12 lg:px-[clamp(40px,5vw,80px)] lg:py-14 gap-5 sm:gap-6">
+        <div className="lg:hidden flex items-center gap-3">
           <span
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontStyle: "italic",
-              fontSize: 24,
+              fontSize: 22,
               letterSpacing: "-0.04em",
               fontWeight: 500,
             }}
           >
             pulse·hr
+          </span>
+          <span
+            className="t-mono ml-auto"
+            style={{ color: "color-mix(in oklch, var(--foreground) 60%, transparent)" }}
+          >
+            v{APP_VERSION}
           </span>
         </div>
         <div>
@@ -138,9 +141,9 @@ export function AuthLayout({
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "8px 0 0",
-              fontSize: "clamp(40px, 5vw, 56px)",
+              fontSize: "clamp(32px, 7.5vw, 56px)",
               letterSpacing: "-0.035em",
-              lineHeight: 0.96,
+              lineHeight: 0.98,
             }}
           >
             <span style={{ fontStyle: "italic" }}>{title.replace(/\.$/, "")}</span>
@@ -152,8 +155,9 @@ export function AuthLayout({
               color: "color-mix(in oklch, var(--foreground) 92%, transparent)",
               fontFamily: "Fraunces, ui-serif, serif",
               fontStyle: "italic",
-              fontSize: 18,
+              fontSize: "clamp(15px, 4vw, 18px)",
               maxWidth: 460,
+              lineHeight: 1.4,
             }}
           >
             {subtitle}
@@ -167,14 +171,14 @@ export function AuthLayout({
               fontStyle: "italic",
               fontSize: 16,
               color: "color-mix(in oklch, var(--foreground) 80%, transparent)",
-              marginTop: 8,
+              marginTop: 4,
             }}
           >
             {footer}
           </div>
         )}
         <span
-          className="t-mono mt-auto"
+          className="t-mono mt-auto hidden lg:inline"
           style={{ color: "color-mix(in oklch, var(--foreground) 65%, transparent)" }}
         >
           v{APP_VERSION}

@@ -110,13 +110,12 @@ export function WelcomeEditorial() {
 
   return (
     <div
-      className="ph grid min-h-[calc(100vh-3.5rem)]"
-      style={{ gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 1fr)" }}
+      className="ph grid min-h-[calc(100dvh-3.5rem)] grid-cols-1 lg:[grid-template-columns:minmax(0,1.1fr)_minmax(0,1fr)]"
     >
       {/* LEFT */}
       <section
-        className="flex flex-col justify-between"
-        style={{ padding: "clamp(32px, 4vw, 56px) clamp(28px, 4vw, 64px)" }}
+        className="flex flex-col justify-between gap-10 lg:gap-0"
+        style={{ padding: "clamp(28px, 5vw, 56px) clamp(20px, 5vw, 64px)" }}
       >
         <header className="flex items-center gap-3.5">
           <span
@@ -145,7 +144,7 @@ export function WelcomeEditorial() {
               margin: "18px 0 0",
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
-              fontSize: "clamp(80px, 12vw, 144px)",
+              fontSize: "clamp(54px, 14vw, 144px)",
               lineHeight: 0.86,
               letterSpacing: "-0.045em",
             }}
@@ -156,12 +155,12 @@ export function WelcomeEditorial() {
           </h1>
           <p
             style={{
-              marginTop: 28,
+              marginTop: 24,
               maxWidth: 520,
               color: "var(--fg-2)",
               fontFamily: "Fraunces, ui-serif, serif",
               fontStyle: "italic",
-              fontSize: 22,
+              fontSize: "clamp(17px, 4.5vw, 22px)",
               lineHeight: 1.4,
               letterSpacing: "-0.005em",
             }}

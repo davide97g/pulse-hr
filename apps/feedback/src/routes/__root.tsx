@@ -19,7 +19,7 @@ function RootComponent() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
+      <div className="min-h-dvh flex items-center justify-center text-sm text-muted-foreground">
         Loading…
       </div>
     );

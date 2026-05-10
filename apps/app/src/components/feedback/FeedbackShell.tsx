@@ -16,7 +16,7 @@ export function FeedbackShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className="min-h-screen flex flex-col"
+      className="min-h-dvh flex flex-col pt-safe pb-safe pl-safe pr-safe"
       style={{
         background:
           "radial-gradient(1200px 600px at 85% -20%, color-mix(in oklch, var(--primary) 18%, transparent), transparent 60%), var(--background)",

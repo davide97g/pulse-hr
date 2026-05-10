@@ -9,6 +9,7 @@
     "./index.css": "./src/index.css",
     "./tokens.css": "./src/tokens.css",
     "./motion.css": "./src/motion.css",
+    "./safe-area.css": "./src/safe-area.css",
     "./base.css": "./src/base.css",
     "./wp-aliases.css": "./src/wp-aliases.css",
     "./tailwind": "./src/tailwind.ts"
