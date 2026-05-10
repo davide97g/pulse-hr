@@ -1040,8 +1040,9 @@ export function bookingsFor(
 }
 
 // ── Mutable store (for CRUD UI) ─────────────────────────────────────
-// Re-exported from `./offices-store` so the mutators delegate to the
-// localStorage-backed tables in `./tables/{offices,rooms,seats,closures}`.
-// The re-export sits at the bottom of this file so seeds above are fully
-// defined before the table modules read them through the import cycle.
-export { officesStore } from "./offices-store";
+// `officesStore` lives in `./offices-store` and is imported directly by
+// `OfficesManagePanel` and `OfficesStoreProvider`. It is intentionally NOT
+// re-exported here: ESM hoists `export … from` to the top of the module, so
+// re-exporting from this file would trigger `offices-store.ts` → `tables/*.ts`
+// before the seed consts (`officesSeed`, `roomsSeed`, …) are initialized,
+// producing a TDZ "Cannot access 'officesSeed' before initialization".

@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { officesStore } from "@/lib/offices";
+import { officesStore } from "@/lib/offices-store";
 
 /**
  * Mount near the root so the whole React tree re-renders when the

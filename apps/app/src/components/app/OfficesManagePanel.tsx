@@ -46,7 +46,6 @@ import {
   offices,
   rooms,
   seats,
-  officesStore,
   officeById,
   seatsByOffice,
   type Office,
@@ -55,6 +54,7 @@ import {
   type Amenity,
   type RoomKind,
 } from "@/lib/offices";
+import { officesStore } from "@/lib/offices-store";
 import { cn } from "@/lib/utils";
 
 const IS_ADMIN = true;
