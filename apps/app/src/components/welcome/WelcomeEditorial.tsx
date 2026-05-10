@@ -110,7 +110,7 @@ export function WelcomeEditorial() {
 
   return (
     <div
-      className="ph grid min-h-[calc(100dvh-3.5rem)] grid-cols-1 lg:[grid-template-columns:minmax(0,1.1fr)_minmax(0,1fr)]"
+      className="ph grid min-h-dvh grid-cols-1 lg:[grid-template-columns:minmax(0,1.1fr)_minmax(0,1fr)] pt-safe pb-safe pl-safe pr-safe"
     >
       {/* LEFT */}
       <section

@@ -109,7 +109,7 @@ export function AuthLayout({
       </aside>
 
       {/* Form side */}
-      <main className="flex flex-col justify-center min-h-dvh px-6 py-8 sm:px-10 sm:py-12 lg:px-[clamp(40px,5vw,80px)] lg:py-14 gap-5 sm:gap-6">
+      <main className="flex flex-col justify-center min-h-full px-6 py-8 sm:px-10 sm:py-12 lg:px-[clamp(40px,5vw,80px)] lg:py-14 gap-5 sm:gap-6">
         <div className="lg:hidden flex items-center gap-3">
           <span
             style={{

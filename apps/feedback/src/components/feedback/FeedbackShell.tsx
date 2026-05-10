@@ -134,7 +134,10 @@ export function FeedbackShell({ children }: { children: React.ReactNode }) {
           </Link>
         </nav>
       </header>
-      <main className="flex-1 overflow-y-auto scrollbar-thin pb-safe">
+      <main
+        className="flex-1 overflow-y-auto scrollbar-thin pb-safe"
+        style={{ scrollPaddingTop: "calc(env(safe-area-inset-top, 0px) + 7rem)" }}
+      >
         {isLoaded ? (
           children
         ) : (
