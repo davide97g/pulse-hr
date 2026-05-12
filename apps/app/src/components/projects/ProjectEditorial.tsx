@@ -169,7 +169,7 @@ export function ProjectEditorial({ projectId }: { projectId: string }) {
 
   return (
     <div
-      className="ph p-4 md:p-6 grid gap-8 min-h-[calc(100vh-3.5rem)]"
+      className="ph p-4 md:p-6 grid gap-8 min-h-full"
       style={{ gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 1.3fr)" }}
     >
       {/* LEFT */}

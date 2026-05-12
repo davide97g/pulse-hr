@@ -197,7 +197,7 @@ export function EmployeesDashboard() {
   const chartH = 180;
 
   return (
-    <div className="p-4 md:p-6 flex flex-col gap-4 min-h-[calc(100vh-3.5rem)]">
+    <div className="p-4 md:p-6 flex flex-col gap-4 min-h-full">
       {/* HEADER */}
       <div className="grid items-end gap-6" style={{ gridTemplateColumns: "1fr auto" }}>
         <div>

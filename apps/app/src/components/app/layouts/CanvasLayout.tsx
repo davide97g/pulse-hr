@@ -14,7 +14,7 @@ export interface CanvasLayoutProps {
 }
 
 /**
- * Layout for canvas/board archetype routes (/org, /calendar, seat maps).
+ * Layout for canvas/board archetype routes (/org, seat maps).
  * Fills viewport below the AppShell topbar (uses --topbar-height set by
  * AppShell.tsx). Header and toolbar are fixed-height; content scrolls or
  * fills, owned by the caller.

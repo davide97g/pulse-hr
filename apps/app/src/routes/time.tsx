@@ -407,7 +407,26 @@ function TimePage() {
         />
       )}
 
-      <TimesheetAutofillDialog open={autofillOpen} onOpenChange={setAutofillOpen} />
+      <TimesheetAutofillDialog
+        open={autofillOpen}
+        onClose={() => setAutofillOpen(false)}
+        entries={entries}
+        employeeId={employeeId}
+        onAccept={(rows) => {
+          for (const row of rows) {
+            timesheetEntriesTable.add({
+              ...row,
+              employeeId,
+              status: "draft",
+            });
+          }
+          toast.success(
+            rows.length === 1
+              ? "1 entry added to your timesheet"
+              : `${rows.length} entries added to your timesheet`,
+          );
+        }}
+      />
     </EditorialPage>
   );
 }
@@ -553,6 +572,7 @@ function DayCell({
   let bg = "var(--bg)";
   if (d.isWeekend) bg = "var(--bg-2)";
   if (isLeave) bg = "var(--bg-3)";
+  if (complete) bg = "color-mix(in oklch, var(--spark) 14%, var(--bg))";
 
   return (
     <button

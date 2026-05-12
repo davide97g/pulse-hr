@@ -53,7 +53,7 @@ const tokenize = (raw: string): Token[] => {
 };
 
 export const Outro: React.FC<Props> = ({
-  tagline = "HR you can read, fork, and run.",
+  tagline = "HR, rebuilt.",
   url = "pulsehr.it",
 }) => {
   const frame = useCurrentFrame();

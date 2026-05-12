@@ -37,7 +37,7 @@ export function ProfileEditorial() {
 
   return (
     <div
-      className="ph p-4 md:p-6 grid gap-11 min-h-[calc(100vh-3.5rem)]"
+      className="ph p-4 md:p-6 grid gap-11 min-h-full"
       style={{ gridTemplateColumns: "1.2fr 1fr" }}
     >
       <section className="flex flex-col justify-between min-h-0 gap-6">

@@ -77,7 +77,6 @@ const TITLE_BY_PATH: Record<string, string> = {
   "/org": "Org chart — Pulse HR",
   "/recruiting": "Recruiting — Pulse HR",
   "/time": "Time & attendance — Pulse HR",
-  "/calendar": "Calendar — Pulse HR",
   "/leave": "Leave — Pulse HR",
   "/documents": "Documents — Pulse HR",
   "/reports": "Reports — Pulse HR",

@@ -29,7 +29,7 @@ export function OfficesEditorial() {
 
   return (
     <div
-      className="ph p-4 md:p-6 grid gap-6 md:gap-11 min-h-[calc(100vh-3.5rem)] grid-cols-1 lg:grid-cols-[1fr_1.2fr]"
+      className="ph p-4 md:p-6 grid gap-6 md:gap-11 min-h-full grid-cols-1 lg:grid-cols-[1fr_1.2fr]"
     >
       <section className="flex flex-col justify-between gap-8">
         <div>

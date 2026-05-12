@@ -56,7 +56,7 @@ export function FeedbackEditorial() {
 
   return (
     <div
-      className="ph p-4 md:p-6 grid gap-10 min-h-[calc(100vh-3.5rem)]"
+      className="ph p-4 md:p-6 grid gap-10 min-h-full"
       style={{ gridTemplateColumns: "1fr 1.2fr" }}
     >
       <section className="flex flex-col justify-between">

@@ -32,7 +32,6 @@ import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as ClientsRouteImport } from './routes/clients'
-import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as ActivitiesRouteImport } from './routes/activities'
 import { Route as IndexRouteImport } from './routes/index'
@@ -174,11 +173,6 @@ const ClientsRoute = ClientsRouteImport.update({
   path: '/clients',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CalendarRoute = CalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AnnouncementsRoute = AnnouncementsRouteImport.update({
   id: '/announcements',
   path: '/announcements',
@@ -309,7 +303,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activities': typeof ActivitiesRoute
   '/announcements': typeof AnnouncementsRoute
-  '/calendar': typeof CalendarRoute
   '/clients': typeof ClientsRouteWithChildren
   '/developers': typeof DevelopersRoute
   '/docs': typeof DocsRouteWithChildren
@@ -360,7 +353,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activities': typeof ActivitiesRoute
   '/announcements': typeof AnnouncementsRoute
-  '/calendar': typeof CalendarRoute
   '/developers': typeof DevelopersRoute
   '/documents': typeof DocumentsRoute
   '/feedback': typeof FeedbackRoute
@@ -409,7 +401,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/activities': typeof ActivitiesRoute
   '/announcements': typeof AnnouncementsRoute
-  '/calendar': typeof CalendarRoute
   '/clients': typeof ClientsRouteWithChildren
   '/developers': typeof DevelopersRoute
   '/docs': typeof DocsRouteWithChildren
@@ -462,7 +453,6 @@ export interface FileRouteTypes {
     | '/'
     | '/activities'
     | '/announcements'
-    | '/calendar'
     | '/clients'
     | '/developers'
     | '/docs'
@@ -513,7 +503,6 @@ export interface FileRouteTypes {
     | '/'
     | '/activities'
     | '/announcements'
-    | '/calendar'
     | '/developers'
     | '/documents'
     | '/feedback'
@@ -561,7 +550,6 @@ export interface FileRouteTypes {
     | '/'
     | '/activities'
     | '/announcements'
-    | '/calendar'
     | '/clients'
     | '/developers'
     | '/docs'
@@ -613,7 +601,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivitiesRoute: typeof ActivitiesRoute
   AnnouncementsRoute: typeof AnnouncementsRoute
-  CalendarRoute: typeof CalendarRoute
   ClientsRoute: typeof ClientsRouteWithChildren
   DevelopersRoute: typeof DevelopersRoute
   DocsRoute: typeof DocsRouteWithChildren
@@ -809,13 +796,6 @@ declare module '@tanstack/react-router' {
       path: '/clients'
       fullPath: '/clients'
       preLoaderRoute: typeof ClientsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calendar': {
-      id: '/calendar'
-      path: '/calendar'
-      fullPath: '/calendar'
-      preLoaderRoute: typeof CalendarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/announcements': {
@@ -1070,7 +1050,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivitiesRoute: ActivitiesRoute,
   AnnouncementsRoute: AnnouncementsRoute,
-  CalendarRoute: CalendarRoute,
   ClientsRoute: ClientsRouteWithChildren,
   DevelopersRoute: DevelopersRoute,
   DocsRoute: DocsRouteWithChildren,

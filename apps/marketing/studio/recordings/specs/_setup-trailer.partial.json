@@ -1,0 +1,115 @@
+{
+  "url": "{{BASE_URL}}/login",
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "input[type=email]",
+      "timeout": 15000
+    },
+    {
+      "action": "type",
+      "selector": "input[type=email]",
+      "text": "{{TEST_EMAIL}}",
+      "delay": 8
+    },
+    {
+      "action": "wait",
+      "ms": 200,
+      "waitFor": "input[type=password]",
+      "timeout": 15000
+    },
+    {
+      "action": "type",
+      "selector": "input[type=password]",
+      "text": "{{TEST_PASSWORD}}",
+      "delay": 8
+    },
+    {
+      "action": "click",
+      "selector": "button[type=submit]"
+    },
+    {
+      "action": "wait",
+      "ms": 2000,
+      "waitFor": "button:has-text('Get started')",
+      "timeout": 20000
+    },
+    {
+      "action": "scroll",
+      "y": 600,
+      "pauseAfter": 300
+    },
+    {
+      "action": "screenshot",
+      "name": "__dbg-pre-click",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "button.pill-spark:has-text('Get started')",
+      "zoom": 1.4
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "__dbg-post-click",
+      "pauseAfter": 80
+    },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "#ws-name",
+      "timeout": 10000
+    },
+    {
+      "action": "type",
+      "selector": "#ws-name",
+      "text": "Bitrock",
+      "delay": 12
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Continue →')"
+    },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "button:has-text('Scale-up')",
+      "timeout": 8000
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Mid-market')"
+    },
+    {
+      "action": "wait",
+      "ms": 250
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Continue →')"
+    },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "button:has-text('Create workspace')",
+      "timeout": 8000
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Create workspace')"
+    },
+    {
+      "action": "wait",
+      "ms": 2000
+    }
+  ]
+}

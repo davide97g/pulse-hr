@@ -77,7 +77,7 @@ export function AnnouncementsEditorial() {
   }
 
   return (
-    <div className="ph p-4 md:p-6 flex flex-col gap-6 min-h-[calc(100vh-3.5rem)]">
+    <div className="ph p-4 md:p-6 flex flex-col gap-6 min-h-full">
       <div className="flex items-end justify-between flex-wrap gap-3">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>

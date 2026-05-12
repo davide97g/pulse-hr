@@ -24,7 +24,15 @@
     "record:time-attendance": "bun studio/recordings/scripts/run.ts time-attendance-entry",
     "record:growth-checks": "bun studio/recordings/scripts/run.ts growth-checks",
     "record:comments-thread": "bun studio/recordings/scripts/run.ts comments-thread",
-    "record:feedback-live": "GHOSTS=1 bun studio/recordings/scripts/run.ts feedback-live"
+    "record:feedback-live": "GHOSTS=1 bun studio/recordings/scripts/run.ts feedback-live",
+    "record:trailer:dashboard": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts trailer-dashboard",
+    "record:trailer:kudos": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts trailer-growth-kudos",
+    "record:trailer:achievements": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts trailer-growth-achievements",
+    "record:trailer:reports": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts trailer-reports",
+    "record:trailer:all": "bun run record:trailer:dashboard && bun run record:trailer:kudos && bun run record:trailer:achievements && bun run record:trailer:reports",
+    "trailer:v1": "remotion render studio/remotion/index.ts trailer-v1 public/studio/trailer-v1.mp4 --codec=h264 --crf=18",
+    "trailer:v2": "remotion render studio/remotion/index.ts trailer-v2 public/studio/trailer-v2.mp4 --codec=h264 --crf=18",
+    "trailer:both": "bun run trailer:v1 && bun run trailer:v2"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",

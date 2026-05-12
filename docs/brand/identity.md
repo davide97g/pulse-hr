@@ -12,7 +12,7 @@ the human-layer decisions (logo, voice, motion, imagery, do / don't).
 
 **Category:** Open-source HR & payroll platform for services-first teams.
 
-**One-liner:** HR you can read, fork, and run.
+**One-liner:** HR · rebuilt.
 
 **Longer form:**
 Three independent modules — Money, People, Work — sharing one
@@ -193,11 +193,12 @@ precise, unadorned, willing to say what we're bad at.
 
 ### Taglines in rotation
 
-- "HR you can read, fork, and run."
+- "HR · rebuilt."
 - "Open, modular HR & payroll."
 - "Two keys. Everything."
 - "Rippling for services firms — open source."
 - "Your HR data, on your infra, for €0."
+- _(Retired April 2026: "HR you can read, fork, and run." — kept in §brand foundation as a dev-audience secondary line only.)_
 
 Pick one per asset. Don't stack them.
 
