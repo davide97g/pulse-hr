@@ -213,6 +213,7 @@ export function WelcomeEditorial() {
 
           <div className="flex gap-2.5 items-center flex-wrap">
             <button
+              id="welcome-cta"
               type="button"
               className="pill pill-spark"
               onClick={() => {
@@ -336,6 +337,7 @@ export function WelcomeEditorial() {
                 return (
                   <button
                     key={opt.id}
+                    id={`size-${opt.id}`}
                     type="button"
                     onClick={() => setSize(opt.id)}
                     className="grid items-center gap-3 rounded-md p-3 text-left"
@@ -402,6 +404,7 @@ export function WelcomeEditorial() {
                     TEAMMATE {String(i + 1).padStart(2, "0")}
                   </span>
                   <Input
+                    id={`teammate-${i}-name`}
                     placeholder="Full name"
                     value={emp.name}
                     onChange={(e) => updateEmp(i, { name: e.target.value })}

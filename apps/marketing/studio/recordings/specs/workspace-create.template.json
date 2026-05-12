@@ -80,83 +80,39 @@
     },
     {
       "action": "wait",
-      "ms": 1600
+      "ms": 1200,
+      "waitFor": "#welcome-cta",
+      "timeout": 15000
     },
     {
       "action": "screenshot",
-      "name": "01-welcome-pick-role"
+      "name": "01-welcome-editorial-hero"
     },
     {
-      "action": "click",
-      "selector": "button:has-text('Admin')",
-      "zoom": 2
-    },
-    {
-      "action": "wait",
-      "ms": 150
-    },
-    {
-      "action": "click",
-      "selector": "button:has-text('Continue')",
-      "zoom": 2
-    },
-    {
-      "action": "zoom",
-      "scale": 1,
-      "duration": 80
-    },
-    {
-      "action": "wait",
-      "ms": 200
+      "action": "scroll",
+      "y": 600,
+      "speed": 1,
+      "pauseAfter": 400
     },
     {
       "action": "screenshot",
-      "name": "02-goals-pick-one-or-more"
+      "name": "02-welcome-editorial-cta"
     },
     {
       "action": "click",
-      "selector": "button:has-text('Hire faster')",
-      "zoom": 2
+      "selector": "#welcome-cta",
+      "zoom": 1.8,
+      "pauseAfter": 400
     },
     {
       "action": "wait",
-      "ms": 120
-    },
-    {
-      "action": "click",
-      "selector": "button:has-text('Retain top talent')",
-      "zoom": 2
-    },
-    {
-      "action": "wait",
-      "ms": 120
-    },
-    {
-      "action": "click",
-      "selector": "button:has-text('Boost engagement')",
-      "zoom": 2
-    },
-    {
-      "action": "wait",
-      "ms": 120
-    },
-    {
-      "action": "click",
-      "selector": "button:has-text('Continue')",
-      "zoom": 2
-    },
-    {
-      "action": "zoom",
-      "scale": 1,
-      "duration": 80
-    },
-    {
-      "action": "wait",
-      "ms": 200
+      "ms": 200,
+      "waitFor": "#ws-name",
+      "timeout": 10000
     },
     {
       "action": "screenshot",
-      "name": "03-workspace-name-step"
+      "name": "02-workspace-name-step"
     },
     {
       "action": "zoom",
@@ -172,7 +128,7 @@
     {
       "action": "type",
       "selector": "#ws-name",
-      "text": "Bitrock",
+      "text": "Pulse HR",
       "delay": 18
     },
     {
@@ -181,36 +137,92 @@
     },
     {
       "action": "screenshot",
-      "name": "04-workspace-name-filled"
-    },
-    {
-      "action": "click",
-      "selector": "button:has-text('Continue')",
-      "zoom": 2
+      "name": "03-workspace-name-filled"
     },
     {
       "action": "zoom",
-      "scale": 1,
-      "duration": 80
+      "selector": "[role=dialog] >> button:has-text('Continue')",
+      "scale": 1.8,
+      "duration": 180
     },
     {
       "action": "wait",
-      "ms": 200
+      "ms": 350
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] >> button:has-text('Continue')"
+    },
+    {
+      "action": "wait",
+      "ms": 1200
+    },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "#size-medium",
+      "timeout": 10000
     },
     {
       "action": "screenshot",
-      "name": "05-teammates-optional"
+      "name": "04-company-size-step"
     },
     {
       "action": "zoom",
-      "selector": "#col-0",
+      "selector": "#size-medium",
+      "scale": 1.8,
+      "duration": 180
+    },
+    {
+      "action": "click",
+      "selector": "#size-medium"
+    },
+    {
+      "action": "wait",
+      "ms": 400
+    },
+    {
+      "action": "screenshot",
+      "name": "05-company-size-selected"
+    },
+    {
+      "action": "zoom",
+      "selector": "[role=dialog] >> button:has-text('Continue')",
+      "scale": 1.8,
+      "duration": 120
+    },
+    {
+      "action": "wait",
+      "ms": 350
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] >> button:has-text('Continue')"
+    },
+    {
+      "action": "wait",
+      "ms": 700
+    },
+    {
+      "action": "wait",
+      "ms": 500,
+      "waitFor": "#teammate-0-name",
+      "timeout": 10000
+    },
+    {
+      "action": "screenshot",
+      "name": "06-teammates-optional"
+    },
+    {
+      "action": "zoom",
+      "selector": "#teammate-0-name",
       "scale": 1.6,
       "duration": 180
     },
     {
       "action": "type",
-      "selector": "#col-0",
-      "text": "Niccolò Naso",
+      "selector": "#teammate-0-name",
+      "text": "John Doe",
       "delay": 14
     },
     {
@@ -219,8 +231,8 @@
     },
     {
       "action": "type",
-      "selector": "#col-1",
-      "text": "Yi Zhang",
+      "selector": "#teammate-1-name",
+      "text": "Jane Smith",
       "delay": 14
     },
     {
@@ -228,9 +240,15 @@
       "ms": 80
     },
     {
+      "action": "zoom",
+      "selector": "#teammate-2-name",
+      "scale": 1.6,
+      "duration": 180
+    },
+    {
       "action": "type",
-      "selector": "#col-2",
-      "text": "Andrea Mazza",
+      "selector": "#teammate-2-name",
+      "text": "Jim Beam",
       "delay": 14
     },
     {
@@ -238,9 +256,14 @@
       "ms": 200
     },
     {
+      "action": "screenshot",
+      "name": "07-teammates-filled"
+    },
+    {
       "action": "click",
       "selector": "button:has-text('Create workspace')",
-      "zoom": 2
+      "zoom": 1.8,
+      "pauseAfter": 400
     },
     {
       "action": "zoom",
@@ -249,15 +272,11 @@
     },
     {
       "action": "wait",
-      "ms": 1600
-    },
-    {
-      "action": "wait",
-      "ms": 250
+      "ms": 1000
     },
     {
       "action": "screenshot",
-      "name": "06-dashboard-ready"
+      "name": "08-dashboard-ready"
     },
     {
       "action": "zoom",
