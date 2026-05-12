@@ -79,6 +79,7 @@ export const docInfo = {
     { name: "admin", description: "Admin-only endpoints" },
     { name: "user-profile", description: "User profile and voting power" },
     { name: "cron", description: "Scheduled tasks (cron-secret auth)" },
+    { name: "super-import", description: "Multi-modal bulk-insert (labs)" },
   ],
 };
 
