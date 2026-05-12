@@ -1,14 +1,14 @@
 import { Composition } from "remotion";
-import { DayInPulse } from "./DayInPulse";
 import {
-  CaptureReel,
   CAPTURE_REEL_PADDING_FRAMES,
+  CaptureReel,
   type CaptureReelProps,
 } from "./CaptureReel";
+import { type TimedCaption } from "./components/Caption";
+import { DayInPulse } from "./DayInPulse";
 import { Montage, type MontageProps } from "./Montage";
 import { INTRO_DURATION_FRAMES } from "./scenes/Intro";
 import { OUTRO_DURATION_FRAMES } from "./scenes/Outro";
-import { type TimedCaption } from "./components/Caption";
 
 const FPS = 30;
 

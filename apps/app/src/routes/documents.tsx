@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useI18n as useI18nLocal } from "@pulse-hr/shared/i18n";
 import { useEffect, useMemo, useState } from "react";
 import {
   FileText,
@@ -69,6 +70,7 @@ export const Route = createFileRoute("/documents")({
 const DEFAULT_FOLDERS = ["Contracts", "Policies", "Templates", "Tax forms", "Onboarding"];
 
 function Documents() {
+  const { t, locale } = useI18nLocal();
   const me = useFullName() || "You";
   const list = useDocs();
   const [folderRaw, setFolderRaw] = useUrlParam("folder");
@@ -149,14 +151,14 @@ function Documents() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        eyebrow="WORK · DOCUMENTI AZIENDALI"
+        eyebrow={t("documents.eyebrow")}
         title={
           <>
-            <span className="spark-mark">Archivio</span>
+            <span className="spark-mark">{t("documents.title")}</span>
             <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
           </>
         }
-        description="Contratti, policy, template, firme elettroniche."
+        description={t("documents.subtitle")}
         actions={
           <>
             <Button
@@ -169,11 +171,11 @@ function Documents() {
               }}
             >
               <FolderPlus className="h-4 w-4 mr-1.5" />
-              New folder
+              {t("documents.new_folder")}
             </Button>
             <Button size="sm" className="press-scale" onClick={() => setUploadOpen(true)}>
               <Upload className="h-4 w-4 mr-1.5" />
-              Upload
+              {t("documents.upload")}
             </Button>
           </>
         }
@@ -188,8 +190,8 @@ function Documents() {
           onClick={() => setFolder(null)}
         >
           <FileText className="h-6 w-6 text-primary mb-2" />
-          <div className="text-sm font-medium">All files</div>
-          <div className="text-xs text-muted-foreground mt-0.5">{list.length} files</div>
+          <div className="text-sm font-medium">{locale === "it" ? "Tutti i file" : "All files"}</div>
+          <div className="text-xs text-muted-foreground mt-0.5">{list.length} {locale === "it" ? "file" : "files"}</div>
         </Card>
         {FOLDERS.map((f) => (
           <Card
@@ -202,7 +204,7 @@ function Documents() {
           >
             <Folder className="h-6 w-6 text-info mb-2" />
             <div className="text-sm font-medium">{f}</div>
-            <div className="text-xs text-muted-foreground mt-0.5">{counts.get(f) ?? 0} files</div>
+            <div className="text-xs text-muted-foreground mt-0.5">{counts.get(f) ?? 0} {locale === "it" ? "file" : "files"}</div>
           </Card>
         ))}
       </div>
@@ -214,7 +216,7 @@ function Documents() {
             <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search documents…"
+              placeholder={t("documents.search.placeholder")}
               className="pl-8 h-9"
             />
           </div>
@@ -262,12 +264,12 @@ function Documents() {
                     onToggle={() => bulk.toggleAll(filtered)}
                   />
                 </th>
-                <th className="text-left font-medium px-4 py-2.5">Name</th>
-                <th className="text-left font-medium px-4 py-2.5">Folder</th>
-                <th className="text-left font-medium px-4 py-2.5">Size</th>
-                <th className="text-left font-medium px-4 py-2.5">Owner</th>
-                <th className="text-left font-medium px-4 py-2.5">Updated</th>
-                <th className="text-left font-medium px-4 py-2.5">Status</th>
+                <th className="text-left font-medium px-4 py-2.5">{t("documents.col.name")}</th>
+                <th className="text-left font-medium px-4 py-2.5">{t("documents.col.folder")}</th>
+                <th className="text-left font-medium px-4 py-2.5">{t("documents.col.size")}</th>
+                <th className="text-left font-medium px-4 py-2.5">{t("documents.col.owner")}</th>
+                <th className="text-left font-medium px-4 py-2.5">{t("documents.col.updated")}</th>
+                <th className="text-left font-medium px-4 py-2.5">{(locale === "it" ? "STATO" : "STATUS")}</th>
                 <th className="w-10"></th>
               </tr>
             </thead>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { GrowthTabs, type GrowthTab } from "./GrowthTabs";
 import { GrowthOverview } from "./GrowthOverview";
 import { GrowthAchievements } from "./GrowthAchievements";
@@ -9,6 +10,11 @@ import { GrowthSkillPath } from "./GrowthSkillPath";
 import { NewKudosSheet } from "./NewKudosSheet";
 import { NewChallengeSheet } from "./NewChallengeSheet";
 import { useEmployees } from "@/lib/tables/employees";
+
+const MONTH_NAMES_EN = [
+  "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+  "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER",
+];
 
 const MONTH_NAMES_IT = [
   "GENNAIO",
@@ -25,12 +31,21 @@ const MONTH_NAMES_IT = [
   "DICEMBRE",
 ];
 
-const TAB_TITLES: Record<GrowthTab, { eyebrow: string; title: string; italic: string }> = {
-  overview: { eyebrow: "CRESCITA", title: "", italic: "Growth" },
-  achievements: { eyebrow: "RICONOSCIMENTI", title: "", italic: "Achievements" },
-  challenges: { eyebrow: "SFIDE", title: "", italic: "Challenges" },
-  kudos: { eyebrow: "PEER RECOGNITION", title: "", italic: "Kudos" },
-  paths: { eyebrow: "PERCORSI", title: "Skill", italic: "paths" },
+const TAB_TITLES_BY_LOCALE: Record<"en" | "it", Record<GrowthTab, { eyebrow: string; title: string; italic: string }>> = {
+  en: {
+    overview: { eyebrow: "GROWTH", title: "", italic: "Growth" },
+    achievements: { eyebrow: "ACHIEVEMENTS", title: "", italic: "Achievements" },
+    challenges: { eyebrow: "CHALLENGES", title: "", italic: "Challenges" },
+    kudos: { eyebrow: "PEER RECOGNITION", title: "", italic: "Kudos" },
+    paths: { eyebrow: "PATHS", title: "Skill", italic: "paths" },
+  },
+  it: {
+    overview: { eyebrow: "CRESCITA", title: "", italic: "Growth" },
+    achievements: { eyebrow: "RICONOSCIMENTI", title: "", italic: "Achievements" },
+    challenges: { eyebrow: "SFIDE", title: "", italic: "Challenges" },
+    kudos: { eyebrow: "PEER RECOGNITION", title: "", italic: "Kudos" },
+    paths: { eyebrow: "PERCORSI", title: "Skill", italic: "paths" },
+  },
 };
 
 export function GrowthEditorial({
@@ -40,10 +55,13 @@ export function GrowthEditorial({
   tab: GrowthTab;
   employee?: string;
 }) {
+  const { t, locale } = useI18n();
   const employees = useEmployees();
   const nav = useNavigate({ from: "/growth" });
   const [kudosOpen, setKudosOpen] = useState(false);
   const [challengeOpen, setChallengeOpen] = useState(false);
+  const TAB_TITLES = TAB_TITLES_BY_LOCALE[locale];
+  const MONTH_NAMES = locale === "it" ? MONTH_NAMES_IT : MONTH_NAMES_EN;
 
   const focusEmployee = useMemo(
     () => employees.find((e) => e.id === employee) ?? employees[0],
@@ -71,7 +89,8 @@ export function GrowthEditorial({
   }, [nav]);
 
   const now = new Date();
-  const eyebrow = `${TAB_TITLES[tab].eyebrow} · ${MONTH_NAMES_IT[now.getMonth()]} ${now.getFullYear()} · ${employees.length} PERSONE`;
+  const peopleLabel = locale === "it" ? "PERSONE" : "PEOPLE";
+  const eyebrow = `${TAB_TITLES[tab].eyebrow} · ${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()} · ${employees.length} ${peopleLabel}`;
 
   return (
     <div className="ph p-4 md:p-6 flex flex-col gap-5 min-h-[calc(100vh-3.5rem)]">
@@ -113,7 +132,7 @@ export function GrowthEditorial({
               cursor: "pointer",
             }}
           >
-            + KUDOS
+            + {t("growth.kudo.new").toUpperCase()}
           </button>
           <button
             type="button"
@@ -128,7 +147,7 @@ export function GrowthEditorial({
               cursor: "pointer",
             }}
           >
-            + CHALLENGE
+            + {t("growth.challenge.new").toUpperCase()}
           </button>
         </div>
       </div>

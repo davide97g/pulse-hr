@@ -53,6 +53,7 @@ import {
   MessagesSquare,
   Gift,
   BarChart3,
+  Languages,
   type LucideIcon,
 } from "lucide-react";
 import { EmployeeHoverCard } from "@/components/score/EmployeeHoverCard";
@@ -96,6 +97,42 @@ import {
 } from "@/lib/role-override";
 import { featuresForRole } from "@/lib/role-features";
 import { managerAsks } from "@/lib/mock-data";
+import { useI18n, useT, LOCALES, LOCALE_SHORT, LOCALE_LABELS } from "@pulse-hr/shared/i18n";
+
+const SIDEBAR_GROUP_KEYS: Record<string, string> = {
+  People: "sidebar.people",
+  Time: "sidebar.time",
+  Work: "sidebar.work",
+  Other: "sidebar.other",
+  Workspace: "sidebar.workspace",
+};
+const SIDEBAR_ITEM_KEYS: Record<string, string> = {
+  Dashboard: "nav.home",
+  Team: "nav.people",
+  "Status log": "nav.log",
+  Growth: "nav.growth",
+  Timesheet: "nav.time",
+  Leave: "nav.leave",
+  Calendar: "nav.calendar",
+  Projects: "nav.projects",
+  Activities: "nav.activities",
+  Offices: "nav.offices",
+  Reports: "nav.reports",
+  Documents: "nav.documents",
+  Docs: "nav.documents",
+  Modules: "nav.settings",
+  "Help & tours": "topbar.assistant",
+  Settings: "nav.settings",
+};
+function localizeGroupLabel(label: string, t: (k: string) => string): string {
+  if (!label) return "";
+  const key = SIDEBAR_GROUP_KEYS[label];
+  return key ? t(key) : label;
+}
+function localizeItemLabel(label: string, t: (k: string) => string): string {
+  const key = SIDEBAR_ITEM_KEYS[label];
+  return key ? t(key) : label;
+}
 import { NotificationsProvider, useNotifications } from "./NotificationsContext";
 import { buildSidebarNavGroups } from "@/lib/sidebar-nav-groups";
 import { cn } from "@/lib/utils";
@@ -171,6 +208,7 @@ function AppShellInner() {
   const admin = useIsEffectiveAdmin();
   const realAdmin = useIsRealAdmin();
   const effectiveRole = useEffectiveRole();
+  const t = useT();
   const { isFeatureEnabled, roleFeatures } = useSidebarFeatures();
   const roleAllowed = useMemo(
     () => featuresForRole(effectiveRole, roleFeatures),
@@ -305,7 +343,7 @@ function AppShellInner() {
               <div key={group.label || `group-${groupIndex}`} className="mb-6">
                 {!collapsed && group.label && (
                   <div className="px-2 mb-2 t-mono" style={{ color: "var(--muted-foreground)" }}>
-                    {group.label}
+                    {localizeGroupLabel(group.label, t)}
                   </div>
                 )}
                 <div className="space-y-0.5">
@@ -334,7 +372,7 @@ function AppShellInner() {
                     const inner = (
                       <>
                         <Icon className="h-4 w-4 shrink-0" />
-                        {!collapsed && <span className="truncate flex-1">{item.label}</span>}
+                        {!collapsed && <span className="truncate flex-1">{localizeItemLabel(item.label, t)}</span>}
                         {!collapsed && active && <span className="dot" aria-hidden />}
                         {!collapsed && !active && item.unreadDot && (
                           <span
@@ -365,7 +403,7 @@ function AppShellInner() {
                       </Link>
                     );
                     return (
-                      <SidebarTooltip key={item.to} label={item.label} enabled={collapsed}>
+                      <SidebarTooltip key={item.to} label={localizeItemLabel(item.label, t)} enabled={collapsed}>
                         {node}
                       </SidebarTooltip>
                     );
@@ -490,7 +528,7 @@ function AppShellInner() {
               <div key={group.label || `group-${groupIndex}`} className="mb-6">
                 {group.label && (
                   <div className="px-2 mb-2 t-mono" style={{ color: "var(--muted-foreground)" }}>
-                    {group.label}
+                    {localizeGroupLabel(group.label, t)}
                   </div>
                 )}
                 <div className="space-y-0.5">
@@ -518,7 +556,7 @@ function AppShellInner() {
                     const inner = (
                       <>
                         <Icon className="h-4 w-4 shrink-0" />
-                        <span className="truncate flex-1">{item.label}</span>
+                        <span className="truncate flex-1">{localizeItemLabel(item.label, t)}</span>
                         {item.unreadDot && (
                           <span
                             className="h-1.5 w-1.5 rounded-full pulse-dot"
@@ -753,6 +791,9 @@ function Topbar({
       >
         <MessagesSquare className="h-4 w-4" />
       </Link>
+
+      <LanguageToggle />
+
 
       <Popover>
         <PopoverTrigger asChild>
@@ -1082,4 +1123,22 @@ function formatRelativeTime(iso: string): string {
   const days = Math.floor(hrs / 24);
   if (days < 7) return `${days}d ago`;
   return new Date(iso).toLocaleDateString();
+}
+
+function LanguageToggle() {
+  const { locale, setLocale, t } = useI18n();
+  const next = LOCALES[(LOCALES.indexOf(locale) + 1) % LOCALES.length];
+  return (
+    <button
+      type="button"
+      onClick={() => setLocale(next)}
+      className="inline-flex h-9 px-2 sm:px-2.5 rounded-md border items-center gap-1 sm:gap-1.5 tap-target no-tap-highlight"
+      style={{ borderColor: "var(--line-strong)", color: "var(--muted-foreground)" }}
+      title={`${t("topbar.language")}: ${LOCALE_LABELS[locale]} → ${LOCALE_LABELS[next]}`}
+      aria-label={t("topbar.language")}
+    >
+      <Languages className="h-4 w-4" />
+      <span className="t-mono text-xs">{LOCALE_SHORT[locale]}</span>
+    </button>
+  );
 }

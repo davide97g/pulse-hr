@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useI18n as usePaletteI18n } from "@pulse-hr/shared/i18n";
 import {
   Search,
   User,
@@ -53,6 +54,7 @@ export function CommandPalette({
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
+  const { locale: paletteLocale } = usePaletteI18n();
   const [q, setQ] = useState("");
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
@@ -177,7 +179,7 @@ export function CommandPalette({
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Cerca o digita un comando…"
+            placeholder={paletteLocale === "it" ? "Cerca o digita un comando…" : "Search or type a command…"}
             className="border-0 focus-visible:ring-0 shadow-none h-16 px-0"
             style={{
               fontFamily: "Fraunces, ui-serif, serif",

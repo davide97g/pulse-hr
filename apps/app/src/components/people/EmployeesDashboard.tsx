@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { useEmployees } from "@/lib/tables/employees";
 import { type Employee } from "@/lib/mock-data";
 
@@ -123,6 +124,7 @@ function recentJoins(employees: Employee[]): Employee[] {
 }
 
 export function EmployeesDashboard() {
+  const { t, locale } = useI18n();
   const employees = useEmployees();
   const navigate = useNavigate();
 
@@ -181,14 +183,14 @@ export function EmployeesDashboard() {
 
   const kpis: Array<[string, string, string, "spark" | undefined]> = [
     [
-      "HEADCOUNT",
+      t("people.kpi.headcount"),
       String(employees.length),
       `${data.headDelta >= 0 ? "+" : ""}${data.headDelta} 12m`,
       "spark",
     ],
-    ["ONBOARDING", String(data.onboardCount), "ultimi 90 gg", undefined],
-    ["IN LEAVE", String(data.leaveCount), "oggi", undefined],
-    ["AVG TENURE", `${data.avgTenure.toFixed(1)} a`, "media", undefined],
+    [t("people.kpi.onboarding"), String(data.onboardCount), t("people.kpi.last90"), undefined],
+    [t("people.kpi.in_leave"), String(data.leaveCount), t("people.kpi.today"), undefined],
+    [t("people.kpi.tenure"), `${data.avgTenure.toFixed(1)} ${locale === "it" ? "a" : "y"}`, t("people.kpi.median"), undefined],
   ];
 
   const chartW = 600;
@@ -200,8 +202,15 @@ export function EmployeesDashboard() {
       <div className="grid items-end gap-6" style={{ gridTemplateColumns: "1fr auto" }}>
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            EMPLOYEES · {NOW.toLocaleDateString("it-IT", { month: "long", year: "numeric" }).toUpperCase()} ·{" "}
-            {employees.length} ATTIVE · {data.onboardCount} ONBOARDING · {data.leaveCount} LEAVE
+            {t("people.eyebrow", {
+              month: NOW.toLocaleDateString(locale === "it" ? "it-IT" : "en-US", {
+                month: "long",
+                year: "numeric",
+              }).toUpperCase(),
+              n: employees.length,
+              onboarding: data.onboardCount,
+              leave: data.leaveCount,
+            })}
           </span>
           <h1
             style={{
@@ -213,7 +222,7 @@ export function EmployeesDashboard() {
               lineHeight: 0.86,
             }}
           >
-            <span style={{ fontStyle: "italic" }}>Employees</span>
+            <span style={{ fontStyle: "italic" }}>{t("people.title")}</span>
             <span style={{ color: "var(--spark)" }}>.</span>
           </h1>
         </div>
@@ -230,14 +239,14 @@ export function EmployeesDashboard() {
               gap: 8,
             }}
           >
-            ⌘K · CERCA PERSONA
+            ⌘K · {t("people.search.placeholder").toUpperCase()}
           </span>
           <button
             type="button"
             className="pill pill-dark pill-sm"
             onClick={() => navigate({ to: "/people/new" })}
           >
-            + Nuovo
+            + {t("people.new")}
           </button>
         </div>
       </div>
@@ -289,7 +298,7 @@ export function EmployeesDashboard() {
           <div className="flex items-baseline justify-between">
             <div>
               <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                HEADCOUNT · 12 MESI
+                {locale === "it" ? "HEADCOUNT · 12 MESI" : "HEADCOUNT · 12 MONTHS"}
               </span>
               <div
                 style={{
@@ -425,7 +434,7 @@ export function EmployeesDashboard() {
           }}
         >
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            PER DIPARTIMENTO
+            {locale === "it" ? "PER DIPARTIMENTO" : "BY DEPARTMENT"}
           </span>
           <div className="flex items-center gap-4 flex-1">
             <svg viewBox="-90 -90 180 180" style={{ width: 150, height: 150 }}>

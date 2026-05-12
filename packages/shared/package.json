@@ -7,7 +7,9 @@
   "exports": {
     "./sidebar-features": "./src/sidebar-features.ts",
     "./tours": "./src/tours.ts",
-    "./changelog": "./src/changelog.ts"
+    "./changelog": "./src/changelog.ts",
+    "./i18n": "./src/i18n/index.ts",
+    "./local-store": "./src/local-store/index.ts"
   },
   "files": [
     "src"

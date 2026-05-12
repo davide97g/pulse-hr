@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { useLogSessions } from "@/lib/tables/logSessions";
 import { useLogMessages } from "@/lib/tables/logMessages";
 import { useEmployees, employeeById } from "@/lib/tables/employees";
@@ -8,7 +9,9 @@ import { projects } from "@/lib/mock-data";
 const ME = "e1";
 
 const MONTHS_IT_SHORT = ["GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"];
+const MONTHS_EN_SHORT = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 const WEEKDAYS_IT = ["DOM", "LUN", "MAR", "MER", "GIO", "VEN", "SAB"];
+const WEEKDAYS_EN = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
 function timeOnly(iso: string): string {
   const d = new Date(iso);
@@ -16,6 +19,7 @@ function timeOnly(iso: string): string {
 }
 
 export function StatusLogEditorial() {
+  const { t, locale } = useI18n();
   const sessions = useLogSessions();
   const messages = useLogMessages();
   const employees = useEmployees();
@@ -44,38 +48,37 @@ export function StatusLogEditorial() {
     return recent;
   }, [messages, todaysPosts]);
 
-  const dateMono = `${WEEKDAYS_IT[today.getDay()]} ${String(today.getDate()).padStart(2, "0")} ${MONTHS_IT_SHORT[today.getMonth()]}`;
+  const wd = locale === "it" ? WEEKDAYS_IT : WEEKDAYS_EN;
+  const mn = locale === "it" ? MONTHS_IT_SHORT : MONTHS_EN_SHORT;
+  const dateMono = `${wd[today.getDay()]} ${String(today.getDate()).padStart(2, "0")} ${mn[today.getMonth()]}`;
 
   function publish() {
     if (!draft.trim()) {
-      toast.error("Scrivi qualcosa prima di pubblicare");
+      toast.error(locale === "it" ? "Scrivi qualcosa prima di pubblicare" : "Write something before publishing");
       return;
     }
-    toast.success("Status pubblicato");
+    toast.success(locale === "it" ? "Status pubblicato" : "Status published");
     setDraft("");
   }
 
   return (
-    <div
-      className="ph p-4 md:p-6 grid gap-11 min-h-[calc(100vh-3.5rem)]"
-      style={{ gridTemplateColumns: "1fr 1.2fr" }}
-    >
+    <div className="ph p-4 md:p-6 grid gap-6 md:gap-11 min-h-[calc(100vh-3.5rem)] grid-cols-1 lg:grid-cols-[1fr_1.2fr]">
       <section className="flex flex-col">
         <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-          {dateMono} · STANDUP ASINCRONO
+          {dateMono} · {locale === "it" ? "STANDUP ASINCRONO" : "ASYNC STANDUP"}
         </span>
         <h1
           style={{
             fontFamily: "Fraunces, ui-serif, serif",
             fontWeight: 400,
             margin: "10px 0 0",
-            fontSize: "clamp(80px, 10vw, 124px)",
+            fontSize: "clamp(48px, 13vw, 124px)",
             letterSpacing: "-0.045em",
             lineHeight: 0.86,
           }}
         >
-          Cosa <span style={{ fontStyle: "italic" }}>oggi</span>
-          <span style={{ color: "var(--spark)" }}>?</span>
+          {t("log.title.0")}<span style={{ fontStyle: "italic" }}>{t("log.title.1")}</span>
+          <span style={{ color: "var(--spark)" }}>{t("log.title.2")}</span>
         </h1>
         <p
           style={{
@@ -88,7 +91,7 @@ export function StatusLogEditorial() {
             lineHeight: 1.35,
           }}
         >
-          Tre righe a testa. Niente call. Read-only fino alle 10.
+          {t("log.subtitle")}
         </p>
 
         <div
@@ -101,12 +104,12 @@ export function StatusLogEditorial() {
           }}
         >
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            IL TUO POST · {(employees.find((e) => e.id === ME)?.name ?? "Davide").toUpperCase()}
+            {t("log.compose.eyebrow", { name: (employees.find((e) => e.id === ME)?.name ?? "—").toUpperCase() })}
           </span>
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Cosa hai fatto ieri, cosa farai oggi, cosa ti blocca?"
+            placeholder={t("log.compose.placeholder")}
             rows={3}
             style={{
               marginTop: 14,
@@ -125,14 +128,14 @@ export function StatusLogEditorial() {
           />
           <div className="flex gap-2 items-center mt-3">
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              ⌘⏎ PUBBLICA
+              ⌘⏎ {t("log.compose.publish").toUpperCase()}
             </span>
             <span className="flex-1" />
             <button type="button" className="pill pill-ghost pill-sm">
-              Allega
+              {t("log.compose.attach")}
             </button>
             <button type="button" className="pill pill-spark pill-sm" onClick={publish}>
-              Pubblica
+              {t("log.compose.publish")}
             </button>
           </div>
         </div>
@@ -141,10 +144,10 @@ export function StatusLogEditorial() {
       <section className="min-h-0 overflow-hidden flex flex-col">
         <div className="flex justify-between items-baseline mb-3.5">
           <span className="t-h3-sans">
-            Oggi · {todaysPosts.length || fallbackPosts.length} post
+            {t("common.today")} · {todaysPosts.length || fallbackPosts.length} {locale === "it" ? "post" : "posts"}
           </span>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            ULTIMI · {dateMono}
+            {t("log.last")} · {dateMono}
           </span>
         </div>
         <div className="overflow-auto flex-1 flex flex-col gap-4 pr-1">

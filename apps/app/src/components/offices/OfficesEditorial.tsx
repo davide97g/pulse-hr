@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { offices, type Office } from "@/lib/offices";
 import { useEmployees } from "@/lib/tables/employees";
 
 export function OfficesEditorial() {
+  const { t, locale } = useI18n();
   const employees = useEmployees();
   const navigate = useNavigate();
 
@@ -27,25 +29,24 @@ export function OfficesEditorial() {
 
   return (
     <div
-      className="ph p-4 md:p-6 grid gap-11 min-h-[calc(100vh-3.5rem)]"
-      style={{ gridTemplateColumns: "1fr 1.2fr" }}
+      className="ph p-4 md:p-6 grid gap-6 md:gap-11 min-h-[calc(100vh-3.5rem)] grid-cols-1 lg:grid-cols-[1fr_1.2fr]"
     >
       <section className="flex flex-col justify-between gap-8">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            SEDI · {stats.rows.length} UFFICI · {employees.length} PERSONE
+            {t("offices.eyebrow", { sites: stats.rows.length, people: employees.length })}
           </span>
           <h1
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(80px, 11vw, 132px)",
+              fontSize: "clamp(48px, 13vw, 132px)",
               letterSpacing: "-0.05em",
               lineHeight: 0.86,
             }}
           >
-            <span style={{ fontStyle: "italic" }}>Sedi</span>
+            <span style={{ fontStyle: "italic" }}>{t("offices.title")}</span>
             <span style={{ color: "var(--spark)" }}>.</span>
           </h1>
           <p
@@ -59,16 +60,17 @@ export function OfficesEditorial() {
               lineHeight: 1.35,
             }}
           >
-            {stats.rows.length} stanz{stats.rows.length === 1 ? "a" : "e"} in{" "}
-            {stats.countries.length} {stats.countries.length === 1 ? "paese" : "paesi"}.
+            {locale === "it"
+              ? `${stats.rows.length} stanz${stats.rows.length === 1 ? "a" : "e"} in ${stats.countries.length} ${stats.countries.length === 1 ? "paese" : "paesi"}.`
+              : `${stats.rows.length} ${stats.rows.length === 1 ? "office" : "offices"} across ${stats.countries.length} ${stats.countries.length === 1 ? "country" : "countries"}.`}
           </p>
         </div>
         <div
           className="grid pt-6"
           style={{ gridTemplateColumns: "1fr 1fr 1fr", borderTop: "1px solid var(--line-strong)" }}
         >
-          <Stat label="ITALIA" value={String(italyCount)} first />
-          <Stat label="ALTRO" value={String(otherCount)} />
+          <Stat label={locale === "it" ? "ITALIA" : "ITALY"} value={String(italyCount)} first />
+          <Stat label={locale === "it" ? "ALTRO" : "OTHER"} value={String(otherCount)} />
           <Stat label="TZ COVERAGE" value="9h" />
         </div>
       </section>
@@ -137,7 +139,7 @@ export function OfficesEditorial() {
                   {r.peopleCount > 0 ? r.peopleCount : r.office.seatCapacity}
                 </span>
                 <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                  PERSONE
+                  {(locale === "it" ? "PERSONE" : "PEOPLE")}
                 </span>
               </div>
             </button>
@@ -145,7 +147,7 @@ export function OfficesEditorial() {
         })}
         {stats.rows.length === 0 && (
           <div className="p-8 text-center" style={{ color: "var(--muted-foreground)" }}>
-            <span className="t-mono">NESSUNA SEDE</span>
+            <span className="t-mono">{locale === "it" ? "NESSUNA SEDE" : "NO OFFICES"}</span>
           </div>
         )}
       </section>

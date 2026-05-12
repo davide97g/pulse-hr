@@ -6,6 +6,7 @@ import { getRouter } from "./router";
 import { initGoogleAnalytics } from "./lib/analytics";
 import { CookieConsentBanner } from "./components/CookieConsentBanner";
 import { ThemeProvider } from "@pulse-hr/ui/theme";
+import { I18nProvider } from "@pulse-hr/shared/i18n";
 import { Analytics } from "@vercel/analytics/react";
 import "./styles.css";
 
@@ -35,9 +36,11 @@ ReactDOM.createRoot(el).render(
         independently of the active palette, and force theme=dark for
         Tailwind tokens (bg-card, bg-background, etc.). */}
       <ThemeProvider forced="dark">
-        <CookieConsentBanner />
-        <Analytics />
-        <RouterProvider router={router} />
+        <I18nProvider>
+          <CookieConsentBanner />
+          <Analytics />
+          <RouterProvider router={router} />
+        </I18nProvider>
       </ThemeProvider>
     </ClerkProvider>
   </React.StrictMode>,

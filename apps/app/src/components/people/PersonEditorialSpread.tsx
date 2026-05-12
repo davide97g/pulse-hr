@@ -276,7 +276,7 @@ function Spread({ employee }: { employee: Employee }) {
                 margin: "12px 0 0",
                 fontFamily: "Fraunces, ui-serif, serif",
                 fontWeight: 400,
-                fontSize: "clamp(64px, 7vw, 96px)",
+                fontSize: "clamp(40px, 10vw, 96px)",
                 lineHeight: 0.86,
                 letterSpacing: "-0.045em",
               }}

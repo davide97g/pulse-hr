@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { useClients, clientsTable } from "@/lib/tables/clients";
 import { useProjects } from "@/lib/tables/projects";
 import { ClientForm } from "@/components/pm/ClientForm";
@@ -16,6 +17,7 @@ function clientInitials(name: string): string {
 }
 
 export function ClientsEditorial() {
+  const { t, locale } = useI18n();
   const clients = useClients();
   const projects = useProjects();
   const navigate = useNavigate();
@@ -25,7 +27,9 @@ export function ClientsEditorial() {
     const exists = clientsTable.getAll().some((x) => x.id === c.id);
     if (exists) clientsTable.update(c.id, c);
     else clientsTable.add(c);
-    toast.success(`Cliente “${c.name}” salvato`);
+    toast.success(
+      locale === "it" ? `Cliente “${c.name}” salvato` : `Client “${c.name}” saved`,
+    );
     setFormOpen(false);
   }
 
@@ -56,32 +60,32 @@ export function ClientsEditorial() {
       <div className="flex items-end justify-between flex-wrap gap-3">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            CLIENTI · {summary.activeClients} ATTIVI · €{summary.revenueK}K NEL TRIMESTRE
+            {t("clients.eyebrow", { active: summary.activeClients, revenue: summary.revenueK })}
           </span>
           <h1
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(72px, 9vw, 124px)",
+              fontSize: "clamp(44px, 12vw, 124px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}
           >
-            <span style={{ fontStyle: "italic" }}>Clienti</span>
+            <span style={{ fontStyle: "italic" }}>{t("clients.title")}</span>
             <span style={{ color: "var(--spark)" }}>.</span>
           </h1>
         </div>
         <div className="flex gap-2">
           <button type="button" className="pill pill-ghost pill-sm">
-            Filtri
+            {t("clients.filter")}
           </button>
           <button
             type="button"
             className="pill pill-dark pill-sm"
             onClick={() => setFormOpen(true)}
           >
-            + Cliente
+            + {t("clients.new")}
           </button>
         </div>
       </div>
@@ -107,11 +111,11 @@ export function ClientsEditorial() {
           }
         >
           <span></span>
-          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>CLIENTE</span>
-          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>SETTORE</span>
-          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>PROJECTS</span>
-          <span className="t-mono" style={{ color: "var(--muted-foreground)", textAlign: "right" }}>FATTURATO</span>
-          <span className="t-mono" style={{ color: "var(--muted-foreground)", textAlign: "right" }}>STATO</span>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>{t("clients.col.client")}</span>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>{t("clients.col.sector")}</span>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>{t("clients.col.projects")}</span>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)", textAlign: "right" }}>{t("clients.col.revenue")}</span>
+          <span className="t-mono" style={{ color: "var(--muted-foreground)", textAlign: "right" }}>{t("clients.col.status")}</span>
         </div>
         <div style={{ flex: 1, overflow: "auto" }}>
           {rows.map((r) => (
@@ -150,7 +154,9 @@ export function ClientsEditorial() {
                   fontFamily: "Fraunces, ui-serif, serif",
                 }}
               >
-                {r.projects} commess{r.projects === 1 ? "a" : "e"}
+                {locale === "it"
+                  ? `${r.projects} commess${r.projects === 1 ? "a" : "e"}`
+                  : `${r.projects} project${r.projects === 1 ? "" : "s"}`}
               </span>
               <span className="t-num" style={{ textAlign: "right", fontSize: 18 }}>
                 € {r.revenueK}k
@@ -168,7 +174,7 @@ export function ClientsEditorial() {
           ))}
           {rows.length === 0 && (
             <div className="p-8 text-center" style={{ color: "var(--muted-foreground)" }}>
-              <span className="t-mono">NESSUN CLIENTE</span>
+              <span className="t-mono">{locale === "it" ? "NESSUN CLIENTE" : "NO CLIENTS"}</span>
             </div>
           )}
         </div>

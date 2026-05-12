@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { useCandidates, candidatesTable } from "@/lib/tables/candidates";
 import { useJobPostings } from "@/lib/tables/jobPostings";
 import type { Candidate } from "@/lib/mock-data";
@@ -35,16 +36,24 @@ function colorVar(c: "muted" | "fg" | "spark"): string {
   return "var(--muted-foreground)";
 }
 
-function relativeFromIso(iso: string): string {
+function relativeFromIso(iso: string, locale: "en" | "it"): string {
   const days = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000);
-  if (days <= 0) return "oggi";
-  if (days === 1) return "1 g fa";
-  if (days < 7) return `${days} gg fa`;
-  if (days < 30) return `${Math.round(days / 7)} sett fa`;
-  return `${Math.round(days / 30)} mesi fa`;
+  if (locale === "it") {
+    if (days <= 0) return "oggi";
+    if (days === 1) return "1 g fa";
+    if (days < 7) return `${days} gg fa`;
+    if (days < 30) return `${Math.round(days / 7)} sett fa`;
+    return `${Math.round(days / 30)} mesi fa`;
+  }
+  if (days <= 0) return "today";
+  if (days === 1) return "1d ago";
+  if (days < 7) return `${days}d ago`;
+  if (days < 30) return `${Math.round(days / 7)}w ago`;
+  return `${Math.round(days / 30)}mo ago`;
 }
 
 export function RecruitingEditorial() {
+  const { t, locale } = useI18n();
   const candidates = useCandidates();
   const jobs = useJobPostings();
   const openJobs = jobs.filter((j) => j.status === "open").length;
@@ -64,28 +73,28 @@ export function RecruitingEditorial() {
       <div className="flex items-end justify-between flex-wrap gap-3">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            PIPELINE · {openJobs} POSIZIONI APERTE · {candidates.length} CANDIDATURE
+            {t("recruiting.eyebrow", { open: openJobs, candidates: candidates.length })}
           </span>
           <h1
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(64px, 8vw, 116px)",
+              fontSize: "clamp(40px, 11vw, 116px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}
           >
-            Chi <span style={{ fontStyle: "italic" }}>sta arrivando</span>
+            {t("recruiting.title")}<span style={{ fontStyle: "italic" }}>{t("recruiting.title.italic")}</span>
             <span style={{ color: "var(--spark)" }}>?</span>
           </h1>
         </div>
         <div className="flex gap-2">
           <button type="button" className="pill pill-ghost pill-sm">
-            Tutte le posizioni
+            {t("recruiting.filter.all")}
           </button>
           <button type="button" className="pill pill-dark pill-sm">
-            + Candidato
+            + {t("recruiting.new")}
           </button>
         </div>
       </div>
@@ -165,7 +174,7 @@ export function RecruitingEditorial() {
                               s.color === "spark" ? "var(--spark)" : "var(--muted-foreground)",
                           }}
                         >
-                          {relativeFromIso(cand.appliedDate)}
+                          {relativeFromIso(cand.appliedDate, locale)}
                         </span>
                         <span style={{ flex: 1 }} />
                         {next && (
@@ -177,7 +186,7 @@ export function RecruitingEditorial() {
                               candidatesTable.update(cand.id, { stage: next });
                               toast(`${cand.name} → ${next}`, {
                                 action: {
-                                  label: "Annulla",
+                                  label: t("common.undo"),
                                   onClick: () =>
                                     candidatesTable.update(cand.id, { stage: prev }),
                                 },
@@ -199,9 +208,9 @@ export function RecruitingEditorial() {
                           className="t-mono"
                           onClick={() => {
                             candidatesTable.remove(cand.id);
-                            toast("Candidato rimosso", {
+                            toast(locale === "it" ? "Candidato rimosso" : "Candidate removed", {
                               action: {
-                                label: "Annulla",
+                                label: t("common.undo"),
                                 onClick: () => candidatesTable.add(cand),
                               },
                             });

@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Constellation } from "@/components/dashboard/Constellation";
 import { buildConstellationPeople, countByDept } from "@/components/dashboard/buildPeople";
 import { lensFor } from "@/components/dashboard/lenses";
+import { useT, useI18n } from "@pulse-hr/shared/i18n";
 import { cardsFor, type CardSignals } from "@/components/dashboard/cards";
 import { useDashboardLens } from "@/components/dashboard/useDashboardLens";
 import type { LensId } from "@/components/dashboard/types";
@@ -66,11 +67,13 @@ function getISOWeek(d: Date): number {
 }
 
 function Dashboard() {
+  const t = useT();
+  const { locale } = useI18n();
   const employees = useEmployees();
   const leaveRequests = useLeaveRequests();
   const { lens, setLens } = useDashboardLens();
   const { theme } = useTheme();
-  const dark = (THEMES.find((t) => t.id === theme)?.mode ?? "dark") === "dark";
+  const dark = (THEMES.find((th) => th.id === theme)?.mode ?? "dark") === "dark";
 
   const people = useMemo(
     () => buildConstellationPeople(employees, projects),
@@ -155,28 +158,40 @@ function Dashboard() {
   }, []);
 
   const captionMono = useMemo(() => {
+    const WEEKDAYS_EN = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    const MONTHS_EN = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     const now = new Date();
     const day = now.getDate();
-    const wd = WEEKDAYS_IT[now.getDay()];
-    const m = MONTHS_IT_SHORT[now.getMonth()];
+    const wd = locale === "it" ? WEEKDAYS_IT[now.getDay()] : WEEKDAYS_EN[now.getDay()];
+    const m = locale === "it" ? MONTHS_IT_SHORT[now.getMonth()] : MONTHS_EN[now.getMonth()];
     const hh = String(now.getHours()).padStart(2, "0");
     const mm = String(now.getMinutes()).padStart(2, "0");
+    const peopleLabel = locale === "it" ? "PERSONE" : "PEOPLE";
+    const projectsLabel = "PROJECTS";
     if (lens === "sentiment") {
-      return `PULSE SURVEY · ${people.length} PERSONE · 87% RISPOSTA · WEEK ${signals.weekNumber}`;
+      const responded = locale === "it" ? "RISPOSTA" : "RESPONDED";
+      return `PULSE SURVEY · ${people.length} ${peopleLabel} · 87% ${responded} · WEEK ${signals.weekNumber}`;
     }
     if (lens === "presence") {
-      return `${wd} ${day} ${m} · ${hh}:${mm} · TIMBRATURE LIVE`;
+      const live = locale === "it" ? "TIMBRATURE LIVE" : "LIVE PRESENCE";
+      return `${wd} ${day} ${m} · ${hh}:${mm} · ${live}`;
     }
-    return `${people.length} PERSONE · ${projects.length} PROJECTS · ${day} ${m}, ${hh}:${mm}`;
-  }, [lens, people.length, signals.weekNumber]);
+    return `${people.length} ${peopleLabel} · ${projects.length} ${projectsLabel} · ${day} ${m}, ${hh}:${mm}`;
+  }, [lens, people.length, signals.weekNumber, locale]);
 
   const narrative = useMemo(() => {
+    const it = locale === "it";
     if (lens === "sentiment") {
       const atRisk = people.filter((p) => p.surveyResponded && p.sentiment < 2.5).length;
-      return (
+      return it ? (
         <>
           Pocket di <span className="spark-mark">stress in OPS</span> dopo la run di aprile.
           {` ${atRisk}`} persone sotto soglia: programmare 1-on-1 con i lead questa settimana.
+        </>
+      ) : (
+        <>
+          Pocket of <span className="spark-mark">stress in OPS</span> after the April run.
+          {` ${atRisk}`} people below threshold: book 1-on-1s with leads this week.
         </>
       );
     }
@@ -184,33 +199,97 @@ function Dashboard() {
       const onsite = people.filter((p) => p.presence === "OFFICE").length;
       const total = people.length || 1;
       const pct = Math.round((onsite / total) * 100);
-      return (
+      return it ? (
         <>
           <span className="spark-mark">{pct}% del team operativo</span> stamattina.
           Tre stand-up coperti senza buchi; coda OPS al completo per la demo cliente.
         </>
+      ) : (
+        <>
+          <span className="spark-mark">{pct}% of the team on-site</span> this morning.
+          Three stand-ups fully covered; OPS bench ready for the client demo.
+        </>
       );
     }
     const over = people.filter((p) => p.sat > 1.05).length;
+    if (it) {
+      return (
+        <>
+          {over === 0 ? "Nessuno" : `${over} person${over === 1 ? "a" : "e"}`} sopra capacità,
+          principalmente su{" "}
+          <strong style={{ fontStyle: "normal" }}>{topProjectCode}</strong>. Il resto
+          del corpo lavora a un ritmo <span className="spark-mark">sostenibile</span>.
+        </>
+      );
+    }
     return (
       <>
-        {over === 0 ? "Nessuno" : `${over} person${over === 1 ? "a" : "e"}`} sopra capacità,
-        principalmente su{" "}
-        <strong style={{ fontStyle: "normal" }}>{topProjectCode}</strong>. Il resto
-        del corpo lavora a un ritmo <span className="spark-mark">sostenibile</span>.
+        {over === 0 ? "Nobody" : `${over} ${over === 1 ? "person" : "people"}`} above capacity,
+        mostly on{" "}
+        <strong style={{ fontStyle: "normal" }}>{topProjectCode}</strong>. The rest of the team
+        runs at a <span className="spark-mark">sustainable</span> pace.
       </>
     );
-  }, [lens, people, topProjectCode]);
+  }, [lens, people, topProjectCode, locale]);
 
-  const lensConfig = useMemo(
-    () =>
-      lensFor(lens, dark, {
-        narrative,
-        captionMono,
-        totalPeople: people.length,
-      }),
-    [lens, dark, narrative, captionMono, people.length],
-  );
+  const lensConfig = useMemo(() => {
+    const cfg = lensFor(lens, dark, {
+      narrative,
+      captionMono,
+      totalPeople: people.length,
+    });
+    const it = locale === "it";
+    const localizedHeadline: [string, string, string] =
+      lens === "workload"
+        ? [t("dashboard.title.workload.0"), t("dashboard.title.workload.1"), "."]
+        : lens === "sentiment"
+          ? [t("dashboard.title.sentiment.0"), t("dashboard.title.sentiment.1"), "."]
+          : it
+            ? ["L'azienda è ", "qui", "."]
+            : ["The company is ", "here", "."];
+    const localizedEyebrow =
+      lens === "workload"
+        ? t("dashboard.eyebrow.workload")
+        : lens === "sentiment"
+          ? t("dashboard.eyebrow.sentiment")
+          : t("dashboard.eyebrow.presence");
+    const kpiLabelMap: Record<string, [string, string]> = {
+      workload: ["AVG SATURATION", "SATURAZIONE MEDIA"],
+      sentiment: ["AVG ENPS / MOOD", "ENPS / MOOD MEDIO"],
+      presence: ["LIVE PRESENCE", "PRESENZA LIVE"],
+    };
+    const legendLabelMap: Record<string, [string, string]> = {
+      workload: ["LOAD PER PERSON", "CARICO PER PERSONA"],
+      sentiment: ["WELLBEING PER PERSON", "BENESSERE PER PERSONA"],
+      presence: ["STATE PER PERSON", "STATO PER PERSONA"],
+    };
+    const localizedKpiLabel = kpiLabelMap[lens][it ? 1 : 0];
+    const localizedLegendLabel = legendLabelMap[lens][it ? 1 : 0];
+    const triadLabelsByLens: Record<string, [string, string, string]> = {
+      workload: it
+        ? ["OVER", "BILANCIATI", "IDLE"]
+        : ["OVER", "BALANCED", "IDLE"],
+      sentiment: it
+        ? ["A RISCHIO", "NEUTRI", "FELICI"]
+        : ["AT RISK", "NEUTRAL", "HAPPY"],
+      presence: it
+        ? ["IN UFFICIO", "REMOTI", "ASSENTI"]
+        : ["ON-SITE", "REMOTE", "AWAY"],
+    };
+    const triadLabels = triadLabelsByLens[lens];
+    const originalTriad = cfg.statTriad;
+    return {
+      ...cfg,
+      headline: localizedHeadline,
+      eyebrow: localizedEyebrow,
+      kpiLabel: localizedKpiLabel,
+      legendLabel: localizedLegendLabel,
+      statTriad: (ppl: typeof people) => {
+        const orig = originalTriad(ppl);
+        return orig.map(([, value, accent], i) => [triadLabels[i] ?? "", value, accent]) as typeof orig;
+      },
+    };
+  }, [lens, dark, narrative, captionMono, people.length, t, locale]);
 
   return (
     <div className="p-4 md:p-6 flex flex-col" style={{ minHeight: "calc(100vh - 3.5rem)" }}>
@@ -227,10 +306,11 @@ function Dashboard() {
 }
 
 function LensSwitcher({ value, onChange }: { value: LensId; onChange: (l: LensId) => void }) {
+  const t = useT();
   const items: Array<[LensId, string]> = [
-    ["workload", "Workload"],
-    ["sentiment", "Sentiment"],
-    ["presence", "Presenza"],
+    ["workload", t("dashboard.eyebrow.workload")],
+    ["sentiment", t("dashboard.eyebrow.sentiment")],
+    ["presence", t("dashboard.eyebrow.presence")],
   ];
   return (
     <div

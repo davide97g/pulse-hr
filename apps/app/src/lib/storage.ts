@@ -150,6 +150,14 @@ export function createTable<T extends { id: string }>(
   // controller will call hydrate again once Clerk resolves.
   hydrate();
 
+  // Cross-tab sync: when another tab writes to our localStorage key, re-read.
+  if (typeof window !== "undefined") {
+    window.addEventListener("storage", (e) => {
+      if (!e.key) return;
+      if (e.key === fullKey()) hydrate();
+    });
+  }
+
   function subscribe(listener: () => void) {
     listeners.add(listener);
     return () => {

@@ -1,3 +1,4 @@
+import { useT } from "@pulse-hr/shared/i18n";
 import { useUrlParam } from "@/lib/useUrlParam";
 import { EmployeesDashboard } from "@/components/people/EmployeesDashboard";
 import { PeopleEditorialList } from "@/components/people/PeopleEditorialList";
@@ -5,6 +6,7 @@ import { PeopleEditorialList } from "@/components/people/PeopleEditorialList";
 type View = "dashboard" | "list";
 
 export function EmployeesView() {
+  const t = useT();
   const [raw, setView] = useUrlParam("view");
   const view: View = raw === "list" ? "list" : "dashboard";
 
@@ -33,7 +35,7 @@ export function EmployeesView() {
                 marginBottom: -1,
               }}
             >
-              {v === "dashboard" ? "DASHBOARD" : "LISTA"}
+              {(v === "dashboard" ? t("people.tab.dashboard") : t("people.tab.list")).toUpperCase()}
             </button>
           );
         })}
