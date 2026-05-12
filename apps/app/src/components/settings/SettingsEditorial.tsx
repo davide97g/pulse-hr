@@ -1,75 +1,110 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useI18n, LOCALE_LABELS } from "@pulse-hr/shared/i18n";
 import { setWorkspaceName, useWorkspaceStatus } from "@/lib/workspace";
 
 interface Item {
   label: string;
   value: string;
   control: "edit" | "select" | "toggle" | "upload" | "color" | "spark";
+  nameKey?: string;
 }
 interface Section {
   label: string;
   items: Item[];
 }
 
-const CONTROL_LABEL: Record<Item["control"], string> = {
-  edit: "MODIFICA",
-  select: "▼",
-  toggle: "ON / OFF",
-  upload: "CARICA",
-  color: "● ● ●",
-  spark: "ATTIVO",
-};
-
 export function SettingsEditorial() {
+  const { t, locale, setLocale } = useI18n();
   const ws = useWorkspaceStatus();
   const [draftName, setDraftName] = useState(ws.name);
 
+  const CONTROL_LABEL: Record<Item["control"], string> = {
+    edit: t("settings.modify").toUpperCase(),
+    select: "▼",
+    toggle: "ON / OFF",
+    upload: (locale === "it" ? "CARICA" : "UPLOAD"),
+    color: "● ● ●",
+    spark: (locale === "it" ? "ATTIVO" : "ACTIVE"),
+  };
+
   function save() {
     if (!draftName.trim()) {
-      toast.error("Il nome del workspace non può essere vuoto");
+      toast.error(locale === "it" ? "Il nome del workspace non può essere vuoto" : "Workspace name cannot be empty");
       return;
     }
     setWorkspaceName(draftName.trim());
-    toast.success("Impostazioni salvate");
+    toast.success(locale === "it" ? "Impostazioni salvate" : "Settings saved");
   }
 
   function reset() {
     setDraftName(ws.name);
-    toast("Modifiche scartate");
+    toast(locale === "it" ? "Modifiche scartate" : "Changes discarded");
+  }
+
+  function toggleLocale() {
+    setLocale(locale === "it" ? "en" : "it");
   }
 
   const sections: Section[] = [
     {
-      label: "WORKSPACE",
+      label: t("settings.workspace"),
       items: [
-        { label: "Nome workspace", value: draftName, control: "edit" },
-        { label: "Lingua di default", value: "Italiano", control: "select" },
-        { label: "Fuso orario", value: "Europe/Rome (UTC+1)", control: "select" },
-        { label: "Settimana inizia", value: "Lunedì", control: "toggle" },
+        { label: t("settings.workspace.name"), value: draftName, control: "edit", nameKey: "name" },
+        { label: t("settings.workspace.locale"), value: LOCALE_LABELS[locale], control: "select", nameKey: "locale" },
+        { label: t("settings.workspace.timezone"), value: "Europe/Rome (UTC+1)", control: "select" },
+        { label: t("settings.workspace.week_start"), value: t("settings.week.monday"), control: "toggle" },
       ],
     },
     {
-      label: "POLICY",
+      label: t("settings.policy"),
       items: [
-        { label: "Approvazione ferie", value: "Manager diretto", control: "select" },
-        { label: "Cut-off timesheet", value: "Venerdì 18:00", control: "edit" },
+        {
+          label: locale === "it" ? "Approvazione ferie" : "Leave approval",
+          value: locale === "it" ? "Manager diretto" : "Direct manager",
+          control: "select",
+        },
+        {
+          label: locale === "it" ? "Cut-off timesheet" : "Timesheet cut-off",
+          value: locale === "it" ? "Venerdì 18:00" : "Friday 6:00 PM",
+          control: "edit",
+        },
       ],
     },
     {
       label: "BRAND",
       items: [
         { label: "Logo", value: "pulse-mark.svg · 240×240", control: "upload" },
-        { label: "Colore brand", value: "Spark · #B4FF39", control: "color" },
-        { label: "Email mittente", value: "noreply@pulsehr.it", control: "edit" },
+        {
+          label: locale === "it" ? "Colore brand" : "Brand color",
+          value: "Spark · #B4FF39",
+          control: "color",
+        },
+        {
+          label: locale === "it" ? "Email mittente" : "Sender email",
+          value: "noreply@pulsehr.it",
+          control: "edit",
+        },
       ],
     },
     {
-      label: "SICUREZZA",
+      label: locale === "it" ? "SICUREZZA" : "SECURITY",
       items: [
-        { label: "SSO Google", value: "Attivo · 142 utenti", control: "spark" },
-        { label: "2FA obbligatoria", value: "Solo per admin", control: "toggle" },
-        { label: "Audit log", value: "Conservato 12 mesi", control: "select" },
+        {
+          label: "SSO Google",
+          value: (locale === "it" ? `Attivo · 142 utenti` : `Active · 142 users`),
+          control: "spark",
+        },
+        {
+          label: locale === "it" ? "2FA obbligatoria" : "2FA required",
+          value: locale === "it" ? "Solo per admin" : "Admins only",
+          control: "toggle",
+        },
+        {
+          label: "Audit log",
+          value: locale === "it" ? "Conservato 12 mesi" : "Retained 12 months",
+          control: "select",
+        },
       ],
     },
   ];
@@ -79,28 +114,28 @@ export function SettingsEditorial() {
       <div className="flex items-end justify-between flex-wrap gap-3">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            SETTINGS · WORKSPACE {ws.name.toUpperCase()}
+            {t("settings.eyebrow", { workspace: ws.name.toUpperCase() })}
           </span>
           <h1
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(64px, 8vw, 116px)",
+              fontSize: "clamp(40px, 11vw, 116px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}
           >
-            <span style={{ fontStyle: "italic" }}>Impostazioni</span>
+            <span style={{ fontStyle: "italic" }}>{t("settings.title")}</span>
             <span style={{ color: "var(--spark)" }}>.</span>
           </h1>
         </div>
         <div className="flex gap-2">
           <button type="button" className="pill pill-ghost pill-sm" onClick={reset}>
-            Reset
+            {t("settings.reset")}
           </button>
           <button type="button" className="pill pill-dark pill-sm" onClick={save}>
-            Salva
+            {t("settings.save")}
           </button>
         </div>
       </div>
@@ -150,7 +185,7 @@ export function SettingsEditorial() {
                   >
                     {it.label}
                   </div>
-                  {it.label === "Nome workspace" ? (
+                  {it.nameKey === "name" ? (
                     <input
                       value={draftName}
                       onChange={(e) => setDraftName(e.target.value)}
@@ -180,6 +215,7 @@ export function SettingsEditorial() {
                 <span
                   className="t-mono"
                   style={{ color: "var(--muted-foreground)", cursor: "pointer" }}
+                  onClick={it.nameKey === "locale" ? toggleLocale : undefined}
                 >
                   {CONTROL_LABEL[it.control]}
                 </span>

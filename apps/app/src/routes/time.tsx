@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { EditorialPage } from "@/components/app/layouts/EditorialPage";
 import { EditorialPill } from "@pulse-hr/ui/atoms/EditorialPill";
 import { Eyebrow } from "@pulse-hr/ui/atoms/Eyebrow";
@@ -10,6 +11,12 @@ import { useEmployees } from "@/lib/tables/employees";
 import { useTimesheetEntries, timesheetEntriesTable } from "@/lib/tables/timesheetEntries";
 import { useProjects } from "@/lib/tables/projects";
 import type { Project, TimesheetEntry } from "@/lib/mock-data";
+
+const MONTHS_EN = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+const MONTHS_EN_UPPER = MONTHS_EN.map((m) => m.toUpperCase());
 
 export const Route = createFileRoute("/time")({
   head: () => ({ meta: [{ title: "Time & attendance — Pulse HR" }] }),
@@ -62,6 +69,7 @@ function fmtHours(h: number): string {
 type Tab = "calendar" | "mine" | "project" | "team";
 
 function TimePage() {
+  const { t, locale } = useI18n();
   const employees = useEmployees();
   const entries = useTimesheetEntries();
   const projects = useProjects();
@@ -142,8 +150,8 @@ function TimePage() {
   monthDays.forEach((d) => cells.push(d));
   while (cells.length % 7 !== 0) cells.push(null);
 
-  const monthLabel = MONTHS_IT_UPPER[cursor.month];
-  const monthLower = MONTHS_IT[cursor.month];
+  const monthLabel = locale === "it" ? MONTHS_IT_UPPER[cursor.month] : MONTHS_EN_UPPER[cursor.month];
+  const monthLower = locale === "it" ? MONTHS_IT[cursor.month] : MONTHS_EN[cursor.month];
 
   const goPrev = () =>
     setCursor((c) => {
@@ -180,17 +188,17 @@ function TimePage() {
         <Eyebrow
           tag={
             missingDays.length > 0 ? (
-              <span className="tag-attention">⚠ {missingDays.length} GIORNI MANCANTI</span>
+              <span className="tag-attention">⚠ {t("time.tag.missing", { n: missingDays.length })}</span>
             ) : (
               <span className="tag-spark">
                 <span className="dot" style={{ background: "var(--spark-ink)", boxShadow: "none" }} />
-                ALLINEATO
+                {t("time.tag.aligned")}
               </span>
             )
           }
           note={`· ${employee?.name ?? "—"}`}
         >
-          TIME &amp; ATTENDANCE · CALENDARIO · {monthLabel} {cursor.year}
+          {t("time.eyebrow", { month: monthLabel, year: cursor.year })}
         </Eyebrow>
       }
       actions={
@@ -214,17 +222,17 @@ function TimePage() {
             →
           </EditorialPill>
           <EditorialPill kind="ghost" size="sm" onClick={() => setAutofillOpen(true)}>
-            ⚡ Auto-fill
+            ⚡ {t("time.action.autofill")}
           </EditorialPill>
           <EditorialPill kind="spark" size="sm" arrow onClick={() => setOpenDay(today > 0 ? today : 1)}>
-            + Voce
+            + {t("time.action.entry")}
           </EditorialPill>
         </>
       }
       title={
         <>
-          Presenze
-          <span style={{ fontStyle: "italic" }}>, ora</span>
+          {t("time.title.0")}
+          <span style={{ fontStyle: "italic" }}>{t("time.title.1")}</span>
           <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
         </>
       }
@@ -232,20 +240,21 @@ function TimePage() {
       summary={
         <>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            SOMMARIO · {monthLabel} {cursor.year}
+            {t("time.summary.eyebrow", { month: monthLabel, year: cursor.year })}
           </span>
           <p className="t-body-lg" style={{ marginTop: 8, color: "var(--fg-2)" }}>
-            <strong style={{ fontWeight: 600 }}>{totalLogged.toFixed(0)}h</strong> registrate su{" "}
-            <strong style={{ fontWeight: 600 }}>{totalTarget}h</strong> attese.
+            <strong style={{ fontWeight: 600 }}>{totalLogged.toFixed(0)}h</strong>{" "}
+            {locale === "it" ? "registrate su" : "logged of"}{" "}
+            <strong style={{ fontWeight: 600 }}>{totalTarget}h</strong>{" "}
+            {locale === "it" ? "attese" : "expected"}.
             {missingDays.length > 0 && (
               <>
                 {" "}
                 <span className="spark-mark" style={{ fontWeight: 600 }}>
-                  {missingDays.length} giorni da riempire
+                  {t("time.summary.missing", { n: missingDays.length })}
                 </span>
               </>
             )}
-            .
           </p>
         </>
       }
@@ -254,10 +263,10 @@ function TimePage() {
       <div className="flex gap-1" style={{ borderBottom: "1px solid var(--line)" }}>
         {(
           [
-            ["calendar", "Calendar"],
-            ["mine", "My timesheet"],
-            ["project", "By project"],
-            ["team", "Team presence"],
+            ["calendar", t("time.tab.calendar")],
+            ["mine", t("time.tab.mine")],
+            ["project", t("time.tab.project")],
+            ["team", t("time.tab.team")],
           ] as [Tab, string][]
         ).map(([k, l]) => (
           <button
@@ -286,23 +295,27 @@ function TimePage() {
       {/* KPI strip */}
       <div className="solid-card flex" style={{ borderRadius: 14 }}>
         <Kpi
-          label="LOGGED / TARGET"
+          label={t("time.kpi.loggedTarget")}
           big={
             <>
               <span>{totalLogged.toFixed(0)}</span>
               <span style={{ color: "var(--muted-foreground)" }}> / {totalTarget}h</span>
             </>
           }
-          sub={`${totalTarget}h ATTESI · ${totalTarget - totalLogged > 0 ? "−" : "+"}${Math.abs(totalTarget - totalLogged).toFixed(0)}h`}
+          sub={t("time.kpi.loggedTarget.sub", {
+            target: totalTarget,
+            sign: totalTarget - totalLogged > 0 ? "−" : "+",
+            delta: Math.abs(totalTarget - totalLogged).toFixed(0),
+          })}
         />
         <Kpi
-          label="FILL %"
+          label={t("time.kpi.fill")}
           big={`${fillPct}%`}
-          sub={`${filled}/${workdays} GIORNI COMPLETI`}
+          sub={t("time.kpi.fill.sub", { filled, total: workdays })}
           accent={fillPct >= 80 ? "var(--spark)" : "var(--fg)"}
         />
         <Kpi
-          label="MISSING"
+          label={t("time.kpi.missing")}
           big={
             <>
               <span>{missingDays.length}</span>
@@ -311,14 +324,14 @@ function TimePage() {
               )}
             </>
           }
-          sub={missingDays.length > 0 ? "VAI AL PRIMO →" : "TUTTO IN REGOLA"}
+          sub={missingDays.length > 0 ? t("time.kpi.missing.go") : t("time.kpi.missing.ok")}
           action={missingDays.length > 0 ? jumpToFirstMissing : undefined}
         />
         <Kpi
           last
-          label="LEAVE + HOLIDAYS"
+          label={t("time.kpi.leave")}
           big={`${leaveDays + holidayDays}`}
-          sub={`${leaveDays} FERIE · ${holidayDays} FESTIVI`}
+          sub={t("time.kpi.leave.sub", { leave: leaveDays, holiday: holidayDays })}
         />
       </div>
 
@@ -343,7 +356,7 @@ function TimePage() {
             !
           </span>
           <span className="text-sm">
-            Hai <b>{missingDays.length} giorni mancanti</b> questo mese.
+            {t("time.alert.missing", { n: missingDays.length })}
           </span>
           <span style={{ flex: 1 }} />
           <div className="flex gap-1.5 flex-wrap">
@@ -644,6 +657,7 @@ function DayCell({
 }
 
 function MineTable({ monthDays, today }: { monthDays: DayRecord[]; today: number }) {
+  const { t } = useI18n();
   return (
     <div className="solid-card overflow-hidden" style={{ borderRadius: 14 }}>
       <div
@@ -655,7 +669,7 @@ function MineTable({ monthDays, today }: { monthDays: DayRecord[]; today: number
           color: "var(--muted-foreground)",
         }}
       >
-        {["GIORNO", "DOW", "STATO", "LOGGED", "TARGET", "DELTA", "PROJECTS"].map((h, i) => (
+        {[t("time.col.day"), t("time.col.dow"), t("time.col.status"), t("time.col.logged"), t("time.col.target"), t("time.col.delta"), t("time.col.projects")].map((h, i) => (
           <div
             key={i}
             style={{

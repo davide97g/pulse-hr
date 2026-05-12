@@ -1,8 +1,14 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { useEmployees } from "@/lib/tables/employees";
 import { useLeaveRequests } from "@/lib/tables/leave";
 import { useTimesheetEntries } from "@/lib/tables/timesheetEntries";
+
+const MONTHS_EN = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 import {
   holidaysSeed,
   projects,
@@ -54,6 +60,7 @@ function isoOf(d: Date) {
 }
 
 export function TimesheetCalendar() {
+  const { t, locale } = useI18n();
   const employees = useEmployees();
   const leaveRequests = useLeaveRequests();
   const timesheetEntries = useTimesheetEntries();
@@ -139,7 +146,8 @@ export function TimesheetCalendar() {
     };
   }, [monthMeta]);
 
-  const monthLabel = `${MONTHS_IT[monthMeta.month]} ${monthMeta.year}`;
+  const MONTH_NAMES = locale === "it" ? MONTHS_IT : MONTHS_EN;
+  const monthLabel = `${MONTH_NAMES[monthMeta.month]} ${monthMeta.year}`;
 
   return (
     <div
@@ -156,20 +164,20 @@ export function TimesheetCalendar() {
       <div className="grid items-end gap-6" style={{ gridTemplateColumns: "1fr auto" }}>
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            TIME &amp; ATTENDANCE · CALENDARIO · {monthLabel.toUpperCase()}
+            {t("time.eyebrow", { month: monthLabel.toUpperCase(), year: "" }).replace(/\s+\s/, " ").trim()}
           </span>
           <h1
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "6px 0 0",
-              fontSize: "clamp(56px, 7vw, 84px)",
+              fontSize: "clamp(40px, 10vw, 84px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}
           >
-            Presenze
-            <span style={{ fontStyle: "italic" }}>, ora</span>
+            {t("time.title.0")}
+            <span style={{ fontStyle: "italic" }}>{t("time.title.1")}</span>
             <span style={{ color: "var(--spark)" }}>.</span>
           </h1>
           <p
@@ -183,8 +191,7 @@ export function TimesheetCalendar() {
               lineHeight: 1.45,
             }}
           >
-            Traccia le ore, registra contro le projects, manda il timesheet per approvazione. Una
-            pagina per il mese.
+            {t("time.subtitle")}
           </p>
         </div>
         <div className="flex gap-2 items-center">
@@ -192,7 +199,7 @@ export function TimesheetCalendar() {
             type="button"
             className="pill pill-ghost pill-sm"
             onClick={() => setCursor(new Date(monthMeta.year, monthMeta.month - 1, 1))}
-            aria-label="Previous month"
+            aria-label={t("time.action.prev")}
           >
             ←
           </button>
@@ -204,21 +211,21 @@ export function TimesheetCalendar() {
               setCursor(new Date(n.getFullYear(), n.getMonth(), 1));
             }}
           >
-            Oggi
+            {t("common.today")}
           </button>
           <button
             type="button"
             className="pill pill-ghost pill-sm"
             onClick={() => setCursor(new Date(monthMeta.year, monthMeta.month + 1, 1))}
-            aria-label="Next month"
+            aria-label={t("time.action.next")}
           >
             →
           </button>
           <Link to="/time" className="pill pill-ghost pill-sm">
-            ⚡ Log now
+            ⚡ {t("time.action.log_now")}
           </Link>
           <Link to="/time" search={{ tab: "mine" }} className="pill pill-spark pill-sm">
-            + Nuova voce <span className="arr">→</span>
+            + {t("time.action.entry")} <span className="arr">→</span>
           </Link>
         </div>
       </div>
@@ -230,10 +237,10 @@ export function TimesheetCalendar() {
       >
         {(
           [
-            ["calendar", "Calendar"],
-            ["mine", "My timesheet"],
-            ["project", "By project"],
-            ["team", "Team presence"],
+            ["calendar", t("time.tab.calendar")],
+            ["mine", t("time.tab.mine")],
+            ["project", t("time.tab.project")],
+            ["team", t("time.tab.team")],
           ] as Array<[TabId, string]>
         ).map(([k, l]) => {
           const active = k === tab;
@@ -340,7 +347,7 @@ export function TimesheetCalendar() {
       <SidePanel
         open={openDay != null}
         onClose={() => setOpenDay(null)}
-        title={openDay != null ? `${openDay} ${MONTHS_IT[monthMeta.month]} ${monthMeta.year}` : ""}
+        title={openDay != null ? `${openDay} ${MONTH_NAMES[monthMeta.month]} ${monthMeta.year}` : ""}
       >
         {openDay != null && (
           <DayDrawerBody

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { useLeaveRequests, leaveTable } from "@/lib/tables/leave";
 import { type LeaveRequest } from "@/lib/mock-data";
 import { useDraft } from "@/lib/use-draft";
@@ -10,29 +11,28 @@ const PERMIT_ALLOWANCE = 32;
 
 const TYPES: Array<LeaveRequest["type"]> = ["Vacation", "Sick", "Personal", "Parental"];
 
-const MONTHS_IT_SHORT = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+const MONTHS_SHORT: Record<"en" | "it", string[]> = {
+  en: ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"],
+  it: ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"],
+};
 
-function fmtDate(iso: string): string {
-  const d = new Date(iso);
-  return `${String(d.getDate()).padStart(2, "0")} ${MONTHS_IT_SHORT[d.getMonth()]} ${d.getFullYear()}`;
-}
-function fmtRange(from: string, to: string): string {
+function fmtRange(months: string[], from: string, to: string): string {
   const f = new Date(from);
   const t = new Date(to);
   if (f.getMonth() === t.getMonth())
-    return `${String(f.getDate()).padStart(2, "0")}–${String(t.getDate()).padStart(2, "0")} ${MONTHS_IT_SHORT[f.getMonth()]}`;
-  return `${String(f.getDate()).padStart(2, "0")} ${MONTHS_IT_SHORT[f.getMonth()]} – ${String(t.getDate()).padStart(2, "0")} ${MONTHS_IT_SHORT[t.getMonth()]}`;
-}
-function localizeType(t: LeaveRequest["type"]): string {
-  return { Vacation: "Ferie", Sick: "Malattia", Personal: "Permesso", Parental: "Parentale" }[t];
-}
-function localizeStatus(s: LeaveRequest["status"]): string {
-  return { pending: "in revisione", approved: "approvato", rejected: "rifiutato" }[s];
+    return `${String(f.getDate()).padStart(2, "0")}–${String(t.getDate()).padStart(2, "0")} ${months[f.getMonth()]}`;
+  return `${String(f.getDate()).padStart(2, "0")} ${months[f.getMonth()]} – ${String(t.getDate()).padStart(2, "0")} ${months[t.getMonth()]}`;
 }
 
 export function LeaveEditorial() {
+  const { t, locale } = useI18n();
   const all = useLeaveRequests();
   const mine = useMemo(() => all.filter((l) => l.employeeId === ME), [all]);
+  const months = MONTHS_SHORT[locale];
+
+  const localizeType = (kind: LeaveRequest["type"]) =>
+    t(`leave.type.${kind.toLowerCase()}`);
+  const localizeStatus = (s: LeaveRequest["status"]) => t(`leave.status.${s}`);
 
   const usedVacation = mine
     .filter((l) => l.type === "Vacation" && l.status === "approved")
@@ -56,8 +56,9 @@ export function LeaveEditorial() {
 
   function submit() {
     const f = new Date(draft.from);
-    const t = new Date(draft.to);
-    const days = Math.max(1, Math.round((t.getTime() - f.getTime()) / 86_400_000) + 1);
+    const toDt = new Date(draft.to);
+    const days = Math.max(1, Math.round((toDt.getTime() - f.getTime()) / 86_400_000) + 1);
+    const unit = locale === "it" ? "gg" : "d";
     const r: LeaveRequest = {
       id: `l-${Date.now()}`,
       employeeId: ME,
@@ -66,11 +67,11 @@ export function LeaveEditorial() {
       to: draft.to,
       days,
       status: "pending",
-      reason: draft.reason || `${localizeType(draft.type)} · ${days}gg`,
+      reason: draft.reason || `${localizeType(draft.type)} · ${days}${unit}`,
       submittedAt: new Date().toISOString(),
     };
     leaveTable.add(r);
-    toast.success("Richiesta inviata", { description: "In coda di approvazione." });
+    toast.success(t("leave.toast.sent"), { description: t("leave.toast.sent_desc") });
     clearDraft();
   }
 
@@ -83,23 +84,23 @@ export function LeaveEditorial() {
   );
 
   return (
-    <div className="ph p-4 md:p-6 grid gap-10 min-h-[calc(100vh-3.5rem)]" style={{ gridTemplateColumns: "1.05fr 1fr" }}>
+    <div className="ph p-4 md:p-6 grid gap-6 md:gap-10 min-h-[calc(100vh-3.5rem)] grid-cols-1 lg:grid-cols-[1.05fr_1fr]">
       <section className="flex flex-col justify-between gap-8">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            FERIE & PERMESSI · ANNO {new Date().getFullYear()}
+            {t("leave.eyebrow", { year: new Date().getFullYear() })}
           </span>
           <h1
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(96px, 11vw, 144px)",
+              fontSize: "clamp(56px, 14vw, 144px)",
               letterSpacing: "-0.05em",
               lineHeight: 0.86,
             }}
           >
-            <span style={{ fontStyle: "italic" }}>Riposo</span>
+            <span style={{ fontStyle: "italic" }}>{t("leave.title")}</span>
             <span style={{ color: "var(--spark)" }}>.</span>
           </h1>
           <p
@@ -113,21 +114,31 @@ export function LeaveEditorial() {
               lineHeight: 1.35,
             }}
           >
-            Hai {remaining} giorni residui.{" "}
-            {remaining > 0 ? "Suggeriamo di pianificare almeno una settimana entro l'estate." : "Hai usato tutto il monte ferie di quest'anno."}
+            {t("leave.summary.left", { days: remaining })}{" "}
+            {remaining > 0 ? t("leave.summary.plan") : t("leave.summary.spent")}
           </p>
         </div>
         <div
           className="grid gap-0 pt-6"
           style={{ gridTemplateColumns: "1fr 1fr 1fr", borderTop: "1px solid var(--line-strong)" }}
         >
-          <BalanceCell label="FERIE" value={String(remaining)} sub={`/ ${VACATION_ALLOWANCE} GG`} accent first />
           <BalanceCell
-            label="PERMESSI"
-            value={String(Math.max(0, PERMIT_ALLOWANCE - permitHours))}
-            sub={`/ ${PERMIT_ALLOWANCE} ORE`}
+            label={t("leave.balance.vacation")}
+            value={String(remaining)}
+            sub={t("leave.balance.vacation.unit", { n: VACATION_ALLOWANCE })}
+            accent
+            first
           />
-          <BalanceCell label="MALATTIA" value={String(sickDays)} sub="GG USATI" />
+          <BalanceCell
+            label={t("leave.balance.permits")}
+            value={String(Math.max(0, PERMIT_ALLOWANCE - permitHours))}
+            sub={t("leave.balance.permits.unit", { n: PERMIT_ALLOWANCE })}
+          />
+          <BalanceCell
+            label={t("leave.balance.sick")}
+            value={String(sickDays)}
+            sub={t("leave.balance.sick.unit")}
+          />
         </div>
       </section>
 
@@ -142,22 +153,22 @@ export function LeaveEditorial() {
             gap: 16,
           }}
         >
-          <span className="t-h3-sans">Nuova richiesta</span>
-          <div className="grid gap-3" style={{ gridTemplateColumns: "1fr 1fr" }}>
-            <FormField label="TIPO">
+          <span className="t-h3-sans">{t("leave.form.title")}</span>
+          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
+            <FormField label={t("leave.form.type")}>
               <select
                 value={draft.type}
                 onChange={(e) => setDraft({ ...draft, type: e.target.value as LeaveRequest["type"] })}
                 style={inputStyle}
               >
-                {TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {localizeType(t)}
+                {TYPES.map((kind) => (
+                  <option key={kind} value={kind}>
+                    {localizeType(kind)}
                   </option>
                 ))}
               </select>
             </FormField>
-            <FormField label="DAL">
+            <FormField label={t("leave.form.from")}>
               <input
                 type="date"
                 value={draft.from}
@@ -165,7 +176,7 @@ export function LeaveEditorial() {
                 style={inputStyle}
               />
             </FormField>
-            <FormField label="AL">
+            <FormField label={t("leave.form.to")}>
               <input
                 type="date"
                 value={draft.to}
@@ -173,10 +184,10 @@ export function LeaveEditorial() {
                 style={inputStyle}
               />
             </FormField>
-            <FormField label="MOTIVO">
+            <FormField label={t("leave.form.reason")}>
               <input
                 type="text"
-                placeholder="Settimana di stacco"
+                placeholder={t("leave.form.reason.placeholder")}
                 value={draft.reason}
                 onChange={(e) => setDraft({ ...draft, reason: e.target.value })}
                 style={inputStyle}
@@ -185,10 +196,10 @@ export function LeaveEditorial() {
           </div>
           <div className="flex justify-end gap-2">
             <button type="button" className="pill pill-ghost pill-sm">
-              Salva bozza
+              {t("leave.form.save_draft")}
             </button>
             <button type="button" className="pill pill-spark pill-sm" onClick={submit}>
-              Invia <span className="arr">→</span>
+              {t("leave.form.submit")} <span className="arr">→</span>
             </button>
           </div>
         </div>
@@ -207,22 +218,21 @@ export function LeaveEditorial() {
           }}
         >
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            STORICO
+            {t("leave.history")}
           </span>
           <div className="overflow-auto pr-1">
             {history.map((r, i) => (
               <div
                 key={r.id}
-                className="grid items-center"
+                className="grid items-center grid-cols-[88px_1fr_auto_auto] sm:grid-cols-[120px_1fr_60px_110px]"
                 style={{
-                  gridTemplateColumns: "120px 1fr 60px 110px",
                   gap: 12,
                   padding: "10px 0",
                   borderBottom: i < history.length - 1 ? "1px solid var(--line)" : "none",
                 }}
               >
                 <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                  {fmtRange(r.from, r.to)}
+                  {fmtRange(months, r.from, r.to)}
                 </span>
                 <span
                   style={{
@@ -234,7 +244,7 @@ export function LeaveEditorial() {
                   {localizeType(r.type)}
                 </span>
                 <span className="t-num" style={{ textAlign: "right", fontSize: 16 }}>
-                  {r.days < 1 ? `${r.days * 8}h` : `${r.days}gg`}
+                  {r.days < 1 ? `${r.days * 8}h` : `${r.days}${locale === "it" ? "gg" : "d"}`}
                 </span>
                 <span
                   className="t-mono"
@@ -254,11 +264,10 @@ export function LeaveEditorial() {
             ))}
             {history.length === 0 && (
               <div className="p-6 text-center" style={{ color: "var(--muted-foreground)" }}>
-                <span className="t-mono">NESSUNA RICHIESTA</span>
+                <span className="t-mono">{t("leave.history.empty")}</span>
               </div>
             )}
           </div>
-          {void fmtDate}
         </div>
       </section>
     </div>

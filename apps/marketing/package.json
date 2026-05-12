@@ -3,11 +3,28 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
+  "description": "pulsehr.it — Astro static site plus the studio content workspace (Remotion compositions and testreel browser recordings) that renders into apps/marketing/public/studio/*.",
   "scripts": {
     "dev": "astro dev --host 0.0.0.0 --port 4321",
     "build": "astro build",
     "preview": "astro preview --host 0.0.0.0 --port 4321",
-    "astro": "astro"
+    "astro": "astro",
+    "studio": "remotion studio studio/remotion/index.ts",
+    "render": "remotion render studio/remotion/index.ts DayInPulse public/studio/reel.mp4 --codec=h264 --crf=20",
+    "render:webm": "remotion render studio/remotion/index.ts DayInPulse public/studio/reel.webm --codec=vp8",
+    "render:poster": "remotion still studio/remotion/index.ts DayInPulse public/studio/poster.jpg --frame=0 --image-format=jpeg --jpeg-quality=88",
+    "render:all": "bun run render && bun run render:webm && bun run render:poster",
+    "reel": "bun studio/scripts/render-reel.ts",
+    "reel:all": "bun studio/scripts/render-reel.ts --all",
+    "reel:montage": "bun studio/scripts/render-reel.ts montage",
+    "record": "bun studio/recordings/scripts/run.ts",
+    "record:setup": "playwright install chromium --with-deps || playwright install chromium",
+    "record:kudos-give": "bun studio/recordings/scripts/run.ts kudos-give",
+    "record:workspace-create": "CRED=new bun studio/recordings/scripts/run.ts workspace-create",
+    "record:time-attendance": "bun studio/recordings/scripts/run.ts time-attendance-entry",
+    "record:growth-checks": "bun studio/recordings/scripts/run.ts growth-checks",
+    "record:comments-thread": "bun studio/recordings/scripts/run.ts comments-thread",
+    "record:feedback-live": "GHOSTS=1 bun studio/recordings/scripts/run.ts feedback-live"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
@@ -15,11 +32,25 @@
     "@fontsource-variable/geist": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@pulse-hr/tokens": "workspace:*",
+    "@remotion/bundler": "^4.0.400",
+    "@remotion/cli": "^4.0.400",
+    "@remotion/google-fonts": "^4.0.400",
+    "@remotion/renderer": "^4.0.400",
     "@tailwindcss/vite": "^4.2.2",
     "@vercel/analytics": "^2.0.1",
     "astro": "^6.1.8",
     "lucide-astro": "^0.556.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.400",
     "tailwindcss": "^4.2.2",
     "workbox-window": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "playwright": "^1.48.0",
+    "testreel": "latest",
+    "typescript": "^5.6.3"
   }
 }

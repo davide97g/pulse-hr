@@ -1,16 +1,17 @@
 import { useNavigate } from "@tanstack/react-router";
+import { useT } from "@pulse-hr/shared/i18n";
 
 export type GrowthTab = "overview" | "achievements" | "challenges" | "kudos" | "paths";
 
-const TABS: Array<[GrowthTab, string]> = [
-  ["overview", "Overview"],
-  ["achievements", "Achievements"],
-  ["challenges", "Challenges"],
-  ["kudos", "Kudos"],
-  ["paths", "Skill paths"],
-];
-
 export function GrowthTabs({ active }: { active: GrowthTab }) {
+  const t = useT();
+  const TABS: Array<[GrowthTab, string]> = [
+    ["overview", t("growth.tab.overview")],
+    ["achievements", t("growth.tab.achievements")],
+    ["challenges", t("growth.tab.challenges")],
+    ["kudos", t("growth.tab.kudos")],
+    ["paths", t("growth.tab.paths")],
+  ];
   const nav = useNavigate({ from: "/growth" });
   const setTab = (t: GrowthTab) =>
     nav({

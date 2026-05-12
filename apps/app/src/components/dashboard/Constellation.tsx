@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useIsMobile } from "@pulse-hr/ui/hooks/use-mobile";
 import type { ConstellationPerson, DeptId, LensConfig, MicroCardConfig } from "./types";
 import { HoverCard } from "./HoverCard";
 import { DeptLabel } from "./DeptLabel";
@@ -53,6 +54,7 @@ export function Constellation({
   const [hover, setHover] = useState<HoverState | null>(null);
   const [filter, setFilter] = useState<DeptId | "ALL">("ALL");
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const pts = useMemo(() => people.map((p) => ax2px(p.q, p.r)), [people]);
   const deptFilters = useMemo<Array<DeptId | "ALL">>(() => {
@@ -151,19 +153,20 @@ export function Constellation({
             border: "1px solid var(--line)",
             borderRadius: 22,
             overflow: "hidden",
-            minHeight: 480,
+            minHeight: isMobile ? 560 : 480,
           }}
         >
           {/* KPI top-left */}
           <div
             style={{
               position: "absolute",
-              top: 22,
-              left: 26,
+              top: isMobile ? 14 : 22,
+              left: isMobile ? 16 : 26,
               display: "flex",
               flexDirection: "column",
               gap: 6,
               zIndex: 4,
+              maxWidth: isMobile ? "calc(100% - 32px)" : undefined,
             }}
           >
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
@@ -173,7 +176,7 @@ export function Constellation({
               <span
                 className="t-num"
                 style={{
-                  fontSize: 96,
+                  fontSize: isMobile ? 64 : 96,
                   lineHeight: 0.85,
                   letterSpacing: "-0.04em",
                   color: "var(--spark)",
@@ -181,25 +184,25 @@ export function Constellation({
               >
                 {lens.kpiValue(people)}
               </span>
-              <span className="t-num" style={{ fontSize: 28, color: "var(--fg)" }}>
+              <span className="t-num" style={{ fontSize: isMobile ? 20 : 28, color: "var(--fg)" }}>
                 {lens.kpiSuffix}
               </span>
             </div>
-            <div style={{ display: "flex", gap: 14, marginTop: 6 }}>
+            <div style={{ display: "flex", gap: isMobile ? 10 : 14, marginTop: 6, flexWrap: "wrap" }}>
               {triad.map(([label, value, accent], i) => (
                 <Stat key={i} label={label} value={value} accent={accent} />
               ))}
             </div>
           </div>
 
-          {/* Legend top-right */}
+          {/* Legend top-right (hidden on mobile — collides with KPI; legend re-emerges via bottom narrative) */}
           <div
             style={{
               position: "absolute",
               top: 22,
               right: 26,
               zIndex: 4,
-              display: "flex",
+              display: isMobile ? "none" : "flex",
               flexDirection: "column",
               gap: 8,
               alignItems: "flex-end",
@@ -264,7 +267,7 @@ export function Constellation({
               inset: 0,
               width: "100%",
               height: "100%",
-              padding: "120px 60px 80px",
+              padding: isMobile ? "180px 18px 140px" : "120px 60px 80px",
               boxSizing: "border-box",
             }}
           >
@@ -362,22 +365,27 @@ export function Constellation({
 
           {hover && <HoverCard hover={{ ...hover.person, x: hover.x, y: hover.y }} dark={dark} lens={lens} />}
 
-          <DeptLabel pos={{ left: "22%", top: "26%" }} title="ENG" count={deptCounts.ENG} />
-          <DeptLabel pos={{ left: "10%", bottom: "22%" }} title="DESIGN" count={deptCounts.DESIGN} />
-          <DeptLabel pos={{ right: "12%", bottom: "22%" }} title="OPS" count={deptCounts.OPS} />
-          <DeptLabel pos={{ left: "47%", bottom: "8%" }} title="PEOPLE" count={deptCounts.PEOPLE} />
+          {!isMobile && (
+            <>
+              <DeptLabel pos={{ left: "22%", top: "26%" }} title="ENG" count={deptCounts.ENG} />
+              <DeptLabel pos={{ left: "10%", bottom: "22%" }} title="DESIGN" count={deptCounts.DESIGN} />
+              <DeptLabel pos={{ right: "12%", bottom: "22%" }} title="OPS" count={deptCounts.OPS} />
+              <DeptLabel pos={{ left: "47%", bottom: "8%" }} title="PEOPLE" count={deptCounts.PEOPLE} />
+            </>
+          )}
 
           {/* Bottom narrative band */}
           <div
             style={{
               position: "absolute",
-              bottom: 18,
-              left: 26,
-              right: 26,
+              bottom: isMobile ? 14 : 18,
+              left: isMobile ? 16 : 26,
+              right: isMobile ? 16 : 26,
               display: "flex",
-              alignItems: "flex-end",
+              alignItems: isMobile ? "stretch" : "flex-end",
+              flexDirection: isMobile ? "column" : "row",
               justifyContent: "space-between",
-              gap: 24,
+              gap: isMobile ? 12 : 24,
               zIndex: 4,
               flexWrap: "wrap",
             }}
@@ -387,7 +395,7 @@ export function Constellation({
               style={{
                 fontFamily: "Fraunces, ui-serif, serif",
                 fontStyle: "italic",
-                fontSize: 18,
+                fontSize: isMobile ? 15 : 18,
                 color: "var(--fg-2)",
                 margin: 0,
                 maxWidth: 560,

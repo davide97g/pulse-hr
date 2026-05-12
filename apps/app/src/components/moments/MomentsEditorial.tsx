@@ -1,8 +1,10 @@
 import { useMemo } from "react";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { useEmployees } from "@/lib/tables/employees";
 import type { Employee } from "@/lib/mock-data";
 
 const MONTHS_IT_SHORT = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+const MONTHS_EN_SHORT = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 
 interface Moment {
   emp: Employee;
@@ -19,7 +21,7 @@ function nextOccurrence(monthDay: string, fromYear: number): Date {
   return candidate;
 }
 
-function buildMoments(employees: Employee[]): Moment[] {
+function buildMoments(employees: Employee[], locale: "en" | "it"): Moment[] {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const horizon = new Date(today.getTime() + 31 * 86_400_000);
@@ -37,7 +39,9 @@ function buildMoments(employees: Employee[]): Moment[] {
           kind: "birthday",
           date: target,
           daysAhead: days,
-          detail: `Compleanno · ${age} anni in azienda`,
+          detail: locale === "it"
+            ? `Compleanno · ${age} anni in azienda`
+            : `Birthday · ${age} years with the company`,
         });
       }
     }
@@ -56,7 +60,9 @@ function buildMoments(employees: Employee[]): Moment[] {
             kind: "anniversary",
             date: annivTarget,
             daysAhead: days,
-            detail: `${years} ann${years === 1 ? "o" : "i"} in azienda`,
+            detail: locale === "it"
+              ? `${years} ann${years === 1 ? "o" : "i"} in azienda`
+              : `${years} ${years === 1 ? "year" : "years"} with the company`,
           });
         }
       }
@@ -66,45 +72,55 @@ function buildMoments(employees: Employee[]): Moment[] {
   return moments.sort((a, b) => a.daysAhead - b.daysAhead);
 }
 
-function fmtMomentDate(d: Date, daysAhead: number): string {
-  if (daysAhead === 0) return "oggi";
-  if (daysAhead === 1) return "domani · 1 g";
-  return `${String(d.getDate()).padStart(2, "0")} ${MONTHS_IT_SHORT[d.getMonth()]} · ${daysAhead} gg`;
+function fmtMomentDate(d: Date, daysAhead: number, locale: "en" | "it"): string {
+  if (locale === "it") {
+    if (daysAhead === 0) return "oggi";
+    if (daysAhead === 1) return "domani · 1 g";
+    return `${String(d.getDate()).padStart(2, "0")} ${MONTHS_IT_SHORT[d.getMonth()]} · ${daysAhead} gg`;
+  }
+  if (daysAhead === 0) return "today";
+  if (daysAhead === 1) return "tomorrow · 1d";
+  return `${String(d.getDate()).padStart(2, "0")} ${MONTHS_EN_SHORT[d.getMonth()]} · ${daysAhead}d`;
 }
 
 export function MomentsEditorial() {
+  const { t, locale } = useI18n();
   const employees = useEmployees();
-  const moments = useMemo(() => buildMoments(employees), [employees]);
+  const moments = useMemo(() => buildMoments(employees, locale), [employees, locale]);
   const today = useMemo(() => moments.find((m) => m.daysAhead === 0), [moments]);
   const upcoming = useMemo(() => moments.filter((m) => m.daysAhead > 0).slice(0, 12), [moments]);
 
   const todayDate = new Date();
-  const todayMono = `MAR ${String(todayDate.getDate()).padStart(2, "0")} ${MONTHS_IT_SHORT[todayDate.getMonth()].toUpperCase()}`;
+  const monthArr = locale === "it" ? MONTHS_IT_SHORT : MONTHS_EN_SHORT;
+  const todayMono = `${String(todayDate.getDate()).padStart(2, "0")} ${monthArr[todayDate.getMonth()].toUpperCase()}`;
 
   return (
-    <div
-      className="ph p-4 md:p-6 grid gap-10 min-h-[calc(100vh-3.5rem)]"
-      style={{ gridTemplateColumns: "1.1fr 1fr" }}
-    >
+    <div className="ph p-4 md:p-6 grid gap-6 md:gap-10 min-h-[calc(100vh-3.5rem)] grid-cols-1 lg:grid-cols-[1.1fr_1fr]">
       {/* Today's moment hero */}
       <section className="flex flex-col justify-between gap-8">
         {today ? (
           <>
             <div>
               <span className="t-mono" style={{ color: "var(--spark)" }}>
-                ⏤ OGGI · {todayMono} ⏤
+                ⏤ {t("common.today").toUpperCase()} · {todayMono} ⏤
               </span>
               <h1
                 style={{
                   fontFamily: "Fraunces, ui-serif, serif",
                   fontWeight: 400,
                   margin: "10px 0 0",
-                  fontSize: "clamp(80px, 10vw, 132px)",
+                  fontSize: "clamp(48px, 13vw, 132px)",
                   letterSpacing: "-0.045em",
                   lineHeight: 0.86,
                 }}
               >
-                {today.kind === "birthday" ? "Auguri" : "Anniversario"},
+                {locale === "it"
+                  ? today.kind === "birthday"
+                    ? "Auguri"
+                    : "Anniversario"
+                  : today.kind === "birthday"
+                    ? "Happy birthday"
+                    : "Anniversary"},
                 <br />
                 <span style={{ fontStyle: "italic" }}>{today.emp.name.split(" ")[0]}</span>
                 <span style={{ color: "var(--spark)" }}>.</span>
@@ -120,8 +136,15 @@ export function MomentsEditorial() {
                   lineHeight: 1.35,
                 }}
               >
-                {today.emp.name} {today.kind === "birthday" ? "compie gli anni oggi" : "festeggia un anniversario"}.{" "}
-                {today.emp.role} a {today.emp.location}.
+                {today.emp.name}{" "}
+                {locale === "it"
+                  ? today.kind === "birthday"
+                    ? "compie gli anni oggi"
+                    : "festeggia un anniversario"
+                  : today.kind === "birthday"
+                    ? "has a birthday today"
+                    : "is celebrating an anniversary"}
+                . {today.emp.role} {locale === "it" ? "a" : "in"} {today.emp.location}.
               </p>
               <div className="mt-7 flex items-center gap-3">
                 <span className="ph-avatar ph-avatar-lg">{today.emp.initials}</span>
@@ -147,32 +170,32 @@ export function MomentsEditorial() {
               style={{ borderTop: "1px solid var(--line-strong)" }}
             >
               <button type="button" className="pill pill-spark">
-                🎂 Manda auguri
+                🎂 {locale === "it" ? "Manda auguri" : "Send wishes"}
               </button>
               <button type="button" className="pill pill-ghost">
-                + Kudos a {today.emp.name.split(" ")[0]}
+                + {t("growth.kudo.new")} {locale === "it" ? "a" : "for"} {today.emp.name.split(" ")[0]}
               </button>
               <button type="button" className="pill pill-ghost">
-                Vedi profilo
+                {locale === "it" ? "Vedi profilo" : "View profile"}
               </button>
             </div>
           </>
         ) : (
           <div className="flex flex-col gap-4">
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              MAR {todayMono} · NIENTE OGGI
+              {todayMono} · {locale === "it" ? "NIENTE OGGI" : "NOTHING TODAY"}
             </span>
             <h1
               style={{
                 fontFamily: "Fraunces, ui-serif, serif",
                 fontWeight: 400,
                 margin: 0,
-                fontSize: "clamp(80px, 10vw, 132px)",
+                fontSize: "clamp(48px, 13vw, 132px)",
                 letterSpacing: "-0.045em",
                 lineHeight: 0.86,
               }}
             >
-              <span style={{ fontStyle: "italic" }}>Calma</span>
+              <span style={{ fontStyle: "italic" }}>{locale === "it" ? "Calma" : "Quiet"}</span>
               <span style={{ color: "var(--spark)" }}>.</span>
             </h1>
             <p
@@ -185,7 +208,9 @@ export function MomentsEditorial() {
                 lineHeight: 1.4,
               }}
             >
-              Nessun compleanno o anniversario oggi. Guarda i prossimi 30 giorni a destra.
+              {locale === "it"
+                ? "Nessun compleanno o anniversario oggi. Guarda i prossimi 30 giorni a destra."
+                : "No birthdays or anniversaries today. See the next 30 days on the right."}
             </p>
           </div>
         )}
@@ -194,9 +219,9 @@ export function MomentsEditorial() {
       {/* Upcoming feed */}
       <section className="flex flex-col gap-3.5 min-h-0">
         <div className="flex justify-between items-baseline">
-          <span className="t-h3-sans">In arrivo</span>
+          <span className="t-h3-sans">{locale === "it" ? "In arrivo" : "Coming up"}</span>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            30 GIORNI
+            {locale === "it" ? "30 GIORNI" : "30 DAYS"}
           </span>
         </div>
         <div
@@ -231,7 +256,7 @@ export function MomentsEditorial() {
                 </span>
               </div>
               <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                {fmtMomentDate(m.date, m.daysAhead)}
+                {fmtMomentDate(m.date, m.daysAhead, locale)}
               </span>
             </div>
           ))}

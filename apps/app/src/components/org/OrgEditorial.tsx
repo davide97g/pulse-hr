@@ -73,7 +73,7 @@ export function OrgEditorial() {
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(64px, 8vw, 116px)",
+              fontSize: "clamp(40px, 11vw, 116px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}

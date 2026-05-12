@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useI18n as useMarketplaceI18n } from "@pulse-hr/shared/i18n";
 import { useEffect, useState } from "react";
 import { Search, Check, Settings2, Star, Shield } from "lucide-react";
 import { toast } from "sonner";
@@ -47,6 +48,7 @@ function writeInstalled(ids: Set<string>) {
 }
 
 function Marketplace() {
+  const { t: tt } = useMarketplaceI18n();
   const [installed, setInstalled] = useState<Set<string>>(() => {
     // Seed from mock-data's initial installed flags the first time only.
     const stored = readInstalled();
@@ -93,14 +95,14 @@ function Marketplace() {
   return (
     <div className="p-4 md:p-6 max-w-[1400px] mx-auto fade-in">
       <PageHeader
-        eyebrow="WORKSPACE · MARKETPLACE · APP & INTEGRAZIONI"
+        eyebrow={tt("marketplace.eyebrow")}
         title={
           <>
-            Estendi <span className="spark-mark">Pulse</span>
+            {tt("marketplace.title.0")}<span className="spark-mark">{tt("marketplace.title.1")}</span>
             <span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
           </>
         }
-        description="App, integrazioni, workflow."
+        description={tt("marketplace.subtitle")}
       />
 
       <div className="flex items-center gap-2 flex-wrap mb-5">
@@ -109,7 +111,7 @@ function Marketplace() {
           <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search apps…"
+            placeholder={tt("marketplace.search.placeholder")}
             className="pl-8 h-9"
           />
         </div>
@@ -121,7 +123,7 @@ function Marketplace() {
               !cat ? "bg-foreground text-background" : "hover:bg-muted",
             )}
           >
-            All
+            {tt("marketplace.filter.all")}
           </button>
           {categories.map((c) => (
             <button
@@ -175,7 +177,7 @@ function Marketplace() {
                     {p.installed && (
                       <span className="text-[10px] uppercase tracking-wider text-success font-medium flex items-center gap-1">
                         <Check className="h-3 w-3" />
-                        Installed
+                        {tt("marketplace.installed")}
                       </span>
                     )}
                   </div>
@@ -189,7 +191,7 @@ function Marketplace() {
               <div className="text-sm text-muted-foreground flex-1">{p.desc}</div>
               <div className="flex items-center gap-2 mt-3 text-[11px] text-muted-foreground">
                 <Shield className="h-3 w-3" />
-                Verified publisher
+                {tt("marketplace.verified")}
               </div>
               <div className="flex gap-2 mt-4">
                 {p.installed && (
@@ -200,7 +202,7 @@ function Marketplace() {
                     onClick={() => setConfigure(p)}
                   >
                     <Settings2 className="h-3.5 w-3.5 mr-1.5" />
-                    Configure
+                    {tt("marketplace.configure")}
                   </Button>
                 )}
                 <Button
@@ -212,7 +214,7 @@ function Marketplace() {
                   )}
                   onClick={() => toggle(p.id)}
                 >
-                  {p.installed ? "Uninstall" : "Install"}
+                  {p.installed ? tt("marketplace.uninstall") : tt("marketplace.install")}
                 </Button>
               </div>
             </Card>

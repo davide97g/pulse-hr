@@ -69,7 +69,7 @@ export function FeedbackEditorial() {
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(72px, 9vw, 124px)",
+              fontSize: "clamp(44px, 12vw, 124px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}

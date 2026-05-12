@@ -18,9 +18,8 @@ pulse-hr/
 │   ├── app/        # @workflows-people/app   → app.pulsehr.it    (Vite + React SPA — main product)
 │   ├── api/        # @pulse-hr/api           → api.pulsehr.it    (Bun + Hono, hosted on Render)
 │   ├── feedback/   # @pulse-hr/feedback      → feedback site     (Vite + React + TanStack Router)
-│   ├── marketing/  # pulse-hr-marketing      → pulsehr.it        (Astro)
-│   ├── design/     # @pulse-hr/design        → design.pulsehr.it (Storybook for the design system)
-│   └── studio/     # @pulse-hr/studio        (content workspace: Remotion compositions + testreel browser recordings → marketing/public/studio/*)
+│   ├── marketing/  # pulse-hr-marketing      → pulsehr.it        (Astro site + co-located studio/ content workspace: Remotion compositions + testreel browser recordings → public/studio/*)
+│   └── design/     # @pulse-hr/design        → design.pulsehr.it (Storybook for the design system)
 └── packages/
     ├── shared/     # @pulse-hr/shared (sidebar features, tours, changelog data)
     ├── tokens/     # @pulse-hr/tokens (CSS variables + TS constants — sole theme source of truth)
@@ -53,9 +52,10 @@ bun run build:app | build:api | build:feedback | build:design | build:marketing
 
 bun run lint                # eslint in apps/app
 bun run db:migrate          # apply Drizzle migrations against Neon
-bun run studio              # Remotion studio (apps/studio)
+bun run studio              # Remotion studio (apps/marketing/studio/remotion)
 bun run render:studio       # render reel.mp4 + .webm + poster into apps/marketing/public/studio/
-bun run record              # testreel browser recording (apps/studio/src/recordings/scripts/run.ts)
+bun run render:reels        # render every reel × aspect into apps/marketing/public/studio/reels/
+bun run record              # testreel browser recording (apps/marketing/studio/recordings/scripts/run.ts)
 ```
 
 Or `cd apps/<name>` and run that workspace's own scripts.
@@ -108,22 +108,28 @@ Bun runtime + Hono. Long-running server hosted on Render (no cold starts). Repla
 
 Vite + React + TanStack Router (separate SPA). Consumes `@pulse-hr/ui` + `@pulse-hr/tokens` + `@pulse-hr/shared`. Routes: `index`, `proposals.$id`, `comments.$id`, `voting-power`. Has its own `CLAUDE.md` worth checking when working in it.
 
-### apps/marketing — Astro static site
+### apps/marketing — Astro static site + studio content workspace
 
-Content in `src/data/*.ts` and `src/pages/*.astro`. Ships changelog, roadmap, security, ecosystem. Imports `@pulse-hr/tokens` for theme parity. Still uses `wp-aliases.css` shim for legacy `--wp-*` token names — being phased out.
+Single deployable workspace (`pulse-hr-marketing`) that bundles two concerns:
 
-### apps/design — Storybook
+**Site** (`src/`, served at pulsehr.it). Content in `src/data/*.ts` and `src/pages/*.astro`. Ships changelog, roadmap, security, ecosystem. Imports `@pulse-hr/tokens` for theme parity. Still uses `wp-aliases.css` shim for legacy `--wp-*` token names — being phased out.
 
-Hosts design-system docs at `design.pulsehr.it`. Globs stories from `packages/ui/src/**/*.stories.tsx` and MDX from `apps/design/docs/**`. Has its own `CLAUDE.md`.
+**Studio** (`studio/`, content creation toolchain — not bundled into the Astro build). Two co-located pipelines:
 
-### apps/studio — content workspace
+- **Recording with testreel** (`studio/recordings/`):
+  - `scripts/run.ts` + `scripts/ghost.ts` — Bun runner that templates a JSON spec, optionally spawns Playwright ghost users, drives testreel, muxes background audio, then promotes the clip + timeline + captions into `studio/captures/<spec>/` for Remotion to consume.
+  - `specs/*.template.json` — testreel recording definitions with `{{TEST_EMAIL}}`, `{{TEST_PASSWORD}}`, `{{BASE_URL}}` placeholders; optional `*.captions.json` and `*.ghosts.json` sidecars; shared `_setup.partial.json` for the onboarding prelude.
+  - Raw intermediates land in `studio/output/<spec>/` (gitignored).
+- **Rendering / editing with Remotion** (`studio/remotion/`):
+  - `index.ts` → `Root.tsx` defines compositions: `DayInPulse` plus per-reel `reel-<flow>-<1080|shorts|square>` and `montage-<aspect>` variants built from the recorded captures.
+  - Scenes in `scenes/`, shared visuals in `components/`, fonts/tokens in `fonts.ts` / `tokens.ts`.
+  - `staticFile()` reads from `studio/captures/...` thanks to `Config.setPublicDir("./studio")` in `apps/marketing/remotion.config.ts` — Astro's `public/` stays exclusively for the marketing site.
+- **Render orchestration** (`studio/scripts/render-reel.ts`) compiles every reel × aspect into `apps/marketing/public/studio/reels/<flow>/<aspect>.{mp4,jpg}`. Hero scripts (`render`, `render:webm`, `render:poster`) target `apps/marketing/public/studio/{reel.mp4,reel.webm,poster.jpg}` directly. All render outputs are gitignored.
+- **Audio + docs**: `studio/audio/Launch Window.mp3` (default mux track), `studio/docs/` (recording spec rules + recordings readme).
 
-Two co-located content-creation toolchains under one workspace (`@pulse-hr/studio`):
+React 18 lives in `dependencies` strictly so Remotion can bundle it — the Astro site doesn't import React; the `studio/` folder is excluded from `tsconfig.json` and uses its own `studio/tsconfig.json` with `jsx: react-jsx`.
 
-- **Remotion** (`src/remotion/`) renders the `DayInPulse` composition into `apps/marketing/public/studio/{reel.mp4,reel.webm,poster.jpg}`. React 18 (Remotion constraint) — do not bump to 19 here.
-- **testreel** (`src/recordings/scripts/run.ts` + top-level `specs/`, `audio/`) records browser flows of `apps/app` for tutorials, demos, and ads — outputs land in `apps/studio/output/<spec-name>/` and can feed back into Remotion via `public/captures/`.
-
-Drop new content workflows (extra compositions, vertical/social cuts, ads) into the same package — add scripts alongside the existing `studio` / `render` / `record` ones.
+Drop new content workflows (extra compositions, vertical/social cuts, ads) into `studio/remotion/` or `studio/recordings/` and add the matching `record:*` / `reel:*` script to `package.json`. Run `bun run record:setup` once per machine to install Playwright's chromium before the first recording.
 
 ### Shared packages
 
@@ -149,8 +155,7 @@ Each app has its own deploy target.
 - `apps/app` → Vercel (project rooted at `apps/app`). `vercel.json`: framework `vite`, build `bun run build`, SPA rewrite `/(.*) → /index.html`, 1-year immutable cache on `/assets/*`.
 - `apps/api` → Render. `render.yaml` + `Dockerfile`. Long-running Bun process.
 - `apps/feedback` → Vercel (rooted at `apps/feedback`).
-- `apps/marketing` → Vercel (rooted at `apps/marketing`). Framework `astro`, output `dist`.
+- `apps/marketing` → Vercel (rooted at `apps/marketing`). Framework `astro`, output `dist`. The co-located `studio/` content workspace is not part of the Astro build; it only writes its render artefacts into `apps/marketing/public/studio/` (gitignored) so the site can serve them.
 - `apps/design` → Vercel (rooted at `apps/design`). Framework "Other", output `storybook-static`.
-- `apps/studio` — not deployed; renders artifacts into `apps/marketing/public/studio/` and writes recording outputs to `apps/studio/output/`.
 
 Vercel auto-detects the Bun workspace and installs from the monorepo root. Root `.vercelignore` strips tooling dirs.

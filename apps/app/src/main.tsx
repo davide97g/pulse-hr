@@ -7,6 +7,7 @@ import { registerSW } from "virtual:pwa-register";
 import { toast } from "sonner";
 import { getRouter } from "./router";
 import { ThemeProvider } from "@pulse-hr/ui/theme";
+import { I18nProvider } from "@pulse-hr/shared/i18n";
 import { WorkspaceProvider } from "./components/app/WorkspaceContext";
 import { RoleOverrideProvider } from "./lib/role-override";
 import { OfflineModeProvider } from "./lib/offline-mode";
@@ -86,15 +87,17 @@ ReactDOM.createRoot(el).render(
           <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/login">
             <RoleOverrideProvider>
               <ThemeProvider>
-                <CookieConsentBanner />
-                <Analytics />
-                <WorkspaceProvider>
-                  <WorkspaceLoaderProvider>
-                    <CompanyProfileProvider>
-                      <RouterProvider router={router} />
-                    </CompanyProfileProvider>
-                  </WorkspaceLoaderProvider>
-                </WorkspaceProvider>
+                <I18nProvider>
+                  <CookieConsentBanner />
+                  <Analytics />
+                  <WorkspaceProvider>
+                    <WorkspaceLoaderProvider>
+                      <CompanyProfileProvider>
+                        <RouterProvider router={router} />
+                      </CompanyProfileProvider>
+                    </WorkspaceLoaderProvider>
+                  </WorkspaceProvider>
+                </I18nProvider>
               </ThemeProvider>
             </RoleOverrideProvider>
           </ClerkProvider>

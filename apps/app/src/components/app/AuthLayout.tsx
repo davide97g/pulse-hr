@@ -1,5 +1,6 @@
 import { APP_VERSION } from "@/lib/version";
 import { useLayoutEffect, type ReactNode } from "react";
+import { useT } from "@pulse-hr/shared/i18n";
 
 /**
  * Pin <html> to dark while the auth screens are mounted, then restore the
@@ -35,6 +36,7 @@ export function AuthLayout({
   side?: ReactNode;
 }) {
   useForcedDarkTheme();
+  const t = useT();
   return (
     <div
       className="ph min-h-dvh grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] pt-safe pb-safe pl-safe pr-safe"
@@ -134,7 +136,7 @@ export function AuthLayout({
             className="t-mono"
             style={{ color: "color-mix(in oklch, var(--foreground) 78%, transparent)" }}
           >
-            ACCEDI
+            {t("auth.access")}
           </span>
           <h1
             style={{
@@ -199,7 +201,7 @@ function DefaultEditorialHero() {
           fontFamily: "Fraunces, ui-serif, serif",
           fontWeight: 400,
           margin: "20px 0 0",
-          fontSize: "clamp(80px, 9vw, 132px)",
+          fontSize: "clamp(48px, 13vw, 132px)",
           letterSpacing: "-0.045em",
           lineHeight: 0.86,
           color: "var(--paper)",

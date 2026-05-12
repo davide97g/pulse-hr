@@ -40,8 +40,13 @@ apps/*/storybook-static
 # Test credentials for recorded demos
 apps/app/test.credentials.json
 
-# Recording + render outputs (regenerated from specs — do not commit)
-apps/studio/output/
-apps/studio/testreel-output/
-apps/studio/public/captures/
+# Studio: recording + render outputs (regenerated from specs — do not commit)
+apps/marketing/studio/output/
+apps/marketing/studio/captures/
+apps/marketing/public/studio/reel.mp4
+apps/marketing/public/studio/reel.webm
+apps/marketing/public/studio/poster.jpg
 apps/marketing/public/studio/reels/
+
+
+.superpowers/

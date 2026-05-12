@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useI18n as useLoginI18n } from "@pulse-hr/shared/i18n";
 import { useState } from "react";
 import { useClerk, useSignIn } from "@clerk/react";
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, ShieldCheck } from "lucide-react";
@@ -34,6 +35,7 @@ function safeRedirectUrl(raw: string | undefined): string | null {
 type Stage = "credentials" | "trust";
 
 function Login() {
+  const { t } = useLoginI18n();
   const nav = useNavigate();
   const clerk = useClerk();
   const { signIn, fetchStatus } = useSignIn();
@@ -151,18 +153,18 @@ function Login() {
 
   return (
     <AuthLayout
-      title={stage === "trust" ? "Verify this device." : "Welcome back."}
+      title={stage === "trust" ? "Verify this device." : `${t("auth.welcome")}.`}
       subtitle={
         stage === "trust"
           ? `New device detected. We sent a 6-digit code to ${signIn.identifier ?? email}.`
-          : "Sign in to your Pulse HR workspace."
+          : t("auth.signin_subtitle")
       }
       footer={
         stage === "credentials" ? (
           <>
-            New to Pulse HR?{" "}
+            {t("auth.new_user")}{" "}
             <Link to="/signup" className="text-foreground font-medium hover:underline">
-              Create an account →
+              {t("auth.create_account")} →
             </Link>
           </>
         ) : undefined
@@ -171,7 +173,7 @@ function Login() {
       {stage === "credentials" && (
         <form onSubmit={submit} className="space-y-4 mt-2">
           <div className="space-y-1.5">
-            <Label htmlFor="email">Work email</Label>
+            <Label htmlFor="email">{t("auth.email.label")}</Label>
             <div className="relative">
               <Mail className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -185,13 +187,13 @@ function Login() {
                 autoComplete="username"
                 inputMode="email"
                 enterKeyHint="next"
-                placeholder="you@company.co"
+                placeholder={t("auth.email.placeholder")}
               />
             </div>
           </div>
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("auth.password.label")}</Label>
               <button
                 type="button"
                 onClick={() => {
@@ -209,7 +211,7 @@ function Login() {
                 }}
                 className="text-xs text-foreground/70 hover:text-foreground"
               >
-                Forgot?
+                {t("auth.password.forgot")}
               </button>
             </div>
             <div className="relative">
@@ -242,7 +244,7 @@ function Login() {
               onChange={(e) => setRemember(e.target.checked)}
               className="h-4 w-4 rounded border-border"
             />
-            <span>Remember this device for 30 days</span>
+            <span>{t("auth.remember")}</span>
           </label>
 
           <Button
@@ -257,7 +259,7 @@ function Login() {
               </>
             ) : (
               <>
-                Sign in <ArrowRight className="h-4 w-4 ml-1.5" />
+                {t("auth.signin")} <ArrowRight className="h-4 w-4 ml-1.5" />
               </>
             )}
           </Button>
@@ -325,23 +327,23 @@ function Login() {
       )}
 
       <p className="text-[11px] text-foreground/70 text-center mt-5">
-        By continuing you agree to our{" "}
+        {t("auth.terms_pre")}{" "}
         <a
           href="https://pulsehr.it/terms"
           target="_blank"
           rel="noreferrer"
           className="underline underline-offset-2"
         >
-          Terms
+          {t("auth.terms")}
         </a>{" "}
-        and{" "}
+        {t("auth.and")}{" "}
         <a
           href="https://pulsehr.it/privacy"
           target="_blank"
           rel="noreferrer"
           className="underline underline-offset-2"
         >
-          Privacy Policy
+          {t("auth.privacy")}
         </a>
         .
       </p>

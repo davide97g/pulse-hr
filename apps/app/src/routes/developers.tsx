@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useI18n as useDevsI18n } from "@pulse-hr/shared/i18n";
 import { useEffect, useState } from "react";
 import {
   Copy,
@@ -62,6 +63,7 @@ export const Route = createFileRoute("/developers")({
 });
 
 function Developers() {
+  const { t } = useDevsI18n();
   const [loading, setLoading] = useState(true);
   const keys = useApiKeys();
   const hooks = useWebhooks();
@@ -83,18 +85,18 @@ function Developers() {
   return (
     <div className="p-4 md:p-6 max-w-[1100px] mx-auto fade-in">
       <PageHeader
-        eyebrow="WORKSPACE · DEVELOPERS · API & WEBHOOK"
+        eyebrow={t("developers.eyebrow")}
         title={
           <>
-            Sviluppo<span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
+            {t("developers.title")}<span style={{ color: "var(--spark)", fontStyle: "normal" }}>.</span>
           </>
         }
-        description="API key, webhook, workflow custom."
+        description={t("developers.subtitle")}
         actions={
           <Button size="sm" variant="outline" className="press-scale" asChild>
             <a href="https://api.pulsehr.it/docs" target="_blank" rel="noreferrer">
               <Code2 className="h-4 w-4 mr-1.5" />
-              API docs
+              {t("developers.docs")}
             </a>
           </Button>
         }
@@ -104,23 +106,23 @@ function Developers() {
         <TabsList>
           <TabsTrigger value="keys">
             <Key className="h-3.5 w-3.5 mr-1.5" />
-            API keys
+            {t("developers.tab.keys")}
           </TabsTrigger>
           <TabsTrigger value="webhooks">
             <WebhookIcon className="h-3.5 w-3.5 mr-1.5" />
-            Webhooks
+            {t("developers.tab.webhooks")}
           </TabsTrigger>
-          <TabsTrigger value="workflows">Workflows</TabsTrigger>
-          <TabsTrigger value="fields">Custom fields</TabsTrigger>
+          <TabsTrigger value="workflows">{t("developers.tab.workflows")}</TabsTrigger>
+          <TabsTrigger value="fields">{t("developers.tab.custom")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="keys" className="mt-4">
           <Card className="p-0 overflow-hidden overflow-x-auto scrollbar-thin [&_table]:min-w-[640px]">
             <div className="px-5 py-4 border-b flex items-center justify-between">
-              <div className="font-semibold text-sm">Active keys</div>
+              <div className="font-semibold text-sm">{t("developers.active_keys")}</div>
               <Button size="sm" className="press-scale" onClick={() => setNewKeyOpen(true)}>
                 <Plus className="h-4 w-4 mr-1.5" />
-                New key
+                {t("developers.new_key")}
               </Button>
             </div>
             {loading ? (

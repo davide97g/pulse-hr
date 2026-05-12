@@ -187,7 +187,7 @@ export function ProjectsEditorial() {
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "8px 0 0",
-              fontSize: "clamp(64px, 8vw, 92px)",
+              fontSize: "clamp(40px, 11vw, 92px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}

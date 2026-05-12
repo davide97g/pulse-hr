@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useT } from "@pulse-hr/shared/i18n";
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { useAnnouncements, announcementsTable } from "@/lib/tables/announcements";
 import { useEmployees, employeeById } from "@/lib/tables/employees";
@@ -30,6 +31,7 @@ function tagFor(a: Announcement): string {
 type FilterMode = "all" | "mine";
 
 export function AnnouncementsEditorial() {
+  const t = useT();
   const announcements = useAnnouncements();
   const employees = useEmployees();
   const [filter, setFilter] = useState<FilterMode>("all");
@@ -79,19 +81,22 @@ export function AnnouncementsEditorial() {
       <div className="flex items-end justify-between flex-wrap gap-3">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            COMUNICAZIONI · {sorted.length} TOTALI · {sorted.filter((a) => a.pinned).length} IN EVIDENZA
+            {t("announcements.eyebrow", {
+              total: sorted.length,
+              featured: sorted.filter((a) => a.pinned).length,
+            })}
           </span>
           <h1
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(64px, 8vw, 116px)",
+              fontSize: "clamp(40px, 11vw, 116px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}
           >
-            <span style={{ fontStyle: "italic" }}>Annunci</span>
+            <span style={{ fontStyle: "italic" }}>{t("announcements.title")}</span>
             <span style={{ color: "var(--spark)" }}>.</span>
           </h1>
         </div>
@@ -101,35 +106,32 @@ export function AnnouncementsEditorial() {
             className={filter === "all" ? "pill pill-dark pill-sm" : "pill pill-ghost pill-sm"}
             onClick={() => setFilter("all")}
           >
-            Tutti
+            {t("announcements.filter.all")}
           </button>
           <button
             type="button"
             className={filter === "mine" ? "pill pill-dark pill-sm" : "pill pill-ghost pill-sm"}
             onClick={() => setFilter("mine")}
           >
-            Da te
+            {t("announcements.filter.fromYou")}
           </button>
           <button
             type="button"
             className="pill pill-spark pill-sm"
             onClick={() => setComposerOpen(true)}
           >
-            + Annuncio
+            + {t("announcements.new")}
           </button>
         </div>
       </div>
 
       {featured && (
         <article
-          className="grid"
+          className="grid grid-cols-1 md:grid-cols-[1fr_280px] gap-6 md:gap-8 p-5 sm:p-7 md:p-[28px_32px]"
           style={{
             border: "1px solid var(--spark)",
             borderRadius: 18,
-            padding: "28px 32px",
             background: "color-mix(in oklch, var(--spark) 5%, transparent)",
-            gridTemplateColumns: "1fr 280px",
-            gap: 32,
           }}
         >
           <div>
@@ -152,7 +154,7 @@ export function AnnouncementsEditorial() {
                 fontFamily: "Fraunces, ui-serif, serif",
                 fontWeight: 400,
                 margin: "12px 0 0",
-                fontSize: "clamp(40px, 4vw, 56px)",
+                fontSize: "clamp(32px, 7vw, 56px)",
                 letterSpacing: "-0.035em",
                 lineHeight: 0.96,
               }}

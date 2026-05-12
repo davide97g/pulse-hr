@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { useEmployees } from "@/lib/tables/employees";
 import { useAllocations } from "@/lib/tables/allocations";
 
@@ -19,6 +20,7 @@ function colorFor(v: number): { bg: string; text: string } {
 }
 
 export function SaturationEditorial() {
+  const { t, locale } = useI18n();
   const employees = useEmployees();
   const allocations = useAllocations();
   const [scope, setScope] = useState<Scope>("ENG_DESIGN");
@@ -57,20 +59,23 @@ export function SaturationEditorial() {
       <div className="flex items-end justify-between flex-wrap gap-3">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            SATURAZIONE TEAM · {WEEK_LABELS[0]} → {WEEK_LABELS[WEEK_LABELS.length - 1]}
+            {t("saturation.eyebrow", {
+              from: WEEK_LABELS[0],
+              to: WEEK_LABELS[WEEK_LABELS.length - 1],
+            })}
           </span>
           <h1
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(64px, 8vw, 116px)",
+              fontSize: "clamp(40px, 11vw, 116px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}
           >
-            Quanto siamo <span style={{ fontStyle: "italic" }}>pieni</span>
-            <span style={{ color: "var(--spark)" }}>?</span>
+            {t("saturation.title.0")} <span style={{ fontStyle: "italic" }}>{t("saturation.title.1")}</span>
+            <span style={{ color: "var(--spark)" }}>{t("saturation.title.2")}</span>
           </h1>
           <p
             style={{
@@ -83,8 +88,18 @@ export function SaturationEditorial() {
             }}
           >
             {overCount > 0
-              ? `${overCount} person${overCount === 1 ? "a" : "e"} sopra capacità nelle prossime 5 settimane.`
-              : "Nessuno sopra capacità nelle prossime 5 settimane."}
+              ? t("saturation.summary.over", {
+                  n: overCount,
+                  p:
+                    locale === "it"
+                      ? overCount === 1
+                        ? "persona"
+                        : "persone"
+                      : overCount === 1
+                        ? "person"
+                        : "people",
+                })
+              : t("saturation.summary.ok")}
           </p>
         </div>
         <div className="flex gap-2">
@@ -97,7 +112,7 @@ export function SaturationEditorial() {
               color: scope === "ENG_DESIGN" ? "var(--paper)" : undefined,
             }}
           >
-            Eng &amp; Design
+            {t("saturation.scope.engDesign")}
           </button>
           <button
             type="button"
@@ -108,10 +123,10 @@ export function SaturationEditorial() {
               color: scope === "ALL" ? "var(--paper)" : undefined,
             }}
           >
-            Tutto il team
+            {t("saturation.scope.all")}
           </button>
           <Link to="/projects" className="pill pill-dark pill-sm">
-            Riassegna
+            {t("saturation.reassign")}
           </Link>
         </div>
       </div>
@@ -119,13 +134,13 @@ export function SaturationEditorial() {
       {/* Legend */}
       <div className="flex gap-4 items-center flex-wrap">
         <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-          LEGENDA:
+          {t("saturation.legend")}:
         </span>
         {(
           [
-            ["< 60%", "var(--bg-3)"],
-            ["60–85%", "var(--fg)"],
-            ["> 100% sovraccarico", "var(--spark)"],
+            [t("saturation.legend.low"), "var(--bg-3)"],
+            [t("saturation.legend.mid"), "var(--fg)"],
+            [t("saturation.legend.over"), "var(--spark)"],
           ] as Array<[string, string]>
         ).map(([l, c]) => (
           <div key={l} className="flex items-center gap-2">
@@ -145,26 +160,33 @@ export function SaturationEditorial() {
         ))}
       </div>
 
-      {/* Heatmap */}
+      {/* Heatmap (horizontal-scroll on narrow viewports) */}
       <div
+        className="scrollbar-thin"
         style={{
           flex: 1,
           minHeight: 0,
           border: "1px solid var(--line)",
           borderRadius: 16,
-          overflow: "hidden",
-          display: "grid",
-          gridTemplateColumns: "260px repeat(5, 1fr) 110px",
-          gridAutoRows: "minmax(56px, 1fr)",
+          overflowX: "auto",
+          overflowY: "hidden",
         }}
       >
-        <HeatmapHeader>PERSONA</HeatmapHeader>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "200px repeat(5, minmax(72px, 1fr)) 96px",
+            gridAutoRows: "minmax(56px, 1fr)",
+            minWidth: 720,
+          }}
+        >
+        <HeatmapHeader>{t("saturation.col.person")}</HeatmapHeader>
         {WEEK_LABELS.map((w) => (
           <HeatmapHeader key={w} center>
             {w}
           </HeatmapHeader>
         ))}
-        <HeatmapHeader right>MEDIA</HeatmapHeader>
+        <HeatmapHeader right>{t("people.kpi.median")}</HeatmapHeader>
 
         {matrix.map((row, i) => {
           const last = i === matrix.length - 1;
@@ -235,6 +257,7 @@ export function SaturationEditorial() {
             </RowFragment>
           );
         })}
+        </div>
       </div>
     </div>
   );
