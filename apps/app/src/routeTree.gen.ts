@@ -26,6 +26,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LogRouteImport } from './routes/log'
 import { Route as LeaveRouteImport } from './routes/leave'
 import { Route as KudosRouteImport } from './routes/kudos'
+import { Route as ImportRouteImport } from './routes/import'
 import { Route as GrowthRouteImport } from './routes/growth'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as DocumentsRouteImport } from './routes/documents'
@@ -142,6 +143,11 @@ const LeaveRoute = LeaveRouteImport.update({
 const KudosRoute = KudosRouteImport.update({
   id: '/kudos',
   path: '/kudos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImportRoute = ImportRouteImport.update({
+  id: '/import',
+  path: '/import',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GrowthRoute = GrowthRouteImport.update({
@@ -316,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/documents': typeof DocumentsRoute
   '/feedback': typeof FeedbackRoute
   '/growth': typeof GrowthRoute
+  '/import': typeof ImportRoute
   '/kudos': typeof KudosRoute
   '/leave': typeof LeaveRoute
   '/log': typeof LogRouteWithChildren
@@ -365,6 +372,7 @@ export interface FileRoutesByTo {
   '/documents': typeof DocumentsRoute
   '/feedback': typeof FeedbackRoute
   '/growth': typeof GrowthRoute
+  '/import': typeof ImportRoute
   '/kudos': typeof KudosRoute
   '/leave': typeof LeaveRoute
   '/login': typeof LoginRoute
@@ -416,6 +424,7 @@ export interface FileRoutesById {
   '/documents': typeof DocumentsRoute
   '/feedback': typeof FeedbackRoute
   '/growth': typeof GrowthRoute
+  '/import': typeof ImportRoute
   '/kudos': typeof KudosRoute
   '/leave': typeof LeaveRoute
   '/log': typeof LogRouteWithChildren
@@ -469,6 +478,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/feedback'
     | '/growth'
+    | '/import'
     | '/kudos'
     | '/leave'
     | '/log'
@@ -518,6 +528,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/feedback'
     | '/growth'
+    | '/import'
     | '/kudos'
     | '/leave'
     | '/login'
@@ -568,6 +579,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/feedback'
     | '/growth'
+    | '/import'
     | '/kudos'
     | '/leave'
     | '/log'
@@ -620,6 +632,7 @@ export interface RootRouteChildren {
   DocumentsRoute: typeof DocumentsRoute
   FeedbackRoute: typeof FeedbackRoute
   GrowthRoute: typeof GrowthRoute
+  ImportRoute: typeof ImportRoute
   KudosRoute: typeof KudosRoute
   LeaveRoute: typeof LeaveRoute
   LogRoute: typeof LogRouteWithChildren
@@ -767,6 +780,13 @@ declare module '@tanstack/react-router' {
       path: '/kudos'
       fullPath: '/kudos'
       preLoaderRoute: typeof KudosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/import': {
+      id: '/import'
+      path: '/import'
+      fullPath: '/import'
+      preLoaderRoute: typeof ImportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/growth': {
@@ -1077,6 +1097,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocumentsRoute: DocumentsRoute,
   FeedbackRoute: FeedbackRoute,
   GrowthRoute: GrowthRoute,
+  ImportRoute: ImportRoute,
   KudosRoute: KudosRoute,
   LeaveRoute: LeaveRoute,
   LogRoute: LogRouteWithChildren,
