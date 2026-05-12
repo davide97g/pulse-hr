@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS: { label: string; to: string; icon: typeof User }[] = [
   { label: "Dashboard", to: "/", icon: Settings },
   { label: "Employees", to: "/people", icon: Users },
+  { label: "Super Import", to: "/import", icon: Sparkles },
   { label: "Time & attendance", to: "/time", icon: Clock },
   { label: "Leave", to: "/leave", icon: Calendar },
   { label: "Documents", to: "/documents", icon: FileText },
