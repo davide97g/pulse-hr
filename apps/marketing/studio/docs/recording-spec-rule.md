@@ -14,7 +14,7 @@ Usa questo documento quando crei o modifichi JSON di recording in `apps/marketin
 | Base URL app       | `{{BASE_URL}}` (default `http://localhost:5173`; override con env `BASE_URL`)                                                       |
 | Base URL feedback  | `{{FEEDBACK_BASE_URL}}` (default `http://localhost:5174`; serve solo a `feedback-live`)                                             |
 
-Il nome dello spec (`focus`, `kudos-give`, …) deve coincidere con il file `recordings/specs/<nome>.template.json`.
+Il nome dello spec (`kudos-give`, `time-attendance-entry`, …) deve coincidere con il file `recordings/specs/<nome>.template.json`.
 
 ### Placeholder supportati da `recordings/scripts/run.ts`
 
@@ -29,7 +29,7 @@ Variabili ambiente utili: `FORMAT` (es. `mp4`, `webm`), `HEADED=1`, `VERBOSE=1`,
 
 ## Struttura del JSON (livello root)
 
-Campi tipici (vedi `focus.template.json` come riferimento “completo”):
+Campi tipici (vedi `kudos-give.template.json` come riferimento “completo”):
 
 - **`url`** — Pagina iniziale del browser (es. `{{BASE_URL}}/login`).
 - **`steps`** — Array obbligatorio di azioni (minimo 1).
@@ -89,7 +89,7 @@ Ordine consigliato per interazioni leggibili nel video:
 
 ---
 
-## Convenzioni narrative (stile `focus.template.json`)
+## Convenzioni narrative (stile `kudos-give.template.json`)
 
 1. **Login + onboarding** — Allineati al flusso reale dell’app (ruolo Admin, goal, nome workspace, opzionale colleghi, “Create workspace”). I selettori `#ws-name`, `#col-0`… devono combaciare con i `id` del form welcome.
 2. **Beat del video** — Dopo ogni transizione importante, `screenshot` con `name` prefissato numericamente: `01-…`, `02-…` per ordinare il montaggio e il debug.
@@ -122,4 +122,4 @@ bun run record <nome-spec>
 # oppure: bun run --filter pulse-hr-marketing record <nome-spec>
 ```
 
-In caso di timeout su uno step, aumenta `timeout` su quello step (ms) come in `focus.template.json` per `#nav-focus`.
+In caso di timeout su uno step, aumenta `timeout` (ms) sul singolo step — utile su navigazioni con animazioni o rete lenta.
