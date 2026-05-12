@@ -59,6 +59,10 @@
     {
       "name": "cron",
       "description": "Scheduled tasks (cron-secret auth)"
+    },
+    {
+      "name": "super-import",
+      "description": "Multi-modal bulk-insert (labs)"
     }
   ],
   "components": {
@@ -1398,6 +1402,110 @@
           "companyWebsite",
           "companySize",
           "companyIndustry"
+        ]
+      },
+      "SuperImportQuota": {
+        "type": "object",
+        "properties": {
+          "runsLeft": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "runsTotal": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "resetAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "runsLeft",
+          "runsTotal",
+          "resetAt"
+        ]
+      },
+      "SuperImportParseResponse": {
+        "type": "object",
+        "properties": {
+          "entities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParsedEntity"
+            }
+          },
+          "quotaAfter": {
+            "$ref": "#/components/schemas/SuperImportQuota"
+          }
+        },
+        "required": [
+          "entities",
+          "quotaAfter"
+        ]
+      },
+      "ParsedEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "entityType": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "conflict": {
+            "type": "object",
+            "properties": {
+              "matchedId": {
+                "type": "string"
+              },
+              "matchedLabel": {
+                "type": "string"
+              },
+              "matchedFields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "matchedId",
+              "matchedLabel",
+              "matchedFields"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "entityType",
+          "data",
+          "confidence"
+        ]
+      },
+      "SuperImportParseRequest": {
+        "type": "object",
+        "properties": {
+          "envelope": {
+            "type": "string",
+            "description": "JSON-stringified ParseRequestEnvelope"
+          },
+          "files": {
+            "type": "array",
+            "items": {}
+          },
+          "voice": {}
+        },
+        "required": [
+          "envelope"
         ]
       }
     },
@@ -3277,6 +3385,116 @@
                   "required": [
                     "ok"
                   ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/super-import/quota": {
+      "get": {
+        "tags": [
+          "super-import"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Read the caller's Super Import quota",
+        "responses": {
+          "200": {
+            "description": "Current quota state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuperImportQuota"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/super-import/parse": {
+      "post": {
+        "tags": [
+          "super-import"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Parse multi-modal input into structured entities",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/SuperImportParseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Parsed entities + remaining quota",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuperImportParseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid envelope or payload too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Daily quota exhausted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "LLM or upstream service failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
