@@ -143,7 +143,7 @@ export function ReportsEditorial() {
   const [period, setPeriod] = useState<Period>("Q2 2026");
 
   return (
-    <div className="ph p-4 md:p-6 flex flex-col gap-5 min-h-[calc(100vh-3.5rem)]">
+    <div className="ph p-4 md:p-6 flex flex-col gap-5 min-h-full">
       <Header view={view} setView={setView} period={period} setPeriod={setPeriod} />
 
       <div className="flex gap-4 flex-1 min-h-0">

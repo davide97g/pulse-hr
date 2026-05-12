@@ -6,7 +6,6 @@ import {
   Settings,
   Clock,
   Calendar,
-  CalendarDays,
   FileText,
   BookOpen,
   MessagesSquare,
@@ -73,7 +72,6 @@ export function buildSidebarNavGroups(
       items: [
         { to: "/time", label: "Timesheet", icon: Clock, featureId: "time" },
         { to: "/leave", label: "Leave", icon: Calendar, featureId: "leave" },
-        { to: "/calendar", label: "Calendar", icon: CalendarDays, featureId: "calendar" },
       ],
     },
     {

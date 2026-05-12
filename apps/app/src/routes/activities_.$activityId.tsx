@@ -67,7 +67,7 @@ function ActivityDetailPage() {
   const status: ActivityStatus = activity.status;
 
   return (
-    <div className="ph p-4 md:p-6 grid gap-9 min-h-[calc(100vh-3.5rem)]"
+    <div className="ph p-4 md:p-6 grid gap-9 min-h-full"
       style={{ gridTemplateColumns: "minmax(0, 1.4fr) minmax(0, 1fr)" }}
     >
       {/* LEFT */}

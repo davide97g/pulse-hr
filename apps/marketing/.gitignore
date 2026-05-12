@@ -29,3 +29,7 @@ public/studio/reel.mp4
 public/studio/reel.webm
 public/studio/poster.jpg
 public/studio/reels/
+# Trailer renders (heavy MP4s — re-render locally with `bun run trailer:both`)
+public/studio/trailer-*.mp4
+public/studio/trailer-*.webm
+public/studio/trailer-*.jpg

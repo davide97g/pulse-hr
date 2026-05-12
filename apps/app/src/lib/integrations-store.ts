@@ -5,7 +5,7 @@ import {
   type IntegrationProvider,
 } from "./mock-data";
 
-// Module-level store so /settings and /calendar share the same mock connection
+// Module-level store so /settings and /time share the same mock connection
 // state within a single session. Not persisted — consistent with the rest of
 // the app's "resets on reload" rule.
 

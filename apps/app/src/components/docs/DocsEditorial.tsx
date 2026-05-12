@@ -52,7 +52,7 @@ export function DocsEditorial() {
 
   return (
     <div
-      className="ph grid min-h-[calc(100vh-3.5rem)]"
+      className="ph grid min-h-full"
       style={{ gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 1.4fr)" }}
     >
       {/* Left — index */}

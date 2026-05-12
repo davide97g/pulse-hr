@@ -32,7 +32,7 @@ export function CommentThreadEditorial({ id }: { id: string }) {
 
   return (
     <div
-      className="ph p-4 md:p-6 grid gap-12 min-h-[calc(100vh-3.5rem)]"
+      className="ph p-4 md:p-6 grid gap-12 min-h-full"
       style={{ gridTemplateColumns: "1fr 1.4fr" }}
     >
       {/* Context */}

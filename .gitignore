@@ -47,6 +47,10 @@ apps/marketing/public/studio/reel.mp4
 apps/marketing/public/studio/reel.webm
 apps/marketing/public/studio/poster.jpg
 apps/marketing/public/studio/reels/
+# Trailer renders (heavy MP4s — re-render locally with `bun run trailer:both`)
+apps/marketing/public/studio/trailer-*.mp4
+apps/marketing/public/studio/trailer-*.webm
+apps/marketing/public/studio/trailer-*.jpg
 
 
 .superpowers/

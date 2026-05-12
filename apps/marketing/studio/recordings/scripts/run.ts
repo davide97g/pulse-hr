@@ -71,6 +71,12 @@ if (existsSync(setupPartialPath) && raw.includes('"{{SETUP}}"')) {
   raw = raw.replace('"{{SETUP}}"', setupBlock);
 }
 
+const setupTrailerPath = resolve(specsDir, "_setup-trailer.partial.json");
+if (existsSync(setupTrailerPath) && raw.includes('"{{SETUP_TRAILER}}"')) {
+  const setupBlock = readFileSync(setupTrailerPath, "utf8").trim();
+  raw = raw.replace('"{{SETUP_TRAILER}}"', setupBlock);
+}
+
 const rendered = raw
   .replaceAll("{{BASE_URL}}", baseUrl)
   .replaceAll("{{FEEDBACK_BASE_URL}}", feedbackBaseUrl)

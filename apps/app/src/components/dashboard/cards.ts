@@ -80,7 +80,7 @@ export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
         caption: `entro venerdì · week ${s.weekNumber}`,
         accent: true,
         status: "Solleciti pronti",
-        link: "/calendar",
+        link: "/time",
       },
       {
         eyebrow: "02 · LEAVE",
@@ -94,7 +94,7 @@ export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
         title: "Riunioni",
         big: String(s.meetingsToday),
         caption: `eventi oggi · ${s.meetingConflicts} conflitti`,
-        link: "/calendar",
+        link: "/time",
       },
       {
         eyebrow: "04 · SATURATION",

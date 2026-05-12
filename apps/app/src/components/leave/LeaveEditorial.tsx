@@ -84,8 +84,8 @@ export function LeaveEditorial() {
   );
 
   return (
-    <div className="ph p-4 md:p-6 grid gap-6 md:gap-10 min-h-[calc(100vh-3.5rem)] grid-cols-1 lg:grid-cols-[1.05fr_1fr]">
-      <section className="flex flex-col justify-between gap-8">
+    <div className="ph p-4 md:p-6 grid gap-6 md:gap-10 min-h-full grid-cols-1 lg:grid-cols-[1.05fr_1fr]">
+      <section className="flex flex-col gap-8">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
             {t("leave.eyebrow", { year: new Date().getFullYear() })}
@@ -145,6 +145,7 @@ export function LeaveEditorial() {
       <section className="flex flex-col gap-5 min-h-0">
         <div
           style={{
+            background: "var(--card)",
             border: "1px solid var(--line)",
             borderRadius: 16,
             padding: "22px 24px",
@@ -206,6 +207,7 @@ export function LeaveEditorial() {
 
         <div
           style={{
+            background: "var(--card)",
             border: "1px solid var(--line)",
             borderRadius: 14,
             padding: "16px 18px",

@@ -203,7 +203,7 @@ export function presenceLens(dark: boolean, narrative: ReactNode, captionMono: s
     }),
     narrative,
     actions: [
-      { label: "Calendario", to: "/calendar" },
+      { label: "Calendario", to: "/time" },
       { label: "Uffici", to: "/offices" },
       { spark: true, label: "Apri timesheet", to: "/time" },
     ],

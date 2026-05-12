@@ -3542,7 +3542,7 @@ export const plugins = [
 
 // ── Google Calendar sync (mock) ─────────────────────────────────────────
 // Distinct from the AI-timesheet `CalendarEvent` above: this models fully-fledged
-// calendar entries surfaced in the /calendar page once a Google account is linked.
+// calendar entries surfaced in the /time calendar tab once a Google account is linked.
 
 export type GCalEventStatus = "confirmed" | "tentative" | "cancelled";
 export type GCalEventSource = "google" | "pulse";

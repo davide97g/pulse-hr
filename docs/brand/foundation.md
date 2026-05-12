@@ -20,7 +20,7 @@ The longer story: we're building the HR platform two craft-obsessed frontend dev
 _Previously considered and retired:_
 
 - _"Rippling for services firms — open source"_ — over-niched on services firms and anchored us to a category incumbent. The commessa/services-firm angle is a **strong feature story**, not the whole pitch.
-- _"HR you can read, fork, and run"_ — too coder-coded for the manager / people-ops audience who are our paying buyers. Kept as a **secondary line** for developer-audience surfaces (repo README, engineering blog, contributor calls).
+- _"HR you can read, fork, and run"_ — too coder-coded for the manager / people-ops audience who are our paying buyers. Replaced May 2026 by the tighter **"HR · rebuilt."** as the trailer/short-form line; the long form survives only on dev-audience surfaces (repo README, engineering blog, contributor calls).
 - _"Open-source people ops for modern teams"_ — accurate but flat. Reads like a directory listing, not a headline. Keep as a **descriptor** in SEO meta descriptions, directory submissions, and the product footer — not as a hero.
 
 ---
@@ -174,6 +174,7 @@ These are the lines. If we cross them, something has gone wrong and we need to s
 
 - **Primary (homepage hero, press quote, banner):** "HR software for people who hate HR software."
 - **Primary subtitle:** "Open-source. Built in the open. By the people who use it."
+- **Short-form / trailer / video:** "HR · rebuilt."
 - **Descriptor** (SEO meta, directories, product footer): "Open-source people ops for modern teams."
 - **Secondary, dev-audience surfaces** (repo README, engineering blog, GitHub About, contributor outreach): "HR you can read, fork, and run."
 - **For pricing / comparison pages:** "HR software without the sales call."

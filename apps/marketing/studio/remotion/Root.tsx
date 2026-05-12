@@ -9,6 +9,7 @@ import { DayInPulse } from "./DayInPulse";
 import { Montage, type MontageProps } from "./Montage";
 import { INTRO_DURATION_FRAMES } from "./scenes/Intro";
 import { OUTRO_DURATION_FRAMES } from "./scenes/Outro";
+import { Trailer, TRAILER_DURATION_FRAMES } from "./Trailer";
 
 const FPS = 30;
 
@@ -39,7 +40,7 @@ const REELS: ReelDescriptor[] = [
     id: "kudos-give",
     title: "Recognition that *lands*.",
     subtitle: "Pulse HR · Kudos",
-    outroTagline: "HR you can read, fork, and run.",
+    outroTagline: "HR, rebuilt.",
     capturePath: "captures/kudos-give/clip.mp4",
     captureSeconds: 15.76,
     cues: [
@@ -53,7 +54,7 @@ const REELS: ReelDescriptor[] = [
     id: "time-attendance-entry",
     title: "Logging time, *finally fast*.",
     subtitle: "Pulse HR · Time",
-    outroTagline: "HR you can read, fork, and run.",
+    outroTagline: "HR, rebuilt.",
     capturePath: "captures/time-attendance-entry/clip.mp4",
     captureSeconds: 17.48,
     cues: [
@@ -68,7 +69,7 @@ const REELS: ReelDescriptor[] = [
     id: "growth-checks",
     title: "Growth, *visible*.",
     subtitle: "Pulse HR · Growth",
-    outroTagline: "HR you can read, fork, and run.",
+    outroTagline: "HR, rebuilt.",
     capturePath: "captures/growth-checks/clip.mp4",
     captureSeconds: 12.4,
     cues: [
@@ -120,7 +121,7 @@ const SEGMENT_START_SECONDS = 2;
 const MONTAGE: MontageProps = {
   introTitle: "The whole loop, *in seconds*.",
   introSubtitle: "Pulse HR — guided tour",
-  outroTagline: "HR you can read, fork, and run.",
+  outroTagline: "HR, rebuilt.",
   clips: REELS.map((reel) => {
     const segmentMs = SEGMENT_SECONDS * 1000;
     return {
@@ -167,6 +168,24 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={MONTAGE}
         />
       ))}
+      <Composition
+        id="trailer-v1"
+        component={Trailer}
+        durationInFrames={TRAILER_DURATION_FRAMES}
+        fps={FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ audioSrc: "audio/trailer-v1.mp3" }}
+      />
+      <Composition
+        id="trailer-v2"
+        component={Trailer}
+        durationInFrames={TRAILER_DURATION_FRAMES}
+        fps={FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ audioSrc: "audio/trailer-v2.mp3" }}
+      />
     </>
   );
 };

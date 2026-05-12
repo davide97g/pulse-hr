@@ -95,7 +95,7 @@ export function MomentsEditorial() {
   const todayMono = `${String(todayDate.getDate()).padStart(2, "0")} ${monthArr[todayDate.getMonth()].toUpperCase()}`;
 
   return (
-    <div className="ph p-4 md:p-6 grid gap-6 md:gap-10 min-h-[calc(100vh-3.5rem)] grid-cols-1 lg:grid-cols-[1.1fr_1fr]">
+    <div className="ph p-4 md:p-6 grid gap-6 md:gap-10 min-h-full grid-cols-1 lg:grid-cols-[1.1fr_1fr]">
       {/* Today's moment hero */}
       <section className="flex flex-col justify-between gap-8">
         {today ? (

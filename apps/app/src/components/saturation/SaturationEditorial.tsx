@@ -54,7 +54,7 @@ export function SaturationEditorial() {
   const overCount = matrix.filter((m) => m.series.some((v) => v > 1.0)).length;
 
   return (
-    <div className="ph p-4 md:p-6 flex flex-col gap-6 min-h-[calc(100vh-3.5rem)]">
+    <div className="ph p-4 md:p-6 flex flex-col gap-6 min-h-full">
       {/* Hero */}
       <div className="flex items-end justify-between flex-wrap gap-3">
         <div>

@@ -93,7 +93,7 @@ export function GrowthEditorial({
   const eyebrow = `${TAB_TITLES[tab].eyebrow} · ${MONTH_NAMES[now.getMonth()]} ${now.getFullYear()} · ${employees.length} ${peopleLabel}`;
 
   return (
-    <div className="ph p-4 md:p-6 flex flex-col gap-5 min-h-[calc(100vh-3.5rem)]">
+    <div className="ph p-4 md:p-6 flex flex-col gap-5 min-h-full">
       <div className="grid items-end gap-6" style={{ gridTemplateColumns: "1fr auto" }}>
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>

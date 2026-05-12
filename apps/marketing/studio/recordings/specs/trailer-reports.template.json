@@ -1,0 +1,110 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/reports",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"getting-started\",\"time-tracking\",\"clients-projects\",\"recruiting\",\"labs-highlights\"]",
+    "pulse.skipBoot": "1",
+    "pulse.locale": "en",
+    "pulse.demoBanner.dismissed.v1": "1",
+    "pulse.lastSeenVersion": "0.9.0"
+  },
+  "setup": "{{SETUP_TRAILER}}",
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 800,
+      "waitFor": "text=HEADCOUNT",
+      "timeout": 12000
+    },
+    {
+      "action": "screenshot",
+      "name": "01-reports-kpi",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "selector": "text=TURNOVER",
+      "scale": 1.7,
+      "duration": 420
+    },
+    {
+      "action": "wait",
+      "ms": 900
+    },
+    {
+      "action": "zoom",
+      "selector": "text=ENPS",
+      "scale": 1.7,
+      "duration": 420
+    },
+    {
+      "action": "wait",
+      "ms": 900
+    },
+    {
+      "action": "zoom",
+      "selector": "button:has-text('People')",
+      "scale": 1.5,
+      "duration": 360
+    },
+    {
+      "action": "wait",
+      "ms": 500
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('People')",
+      "pauseAfter": 80
+    },
+    {
+      "action": "wait",
+      "ms": 1100
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 280
+    },
+    {
+      "action": "wait",
+      "ms": 700
+    },
+    {
+      "action": "screenshot",
+      "name": "02-people-deep-dive",
+      "pauseAfter": 80
+    },
+    {
+      "action": "wait",
+      "ms": 1800
+    }
+  ]
+}

@@ -123,7 +123,7 @@ export function ModulesEditorial() {
       : "Gli override per ruolo partono dai default usati quando si fa role-switch. Si applicano solo agli account il cui ruolo effettivo combacia.";
 
   return (
-    <div className="ph p-4 md:p-6 flex flex-col gap-7 min-h-[calc(100vh-3.5rem)]">
+    <div className="ph p-4 md:p-6 flex flex-col gap-7 min-h-full">
       <div className="flex flex-col gap-3.5">
         <div className="flex items-baseline justify-between flex-wrap gap-2">
           <div className="flex items-baseline gap-3.5 flex-wrap">
