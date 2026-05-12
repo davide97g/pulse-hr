@@ -1,26 +1,29 @@
 # Regole per spec video (testreel) — Pulse HR
 
-Usa questo documento quando crei o modifichi JSON di recording in `apps/app/recordings/specs/*.template.json`. Il formato è quello di **[testreel](https://testreel.dev)**; lo schema JSON è referenziato da ogni file tramite `"$schema": "../node_modules/testreel/recording-definition.schema.json"`.
+Usa questo documento quando crei o modifichi JSON di recording in `apps/marketing/studio/recordings/specs/*.template.json`. Il formato è quello di **[testreel](https://testreel.dev)**; lo schema JSON è referenziato da ogni file tramite `"$schema": "../../../node_modules/testreel/recording-definition.schema.json"` (path relativo alla nuova posizione dei spec).
 
 ## Tooling e file
 
-| Cosa               | Dove                                                                                                                       |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| Template in input  | `apps/app/recordings/specs/<nome>.template.json`                                                                           |
-| Compilazione + run | `bun --cwd apps/app/recordings scripts/run.ts <nome>` oppure dalla root `bun run demo:record -- <nome>`                    |
-| Output video       | `apps/app/recordings/output/<nome>/`                                                                                       |
-| Credenziali        | `apps/app/test.credentials.json` (`email`, `password`) — sostituiti in compile come `{{TEST_EMAIL}}` / `{{TEST_PASSWORD}}` |
-| Base URL app       | `{{BASE_URL}}` (default `http://localhost:5173`; override con env `BASE_URL`)                                              |
+| Cosa               | Dove                                                                                                                                |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Template in input  | `apps/marketing/studio/recordings/specs/<nome>.template.json`                                                                       |
+| Compilazione + run | `bun run --filter pulse-hr-marketing record <nome>` oppure dalla root `bun run record <nome>`                                       |
+| Output raw         | `apps/marketing/studio/output/<nome>/` (gitignored, intermedi testreel)                                                             |
+| Capture per Remotion | `apps/marketing/studio/captures/<nome>/clip.mp4` (gitignored, consumato da `staticFile()` via `Config.setPublicDir("./studio")`)  |
+| Credenziali        | `apps/app/test.credentials.json` (`email`, `password` o `{ existing, new, ghosts }`) — sostituiti come `{{TEST_EMAIL}}` / `{{TEST_PASSWORD}}` |
+| Base URL app       | `{{BASE_URL}}` (default `http://localhost:5173`; override con env `BASE_URL`)                                                       |
+| Base URL feedback  | `{{FEEDBACK_BASE_URL}}` (default `http://localhost:5174`; serve solo a `feedback-live`)                                             |
 
-Il nome dello spec (`focus`, `kudos-give`, …) deve coincidere con il file `specs/<nome>.template.json`.
+Il nome dello spec (`focus`, `kudos-give`, …) deve coincidere con il file `recordings/specs/<nome>.template.json`.
 
-### Placeholder supportati da `scripts/run.ts`
+### Placeholder supportati da `recordings/scripts/run.ts`
 
 - `{{BASE_URL}}` — URL dell’app in dev/preview.
-- `{{TEST_EMAIL}}`, `{{TEST_PASSWORD}}` — da `test.credentials.json`.
-- `"{{SETUP}}"` — se presente nel JSON, viene sostituito dal contenuto di `specs/_setup.partial.json` (blocco JSON di step riusabile).
+- `{{FEEDBACK_BASE_URL}}` — URL del feedback site (solo `feedback-live`).
+- `{{TEST_EMAIL}}`, `{{TEST_PASSWORD}}` — da `test.credentials.json` (slot `existing` di default, `new` con `CRED=new`).
+- `"{{SETUP}}"` — se presente nel JSON, viene sostituito dal contenuto di `recordings/specs/_setup.partial.json` (blocco JSON di step riusabile per l’onboarding).
 
-Variabili ambiente utili: `FORMAT` (es. `mp4`), `HEADED=1`, `VERBOSE=1`, `AUDIO` (path relativo a `recordings/` per mux audio post-run).
+Variabili ambiente utili: `FORMAT` (es. `mp4`, `webm`), `HEADED=1`, `VERBOSE=1`, `GHOSTS=1` (spawna i ghost di `<spec>.ghosts.json`), `CRED=new`, `AUDIO=<path-relativo-a-studio/>` per override del mux audio.
 
 ---
 
@@ -111,11 +114,12 @@ Ordine consigliato per interazioni leggibili nel video:
 ## Eseguire il recording
 
 ```bash
-# dalla root del monorepo, app dev su :5173
+# dalla root del monorepo, app dev su :5173 (e feedback su :5174)
 bun run dev
 
 # in altro terminale
-bun run demo:record -- <nome-spec>
+bun run record <nome-spec>
+# oppure: bun run --filter pulse-hr-marketing record <nome-spec>
 ```
 
 In caso di timeout su uno step, aumenta `timeout` su quello step (ms) come in `focus.template.json` per `#nav-focus`.

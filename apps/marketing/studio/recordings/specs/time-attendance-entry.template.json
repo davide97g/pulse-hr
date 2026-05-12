@@ -1,6 +1,6 @@
 {
-  "$schema": "../node_modules/testreel/recording-definition.schema.json",
-  "url": "{{BASE_URL}}/",
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/time",
   "colorScheme": "dark",
   "viewport": {
     "width": 1280,
@@ -82,7 +82,21 @@
       },
       {
         "action": "wait",
-        "ms": 1600
+        "ms": 2000
+      },
+      {
+        "action": "navigate",
+        "url": "{{BASE_URL}}/dev/recording-reset"
+      },
+      {
+        "action": "wait",
+        "ms": 600
+      },
+      {
+        "action": "wait",
+        "ms": 400,
+        "waitFor": "button:has-text('Admin')",
+        "timeout": 25000
       },
       {
         "action": "click",
@@ -244,152 +258,99 @@
   "steps": [
     {
       "action": "wait",
-      "ms": 250,
-      "waitFor": "main",
+      "ms": 450,
+      "waitFor": "text=Time & attendance",
       "timeout": 10000
     },
     {
+      "action": "screenshot",
+      "name": "01-time-idle",
+      "pauseAfter": 80
+    },
+    {
       "action": "click",
-      "selector": "[data-tour=\"sidebar-help\"]",
+      "selector": "button:has-text('New entry')",
       "timeout": 8000,
       "pauseAfter": 120,
       "zoom": 2
     },
     {
       "action": "wait",
-      "ms": 220
+      "ms": 500
     },
     {
       "action": "screenshot",
-      "name": "01-help-tours-menu",
+      "name": "02-new-entry-panel",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "selector": "textarea[placeholder='What did you work on?']",
+      "scale": 1.75,
+      "duration": 140
+    },
+    {
+      "action": "type",
+      "selector": "textarea[placeholder='What did you work on?']",
+      "text": "Monthly close support and anomaly checks on payroll totals.",
+      "delay": 16
+    },
+    {
+      "action": "wait",
+      "ms": 180
+    },
+    {
+      "action": "zoom",
+      "selector": "input[type='number'][step='0.25']",
+      "scale": 1.75,
+      "duration": 140
+    },
+    {
+      "action": "fill",
+      "selector": "input[type='number'][step='0.25']",
+      "text": "2.5"
+    },
+    {
+      "action": "wait",
+      "ms": 180
+    },
+    {
+      "action": "screenshot",
+      "name": "03-entry-draft",
       "pauseAfter": 80
     },
     {
       "action": "click",
-      "selector": "[role=menu] [role=menuitem]:has-text('Welcome to Pulse HR')",
+      "selector": "button:has-text('Add entry')",
       "timeout": 8000,
       "pauseAfter": 120,
-      "zoom": 1.85
+      "zoom": 2
     },
     {
       "action": "wait",
-      "ms": 420
+      "ms": 1000
     },
     {
       "action": "screenshot",
-      "name": "02-tour-intro-welcome",
+      "name": "04-entry-added",
       "pauseAfter": 80
     },
     {
       "action": "click",
-      "selector": "[role=dialog] button:has-text('Next')",
-      "timeout": 8000,
-      "pauseAfter": 100,
-      "zoom": 1.85
-    },
-    {
-      "action": "wait",
-      "ms": 520
-    },
-    {
-      "action": "screenshot",
-      "name": "03-tour-sidebar-nav",
-      "pauseAfter": 80
-    },
-    {
-      "action": "click",
-      "selector": "[role=dialog] button:has-text('Next')",
-      "timeout": 8000,
-      "pauseAfter": 100,
-      "zoom": 1.85
-    },
-    {
-      "action": "wait",
-      "ms": 440
-    },
-    {
-      "action": "screenshot",
-      "name": "04-tour-global-search",
-      "pauseAfter": 80
-    },
-    {
-      "action": "click",
-      "selector": "[role=dialog] button:has-text('Next')",
-      "timeout": 8000,
-      "pauseAfter": 100,
-      "zoom": 1.85
-    },
-    {
-      "action": "wait",
-      "ms": 360
-    },
-    {
-      "action": "screenshot",
-      "name": "05-tour-status-log",
-      "pauseAfter": 80
-    },
-    {
-      "action": "click",
-      "selector": "[role=dialog] button:has-text('Next')",
-      "timeout": 8000,
-      "pauseAfter": 100,
-      "zoom": 1.85
-    },
-    {
-      "action": "wait",
-      "ms": 300
-    },
-    {
-      "action": "screenshot",
-      "name": "06-tour-quick-actions",
-      "pauseAfter": 80
-    },
-    {
-      "action": "click",
-      "selector": "[role=dialog] button:has-text('Next')",
-      "timeout": 8000,
-      "pauseAfter": 100,
-      "zoom": 1.85
-    },
-    {
-      "action": "wait",
-      "ms": 240
-    },
-    {
-      "action": "screenshot",
-      "name": "07-tour-notifications",
-      "pauseAfter": 80
-    },
-    {
-      "action": "click",
-      "selector": "[role=dialog] button:has-text('Next')",
-      "timeout": 8000,
-      "pauseAfter": 100,
-      "zoom": 1.85
-    },
-    {
-      "action": "wait",
-      "ms": 200
-    },
-    {
-      "action": "screenshot",
-      "name": "08-tour-youre-set",
-      "pauseAfter": 80
-    },
-    {
-      "action": "click",
-      "selector": "[role=dialog] button:has-text('Finish')",
+      "selector": "button[aria-label*='· filled ·'] >> nth=0",
       "timeout": 8000,
       "pauseAfter": 120,
-      "zoom": 1.85
+      "zoom": 1.7
     },
     {
       "action": "wait",
-      "ms": 320
+      "ms": 350,
+      "waitFor": "text=logged ·",
+      "timeout": 12000
     },
     {
       "action": "screenshot",
-      "name": "09-dashboard-after-tour",
+      "name": "05-agenda-day-detail",
       "pauseAfter": 80
     },
     {

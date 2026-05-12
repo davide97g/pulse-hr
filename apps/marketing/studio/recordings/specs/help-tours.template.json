@@ -1,6 +1,6 @@
 {
-  "$schema": "../node_modules/testreel/recording-definition.schema.json",
-  "url": "{{BASE_URL}}/time",
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/",
   "colorScheme": "dark",
   "viewport": {
     "width": 1280,
@@ -82,21 +82,7 @@
       },
       {
         "action": "wait",
-        "ms": 2000
-      },
-      {
-        "action": "navigate",
-        "url": "{{BASE_URL}}/dev/recording-reset"
-      },
-      {
-        "action": "wait",
-        "ms": 600
-      },
-      {
-        "action": "wait",
-        "ms": 400,
-        "waitFor": "button:has-text('Admin')",
-        "timeout": 25000
+        "ms": 1600
       },
       {
         "action": "click",
@@ -258,99 +244,152 @@
   "steps": [
     {
       "action": "wait",
-      "ms": 450,
-      "waitFor": "text=Time & attendance",
+      "ms": 250,
+      "waitFor": "main",
       "timeout": 10000
     },
     {
-      "action": "screenshot",
-      "name": "01-time-idle",
-      "pauseAfter": 80
-    },
-    {
       "action": "click",
-      "selector": "button:has-text('New entry')",
+      "selector": "[data-tour=\"sidebar-help\"]",
       "timeout": 8000,
       "pauseAfter": 120,
       "zoom": 2
     },
     {
       "action": "wait",
-      "ms": 500
+      "ms": 220
     },
     {
       "action": "screenshot",
-      "name": "02-new-entry-panel",
-      "pauseAfter": 80
-    },
-    {
-      "action": "zoom",
-      "selector": "textarea[placeholder='What did you work on?']",
-      "scale": 1.75,
-      "duration": 140
-    },
-    {
-      "action": "type",
-      "selector": "textarea[placeholder='What did you work on?']",
-      "text": "Monthly close support and anomaly checks on payroll totals.",
-      "delay": 16
-    },
-    {
-      "action": "wait",
-      "ms": 180
-    },
-    {
-      "action": "zoom",
-      "selector": "input[type='number'][step='0.25']",
-      "scale": 1.75,
-      "duration": 140
-    },
-    {
-      "action": "fill",
-      "selector": "input[type='number'][step='0.25']",
-      "text": "2.5"
-    },
-    {
-      "action": "wait",
-      "ms": 180
-    },
-    {
-      "action": "screenshot",
-      "name": "03-entry-draft",
+      "name": "01-help-tours-menu",
       "pauseAfter": 80
     },
     {
       "action": "click",
-      "selector": "button:has-text('Add entry')",
+      "selector": "[role=menu] [role=menuitem]:has-text('Welcome to Pulse HR')",
       "timeout": 8000,
       "pauseAfter": 120,
-      "zoom": 2
+      "zoom": 1.85
     },
     {
       "action": "wait",
-      "ms": 1000
+      "ms": 420
     },
     {
       "action": "screenshot",
-      "name": "04-entry-added",
+      "name": "02-tour-intro-welcome",
       "pauseAfter": 80
     },
     {
       "action": "click",
-      "selector": "button[aria-label*='· filled ·'] >> nth=0",
+      "selector": "[role=dialog] button:has-text('Next')",
       "timeout": 8000,
-      "pauseAfter": 120,
-      "zoom": 1.7
+      "pauseAfter": 100,
+      "zoom": 1.85
     },
     {
       "action": "wait",
-      "ms": 350,
-      "waitFor": "text=logged ·",
-      "timeout": 12000
+      "ms": 520
     },
     {
       "action": "screenshot",
-      "name": "05-agenda-day-detail",
+      "name": "03-tour-sidebar-nav",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 440
+    },
+    {
+      "action": "screenshot",
+      "name": "04-tour-global-search",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 360
+    },
+    {
+      "action": "screenshot",
+      "name": "05-tour-status-log",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 300
+    },
+    {
+      "action": "screenshot",
+      "name": "06-tour-quick-actions",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 240
+    },
+    {
+      "action": "screenshot",
+      "name": "07-tour-notifications",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Next')",
+      "timeout": 8000,
+      "pauseAfter": 100,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "screenshot",
+      "name": "08-tour-youre-set",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] button:has-text('Finish')",
+      "timeout": 8000,
+      "pauseAfter": 120,
+      "zoom": 1.85
+    },
+    {
+      "action": "wait",
+      "ms": 320
+    },
+    {
+      "action": "screenshot",
+      "name": "09-dashboard-after-tour",
       "pauseAfter": 80
     },
     {

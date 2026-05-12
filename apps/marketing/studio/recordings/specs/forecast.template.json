@@ -1,5 +1,5 @@
 {
-  "$schema": "../node_modules/testreel/recording-definition.schema.json",
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
   "url": "{{BASE_URL}}/forecast",
   "viewport": {
     "width": 1440,

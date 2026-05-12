@@ -10,7 +10,7 @@
  *   4. Run testreel against the compiled spec.
  *   5. Mux the configured background music track over the produced clip.
  *   6. Promote the clip + timeline + caption sidecar into
- *      `public/captures/<spec>/` for Remotion to consume.
+ *      `captures/<spec>/` (Remotion publicDir) for Remotion to consume.
  */
 import {
   readFileSync,
@@ -26,8 +26,9 @@ import { fileURLToPath } from "node:url";
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const studioDir = resolve(__dirname, "..", "..", "..");
-const appDir = resolve(studioDir, "..", "app");
+// apps/marketing/studio/recordings/scripts/run.ts → studio dir is two levels up.
+const studioDir = resolve(__dirname, "..", "..");
+const appDir = resolve(studioDir, "..", "..", "app");
 const specName = process.argv[2] ?? "kudos-give";
 const format = process.env.FORMAT ?? "mp4";
 const baseUrl = process.env.BASE_URL ?? "http://localhost:5173";
@@ -56,14 +57,15 @@ if (!primary?.email || !primary?.password) {
 const ghostCreds: Record<string, { email: string; password: string }> =
   credsRaw.ghosts ?? {};
 
-const templatePath = resolve(studioDir, "specs", `${specName}.template.json`);
+const specsDir = resolve(studioDir, "recordings", "specs");
+const templatePath = resolve(specsDir, `${specName}.template.json`);
 if (!existsSync(templatePath)) {
   console.error(`missing ${templatePath}`);
   process.exit(1);
 }
 let raw = readFileSync(templatePath, "utf8");
 
-const setupPartialPath = resolve(studioDir, "specs", "_setup.partial.json");
+const setupPartialPath = resolve(specsDir, "_setup.partial.json");
 if (existsSync(setupPartialPath) && raw.includes('"{{SETUP}}"')) {
   const setupBlock = readFileSync(setupPartialPath, "utf8").trim();
   raw = raw.replace('"{{SETUP}}"', setupBlock);
@@ -88,7 +90,7 @@ console.log(`[recordings] compiled:     ${compiledPath}`);
 console.log(`[recordings] format:       ${format}`);
 
 // ─── Ghost users ──────────────────────────────────────────────────────────
-const ghostsPath = resolve(studioDir, "specs", `${specName}.ghosts.json`);
+const ghostsPath = resolve(specsDir, `${specName}.ghosts.json`);
 const ghostProcesses: ChildProcess[] = [];
 if (enableGhosts && existsSync(ghostsPath)) {
   const ghostsConfig = JSON.parse(readFileSync(ghostsPath, "utf8"));
@@ -192,8 +194,8 @@ child.on("exit", (code) => {
     console.log(`[recordings] no audio at ${audioPath}, skipping mux`);
   }
 
-  // ─── Promote to public/captures ─────────────────────────────────────────
-  const capturesDir = resolve(studioDir, "public", "captures", specName);
+  // ─── Promote to captures/ (Remotion publicDir) ──────────────────────────
+  const capturesDir = resolve(studioDir, "captures", specName);
   mkdirSync(capturesDir, { recursive: true });
   const targetClip = resolve(capturesDir, `clip.${format}`);
   copyFileSync(video, targetClip);
@@ -205,7 +207,7 @@ child.on("exit", (code) => {
   }
 
   // ─── Caption merge ──────────────────────────────────────────────────────
-  const sidecarPath = resolve(studioDir, "specs", `${specName}.captions.json`);
+  const sidecarPath = resolve(specsDir, `${specName}.captions.json`);
   if (existsSync(sidecarPath) && existsSync(timelinePath)) {
     try {
       const sidecar = JSON.parse(readFileSync(sidecarPath, "utf8"));

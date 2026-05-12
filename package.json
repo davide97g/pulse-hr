@@ -26,9 +26,10 @@
     "preview:feedback": "bun run --filter '@pulse-hr/feedback' preview",
     "preview:design": "bun run --filter '@pulse-hr/design' preview",
     "preview:marketing": "bun run --filter 'pulse-hr-marketing' preview",
-    "studio": "bun run --filter '@pulse-hr/studio' studio",
-    "render:studio": "bun run --filter '@pulse-hr/studio' render:all",
-    "record": "bun run --filter '@pulse-hr/studio' record",
+    "studio": "bun run --filter 'pulse-hr-marketing' studio",
+    "render:studio": "bun run --filter 'pulse-hr-marketing' render:all",
+    "render:reels": "bun run --filter 'pulse-hr-marketing' reel:all",
+    "record": "bun run --filter 'pulse-hr-marketing' record",
     "lint": "bun run --filter '@workflows-people/app' lint",
     "db:migrate": "bun run --filter '@pulse-hr/api' db:migrate"
   }

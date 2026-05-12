@@ -1,15 +1,25 @@
-# Pulse HR — Marketing
+# Pulse HR — Marketing + Studio
 
-Static, SEO-first Astro site for `pulsehr.it`. The main React SPA lives at `../` and is served from `app.pulsehr.it` (or `/app/*`); this app owns marketing surfaces only.
+Two co-located workspaces under one Vercel-deployable app:
+
+1. **Marketing site** (`src/`) — static, SEO-first Astro site for `pulsehr.it`. The main React SPA lives at `../app/` and is served from `app.pulsehr.it`.
+2. **Studio content workspace** (`studio/`) — Remotion compositions and testreel browser recordings that render into `public/studio/*`. Not part of the Astro build.
 
 ## Run
 
 ```bash
-cd marketing
+cd apps/marketing
 bun install
-bun run dev      # http://localhost:4321
-bun run build    # → dist/
-bun run preview  # serve dist/ locally
+bun run dev      # site — http://localhost:4321
+bun run build    # site — → dist/
+bun run preview  # site — serve dist/ locally
+
+# Studio
+bun run studio          # Remotion Studio (preview compositions, edit visually)
+bun run record:setup    # one-time: install Playwright chromium
+bun run record <spec>   # drive a testreel recording (specs in studio/recordings/specs/)
+bun run render:all      # render hero reel.mp4 + .webm + poster into public/studio/
+bun run reel:all        # render every reel × aspect into public/studio/reels/
 ```
 
 ## What's implemented (SEO audit closure)
@@ -37,27 +47,47 @@ bun run preview  # serve dist/ locally
 ## Architecture
 
 ```
-marketing/
-├── astro.config.mjs        # Astro + sitemap + tailwind/vite
+apps/marketing/
+├── astro.config.mjs                  # Astro + sitemap + tailwind/vite
+├── remotion.config.ts                # Remotion publicDir → ./studio (no clash with Astro public/)
+├── tsconfig.json                     # Astro strict (excludes studio/)
 ├── public/
 │   ├── robots.txt
-│   └── favicon.svg
-└── src/
-    ├── data/landing.ts     # All content arrays (FEATURES, LABS, FAQ…)
-    ├── layouts/BaseLayout.astro  # SEO meta + JSON-LD + skip-link
-    ├── components/         # 15 section components
-    ├── pages/index.astro   # Wires sections
-    └── styles/global.css   # Tailwind 4 theme + utilities
+│   ├── favicon.svg
+│   └── studio/                       # rendered video outputs (gitignored: reel.mp4, reel.webm, poster.jpg, reels/)
+├── src/                              # Astro site
+│   ├── data/landing.ts               # All content arrays (FEATURES, LABS, FAQ…)
+│   ├── layouts/BaseLayout.astro      # SEO meta + JSON-LD + skip-link
+│   ├── components/                   # section components
+│   ├── pages/index.astro             # wires sections
+│   └── styles/global.css             # Tailwind 4 theme + utilities
+└── studio/                           # content workspace (not bundled into Astro)
+    ├── tsconfig.json                 # react-jsx for Remotion + testreel
+    ├── remotion/                     # Remotion compositions
+    │   ├── index.ts, Root.tsx, DayInPulse.tsx, Montage.tsx, CaptureReel.tsx
+    │   ├── scenes/                   # Intro, Outro, Kudos, Focus, Forecast, Timesheet, Commessa, Snap
+    │   └── components/               # Caption, Grid, Wordmark, text
+    ├── recordings/
+    │   ├── scripts/run.ts            # testreel driver (templates + ghosts + audio mux + capture promotion)
+    │   ├── scripts/ghost.ts          # Playwright ghost-user driver (feedback-live)
+    │   └── specs/*.template.json     # testreel recording definitions (+ .captions.json + .ghosts.json sidecars)
+    ├── scripts/                      # render-reel, sweep-chrome, sweep-zoom, sweep-login-wait
+    ├── audio/Launch Window.mp3       # default mux track
+    ├── docs/                         # recording spec rules + recordings readme
+    ├── captures/                     # gitignored — Remotion staticFile root (clip.mp4 + timeline.json + captions.timed.json per spec)
+    └── output/                       # gitignored — raw testreel intermediates per spec
 ```
 
-Every content change happens in `src/data/landing.ts`. Sections are presentational; they import and map.
+Site content edits happen in `src/data/landing.ts`; studio content lives in `studio/`.
 
 ## Deploy
 
-Point Vercel (or any static host) at `marketing/` with:
+Point Vercel (or any static host) at `apps/marketing/` with:
 
 - Build: `bun run build`
 - Output: `dist/`
 - Framework: Astro (auto-detected)
 
-DNS: `pulsehr.it` → this app. `app.pulsehr.it` → the React SPA in `../`.
+The studio workspace is **not** part of the Astro build — it only writes render artefacts into `public/studio/*` so the deployed site can serve them. Render those artefacts locally (or in CI) with `bun run render:all` + `bun run reel:all` before pushing.
+
+DNS: `pulsehr.it` → this app. `app.pulsehr.it` → the React SPA in `../app/`.

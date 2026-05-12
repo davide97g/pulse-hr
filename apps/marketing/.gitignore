@@ -21,3 +21,11 @@ bun-debug.log*
 # jetbrains setting folder
 .idea/
 .vercel
+
+# Studio: recording + render artefacts (regenerated from specs — do not commit)
+studio/output/
+studio/captures/
+public/studio/reel.mp4
+public/studio/reel.webm
+public/studio/poster.jpg
+public/studio/reels/

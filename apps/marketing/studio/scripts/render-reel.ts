@@ -3,11 +3,11 @@
  * Render reels into apps/marketing/public/studio/reels/<flow>/<aspect>.mp4.
  *
  * Usage:
- *   bun scripts/render-reel.ts                    → render every reel × aspect
- *   bun scripts/render-reel.ts --all              → same
- *   bun scripts/render-reel.ts kudos-give         → render reel-kudos-give-* in all aspects
- *   bun scripts/render-reel.ts montage            → render montage-* in all aspects
- *   bun scripts/render-reel.ts kudos-give 1080    → render only the HD landscape variant
+ *   bun studio/scripts/render-reel.ts                 → render every reel × aspect
+ *   bun studio/scripts/render-reel.ts --all           → same
+ *   bun studio/scripts/render-reel.ts kudos-give      → render reel-kudos-give-* in all aspects
+ *   bun studio/scripts/render-reel.ts montage         → render montage-* in all aspects
+ *   bun studio/scripts/render-reel.ts kudos-give 1080 → render only the HD landscape variant
  */
 import { existsSync, mkdirSync } from "node:fs";
 import { resolve, dirname } from "node:path";
@@ -15,9 +15,10 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+// apps/marketing/studio/scripts/render-reel.ts → studio dir is one level up.
 const studioDir = resolve(__dirname, "..");
-const marketingDir = resolve(studioDir, "..", "marketing");
-const entry = resolve(studioDir, "src", "remotion", "index.ts");
+const marketingDir = resolve(studioDir, "..");
+const entry = resolve(studioDir, "remotion", "index.ts");
 
 const FLOWS = [
   "kudos-give",
@@ -66,7 +67,6 @@ const buildJobs = (): Job[] => {
       for (const a of aspects) {
         const capture = resolve(
           studioDir,
-          "public",
           "captures",
           flow,
           "clip.mp4",
@@ -115,7 +115,7 @@ for (const job of jobs) {
       "--codec=h264",
       "--crf=20",
     ],
-    { stdio: "inherit", cwd: studioDir },
+    { stdio: "inherit", cwd: marketingDir },
   );
   if (r.status !== 0) {
     failed += 1;

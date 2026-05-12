@@ -31,5 +31,5 @@ Read in this order:
 output lived here. Both were removed. One reel is not a campaign; the
 campaign plan in `campaign.md` supersedes that single asset's brief.
 Video masters now live where they render — with the Remotion project at
-`apps/studio/` and published to the marketing site at
+`apps/marketing/studio/` and published to the marketing site at
 `apps/marketing/public/studio/`.

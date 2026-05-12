@@ -14,7 +14,7 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const specsDir = resolve(__dirname, "..", "specs");
+const specsDir = resolve(__dirname, "..", "recordings", "specs");
 
 const EMAIL_SEL = "input[type=email]";
 const PASSWORD_SEL = "input[type=password]";

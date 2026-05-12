@@ -1,14 +1,15 @@
 #!/usr/bin/env bun
 /**
  * One-shot sweep — applies CONVENTIONS.md chrome + localStorage rules to every
- * *.template.json in apps/studio/specs/. Idempotent. Run again after editing.
+ * *.template.json in apps/marketing/studio/recordings/specs/. Idempotent.
+ * Run again after editing.
  */
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const specsDir = resolve(__dirname, "..", "specs");
+const specsDir = resolve(__dirname, "..", "recordings", "specs");
 
 const CANONICAL_CHROME = {
   trafficLights: true,

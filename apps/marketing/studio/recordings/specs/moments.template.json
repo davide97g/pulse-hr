@@ -1,6 +1,6 @@
 {
-  "$schema": "../node_modules/testreel/recording-definition.schema.json",
-  "url": "{{BASE_URL}}/recruiting",
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/moments",
   "viewport": {
     "width": 1440,
     "height": 900
@@ -26,24 +26,24 @@
   "steps": [
     {
       "action": "wait",
-      "ms": 1400
+      "ms": 1800
     },
     {
       "action": "screenshot",
-      "name": "01-pipeline-overview"
+      "name": "01-moments-open"
     },
     {
       "action": "zoom",
-      "scale": 1.15,
+      "scale": 1.2,
       "duration": 700
     },
     {
       "action": "wait",
-      "ms": 900
+      "ms": 1600
     },
     {
       "action": "screenshot",
-      "name": "02-pipeline-zoom"
+      "name": "02-first-slide"
     },
     {
       "action": "zoom",
@@ -51,82 +51,56 @@
       "duration": 500
     },
     {
-      "action": "wait",
-      "ms": 400
-    },
-    {
       "action": "click",
-      "selector": ".cursor-pointer:has-text('Emma Wilson')",
-      "zoom": 1.6
+      "selector": "button:has-text('Next')",
+      "zoom": 1.4
     },
     {
       "action": "wait",
-      "ms": 1100
+      "ms": 1500
     },
     {
       "action": "screenshot",
-      "name": "03-candidate-applied"
+      "name": "03-slide-2"
     },
     {
       "action": "click",
-      "selector": "button:has-text('Advance stage')",
-      "zoom": 1.6
+      "selector": "button:has-text('Next')",
+      "zoom": 1.4
     },
     {
       "action": "wait",
-      "ms": 1200
+      "ms": 1500
     },
     {
       "action": "screenshot",
-      "name": "04-emma-advanced"
-    },
-    {
-      "action": "keyboard",
-      "key": "Escape"
-    },
-    {
-      "action": "wait",
-      "ms": 700
+      "name": "04-slide-3"
     },
     {
       "action": "click",
-      "selector": ".cursor-pointer:has-text('Raj Mehta')",
-      "zoom": 1.6
+      "selector": "button:has-text('Next')",
+      "zoom": 1.4
     },
     {
       "action": "wait",
-      "ms": 1100
+      "ms": 1500
     },
     {
       "action": "screenshot",
-      "name": "05-raj-offer"
-    },
-    {
-      "action": "zoom",
-      "selector": "button:has-text('Mark hired')",
-      "scale": 1.7,
-      "duration": 700
-    },
-    {
-      "action": "wait",
-      "ms": 600
+      "name": "05-slide-4"
     },
     {
       "action": "click",
-      "selector": "button:has-text('Mark hired')"
+      "selector": "button:has-text('Next')",
+      "zoom": 1.4
     },
     {
       "action": "wait",
-      "ms": 2800
+      "ms": 1800
     },
     {
       "action": "screenshot",
-      "name": "06-hired"
-    },
-    {
-      "action": "zoom",
-      "scale": 1,
-      "duration": 500
+      "name": "06-slide-5"
     }
   ],
   "localStorage": {

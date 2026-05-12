@@ -657,6 +657,7 @@ function DayCell({
 }
 
 function MineTable({ monthDays, today }: { monthDays: DayRecord[]; today: number }) {
+  const { t } = useI18n();
   return (
     <div className="solid-card overflow-hidden" style={{ borderRadius: 14 }}>
       <div
