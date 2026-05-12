@@ -1,9 +1,5 @@
 import { Composition } from "remotion";
-import {
-  CAPTURE_REEL_PADDING_FRAMES,
-  CaptureReel,
-  type CaptureReelProps,
-} from "./CaptureReel";
+import { CAPTURE_REEL_PADDING_FRAMES, CaptureReel, type CaptureReelProps } from "./CaptureReel";
 import { type TimedCaption } from "./components/Caption";
 import { DayInPulse } from "./DayInPulse";
 import { Montage, type MontageProps } from "./Montage";
@@ -77,6 +73,21 @@ const REELS: ReelDescriptor[] = [
       { atMs: 8500, text: "*Week. Month. Year.*", holdMs: 2400 },
     ],
   },
+  {
+    id: "workspace-create",
+    title: "Set up your *workspace*.",
+    subtitle: "Pulse HR · Onboarding",
+    outroTagline: "HR you can read, fork, and run.",
+    capturePath: "captures/workspace-create/clip.mp4",
+    captureSeconds: 39.36,
+    cues: [
+      { atMs: 1000, text: "Sign in", holdMs: 1800 },
+      { atMs: 9000, text: "Name your workspace", holdMs: 2500 },
+      { atMs: 21000, text: "Select your company size", holdMs: 2500 },
+      { atMs: 27000, text: "Add your teammates", holdMs: 2500 },
+      { atMs: 36000, text: "Workspace created.", holdMs: 2500 },
+    ],
+  },
 ];
 
 const ASPECTS = [
@@ -85,10 +96,7 @@ const ASPECTS = [
   { suffix: "square", width: 1080, height: 1080 },
 ] as const;
 
-const buildReelComposition = (
-  reel: ReelDescriptor,
-  aspect: (typeof ASPECTS)[number],
-) => {
+const buildReelComposition = (reel: ReelDescriptor, aspect: (typeof ASPECTS)[number]) => {
   const captureDurationFrames = Math.round(reel.captureSeconds * FPS);
   const total = captureDurationFrames + CAPTURE_REEL_PADDING_FRAMES;
   const props: CaptureReelProps = {
@@ -152,9 +160,7 @@ export const RemotionRoot: React.FC = () => {
         width={1280}
         height={720}
       />
-      {REELS.flatMap((reel) =>
-        ASPECTS.map((aspect) => buildReelComposition(reel, aspect)),
-      )}
+      {REELS.flatMap((reel) => ASPECTS.map((aspect) => buildReelComposition(reel, aspect)))}
       {ASPECTS.map((aspect) => (
         <Composition
           key={`montage-${aspect.suffix}`}

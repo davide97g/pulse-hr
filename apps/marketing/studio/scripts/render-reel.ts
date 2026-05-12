@@ -24,6 +24,7 @@ const FLOWS = [
   "kudos-give",
   "time-attendance-entry",
   "growth-checks",
+  "workspace-create",
 ];
 const ASPECTS = ["1080", "shorts", "square"];
 
@@ -105,7 +106,7 @@ for (const job of jobs) {
   mkdirSync(dirname(job.outPath), { recursive: true });
   console.log(`  → ${job.composition} → ${job.outPath}`);
   const r = spawnSync(
-    "bunx",
+    "bun",
     [
       "remotion",
       "render",

@@ -65,6 +65,10 @@ export function WelcomeEditorial() {
     setEmps((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
   }
 
+  function advanceStep(next: 2 | 3) {
+    window.setTimeout(() => setStep(next), 450);
+  }
+
   function finish() {
     const name = wsName.trim() || DEFAULT_WORKSPACE_NAME;
     createWorkspace(name);
@@ -323,7 +327,7 @@ export function WelcomeEditorial() {
                 placeholder={DEFAULT_WORKSPACE_NAME}
                 onChange={(e) => setWsName(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") setStep(2);
+                  if (e.key === "Enter") advanceStep(2);
                 }}
               />
             </div>
@@ -433,7 +437,7 @@ export function WelcomeEditorial() {
                 <Button variant="ghost" onClick={() => setOpen(false)}>
                   Cancel
                 </Button>
-                <Button onClick={() => setStep(2)} disabled={wsName.trim().length === 0}>
+                <Button onClick={() => advanceStep(2)} disabled={wsName.trim().length === 0}>
                   Continue →
                 </Button>
               </>
@@ -443,7 +447,7 @@ export function WelcomeEditorial() {
                 <Button variant="ghost" onClick={() => setStep(1)}>
                   ← Back
                 </Button>
-                <Button onClick={() => setStep(3)}>Continue →</Button>
+                <Button onClick={() => advanceStep(3)}>Continue →</Button>
               </>
             )}
             {step === 3 && (
