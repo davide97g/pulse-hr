@@ -335,6 +335,7 @@ function AppShellInner() {
                       <>
                         <Icon className="h-4 w-4 shrink-0" />
                         {!collapsed && <span className="truncate flex-1">{item.label}</span>}
+                        {!collapsed && item.badge === "new" && <NewBadge />}
                         {!collapsed && active && <span className="dot" aria-hidden />}
                         {!collapsed && !active && item.unreadDot && (
                           <span
@@ -519,6 +520,7 @@ function AppShellInner() {
                       <>
                         <Icon className="h-4 w-4 shrink-0" />
                         <span className="truncate flex-1">{item.label}</span>
+                        {item.badge === "new" && <NewBadge />}
                         {item.unreadDot && (
                           <span
                             className="h-1.5 w-1.5 rounded-full pulse-dot"
@@ -640,6 +642,7 @@ const SECTION_BY_PATH: Record<string, string> = {
   "/recruiting": "RECRUITING",
   "/org": "ORG CHART",
   "/moments": "MOMENTI",
+  "/import": "SUPER IMPORT",
 };
 
 function sectionForPath(pathname: string): string {

@@ -16,6 +16,7 @@ import {
   PanelLeft,
   LifeBuoy,
   ListChecks,
+  Sparkles,
 } from "lucide-react";
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
 import { ADMIN_MODULES_PATH } from "@/lib/sidebar-features";
@@ -28,6 +29,8 @@ export type SidebarNavItem = {
   featureId?: SidebarFeatureId;
   /** Render a notification dot (e.g. unread activity). Not for "new feature" marketing. */
   unreadDot?: boolean;
+  /** When "new", renders a NEW badge beside the label (LABS visual language). */
+  badge?: "new";
   /** When true, `to` is an absolute URL — render as <a> instead of a router Link. */
   external?: boolean;
   /**
@@ -58,6 +61,7 @@ export function buildSidebarNavGroups(
       label: "People",
       items: [
         { to: "/people", label: "Team", icon: Users, featureId: "people" },
+        { to: "/import", label: "Super Import", icon: Sparkles, badge: "new" },
         {
           to: "/log",
           label: "Status log",
