@@ -80,10 +80,10 @@ const REELS: ReelDescriptor[] = [
     subtitle: "Pulse HR · Onboarding",
     outroTagline: "HR - rebuilt.",
     capturePath: "captures/workspace-create/clip.mp4",
-    captureSeconds: 39.36,
+    captureSeconds: 36,
     cues: [
       { atMs: 1000, text: "Sign in", holdMs: 1800 },
-      { atMs: 9000, text: "Name your workspace", holdMs: 2500 },
+      { atMs: 10000, text: "Name your workspace", holdMs: 2500 },
       { atMs: 19500, text: "Select your company size", holdMs: 2500 },
       { atMs: 25000, text: "Add your teammates", holdMs: 2500 },
       { atMs: 32000, text: "Workspace created.", holdMs: 2500 },
