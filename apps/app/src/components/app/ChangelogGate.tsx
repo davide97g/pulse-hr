@@ -5,7 +5,8 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@clerk/react";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Sparkles, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import { useTour } from "./TourProvider";
 
 type Release = {
@@ -16,19 +17,25 @@ type Release = {
   tour: Tour | null;
 };
 
-const STORAGE_KEY = "pulse.lastSeenVersion";
+type MeProfile = {
+  changelogLastSeenVersion?: string | null;
+} | null;
 
 /**
- * On first mount, compares the latest release version to the one the user has
- * already seen. If newer, shows a corner "What's new" card. Also consumes a
- * `?tour=<id>` query param (emitted from release emails) to auto-start a tour.
+ * On first mount, compares the latest release from `/changelog/latest` to
+ * `changelogLastSeenVersion` on the user's API profile. If newer, shows a
+ * corner "What's new" card. Dismiss persists via `POST /user-profile/changelog-seen`
+ * (same account sees no card on other machines / fresh recordings).
+ *
+ * Also consumes a `?tour=<id>` query param (emitted from release emails) to
+ * auto-start a tour.
  *
  * Rendering is intentionally done via a tiny hand-rolled markdown-ish
  * renderer so we avoid injecting HTML. CHANGELOG is trusted (repo-committed)
  * but content-as-React keeps the XSS surface at zero.
  */
 export function ChangelogGate() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, getToken } = useAuth();
   const { startAdHoc } = useTour();
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,46 +44,98 @@ export function ChangelogGate() {
   const fetchedRef = useRef(false);
   const tourLaunchedRef = useRef(false);
 
+  const persistSeen = useCallback(
+    async (version: string): Promise<boolean> => {
+      const token = await getToken();
+      if (!token) return false;
+      try {
+        const res = await apiFetch(
+          "/user-profile/changelog-seen",
+          {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ version }),
+          },
+          token,
+        );
+        return res.ok;
+      } catch {
+        return false;
+      }
+    },
+    [getToken],
+  );
+
   useEffect(() => {
     if (!isSignedIn || fetchedRef.current) return;
     fetchedRef.current = true;
     (async () => {
       try {
-        const res = await apiFetch("/changelog/latest");
-        if (!res.ok) return;
-        const body = (await res.json()) as { release: Release | null };
+        const [changelogRes, token] = await Promise.all([
+          apiFetch("/changelog/latest"),
+          getToken(),
+        ]);
+        if (!changelogRes.ok) return;
+        const body = (await changelogRes.json()) as { release: Release | null };
         if (!body.release) return;
-        const last = localStorage.getItem(STORAGE_KEY);
-        if (last === body.release.version) return;
+
+        let lastSeen: string | null = null;
+        if (token) {
+          const meRes = await apiFetch("/user-profile/me", {}, token);
+          if (meRes.ok) {
+            const me = (await meRes.json()) as { profile: MeProfile };
+            lastSeen = me.profile?.changelogLastSeenVersion ?? null;
+          }
+        }
+
+        if (lastSeen === body.release.version) return;
         setRelease(body.release);
       } catch {
         /* silent */
       }
     })();
-  }, [isSignedIn]);
+  }, [isSignedIn, getToken]);
 
   useEffect(() => {
     if (tourLaunchedRef.current) return;
-    // TanStack Router parses `location.search` into an object; for a simple
-    // `?tour=<id>` lookup we read from it directly.
     const raw = location.search as Record<string, unknown>;
     const tourId = typeof raw?.tour === "string" ? (raw.tour as string) : null;
     if (!tourId) return;
     if (!release?.tour || release.tour.id !== tourId) return;
     tourLaunchedRef.current = true;
-    startAdHoc(release.tour);
-    markSeen(release.version);
-    setRelease(null);
-    const clean: Record<string, string> = {};
-    for (const [k, v] of Object.entries(raw)) {
-      if (k !== "tour" && typeof v === "string") clean[k] = v;
-    }
-    navigate({ to: location.pathname, search: clean, replace: true });
-  }, [location, release, startAdHoc, navigate]);
+    void (async () => {
+      const ok = await persistSeen(release.version);
+      if (!ok) {
+        toast.error("Could not save changelog preference");
+        tourLaunchedRef.current = false;
+        const clean: Record<string, string> = {};
+        for (const [k, v] of Object.entries(raw)) {
+          if (k !== "tour" && typeof v === "string") clean[k] = v;
+        }
+        navigate({ to: location.pathname, search: clean, replace: true });
+        return;
+      }
+      startAdHoc(release.tour!);
+      setRelease(null);
+      const clean: Record<string, string> = {};
+      for (const [k, v] of Object.entries(raw)) {
+        if (k !== "tour" && typeof v === "string") clean[k] = v;
+      }
+      navigate({ to: location.pathname, search: clean, replace: true });
+    })();
+  }, [location, release, startAdHoc, navigate, persistSeen]);
 
   const blocks = useMemo(() => (release ? renderMarkdown(release.bodyMarkdown) : []), [release]);
 
   if (!release || dismissed) return null;
+
+  const onDismiss = () => {
+    void (async () => {
+      const ok = await persistSeen(release.version);
+      if (ok) setDismissed(true);
+      else toast.error("Could not save changelog preference");
+    })();
+  };
 
   return (
     <div
@@ -95,10 +154,7 @@ export function ChangelogGate() {
           </div>
         </div>
         <button
-          onClick={() => {
-            markSeen(release.version);
-            setDismissed(true);
-          }}
+          onClick={onDismiss}
           className="h-6 w-6 -mr-1 -mt-0.5 inline-flex items-center justify-center rounded hover:bg-muted text-muted-foreground"
           aria-label="Dismiss"
         >
@@ -114,15 +170,7 @@ export function ChangelogGate() {
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 px-3 pb-3 pt-1 border-t">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            markSeen(release.version);
-            setDismissed(true);
-          }}
-          className="h-8 px-3 text-xs"
-        >
+        <Button variant="ghost" size="sm" onClick={onDismiss} className="h-8 px-3 text-xs">
           Dismiss
         </Button>
         {release.tour ? (
@@ -130,9 +178,15 @@ export function ChangelogGate() {
             size="sm"
             onClick={() => {
               if (!release.tour) return;
-              startAdHoc(release.tour);
-              markSeen(release.version);
-              setDismissed(true);
+              void (async () => {
+                const ok = await persistSeen(release.version);
+                if (!ok) {
+                  toast.error("Could not save changelog preference");
+                  return;
+                }
+                startAdHoc(release.tour!);
+                setDismissed(true);
+              })();
             }}
             className="h-8 px-3 text-xs"
           >
@@ -144,22 +198,14 @@ export function ChangelogGate() {
   );
 }
 
-function markSeen(version: string): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, version);
-  } catch {
-    /* ignore */
-  }
-}
-
 /**
  * Minimal markdown renderer: paragraphs and `-` / `*` bulleted lists. Bold
  * via `**x**`. Enough for the CHANGELOG.md format we emit, and keeps the
  * component free of `dangerouslySetInnerHTML`.
  */
-function renderMarkdown(md: string): React.ReactNode[] {
+function renderMarkdown(md: string): ReactNode[] {
   const lines = md.replace(/\r\n/g, "\n").split("\n");
-  const out: React.ReactNode[] = [];
+  const out: ReactNode[] = [];
   let buf: string[] = [];
   let list: string[] = [];
 
@@ -202,9 +248,8 @@ function renderMarkdown(md: string): React.ReactNode[] {
   return out;
 }
 
-function renderInline(text: string): React.ReactNode {
-  // Very small inline renderer: **bold**. Everything else literal.
-  const parts: React.ReactNode[] = [];
+function renderInline(text: string): ReactNode {
+  const parts: ReactNode[] = [];
   let i = 0;
   let key = 0;
   while (i < text.length) {

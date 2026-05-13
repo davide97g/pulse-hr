@@ -1278,6 +1278,12 @@
           "fullyAnswered": {
             "type": "boolean"
           },
+          "changelogLastSeenVersion": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "updatedAt": {
             "type": "string"
           }
@@ -1294,6 +1300,7 @@
           "painPoint",
           "source",
           "fullyAnswered",
+          "changelogLastSeenVersion",
           "updatedAt"
         ]
       },
@@ -1398,6 +1405,19 @@
           "companyWebsite",
           "companySize",
           "companyIndustry"
+        ]
+      },
+      "ChangelogSeenBody": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "version"
         ]
       }
     },
@@ -3262,6 +3282,52 @@
         "responses": {
           "200": {
             "description": "Skipped",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user-profile/changelog-seen": {
+      "post": {
+        "tags": [
+          "user-profile"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Record that the user dismissed the in-app changelog gate for a version",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangelogSeenBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recorded",
             "content": {
               "application/json": {
                 "schema": {

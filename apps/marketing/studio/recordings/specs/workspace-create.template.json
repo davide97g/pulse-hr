@@ -99,10 +99,18 @@
       "name": "02-welcome-editorial-cta"
     },
     {
-      "action": "click",
+      "action": "zoom",
       "selector": "#welcome-cta",
-      "zoom": 1.8,
-      "pauseAfter": 400
+      "scale": 1.8,
+      "duration": 180
+    },
+    {
+      "action": "wait",
+      "ms": 250
+    },
+    {
+      "action": "click",
+      "selector": "#welcome-cta"
     },
     {
       "action": "wait",
@@ -132,10 +140,6 @@
       "delay": 18
     },
     {
-      "action": "wait",
-      "ms": 200
-    },
-    {
       "action": "screenshot",
       "name": "03-workspace-name-filled"
     },
@@ -146,21 +150,13 @@
       "duration": 180
     },
     {
-      "action": "wait",
-      "ms": 350
-    },
-    {
       "action": "click",
       "selector": "[role=dialog] >> button:has-text('Continue')"
     },
     {
       "action": "wait",
-      "ms": 1200
-    },
-    {
-      "action": "wait",
       "ms": 400,
-      "waitFor": "#size-medium",
+      "waitFor": "#size-large",
       "timeout": 10000
     },
     {
@@ -169,17 +165,13 @@
     },
     {
       "action": "zoom",
-      "selector": "#size-medium",
+      "selector": "#size-large",
       "scale": 1.8,
       "duration": 180
     },
     {
       "action": "click",
-      "selector": "#size-medium"
-    },
-    {
-      "action": "wait",
-      "ms": 400
+      "selector": "#size-large"
     },
     {
       "action": "screenshot",
@@ -192,20 +184,12 @@
       "duration": 120
     },
     {
-      "action": "wait",
-      "ms": 350
-    },
-    {
       "action": "click",
       "selector": "[role=dialog] >> button:has-text('Continue')"
     },
     {
       "action": "wait",
-      "ms": 700
-    },
-    {
-      "action": "wait",
-      "ms": 500,
+      "ms": 350,
       "waitFor": "#teammate-0-name",
       "timeout": 10000
     },
@@ -262,8 +246,7 @@
     {
       "action": "click",
       "selector": "button:has-text('Create workspace')",
-      "zoom": 1.8,
-      "pauseAfter": 400
+      "zoom": 1.8
     },
     {
       "action": "zoom",

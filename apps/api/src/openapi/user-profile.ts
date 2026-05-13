@@ -56,9 +56,16 @@ const ProfileSchema = z
     painPoint: z.string().nullable(),
     source: z.string().nullable(),
     fullyAnswered: z.boolean(),
+    changelogLastSeenVersion: z.string().nullable(),
     updatedAt: z.string(),
   })
   .openapi("UserProfile");
+
+const ChangelogSeenBody = z
+  .object({
+    version: z.string().trim().min(1).max(64),
+  })
+  .openapi("ChangelogSeenBody");
 
 const PowerRowSchema = z
   .object({
@@ -221,6 +228,7 @@ userProfile.openapi(companyRoute, async (c) => {
         utmTerm: null,
         utmContent: null,
         fullyAnswered: true,
+        changelogLastSeenVersion: null,
         createdAt: now,
         updatedAt: now,
       }),
@@ -263,6 +271,40 @@ userProfile.openapi(skipRoute, async (c) => {
   return c.json({ ok: true as const }, 200);
 });
 
+// POST /changelog-seen ---------------------------------------------
+const changelogSeenRoute = createRoute({
+  method: "post",
+  path: "/changelog-seen",
+  tags: [TAG],
+  security: RequireAuth,
+  summary: "Record that the user dismissed the in-app changelog gate for a version",
+  request: { body: jsonBody(ChangelogSeenBody) },
+  responses: {
+    200: jsonContent(z.object({ ok: z.literal(true) }), "Recorded"),
+  },
+});
+
+userProfile.openapi(changelogSeenRoute, async (c) => {
+  const user = c.get("user");
+  const body = c.req.valid("json");
+  const now = new Date();
+  await db
+    .insert(schema.userProfiles)
+    .values({
+      userId: user.id,
+      changelogLastSeenVersion: body.version,
+      fullyAnswered: false,
+      createdAt: now,
+      updatedAt: now,
+    })
+    .onConflictDoUpdate({
+      target: schema.userProfiles.userId,
+      set: { changelogLastSeenVersion: body.version, updatedAt: now },
+    });
+
+  return c.json({ ok: true as const }, 200);
+});
+
 function serializeProfile(row: typeof schema.userProfiles.$inferSelect) {
   return {
     userId: row.userId,
@@ -276,6 +318,7 @@ function serializeProfile(row: typeof schema.userProfiles.$inferSelect) {
     painPoint: row.painPoint,
     source: row.source,
     fullyAnswered: row.fullyAnswered,
+    changelogLastSeenVersion: row.changelogLastSeenVersion ?? null,
     updatedAt: toIso(row.updatedAt),
   };
 }

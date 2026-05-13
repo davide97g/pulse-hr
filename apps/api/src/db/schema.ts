@@ -276,6 +276,8 @@ export const userProfiles = pgTable("user_profiles", {
   utmTerm: text("utm_term"),
   utmContent: text("utm_content"),
   fullyAnswered: boolean("fully_answered").notNull().default(false),
+  /** Latest changelog app version the user dismissed from the in-app gate. */
+  changelogLastSeenVersion: text("changelog_last_seen_version"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
