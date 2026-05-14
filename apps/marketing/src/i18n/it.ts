@@ -13,7 +13,7 @@ export const it: Dict = {
   meta: {
     tagline: "Software per le persone, non per i numeri.",
     description:
-      "Lo strumento HR che si interessa a come stai, non a quante ore hai loggato. Status log async, crescita, kudos, benessere — niente timesheet, niente code di approvazione, niente paghe. Open source, self-host, costruito da chi lo usa.",
+      "Lo strumento HR che guarda a come stai, non a quante ore hai tracciato. Status log async, crescita, kudos, benessere — niente timesheet, niente code di approvazione, niente buste paga. Open source, self-host, costruito da chi lo usa.",
     keywords:
       "engagement dipendenti, standup async, kudos, riconoscimento, benessere, open source, self-hosted, status log, crescita, soddisfazione, HR people-first",
   },
@@ -46,7 +46,7 @@ export const it: Dict = {
 
   footer: {
     tagline:
-      "Aperto. Trasparente. Costruito dalle persone che lo usano. Spedito da Milano, in pubblico.",
+      "Aperto. Trasparente. Costruito in pubblico, dalle persone che lo usano.",
     colProduct: "Prodotto",
     colOpenSource: "Open source",
     colResources: "Risorse",
@@ -83,7 +83,7 @@ export const it: Dict = {
     label: "Avviso demo pubblica",
     tag: "Demo pubblica",
     headline: "Pulse è in modalità demo.",
-    body: "Il prodotto è un mock solo frontend — ogni schermata, ogni record vive nel tuo browser. Lo rilasciamo presto per capire cosa serve davvero alle persone, prima di costruire il backend. Accedi dentro l'app per lasciarci feedback che arriva diretto ai maintainer.",
+    body: "Il prodotto è un mock solo frontend — ogni schermata, ogni record vive nel tuo browser. Lo rilasciamo in anticipo per capire cosa serve davvero alle persone, prima di costruire il backend. Accedi nell'app per lasciarci feedback che arriva diretto ai maintainer.",
     cta: "Apri la demo",
   },
 
@@ -94,7 +94,7 @@ export const it: Dict = {
       italic: "demo.",
       after: "",
     },
-    body: "Pulse HR oggi è un mock solo frontend. Lo rilasciamo prima del backend perché chi usa software HR ogni giorno possa indicarci cosa costruire per primo. Cliccaci sopra, rompi tutto, poi raccontaci cosa manca — il feedback è l'unico pezzo collegato a un vero backend, ed è proprio quello che vogliamo sentire da te.",
+    body: "Pulse HR oggi è un mock solo frontend. Lo rilasciamo prima del backend così chi usa software HR ogni giorno possa dirci cosa costruire per primo. Provalo, rompi tutto, poi raccontaci cosa manca — il feedback è l'unico pezzo collegato a un vero backend, ed è proprio quello che vogliamo sentire da te.",
     bullets: [
       {
         k: "Tutto mockato",
@@ -120,13 +120,13 @@ export const it: Dict = {
     titleItalic: "persone",
     titleAfter: ", non per i numeri.",
     body: [
-      "Lo strumento HR che si interessa a come stai, non a quante ore hai loggato. ",
+      "Lo strumento HR che guarda a come stai, non a quante ore hai tracciato. ",
       "Status log async",
       ", ",
       "crescita",
       " e ",
       "riconoscimento",
-      " — costruiti attorno ai momenti che contano per un team. Niente timesheet, niente code di approvazione, niente paghe. Open source su GitHub, self-host o hosted — niente chiamata commerciale per vedere il prodotto.",
+      " — costruiti attorno ai momenti che contano per un team. Niente timesheet, niente code di approvazione, niente buste paga. Open source su GitHub, self-host o hosted — niente chiamata commerciale per vedere il prodotto.",
     ],
     ctaPrimary: "Prova gratis — i tuoi dati, la tua infra",
     ctaGithub: "Leggi il sorgente",
@@ -150,9 +150,9 @@ export const it: Dict = {
 
   stats: {
     processed: "Commit pubblici su main",
-    countries: "PR della community mergeate",
+    countries: "PR della community integrate",
     teams: "Stelle su GitHub",
-    commands: "Giorni spediti in pubblico",
+    commands: "Giorni di sviluppo in pubblico",
   },
 
   whyPulse: {
@@ -165,7 +165,7 @@ export const it: Dict = {
     },
     subtitle: {
       before:
-        "Lattice lega tutto agli OKR. 15Five gira attorno ai moduli 1:1. Officevibe è un negozio di survey. Pulse è l'unico tool people-first dove il sorgente, la roadmap, il changelog e i prezzi sono tutti pubblici — ",
+        "Lattice lega tutto agli OKR. 15Five gira attorno ai moduli 1:1. Officevibe è solo una macchina da survey. Pulse è l'unico tool people-first dove il sorgente, la roadmap, il changelog e i prezzi sono tutti pubblici — ",
       link: "vedi il confronto onesto",
       after: ".",
     },
@@ -183,7 +183,7 @@ export const it: Dict = {
       },
       {
         k: "Tuo",
-        p: "I tuoi dati, la tua infra, la tua uscita. Self-host su Docker, Helm o Terraform. Esporta tutto in un formato pulito, sempre, senza chiedere. Lasciare Pulse è facile — è il punto.",
+        p: "I tuoi dati, la tua infra, libero di andartene. Self-host su Docker, Helm o Terraform. Esporta tutto in un formato pulito, sempre, senza chiedere. Lasciare Pulse è facile — è proprio quello che vogliamo.",
         cta: "Self-host · export · niente lock-in",
       },
       {
@@ -206,7 +206,7 @@ export const it: Dict = {
       },
       {
         k: "Trasparente",
-        d: "Roadmap, changelog, prezzi, limiti, policy di sicurezza, schema della telemetria — tutto pubblico. Non nascondiamo cosa fa il prodotto dietro una chiamata commerciale. Non recitiamo la trasparenza; spediamo con la porta aperta.",
+        d: "Roadmap, changelog, prezzi, limiti, policy di sicurezza, schema della telemetria — tutto pubblico. Non nascondiamo cosa fa il prodotto dietro una chiamata commerciale. Non recitiamo la trasparenza; rilasciamo con la porta aperta.",
       },
       {
         k: "Tuo",
@@ -214,7 +214,7 @@ export const it: Dict = {
       },
       {
         k: "Costruito da chi lo usa",
-        d: "La roadmap è plasmata dalle pull request, non dai product manager. I maintainer usano Pulse per il proprio lavoro ogni giorno. 'Richiesta di feature' e 'pull request' sono due strade per la stessa roadmap, entrambe di prima classe.",
+        d: "La roadmap è plasmata dalle pull request, non dai product manager. I maintainer usano Pulse per il proprio lavoro ogni giorno. 'Richiesta di feature' e 'pull request' sono due strade per la stessa roadmap, entrambe a pieno titolo.",
       },
     ],
   },
@@ -223,17 +223,17 @@ export const it: Dict = {
     eyebrow: "Cosa c'è dentro",
     title: "Otto superfici. Una sensazione: essere visti.",
     subtitle:
-      "Pulse è stretto di proposito. Ogni superficie parla di come sta una persona — cosa fa, cosa celebra, dove è tirata. Paghe, timesheet e allocazione dei progetti vivono negli strumenti costruiti per loro. Lì non competiamo.",
+      "Pulse è ristretto di proposito. Ogni superficie parla di come sta una persona — cosa fa, cosa celebra, dove è sotto pressione. Paghe, timesheet e allocazione dei progetti vivono negli strumenti costruiti per loro. Lì non competiamo.",
     items: [
       {
         icon: "MessageSquare",
         title: "Status Log",
-        body: "Standup asincrono per iscritto. Tre righe a testa, feed di team pubblico, recap manager-safe del sentiment — la chat raw resta col dipendente. Niente meeting, niente AI, niente thread di chat.",
+        body: "Standup asincrono per iscritto. Tre righe a testa, feed pubblico del team, recap manager-safe del sentiment — la chat completa resta col dipendente. Niente meeting, niente AI, niente thread di chat.",
       },
       {
         icon: "Trophy",
         title: "Crescita",
-        body: "Obiettivi, sfide, percorsi di skill e kudos in un'unica tela. Segnale continuo, non review annuali. Lo score nasce da cosa fanno le persone, non da un manager che riempie un form.",
+        body: "Obiettivi, sfide, percorsi di skill e kudos in un'unica vista. Segnale continuo, non review annuali. Lo score nasce da cosa fanno le persone, non da un manager che riempie un form.",
       },
       {
         icon: "Gift",
@@ -243,17 +243,17 @@ export const it: Dict = {
       {
         icon: "Sparkles",
         title: "Moments",
-        body: "Compleanni, anniversari e ticker dei kudos in un feed continuo. La memoria aziendale resa schermo.",
+        body: "Compleanni, anniversari e ticker dei kudos in un feed continuo. La memoria del team, su schermo.",
       },
       {
         icon: "Gauge",
         title: "Check-in del carico",
-        body: "Un tocco ogni venerdì — leggero / bilanciato / pesante / sovraccarico. Sparkline a 8 settimane. Il tuo manager vede il trend, non le risposte singole. Ore e allocazione vivono nell'altro strumento.",
+        body: "Un tocco ogni venerdì — leggero / bilanciato / pesante / sovraccarico. Sparkline a 8 settimane. Il tuo manager vede il trend, non le risposte singole. Ore e allocazione vivono nello strumento dedicato.",
       },
       {
         icon: "Calendar",
         title: "Diario di riposo",
-        body: "Registro personale dei giorni che hai preso. Nessuna approvazione, nessuno stato pending — lo segni, è segnato. Il saldo lo vedi tu, per la tua memoria.",
+        body: "Registro personale dei giorni che hai preso. Nessuna approvazione, nessuno stato in attesa — lo segni, è segnato. Il saldo è solo tuo, per il tuo registro.",
       },
       {
         icon: "Heart",
@@ -279,7 +279,7 @@ export const it: Dict = {
         icon: "MessageSquare",
         kind: "Status Log",
         tag: "Standup",
-        body: "Standup asincrono per iscritto. Tre righe a testa, feed di team pubblico, recap manager-safe con dimensioni di sentiment. Niente call, niente AI, niente chat.",
+        body: "Standup asincrono per iscritto. Tre righe a testa, feed pubblico del team, recap manager-safe con dimensioni di sentiment. Niente call, niente AI, niente chat.",
       },
       {
         icon: "Gift",
@@ -297,7 +297,7 @@ export const it: Dict = {
         icon: "Sparkles",
         kind: "Moments",
         tag: "Rituale",
-        body: "Compleanni, anniversari di lavoro e ticker dei kudos in un unico feed continuo. La memoria aziendale resa schermo.",
+        body: "Compleanni, anniversari di lavoro e ticker dei kudos in un unico feed continuo. La memoria del team, su schermo.",
       },
     ],
   },
@@ -308,7 +308,7 @@ export const it: Dict = {
     titleItalic: "cinque",
     titleAfter: "punti di vista.",
     subtitle:
-      "Ogni persona ha i suoi gruppi di sidebar, la sua vista di default e il suo set di shortcut. Tema chiaro o scuro oggi; le palette per ruolo sono in roadmap. I CFO non vedono gli standup di sprint.",
+      "Ogni persona ha i propri gruppi nella sidebar, la propria vista di default e il proprio set di shortcut. Tema chiaro o scuro oggi; le palette per ruolo sono in roadmap. I CFO non vedono gli standup di sprint.",
     items: [
       { k: "Employee", d: "Posta lo status, manda kudos, fai il check-in del carico, segna i giorni off." },
       { k: "Manager", d: "Leggi il recap del sentiment, nota il sovraccarico, celebra le vittorie. Mai la chat raw." },
@@ -327,17 +327,17 @@ export const it: Dict = {
       {
         who: "Davide Ghiotto",
         role: "Maintainer · github.com/davide97g",
-        body: "Usiamo Pulse ogni giorno per le nostre ore e le nostre ferie. Se una frizione dura più di una settimana, la fixiamo. La roadmap è la lista delle cose in cui noi — o chi lo tiene sulla propria infra — siamo inciampati davvero.",
+        body: "Usiamo Pulse ogni giorno per le nostre ore e le nostre ferie. Se una frizione dura più di una settimana, la risolviamo. La roadmap è la lista delle cose in cui noi — o chi lo gira sulla propria infra — siamo davvero inciampati.",
       },
       {
         who: "Feedback board pubblica",
         role: "github.com/davide97g/pulse-hr/discussions",
-        body: "Ogni richiesta di feature è pubblica. Ogni PR viene revisionata in pubblico. Il changelog si legge perché dietro ogni riga vedi il commit. È come l'HR software doveva essere costruito fin dall'inizio.",
+        body: "Ogni richiesta di feature è pubblica. Ogni PR viene revisionata in pubblico. Il changelog si legge perché dietro ogni riga vedi il commit. È così che l'HR software andava costruito fin dall'inizio.",
       },
       {
         who: "Il bottone Export",
         role: "I tuoi dati, la tua infra",
-        body: "Cliccalo. Ti porti tutto. Portalo altrove se vuoi. Il test onesto di una piattaforma aperta è se puoi andartene — non quello che dice la slide commerciale.",
+        body: "Cliccalo. Ti porti tutto. Portalo altrove se vuoi. Il test onesto di una piattaforma aperta è se puoi andartene — non quello che dice la presentazione commerciale.",
       },
     ],
   },
@@ -350,19 +350,19 @@ export const it: Dict = {
     items: [
       {
         q: "Pulse sostituisce il mio HRIS?",
-        a: "No, ed è il punto. Pulse è la metà 'persone' dell'HR — status, crescita, kudos, benessere. Paghe, rilevazione ore, recruiting, allocazione progetti e firma documenti vivono negli strumenti costruiti per loro. Pulse gira a fianco al tuo HRIS, non al suo posto. Molti team usano Pulse insieme a BambooHR, Personio, Rippling o Factorial; lo scope ridotto è quello che lo fa usare davvero.",
+        a: "No, ed è proprio il senso. Pulse è la metà 'persone' dell'HR — status, crescita, kudos, benessere. Paghe, rilevazione ore, recruiting, allocazione progetti e firma documenti vivono negli strumenti costruiti per loro. Pulse gira a fianco al tuo HRIS, non al suo posto. Molti team usano Pulse insieme a BambooHR, Personio, Rippling o Factorial; l'ambito ristretto è quello che lo rende davvero usabile.",
       },
       {
         q: "Come è fatto il pricing di Pulse HR?",
-        a: "Per dipendente attivo, al mese. Un unico piano trasparente con tutte le funzionalità incluse — niente gate 'parla col sales', niente upsell per le feature Labs, niente add-on per l'accesso API o SSO. Gratis per i primi 5 dipendenti attivi, per sempre. Con fatturazione annuale 15% di sconto.",
+        a: "Per dipendente attivo, al mese. Un unico piano trasparente con tutte le funzionalità incluse — nessun blocco 'parla col sales', niente upsell per le feature Labs, niente add-on per l'accesso API o SSO. Gratis per i primi 5 dipendenti attivi, per sempre. Con fatturazione annuale 15% di sconto.",
       },
       {
         q: "È SOC 2 / GDPR compliant?",
-        a: "Risposta onesta: siamo GDPR-compliant by design — residenza dati in UE (Francoforte, Dublino, Milano), DPA firmato all'iscrizione, sub-processor documentati su pulsehr.it/security. SOC 2 Type II e ISO 27001 non sono ancora in mano oggi; sono sulla roadmap quando il parco clienti lo richiederà. Se hai bisogno di un'attestazione prima che l'abbiamo, la strada onesta è il self-host — rimani dentro il tuo perimetro di audit. Preferiamo dirtelo che fingere.",
+        a: "Risposta onesta: siamo GDPR-compliant by design — residenza dati in UE (Francoforte, Dublino), DPA firmato all'iscrizione, sub-processor documentati su pulsehr.it/security. SOC 2 Type II e ISO 27001 non li abbiamo ancora oggi; sono sulla roadmap quando il parco clienti lo richiederà. Se hai bisogno di un'attestazione prima che l'abbiamo, la strada onesta è il self-host — rimani dentro il tuo perimetro di audit. Preferiamo dirtelo che fingere.",
       },
       {
         q: "C'è un'API?",
-        a: "Sì — un'API REST completa, webhook su ogni evento (employee.created, leave.approved, ecc.) e SDK mantenuti per TypeScript, Python e Go. Le chiavi API sono scoped per ambiente con permessi granulari. Spec OpenAPI completa su pulsehr.it/docs/api. Il rate limit è 1.000 richieste/minuto sul tier standard.",
+        a: "Sì — un'API REST completa, webhook su ogni evento (employee.created, leave.approved, ecc.) e SDK mantenuti per TypeScript, Python e Go. Le chiavi API hanno scope per ambiente con permessi granulari. Spec OpenAPI completa su pulsehr.it/docs/api. Il rate limit è 1.000 richieste/minuto sul tier standard.",
       },
       {
         q: "Pulse è davvero open source?",
@@ -378,7 +378,7 @@ export const it: Dict = {
       },
       {
         q: "Pulse funziona offline?",
-        a: "L'intera superficie si installa come PWA su macOS, Windows, iOS e Android. Viste recenti, bozze di status log e bozze di kudos continuano a funzionare offline e sincronizzano appena torni online — niente schermate 'loading…' in aeroporto o nella sala riunioni in cantina. Le azioni distruttive richiedono una connessione attiva e vengono messe in coda se offline, così niente parte due volte per sbaglio.",
+        a: "L'intera superficie si installa come PWA su macOS, Windows, iOS e Android. Viste recenti, bozze di status log e bozze di kudos continuano a funzionare offline e sincronizzano appena torni online — niente schermate 'loading…' in aeroporto o in una sala riunioni senza segnale. Le azioni distruttive richiedono una connessione attiva e vengono messe in coda se offline, così niente parte due volte per sbaglio.",
       },
     ],
   },
@@ -388,10 +388,10 @@ export const it: Dict = {
     titleItalic: "Pulse",
     titleAfter: ".",
     subtitle:
-      "Due sviluppatori frontend-fluent che costruiscono in pubblico, da Milano. L'agent-driven development è il motivo per cui siamo solo in due — non lo vendiamo, spediamo solo più di quanto il nostro headcount dovrebbe permettere. Il prodotto è il protagonista; noi firmiamo i commit.",
+      "Due sviluppatori frontend-fluent che costruiscono in pubblico. L'agent-driven development è il motivo per cui siamo solo in due — non lo vendiamo, rilasciamo solo più di quanto due persone dovrebbero permettersi. Il prodotto è il protagonista; noi firmiamo i commit.",
     items: [
-      { n: "Davide Ghiotto", r: "Maintainer · Milano", bio: "Frontend-fluent, stanco del software HR. github.com/davide97g · linkedin.com/in/davide-ghiotto" },
-      { n: "Niccolò Naso", r: "Maintainer · Milano", bio: "Co-maintainer frontend-fluent. github.com/LordNik10 · linkedin.com/in/niccolò-naso-888039178" },
+      { n: "Davide Ghiotto", r: "Maintainer", bio: "Frontend-fluent, stanco del software HR. github.com/davide97g · linkedin.com/in/davide-ghiotto" },
+      { n: "Niccolò Naso", r: "Maintainer", bio: "Co-maintainer frontend-fluent. github.com/LordNik10 · linkedin.com/in/niccolò-naso-888039178" },
       { n: "Tu?", r: "Aperti ai contributor", bio: "La roadmap è plasmata dalle pull request. Se il codebase fixa una frizione che vivi ogni settimana, manda una PR — ogni contributor viene creditato nel changelog." },
     ],
   },
@@ -412,7 +412,7 @@ export const it: Dict = {
   changelog: {
     eyebrow: "Rilasciato di recente",
     titleBefore: "Un changelog",
-    titleItalic: "che vale leggere",
+    titleItalic: "che vale la pena leggere",
     titleAfter: ".",
     full: "Changelog completo",
     items: [
@@ -420,7 +420,7 @@ export const it: Dict = {
       { d: "06 mag", t: "Sidebar collassata, tema e \"View as\" persistono al refresh", k: "Workspace" },
       { d: "30 apr", t: "Flow di Welcome semplificato — nome + dimensione, niente scelta ruolo", k: "Onboarding" },
       { d: "24 apr", t: "\"View as\" in topbar — anteprima dell'app come un'altra persona", k: "Workspace" },
-      { d: "19 apr", t: "Sidebar regroupata: Dashboard / People / Time / Work / Other", k: "Navigazione" },
+      { d: "19 apr", t: "Sidebar riorganizzata: Dashboard / People / Time / Work / Other", k: "Navigazione" },
     ],
   },
 
@@ -474,7 +474,7 @@ export const it: Dict = {
       "Self-host o hosted — scegli tu",
     ],
     mockDashboard: {
-      pending: "Off loggati",
+      pending: "Off registrati",
       headcount: "Kudos · sett.",
       overtime: "Growth score",
       rows: [
@@ -483,7 +483,7 @@ export const it: Dict = {
         { n: "Noah W.", t: "Permesso · 1g off", s: "approved" },
       ],
       statusPending: "fresco",
-      statusApproved: "loggato",
+      statusApproved: "registrato",
     },
     mockTime: {
       activeClock: "Questa settimana",
@@ -540,7 +540,7 @@ export const it: Dict = {
     titleItalic: "che reinventano",
     titleAfter: " come un team resta in sintonia.",
     body:
-      "Labs è dove spediamo prima le capacità sperimentali — standup asincrono con recap manager-safe, riconoscimenti peer, check-in del carico in un tocco e un feed di memoria aziendale. Niente liste d'attesa, niente upsell, niente paywall enterprise-tier.",
+      "Labs è dove rilasciamo per prime le capacità sperimentali — standup asincrono con recap manager-safe, riconoscimenti peer, check-in del carico in un tocco e un feed della memoria del team. Niente liste d'attesa, niente upsell, niente paywall enterprise-tier.",
   },
 
   changelogPage: {
@@ -548,8 +548,8 @@ export const it: Dict = {
     description:
       "Ogni aggiornamento significativo della piattaforma Pulse HR. Polish del Gantt, pulizia colori, Employee Score, tab Saturation, Command bar — in ordine cronologico inverso.",
     eyebrow: "Changelog",
-    titleBefore: "Cosa è stato",
-    titleItalic: "spedito",
+    titleBefore: "Cosa abbiamo",
+    titleItalic: "rilasciato",
     titleAfter: ".",
     body:
       'Solo aggiornamenti significativi — niente riempitivi tipo "versione 2.38.4 bug fix". Nuove voci arrivano ogni una o due settimane, ognuna con una nota veloce sul perché conta.',
@@ -561,15 +561,15 @@ export const it: Dict = {
     description:
       "Un'email per ogni scopo. GitHub Discussions per tutto ciò che vuoi chiedere in pubblico. Segnalazioni di sicurezza su security@. Niente chatbot funnel, nessun form \"book a demo\" che finisce a un BDR.",
     eyebrow: "Contatti",
-    titleLine1: "Una inbox vera.",
+    titleLine1: "Un'inbox vera.",
     titleItalic: "Persone",
     titleAfter: " vere.",
     body:
       "Niente chatbot funnel, nessun form \"book a call\" che finisce a un BDR a provvigione. Un'email per ogni scopo, e la maggior parte delle conversazioni sul prodotto avviene in pubblico su GitHub. Scegli la corsia giusta.",
     askPublic: "Chiedi in pubblico.",
     whereTitle: "Dove siamo.",
-    whereBody: "HQ a Milano, team remote-first tra CET e PT.",
-    hq: "Milano (HQ)",
+    whereBody: "Team remote-first tra CET e PT.",
+    hq: "Remote-first",
     berlin: "Berlino",
     sf: "San Francisco",
     slaNote:
@@ -594,7 +594,7 @@ export const it: Dict = {
       {
         k: "Stampa & partnership",
         email: "press@pulsehr.it",
-        d: "Giornalisti, analisti, partner di integrazione. Includi un link calendario e saltiamo il ping-pong di email.",
+        d: "Giornalisti, analisti, partner di integrazione. Includi un link al calendario e saltiamo il ping-pong di email.",
       },
     ],
     other: [
@@ -618,7 +618,7 @@ export const it: Dict = {
     pingUs: "Scrivici di",
     privacyTitle: "Informativa privacy",
     privacyDescription:
-      "Come raccogliamo, trattiamo e proteggiamo i dati personali. GDPR-compliant by design con residenza dei dati in UE. Documento completo in via di finalizzazione dal legale.",
+      "Come raccogliamo, trattiamo e proteggiamo i dati personali. GDPR-compliant by design con residenza dei dati in UE. Documento completo in via di finalizzazione a cura del legale.",
     termsTitle: "Termini di servizio",
     termsDescription:
       "Master subscription agreement, acceptable use policy e addendum sul trattamento dati. Il documento completo è in via di finalizzazione e sarà pubblicato a breve.",

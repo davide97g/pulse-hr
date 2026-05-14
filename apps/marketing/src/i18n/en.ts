@@ -39,7 +39,7 @@ export const en = {
   },
 
   footer: {
-    tagline: "Open. Transparent. Built by the people who use it. Shipped from Milan, in public.",
+    tagline: "Open. Transparent. Built in public, by the people who use it.",
     colProduct: "Product",
     colOpenSource: "Open source",
     colResources: "Resources",
@@ -351,7 +351,7 @@ export const en = {
       },
       {
         q: "Is it SOC 2 / GDPR compliant?",
-        a: "Honest answer: we are GDPR-compliant by design — EU data residency (Frankfurt, Dublin, Milan), signed DPA on sign-up, documented sub-processors at pulsehr.it/security. SOC 2 Type II and ISO 27001 are not in hand today; they're on the roadmap as the customer base requires them. If you need an attestation before we have one, the honest path is self-host — you stay in control of the audit boundary. We'd rather tell you that than pretend.",
+        a: "Honest answer: we are GDPR-compliant by design — EU data residency (Frankfurt, Dublin), signed DPA on sign-up, documented sub-processors at pulsehr.it/security. SOC 2 Type II and ISO 27001 are not in hand today; they're on the roadmap as the customer base requires them. If you need an attestation before we have one, the honest path is self-host — you stay in control of the audit boundary. We'd rather tell you that than pretend.",
       },
       {
         q: "Do you have an API?",
@@ -381,10 +381,10 @@ export const en = {
     titleItalic: "Pulse",
     titleAfter: ".",
     subtitle:
-      "Two frontend-fluent developers, building in public from Milan. Agent-driven development is how two of us compete — we don't sell it, we just ship more than our headcount should allow. The product is the main character; we sign our commits.",
+      "Two frontend-fluent developers, building in public. Agent-driven development is how two of us compete — we don't sell it, we just ship more than our headcount should allow. The product is the main character; we sign our commits.",
     items: [
-      { n: "Davide Ghiotto", r: "Maintainer · Milan", bio: "Frontend-fluent, tired of HR software. github.com/davide97g · linkedin.com/in/davide-ghiotto" },
-      { n: "Niccolò Naso", r: "Maintainer · Milan", bio: "Frontend-fluent co-maintainer. github.com/LordNik10 · linkedin.com/in/niccolò-naso-888039178" },
+      { n: "Davide Ghiotto", r: "Maintainer", bio: "Frontend-fluent, tired of HR software. github.com/davide97g · linkedin.com/in/davide-ghiotto" },
+      { n: "Niccolò Naso", r: "Maintainer", bio: "Frontend-fluent co-maintainer. github.com/LordNik10 · linkedin.com/in/niccolò-naso-888039178" },
       { n: "You?", r: "Open to contributors", bio: "The roadmap is shaped by pull requests. If the codebase fixes a pain you live with every week, land a PR — we credit every contributor in the changelog." },
     ],
   },
@@ -559,8 +559,8 @@ export const en = {
       "No chatbot funnels, no \"book a call\" form that routes to a BDR on commission. One email per purpose, and most product conversation happens in public on GitHub. Pick the lane that fits.",
     askPublic: "Ask in public.",
     whereTitle: "Where we are.",
-    whereBody: "HQ in Milan, team remote-first across CET and PT.",
-    hq: "Milan (HQ)",
+    whereBody: "Remote-first team across CET and PT.",
+    hq: "Remote-first",
     berlin: "Berlin",
     sf: "San Francisco",
     slaNote:
