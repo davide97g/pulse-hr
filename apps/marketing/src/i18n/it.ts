@@ -11,7 +11,7 @@ import type { Dict } from "./en";
 
 export const it: Dict = {
   meta: {
-    tagline: "Software per le persone, non per gli organici.",
+    tagline: "Software per le persone, non per i numeri.",
     description:
       "Lo strumento HR che si interessa a come stai, non a quante ore hai loggato. Status log async, crescita, kudos, benessere — niente timesheet, niente code di approvazione, niente paghe. Open source, self-host, costruito da chi lo usa.",
     keywords:
@@ -118,7 +118,7 @@ export const it: Dict = {
     eyebrow: "Open source · per le persone del tuo team",
     titleBefore: "Software per le",
     titleItalic: "persone",
-    titleAfter: ", non per gli organici.",
+    titleAfter: ", non per i numeri.",
     body: [
       "Lo strumento HR che si interessa a come stai, non a quante ore hai loggato. ",
       "Status log async",
@@ -495,7 +495,7 @@ export const it: Dict = {
   cta: {
     titleLine1: "Software per le",
     titleItalic: "persone",
-    titleAfter: ", non per gli organici.",
+    titleAfter: ", non per i numeri.",
     body: "Gratis per sempre in self-host. Gratis per i primi 5 dipendenti su Pulse hosted. Nessuna carta di credito. Nessuna chiamata commerciale per vedere il prodotto. Esporta tutto con un click — sempre.",
     primary: "Prova gratis",
     secondary: "Leggi il sorgente",
@@ -516,7 +516,7 @@ export const it: Dict = {
   },
 
   indexPage: {
-    title: "Pulse HR — software per le persone, non per gli organici",
+    title: "Pulse HR — software per le persone, non per i numeri",
   },
 
   productPage: {
