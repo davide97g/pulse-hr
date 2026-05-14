@@ -41,9 +41,8 @@
     "trailer:v1": "remotion render studio/remotion/index.ts trailer-v1 public/studio/trailer-v1.mp4 --codec=h264 --crf=18",
     "trailer:v2": "remotion render studio/remotion/index.ts trailer-v2 public/studio/trailer-v2.mp4 --codec=h264 --crf=18",
     "trailer:both": "bun run trailer:v1 && bun run trailer:v2",
-    "teaser:v1": "remotion render studio/remotion/index.ts teaser-v1 public/studio/teaser-v1.mp4 --codec=h264 --crf=18",
     "teaser:v2": "remotion render studio/remotion/index.ts teaser-v2 public/studio/teaser-v2.mp4 --codec=h264 --crf=18",
-    "teaser:both": "bun run teaser:v1 && bun run teaser:v2"
+    "render:og": "bun scripts/render-og.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",

@@ -277,7 +277,8 @@ export interface GenerateOptions {
 export function generateEmployees(opts: GenerateOptions): Employee[] {
   const { workspaceName, count, manualEmployees = [], seed = 41 } = opts;
   const rand = makeRand(seed);
-  const domain = `${workspaceName.toLowerCase().replace(/[^a-z0-9]/g, "")}.co` || "acme.co";
+  const slug = workspaceName.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const domain = slug ? `${slug}.co` : "acme.co";
 
   const remaining = Math.max(0, count - manualEmployees.length);
   const targets = targetsFor(remaining);

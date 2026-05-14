@@ -194,15 +194,6 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{ audioSrc: "audio/trailer-v2.mp3" }}
       />
       <Composition
-        id="teaser-v1"
-        component={Teaser}
-        durationInFrames={TEASER_DURATION_FRAMES}
-        fps={FPS}
-        width={1920}
-        height={1080}
-        defaultProps={{ audioSrc: "audio/trailer-v1.mp3" }}
-      />
-      <Composition
         id="teaser-v2"
         component={Teaser}
         durationInFrames={TEASER_DURATION_FRAMES}

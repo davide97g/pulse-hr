@@ -6,7 +6,7 @@ import type { Locale } from "../i18n/locales";
 export const SITE = {
   name: "Pulse HR",
   url: "https://pulsehr.it",
-  // Hero tagline card — generated from docs/brand/logo-explorations/og/og-hero.svg.
+  // Hero tagline card — regenerate via `bun run --filter pulse-hr-marketing render:og`.
   // PNG format (not SVG) because some social crawlers reject SVG og:images.
   ogImage: "/og/og-hero.png",
   twitter: "@pulsehr_it",
