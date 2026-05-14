@@ -1,9 +1,16 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { toast } from "sonner";
 import { AvatarDisplay } from "@pulse-hr/ui/atoms/AvatarDisplay";
 import { EditorialPill } from "@pulse-hr/ui/atoms/EditorialPill";
 import { LevelSegments } from "@pulse-hr/ui/atoms/LevelSegments";
-import { LV_LABEL, pendingRows, type PendingRow } from "@/lib/skills-data";
+import { LV_LABEL, type PendingRow } from "@/lib/skills-data";
+import {
+  approveAllPending,
+  approveCell,
+  pendingRowsFrom,
+  restorePending,
+  useTeamSkills,
+} from "@/lib/team-skills-store";
 
 const WAIT_LABELS = [
   "2 days ago",
@@ -16,23 +23,25 @@ const WAIT_LABELS = [
 ];
 
 export function ManagerPending({ onAdjust }: { onAdjust?: (row: PendingRow) => void }) {
-  const initial = useMemo(pendingRows, []);
-  const [rows, setRows] = useState<PendingRow[]>(initial);
+  const { grid, proposed } = useTeamSkills();
+  const rows = useMemo(() => pendingRowsFrom(grid, proposed), [grid, proposed]);
 
   const approve = (row: PendingRow) => {
-    const prev = rows;
-    setRows((cur) => cur.filter((r) => r.key !== row.key));
+    approveCell(row.s.id, row.e.id);
     toast.success(`${row.s.name} approved for ${row.e.name}`, {
-      action: { label: "Undo", onClick: () => setRows(prev) },
+      action: {
+        label: "Undo",
+        onClick: () => restorePending([row.key as `${string}:${string}`]),
+      },
     });
   };
 
   const approveAll = () => {
     if (rows.length === 0) return;
-    const prev = rows;
-    setRows([]);
-    toast.success(`Approved ${prev.length} pending`, {
-      action: { label: "Undo", onClick: () => setRows(prev) },
+    const previous = approveAllPending();
+    if (previous.length === 0) return;
+    toast.success(`Approved ${previous.length} pending`, {
+      action: { label: "Undo", onClick: () => restorePending(previous) },
     });
   };
 

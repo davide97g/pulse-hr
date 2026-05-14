@@ -1,7 +1,17 @@
 import { useMemo } from "react";
+import { toast } from "sonner";
 import { AvatarDisplay } from "@pulse-hr/ui/atoms/AvatarDisplay";
 import { EditorialPill } from "@pulse-hr/ui/atoms/EditorialPill";
-import { LV_LABEL, perSkillAggregates, type PerSkillAggregate } from "@/lib/skills-data";
+import {
+  LV_INDEX,
+  LV_LABEL,
+  type PendingRow,
+  type PerSkillAggregate,
+} from "@/lib/skills-data";
+import {
+  perSkillAggregatesFrom,
+  useTeamSkills,
+} from "@/lib/team-skills-store";
 
 function StrengthsCard({ rows }: { rows: PerSkillAggregate[] }) {
   return (
@@ -137,7 +147,13 @@ function StrengthsCard({ rows }: { rows: PerSkillAggregate[] }) {
   );
 }
 
-function GapsCard({ rows }: { rows: PerSkillAggregate[] }) {
+function GapsCard({
+  rows,
+  onSuggest,
+}: {
+  rows: PerSkillAggregate[];
+  onSuggest: (skill: PerSkillAggregate) => void;
+}) {
   return (
     <section
       style={{
@@ -228,7 +244,7 @@ function GapsCard({ rows }: { rows: PerSkillAggregate[] }) {
             >
               {s.practPlus.length === 0 ? "EMPTY" : "THIN"}
             </span>
-            <EditorialPill kind="ghost" size="sm">
+            <EditorialPill kind="ghost" size="sm" onClick={() => onSuggest(s)}>
               Suggest growth →
             </EditorialPill>
           </div>
@@ -238,9 +254,14 @@ function GapsCard({ rows }: { rows: PerSkillAggregate[] }) {
   );
 }
 
-export function ManagerGaps() {
+export function ManagerGaps({
+  onSuggestGrowth,
+}: {
+  onSuggestGrowth?: (row: PendingRow) => void;
+}) {
+  const { grid, proposed } = useTeamSkills();
   const { strengths, gaps } = useMemo(() => {
-    const per = perSkillAggregates();
+    const per = perSkillAggregatesFrom(grid, proposed);
     return {
       strengths: per
         .filter((s) => s.expertPlus.length >= 3)
@@ -249,7 +270,25 @@ export function ManagerGaps() {
         .filter((s) => s.practPlus.length <= 1)
         .sort((a, b) => a.practPlus.length - b.practPlus.length),
     };
-  }, []);
+  }, [grid, proposed]);
+
+  const handleSuggest = (s: PerSkillAggregate) => {
+    if (!onSuggestGrowth) return;
+    /* Pick the lowest-level existing holder as the upgrade target. If no one
+       currently has the skill, surface a hint instead of opening an empty
+       panel — adjusting a non-existent cell would be a no-op. */
+    if (s.people.length === 0) {
+      toast(`No one tracks ${s.name} yet — add it from a teammate's profile first.`);
+      return;
+    }
+    const target = [...s.people].sort((a, b) => LV_INDEX[a.lvl] - LV_INDEX[b.lvl])[0];
+    onSuggestGrowth({
+      s: { id: s.id, name: s.name, bucket: s.bucket },
+      e: target.e,
+      lvl: target.lvl,
+      key: `${s.id}:${target.e.id}`,
+    });
+  };
 
   return (
     <div
@@ -264,7 +303,7 @@ export function ManagerGaps() {
       className="max-md:!grid-cols-1"
     >
       <StrengthsCard rows={strengths} />
-      <GapsCard rows={gaps} />
+      <GapsCard rows={gaps} onSuggest={handleSuggest} />
     </div>
   );
 }

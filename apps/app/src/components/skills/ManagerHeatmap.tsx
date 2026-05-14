@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { Link } from "@tanstack/react-router";
 import { AvatarDisplay } from "@pulse-hr/ui/atoms/AvatarDisplay";
 import { EditorialPill } from "@pulse-hr/ui/atoms/EditorialPill";
 import { LevelSegments } from "@pulse-hr/ui/atoms/LevelSegments";
@@ -8,18 +9,26 @@ import {
   HoverCardTrigger,
 } from "@pulse-hr/ui/primitives/hover-card";
 import {
-  cellLevel,
-  countByLevel,
-  isProposed,
   LV_LABEL,
   LV_PCT,
-  MY_SKILLS,
+  MY_ID,
   SKILL_CATALOG,
   SKILL_TEAM,
+  employee as resolveEmployee,
+  skill as resolveSkill,
+  type LevelDistribution,
+  type PendingRow,
   type SkillLevel,
   type SkillTeamMember,
   type TeamMetrics,
 } from "@/lib/skills-data";
+import {
+  cellLevelFrom,
+  countByLevelFrom,
+  isProposedFrom,
+  useTeamSkills,
+} from "@/lib/team-skills-store";
+import { useMySkills } from "@/lib/skills-store";
 import { ValidationTag } from "./SkillsShared";
 
 const NAME_W = 220;
@@ -89,30 +98,43 @@ function ManagerKpis({ k }: { k: TeamMetrics }) {
   );
 }
 
-function teamScoredOrdered() {
-  return SKILL_TEAM.map((e) => {
-    const t = countByLevel(e.id);
-    const pts =
-      t.dist.master * 4 +
-      t.dist.expert * 3 +
-      t.dist.practitioner * 2 +
-      t.dist.novice * 1;
-    return { ...e, pts, totals: t };
-  }).sort((a, b) => b.pts - a.pts);
+interface ScoredMember extends SkillTeamMember {
+  pts: number;
+  totals: LevelDistribution;
 }
 
-function noteFor(skillId: string, empId: string): string | undefined {
-  if (empId !== "dg") return undefined;
-  return MY_SKILLS.find((r) => r.sk === skillId)?.note;
-}
+export function ManagerHeatmap({
+  metrics,
+  onAdjust,
+}: {
+  metrics: TeamMetrics;
+  onAdjust?: (row: PendingRow) => void;
+}) {
+  const { grid, proposed } = useTeamSkills();
+  const mySkills = useMySkills();
 
-export function ManagerHeatmap({ metrics }: { metrics: TeamMetrics }) {
-  const team = useMemo(teamScoredOrdered, []);
+  const team: ScoredMember[] = useMemo(() => {
+    return SKILL_TEAM.map((e) => {
+      const t = countByLevelFrom(e.id, grid, proposed, mySkills);
+      const pts =
+        t.dist.master * 4 +
+        t.dist.expert * 3 +
+        t.dist.practitioner * 2 +
+        t.dist.novice * 1;
+      return { ...e, pts, totals: t };
+    }).sort((a, b) => b.pts - a.pts);
+  }, [grid, proposed, mySkills]);
+
   const orderedSkills = useMemo(() => {
     const hard = SKILL_CATALOG.filter((s) => s.bucket === "hard");
     const soft = SKILL_CATALOG.filter((s) => s.bucket === "soft");
     return [...hard, ...soft];
   }, []);
+
+  const noteFor = (skillId: string, empId: string): string | undefined => {
+    if (empId !== MY_ID) return undefined;
+    return mySkills.find((r) => r.sk === skillId)?.note;
+  };
 
   const totalW = NAME_W + orderedSkills.length * (CELL + GAP) + 16;
 
@@ -259,6 +281,10 @@ export function ManagerHeatmap({ metrics }: { metrics: TeamMetrics }) {
                 e={e}
                 isFirst={ri === 0}
                 orderedSkills={orderedSkills}
+                cellLevel={(sId, eId) => cellLevelFrom(grid, sId, eId)}
+                cellProposed={(sId, eId) => isProposedFrom(proposed, sId, eId)}
+                noteFor={noteFor}
+                onAdjust={onAdjust}
               />
             ))}
           </div>
@@ -272,10 +298,18 @@ function HeatmapRow({
   e,
   isFirst,
   orderedSkills,
+  cellLevel,
+  cellProposed,
+  noteFor,
+  onAdjust,
 }: {
-  e: SkillTeamMember & { pts: number; totals: ReturnType<typeof countByLevel> };
+  e: ScoredMember;
   isFirst: boolean;
   orderedSkills: typeof SKILL_CATALOG;
+  cellLevel: (skillId: string, empId: string) => SkillLevel | undefined;
+  cellProposed: (skillId: string, empId: string) => boolean;
+  noteFor: (skillId: string, empId: string) => string | undefined;
+  onAdjust?: (row: PendingRow) => void;
 }) {
   return (
     <>
@@ -299,7 +333,7 @@ function HeatmapRow({
           <div
             style={{
               fontFamily: '"Fraunces", ui-serif, serif',
-              fontStyle: e.id === "dg" ? "italic" : "normal",
+              fontStyle: e.id === MY_ID ? "italic" : "normal",
               fontSize: 17,
               letterSpacing: "-0.015em",
               color: "var(--fg)",
@@ -322,7 +356,7 @@ function HeatmapRow({
 
       {orderedSkills.map((s, ci) => {
         const lvl = cellLevel(s.id, e.id);
-        const proposed = !!lvl && isProposed(s.id, e.id);
+        const proposed = !!lvl && cellProposed(s.id, e.id);
         const firstSoft =
           s.bucket === "soft" && orderedSkills[ci - 1]?.bucket === "hard";
         const cell = (
@@ -351,6 +385,13 @@ function HeatmapRow({
           return <div key={`c-${s.id}-${e.id}`}>{cell}</div>;
         }
         const note = noteFor(s.id, e.id);
+        const handleAdjust = () => {
+          if (!onAdjust) return;
+          const sCat = resolveSkill(s.id);
+          const eMember = resolveEmployee(e.id);
+          if (!sCat || !eMember) return;
+          onAdjust({ s: sCat, e: eMember, lvl, key: `${s.id}:${e.id}` });
+        };
         return (
           <HoverCard key={`c-${s.id}-${e.id}`} openDelay={120} closeDelay={60}>
             <HoverCardTrigger asChild>{cell}</HoverCardTrigger>
@@ -420,10 +461,16 @@ function HeatmapRow({
                   )}
                 </div>
                 <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
-                  <EditorialPill kind="ghost" size="sm">
-                    View profile
-                  </EditorialPill>
-                  <EditorialPill kind="spark" size="sm">
+                  <Link
+                    to="/people/$employeeId"
+                    params={{ employeeId: e.id }}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <EditorialPill kind="ghost" size="sm">
+                      View profile
+                    </EditorialPill>
+                  </Link>
+                  <EditorialPill kind="spark" size="sm" onClick={handleAdjust}>
                     Adjust →
                   </EditorialPill>
                 </div>
@@ -435,4 +482,3 @@ function HeatmapRow({
     </>
   );
 }
-

@@ -1,5 +1,16 @@
 import { useMemo, useState } from "react";
-import { teamMetrics, type PendingRow } from "@/lib/skills-data";
+import { toast } from "sonner";
+import {
+  findCatalogByName,
+  type SkillDraft,
+} from "@/lib/skills-store";
+import { type PendingRow } from "@/lib/skills-data";
+import {
+  removeCell,
+  setCell,
+  teamMetricsFrom,
+  useTeamSkills,
+} from "@/lib/team-skills-store";
 import {
   SkillsEditorialHero,
   SkillsTabsStrip,
@@ -14,7 +25,8 @@ import { SkillsAddPanel } from "./SkillsAddPanel";
 type ManagerTab = "heatmap" | "gaps" | "pending";
 
 export function SkillsManagerView(_props: { onViewAsMe?: () => void } = {}) {
-  const metrics = useMemo(teamMetrics, []);
+  const { grid, proposed } = useTeamSkills();
+  const metrics = useMemo(() => teamMetricsFrom(grid, proposed), [grid, proposed]);
   const [tab, setTab] = useState<ManagerTab>("heatmap");
   const [panel, setPanel] = useState<
     | { mode: "closed" }
@@ -29,6 +41,25 @@ export function SkillsManagerView(_props: { onViewAsMe?: () => void } = {}) {
 
   const onAdjust = (row: PendingRow) => {
     setPanel({ mode: "edit", initial: row });
+  };
+
+  const closePanel = () => setPanel({ mode: "closed" });
+
+  const handleSubmit = (draft: SkillDraft) => {
+    if (panel.mode !== "edit") return;
+    const empId = panel.initial.e.id;
+    const skillName = findCatalogByName(panel.initial.s.name)?.name ?? panel.initial.s.name;
+    setCell(draft.sk, empId, draft.lvl, true);
+    toast.success(`${skillName} validated for ${panel.initial.e.name}`);
+    closePanel();
+  };
+
+  const handleRemove = () => {
+    if (panel.mode !== "edit") return;
+    const { s, e } = panel.initial;
+    removeCell(s.id, e.id);
+    toast(`${s.name} removed from ${e.name}`);
+    closePanel();
   };
 
   return (
@@ -63,8 +94,8 @@ export function SkillsManagerView(_props: { onViewAsMe?: () => void } = {}) {
           overflow: "hidden",
         }}
       >
-        {tab === "heatmap" && <ManagerHeatmap metrics={metrics} />}
-        {tab === "gaps" && <ManagerGaps />}
+        {tab === "heatmap" && <ManagerHeatmap metrics={metrics} onAdjust={onAdjust} />}
+        {tab === "gaps" && <ManagerGaps onSuggestGrowth={onAdjust} />}
         {tab === "pending" && <ManagerPending onAdjust={onAdjust} />}
       </div>
 
@@ -81,7 +112,9 @@ export function SkillsManagerView(_props: { onViewAsMe?: () => void } = {}) {
               }
             : undefined
         }
-        onClose={() => setPanel({ mode: "closed" })}
+        onClose={closePanel}
+        onSubmit={handleSubmit}
+        onRemove={handleRemove}
       />
     </div>
   );
