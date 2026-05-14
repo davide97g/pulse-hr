@@ -1,10 +1,10 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
-import { Briefcase } from "lucide-astro";
+import { Briefcase, AlertCircle } from "lucide-astro";
 
-const title = "Clients & Projects — Pulse HR docs";
+const title = "Clients & Projects — parked (people-first refocus 2026-05)";
 const description =
-  "Managing the work we sell and who delivers it. Client → Project → Activity hierarchy, team allocations, activity boards, Gantt charts, and external work-item links.";
+  "Reference doc for the parked Clients & Projects surface. Pulse HR refocused on people-first scope in May 2026 and parked all business-ops surfaces (time tracking, projects, clients, etc.). The page below describes the parked feature for historical reference only.";
 const path = "/docs/clients-projects";
 
 const SECTIONS = [
@@ -43,9 +43,22 @@ const SECTIONS = [
     </span>
     <div>
       <h1 class="font-display text-4xl md:text-5xl tracking-tight m-0">Clients &amp; Projects</h1>
-      <p class="text-sm text-white/50 mt-1 m-0">Managing the work we sell and who delivers it.</p>
+      <p class="text-sm text-white/50 mt-1 m-0">Parked surface · historical reference only.</p>
     </div>
   </div>
+
+  <aside class="rounded-2xl border border-[#ffbf4a]/40 bg-[#ffbf4a]/[0.06] p-5 mb-6 flex items-start gap-3">
+    <AlertCircle class="h-5 w-5 text-[#ffbf4a] shrink-0 mt-0.5" />
+    <div class="text-[14px] leading-relaxed text-white/80">
+      <strong class="text-[#ffbf4a]">Parked feature.</strong>
+      In May 2026 Pulse HR refocused on a people-first scope — Status Log,
+      Growth, Kudos, Moments, Workload check-in, Leave journal, Pulse,
+      People Insights. Business-ops surfaces (time tracking, clients,
+      projects, recruiting, documents, offices) are off by default in the
+      workspace modules. The content below describes how this surface
+      worked while it was active.
+    </div>
+  </aside>
 
   <div class="space-y-4">
     {SECTIONS.map((s) => (

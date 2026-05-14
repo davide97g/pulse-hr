@@ -1,21 +1,21 @@
 <!--
 Pulse HR — README
-SEO targets: open source HR, open source HRIS, self-hosted HR, modular HR,
-HR software, HR API, payroll, time tracking, commessa, keyboard-first HR,
-PWA HR, public roadmap, FSL-1.1-MIT.
+SEO targets: employee engagement, async standup, kudos, peer recognition,
+wellbeing, open source HR, self-hosted, status log, growth, employee
+satisfaction, people-first HR, FSL-1.1-MIT.
 -->
 
 <div align="center">
 
 <a href="https://pulsehr.it">
-  <img src="apps/marketing/public/og/og-hero.png" alt="Pulse HR — open-source HR, payroll and time tracking in one workspace" width="800" />
+  <img src="apps/marketing/public/og/og-hero.png" alt="Pulse HR — software for people, not headcount" width="800" />
 </a>
 
 # Pulse HR
 
-### Open-source HR, payroll and time tracking in one workspace.
+### Software for people, not headcount.
 
-**HR software for people who hate HR software.** Built in the open. Shaped by the people who use it. Money, People and Work as three composable modules — adopt one, skip the others, swap later. Self-host on your own infra, or run hosted. No sales call to see the product.
+**The HR tool that cares how you're doing, not how many hours you logged.** Async status log, growth, kudos, wellbeing — built around the moments that matter to a team. No timesheets, no approval queues, no payroll. Open-source on GitHub, self-host or run hosted. No sales call to see the product.
 
 [**🚀 Live app**](https://app.pulsehr.it) · [**🌐 Marketing**](https://pulsehr.it) · [**🗺️ Roadmap**](https://pulsehr.it/roadmap) · [**📜 Changelog**](https://pulsehr.it/changelog) · [**📊 Status**](https://status.pulsehr.it) · [**💬 Feedback**](https://feedback.pulsehr.it)
 
@@ -33,42 +33,39 @@ PWA HR, public roadmap, FSL-1.1-MIT.
 
 ## Why Pulse HR
 
-Most HR software treats your team as rows in a CRM. Pulse treats them as people, your projects as work, and your money as money — and ships the whole thing **in public** so you can read every line of code that touches a payslip.
+Most HR software counts people. Pulse sees them. The product covers **the people half of HR** — status, growth, kudos, wellbeing — and stays deliberately out of the business half (payroll, time tracking, project allocation, recruiting) so it does one thing well instead of ten things adequately.
 
 - 🔓 **Truly open source** — full source on GitHub under [FSL-1.1-MIT](./LICENSE). Read it, run it, fork it. Converts to plain MIT after two years.
-- 🧩 **Modular by design** — **Money**, **People** and **Work** are three independent products that share one workspace, one keyboard, one API. Adopt one, skip the others.
+- 🤝 **People-first scope** — eight surfaces, all about a person, not a process. The honest list of what we *don't* ship is on [`/roadmap`](https://pulsehr.it/roadmap).
+- 🔒 **Manager-safe sentiment** — raw chat and individual workload check-ins stay with the employee. Managers see aggregated trends only, and the code that enforces the boundary is in this repo.
 - ⌨️ **Keyboard-first** — `⌘K` fuzzy search, `⌘J` command bar, 40+ shortcuts. Every workflow reachable without a mouse.
-- 🧪 **Labs that ship** — anonymous team Pulse, commessa Forecast, peer Kudos, deep-work Focus. Real features, real users, in the open.
-- 🪜 **Project-first time tracking** — `commessa` (project code) is a first-class concept across timesheets, forecasting, focus and saturation reporting.
-- 📡 **API + webhooks on every event** — REST endpoints + webhook fan-out for proposals, comments, votes, time entries, payroll runs.
+- 🧪 **Labs that ship** — Status Log, Workload check-in, Kudos, Moments. Real features, real users, in the open.
+- 📡 **API + webhooks** — REST endpoints + webhook fan-out for the people events (kudos, status log, workload check-in, leave entries). Included on every tier.
 - 📱 **PWA-ready** — installs on macOS, Windows, iOS, Android. Drafts and recent views work offline, sync on reconnect.
 - 🛠️ **Built on Bun** — one runtime, one package manager, no `node_modules` of `node_modules`. `bun install && bun run dev` and you're in.
 
-> **Status — April 2026:** Pulse is in public beta. The product surface (`apps/app`) is a high-fidelity mock that runs in your browser; the **feedback board, voting power, comments and proposals** are wired to a real Hono + Postgres backend (`apps/api`) so the bits we ship next are shaped by the people using it. See the [latest changelog entry](./CHANGELOG.md) for what just landed.
+> **Status — May 2026:** Pulse just refocused on a people-first scope. The product surface (`apps/app`) is a high-fidelity mock that runs in your browser; the **feedback board, voting power, comments and proposals** are wired to a real Hono + Postgres backend (`apps/api`). See [`CHANGELOG.md`](./CHANGELOG.md) for the latest and [`wiki/AGENTS.md`](./wiki/AGENTS.md) for the active vs parked split.
 
 ---
 
 ## What's inside
 
-### 🟣 People
+Eight active surfaces, all about how a person is doing:
 
-Employees, roles, leave, recruiting pipeline, onboarding workflows, docs, announcements, kudos.
-
-### 🟢 Work
-
-Commesse (projects), timesheets, focus sessions, deep-work timer with auto-decline, forecast & burn projection with scenario sliders, saturation reporting (utilisation trend, project margins, employee value).
-
-### 🧪 Labs
-
-Experimental surfaces with the [Labs visual language](apps/app/src/styles.css) (iridescent border, pulse-dot, NEW badge):
-
-| Lab | What it does |
+| Surface | What it is |
 | --- | --- |
-| **Pulse** | Anonymous vibe-check + heatmap |
-| **Forecast** | Commessa burn projection with scenario sliders |
-| **Kudos** | Peer coins, leaderboard, confetti |
-| **Focus** | Deep-work timer with auto-decline |
-| **Voting Power** | Earn, spend and refill power on the [feedback board](https://feedback.pulsehr.it) — see [v0.7.0](./CHANGELOG.md#070--2026-04-25--voting-power-with-a-real-economy) |
+| **Status Log** | Async morning standup in writing. Three lines, public team feed, manager-safe sentiment recap. |
+| **Growth** | Achievements, challenges, skill paths and kudos coins on one canvas. Continuous, not yearly. |
+| **Kudos** | Peer recognition coins with reasons attached. Confetti on send. |
+| **Moments** | Birthdays, work anniversaries, kudos ticker — one continuous feed. |
+| **Workload check-in** | One tap a week — light / balanced / heavy / overloaded. 8-week sparkline. Manager sees the trend only. |
+| **Leave journal** | Personal record of days off taken. No approvals, no pending state. |
+| **Pulse** | Anonymous weekly vibe heatmap, embedded inside Status Log. |
+| **People Insights** | Engagement, sentiment, kudos volume, growth trend over time. No business KPIs. |
+
+### What we deliberately don't ship
+
+No time tracking. No timesheet approval. No project codes. No client billing. No recruiting kanban. No onboarding workflow. No e-signature. No payroll. No turnover %. Those features make sense in some HR tool — just not this one. Pulse runs alongside the tools you already have for the business half of HR.
 
 ---
 
@@ -159,7 +156,7 @@ flowchart LR
   api  -. verify .- clerk
 ```
 
-- **`apps/app`** — main product surface, mostly mocked client-side. Routes are file-based (`src/routes/*.tsx`) with TanStack Router auto code-splitting; theme system supports 7 personas (`light`, `dark`, `employee`, `hr`, `admin`, `manager`, `finance`).
+- **`apps/app`** — main product surface, mostly mocked client-side. Routes are file-based (`src/routes/*.tsx`) with TanStack Router auto code-splitting; ships with `light` and `dark` themes. Sidebar is regrouped around Dashboard / You / Wellbeing / People / Workspace (May 2026 people-first refocus); parked business-ops surfaces still resolve by URL but ship off by default in the workspace modules.
 - **`apps/api`** — Bun + [Hono](https://hono.dev) over [Drizzle ORM](https://orm.drizzle.team) on Neon Postgres. All endpoints Clerk-authenticated. Owns comments, proposals, votes, voting power, user profiles, questionnaires, notifications, changelog.
 - **`apps/feedback`** — the place real users vote on what we build next. Voting power is a real economy: 10 baseline, 1 power per vote, weekly refill, +10 grants for questionnaires and items reaching `planned`. Backend in `apps/api/src/lib/voting-power.ts`.
 - **`apps/marketing`** — Astro static site, SEO-audited (sitemap, canonicals, JSON-LD `Organization` + `SoftwareApplication` + `FAQPage`, OG/Twitter cards, `llms.txt`). Optimised for AI crawlers and humans alike.
@@ -182,9 +179,11 @@ flowchart LR
 
 ---
 
-## Project-first by design (the `commessa`)
+## People-first scope (and what changed)
 
-The Italian word **commessa** (project code) is a first-class entity here, not an afterthought tacked onto a generic "project" table. It pivots Time, Forecast, Focus, Saturation reporting and Payroll allocation. If you're tracking work against client engagements, this is built for you.
+Pulse HR went through a deliberate scope narrowing in **May 2026**: the surfaces about a person (Status Log, Growth, Kudos, Moments, Workload, Leave, Pulse, People Insights) stayed active and got polished; the surfaces about a business process (Time Tracking, Projects, Activities, Clients, Recruiting, Documents, Offices, Onboarding workflows, Marketplace, Developers, Calendar, Announcements) were **parked** — routes still resolve, but the modules ship off by default and the wiki marks the pages with `status: parked`.
+
+Read [`wiki/AGENTS.md#product-focus-2026-05-refocus`](./wiki/AGENTS.md) for the active vs parked split. Read [`wiki/concepts/mission.md`](./wiki/concepts/mission.md) and [`wiki/concepts/vision.md`](./wiki/concepts/vision.md) for the why.
 
 ---
 

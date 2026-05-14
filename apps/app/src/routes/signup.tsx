@@ -384,9 +384,9 @@ function SignupSide({ stage }: { stage: Stage }) {
         ))}
       </div>
       <h2 className="font-display text-4xl leading-tight max-w-md">
-        Your workspace,{" "}
+        Status log, kudos, growth —{" "}
         <em className="italic" style={{ color: "var(--spark)" }}>
-          live in 60 seconds
+          your workspace in 60 seconds
         </em>
         .
       </h2>

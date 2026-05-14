@@ -37,9 +37,9 @@ const SIZE_OPTIONS: Array<{
   label: string;
   blurb: string;
 }> = [
-  { id: "small", label: "Startup", blurb: "10 people · early team finding fit." },
-  { id: "medium", label: "Scale-up", blurb: "25 people · growing across functions." },
-  { id: "large", label: "Mid-market", blurb: "100 people · multiple departments." },
+  { id: "small", label: "Small team", blurb: "10 people · finding each other's rhythm." },
+  { id: "medium", label: "Growing team", blurb: "25 people · learning to stay in sync." },
+  { id: "large", label: "Bigger team", blurb: "100 people · keeping the human signal alive." },
 ];
 
 export function WelcomeEditorial() {

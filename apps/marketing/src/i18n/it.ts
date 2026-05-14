@@ -11,11 +11,11 @@ import type { Dict } from "./en";
 
 export const it: Dict = {
   meta: {
-    tagline: "Software HR per chi odia il software HR.",
+    tagline: "Software per le persone, non per gli organici.",
     description:
-      "People ops open source per team moderni. Costruito in pubblico, dalle persone che lo usano. Money, People e Work come tre moduli componibili. Self-host sulla tua infra o hosted — niente chiamata commerciale per vedere il prodotto.",
+      "Lo strumento HR che si interessa a come stai, non a quante ore hai loggato. Status log async, crescita, kudos, benessere — niente timesheet, niente code di approvazione, niente paghe. Open source, self-host, costruito da chi lo usa.",
     keywords:
-      "HR open source, HRIS, HR self-hosted, HR modulare, API HR, webhook, commessa, keyboard-first, PWA, FSL, roadmap pubblica",
+      "engagement dipendenti, standup async, kudos, riconoscimento, benessere, open source, self-hosted, status log, crescita, soddisfazione, HR people-first",
   },
 
   a11y: {
@@ -115,25 +115,25 @@ export const it: Dict = {
 
   hero: {
     badge: "Open source · FSL-1.1-MIT · beta pubblica · costruito in pubblico",
-    eyebrow: "People ops open source per team moderni",
-    titleBefore: "Software HR per chi",
-    titleItalic: "odia",
-    titleAfter: " il software HR",
+    eyebrow: "Open source · per le persone del tuo team",
+    titleBefore: "Software per le",
+    titleItalic: "persone",
+    titleAfter: ", non per gli organici.",
     body: [
-      "Costruito in pubblico. Plasmato dalle persone che lo usano. ",
-      "Money",
+      "Lo strumento HR che si interessa a come stai, non a quante ore hai loggato. ",
+      "Status log async",
       ", ",
-      "People",
+      "crescita",
       " e ",
-      "Work",
-      " — tre moduli indipendenti che condividono un workspace, una tastiera, un'API. Sorgente su GitHub. Self-host sulla tua infra, o hosted — niente chiamata commerciale per vedere il prodotto, nessun export proprietario, nessun lock-in.",
+      "riconoscimento",
+      " — costruiti attorno ai momenti che contano per un team. Niente timesheet, niente code di approvazione, niente paghe. Open source su GitHub, self-host o hosted — niente chiamata commerciale per vedere il prodotto.",
     ],
     ctaPrimary: "Prova gratis — i tuoi dati, la tua infra",
     ctaGithub: "Leggi il sorgente",
     ctaTour: "Guarda l'app",
-    chip1: "Money · People · Work — adotta ciò che serve",
-    chip2: "Roadmap pubblica · changelog pubblico · prezzi pubblici",
-    chip3: "Self-host su Docker / Helm / Terraform",
+    chip1: "Niente timesheet · Niente code di approvazione",
+    chip2: "Standup async · Pulse continuo",
+    chip3: "Self-host o hosted — scegli tu",
     newThisQuarter: "Novità di questo trimestre",
   },
 
@@ -158,14 +158,14 @@ export const it: Dict = {
   whyPulse: {
     eyebrow: "Perché Pulse",
     title: {
-      before: "Nessun altro vendor HR spedisce",
-      italic: "apertamente",
-      after: " ",
-      end: ".",
+      before: "Gli altri tool HR ti",
+      italic: "contano",
+      after: ". Noi ti ",
+      end: "vediamo.",
     },
     subtitle: {
       before:
-        "Rippling è chiuso. Deel è solo per contractor. BambooHR non ha un'API degna di questo nome. Pulse è l'unica piattaforma HR dove il sorgente, la roadmap, il changelog, gli errori e i prezzi sono tutti pubblici — ",
+        "Lattice lega tutto agli OKR. 15Five gira attorno ai moduli 1:1. Officevibe è un negozio di survey. Pulse è l'unico tool people-first dove il sorgente, la roadmap, il changelog e i prezzi sono tutti pubblici — ",
       link: "vedi il confronto onesto",
       after: ".",
     },
@@ -188,8 +188,8 @@ export const it: Dict = {
       },
       {
         k: "Costruito da chi lo usa",
-        p: "La roadmap è plasmata dalle pull request, non dai product manager. Money, People e Work sono tre moduli indipendenti — adotta uno, salta gli altri, sostituiscili quando vuoi. Ogni release esce perché serviva davvero a qualcuno.",
-        cta: "Moduli · PR · feedback board",
+        p: "La roadmap è plasmata dalle pull request, non dai product manager. Pulse copre la metà 'persone' dell'HR — status, crescita, kudos, benessere — e sta deliberatamente fuori dall'altra metà. I maintainer lo usano su se stessi ogni giorno; ogni release esce perché serviva davvero a qualcuno.",
+        cta: "Superfici · PR · feedback board",
       },
     ],
   },
@@ -220,50 +220,50 @@ export const it: Dict = {
   },
 
   features: {
-    eyebrow: "Tutto in un posto solo",
-    title: "Otto prodotti che sembrano uno.",
+    eyebrow: "Cosa c'è dentro",
+    title: "Otto superfici. Una sensazione: essere visti.",
     subtitle:
-      "Ogni modulo è abbastanza profondo da sostituire uno strumento dedicato, ma tutti condividono un profilo, una ricerca, un audit log. Smetterai di cambiare tab — promesso.",
+      "Pulse è stretto di proposito. Ogni superficie parla di come sta una persona — cosa fa, cosa celebra, dove è tirata. Paghe, timesheet e allocazione dei progetti vivono negli strumenti costruiti per loro. Lì non competiamo.",
     items: [
       {
-        icon: "Clock",
-        title: "Presenze & rilevazione ore",
-        body: "Timbra da ovunque. Traccia le ore sulle commesse (codici progetto, nel modo in cui finance li vede), non solo sull'orologio. Inserimento manuale, import, approvazioni, anomalie di straordinario — tutto in un'unica superficie.",
-      },
-      {
-        icon: "Users",
-        title: "People operations",
-        body: "Un profilo per ogni collega. Organigramma, documenti, firme elettroniche, offboarding — niente fogli di calcolo, niente NDA persi.",
-      },
-      {
-        icon: "Briefcase",
-        title: "Recruiting & onboarding",
-        body: "Pipeline kanban per i candidati, workflow di onboarding automatici nel momento in cui qualcuno firma.",
-      },
-      {
-        icon: "BarChart3",
-        title: "Report che tutti leggono",
-        body: "Headcount, turnover, cost per hire, assenteismo — export in PDF/CSV o invio al BI con un click.",
-      },
-      {
-        icon: "Plug",
-        title: "Integrazioni & API",
-        body: "Slack, Google, QuickBooks, Okta, Stripe. E dove non arriviamo noi, arrivano la nostra API e i webhook.",
-      },
-      {
-        icon: "Gauge",
-        title: "Saturazione & margini",
-        body: "Utilizzo aziendale, bench settimanale, margine blended, progetti a rischio. Una lettura live se l'azienda è sovra- o sottovenduta.",
-      },
-      {
-        icon: "Sparkles",
-        title: "Command bar (⌘J)",
-        body: "Scrivi quello che vuoi — 'registra 4h su NOV-07', 'approva la spesa di Aisha', 'prenota ferie venerdì prossimo'. Un parser di intent locale traduce frasi naturali in azioni eseguibili. Nessuna chiamata LLM, nessun dato che esce dal tuo tenant.",
+        icon: "MessageSquare",
+        title: "Status Log",
+        body: "Standup asincrono per iscritto. Tre righe a testa, feed di team pubblico, recap manager-safe del sentiment — la chat raw resta col dipendente. Niente meeting, niente AI, niente thread di chat.",
       },
       {
         icon: "Trophy",
-        title: "Crescita & riconoscimenti",
-        body: "XP, kudos coin, classifiche, podi settimanali. Dati di engagement che HR e manager leggono davvero, non un gadget feel-good.",
+        title: "Crescita",
+        body: "Obiettivi, sfide, percorsi di skill e kudos in un'unica tela. Segnale continuo, non review annuali. Lo score nasce da cosa fanno le persone, non da un manager che riempie un form.",
+      },
+      {
+        icon: "Gift",
+        title: "Kudos",
+        body: "Riconoscimento peer-to-peer con motivazione. Coin tra colleghi, coriandoli all'invio, classifiche che si resettano settimana, mese e anno. Vive dentro Growth.",
+      },
+      {
+        icon: "Sparkles",
+        title: "Moments",
+        body: "Compleanni, anniversari e ticker dei kudos in un feed continuo. La memoria aziendale resa schermo.",
+      },
+      {
+        icon: "Gauge",
+        title: "Check-in del carico",
+        body: "Un tocco ogni venerdì — leggero / bilanciato / pesante / sovraccarico. Sparkline a 8 settimane. Il tuo manager vede il trend, non le risposte singole. Ore e allocazione vivono nell'altro strumento.",
+      },
+      {
+        icon: "Calendar",
+        title: "Diario di riposo",
+        body: "Registro personale dei giorni che hai preso. Nessuna approvazione, nessuno stato pending — lo segni, è segnato. Il saldo lo vedi tu, per la tua memoria.",
+      },
+      {
+        icon: "Heart",
+        title: "Pulse",
+        body: "Heatmap settimanale anonima del vibe. Si mostra solo se rispondono almeno tre persone. Dentro Status Log, così resta parte del discorso, non un sondaggio temuto.",
+      },
+      {
+        icon: "BarChart3",
+        title: "People Insights",
+        body: "Engagement, sentiment, volume di kudos, trend di crescita, vibe del Pulse nel tempo. Report su come stanno le persone — non sul cost per hire o sul margine.",
       },
     ],
   },
@@ -289,9 +289,9 @@ export const it: Dict = {
       },
       {
         icon: "Gauge",
-        kind: "Saturation",
+        kind: "Check-in del carico",
         tag: "Carico",
-        body: "Heatmap di utilizzo e proiezione a 4 settimane da allocazioni e ferie. Chi sta spingendo, dov'è il bench, cosa è a rischio.",
+        body: "Un tocco a settimana — leggero / bilanciato / pesante / sovraccarico. Una sparkline a 8 settimane di come sta il team. Niente allocazioni, niente percentuali, niente ore.",
       },
       {
         icon: "Sparkles",
@@ -310,11 +310,11 @@ export const it: Dict = {
     subtitle:
       "Ogni persona ha i suoi gruppi di sidebar, la sua vista di default e il suo set di shortcut. Tema chiaro o scuro oggi; le palette per ruolo sono in roadmap. I CFO non vedono gli standup di sprint.",
     items: [
-      { k: "Employee", d: "Timbra, registra le ore, posta lo status, manda kudos." },
-      { k: "Manager", d: "Approvazioni, saturation del team, recap dello status log, autorità sui kudos." },
-      { k: "HR", d: "People ops, onboarding, recruiting, comunicazioni." },
-      { k: "Admin", d: "Moduli, integrazioni, API, audit log — e il \"View as\"." },
-      { k: "Finance", d: "Margini, report, redditività dei progetti." },
+      { k: "Employee", d: "Posta lo status, manda kudos, fai il check-in del carico, segna i giorni off." },
+      { k: "Manager", d: "Leggi il recap del sentiment, nota il sovraccarico, celebra le vittorie. Mai la chat raw." },
+      { k: "HR", d: "Segnale di engagement, conversazioni di crescita, trend di benessere. Niente fogli di calcolo." },
+      { k: "Admin", d: "Moduli, setup delle persona, audit log — e il \"View as\"." },
+      { k: "Finance", d: "Risposta onesta: non è per te. Tieniti il tuo gestionale paghe." },
     ],
   },
 
@@ -349,12 +349,12 @@ export const it: Dict = {
     titleAfter: ".",
     items: [
       {
-        q: "Posso importare i dati dal mio attuale strumento HR?",
-        a: "Sì. Forniamo importer one-click per BambooHR, Personio, Rippling, Deel e Factorial, oltre a un importer CSV generico con mapping delle colonne per tutto il resto. L'importer esegue prima un dry-run così puoi correggere le righe sbagliate prima di committare, e preserva gli ID dei dipendenti in modo che le integrazioni continuino a funzionare. La maggior parte dei team migra un dataset completo — dipendenti, saldi ferie, documenti — in meno di un'ora.",
+        q: "Pulse sostituisce il mio HRIS?",
+        a: "No, ed è il punto. Pulse è la metà 'persone' dell'HR — status, crescita, kudos, benessere. Paghe, rilevazione ore, recruiting, allocazione progetti e firma documenti vivono negli strumenti costruiti per loro. Pulse gira a fianco al tuo HRIS, non al suo posto. Molti team usano Pulse insieme a BambooHR, Personio, Rippling o Factorial; lo scope ridotto è quello che lo fa usare davvero.",
       },
       {
         q: "Come è fatto il pricing di Pulse HR?",
-        a: "Per dipendente attivo, al mese. Un unico piano trasparente con tutte le funzionalità incluse — niente gate 'parla col sales', niente upsell per le feature Labs, niente add-on per l'accesso API o SSO. Gratis per i primi 5 dipendenti attivi, per sempre. I contractor hanno prezzi diversi, max $4 per contractor attivo al mese. Con fatturazione annuale 15% di sconto.",
+        a: "Per dipendente attivo, al mese. Un unico piano trasparente con tutte le funzionalità incluse — niente gate 'parla col sales', niente upsell per le feature Labs, niente add-on per l'accesso API o SSO. Gratis per i primi 5 dipendenti attivi, per sempre. Con fatturazione annuale 15% di sconto.",
       },
       {
         q: "È SOC 2 / GDPR compliant?",
@@ -374,11 +374,11 @@ export const it: Dict = {
       },
       {
         q: "Come funziona la command bar (⌘J)?",
-        a: "La command bar esegue un parser di intent locale sui dati del tuo tenant — nessuna chiamata LLM, nessun round-trip di rete, nessun training cross-tenant. Scrivi frasi naturali come 'registra 4h su NOV-07 ieri' o 'approva la spesa di Aisha', e un'euristica deterministica le mappa in azioni eseguibili con i tuoi permessi. Funzionando nel browser, va anche offline come parte della PWA. Esporremo un server MCP per workflow di agenti esterni in una release futura; per ora l'etichetta onesta è: una command bar keyboard-first, senza AI nel loop.",
+        a: "La command bar esegue un parser di intent locale sui dati del tuo tenant — nessuna chiamata LLM, nessun round-trip di rete, nessun training cross-tenant. Scrivi frasi naturali come 'manda kudos a Marta per la demo' o 'segna un giorno off venerdì scorso', e un'euristica deterministica le mappa in azioni eseguibili con i tuoi permessi. Funzionando nel browser, va anche offline come parte della PWA. Esporremo un server MCP per workflow di agenti esterni in una release futura; per ora l'etichetta onesta è: una command bar keyboard-first, senza AI nel loop.",
       },
       {
         q: "Pulse funziona offline?",
-        a: "L'intera superficie si installa come PWA su macOS, Windows, iOS e Android. Viste recenti, timesheet e bozze di kudos continuano a funzionare offline e sincronizzano appena torni online — niente schermate 'loading…' in aeroporto o nella sala riunioni in cantina. Le azioni distruttive richiedono una connessione attiva e vengono messe in coda se offline, così niente parte due volte per sbaglio.",
+        a: "L'intera superficie si installa come PWA su macOS, Windows, iOS e Android. Viste recenti, bozze di status log e bozze di kudos continuano a funzionare offline e sincronizzano appena torni online — niente schermate 'loading…' in aeroporto o nella sala riunioni in cantina. Le azioni distruttive richiedono una connessione attiva e vengono messe in coda se offline, così niente parte due volte per sbaglio.",
       },
     ],
   },
@@ -403,9 +403,9 @@ export const it: Dict = {
       after: "team lavora davvero.",
     },
     items: [
-      { k: "Agenzie & consulenze", d: "Fattura per codice progetto (commessa), traccia l'utilizzo, chiudi il bilancio senza fogli di calcolo." },
-      { k: "Startup prodotto", d: "Onboarda da una mail di candidate-accepted con un click. Equity, offerte, laptop — on rails." },
-      { k: "Scale-up (50-500)", d: "Catene di approvazione che rispecchiano la tua org, controlli multi-entità, report che il tuo CFO aprirà davvero." },
+      { k: "Team stanchi delle review annuali", d: "Segnale continuo — kudos, status, sentiment — invece di una calibrazione da 90 minuti una volta l'anno." },
+      { k: "Team distribuiti stufi dei meeting", d: "Standup async per iscritto, check-in del carico in un tocco. Smetti di programmare meeting per parlare di tempo." },
+      { k: "Founder che vogliono sapere che le persone stanno bene", d: "Vibe del Pulse, segnale di sovraccarico, volume di kudos. Leggilo in 30 secondi, agisci prima che qualcuno se ne vada." },
     ],
   },
 
@@ -431,7 +431,7 @@ export const it: Dict = {
     titleAfter: ".",
     body: {
       key1Before:
-        " apre una palette fuzzy — salta a qualsiasi dipendente, progetto, documento o impostazione.",
+        " apre una palette fuzzy — salta a qualsiasi collega, pagina o impostazione.",
       key2Before:
         " apre la command bar — scrivi quello che vuoi in linguaggio naturale, un parser locale lo traduce in un'azione eseguibile. Nessuna chiamata LLM, nessun training cross-tenant, funziona offline.",
     },
@@ -439,19 +439,19 @@ export const it: Dict = {
     chipShortcuts: "40+ shortcut",
     chipOffline: "Funziona offline",
     panelTitle: "Command bar",
-    commandExample: "registra 4h su NOV-2025-07 ieri, lavoro su feature",
-    parsedLabel: "Parsed · intent=log-hours · confidence 0.94",
+    commandExample: "manda kudos a Marta per la demo, grazie",
+    parsedLabel: "Parsed · intent=send-kudos · confidence 0.96",
     parsedSentence: {
-      log: "Registra ",
-      to: " su ",
-      on: " il ",
-      tagged: ", tag ",
+      log: "Manda ",
+      to: " a ",
+      on: " per ",
+      tagged: ", nota ",
       end: ".",
     },
-    tagFeature: "feature",
+    tagFeature: "demo",
     actionConfirm: "Conferma",
     actionEdit: "Modifica dettagli",
-    actionOpen: "Apri timesheet",
+    actionOpen: "Apri Kudos",
     footerLocal: "parser locale · nessuna chiamata di rete",
     footerOffline: "funziona offline",
   },
@@ -464,39 +464,39 @@ export const it: Dict = {
     },
     openApp: "Apri l'app completa",
     tabs: [
-      { k: "dashboard", l: "Dashboard", body: "Approvazioni, alert, presenze e trend. L'unico pannello che il tuo team HR apre alle 9." },
-      { k: "time", l: "Ore & commesse", body: "Registra ore su qualsiasi commessa. Burn di budget, redditività per cliente, export in CSV." },
+      { k: "dashboard", l: "Dashboard", body: "Streak dello status, kudos della settimana, growth score, vibe del Pulse, prossimi Moments. L'unico pannello che il tuo team apre alle 9." },
+      { k: "log", l: "Status Log", body: "Tre righe a testa, feed pubblico, recap manager-safe del sentiment. La chat raw resta col dipendente." },
     ],
     bullets: [
-      "Approvazioni in un click",
+      "Check-in del carico in un tocco",
       "Navigazione keyboard-first (⌘K)",
-      "Audit trail completo",
-      "Export in CSV / PDF / API",
+      "Recap manager-safe del sentiment",
+      "Self-host o hosted — scegli tu",
     ],
     mockDashboard: {
-      pending: "In attesa",
-      headcount: "Headcount",
-      overtime: "Straordinari",
+      pending: "Off loggati",
+      headcount: "Kudos · sett.",
+      overtime: "Growth score",
       rows: [
-        { n: "Marcus R.", t: "Ferie · 5g", s: "pending" },
-        { n: "Tom B.", t: "Malattia · 3g", s: "approved" },
-        { n: "Noah W.", t: "Permesso · 1g", s: "pending" },
+        { n: "Marta E.", t: "Kudos · Ace della demo", s: "approved" },
+        { n: "Tom B.", t: "Status · 3 di fila", s: "approved" },
+        { n: "Noah W.", t: "Permesso · 1g off", s: "approved" },
       ],
-      statusPending: "in attesa",
-      statusApproved: "approvato",
+      statusPending: "fresco",
+      statusApproved: "loggato",
     },
     mockTime: {
-      activeClock: "Timbratura attiva",
-      project: "ACM-2025-01 · Rebuild piattaforma",
-      stopCta: "Ferma & registra ore",
+      activeClock: "Questa settimana",
+      project: "Carico · bilanciato ⛅",
+      stopCta: "Apri Status Log",
     },
   },
 
   cta: {
-    titleLine1: "Software HR per chi",
-    titleItalic: "odia",
-    titleAfter: " il software HR.",
-    body: "Gratis per sempre in self-host. Gratis per i primi 5 dipendenti su Pulse hosted. Nessuna carta di credito. Nessuna chiamata commerciale per vedere il prodotto. Importa in un'ora, esporta con un click — sempre.",
+    titleLine1: "Software per le",
+    titleItalic: "persone",
+    titleAfter: ", non per gli organici.",
+    body: "Gratis per sempre in self-host. Gratis per i primi 5 dipendenti su Pulse hosted. Nessuna carta di credito. Nessuna chiamata commerciale per vedere il prodotto. Esporta tutto con un click — sempre.",
     primary: "Prova gratis",
     secondary: "Leggi il sorgente",
   },
@@ -516,31 +516,31 @@ export const it: Dict = {
   },
 
   indexPage: {
-    title: "Pulse HR — software HR per chi odia il software HR",
+    title: "Pulse HR — software per le persone, non per gli organici",
   },
 
   productPage: {
-    title: "Tour del prodotto — panoramica piattaforma Pulse HR",
+    title: "Tour del prodotto — panoramica people-first Pulse HR",
     description:
-      "Tre moduli indipendenti — Money, People e Work — che condividono un workspace, una tastiera, un'API. Open source sotto FSL. Keyboard-first, a tema per ruolo, multi-paese.",
+      "Status Log, Crescita, Kudos, Moments, Pulse, check-in del carico, diario di riposo, People Insights — otto superfici, tutte su come sta il tuo team. Open source sotto FSL. Keyboard-first, self-hostabile.",
     eyebrow: "Tour del prodotto",
-    titleLine1: "Otto prodotti,",
-    titleItalic: "un workspace",
-    titleAfter: ".",
+    titleLine1: "Otto superfici,",
+    titleItalic: "una sensazione",
+    titleAfter: ": essere visti.",
     body:
-      "Ogni modulo è abbastanza profondo da sostituire uno strumento dedicato — e condividono un profilo, una ricerca, un audit log, un'API. Adotta Money, People e Work in modo indipendente, o tutti e tre insieme.",
+      "Ogni superficie parla di una persona, non di un processo. Status, kudos, crescita, riposo, carico — letti in secondi, agiti in secondi. Ore e paghe vivono negli strumenti costruiti per loro. Lì non competiamo.",
   },
 
   labsPage: {
-    title: "Pulse Labs — status log, kudos, saturation, moments",
+    title: "Pulse Labs — status log, kudos, check-in del carico, moments",
     description:
-      "Quattro feature Labs già disponibili: Status Log (standup asincrono + recap), riconoscimenti Kudos, utilizzo Saturation e Moments. Incluse in ogni piano.",
+      "Quattro feature Labs già disponibili: Status Log (standup asincrono + recap), riconoscimenti Kudos, check-in settimanale del carico e Moments. Incluse in ogni piano.",
     eyebrow: "Labs · già disponibile · incluso in ogni piano",
     titleLine1: "Le quattro feature Pulse",
     titleItalic: "che reinventano",
-    titleAfter: " il software HR.",
+    titleAfter: " come un team resta in sintonia.",
     body:
-      "Labs è dove spediamo prima le capacità sperimentali — standup asincrono con recap manager-safe, riconoscimenti peer, insight live di utilizzo e un feed di memoria aziendale. Niente liste d'attesa, niente upsell, niente paywall enterprise-tier.",
+      "Labs è dove spediamo prima le capacità sperimentali — standup asincrono con recap manager-safe, riconoscimenti peer, check-in del carico in un tocco e un feed di memoria aziendale. Niente liste d'attesa, niente upsell, niente paywall enterprise-tier.",
   },
 
   changelogPage: {
@@ -625,10 +625,10 @@ export const it: Dict = {
   },
 
   heroNewTags: [
-    "Command bar ⌘J",
-    "Saturation",
     "Status Log",
+    "Check-in carico",
     "Kudos",
+    "Moments",
     "Open source",
   ],
 };

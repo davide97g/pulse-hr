@@ -1,7 +1,7 @@
 ---
 import {
   Clock, Wallet, Users, Briefcase, BarChart3, Plug,
-  Gauge, Sparkles, Trophy,
+  Gauge, Sparkles, Trophy, MessageSquare, Gift, Calendar, Heart,
 } from "lucide-astro";
 import { useI18n } from "../i18n";
 import { getLanding } from "../data/landing";
@@ -11,6 +11,7 @@ const { FEATURES } = getLanding(locale);
 
 const ICONS: Record<string, any> = {
   Clock, Wallet, Users, Briefcase, BarChart3, Plug, Gauge, Sparkles, Trophy,
+  MessageSquare, Gift, Calendar, Heart,
 };
 ---
 

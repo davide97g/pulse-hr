@@ -74,42 +74,34 @@ export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
   if (lens === "presence") {
     return [
       {
-        eyebrow: "01 · TIMESHEET",
-        title: "Da chiudere",
-        big: String(s.timesheetsToClose),
-        caption: `entro venerdì · week ${s.weekNumber}`,
-        accent: true,
-        status: "Solleciti pronti",
-        link: "/time",
-      },
-      {
-        eyebrow: "02 · LEAVE",
+        eyebrow: "01 · LEAVE",
         title: "Oggi fuori",
         big: String(s.outToday),
         caption: `ferie + malattia · ${s.newLeaveRequests} nuove richieste`,
+        accent: true,
         link: "/leave",
       },
       {
-        eyebrow: "03 · CALENDAR",
-        title: "Riunioni",
-        big: String(s.meetingsToday),
-        caption: `eventi oggi · ${s.meetingConflicts} conflitti`,
-        link: "/time",
-      },
-      {
-        eyebrow: "04 · SATURATION",
-        title: "Saturazione",
+        eyebrow: "02 · WORKLOAD",
+        title: "Carico medio",
         big: `${s.satMeanPct}%`,
-        caption: `media team · ${s.projectsAtRisk} projects a rischio`,
+        caption: "saturazione team · soglia salute",
         spark: true,
         link: "/saturation",
       },
       {
-        eyebrow: "05 · OFFICES",
-        title: "Sedi",
-        big: `${s.officesOpen} / ${s.officesTotal}`,
-        caption: `tutte aperte · ${s.busiestOfficeName} al ${s.busiestOfficePct}%`,
-        link: "/offices",
+        eyebrow: "03 · MOMENTS",
+        title: "Auguri",
+        big: String(s.momentsToday),
+        caption: "compleanni e anniversari oggi",
+        link: "/moments",
+      },
+      {
+        eyebrow: "04 · STATUS LOG",
+        title: "Standup",
+        big: String(s.oneOnOneOpen),
+        caption: `chat aperte · ${s.oneOnOneLate} in ritardo`,
+        link: "/log",
       },
     ];
   }
@@ -133,11 +125,18 @@ export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
       link: "/kudos",
     },
     {
-      eyebrow: "03 · RECRUITING",
-      title: "Pipeline",
-      big: String(s.recruitingCandidates),
-      caption: `candidati attivi · ${s.recruitingOffers} offerte`,
-      link: "/recruiting",
+      eyebrow: "03 · GROWTH",
+      title: "Carriere",
+      big: String(s.growthOpen),
+      caption: "review trimestrale aperte",
+      link: "/growth",
+    },
+    {
+      eyebrow: "04 · MOMENTS",
+      title: "Auguri",
+      big: String(s.momentsToday),
+      caption: "compleanni e anniversari oggi",
+      link: "/moments",
     },
   ];
 }

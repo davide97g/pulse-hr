@@ -1,27 +1,33 @@
 ---
 type: feature
-tags: [feature, insights, money]
-last_updated: 2026-04-26
+tags: [feature, insights, people]
+last_updated: 2026-05-14
 ---
 
-# Reports
+# People Insights
 
-The aggregate-numbers surface. Headcount, cost-per-hire, turnover, [[Commessa]] margin, utilization.
+The aggregate surface for **engagement, sentiment, kudos, growth, Pulse vibe over time**. Reports about how people are doing — not about cost per hire, margin, or turnover.
+
+> The page still lives at `/reports` for now and the route file is `reports.tsx`, but the product surface is People Insights.
 
 ## Who uses it
 
-[[Finance]], [[HR]], [[Admin]]. [[Manager]] sees a slice (their team's utilization).
+[[HR]], [[Admin]], [[Manager]] (for their team). [[Finance]] no longer has a primary view here — that data lives in payroll/HRIS tools.
 
 ## Key entities
 
-[[Employee]] · [[Commessa]] · [[Timesheet Entry]] · [[Leave Request]]
+[[Employee]] · [[Kudo]] · [[Log Session]] · [[Pulse Entry]] · [[Employee Score]]
+
+[[Commessa]], [[Allocation]] and [[Timesheet Entry]] are no longer surfaced here.
 
 ## Notable behaviors
 
-- **Date-range filter.** Month / quarter / year / custom.
-- **Drill-down.** Click a number to see the underlying entities.
-- **Export.** CSV.
+- **Two tabs.** Overview · People. (The old `Time` tab is parked.)
+- **KPI tiles.** Kudos volume, eNPS, Growth obiettivi, Pulse mood — replacing the old Headcount / Turnover / Absenteeism / eNPS row.
+- **Date-range filter.** Last 7g / 30g / Q1 / Q2 / YTD.
+- **Drill-down.** Click an aggregate to see the underlying entities (a kudos breakdown, a sentiment band, a Pulse week).
+- **What it does not show.** No cost-per-hire, no turnover percentage, no margin per commessa, no time-to-hire. Those numbers belong in the tool that produces them.
 
 ## Related journeys
 
-
+[[Quarterly Pulse Cycle]]

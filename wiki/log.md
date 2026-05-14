@@ -31,3 +31,17 @@ Sync pass against the current state of `apps/app/`. Driven by recent commits `7b
 **Source corrections.** Root `CLAUDE.md` had drifted on three points and was updated alongside the wiki: sidebar groups are `Dashboard / People / Time / Work / Other / Workspace` (not Overview / Money / Insights / Labs / Workspace); only two themes ship today (not seven); the public route prefix list is `/welcome /login /signup` (not `/landing /login /signup`).
 
 Known gaps still flagged: (a) per-persona accent palettes are described in marketing but not in tokens — gap noted in `concepts/role-themes.md`; (b) [[Pulse]] sits between feature and component — page kept, with the framing "lives inside Status Log".
+
+
+## [2026-05-14] manual | people-first refocus
+
+Narrowed Pulse HR's scope to the people half of HR. Eight active surfaces: [[Dashboard]], [[Status Log]], [[Growth]], [[Kudos]], [[Moments]], Workload check-in ([[Saturation]] rewritten), [[Leave]] journal, [[Pulse]], [[Employees]], [[Org Chart]], People Insights ([[Reports]] rewritten). Twelve surfaces parked: [[Time Tracking]], [[Projects]], [[Activities]], [[Clients]], [[Recruiting]], [[Documents]], [[Offices]], [[Announcements]], [[Marketplace]], [[Developers]], [[Calendar]] (folded into Leave), [[Onboarding]]. Soft-prune pattern: routes still resolve, but the modules ship off by default in \`packages/shared/src/sidebar-features.ts\` and the sidebar (\`apps/app/src/lib/sidebar-nav-groups.tsx\`) regroups around Dashboard / You / Wellbeing / People / Workspace.
+
+**Updated wiki pages.** \`AGENTS.md\` (added a product-focus paragraph naming the active vs parked split). \`index.md\` (features split into Active / Parked, three concept pages added). \`features/leave.md\` (personal journal, no approvals). \`features/saturation.md\` (Workload check-in, one-tap weekly). \`features/reports.md\` (People Insights, no business KPIs). \`personas/employee.md\`, \`personas/manager.md\`, \`personas/hr.md\` (parked surfaces removed from daily narrative). \`personas/finance.md\` (marked as marginal). \`journeys/leave-request-to-approval.md\` (rewritten as \"Logging Time Off\", no manager step). \`journeys/daily-status-log.md\` (Time Tracking step removed). \`journeys/candidate-to-employee.md\` and \`journeys/onboarding-new-hire.md\` (parked banner added). All 12 parked feature pages got \`status: parked\` in frontmatter.
+
+**Created.** \`concepts/mission.md\`, \`concepts/vision.md\`, \`concepts/brand-voice.md\`.
+
+**Out of scope of this entry but related.** Marketing site (\`apps/marketing\`) rewritten end-to-end — both i18n locales, hero, features, vs (now Lattice/15Five/Officevibe/CultureAmp, not Rippling/Deel/BambooHR), modules → \"What's inside\", pricing simplified, ecosystem shrunk to Slack/Calendar/SSO, roadmap rewired around people-first surfaces. Root README + CLAUDE.md got top-of-file scope notes. In-app dashboard cards swapped to people-first signals. Leave + Saturation editorials rewritten. Reports renamed → People Insights.
+
+Known gaps. (a) The entity \`Leave Request\` is still named that in code even though there's nothing to request anymore — renamed in the wiki feature page but not in mock-data. (b) The marketing \`/changelog\` page still narrates old shipments; the people-first ones haven't been added yet. (c) \`apps/api\` still serves endpoints for parked features — intentional (low cost) but should be revisited if the scope holds for a quarter.
+

@@ -2,8 +2,11 @@
 type: journey
 aliases: [Onboarding a New Hire]
 tags: [journey, people]
-last_updated: 2026-04-26
+status: parked  # 2026-05 people-first refocus — see ../AGENTS.md
+last_updated: 2026-05-14
 ---
+
+> **Parked journey.** This flow centres on [[Onboarding]] workflows, [[Recruiting]], [[Documents]] e-sign, [[Allocation]] and [[Time Tracking]] — all parked in the May 2026 people-first refocus. The text below is preserved for historical reference. The much smaller post-refocus version: HR adds an employee, the employee logs into Pulse and finds their first [[Status Log]] prompt waiting; the rest of onboarding lives in the HRIS the workspace already runs.
 
 # Onboarding a New Hire
 

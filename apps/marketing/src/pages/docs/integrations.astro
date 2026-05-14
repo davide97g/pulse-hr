@@ -1,10 +1,10 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
-import { Plug } from "lucide-astro";
+import { Plug, AlertCircle } from "lucide-astro";
 
-const title = "Jira & Linear integrations — Pulse HR docs";
+const title = "Jira & Linear integrations — parked (people-first refocus 2026-05)";
 const description =
-  "Pulling external tickets alongside Pulse HR projects. OAuth connect flow, linking tickets to activities, syncing issues into a project, webhook error simulation.";
+  "Reference doc for the parked Jira/Linear integrations. Pulse HR refocused on people-first scope in May 2026 and parked the project/activity surfaces these integrations plugged into. The current ecosystem is Slack + Google Calendar + SSO — see /ecosystem.";
 const path = "/docs/integrations";
 
 const SECTIONS = [
@@ -42,9 +42,20 @@ const SECTIONS = [
     </span>
     <div>
       <h1 class="font-display text-4xl md:text-5xl tracking-tight m-0">Jira &amp; Linear</h1>
-      <p class="text-sm text-white/50 mt-1 m-0">Pulling external tickets alongside Pulse HR projects.</p>
+      <p class="text-sm text-white/50 mt-1 m-0">Parked integrations · historical reference only.</p>
     </div>
   </div>
+
+  <aside class="rounded-2xl border border-[#ffbf4a]/40 bg-[#ffbf4a]/[0.06] p-5 mb-6 flex items-start gap-3">
+    <AlertCircle class="h-5 w-5 text-[#ffbf4a] shrink-0 mt-0.5" />
+    <div class="text-[14px] leading-relaxed text-white/80">
+      <strong class="text-[#ffbf4a]">Parked feature.</strong>
+      The Jira and Linear integrations plugged into the parked Clients &amp;
+      Projects surface. Pulse HR's current ecosystem is intentionally
+      narrower — Slack, Google Calendar, SSO. See <a href="/ecosystem" class="text-[#b4ff39] hover:underline">/ecosystem</a>
+      for the live list.
+    </div>
+  </aside>
 
   <div class="space-y-4">
     {SECTIONS.map((s) => (

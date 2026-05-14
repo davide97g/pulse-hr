@@ -5,41 +5,33 @@ import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Plug, Webhook, Code, BookOpen } from "lucide-astro";
 
-const title = "Ecosystem — webhooks, REST API, integrations & SDKs";
+const title = "Ecosystem — Slack, Google Calendar, SSO, webhooks, REST API";
 const description =
-  "Webhooks on every resource event, a public REST API, maintained SDKs for TypeScript / Python / Go. First-class integrations with Slack, Google, QuickBooks, Okta, Stripe, DocuSign, Greenhouse, Zapier. Anything we don't ship, you can add.";
+  "Lightweight by design. Slack notifications, Google Calendar OOO sync, SSO via Okta/Google, plus a public REST API with webhooks and maintained SDKs for TypeScript / Python / Go. Your hours, payroll and project tools already have homes — Pulse plugs in where it adds signal.";
 const path = "/ecosystem";
 
 // status: "live" | "beta" | "roadmap"
 const integrations = [
-  { n: "Slack",           c: "Comms",      s: "live" },
-  { n: "Google Workspace",c: "Identity",   s: "live" },
-  { n: "Okta",            c: "Identity",   s: "live" },
-  { n: "QuickBooks",      c: "Accounting", s: "live" },
-  { n: "Xero",            c: "Accounting", s: "beta" },
-  { n: "Stripe",          c: "Payments",   s: "live" },
-  { n: "DocuSign",        c: "Docs",       s: "live" },
-  { n: "Greenhouse",      c: "Recruiting", s: "live" },
-  { n: "Zapier",          c: "Automation", s: "live" },
-  { n: "Make.com",        c: "Automation", s: "beta" },
-  { n: "Jira",            c: "Work mgmt",  s: "beta" },
-  { n: "Linear",          c: "Work mgmt",  s: "beta" },
-  { n: "BambooHR",        c: "Importer",   s: "live" },
-  { n: "Personio",        c: "Importer",   s: "live" },
-  { n: "Rippling",        c: "Importer",   s: "beta" },
-  { n: "SAP",             c: "ERP",        s: "roadmap" },
+  { n: "Slack",           c: "Notify · standup · kudos",  s: "live" },
+  { n: "Google Calendar", c: "OOO sync · birthdays",      s: "live" },
+  { n: "Okta",            c: "SSO · SCIM",                s: "live" },
+  { n: "Google Workspace",c: "SSO · identity",            s: "live" },
+  { n: "Microsoft Entra", c: "SSO",                       s: "beta" },
+  { n: "Zapier",          c: "Automation",                s: "live" },
+  { n: "Make.com",        c: "Automation",                s: "beta" },
+  { n: "MS Teams",        c: "Notify · standup",          s: "roadmap" },
+  { n: "Discord",         c: "Notify · kudos",            s: "roadmap" },
 ];
 
 const webhookEvents = [
   "employee.created",
   "employee.updated",
-  "leave.requested",
-  "leave.approved",
-  "timesheet.submitted",
-  "timesheet.approved",
-  "candidate.stage.changed",
-  "kudos.awarded",
-  "commessa.created",
+  "leave.logged",
+  "kudos.sent",
+  "log_session.published",
+  "growth.achievement_unlocked",
+  "workload.checkin.recorded",
+  "pulse_entry.submitted",
 ];
 
 const statusStyles = {
@@ -54,17 +46,18 @@ const statusStyles = {
   <main id="main">
     <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
       <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
-        <Plug class="h-3 w-3" /> Ecosystem-first
+        <Plug class="h-3 w-3" /> Lightweight by design
       </p>
       <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
-        Webhooks on<br />
-        <em class="italic text-[#b4ff39]">every</em> event.
+        Your hours and payroll<br />
+        <em class="italic text-[#b4ff39]">already have homes</em>.
       </h1>
       <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
-        Most HR vendors gate the API behind an enterprise tier and ship "integrations"
-        that are really just Zapier wrappers. Pulse treats the API and the UI as
-        equal citizens — every resource has a REST endpoint, every state change
-        fires a webhook, every integration ships with source.
+        Pulse stays out of payroll, time tracking and project allocation. So the
+        integrations list is short on purpose — Slack and Calendar to surface the
+        signal, SSO to log in, a real API for everything else. No HRIS-to-HRIS
+        sync, no QuickBooks dance, no DocuSign module. Every webhook fires on a
+        people event, not a billing event.
       </p>
     </section>
 
@@ -83,12 +76,12 @@ const statusStyles = {
         ))}
       </div>
 
-      <h2 class="font-display text-4xl tracking-tight mb-6">Integrations — status-honest.</h2>
+      <h2 class="font-display text-4xl tracking-tight mb-6">A short, honest list.</h2>
       <p class="text-white/60 mb-6 max-w-2xl">
         We label every integration with its real status. <span class="text-[#b4ff39] font-mono">Live</span> means
         production-ready with OAuth and sync; <span class="text-[#ffbf4a] font-mono">Beta</span> means it works
         but we want more field testing; <span class="text-[#6fd8ff] font-mono">Roadmap</span> means it's scoped,
-        not shipped.
+        not shipped. If your team's chat tool isn't here, the webhook can almost certainly cover it.
       </p>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         {integrations.map((i) => {

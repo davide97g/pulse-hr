@@ -1,27 +1,32 @@
 # Pulse HR
 
-> Open-source, modular HR & payroll platform for teams of 5–500. Money, People and Work as three composable products sharing one workspace. Multi-country payroll (US, UK, IT, ES, FR, DE, IE, NL natively), keyboard-first command bar, webhooks on every event, PWA-ready. Source-available under FSL-1.1-MIT. Free for the first 5 employees.
+> Software for people, not headcount. The HR tool that cares how you're doing, not how many hours you logged. Open-source, self-hostable people-first workspace built around async standups (Status Log), peer recognition (Kudos), continuous growth signal, weekly workload check-ins, and a personal time-off journal. Deliberately scoped: no payroll, no time tracking, no project allocation, no recruiting. Source-available under FSL-1.1-MIT. Free for the first 5 employees.
 
 ## Overview
-- [Product tour](https://pulsehr.it/product) — Three independent modules (Money, People, Work) sharing one workspace, one keyboard, one API.
-- [Labs features](https://pulsehr.it/labs) — Team Pulse (sentiment), Commessa Forecast (scenario planning), Kudos (peer recognition), Focus Mode (deep work), Saturation (utilization).
+- [Product tour](https://pulsehr.it/product) — Eight surfaces, all about how a person is doing: Status Log, Growth, Kudos, Moments, Workload check-in, Leave journal, Pulse, People Insights.
+- [What's inside](https://pulsehr.it/modules) — One section per surface, plain-English purpose, what we deliberately don't ship.
+- [Labs](https://pulsehr.it/labs) — Status Log, Kudos, Workload check-in, Moments.
+- [vs comparison](https://pulsehr.it/vs) — Pulse vs Lattice, 15Five, Officevibe, Culture Amp.
 - [Changelog](https://pulsehr.it/changelog) — Reverse-chronological product updates.
-- [Pricing](https://pulsehr.it/pricing) — One transparent tier per active employee per month. Free up to 5 employees.
-- [Security](https://pulsehr.it/security) — SOC 2 Type II, GDPR-compliant, EU data residency, ISO 27001 in progress.
-- [API reference](https://pulsehr.it/docs/api) — REST API, webhooks on every resource, SDKs for TypeScript, Python, Go.
+- [Pricing](https://pulsehr.it/pricing) — One transparent tier per active employee per month. Free up to 5 employees. Self-host €0.
+- [Security](https://pulsehr.it/security) — GDPR-compliant by design, EU data residency, SOC 2 Type II in progress. Sentiment data never crosses the manager line.
 - [Source code](https://github.com/davide97g/pulse-hr) — Public repository, FSL-1.1-MIT license.
 
 ## Principles
+- **People-first scope** — The product covers the people half of HR (status, growth, recognition, wellbeing) and stays out of the business half (payroll, time tracking, project allocation, recruiting) on purpose. Pulse runs alongside an HRIS or payroll tool, not in place of it.
 - **Open source** — Full source on GitHub under the Functional Source License (converts to MIT after 2 years). Read it, run it, fork it.
-- **Modular** — Money, People and Work are three independent products. Adopt one, skip the others, swap later. No all-or-nothing migration.
-- **Ecosystem-first** — Webhooks on every resource event, public REST API, first-class integrations with Slack, Google, QuickBooks, Okta, Stripe.
-- **Keyboard-first** — ⌘K fuzzy search, ⌘J command bar, voice dictation, 40+ shortcuts. Every workflow reachable without a mouse.
+- **Manager-safe sentiment** — Raw chat and individual workload check-ins stay with the employee. Managers see aggregated trends only, and the code that enforces the boundary is in this repo.
+- **Async-first** — Status Log is three lines in writing; Workload is one emoji tap; Pulse is anonymous and weekly. No meetings required to use the product.
+- **Keyboard-first** — ⌘K fuzzy search, ⌘J command bar, 40+ shortcuts. Every workflow reachable without a mouse.
 
 ## Command bar (⌘J)
-⌘J opens a local intent parser. Type "log 4h on NOV-07 yesterday" or "approve Aisha's expense" and the parser maps it to a runnable action. No LLM call, no cross-tenant training, no network dependency — works fully offline on the PWA.
+⌘J opens a local intent parser. Type "send kudos to Marta for the demo" or "log a day off last Friday" and the parser maps it to a runnable action. No LLM call, no cross-tenant training, no network dependency — works fully offline on the PWA.
 
 ## Offline (PWA)
-Installs as a PWA on macOS, Windows, iOS, Android. Recent views, timesheets and kudos drafts work offline and sync on reconnect. Payroll runs require a live connection and queue if offline.
+Installs as a PWA on macOS, Windows, iOS, Android. Recent views, status log drafts and kudos drafts work offline and sync on reconnect. Destructive actions require a live connection and queue if offline.
+
+## What Pulse does not ship
+No time tracking. No timesheet approval. No project codes. No client billing. No recruiting kanban. No onboarding workflow. No e-signature. No payroll. No expense reports. No turnover %. The shorter list is the product.
 
 ## Contact
 - Email: hello@pulsehr.it · sales@pulsehr.it

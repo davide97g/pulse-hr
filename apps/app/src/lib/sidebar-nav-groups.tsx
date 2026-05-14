@@ -4,17 +4,15 @@ import {
   Users,
   BarChart3,
   Settings,
-  Clock,
   Calendar,
-  FileText,
   BookOpen,
   MessagesSquare,
   Trophy,
-  Briefcase,
-  Building2,
   PanelLeft,
   LifeBuoy,
-  ListChecks,
+  Sparkles,
+  Network,
+  Gauge,
 } from "lucide-react";
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
 import { ADMIN_MODULES_PATH } from "@/lib/sidebar-features";
@@ -39,10 +37,12 @@ export type SidebarNavItem = {
 export type SidebarNavGroup = { label: string; items: SidebarNavItem[]; accent?: boolean };
 
 /**
- * Editorial sidebar — Dashboard sits unlabelled at the top, then PEOPLE / TIME
- * / WORK / OTHER, with a collapsed Workspace footer for Docs, Help, Settings.
- * Pages without an editorial counterpart (Marketplace, Developers, Modules)
- * live behind the avatar dropdown so they don't compete with day-to-day work.
+ * People-first sidebar. Dashboard sits unlabelled, then YOU (personal growth +
+ * status), WELLBEING (rest + load), PEOPLE (directory + insights). Business-ops
+ * surfaces (time, projects, activities, clients, recruiting, documents,
+ * offices, announcements, marketplace, developers) are parked — their routes
+ * still resolve, but they don't appear in the primary nav. See plan file
+ * `help-me-refine-the-velvet-fiddle` and `wiki/AGENTS.md` for the rationale.
  */
 export function buildSidebarNavGroups(
   hasOpenManagerAsks: boolean,
@@ -54,9 +54,8 @@ export function buildSidebarNavGroups(
       items: [{ to: "/", label: "Dashboard", icon: LayoutDashboard, featureId: "dashboard" }],
     },
     {
-      label: "People",
+      label: "You",
       items: [
-        { to: "/people", label: "Team", icon: Users, featureId: "people" },
         {
           to: "/log",
           label: "Status log",
@@ -65,35 +64,27 @@ export function buildSidebarNavGroups(
           unreadDot: hasOpenManagerAsks,
         },
         { to: "/growth", label: "Growth", icon: Trophy, featureId: "growth" },
+        { to: "/moments", label: "Moments", icon: Sparkles },
       ],
     },
     {
-      label: "Time",
+      label: "Wellbeing",
       items: [
-        { to: "/time", label: "Timesheet", icon: Clock, featureId: "time" },
         { to: "/leave", label: "Leave", icon: Calendar, featureId: "leave" },
+        { to: "/saturation", label: "Workload", icon: Gauge, featureId: "saturation" },
       ],
     },
     {
-      label: "Work",
+      label: "People",
       items: [
-        { to: "/projects", label: "Projects", icon: Briefcase, featureId: "clients" },
-        { to: "/activities", label: "Activities", icon: ListChecks, featureId: "clients" },
-      ],
-    },
-    {
-      label: "Other",
-      items: [
-        { to: "/offices", label: "Offices", icon: Building2, featureId: "offices" },
-        { to: "/reports", label: "Reports", icon: BarChart3, featureId: "reports" },
-        { to: "/documents", label: "Documents", icon: FileText, featureId: "documents" },
+        { to: "/people", label: "Team", icon: Users, featureId: "people" },
+        { to: "/org", label: "Org chart", icon: Network, featureId: "org" },
+        { to: "/reports", label: "People Insights", icon: BarChart3, featureId: "reports" },
       ],
     },
   ];
 
-  // Workspace section — collapsed at the bottom, secondary tools that the
-  // Editorial design pushes out of the primary nav. Items still register so
-  // ⌘K, the avatar menu, and direct links continue to work.
+  // Workspace section — collapsed at the bottom, secondary tools.
   const workspace: SidebarNavGroup = {
     label: "Workspace",
     items: [{ to: "/docs", label: "Docs", icon: BookOpen, featureId: "docs" }],

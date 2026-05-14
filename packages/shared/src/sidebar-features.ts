@@ -57,11 +57,27 @@ export const SIDEBAR_FEATURE_LABELS: Record<SidebarFeatureId, string> = {
   settings: "Settings",
 };
 
+/**
+ * Features parked by the people-first refocus (2026-05). Routes still resolve,
+ * but the modules ship off by default so the sidebar and route guards hide
+ * them. Admins can re-enable individually via `/admin/modules` if they want a
+ * particular surface back.
+ */
+const PARKED_DEFAULT_OFF: ReadonlySet<SidebarFeatureId> = new Set([
+  "announcements",
+  "recruiting",
+  "clients",
+  "time",
+  "documents",
+  "offices",
+  "marketplace",
+  "developers",
+]);
+
 export function defaultSidebarFeaturesEnabled(): Record<SidebarFeatureId, boolean> {
-  return Object.fromEntries(ALL_SIDEBAR_FEATURE_IDS.map((id) => [id, true])) as Record<
-    SidebarFeatureId,
-    boolean
-  >;
+  return Object.fromEntries(
+    ALL_SIDEBAR_FEATURE_IDS.map((id) => [id, !PARKED_DEFAULT_OFF.has(id)]),
+  ) as Record<SidebarFeatureId, boolean>;
 }
 
 /** Merge a partial feature map (API or localStorage) onto defaults. */

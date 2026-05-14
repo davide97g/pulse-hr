@@ -3,41 +3,136 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
-import { Package, Wallet, Users, Briefcase, ArrowRight } from "lucide-astro";
+import {
+  Package,
+  MessageSquare,
+  Trophy,
+  Gift,
+  Sparkles,
+  Gauge,
+  Calendar,
+  Heart,
+  BarChart3,
+  ArrowRight,
+} from "lucide-astro";
 
-const title = "Modular — Money, People, Work as three independent products";
+const title = "What's inside — eight surfaces about how your team is doing";
 const description =
-  "Pulse is three independent modules sharing one workspace, one keyboard and one API. Adopt Money on its own, add People later, keep your existing Work tool — or roll out all three. No all-or-nothing migration.";
+  "Pulse is narrow on purpose. Eight surfaces — Status Log, Growth, Kudos, Moments, Workload check-in, Leave journal, Pulse, People Insights — all about a person, not a process. Hours and payroll belong in the tools built for them.";
 const path = "/modules";
 
-const modules = [
+const surfaces = [
   {
-    icon: Users,
-    k: "People",
-    tag: "HR + recruiting",
-    p: "One profile per teammate. Org chart, documents, e-signatures, onboarding workflows, recruiting kanban, offboarding, status log.",
+    icon: MessageSquare,
+    k: "Status Log",
+    tag: "Daily · async",
+    p: "Async morning standup in writing. Three lines per person, public team feed, manager-safe sentiment recap.",
     includes: [
-      "Employee directory + org chart",
-      "Leave, time-off, holiday calendars",
-      "Document vault + e-signatures",
-      "Recruiting kanban + onboarding workflows",
-      "Status Log — async standup with manager-safe recap",
+      "Three lines per teammate per day",
+      "Topic chips: status / win / pain / challenge / feedback",
+      "Manager recap: energy / engagement / alignment / stress",
+      "Raw chat stays with the employee",
     ],
-    standalone: "Roll out People first if onboarding is stuck in Google Docs and Gmail.",
+    standalone: "Start here if your standups are eating an hour a day and producing nothing readable.",
+    accent: "#b4ff39",
+  },
+  {
+    icon: Trophy,
+    k: "Growth",
+    tag: "Continuous · not yearly",
+    p: "Achievements, challenges, skill paths and kudos coins on one canvas. Score built from real activity, not from a manager filling in a form.",
+    includes: [
+      "Achievements and challenges per quarter",
+      "Skill paths with self-paced progress",
+      "Kudos coins folded in",
+      "0–100 score driven by what people actually do",
+    ],
+    standalone: "Start here if your last performance review took two weeks to write and was read by nobody.",
+    accent: "#ffd96a",
+  },
+  {
+    icon: Gift,
+    k: "Kudos",
+    tag: "Recognition · weekly",
+    p: "Peer recognition with reasons attached. Coins between teammates, confetti on send, leaderboards that reset weekly, monthly, yearly.",
+    includes: [
+      "Send a coin with a one-line reason",
+      "Tags: craft / kindness / hustle / leadership",
+      "Three leaderboards: week / month / year",
+      "Lives inside Growth",
+    ],
+    standalone: "Adopt anytime — Kudos works even before the rest of Pulse lands.",
     accent: "#ff8a7a",
   },
   {
-    icon: Briefcase,
-    k: "Work",
-    tag: "Time + projects",
-    p: "Clock in, track against commesse (project codes, the finance way), run saturation analyses on top.",
+    icon: Sparkles,
+    k: "Moments",
+    tag: "Ritual · ambient",
+    p: "Birthdays, work anniversaries and the kudos ticker on one continuous feed. Company memory rendered as a screen.",
     includes: [
-      "Time tracking + timesheets",
-      "Commessa (project) hours + costs",
-      "Saturation heatmap + margin view",
+      "Birthday halo on the avatar (opt-in)",
+      "Work anniversaries with year count",
+      "Kudos ticker — live",
+      "Quiet by default; never an inbox",
     ],
-    standalone: "Roll out Work first if you bill by the hour and can't answer \"is this project profitable?\".",
+    standalone: "Drop Moments on the lobby screen and watch what happens.",
+    accent: "#7eb8ff",
+  },
+  {
+    icon: Gauge,
+    k: "Workload check-in",
+    tag: "Weekly · one tap",
+    p: "One tap a week — light / balanced / heavy / overloaded. Eight-week sparkline trend. Your manager sees the trend, not the individual answers.",
+    includes: [
+      "Four emoji buttons, no form",
+      "8-week sparkline of your own answers",
+      "Manager sees aggregated team trend only",
+      "Hours and project allocation live in your other tool",
+    ],
+    standalone: "Use Workload before you build any other HR ritual — the data alone is worth the rollout.",
     accent: "#b4ff39",
+  },
+  {
+    icon: Calendar,
+    k: "Leave journal",
+    tag: "Personal · no approvals",
+    p: "Personal record of the days off you took. No approval workflow, no pending state — you log it, it's logged. Balance for your own picture.",
+    includes: [
+      "Log a day off in one form",
+      "Auto-approved (nothing to approve)",
+      "Personal balance — visible only to you",
+      "Team OOO view stays simple",
+    ],
+    standalone: "Drop the approval flow you've been carrying since the spreadsheet era.",
+    accent: "#ffd96a",
+  },
+  {
+    icon: Heart,
+    k: "Pulse",
+    tag: "Anonymous · weekly",
+    p: "Anonymous weekly vibe heatmap. Shows only when at least three people answer. Embedded inside Status Log, not a survey to dread.",
+    includes: [
+      "Four-mood weekly check (anonymous)",
+      "Min 3 responses to show",
+      "Folded into Status Log feed",
+      "Per-team aggregation only",
+    ],
+    standalone: "Use Pulse to replace the quarterly engagement survey nobody finishes.",
+    accent: "#ff8a7a",
+  },
+  {
+    icon: BarChart3,
+    k: "People Insights",
+    tag: "Reports · about people",
+    p: "Engagement, sentiment, kudos volume, growth trend, Pulse vibe over time. Reports about how people are doing — not about cost per hire or margin.",
+    includes: [
+      "Engagement + sentiment trends",
+      "Kudos volume by team",
+      "Growth score evolution",
+      "No business KPIs (cost / margin / turnover)",
+    ],
+    standalone: "Open Insights once a week; it should take you 90 seconds to read.",
+    accent: "#7eb8ff",
   },
 ];
 ---
@@ -47,24 +142,22 @@ const modules = [
   <main id="main">
     <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
       <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
-        <Package class="h-3 w-3" /> Modular
+        <Package class="h-3 w-3" /> What's inside
       </p>
       <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-5xl">
-        Three products.<br />
-        <em class="italic text-[#b4ff39]">Pick any combination</em>.
+        Eight surfaces.<br />
+        <em class="italic text-[#b4ff39]">One feeling: seen</em>.
       </h1>
       <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
-        Rippling makes you buy the whole suite. Deel pushes you into contractors-only.
-        Pulse lets you adopt <strong class="font-semibold">Money</strong>,
-        <strong class="font-semibold">People</strong> or
-        <strong class="font-semibold">Work</strong> independently —
-        each goes deep enough to replace a standalone tool, and they share one
-        profile, one search, one audit log, one API.
+        Pulse is narrow on purpose. Every surface is about how a person is doing —
+        what they're working on, what they're celebrating, where they're stretched.
+        <strong class="font-semibold">Payroll, timesheets and project allocation</strong>
+        belong in the tools built for them. We don't compete there.
       </p>
     </section>
 
     <section class="max-w-[1280px] mx-auto px-6 py-20 space-y-4">
-      {modules.map((m) => (
+      {surfaces.map((m) => (
         <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-8 md:p-10 grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-8">
           <div>
             <div class="flex items-center gap-3 mb-4">
@@ -81,7 +174,7 @@ const modules = [
             <p class="mt-6 text-sm text-white/55 italic max-w-md">{m.standalone}</p>
           </div>
           <div>
-            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-4">Inside {m.k.toLowerCase()}</p>
+            <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-white/40 mb-4">Inside {m.k}</p>
             <ul class="space-y-2 list-none p-0">
               {m.includes.map((f) => (
                 <li class="flex items-start gap-3 text-white/75">
@@ -96,22 +189,22 @@ const modules = [
     </section>
 
     <section class="max-w-[960px] mx-auto px-6 py-20">
-      <h2 class="font-display text-4xl md:text-5xl tracking-tight mb-6">What "modular" means, concretely.</h2>
+      <h2 class="font-display text-4xl md:text-5xl tracking-tight mb-6">What we deliberately don't ship.</h2>
       <div class="space-y-4 text-white/70 leading-relaxed">
         <p>
-          Each module has its own routes, its own permissions, its own API scope.
-          If you pay for People only, People is all you see — no ghost menus,
-          no greyed-out finance tabs, no upsell banners.
+          No time tracking. No timesheet approval. No project codes. No client
+          billing. No recruiting kanban. No onboarding workflow. No e-signature.
+          No desk booking. No payroll run. No expense reports. No turnover %.
         </p>
         <p>
-          Swap a module out whenever you want. Export anything via the API, close
-          the module, point your webhooks at the new vendor. No data hostage, no
-          migration fees, no "book a call with our retention team".
+          The shorter list is the product. Every one of those features makes
+          sense in some HR tool — just not this one. Pulse runs alongside the
+          tools you already have for the business half of HR; it covers the
+          human half they don't.
         </p>
         <p>
-          And because Money, People and Work share the same data model, adding a
-          second module later takes minutes — employees, commesse, org chart are
-          already there.
+          If you need an HRIS, buy an HRIS. If you need payroll, buy payroll.
+          If you want your team to feel seen, that's where we come in.
         </p>
       </div>
     </section>

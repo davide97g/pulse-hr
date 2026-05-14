@@ -1,28 +1,37 @@
 ---
 type: feature
-tags: [feature, insights, labs]
-last_updated: 2026-05-09
+tags: [feature, insights, labs, wellbeing]
+last_updated: 2026-05-14
 ---
 
-# Saturation
+# Workload check-in
 
-A heatmap of how loaded each [[Employee]] is. Built from [[allocation]]s, [[timesheet]] burn, and [[Leave Request]] absences. The "are we crushing this person?" view.
+> The feature is still called `saturation` in code and at `/saturation` for now. The product surface and product name are **Workload check-in**.
+
+A **one-tap weekly self check-in**: how heavy is this week? Four options — 🌤 Light, ⛅ Balanced, 🌧 Heavy, ⛈ Overloaded — and an 8-week sparkline of your own past answers. That's the whole feature.
+
+The old allocation/timesheet-driven heatmap is parked; Pulse HR doesn't track hours.
 
 ## Who uses it
 
-[[Manager]] (team), [[HR]] (org), [[Finance]] (margin angle), [[Admin]].
+- [[Employee]] checks in for themselves every Friday (the nudge is soft).
+- [[Manager]] sees a **team aggregate** only — how many people landed in each bucket, and the trend. Never individual answers.
+- [[HR]] reads aggregate trends across teams as an overload signal alongside [[Pulse Entry]] and [[Status Log]] sentiment.
 
 ## Key entities
 
-[[Allocation]] · [[Employee]] · [[Commessa]] · [[Leave Request]]
+[[Employee]] · `WorkloadCheckIn` (week + level + at, stored on the employee).
+
+Allocations, commesse and timesheet entries no longer feed this surface.
 
 ## Notable behaviors
 
-- **Per-person.** Bands: under-utilized, healthy, hot, burning. Color-coded.
-- **At-risk projects.** [[Commessa]]e where the lead is in the burning band trigger a flag.
-- **Look-ahead.** Saturation projects forward 4 weeks based on current allocations + scheduled [[Leave Request]]s.
-- **Lives at `/saturation`** in the *Other* sidebar group, with `/docs/saturation` as the in-app explainer. Counted as part of [[Labs]] because the look-ahead projection layer is still maturing.
+- **Four buttons, no form.** Tap-to-log. Tap again to change. Last answer in the week wins.
+- **Private by default.** The employee's own sparkline is visible only to them. The team aggregate is visible to managers.
+- **External-tool nudge.** A soft footer on the page reminds the employee that hours, allocations and project tracking live in their existing tool — Pulse HR doesn't compete there.
+- **Lives at `/saturation`** in the *Wellbeing* sidebar group, with `/docs/saturation` as the in-app explainer. Counts as [[Labs]] because the manager-aggregate visualisation is still maturing.
+- **8-week sparkline.** Missed weeks render as dashed circles; the line skips gaps. Seven weeks of plausible history are seeded on first visit so the chart isn't empty.
 
 ## Related journeys
 
-[[Onboarding a New Hire]] (allocation triggers a saturation update).
+— (No allocation-driven journeys link here anymore. The check-in is the journey.)

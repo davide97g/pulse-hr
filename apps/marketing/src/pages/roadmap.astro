@@ -12,9 +12,14 @@ const path = "/roadmap";
 
 const NOW = [
   {
-    t: "MCP server (read-only)",
-    d: "A Model Context Protocol server exposing employees, commesse and timesheets as resources. Enables external agents (Claude, Cursor) to ground on your tenant data.",
-    tag: "agents",
+    t: "Workload check-in v1",
+    d: "One-tap weekly mood / load capture, 8-week sparkline, manager-safe aggregate. Replaces the old allocation-driven Saturation heatmap.",
+    tag: "wellbeing",
+  },
+  {
+    t: "People-first dashboard tiles",
+    d: "Personal status streak, kudos this week, growth score, team Pulse vibe, upcoming Moments — instead of the business-ops KPI grid.",
+    tag: "dashboard",
   },
   {
     t: "Self-host Helm chart v1.0",
@@ -22,22 +27,17 @@ const NOW = [
     tag: "self-host",
   },
   {
-    t: "OpenAPI 3.1 spec + generated SDKs",
-    d: "The REST API as a single source-of-truth spec. Auto-generated TS, Python and Go clients drop on every merge — no more drift.",
-    tag: "api",
-  },
-  {
     t: "Webhook delivery service",
-    d: "Dedicated delivery queue with HMAC signing, exponential backoff (72h), replay from dashboard, and partial-failure dead-letter. Replaces the current in-process fan-out.",
+    d: "Dedicated delivery queue with HMAC signing, exponential backoff (72h), replay from dashboard, and partial-failure dead-letter for the people events (kudos, log, workload, leave).",
     tag: "ecosystem",
   },
 ];
 
 const NEXT = [
   {
-    t: "Module standalone billing",
-    d: "Enable just Money, just People or just Work in the product — billing, seat counts and feature flags all module-aware. Back-end scoping already there; UI + Stripe wiring remaining.",
-    tag: "modular",
+    t: "MCP server (read-only)",
+    d: "A Model Context Protocol server exposing employees, kudos, status log entries and workload check-ins as resources. Enables external agents (Claude, Cursor) to ground on your tenant data.",
+    tag: "agents",
   },
   {
     t: "Real OAuth for Slack / Google / Okta",
@@ -49,22 +49,27 @@ const NEXT = [
     d: "Native shells around the PWA with biometric unlock and background sync. Ships via App Store / Play Store; PWA remains the default.",
     tag: "mobile",
   },
+  {
+    t: "Manager digest email",
+    d: "Weekly recap delivered to managers: sentiment trend, workload at-risk count, kudos volume, Pulse vibe. Never the raw chat. Opt-in per workspace.",
+    tag: "manager",
+  },
 ];
 
 const LATER = [
   {
     t: "Agent-native workflows (write actions via MCP)",
-    d: "Once the read-only MCP server has settled, extend to write actions — book leave, draft offer letter, post a job. Gated behind explicit per-tool permissions.",
+    d: "Once the read-only MCP server has settled, extend to write actions — send a kudos, log a day off, mark a workload check-in. Gated behind explicit per-tool permissions.",
     tag: "agents",
   },
   {
-    t: "BYO-LLM for anomaly detection",
-    d: "Optional plug-in: route timesheet anomalies through your own Azure OpenAI or Bedrock tenant. No data leaves your network.",
+    t: "Sentiment summarisation (BYO-LLM)",
+    d: "Optional plug-in: route a week of personal status log entries through the employee's own Azure OpenAI or Bedrock tenant for a private retrospective. Data never leaves their network.",
     tag: "ai",
   },
   {
-    t: "Marketplace SDK for community modules",
-    d: "A packaging format (think VS Code extensions) for third-party modules distributed on GitHub. Each module declares permissions up front.",
+    t: "Marketplace SDK for community surfaces",
+    d: "A packaging format (think VS Code extensions) for third-party people-first surfaces distributed on GitHub. Each one declares permissions up front.",
     tag: "ecosystem",
   },
   {
@@ -75,6 +80,10 @@ const LATER = [
 ];
 
 const NOT_DOING = [
+  "Time tracking, timesheets, project codes, billing by the hour. Use the tool you already have.",
+  "Payroll, expense reports, GL/journal exports, tax. Buy payroll software for that.",
+  "Recruiting kanban, applicant tracking, onboarding workflows, e-signature. Different product, different scope.",
+  "Performance reviews and OKR cycles. Continuous signal is what we ship instead.",
   "Closed-source enterprise edition with extra features. No.",
   "Per-API-call pricing for the REST API. Included on every tier.",
   "LLM-generated chat agents in place of deterministic forms and the local intent parser. Reliability > marketing.",
@@ -82,7 +91,7 @@ const NOT_DOING = [
 
 const LANES = [
   { key: "now",   title: "Now",   icon: Zap,      sub: "In flight this quarter (Q2 2026)", items: NOW,   accent: "#b4ff39" },
-  { key: "next",  title: "Next",  icon: Clock,    sub: "Scoped for Q3 2026",               items: NEXT,  accent: "#ffbf4a" },
+  { key: "next",  title: "Next",  icon: Clock,    sub: "Scoped for Q3 2026",                items: NEXT,  accent: "#ffbf4a" },
   { key: "later", title: "Later", icon: Calendar, sub: "On the radar for Q4 2026 and beyond", items: LATER, accent: "#6fd8ff" },
 ];
 ---

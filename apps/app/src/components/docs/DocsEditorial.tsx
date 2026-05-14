@@ -15,36 +15,36 @@ const SECTIONS: Section[] = [
   {
     label: "PRIMI PASSI",
     items: [
-      { num: "01", title: "Cos'è PulseHR", read: "5 min" },
-      { num: "02", title: "Setup workspace", read: "8 min" },
-      { num: "03", title: "Invita le prime persone", read: "3 min" },
-      { num: "04", title: "Configura ferie e permessi", read: "6 min" },
+      { num: "01", title: "Cos'è Pulse HR", read: "4 min" },
+      { num: "02", title: "A chi serve (e a chi no)", read: "3 min" },
+      { num: "03", title: "Setup workspace", read: "6 min" },
+      { num: "04", title: "Invita le prime persone", read: "3 min" },
     ],
   },
   {
-    label: "CORE",
+    label: "GIORNO PER GIORNO",
     items: [
-      { num: "05", title: "Timesheet · come funziona", read: "12 min", spark: true },
-      { num: "06", title: "Forecast & saturazione", read: "10 min" },
-      { num: "07", title: "Payroll · run mensile", read: "15 min" },
-      { num: "08", title: "Performance & growth", read: "10 min" },
+      { num: "05", title: "Status Log · standup async", read: "8 min", spark: true },
+      { num: "06", title: "Workload · check-in settimanale", read: "5 min" },
+      { num: "07", title: "Diario di riposo", read: "4 min" },
+      { num: "08", title: "Kudos · dire grazie", read: "3 min" },
     ],
   },
   {
-    label: "INTEGRAZIONI",
+    label: "CRESCITA",
     items: [
-      { num: "09", title: "Slack · configurare", read: "6 min" },
-      { num: "10", title: "GitHub · timesheet auto", read: "8 min" },
-      { num: "11", title: "Calendario Google", read: "4 min" },
-      { num: "12", title: "API & webhook", read: "20 min" },
+      { num: "09", title: "Growth · obiettivi e percorsi", read: "10 min" },
+      { num: "10", title: "Moments · compleanni e anniversari", read: "3 min" },
+      { num: "11", title: "Pulse · vibe anonima del team", read: "5 min" },
+      { num: "12", title: "People Insights · cosa misura", read: "8 min" },
     ],
   },
 ];
 
 const ARTICLE_RULES = [
-  ["01", "Una riga per project.", "Non per task. Non per ticket. Solo project."],
-  ["02", "Otto ore al giorno.", "Più o meno è ok. Niente tracking al minuto."],
-  ["03", "Conferma il venerdì.", "Lunedì scatta la run, non si torna indietro."],
+  ["01", "Tre righe, non tre paragrafi.", "Cos'hai fatto · cosa fai · cosa ti blocca. Stop."],
+  ["02", "Async by default.", "Niente meeting per allinearsi. Si scrive, si legge, si va avanti."],
+  ["03", "Manager vede solo il riassunto.", "Sentiment e trend, mai il chat raw. La fiducia non è negoziabile."],
 ];
 
 export function DocsEditorial() {
@@ -66,7 +66,7 @@ export function DocsEditorial() {
       >
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            DOCS · 12 ARTICOLI · IT
+            DOCS · 12 ARTICOLI · PEOPLE-FIRST
           </span>
           <h1
             style={{
@@ -89,10 +89,11 @@ export function DocsEditorial() {
               fontStyle: "italic",
               fontSize: 20,
               lineHeight: 1.4,
-              maxWidth: 420,
+              maxWidth: 460,
             }}
           >
-            Tutto quello che serve per usare PulseHR bene. In ordine sparso, come la vita.
+            Pulse HR è uno strumento per le persone, non per il business. Qui dentro:
+            soddisfazione, crescita, riconoscimento, riposo. Le ore le tracci altrove.
           </p>
         </div>
 
@@ -162,7 +163,7 @@ export function DocsEditorial() {
         style={{ padding: "clamp(40px, 5vw, 64px)" }}
       >
         <span className="t-mono" style={{ color: "var(--spark)" }}>
-          ⏤ CAP. {active} · CORE ⏤
+          ⏤ CAP. {active} · GIORNO PER GIORNO ⏤
         </span>
         <h2
           style={{
@@ -174,7 +175,7 @@ export function DocsEditorial() {
             lineHeight: 0.92,
           }}
         >
-          Timesheet · <span style={{ fontStyle: "italic" }}>come</span> funziona
+          Status Log · <span style={{ fontStyle: "italic" }}>standup</span> async
           <span style={{ color: "var(--spark)" }}>.</span>
         </h2>
         <p
@@ -188,15 +189,15 @@ export function DocsEditorial() {
             maxWidth: 620,
           }}
         >
-          Il timesheet di PulseHR è pensato per essere compilato in tre minuti alla fine della
-          settimana, non in dieci durante la settimana.
+          Tre righe ogni mattina, niente meeting. Il team le legge quando arriva. Il tuo
+          manager vede solo il trend di sentiment — il messaggio raw resta con te.
         </p>
 
         <div
           className="placeholder-img"
           style={{ width: "100%", height: 240, borderRadius: 16, margin: "8px 0" }}
         >
-          <span className="cap t-mono-sm">HERO · TIMESHEET SCREENSHOT</span>
+          <span className="cap t-mono-sm">HERO · STATUS LOG SCREENSHOT</span>
         </div>
 
         <h3
@@ -272,11 +273,11 @@ export function DocsEditorial() {
                 marginTop: 6,
               }}
             >
-              Scrivici su Slack #pulse-help
+              Scrivici sul feedback board · ti rispondiamo entro 24h
             </div>
           </div>
           <button type="button" className="pill pill-spark pill-sm">
-            Apri Slack <span className="arr">→</span>
+            Apri feedback <span className="arr">→</span>
           </button>
         </div>
       </article>

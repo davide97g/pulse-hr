@@ -5,9 +5,9 @@ import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Check, ArrowRight, Github, Server, Tag, Info } from "lucide-astro";
 
-const title = "Pricing — free for 5, €8/employee after, self-host €0";
+const title = "Pricing — free for 5, €6/employee after, self-host €0";
 const description =
-  "One transparent tier per active employee per month. Free for the first 5, forever, with every feature included. Contractors priced separately. Self-hosted is free under FSL.";
+  "One transparent tier per active employee per month. Free for the first 5, forever, with every feature included. Self-hosted is free under FSL.";
 
 const path = "/pricing";
 
@@ -21,10 +21,9 @@ const TIERS = [
     cta: { label: "Start free", href: "https://app.pulsehr.it/" },
     included: [
       "Up to 5 active employees",
-      "All Money / People / Work modules",
+      "All eight surfaces — Status Log, Growth, Kudos, Moments, Workload, Leave journal, Pulse, People Insights",
       "Full API + webhooks (no tier gate)",
       "SSO via Google / Microsoft",
-      "Commessa-native time tracking",
       "Command bar (⌘K / ⌘J)",
       "Community support on GitHub",
     ],
@@ -39,14 +38,13 @@ const TIERS = [
   {
     id: "standard",
     name: "Standard",
-    price: "€8",
+    price: "€6",
     unit: "per active employee / month",
     punch: "Everything in Free, no feature asterisks. One tier for teams from 6 to 500.",
     cta: { label: "Start free — upgrade later", href: "https://app.pulsehr.it/" },
     featured: true,
     included: [
       "Everything in Free, unlimited seats",
-      "Tax GL + journal export (QuickBooks / Xero / SAP)",
       "SAML SSO, SCIM provisioning, audit log",
       "Priority email + Slack Connect support",
       "SOC 2 Type II report under NDA",
@@ -65,7 +63,7 @@ const TIERS = [
     punch: "Run the whole platform on your own infra. Source is public, license is self-serve.",
     cta: { label: "See on GitHub", href: "https://github.com/davide97g/pulse-hr" },
     included: [
-      "Full source code, every module",
+      "Full source code, every surface",
       "Docker Compose reference (single-node)",
       "Helm chart for Kubernetes",
       "Terraform modules for AWS / GCP / Hetzner",
@@ -81,17 +79,6 @@ const TIERS = [
     border: "border-white/10",
   },
 ];
-
-const CONTRACTOR = {
-  price: "€4",
-  unit: "per active contractor / month",
-  points: [
-    "Anyone paid outside your normal employee process — freelancers, consultants, international contractors.",
-    "Full profile and time tracking.",
-    "Switch the same person between contractor and employee with no data loss.",
-    "Not counted toward the free-for-5 employee allowance.",
-  ],
-};
 
 const breadcrumbs = [{ name: "Pricing", path: "/pricing" }];
 
@@ -114,11 +101,11 @@ const offerCatalogLd = {
     {
       "@type": "Offer",
       name: "Standard",
-      price: "8",
+      price: "6",
       priceCurrency: "EUR",
       priceSpecification: {
         "@type": "UnitPriceSpecification",
-        price: "8",
+        price: "6",
         priceCurrency: "EUR",
         referenceQuantity: { "@type": "QuantitativeValue", value: "1", unitText: "active employee / month" },
       },
@@ -135,15 +122,6 @@ const offerCatalogLd = {
       availability: "https://schema.org/InStock",
       url: "https://pulsehr.it/pricing#self-host",
     },
-    {
-      "@type": "Offer",
-      name: "Contractor",
-      price: "4",
-      priceCurrency: "EUR",
-      description: "Per active contractor, per month. Not counted toward the free-for-5 employee tier.",
-      availability: "https://schema.org/InStock",
-      url: "https://pulsehr.it/pricing#contractor",
-    },
   ],
 };
 
@@ -156,15 +134,15 @@ const pricingFaqLd = {
 const FAQ = [
   {
     q: "Why \"per active employee\" and what does active mean?",
-    a: "An employee is active in a calendar month if they had a contract on any day of that month or were paid in that month. You don't pay for offboarded people after their exit date. Contractors don't count toward the employee tier — they have their own €4 line.",
+    a: "An employee is active in a calendar month if they had a contract on any day of that month or were paid in that month. You don't pay for offboarded people after their exit date.",
   },
   {
     q: "Is there any feature locked behind an enterprise tier?",
     a: "No. API, webhooks, SSO/SAML, audit logs, SCIM, the full Labs suite — all included on Free and Standard. The only difference between Free and Standard is the employee cap.",
   },
   {
-    q: "Can I mix modules? E.g. only People and Work, not Money?",
-    a: "Yes. Money / People / Work are independently toggleable. The per-employee price stays €8 regardless of how many modules you run — we don't charge twice for the same person.",
+    q: "Does Pulse replace my HRIS or payroll system?",
+    a: "No. Pulse is the people half of HR — status, growth, kudos, wellbeing. Payroll, time tracking, recruiting and project allocation belong in tools built for them. Pulse runs alongside your HRIS, not in place of it, which is also why the per-seat price is lower than a full HRIS.",
   },
   {
     q: "Discounts for non-profits, education, open-source maintainers?",
@@ -201,9 +179,10 @@ const extraLd = [offerCatalogLd, pricingFaqLd];
         <em class="italic text-[#b4ff39]">No</em> asterisks.
       </h1>
       <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
-        Free for your first 5 employees, forever. €8 per active employee per
+        Free for your first 5 employees, forever. €6 per active employee per
         month above that, with every feature on every tier. Or self-host the
-        whole platform from GitHub for €0.
+        whole platform from GitHub for €0. Lower than an HRIS because Pulse
+        does less on purpose — it runs alongside the payroll tool you already pay for.
       </p>
     </section>
 
@@ -265,30 +244,6 @@ const extraLd = [offerCatalogLd, pricingFaqLd];
             )}
           </article>
         ))}
-      </div>
-    </section>
-
-    <section class="max-w-[1280px] mx-auto px-6 py-10">
-      <div class="rounded-2xl border border-white/10 bg-[#0f0f11] p-8 md:p-10 grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-8">
-        <div>
-          <p class="font-mono uppercase tracking-[0.2em] text-[11px] text-[#ffbf4a] mb-3">Contractors</p>
-          <div class="flex items-baseline gap-2 mb-3">
-            <span class="font-display text-5xl text-[#ffbf4a]">{CONTRACTOR.price}</span>
-            <span class="text-white/50 font-mono text-sm">/ {CONTRACTOR.unit}</span>
-          </div>
-          <p class="text-white/65 leading-relaxed max-w-md m-0">
-            A separate line for anyone paid outside your normal employee
-            process — freelancers, consultants, international contractors.
-          </p>
-        </div>
-        <ul class="space-y-2 list-none p-0 m-0">
-          {CONTRACTOR.points.map((p) => (
-            <li class="flex items-start gap-2 text-sm text-white/80">
-              <Check class="h-4 w-4 mt-0.5 shrink-0 text-[#ffbf4a]" />
-              <span>{p}</span>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
 

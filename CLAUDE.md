@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Product scope (2026-05 people-first refocus)
+
+Pulse HR is **people-first**. The active scope covers employee satisfaction, growth, recognition, async standups, wellbeing — Status Log, Growth, Kudos, Moments, Workload check-in (the `/saturation` route), Leave journal, Pulse, People Insights (the `/reports` route), Employees, Org chart, Dashboard. Business-ops surfaces (Time Tracking, Projects, Activities, Clients, Recruiting, Documents, Offices, Announcements, Marketplace, Developers, Calendar, Onboarding workflows) are **parked**: their routes still resolve and their code still compiles, but the modules ship off by default in `packages/shared/src/sidebar-features.ts` and the sidebar groups in `apps/app/src/lib/sidebar-nav-groups.tsx` no longer link to them. Don't reintroduce parked surfaces into navigation, dashboards, marketing copy or wiki narratives without an explicit user request to un-park.
+
+See `wiki/AGENTS.md` for the product-focus rules and `wiki/concepts/{mission,vision,brand-voice}.md` for the framing. Plan files: `~/.claude/plans/help-me-refine-the-velvet-fiddle.md` (in-app prune) and `~/.claude/plans/pulsehr-people-first-rebrand.md` (everything outside the app).
+
 ## Wiki
 
 `/wiki` is the product knowledge base — HR-readable, LLM-maintained. Read `wiki/AGENTS.md` before answering product/domain questions, and read relevant pages in `wiki/personas/`, `wiki/features/`, `wiki/entities/`, `wiki/concepts/`, `wiki/journeys/`, `wiki/glossary/` instead of re-deriving the product model from routes and mock-data. Start with `wiki/index.md`.

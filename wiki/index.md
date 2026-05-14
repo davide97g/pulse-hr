@@ -14,34 +14,41 @@ Use this as your starting point: scan the relevant section, click into the pages
 
 ## Features
 
-- [Activities](features/activities.md) — flat task list, lighter than an issue tracker.
-- [Announcements](features/announcements.md) — company-wide messages.
-- [Calendar](features/calendar.md) — team out-of-office and booking view.
-- [Clients](features/clients.md) — external parties commesse are billed against.
+Pulse HR is **people-first** (2026-05 refocus). The active list below covers employee satisfaction, progress, recognition, and wellbeing. Parked features still have pages but are off by default in the workspace modules — see [AGENTS.md](AGENTS.md#product-focus-2026-05-refocus) for the rationale.
+
+### Active
+
 - [Dashboard](features/dashboard.md) — the personalized home screen.
-- [Developers](features/developers.md) — API keys, webhooks, custom fields, audit log.
-- [Documents](features/documents.md) — contracts, NDAs, handbooks; templated and signed.
 - [Employees](features/employees.md) — the directory.
 - [Feedback](features/feedback.md) — public feedback board (separate site).
 - [Growth](features/growth.md) — engagement, performance, employee score.
 - [In-App Docs](features/in-app-docs.md) — user-facing how-to.
 - [Kudos](features/kudos.md) — peer recognition coins. NEW.
-- [Leave](features/leave.md) — vacation, sick, personal, parental — full and half day.
-- [Marketplace](features/marketplace.md) — integrations index.
+- [Leave](features/leave.md) — personal wellbeing: vacation, sick, personal, parental.
 - [Modules](features/modules.md) — admin-only feature toggle per role.
 - [Moments](features/moments.md) — birthdays, anniversaries, kudos ticker.
+- [Org Chart](features/org-chart.md) — visual reporting tree.
+- [Pulse](features/pulse.md) — anonymous weekly vibe heatmap. NEW.
+- [Reports](features/reports.md) — People Insights: engagement, sentiment, kudos, growth.
+- [Saturation](features/saturation.md) — personal workload + overload signal.
+- [Settings](features/settings.md) — workspace and personal preferences.
+- [Status Log](features/status-log.md) — daily async standup; manager sees only the summary.
+- [Welcome](features/welcome.md) — first-run editorial; names the workspace, seeds the roster.
+
+### Parked (off by default; out of current scope)
+
+- [Activities](features/activities.md) — flat task list, lighter than an issue tracker.
+- [Announcements](features/announcements.md) — company-wide messages.
+- [Calendar](features/calendar.md) — team out-of-office and booking view.
+- [Clients](features/clients.md) — external parties commesse are billed against.
+- [Developers](features/developers.md) — API keys, webhooks, custom fields, audit log.
+- [Documents](features/documents.md) — contracts, NDAs, handbooks; templated and signed.
+- [Marketplace](features/marketplace.md) — integrations index.
 - [Offices](features/offices.md) — physical workspaces, desk and room booking.
 - [Onboarding](features/onboarding.md) — auto-workflow for new hires.
-- [Org Chart](features/org-chart.md) — visual reporting tree.
 - [Projects](features/projects.md) — single-commessa detail view.
-- [Pulse](features/pulse.md) — anonymous weekly vibe heatmap. NEW.
 - [Recruiting](features/recruiting.md) — kanban hiring pipeline.
-- [Reports](features/reports.md) — aggregate numbers, drill-downs, exports.
-- [Saturation](features/saturation.md) — utilization heatmap; at-risk projects.
-- [Settings](features/settings.md) — workspace and personal preferences.
-- [Status Log](features/status-log.md) — daily AI conversation; manager sees only the summary.
 - [Time Tracking](features/time-tracking.md) — log hours against a commessa.
-- [Welcome](features/welcome.md) — first-run editorial; names the workspace, seeds the roster.
 
 ## Entities
 
@@ -67,15 +74,18 @@ Use this as your starting point: scan the relevant section, click into the pages
 
 ## Concepts
 
+- [Brand Voice](concepts/brand-voice.md) — how we write, in product, marketing, wiki and commits.
 - [Command Palette](concepts/command-palette.md) — ⌘K finder for navigation.
 - [Demo Mode](concepts/demo-mode.md) — frontend-only mockup state.
 - [Keyboard-First](concepts/keyboard-first.md) — design stance; shortcut catalog.
 - [Labs](concepts/labs.md) — experimental shelf with NEW-badged features.
+- [Mission](concepts/mission.md) — make a workspace where people are seen, not measured.
 - [Open Source Positioning](concepts/open-source-positioning.md) — why Pulse HR ships in public.
 - [PWA & Offline](concepts/pwa-offline.md) — installable, offline-capable surfaces.
 - [Role Override](concepts/role-override.md) — topbar "View as"; preview the workspace as another persona.
 - [Role Themes](concepts/role-themes.md) — light and dark; the per-role palette is aspirational.
 - [Signed-Out Gate](concepts/signed-out-gate.md) — public vs gated routes; how the demo lets visitors in.
+- [Vision](concepts/vision.md) — an HR product the team actually opens.
 
 ## Journeys
 

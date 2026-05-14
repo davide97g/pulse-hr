@@ -5,11 +5,11 @@
 
 export const en = {
   meta: {
-    tagline: "HR software for people who hate HR software.",
+    tagline: "Software for people, not headcount.",
     description:
-      "Open-source people ops for modern teams. Built in the open, by the people who use it. Money, People and Work as three composable modules. Self-host on your own infra, or run hosted — no sales call to see the product.",
+      "The HR tool that cares how you're doing, not how many hours you logged. Async status log, growth, kudos, wellbeing — no timesheets, no approval queues, no payroll. Open-source, self-hostable, built by the people who use it.",
     keywords:
-      "open source HR, HRIS, self-hosted HR, modular HR, HR API, webhooks, time tracking, commessa, keyboard-first, PWA, FSL, public roadmap",
+      "employee engagement, async standup, kudos, peer recognition, wellbeing, open source, self-hosted, status log, growth, employee satisfaction, people-first HR",
   },
 
   a11y: {
@@ -108,25 +108,25 @@ export const en = {
 
   hero: {
     badge: "Open source · FSL-1.1-MIT · public beta · built in public",
-    eyebrow: "Open-source people ops for modern teams",
-    titleBefore: "HR software for people who",
-    titleItalic: "hate",
-    titleAfter: " HR software",
+    eyebrow: "Open-source · for the humans on your team",
+    titleBefore: "Software for",
+    titleItalic: "people",
+    titleAfter: ", not headcount.",
     body: [
-      "Built in the open. Shaped by the people who use it. ",
-      "Money",
+      "The HR tool that cares how you're doing, not how many hours you logged. ",
+      "Async status log",
       ", ",
-      "People",
+      "growth",
       " and ",
-      "Work",
-      " — three independent modules sharing one workspace, one keyboard, one API. Source-available on GitHub. Self-host on your own infra, or run hosted — no sales call to see the product, no proprietary export, no lock-in.",
+      "recognition",
+      " — built around the moments that matter to a team. No timesheets, no approval queues, no payroll. Open-source on GitHub, self-host or run hosted — no sales call to see the product.",
     ] as string[],
     ctaPrimary: "Try it free — your data, your infra",
     ctaGithub: "Read the source",
     ctaTour: "See the app",
-    chip1: "Money · People · Work — adopt any",
-    chip2: "Public roadmap · public changelog · public prices",
-    chip3: "Self-host on Docker / Helm / Terraform",
+    chip1: "No timesheets · No approval queues",
+    chip2: "Async standups · Continuous Pulse",
+    chip3: "Self-host or hosted — your call",
     newThisQuarter: "New this quarter",
   },
 
@@ -151,14 +151,14 @@ export const en = {
   whyPulse: {
     eyebrow: "Why Pulse",
     title: {
-      before: "No other HR vendor",
-      italic: "openly",
-      after: "ships ",
-      end: ".",
+      before: "The other HR tools",
+      italic: "count",
+      after: "you. We ",
+      end: "see you.",
     },
     subtitle: {
       before:
-        "Rippling is closed. Deel is contractors-only. BambooHR has no API to speak of. Pulse is the only HR platform where the source, the roadmap, the changelog, the screw-ups and the prices are all public — ",
+        "Lattice ties everything to OKRs. 15Five is built around 1:1 forms. Officevibe is a survey shop. Pulse is the only people-first tool where the source, the roadmap, the changelog and the prices are all public — ",
       link: "see the honest comparison",
       after: ".",
     },
@@ -181,8 +181,8 @@ export const en = {
       },
       {
         k: "Built by the people who use it",
-        p: "The roadmap is shaped by pull requests, not product managers. Money, People and Work are three independent modules — adopt one, skip the rest, swap any of them later. Every ship is because someone actually needed it.",
-        cta: "Modules · PRs · feedback board",
+        p: "The roadmap is shaped by pull requests, not product managers. Pulse covers the people half of HR — status, growth, kudos, wellbeing — and stays out of the business half on purpose. The maintainers use Pulse on themselves every day; every ship is because someone actually needed it.",
+        cta: "Surfaces · PRs · feedback board",
       },
     ],
   },
@@ -213,50 +213,50 @@ export const en = {
   },
 
   features: {
-    eyebrow: "Everything in one place",
-    title: "Eight products that feel like one.",
+    eyebrow: "What's inside",
+    title: "Eight surfaces. One feeling: seen.",
     subtitle:
-      "Each module is deep enough to replace a standalone tool, but they share one profile, one search, one audit log. You'll stop switching tabs — we promise.",
+      "Pulse is narrow on purpose. Every surface is about how a person is doing — what they're working on, what they're celebrating, where they're stretched. Payroll, timesheets and project allocation belong in tools built for them. We don't compete there.",
     items: [
       {
-        icon: "Clock",
-        title: "Time & attendance",
-        body: "Clock in from anywhere. Track hours against commesse (project codes, the way finance sees it), not just the wall clock. Manual entry, imports, approvals, overtime anomalies — all one surface.",
-      },
-      {
-        icon: "Users",
-        title: "People operations",
-        body: "One profile per teammate. Org chart, documents, e-signatures, offboarding — no spreadsheets, no lost NDAs.",
-      },
-      {
-        icon: "Briefcase",
-        title: "Recruiting & onboarding",
-        body: "Kanban pipeline for candidates, automated onboarding workflows the moment someone says yes.",
-      },
-      {
-        icon: "BarChart3",
-        title: "Reports everyone reads",
-        body: "Headcount, turnover, cost per hire, absenteeism — export to PDF/CSV or pipe to BI in a click.",
-      },
-      {
-        icon: "Plug",
-        title: "Integrations & API",
-        body: "Slack, Google, QuickBooks, Okta, Stripe. And when we don't have it, our API and webhooks do.",
-      },
-      {
-        icon: "Gauge",
-        title: "Saturation & margins",
-        body: "Org utilization, weekly bench, blended margin, at-risk projects. A live read on whether the company is over- or under-sold.",
-      },
-      {
-        icon: "Sparkles",
-        title: "Command bar (⌘J)",
-        body: "Type what you want — 'log 4h on NOV-07', 'book leave next Friday'. A local intent parser turns natural phrases into runnable actions. No LLM call, no data leaving your tenant. Works offline.",
+        icon: "MessageSquare",
+        title: "Status Log",
+        body: "Async morning standup in writing. Three lines per person, public team feed, manager-safe sentiment recap — the raw chat stays with the employee. No meetings, no AI, no chat threads.",
       },
       {
         icon: "Trophy",
-        title: "Growth & recognition",
-        body: "XP, kudos coins, leaderboards, weekly podiums. Engagement data that HR and managers actually read, not a feel-good gimmick.",
+        title: "Growth",
+        body: "Achievements, challenges, skill paths and kudos coins on one canvas. Continuous signal, not yearly reviews. The score is built from what people actually do, not from a manager filling in a form.",
+      },
+      {
+        icon: "Gift",
+        title: "Kudos",
+        body: "Peer recognition with reasons attached. Coins between teammates, confetti on send, leaderboards that reset weekly, monthly and yearly. Lives inside Growth.",
+      },
+      {
+        icon: "Sparkles",
+        title: "Moments",
+        body: "Birthdays, work anniversaries and the kudos ticker on one continuous feed. Company memory rendered as a screen.",
+      },
+      {
+        icon: "Gauge",
+        title: "Workload check-in",
+        body: "One tap each Friday — light / balanced / heavy / overloaded. Eight-week sparkline trend. Your manager sees the trend, not the individual answers. Hours and project allocation live in your other tool.",
+      },
+      {
+        icon: "Calendar",
+        title: "Leave journal",
+        body: "Personal record of the days off you took. No approval workflow, no pending state — you log it, it's logged. Balance visible to you alone, for your own picture.",
+      },
+      {
+        icon: "Heart",
+        title: "Pulse",
+        body: "Anonymous weekly vibe heatmap. Shows only when at least three people answer. Embedded inside Status Log so it stays part of the conversation, not a survey to dread.",
+      },
+      {
+        icon: "BarChart3",
+        title: "People Insights",
+        body: "Engagement, sentiment, kudos volume, growth trend, Pulse vibe over time. Reports about how people are doing — not about cost per hire or margin.",
       },
     ],
   },
@@ -282,9 +282,9 @@ export const en = {
       },
       {
         icon: "Gauge",
-        kind: "Saturation",
+        kind: "Workload check-in",
         tag: "Load",
-        body: "Utilization heatmap and 4-week look-ahead from allocations and leave. Who's leaning in, where the bench is, what's at risk.",
+        body: "One tap a week — light / balanced / heavy / overloaded. An 8-week sparkline of how the team is holding up. No allocations, no percentages, no hours.",
       },
       {
         icon: "Sparkles",
@@ -303,11 +303,11 @@ export const en = {
     subtitle:
       "Each persona ships with its own sidebar groups, default view and shortcut set. Light and dark themes today; per-persona accent palettes are on the roadmap. CFOs don't see sprint standups.",
     items: [
-      { k: "Employee", d: "Clock in, log time, post status, send kudos." },
-      { k: "Manager", d: "Approvals, team saturation, status-log recap, kudos authority." },
-      { k: "HR", d: "People ops, onboarding, recruiting, announcements." },
-      { k: "Admin", d: "Modules, integrations, API, audit log — and \"View as\"." },
-      { k: "Finance", d: "Margins, reports, project profitability." },
+      { k: "Employee", d: "Post status, send kudos, check in on workload, log days off." },
+      { k: "Manager", d: "Read the sentiment recap, notice overload, celebrate wins. Never the raw chat." },
+      { k: "HR", d: "Engagement signal, growth conversations, wellbeing trends. No spreadsheets." },
+      { k: "Admin", d: "Modules, persona setup, audit log — and \"View as\"." },
+      { k: "Finance", d: "Honest answer: this isn't for you. Keep your existing payroll tool." },
     ],
   },
 
@@ -342,12 +342,12 @@ export const en = {
     titleAfter: ".",
     items: [
       {
-        q: "Can I import data from my current HR tool?",
-        a: "Yes. We ship one-click importers for BambooHR, Personio, Rippling, Deel and Factorial, plus a generic CSV importer with column mapping for anything else. The importer runs a dry-run first so you can fix bad rows before committing, and it preserves employee IDs so integrations keep working. Most teams migrate a full dataset — employees, leave balances, documents — in under an hour.",
+        q: "Does Pulse replace my HRIS?",
+        a: "No, and that's the point. Pulse is the people half of HR — status, growth, kudos, wellbeing. Payroll, time tracking, recruiting, project allocation and document e-signature belong in tools built for them. Pulse runs next to your HRIS, not in place of it. Many teams use Pulse alongside BambooHR, Personio, Rippling or Factorial; the lightweight scope is what makes it actually get used.",
       },
       {
         q: "How is Pulse HR priced?",
-        a: "Per active employee, per month. One transparent tier with every feature included — no 'talk to sales' gates, no upsell for Labs features, no per-seat add-ons for API access or SSO. Free for the first 5 active employees, forever. Contractors are priced differently and capped at $4 per active contractor per month. Annual billing is 15% off.",
+        a: "Per active employee, per month. One transparent tier with every feature included — no 'talk to sales' gates, no upsell for Labs features, no per-seat add-ons for API access or SSO. Free for the first 5 active employees, forever. Annual billing is 15% off.",
       },
       {
         q: "Is it SOC 2 / GDPR compliant?",
@@ -367,11 +367,11 @@ export const en = {
       },
       {
         q: "How does the command bar (⌘J) work?",
-        a: "The command bar runs a local intent parser over your tenant's data — no LLM call, no network round-trip, no cross-tenant training. You type natural phrases like 'log 4h on NOV-07 yesterday' or 'book leave next Friday', and a deterministic heuristic maps them to runnable actions scoped to your permissions. Because it runs in the browser, it works offline as part of the PWA. We'll expose an MCP server for external agent workflows in a later release; until then, the honest label is: a keyboard-first command bar — no AI in the loop.",
+        a: "The command bar runs a local intent parser over your tenant's data — no LLM call, no network round-trip, no cross-tenant training. You type natural phrases like 'send kudos to Marta for the demo' or 'log a day off last Friday', and a deterministic heuristic maps them to runnable actions scoped to your permissions. Because it runs in the browser, it works offline as part of the PWA. We'll expose an MCP server for external agent workflows in a later release; until then, the honest label is: a keyboard-first command bar — no AI in the loop.",
       },
       {
         q: "Does Pulse work offline?",
-        a: "The whole surface installs as a PWA on macOS, Windows, iOS and Android. Recent views, timesheets and kudos drafts keep working offline and sync as soon as you're back — no 'loading…' screens at the airport or in a basement meeting room. Destructive actions require a live connection and queue if offline, so nothing fires twice by mistake.",
+        a: "The whole surface installs as a PWA on macOS, Windows, iOS and Android. Recent views, status-log drafts and kudos drafts keep working offline and sync as soon as you're back — no 'loading…' screens at the airport or in a basement meeting room. Destructive actions require a live connection and queue if offline, so nothing fires twice by mistake.",
       },
     ],
   },
@@ -396,9 +396,9 @@ export const en = {
       after: "team actually works.",
     },
     items: [
-      { k: "Agencies & consultancies", d: "Bill by project code (commessa), track utilization, close books without spreadsheets." },
-      { k: "Product startups", d: "Onboard from a candidate-accepted email in one click. Equity, offers, laptops — on rails." },
-      { k: "Scale-ups (50-500)", d: "Approval chains that match your org, multi-entity controls, reports your CFO will actually open." },
+      { k: "Teams sick of yearly reviews", d: "Continuous signal — kudos, status, sentiment — instead of a 90-minute calibration once a year." },
+      { k: "Distributed teams tired of meetings", d: "Async standup in writing, workload check-in in one tap. Stop scheduling time to talk about time." },
+      { k: "Founders who want to know their people are okay", d: "Pulse vibe, overload signal, kudos volume. Read it in 30 seconds, act on it before someone quits." },
     ],
   },
 
@@ -423,7 +423,7 @@ export const en = {
     titleItalic: "Everything",
     titleAfter: ".",
     body: {
-      key1Before: " opens a fuzzy palette — jump to any employee, project, document or setting.",
+      key1Before: " opens a fuzzy palette — jump to any teammate, page or setting.",
       key2Before:
         " opens the command bar — type what you want in plain language, a local parser turns it into a runnable action. No LLM call, no cross-tenant training, works offline.",
     },
@@ -431,19 +431,19 @@ export const en = {
     chipShortcuts: "40+ shortcuts",
     chipOffline: "Works offline",
     panelTitle: "Command bar",
-    commandExample: "log 4h on NOV-2025-07 yesterday, feature work",
-    parsedLabel: "Parsed · intent=log-hours · confidence 0.94",
+    commandExample: "send kudos to Marta for the demo, thanks",
+    parsedLabel: "Parsed · intent=send-kudos · confidence 0.96",
     parsedSentence: {
-      log: "Log ",
+      log: "Send ",
       to: " to ",
-      on: " on ",
-      tagged: ", tagged ",
+      on: " for ",
+      tagged: ", note ",
       end: ".",
     },
-    tagFeature: "feature",
+    tagFeature: "demo",
     actionConfirm: "Confirm",
     actionEdit: "Edit details",
-    actionOpen: "Open timesheet",
+    actionOpen: "Open Kudos",
     footerLocal: "local parser · no network call",
     footerOffline: "works offline",
   },
@@ -456,39 +456,39 @@ export const en = {
     },
     openApp: "Open the full app",
     tabs: [
-      { k: "dashboard", l: "Dashboard", body: "Approvals, alerts, presence and trends. The one pane your HR team opens at 9am." },
-      { k: "time", l: "Time & commesse", body: "Log hours against any commessa. Budget burn, per-client profitability, exports to CSV." },
+      { k: "dashboard", l: "Dashboard", body: "Status streak, kudos this week, growth score, team Pulse vibe, upcoming Moments. The one pane your team opens at 9am." },
+      { k: "log", l: "Status Log", body: "Three lines per person, public team feed, manager-safe sentiment recap. The raw chat stays with the employee." },
     ],
     bullets: [
-      "Approvals in one click",
+      "One-tap workload check-in",
       "Keyboard-first navigation (⌘K)",
-      "Full audit trail",
-      "Exports to CSV / PDF / API",
+      "Manager-safe sentiment recap",
+      "Self-host or hosted — your call",
     ],
     mockDashboard: {
-      pending: "Pending",
-      headcount: "Headcount",
-      overtime: "Overtime",
+      pending: "Logged off",
+      headcount: "Kudos · week",
+      overtime: "Growth score",
       rows: [
-        { n: "Marcus R.", t: "Vacation · 5d", s: "pending" },
-        { n: "Tom B.", t: "Sick · 3d", s: "approved" },
-        { n: "Noah W.", t: "Personal · 1d", s: "pending" },
+        { n: "Marta E.", t: "Kudos · Demo ace", s: "approved" },
+        { n: "Tom B.", t: "Status · 3 in a row", s: "approved" },
+        { n: "Noah W.", t: "Personal · 1d off", s: "approved" },
       ],
-      statusPending: "pending",
-      statusApproved: "approved",
+      statusPending: "fresh",
+      statusApproved: "logged",
     },
     mockTime: {
-      activeClock: "Active clock",
-      project: "ACM-2025-01 · Platform rebuild",
-      stopCta: "Stop & log hours",
+      activeClock: "This week",
+      project: "Workload · balanced ⛅",
+      stopCta: "Open Status Log",
     },
   },
 
   cta: {
-    titleLine1: "HR software for people who",
-    titleItalic: "hate",
-    titleAfter: " HR software.",
-    body: "Free forever, self-hosted. Free for your first 5 employees on hosted Pulse. No credit card. No sales call to see the product. Import in an hour, export in a click — always.",
+    titleLine1: "Software for",
+    titleItalic: "people",
+    titleAfter: ", not headcount.",
+    body: "Free forever, self-hosted. Free for your first 5 employees on hosted Pulse. No credit card. No sales call to see the product. Export everything in a click — always.",
     primary: "Try it free",
     secondary: "Read the source",
   },
@@ -507,31 +507,31 @@ export const en = {
   },
 
   indexPage: {
-    title: "Pulse HR — HR software for people who hate HR software",
+    title: "Pulse HR — software for people, not headcount",
   },
 
   productPage: {
-    title: "Product tour — Pulse HR platform overview",
+    title: "Product tour — Pulse HR people-first overview",
     description:
-      "Three independent modules — Money, People and Work — sharing one workspace, one keyboard, one API. Open source under FSL. Keyboard-first, role-themed, multi-country.",
+      "Status Log, Growth, Kudos, Moments, Pulse, Workload check-in, Leave journal, People Insights — eight surfaces all about how your team is doing. Open source under FSL. Keyboard-first, self-hostable.",
     eyebrow: "Product tour",
-    titleLine1: "Eight products,",
-    titleItalic: "one workspace",
-    titleAfter: ".",
+    titleLine1: "Eight surfaces,",
+    titleItalic: "one feeling",
+    titleAfter: ": seen.",
     body:
-      "Every module goes deep enough to replace a standalone tool — and they share one profile, one search, one audit log, one API. Adopt Money, People and Work independently, or all three together.",
+      "Every surface is about a person, not a process. Status, kudos, growth, rest, workload — read in seconds, acted on in seconds. Hours and payroll live in the tools built for them. We don't compete there.",
   },
 
   labsPage: {
-    title: "Pulse Labs — status log, kudos, saturation, moments",
+    title: "Pulse Labs — status log, kudos, workload check-in, moments",
     description:
-      "Four Labs features shipping now: Status Log (async standup + recap), Kudos peer recognition, Saturation utilization, and Moments. Included on every plan.",
+      "Four Labs features shipping now: Status Log (async standup + recap), Kudos peer recognition, Workload check-in, and Moments. Included on every plan.",
     eyebrow: "Labs · shipping now · free on every plan",
     titleLine1: "The four Pulse features",
     titleItalic: "reinventing",
-    titleAfter: " HR software.",
+    titleAfter: " how teams stay in sync.",
     body:
-      "Labs is where we ship experimental capabilities first — async standup with manager-safe recap, peer recognition, live utilization insights, and a company-memory feed. No waiting lists, no upsells, no enterprise-tier paywall.",
+      "Labs is where we ship experimental capabilities first — async standup with manager-safe recap, peer recognition, one-tap workload check-in, and a company-memory feed. No waiting lists, no upsells, no enterprise-tier paywall.",
   },
 
   changelogPage: {
@@ -616,10 +616,10 @@ export const en = {
   },
 
   heroNewTags: [
-    "Command bar ⌘J",
-    "Saturation",
     "Status Log",
+    "Workload check-in",
     "Kudos",
+    "Moments",
     "Open source",
   ] as string[],
 };

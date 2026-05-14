@@ -1,31 +1,34 @@
 ---
 type: feature
-tags: [feature, work, italian]
-last_updated: 2026-04-26
+tags: [feature, people, italian]
+last_updated: 2026-05-14
 ---
 
 # Leave
 
-Vacation, sick days, personal time, and parental leave. The Italian-flavored variants — [[ferie]], [[permesso]], [[malattia]], [[ROL]] — flow through here too.
+A **personal journal of the days off you took**. Not a request system. Not an approval queue. You log a day off the way you'd write it in your own calendar, and it's logged.
 
 ## Who uses it
 
-- [[Employee]] requests leave; sees their balance.
-- [[Manager]] approves / rejects requests for their reports.
-- [[HR]] has org-wide visibility and override authority.
-- [[Finance]] cares about the impact on  calculations.
+- [[Employee]] logs their own days off, sees their own balance.
+- [[Manager]] glances at the team OOO view to plan around it.
+- [[HR]] doesn't have an approval role here — Pulse left that with the payroll/HRIS tool that handles it properly.
 
 ## Key entities
 
 [[Leave Request]] · [[Employee]]
 
+The entity is still called `Leave Request` in code for historical reasons, but in the people-first refocus there is nothing to request and nothing to approve — every entry is created in the `approved` state.
+
 ## Notable behaviors
 
-- **Granularity.** Full day or half day (AM / PM) — half-day rows store 0.5 days.
-- **Types.** Vacation, Sick, Personal, Parental. Maps to Italian [[ferie]] / [[malattia]] / [[permesso]] / [[ROL]] in IT-tagged workspaces.
-- **Status.** pending → approved or rejected. Undo-able delete via [[Demo Mode]] or live workspace.
-- **Calendar push.** Approved leave appears in [[Calendar]] and reduces capacity in [[Saturation]].
+- **One form, one click.** Type (vacation / sick / personal / parental) + from + to + optional note. That's it.
+- **Auto-approved.** No pending state. No manager queue. The employee is logging a fact about their own time, not asking permission.
+- **Italian variants.** Maps to [[ferie]] / [[malattia]] / [[permesso]] / [[ROL]] in IT-tagged workspaces. Still informational only.
+- **Personal balance.** The remaining days/hours bar is visible only to the employee. Pulse doesn't enforce the cap — it's a number to be aware of, not a guardrail.
+- **Team OOO.** The team's day-off list is visible to the team (people respect each other's plans), but the page is built around the personal journal first.
+- **No payroll handoff.** Pulse never reports leave back to a payroll system. Your HRIS is still where the contractually-relevant record lives.
 
 ## Related journeys
 
-[[Leave Request to Approval]]
+[[Logging Time Off]]

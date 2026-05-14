@@ -8,6 +8,12 @@ The wiki models **Pulse HR as a product**, not as code. The audience is HR-minde
 
 You write and maintain the wiki. Humans read it. They will rarely edit pages directly — that is your job.
 
+## Product focus (2026-05 refocus)
+
+Pulse HR is a **people-first** product. The scope is employee satisfaction, progress, real contributions, and challenges — not business operations. Surfaces that fit: [[Status Log]], [[Growth]], [[Kudos]], [[Moments]], [[Pulse]], [[Saturation]] (as personal workload signal), [[Leave]] (as personal wellbeing), [[Employees]], [[Org Chart]], [[Dashboard]], [[Reports]] (reframed as People Insights — engagement / sentiment / kudos / growth only).
+
+Business-ops surfaces are **parked**: [[Time Tracking]], [[Projects]], [[Activities]], [[Clients]], [[Recruiting]], [[Documents]], [[Offices]], [[Announcements]], [[Marketplace]], [[Developers]], [[Calendar]], [[Onboarding]]. Their pages stay readable for historical context and possible revival, but they are flagged with `status: parked` in frontmatter and are off by default in the workspace modules. Do not re-introduce them into journeys, dashboard signals, or persona narratives without an explicit user request to un-park.
+
 ## Hard rules
 
 1. **No technical content.** Never document APIs, React patterns, hooks, build tooling, file paths, environment variables, or any engineering plumbing. That belongs in `CLAUDE.md` and source comments. If you find yourself typing a code block, stop.

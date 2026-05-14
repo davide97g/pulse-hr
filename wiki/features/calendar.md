@@ -1,7 +1,8 @@
 ---
 type: feature
 tags: [feature, work]
-last_updated: 2026-04-26
+status: parked  # 2026-05 people-first refocus — see ../AGENTS.md
+last_updated: 2026-05-14
 ---
 
 # Calendar

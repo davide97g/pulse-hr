@@ -1,9 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Gauge } from "lucide-react";
 import { Card } from "@pulse-hr/ui/primitives/card";
 
 export const Route = createFileRoute("/docs/saturation")({
-  head: () => ({ meta: [{ title: "Saturation — Pulse HR docs" }] }),
+  head: () => ({ meta: [{ title: "Workload check-in — Pulse HR docs" }] }),
   component: SaturationDoc,
 });
 
@@ -16,56 +16,59 @@ function SaturationDoc() {
             <Gauge className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-lg font-semibold">Saturation</div>
+            <div className="text-lg font-semibold">Workload check-in</div>
             <div className="text-xs text-muted-foreground">
-              How busy the org is, who's leaning in, and what each hour returns.
+              One tap a week. The shape of a sparkline, not a spreadsheet.
             </div>
           </div>
         </div>
       </Card>
 
-      <Section title="Team load">
+      <Section title="How it works">
         <p>
-          The <b>utilisation heatmap</b> shows one row per person, one column per upcoming week, and
-          each cell is the sum of their allocation percentages in that week. Green is healthy, amber
-          means over, red means burnout territory. Blank = bench.
+          Every Friday, each teammate gets a soft nudge: <b>how heavy is this week?</b> Four
+          options, all emoji, all one tap — 🌤 Light, ⛅ Balanced, 🌧 Heavy, ⛈ Overloaded. That's the
+          whole interaction. No form, no percentage, no project selector.
         </p>
         <p>
-          Next to it, the <b>trend chart</b> draws a line per employee using their avatar colour.
-          Hover any row, line or legend item and the rest dim — good for isolating a single person
-          across the team.
+          The answer is stored on your own profile. You can change it any time during the week;
+          only the last answer counts.
         </p>
       </Section>
 
-      <Section title="Project margins">
+      <Section title="What you see">
         <p>
-          Revenue − cost, summed per project year-to-date. Bars in the project's own colour are
-          net-positive; red bars are net-negative. Feed projects into this view by adding
-          allocations with rates in the{" "}
-          <Link to="/clients" className="text-primary hover:underline">
-            Clients &amp; Projects
-          </Link>{" "}
-          area.
+          An <b>8-week sparkline</b> of your own answers — a single line moving between the four
+          levels. Future weeks are dashed circles waiting to be filled. The sparkline is private to
+          you.
+        </p>
+        <p>
+          Managers see a <b>team aggregate</b> only — how many people landed in each bucket per
+          week, and the trend. They never see who answered what.
+        </p>
+      </Section>
+
+      <Section title="What it isn't">
+        <p>
+          Pulse HR does <b>not</b> track hours. There are no allocations, no project codes, no
+          percentages, no commesse, no timesheets. If your team needs hour-level capacity planning,
+          keep using the tool you already have — Harvest, Toggl, Tempo, Float, your spreadsheet.
+        </p>
+        <p>
+          The workload check-in answers a different question:{" "}
+          <i>does this team feel okay right now?</i>
         </p>
         <p className="text-xs text-muted-foreground">
-          Cost = employee salary ÷ 1,800h baseline. Revenue = allocation % × rate × hours.
+          The old allocation-driven heatmap is parked. The check-in is the whole feature.
         </p>
       </Section>
 
-      <Section title="Employee value">
+      <Section title="Why it works">
         <p>
-          A scatter plot of cost vs revenue per person. Upper-right = expensive and profitable;
-          upper-left = leverage points; lower-right = watch list. Dot size scales with hours
-          delivered.
-        </p>
-      </Section>
-
-      <Section title="Insights">
-        <p>
-          A triage surface showing only the problems worth acting on today: losing projects,
-          over-budget burn, at-risk and on-hold flags, people on the bench or overbooked, declining
-          forward load, and low-health clients. Each row is severity-coded and deep-links to the
-          relevant project where applicable.
+          A four-option weekly question gets answered. A 12-field timesheet doesn't. The signal is
+          fuzzy on purpose — over eight weeks the shape of a person's sparkline tells you more than
+          any precise hour count, because it's the only number that captures both objective load and
+          how they're carrying it.
         </p>
       </Section>
     </div>

@@ -2,8 +2,11 @@
 type: journey
 aliases: [Candidate to Employee]
 tags: [journey, people]
-last_updated: 2026-04-26
+status: parked  # 2026-05 people-first refocus — see ../AGENTS.md
+last_updated: 2026-05-14
 ---
+
+> **Parked journey.** This flow depends entirely on [[Recruiting]] and [[Onboarding]] — both parked in the May 2026 people-first refocus. The text below is preserved for historical reference.
 
 # Candidate to Employee
 

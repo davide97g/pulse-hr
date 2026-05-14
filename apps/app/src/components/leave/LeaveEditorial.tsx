@@ -32,7 +32,6 @@ export function LeaveEditorial() {
 
   const localizeType = (kind: LeaveRequest["type"]) =>
     t(`leave.type.${kind.toLowerCase()}`);
-  const localizeStatus = (s: LeaveRequest["status"]) => t(`leave.status.${s}`);
 
   const usedVacation = mine
     .filter((l) => l.type === "Vacation" && l.status === "approved")
@@ -66,7 +65,9 @@ export function LeaveEditorial() {
       from: draft.from,
       to: draft.to,
       days,
-      status: "pending",
+      // People-first refocus: no approval flow. Every entry is the user's own
+      // journal record of time they took off.
+      status: "approved",
       reason: draft.reason || `${localizeType(draft.type)} · ${days}${unit}`,
       submittedAt: new Date().toISOString(),
     };
@@ -226,7 +227,7 @@ export function LeaveEditorial() {
             {history.map((r, i) => (
               <div
                 key={r.id}
-                className="grid items-center grid-cols-[88px_1fr_auto_auto] sm:grid-cols-[120px_1fr_60px_110px]"
+                className="grid items-center grid-cols-[88px_1fr_auto] sm:grid-cols-[120px_1fr_60px]"
                 style={{
                   gap: 12,
                   padding: "10px 0",
@@ -247,20 +248,6 @@ export function LeaveEditorial() {
                 </span>
                 <span className="t-num" style={{ textAlign: "right", fontSize: 16 }}>
                   {r.days < 1 ? `${r.days * 8}h` : `${r.days}${locale === "it" ? "gg" : "d"}`}
-                </span>
-                <span
-                  className="t-mono"
-                  style={{
-                    color:
-                      r.status === "approved"
-                        ? "var(--muted-foreground)"
-                        : r.status === "pending"
-                          ? "var(--spark)"
-                          : "var(--muted-foreground)",
-                    textAlign: "right",
-                  }}
-                >
-                  {localizeStatus(r.status)}
                 </span>
               </div>
             ))}

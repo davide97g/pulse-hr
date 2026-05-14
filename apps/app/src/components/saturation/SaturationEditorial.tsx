@@ -1,330 +1,419 @@
-import { useMemo, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { useI18n } from "@pulse-hr/shared/i18n";
-import { useEmployees } from "@/lib/tables/employees";
-import { useAllocations } from "@/lib/tables/allocations";
 
-const WEEK_LABELS = ["W18", "W19", "W20", "W21", "W22"];
-const SCOPES = ["ENG_DESIGN", "ALL"] as const;
-type Scope = (typeof SCOPES)[number];
+type Level = "light" | "balanced" | "heavy" | "overloaded";
 
-function colorFor(v: number): { bg: string; text: string } {
-  if (v === 0) return { bg: "transparent", text: "var(--muted-foreground)" };
-  if (v >= 1.0)
-    return { bg: "var(--spark)", text: "var(--spark-ink)" };
-  if (v >= 0.85) return { bg: "var(--fg)", text: "var(--bg)" };
-  return {
-    bg: `color-mix(in oklch, var(--fg) ${Math.round(v * 100)}%, transparent)`,
-    text: v >= 0.7 ? "var(--bg)" : "var(--fg)",
-  };
+interface CheckIn {
+  weekISO: string;
+  level: Level;
+  at: string;
+}
+
+const STORAGE_KEY = "pulse.workload.checkins.v1";
+const HISTORY_WEEKS = 8;
+
+function isoWeek(d: Date): string {
+  const target = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const day = (target.getDay() + 6) % 7;
+  target.setDate(target.getDate() - day + 3);
+  const firstThursday = new Date(target.getFullYear(), 0, 4);
+  const week =
+    1 +
+    Math.round(
+      ((target.getTime() - firstThursday.getTime()) / 86_400_000 -
+        3 +
+        ((firstThursday.getDay() + 6) % 7)) /
+        7,
+    );
+  return `${target.getFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+
+function loadCheckins(): CheckIn[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return seedHistory();
+    const parsed = JSON.parse(raw) as CheckIn[];
+    return Array.isArray(parsed) ? parsed : seedHistory();
+  } catch {
+    return seedHistory();
+  }
+}
+
+function saveCheckins(list: CheckIn[]) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  } catch {
+    /* ignore */
+  }
+}
+
+function seedHistory(): CheckIn[] {
+  // 7 weeks of plausible past data so the sparkline isn't empty on first visit.
+  const levels: Level[] = ["balanced", "balanced", "heavy", "balanced", "light", "heavy", "balanced"];
+  const now = new Date();
+  return levels.map((lvl, i) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() - (levels.length - i) * 7);
+    return { weekISO: isoWeek(d), level: lvl, at: d.toISOString() };
+  });
+}
+
+function pastWeeks(n: number): string[] {
+  const out: string[] = [];
+  const now = new Date();
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i * 7);
+    out.push(isoWeek(d));
+  }
+  return out;
+}
+
+interface LevelMeta {
+  id: Level;
+  glyph: string;
+  label: { en: string; it: string };
+  caption: { en: string; it: string };
+  rank: number;
+}
+
+const LEVELS: LevelMeta[] = [
+  {
+    id: "light",
+    glyph: "🌤",
+    label: { en: "Light", it: "Leggera" },
+    caption: { en: "Plenty of slack — good for deep work.", it: "Tanta aria — buona per cose tue." },
+    rank: 1,
+  },
+  {
+    id: "balanced",
+    glyph: "⛅",
+    label: { en: "Balanced", it: "Bilanciata" },
+    caption: { en: "Full but sustainable.", it: "Piena ma sostenibile." },
+    rank: 2,
+  },
+  {
+    id: "heavy",
+    glyph: "🌧",
+    label: { en: "Heavy", it: "Pesante" },
+    caption: { en: "Stretched. A second pair of hands would help.", it: "Tirata. Un aiuto farebbe comodo." },
+    rank: 3,
+  },
+  {
+    id: "overloaded",
+    glyph: "⛈",
+    label: { en: "Overloaded", it: "Sovraccarica" },
+    caption: { en: "Too much. Worth flagging.", it: "Troppo. Vale la pena dirlo." },
+    rank: 4,
+  },
+];
+
+function levelColor(lvl: Level): string {
+  switch (lvl) {
+    case "light":
+      return "color-mix(in oklch, var(--spark) 65%, var(--fg) 10%)";
+    case "balanced":
+      return "var(--fg)";
+    case "heavy":
+      return "color-mix(in oklch, var(--spark) 80%, var(--fg) 20%)";
+    case "overloaded":
+      return "var(--destructive)";
+  }
 }
 
 export function SaturationEditorial() {
-  const { t, locale } = useI18n();
-  const employees = useEmployees();
-  const allocations = useAllocations();
-  const [scope, setScope] = useState<Scope>("ENG_DESIGN");
+  const { locale } = useI18n();
+  const it = locale === "it";
+  const [checkins, setCheckins] = useState<CheckIn[]>(() => loadCheckins());
+  const thisWeek = useMemo(() => isoWeek(new Date()), []);
+  const current = checkins.find((c) => c.weekISO === thisWeek);
 
-  const visibleEmployees = useMemo(() => {
-    if (scope === "ALL") return employees.slice(0, 14);
-    return employees
-      .filter((e) =>
-        ["Engineering", "Design", "Product"].includes(e.department),
-      )
-      .slice(0, 14);
-  }, [employees, scope]);
+  useEffect(() => {
+    saveCheckins(checkins);
+  }, [checkins]);
 
-  const matrix = useMemo(() => {
-    return visibleEmployees.map((emp) => {
-      const empAllocs = allocations.filter((a) => a.employeeId === emp.id);
-      const baseSat = empAllocs.reduce((s, a) => s + a.percent, 0) / 100;
-      // Vary per week with deterministic offset based on emp.id charcode
-      const seed = emp.id
-        .split("")
-        .reduce((s, c) => s + c.charCodeAt(0), 0);
-      const series = WEEK_LABELS.map((_, i) => {
-        const wave = Math.sin((i + seed) * 0.7) * 0.15;
-        const v = Math.max(0, Math.min(1.2, baseSat + wave));
-        return Math.round(v * 100) / 100;
-      });
-      return { emp, series };
+  function pick(level: Level) {
+    setCheckins((prev) => {
+      const without = prev.filter((c) => c.weekISO !== thisWeek);
+      return [...without, { weekISO: thisWeek, level, at: new Date().toISOString() }];
     });
-  }, [visibleEmployees, allocations]);
-
-  const overCount = matrix.filter((m) => m.series.some((v) => v > 1.0)).length;
+    const label = LEVELS.find((l) => l.id === level)?.label[it ? "it" : "en"] ?? level;
+    toast.success(it ? `Settimana segnata: ${label}` : `Week logged: ${label}`, {
+      description: it
+        ? "Il tuo capo vedrà solo il trend, non i singoli check-in."
+        : "Your manager sees only the trend, not individual check-ins.",
+    });
+  }
 
   return (
-    <div className="ph p-4 md:p-6 flex flex-col gap-6 min-h-full">
+    <div className="ph p-4 md:p-6 flex flex-col gap-10 min-h-full">
       {/* Hero */}
-      <div className="flex items-end justify-between flex-wrap gap-3">
+      <section className="flex flex-col gap-6">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            {t("saturation.eyebrow", {
-              from: WEEK_LABELS[0],
-              to: WEEK_LABELS[WEEK_LABELS.length - 1],
-            })}
+            {it ? "CARICO DI LAVORO · SETTIMANA " : "WORKLOAD · WEEK "}
+            {thisWeek.split("-W")[1]}
           </span>
           <h1
             style={{
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(40px, 11vw, 116px)",
+              fontSize: "clamp(48px, 11vw, 116px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}
           >
-            {t("saturation.title.0")} <span style={{ fontStyle: "italic" }}>{t("saturation.title.1")}</span>
-            <span style={{ color: "var(--spark)" }}>{t("saturation.title.2")}</span>
+            {it ? "Com'è andata la " : "How heavy is this "}
+            <span style={{ fontStyle: "italic" }}>{it ? "settimana" : "week"}</span>
+            <span style={{ color: "var(--spark)" }}>?</span>
           </h1>
           <p
             style={{
-              marginTop: 12,
-              maxWidth: 520,
+              marginTop: 16,
+              maxWidth: 560,
               color: "var(--fg-2)",
               fontFamily: "Fraunces, ui-serif, serif",
               fontStyle: "italic",
-              fontSize: 18,
+              fontSize: 19,
+              lineHeight: 1.4,
             }}
           >
-            {overCount > 0
-              ? t("saturation.summary.over", {
-                  n: overCount,
-                  p:
-                    locale === "it"
-                      ? overCount === 1
-                        ? "persona"
-                        : "persone"
-                      : overCount === 1
-                        ? "person"
-                        : "people",
-                })
-              : t("saturation.summary.ok")}
+            {current
+              ? it
+                ? "Già segnata. Tocca pure se vuoi cambiare."
+                : "Already logged. Tap again to change it."
+              : it
+                ? "Un tocco. Niente form, niente percentuali."
+                : "One tap. No forms, no percentages."}
           </p>
         </div>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            className="pill pill-ghost pill-sm"
-            onClick={() => setScope("ENG_DESIGN")}
-            style={{
-              background: scope === "ENG_DESIGN" ? "var(--ink)" : undefined,
-              color: scope === "ENG_DESIGN" ? "var(--paper)" : undefined,
-            }}
-          >
-            {t("saturation.scope.engDesign")}
-          </button>
-          <button
-            type="button"
-            className="pill pill-ghost pill-sm"
-            onClick={() => setScope("ALL")}
-            style={{
-              background: scope === "ALL" ? "var(--ink)" : undefined,
-              color: scope === "ALL" ? "var(--paper)" : undefined,
-            }}
-          >
-            {t("saturation.scope.all")}
-          </button>
-          <Link to="/projects" className="pill pill-dark pill-sm">
-            {t("saturation.reassign")}
-          </Link>
-        </div>
-      </div>
 
-      {/* Legend */}
-      <div className="flex gap-4 items-center flex-wrap">
-        <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-          {t("saturation.legend")}:
-        </span>
-        {(
-          [
-            [t("saturation.legend.low"), "var(--bg-3)"],
-            [t("saturation.legend.mid"), "var(--fg)"],
-            [t("saturation.legend.over"), "var(--spark)"],
-          ] as Array<[string, string]>
-        ).map(([l, c]) => (
-          <div key={l} className="flex items-center gap-2">
-            <span
-              style={{
-                width: 14,
-                height: 14,
-                borderRadius: 3,
-                background: c,
-                border: "1px solid var(--line)",
-              }}
-            />
-            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              {l}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Heatmap (horizontal-scroll on narrow viewports) */}
-      <div
-        className="scrollbar-thin"
-        style={{
-          flex: 1,
-          minHeight: 0,
-          border: "1px solid var(--line)",
-          borderRadius: 16,
-          overflowX: "auto",
-          overflowY: "hidden",
-        }}
-      >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "200px repeat(5, minmax(72px, 1fr)) 96px",
-            gridAutoRows: "minmax(56px, 1fr)",
-            minWidth: 720,
-          }}
-        >
-        <HeatmapHeader>{t("saturation.col.person")}</HeatmapHeader>
-        {WEEK_LABELS.map((w) => (
-          <HeatmapHeader key={w} center>
-            {w}
-          </HeatmapHeader>
-        ))}
-        <HeatmapHeader right>{t("people.kpi.median")}</HeatmapHeader>
-
-        {matrix.map((row, i) => {
-          const last = i === matrix.length - 1;
-          const valid = row.series.filter((v) => v > 0);
-          const avg = valid.length === 0 ? 0 : valid.reduce((a, b) => a + b, 0) / valid.length;
-          const isOver = avg > 0.95;
-          return (
-            <RowFragment key={row.emp.id} last={last} initials={row.emp.initials} name={row.emp.name}>
-              {row.series.map((v, j) => {
-                const c = colorFor(v);
-                return (
-                  <div
-                    key={j}
-                    style={{
-                      borderRight: "1px solid var(--line)",
-                      borderBottom: last ? "none" : "1px solid var(--line)",
-                      padding: 6,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        background: c.bg,
-                        borderRadius: 6,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        minHeight: 36,
-                      }}
-                    >
-                      <span
-                        className="t-mono"
-                        style={{
-                          color: c.text,
-                          fontSize: 11,
-                        }}
-                      >
-                        {v === 0 ? "OFF" : `${Math.round(v * 100)}%`}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-              <div
+        {/* Four big buttons */}
+        <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+          {LEVELS.map((lvl) => {
+            const active = current?.level === lvl.id;
+            return (
+              <button
+                key={lvl.id}
+                type="button"
+                onClick={() => pick(lvl.id)}
+                className="press-scale text-left"
                 style={{
-                  padding: "12px 14px",
-                  borderBottom: last ? "none" : "1px solid var(--line)",
+                  border: `1px solid ${active ? "var(--spark)" : "var(--line)"}`,
+                  background: active
+                    ? "color-mix(in oklch, var(--spark) 10%, transparent)"
+                    : "var(--bg-2)",
+                  borderRadius: 18,
+                  padding: "20px 22px",
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
+                  flexDirection: "column",
+                  gap: 10,
+                  cursor: "pointer",
+                  color: "inherit",
+                  minHeight: 160,
                 }}
               >
+                <span style={{ fontSize: 44, lineHeight: 1 }}>{lvl.glyph}</span>
                 <span
-                  className="t-num"
                   style={{
-                    fontSize: 20,
+                    fontFamily: "Fraunces, ui-serif, serif",
+                    fontStyle: "italic",
+                    fontSize: 26,
                     letterSpacing: "-0.02em",
-                    color: isOver ? "var(--spark)" : "var(--fg)",
+                    color: active ? "var(--spark)" : "var(--fg)",
                   }}
                 >
-                  {Math.round(avg * 100)}%
+                  {lvl.label[it ? "it" : "en"]}
                 </span>
-              </div>
-            </RowFragment>
-          );
-        })}
+                <span
+                  style={{
+                    color: "var(--fg-2)",
+                    fontSize: 13,
+                    lineHeight: 1.45,
+                  }}
+                >
+                  {lvl.caption[it ? "it" : "en"]}
+                </span>
+              </button>
+            );
+          })}
         </div>
-      </div>
+      </section>
+
+      {/* Sparkline trend */}
+      <TrendStrip checkins={checkins} weeks={pastWeeks(HISTORY_WEEKS)} it={it} />
+
+      {/* External-tool nudge */}
+      <ExternalToolNote it={it} />
     </div>
   );
 }
 
-function HeatmapHeader({
-  children,
-  center,
-  right,
+function TrendStrip({
+  checkins,
+  weeks,
+  it,
 }: {
-  children: React.ReactNode;
-  center?: boolean;
-  right?: boolean;
+  checkins: CheckIn[];
+  weeks: string[];
+  it: boolean;
 }) {
-  return (
-    <div
-      style={{
-        padding: "16px 18px",
-        borderRight: "1px solid var(--line)",
-        borderBottom: "1px solid var(--line)",
-        background: "var(--bg-2)",
-        textAlign: center ? "center" : right ? "right" : "left",
-      }}
-    >
-      <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-        {children}
-      </span>
-    </div>
-  );
-}
+  const points = weeks.map((w) => {
+    const hit = checkins.find((c) => c.weekISO === w);
+    return { week: w, level: hit?.level, rank: hit ? LEVELS.find((l) => l.id === hit.level)!.rank : null };
+  });
 
-function RowFragment({
-  initials,
-  name,
-  last,
-  children,
-}: {
-  initials: string;
-  name: string;
-  last: boolean;
-  children: React.ReactNode;
-}) {
+  const W = 720;
+  const H = 120;
+  const PAD = 20;
+  const x = (i: number) => PAD + ((W - 2 * PAD) * i) / Math.max(1, points.length - 1);
+  const y = (rank: number) => PAD + ((H - 2 * PAD) * (rank - 1)) / 3;
+
+  const lineD = points
+    .map((p, i) => (p.rank == null ? null : `${i === 0 || points[i - 1].rank == null ? "M" : "L"} ${x(i).toFixed(1)} ${y(p.rank).toFixed(1)}`))
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <>
-      <div
-        style={{
-          padding: "12px 18px",
-          borderRight: "1px solid var(--line)",
-          borderBottom: last ? "none" : "1px solid var(--line)",
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-        }}
-      >
-        <span className="ph-avatar ph-avatar-sm">{initials}</span>
-        <span
-          style={{
-            fontFamily: "Fraunces, ui-serif, serif",
-            fontStyle: "italic",
-            fontSize: 17,
-            letterSpacing: "-0.005em",
-          }}
-        >
-          {name}
+    <section className="flex flex-col gap-4">
+      <div className="flex justify-between items-baseline flex-wrap gap-2">
+        <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+          {it ? "TENDENZA · ULTIME 8 SETTIMANE" : "TREND · LAST 8 WEEKS"}
+        </span>
+        <span className="t-mono-sm" style={{ color: "var(--muted-foreground)" }}>
+          {it ? "tu vedi questo · il tuo capo vede solo aggregato" : "you see this · manager sees only aggregate"}
         </span>
       </div>
-      {children}
-    </>
+      <div
+        style={{
+          border: "1px solid var(--line)",
+          borderRadius: 16,
+          padding: "20px 22px",
+          background: "var(--bg-2)",
+        }}
+      >
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: 140 }}>
+          {[1, 2, 3, 4].map((rank) => (
+            <line
+              key={rank}
+              x1={PAD}
+              x2={W - PAD}
+              y1={y(rank)}
+              y2={y(rank)}
+              stroke="var(--line)"
+              strokeDasharray="2 4"
+              strokeWidth="1"
+            />
+          ))}
+          {lineD && (
+            <path
+              d={lineD}
+              stroke="color-mix(in oklch, var(--spark) 55%, var(--fg) 25%)"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          )}
+          {points.map((p, i) =>
+            p.rank == null ? (
+              <circle
+                key={p.week}
+                cx={x(i)}
+                cy={y(2)}
+                r="4"
+                fill="none"
+                stroke="var(--line-strong)"
+                strokeDasharray="2 2"
+                strokeWidth="1"
+              />
+            ) : (
+              <circle
+                key={p.week}
+                cx={x(i)}
+                cy={y(p.rank)}
+                r={i === points.length - 1 ? 8 : 6}
+                fill={levelColor(p.level!)}
+                stroke="var(--background)"
+                strokeWidth="2"
+              />
+            ),
+          )}
+          {points.map((p, i) => (
+            <text
+              key={`${p.week}-lbl`}
+              x={x(i)}
+              y={H - 4}
+              fontFamily="JetBrains Mono"
+              fontSize="9"
+              fill="var(--muted-foreground)"
+              textAnchor="middle"
+            >
+              {p.week.split("-W")[1]}
+            </text>
+          ))}
+        </svg>
+        <div className="flex gap-4 flex-wrap mt-1">
+          {LEVELS.map((l) => (
+            <div key={l.id} className="flex items-center gap-1.5">
+              <span
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: 999,
+                  background: levelColor(l.id),
+                }}
+              />
+              <span className="t-mono-sm" style={{ color: "var(--muted-foreground)" }}>
+                {l.label[it ? "it" : "en"]}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ExternalToolNote({ it }: { it: boolean }) {
+  return (
+    <section
+      style={{
+        border: "1px dashed var(--line-strong)",
+        borderRadius: 16,
+        padding: "18px 22px",
+        background: "transparent",
+        display: "flex",
+        gap: 18,
+        alignItems: "center",
+        flexWrap: "wrap",
+      }}
+    >
+      <div className="flex-1 min-w-[260px]">
+        <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+          {it ? "ORE & PROGETTI" : "HOURS & PROJECTS"}
+        </span>
+        <p
+          style={{
+            margin: "6px 0 0",
+            fontFamily: "Fraunces, ui-serif, serif",
+            fontStyle: "italic",
+            fontSize: 18,
+            lineHeight: 1.4,
+            color: "var(--fg)",
+            maxWidth: 560,
+          }}
+        >
+          {it
+            ? "Pulse HR non traccia le ore. Per allocazioni, commesse e timesheet usa il tuo strumento di sempre — qui ci interessa solo come stai."
+            : "Pulse HR doesn't track hours. For allocations, projects, and timesheets keep using your usual tool — here we only care how you're doing."}
+        </p>
+      </div>
+      <span className="t-mono-sm" style={{ color: "var(--muted-foreground)" }}>
+        {it ? "promemoria settimanale ogni venerdì" : "weekly reminder every Friday"}
+      </span>
+    </section>
   );
 }

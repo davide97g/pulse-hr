@@ -20,7 +20,7 @@ function exportReport(kind: "csv" | "json", view: string, period: string) {
   toast.success(`Esportato ${filename}`);
 }
 
-type View = "overview" | "people" | "time";
+type View = "overview" | "people";
 
 const PERIODS = ["7g", "30g", "Q1", "Q2 2026", "YTD"] as const;
 type Period = (typeof PERIODS)[number];
@@ -28,7 +28,6 @@ type Period = (typeof PERIODS)[number];
 const TABS: Array<[View, string]> = [
   ["overview", "Overview"],
   ["people", "People"],
-  ["time", "Time"],
 ];
 
 function seeded(seed: number) {
@@ -150,7 +149,6 @@ export function ReportsEditorial() {
         <section className="flex-1 min-w-0 flex flex-col gap-3.5">
           {view === "overview" && <OverviewView />}
           {view === "people" && <PeopleDeepDive />}
-          {view === "time" && <TimeDeepDive />}
 
           <div className="xl:hidden">
             <SignalsRecap />
@@ -180,7 +178,7 @@ function Header({
       <div className="flex items-baseline justify-between flex-wrap gap-2">
         <div className="flex items-baseline gap-3.5 flex-wrap">
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            INSIGHTS · REPORT &amp; ANALITICA
+            PEOPLE INSIGHTS · BENESSERE &amp; CRESCITA
           </span>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
             · 142 PERSONE · {period.toUpperCase()}
@@ -214,13 +212,13 @@ function Header({
             color: "var(--fg)",
           }}
         >
-          I <span style={{ fontStyle: "italic" }}>numeri</span>
+          Le <span style={{ fontStyle: "italic" }}>persone</span>
           <span style={{ color: "var(--spark)" }}>.</span>
           <span
             className="t-mono"
             style={{ marginLeft: 18, color: "var(--muted-foreground)", verticalAlign: "middle" }}
           >
-            HR · TEMPO · CONFIGURABILE
+            ENGAGEMENT · SENTIMENT · CRESCITA
           </span>
         </h1>
         <div className="flex gap-2 items-center flex-wrap justify-end">
@@ -379,33 +377,13 @@ interface KpiTileData {
 function KpiRow() {
   const tiles: KpiTileData[] = [
     {
-      label: "HEADCOUNT",
-      value: "142",
-      delta: "+12",
+      label: "KUDOS",
+      value: "186",
+      delta: "+47",
       deltaPos: true,
-      sub: "vs Q1 · +9.2%",
-      spark: makeSpark(12, 134, 142),
-      kind: "default",
-    },
-    {
-      label: "TURNOVER",
-      value: "4.2",
-      unit: "%",
-      delta: "−0.8 pt",
-      deltaPos: true,
-      sub: "sotto media settore",
-      spark: makeSpark(12, 6.1, 4.2),
+      sub: "questo mese · +34% vs scorso",
+      spark: makeSpark(12, 110, 186),
       kind: "spark",
-    },
-    {
-      label: "ASSENTEISMO",
-      value: "2.1",
-      unit: "%",
-      delta: "−0.4 pt",
-      deltaPos: true,
-      sub: "trend stabile",
-      spark: makeSpark(12, 2.6, 2.1),
-      kind: "default",
     },
     {
       label: "ENPS",
@@ -414,6 +392,25 @@ function KpiRow() {
       deltaPos: true,
       sub: "survey aprile · 87% risp.",
       spark: makeSpark(12, 30, 42),
+      kind: "default",
+    },
+    {
+      label: "GROWTH",
+      value: "63",
+      delta: "+12",
+      deltaPos: true,
+      sub: "obiettivi attivi · 78% on-track",
+      spark: makeSpark(12, 48, 63),
+      kind: "default",
+    },
+    {
+      label: "PULSE",
+      value: "4.1",
+      unit: "/5",
+      delta: "+0.3",
+      deltaPos: true,
+      sub: "mood medio · trend in salita",
+      spark: makeSpark(12, 3.6, 4.1),
       kind: "default",
     },
   ];
@@ -912,11 +909,11 @@ function DeepDiveStrip() {
       kind: "default",
     },
     {
-      id: "hiring",
-      eyebrow: "03 · HIRING",
-      title: "Time-to-hire",
-      stat: "28 g",
-      sub: "−6g vs Q1 · 14 in pipeline",
+      id: "kudos",
+      eyebrow: "03 · KUDOS",
+      title: "Grazie ricevute",
+      stat: "186",
+      sub: "questo mese · ENG in testa con 22",
       kind: "spark",
     },
     {
@@ -1031,11 +1028,11 @@ const SIGNALS: Signal[] = [
     action: "Vai a Riposo",
   },
   {
-    kind: "neutral",
-    eyebrow: "PIPELINE",
-    head: "2 offerte in scadenza",
-    body: "Senior Backend e Lead Designer. Decisione attesa entro 6 maggio.",
-    action: "Apri pipeline",
+    kind: "good",
+    eyebrow: "GROWTH · CRESCITA",
+    head: "14 obiettivi chiusi in Q2",
+    body: "Design e Engineering già sopra il target trimestrale. Tre review aperte.",
+    action: "Apri Growth",
   },
 ];
 
