@@ -68,6 +68,10 @@ export function ChangelogGate() {
 
   useEffect(() => {
     if (!isSignedIn || fetchedRef.current) return;
+    if (typeof window !== "undefined" && window.localStorage.getItem("pulse.changelog.skip") === "1") {
+      fetchedRef.current = true;
+      return;
+    }
     fetchedRef.current = true;
     (async () => {
       try {

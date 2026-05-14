@@ -33,3 +33,7 @@ public/studio/reels/
 public/studio/trailer-*.mp4
 public/studio/trailer-*.webm
 public/studio/trailer-*.jpg
+# Teaser renders (heavy MP4s — re-render locally with `bun run teaser:both`)
+public/studio/teaser-*.mp4
+public/studio/teaser-*.webm
+public/studio/teaser-*.jpg

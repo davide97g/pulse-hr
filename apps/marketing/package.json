@@ -30,9 +30,20 @@
     "record:trailer:achievements": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts trailer-growth-achievements",
     "record:trailer:reports": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts trailer-reports",
     "record:trailer:all": "bun run record:trailer:dashboard && bun run record:trailer:kudos && bun run record:trailer:achievements && bun run record:trailer:reports",
+    "record:teaser:dashboard": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts teaser-dashboard",
+    "record:teaser:growth": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts teaser-growth",
+    "record:teaser:skills-team": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts teaser-skills-team",
+    "record:teaser:skills-me": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts teaser-skills-me",
+    "record:teaser:moments": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts teaser-moments",
+    "record:teaser:log": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts teaser-log",
+    "record:teaser:reports": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts teaser-reports",
+    "record:teaser:all": "bun run record:teaser:dashboard && bun run record:teaser:growth && bun run record:teaser:skills-team && bun run record:teaser:skills-me && bun run record:teaser:moments && bun run record:teaser:log && bun run record:teaser:reports",
     "trailer:v1": "remotion render studio/remotion/index.ts trailer-v1 public/studio/trailer-v1.mp4 --codec=h264 --crf=18",
     "trailer:v2": "remotion render studio/remotion/index.ts trailer-v2 public/studio/trailer-v2.mp4 --codec=h264 --crf=18",
-    "trailer:both": "bun run trailer:v1 && bun run trailer:v2"
+    "trailer:both": "bun run trailer:v1 && bun run trailer:v2",
+    "teaser:v1": "remotion render studio/remotion/index.ts teaser-v1 public/studio/teaser-v1.mp4 --codec=h264 --crf=18",
+    "teaser:v2": "remotion render studio/remotion/index.ts teaser-v2 public/studio/teaser-v2.mp4 --codec=h264 --crf=18",
+    "teaser:both": "bun run teaser:v1 && bun run teaser:v2"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",

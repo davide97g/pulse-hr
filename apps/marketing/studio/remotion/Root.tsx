@@ -5,6 +5,7 @@ import { DayInPulse } from "./DayInPulse";
 import { Montage, type MontageProps } from "./Montage";
 import { INTRO_DURATION_FRAMES } from "./scenes/Intro";
 import { OUTRO_DURATION_FRAMES } from "./scenes/Outro";
+import { Teaser, TEASER_DURATION_FRAMES } from "./Teaser";
 import { Trailer, TRAILER_DURATION_FRAMES } from "./Trailer";
 
 const FPS = 30;
@@ -187,6 +188,24 @@ export const RemotionRoot: React.FC = () => {
         id="trailer-v2"
         component={Trailer}
         durationInFrames={TRAILER_DURATION_FRAMES}
+        fps={FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ audioSrc: "audio/trailer-v2.mp3" }}
+      />
+      <Composition
+        id="teaser-v1"
+        component={Teaser}
+        durationInFrames={TEASER_DURATION_FRAMES}
+        fps={FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ audioSrc: "audio/trailer-v1.mp3" }}
+      />
+      <Composition
+        id="teaser-v2"
+        component={Teaser}
+        durationInFrames={TEASER_DURATION_FRAMES}
         fps={FPS}
         width={1920}
         height={1080}

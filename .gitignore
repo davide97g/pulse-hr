@@ -51,6 +51,10 @@ apps/marketing/public/studio/reels/
 apps/marketing/public/studio/trailer-*.mp4
 apps/marketing/public/studio/trailer-*.webm
 apps/marketing/public/studio/trailer-*.jpg
+# Teaser renders (heavy MP4s — re-render locally with `bun run teaser:both`)
+apps/marketing/public/studio/teaser-*.mp4
+apps/marketing/public/studio/teaser-*.webm
+apps/marketing/public/studio/teaser-*.jpg
 
 
 .superpowers/
