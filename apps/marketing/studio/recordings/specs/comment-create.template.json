@@ -1,0 +1,147 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/growth",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1",
+    "pulse.locale": "en",
+    "pulse.demoBanner.dismissed.v1": "1",
+    "pulse.lastSeenVersion": "0.9.0"
+  },
+  "setup": "{{SETUP_TRAILER}}",
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 700,
+      "waitFor": "button[aria-label='Leave a comment']",
+      "timeout": 15000
+    },
+    {
+      "action": "hover",
+      "selector": "button[aria-label='Leave a comment']",
+      "pauseAfter": 250
+    },
+    {
+      "action": "screenshot",
+      "name": "01-pill-visible",
+      "pauseAfter": 400
+    },
+    {
+      "action": "zoom",
+      "selector": "button[aria-label='Leave a comment']",
+      "scale": 1.9,
+      "duration": 240
+    },
+    {
+      "action": "click",
+      "selector": "button[aria-label='Leave a comment']",
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "button[aria-label='Cancel comment mode']",
+      "timeout": 8000
+    },
+    {
+      "action": "screenshot",
+      "name": "02-placement-mode",
+      "pauseAfter": 400
+    },
+    {
+      "action": "click",
+      "selector": "h1:has-text('Growth')",
+      "pauseAfter": 200
+    },
+    {
+      "action": "wait",
+      "ms": 500,
+      "waitFor": "input[placeholder='Leave a comment…']",
+      "timeout": 8000
+    },
+    {
+      "action": "screenshot",
+      "name": "03-composer-open",
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "selector": "input[placeholder='Leave a comment…']",
+      "scale": 1.7,
+      "duration": 220
+    },
+    {
+      "action": "type",
+      "selector": "input[placeholder='Leave a comment…']",
+      "text": "Can we surface team-level growth here too?",
+      "delay": 16
+    },
+    {
+      "action": "wait",
+      "ms": 250
+    },
+    {
+      "action": "screenshot",
+      "name": "04-composed",
+      "pauseAfter": 200
+    },
+    {
+      "action": "click",
+      "selector": "button[aria-label='Post comment']",
+      "zoom": 2,
+      "pauseAfter": 220
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 1200
+    },
+    {
+      "action": "screenshot",
+      "name": "05-posted",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    }
+  ]
+}

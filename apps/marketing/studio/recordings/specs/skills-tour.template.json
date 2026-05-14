@@ -1,0 +1,133 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/skills/team",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1",
+    "pulse.locale": "en",
+    "pulse.demoBanner.dismissed.v1": "1",
+    "pulse.lastSeenVersion": "0.9.0"
+  },
+  "setup": "{{SETUP_TRAILER}}",
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 700,
+      "waitFor": "button:text-is(\"Heatmap\")",
+      "timeout": 15000
+    },
+    {
+      "action": "screenshot",
+      "name": "01-heatmap",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "selector": "button:has-text('Gaps & strengths')",
+      "scale": 1.8,
+      "duration": 220
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Gaps & strengths')",
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "02-gaps",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "selector": "button:has-text('Pending')",
+      "scale": 1.8,
+      "duration": 220
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Pending')",
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "03-pending",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "selector": "button:text-is(\"Heatmap\")",
+      "scale": 1.8,
+      "duration": 220
+    },
+    {
+      "action": "click",
+      "selector": "button:text-is(\"Heatmap\")",
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "04-back-to-heatmap",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    }
+  ]
+}

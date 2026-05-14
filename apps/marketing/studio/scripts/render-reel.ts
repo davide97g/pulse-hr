@@ -24,6 +24,10 @@ const FLOWS = [
   "kudos-give",
   "time-attendance-entry",
   "growth-checks",
+  "growth-tour",
+  "skills-tour",
+  "comment-create",
+  "comments-thread",
   "workspace-create",
 ];
 const ASPECTS = ["1080", "shorts", "square"];

@@ -1,0 +1,9 @@
+{
+  "spec": "skills-tour",
+  "captions": [
+    { "atStep": 1, "text": "Team skills — the heatmap", "holdMs": 2400 },
+    { "atStep": 6, "text": "Gaps & strengths at a glance", "holdMs": 2400 },
+    { "atStep": 11, "text": "Pending validations", "holdMs": 2200 },
+    { "atStep": 16, "text": "Back to the big picture", "holdMs": 2200 }
+  ]
+}

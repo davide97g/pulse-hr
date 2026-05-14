@@ -1,0 +1,158 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/growth",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1",
+    "pulse.locale": "en",
+    "pulse.demoBanner.dismissed.v1": "1",
+    "pulse.lastSeenVersion": "0.9.0"
+  },
+  "setup": "{{SETUP_TRAILER}}",
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 700,
+      "waitFor": "button:text-is(\"Overview\")",
+      "timeout": 15000
+    },
+    {
+      "action": "screenshot",
+      "name": "01-overview",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "selector": "button:text-is(\"Achievements\")",
+      "scale": 1.8,
+      "duration": 220
+    },
+    {
+      "action": "click",
+      "selector": "button:text-is(\"Achievements\")",
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "02-achievements",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "selector": "button:text-is(\"Challenges\")",
+      "scale": 1.8,
+      "duration": 220
+    },
+    {
+      "action": "click",
+      "selector": "button:text-is(\"Challenges\")",
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "03-challenges",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "selector": "button:text-is(\"Kudos\")",
+      "scale": 1.8,
+      "duration": 220
+    },
+    {
+      "action": "click",
+      "selector": "button:text-is(\"Kudos\")",
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    },
+    {
+      "action": "screenshot",
+      "name": "04-kudos",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "selector": "button:text-is(\"Skill paths\")",
+      "scale": 1.8,
+      "duration": 220
+    },
+    {
+      "action": "click",
+      "selector": "button:text-is(\"Skill paths\")",
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 900
+    },
+    {
+      "action": "screenshot",
+      "name": "05-skill-paths",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    }
+  ]
+}

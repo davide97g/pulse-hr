@@ -1,0 +1,10 @@
+{
+  "spec": "growth-tour",
+  "captions": [
+    { "atStep": 1, "text": "Growth at a glance", "holdMs": 2200 },
+    { "atStep": 6, "text": "Achievements — what we celebrate", "holdMs": 2400 },
+    { "atStep": 11, "text": "Challenges with a prize ladder", "holdMs": 2400 },
+    { "atStep": 16, "text": "The kudos feed", "holdMs": 2200 },
+    { "atStep": 21, "text": "Skill paths — where we're heading", "holdMs": 2600 }
+  ]
+}

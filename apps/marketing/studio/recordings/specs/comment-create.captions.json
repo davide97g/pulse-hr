@@ -1,0 +1,10 @@
+{
+  "spec": "comment-create",
+  "captions": [
+    { "atStep": 2, "text": "Comments live in the pill", "holdMs": 2200 },
+    { "atStep": 5, "text": "Tap to start", "holdMs": 1600 },
+    { "atStep": 8, "text": "Pick anything on the page", "holdMs": 2200 },
+    { "atStep": 13, "text": "Plain English. *No forms.*", "holdMs": 2400 },
+    { "atStep": 16, "text": "Posted. The team sees it instantly.", "holdMs": 2400 }
+  ]
+}
