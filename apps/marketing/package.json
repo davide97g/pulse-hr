@@ -42,6 +42,7 @@
     "trailer:v2": "remotion render studio/remotion/index.ts trailer-v2 public/studio/trailer-v2.mp4 --codec=h264 --crf=18",
     "trailer:both": "bun run trailer:v1 && bun run trailer:v2",
     "teaser:v2": "remotion render studio/remotion/index.ts teaser-v2 public/studio/teaser-v2.mp4 --codec=h264 --crf=18",
+    "teaser:poster": "remotion still studio/remotion/index.ts teaser-v2 public/studio/teaser-v2-poster.jpg --frame=200 --image-format=jpeg --jpeg-quality=92",
     "render:og": "bun scripts/render-og.ts"
   },
   "dependencies": {

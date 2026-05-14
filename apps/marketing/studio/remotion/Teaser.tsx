@@ -139,13 +139,13 @@ const FAST_CLIPS: TeaserClip[] = [
   { capturePath: CAPTURE.log, startFrame: 90, frames: 15, scaleFrom: 1.16, scaleTo: 1.28 },
   { capturePath: CAPTURE.reports, startFrame: 90, frames: 15, scaleFrom: 1.14, scaleTo: 1.26 },
   { capturePath: CAPTURE.skillsTeam, startFrame: 60, frames: 15, scaleFrom: 1.18, scaleTo: 1.3 },
-  { capturePath: CAPTURE.skillsMe, startFrame: 300, frames: 15, scaleFrom: 1.16, scaleTo: 1.28 },
+  { capturePath: CAPTURE.skillsMe, startFrame: 70, frames: 15, scaleFrom: 1.1, scaleTo: 1.22 },
   { capturePath: CAPTURE.moments, startFrame: 150, frames: 15, scaleFrom: 1.18, scaleTo: 1.3 },
   { capturePath: CAPTURE.log, startFrame: 150, frames: 15, scaleFrom: 1.16, scaleTo: 1.28 },
   { capturePath: CAPTURE.reports, startFrame: 30, frames: 15, scaleFrom: 1.14, scaleTo: 1.26 },
   { capturePath: CAPTURE.skillsTeam, startFrame: 140, frames: 15, scaleFrom: 1.18, scaleTo: 1.3 },
   { capturePath: CAPTURE.dashboard, startFrame: 80, frames: 15, scaleFrom: 1.18, scaleTo: 1.3 },
-  { capturePath: CAPTURE.skillsMe, startFrame: 420, frames: 24, scaleFrom: 1.08, scaleTo: 1.2 },
+  { capturePath: CAPTURE.skillsMe, startFrame: 450, frames: 24, scaleFrom: 1.04, scaleTo: 1.16 },
 ];
 
 export interface TeaserProps {
