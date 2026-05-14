@@ -37,6 +37,7 @@ const FEATURE_PATHS: Record<SidebarFeatureId, string[]> = {
   reports: ["/reports"],
   growth: ["/growth"],
   kudos: ["/kudos"],
+  skills: ["/skills", "/skills/me", "/skills/team"],
   saturation: ["/saturation"],
   feedback: ["/feedback"],
   marketplace: [],

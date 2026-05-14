@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TimeRouteImport } from './routes/time'
+import { Route as SkillsRouteImport } from './routes/skills'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SaturationRouteImport } from './routes/saturation'
@@ -35,10 +36,13 @@ import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as ActivitiesRouteImport } from './routes/activities'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SkillsIndexRouteImport } from './routes/skills.index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as LogIndexRouteImport } from './routes/log.index'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
+import { Route as SkillsTeamRouteImport } from './routes/skills.team'
+import { Route as SkillsMeRouteImport } from './routes/skills.me'
 import { Route as ProposalIdRouteImport } from './routes/proposal.$id'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects.$projectId'
 import { Route as PeopleNewRouteImport } from './routes/people_.new'
@@ -66,6 +70,11 @@ const WelcomeRoute = WelcomeRouteImport.update({
 const TimeRoute = TimeRouteImport.update({
   id: '/time',
   path: '/time',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SkillsRoute = SkillsRouteImport.update({
+  id: '/skills',
+  path: '/skills',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -188,6 +197,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SkillsIndexRoute = SkillsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SkillsRoute,
+} as any)
 const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -207,6 +221,16 @@ const ClientsIndexRoute = ClientsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ClientsRoute,
+} as any)
+const SkillsTeamRoute = SkillsTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => SkillsRoute,
+} as any)
+const SkillsMeRoute = SkillsMeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => SkillsRoute,
 } as any)
 const ProposalIdRoute = ProposalIdRouteImport.update({
   id: '/proposal/$id',
@@ -324,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/saturation': typeof SaturationRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
+  '/skills': typeof SkillsRouteWithChildren
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRoute
@@ -342,10 +367,13 @@ export interface FileRoutesByFullPath {
   '/people/new': typeof PeopleNewRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/proposal/$id': typeof ProposalIdRoute
+  '/skills/me': typeof SkillsMeRoute
+  '/skills/team': typeof SkillsTeamRoute
   '/clients/': typeof ClientsIndexRoute
   '/docs/': typeof DocsIndexRoute
   '/log/': typeof LogIndexRoute
   '/projects/': typeof ProjectsIndexRoute
+  '/skills/': typeof SkillsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
   '/people/$employeeId/edit': typeof PeopleEmployeeIdEditRoute
 }
@@ -389,10 +417,13 @@ export interface FileRoutesByTo {
   '/people/new': typeof PeopleNewRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/proposal/$id': typeof ProposalIdRoute
+  '/skills/me': typeof SkillsMeRoute
+  '/skills/team': typeof SkillsTeamRoute
   '/clients': typeof ClientsIndexRoute
   '/docs': typeof DocsIndexRoute
   '/log': typeof LogIndexRoute
   '/projects': typeof ProjectsIndexRoute
+  '/skills': typeof SkillsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
   '/people/$employeeId/edit': typeof PeopleEmployeeIdEditRoute
 }
@@ -422,6 +453,7 @@ export interface FileRoutesById {
   '/saturation': typeof SaturationRoute
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
+  '/skills': typeof SkillsRouteWithChildren
   '/time': typeof TimeRoute
   '/welcome': typeof WelcomeRoute
   '/activities_/$activityId': typeof ActivitiesActivityIdRoute
@@ -440,10 +472,13 @@ export interface FileRoutesById {
   '/people_/new': typeof PeopleNewRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/proposal/$id': typeof ProposalIdRoute
+  '/skills/me': typeof SkillsMeRoute
+  '/skills/team': typeof SkillsTeamRoute
   '/clients/': typeof ClientsIndexRoute
   '/docs/': typeof DocsIndexRoute
   '/log/': typeof LogIndexRoute
   '/projects/': typeof ProjectsIndexRoute
+  '/skills/': typeof SkillsIndexRoute
   '/offices/$officeId/$roomId': typeof OfficesOfficeIdRoomIdRoute
   '/people_/$employeeId_/edit': typeof PeopleEmployeeIdEditRoute
 }
@@ -474,6 +509,7 @@ export interface FileRouteTypes {
     | '/saturation'
     | '/settings'
     | '/signup'
+    | '/skills'
     | '/time'
     | '/welcome'
     | '/activities/$activityId'
@@ -492,10 +528,13 @@ export interface FileRouteTypes {
     | '/people/new'
     | '/projects/$projectId'
     | '/proposal/$id'
+    | '/skills/me'
+    | '/skills/team'
     | '/clients/'
     | '/docs/'
     | '/log/'
     | '/projects/'
+    | '/skills/'
     | '/offices/$officeId/$roomId'
     | '/people/$employeeId/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -539,10 +578,13 @@ export interface FileRouteTypes {
     | '/people/new'
     | '/projects/$projectId'
     | '/proposal/$id'
+    | '/skills/me'
+    | '/skills/team'
     | '/clients'
     | '/docs'
     | '/log'
     | '/projects'
+    | '/skills'
     | '/offices/$officeId/$roomId'
     | '/people/$employeeId/edit'
   id:
@@ -571,6 +613,7 @@ export interface FileRouteTypes {
     | '/saturation'
     | '/settings'
     | '/signup'
+    | '/skills'
     | '/time'
     | '/welcome'
     | '/activities_/$activityId'
@@ -589,10 +632,13 @@ export interface FileRouteTypes {
     | '/people_/new'
     | '/projects/$projectId'
     | '/proposal/$id'
+    | '/skills/me'
+    | '/skills/team'
     | '/clients/'
     | '/docs/'
     | '/log/'
     | '/projects/'
+    | '/skills/'
     | '/offices/$officeId/$roomId'
     | '/people_/$employeeId_/edit'
   fileRoutesById: FileRoutesById
@@ -622,6 +668,7 @@ export interface RootRouteChildren {
   SaturationRoute: typeof SaturationRoute
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
+  SkillsRoute: typeof SkillsRouteWithChildren
   TimeRoute: typeof TimeRoute
   WelcomeRoute: typeof WelcomeRoute
   ActivitiesActivityIdRoute: typeof ActivitiesActivityIdRoute
@@ -649,6 +696,13 @@ declare module '@tanstack/react-router' {
       path: '/time'
       fullPath: '/time'
       preLoaderRoute: typeof TimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/skills': {
+      id: '/skills'
+      path: '/skills'
+      fullPath: '/skills'
+      preLoaderRoute: typeof SkillsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -819,6 +873,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/skills/': {
+      id: '/skills/'
+      path: '/'
+      fullPath: '/skills/'
+      preLoaderRoute: typeof SkillsIndexRouteImport
+      parentRoute: typeof SkillsRoute
+    }
     '/projects/': {
       id: '/projects/'
       path: '/projects'
@@ -846,6 +907,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/clients/'
       preLoaderRoute: typeof ClientsIndexRouteImport
       parentRoute: typeof ClientsRoute
+    }
+    '/skills/team': {
+      id: '/skills/team'
+      path: '/team'
+      fullPath: '/skills/team'
+      preLoaderRoute: typeof SkillsTeamRouteImport
+      parentRoute: typeof SkillsRoute
+    }
+    '/skills/me': {
+      id: '/skills/me'
+      path: '/me'
+      fullPath: '/skills/me'
+      preLoaderRoute: typeof SkillsMeRouteImport
+      parentRoute: typeof SkillsRoute
     }
     '/proposal/$id': {
       id: '/proposal/$id'
@@ -1046,6 +1121,21 @@ const OfficesRouteChildren: OfficesRouteChildren = {
 const OfficesRouteWithChildren =
   OfficesRoute._addFileChildren(OfficesRouteChildren)
 
+interface SkillsRouteChildren {
+  SkillsMeRoute: typeof SkillsMeRoute
+  SkillsTeamRoute: typeof SkillsTeamRoute
+  SkillsIndexRoute: typeof SkillsIndexRoute
+}
+
+const SkillsRouteChildren: SkillsRouteChildren = {
+  SkillsMeRoute: SkillsMeRoute,
+  SkillsTeamRoute: SkillsTeamRoute,
+  SkillsIndexRoute: SkillsIndexRoute,
+}
+
+const SkillsRouteWithChildren =
+  SkillsRoute._addFileChildren(SkillsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivitiesRoute: ActivitiesRoute,
@@ -1071,6 +1161,7 @@ const rootRouteChildren: RootRouteChildren = {
   SaturationRoute: SaturationRoute,
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
+  SkillsRoute: SkillsRouteWithChildren,
   TimeRoute: TimeRoute,
   WelcomeRoute: WelcomeRoute,
   ActivitiesActivityIdRoute: ActivitiesActivityIdRoute,

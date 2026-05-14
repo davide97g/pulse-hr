@@ -38,4 +38,161 @@
     animation: authDotDrift 5.1s ease-in-out infinite;
     animation-delay: -0.8s;
   }
+
+  /* ===== Skills Matrix — feature styles ===== */
+
+  /* 4-cell filled-segments level chip (LevelSegments atom). */
+  .lv-seg {
+    --w: 22px;
+    display: inline-flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .lv-seg .seg {
+    width: var(--w);
+    height: 8px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+  }
+  .lv-seg .seg.on {
+    background: var(--fg);
+    border-color: var(--fg);
+  }
+  .lv-seg .seg.on.master {
+    background: var(--spark);
+    border-color: var(--spark);
+  }
+
+  /* 4-pip dot-quartet (LevelDots atom). */
+  .lv-dots {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+  }
+  .lv-dots .pip {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+  }
+  .lv-dots .pip.on {
+    background: var(--fg);
+    border-color: var(--fg);
+  }
+  .lv-dots .pip.on.master {
+    background: var(--spark);
+    border-color: var(--spark);
+    box-shadow: 0 0 8px color-mix(in oklch, var(--spark) 50%, transparent);
+  }
+
+  /* Small lime corner pip — used inside heatmap cells to mark a proposed
+     assessment without taking over the cell. */
+  .proposed-pip {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--spark);
+    box-shadow: 0 0 0 1px var(--bg);
+  }
+
+  /* Oversized Fraunces numerals used in the Manifesto distribution panel. */
+  .sm-numeral {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.06em;
+    line-height: 0.82;
+  }
+
+  /* Pulsing dashed halo on a constellation dot, marking a proposed skill. */
+  .sk-constellation-halo {
+    transform-origin: center;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .sk-constellation-halo {
+      animation: skHaloPulse 2.4s ease-in-out infinite;
+    }
+  }
+  @keyframes skHaloPulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.85;
+    }
+    50% {
+      transform: scale(1.18);
+      opacity: 1;
+    }
+  }
+
+  /* Constellation page split: wheel left, KPI stack right at >=768px;
+     stack collapses below the wheel on narrow viewports. */
+  .constellation-split {
+    grid-template-columns: minmax(0, 4fr) minmax(220px, 1fr);
+  }
+  @media (max-width: 767px) {
+    .constellation-split {
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(360px, 1fr) auto;
+    }
+  }
+
+  /* Two-wheel row inside the constellation pane — collapses to stack on narrow viewports. */
+  @media (max-width: 767px) {
+    .sk-wheels-row {
+      grid-template-columns: 1fr !important;
+      grid-template-rows: 1fr 1fr;
+    }
+  }
+
+  /* 2px iridescent halo for proposed Pending rows — thicker / more present
+     than the global `.iridescent-border` so it reads cleanly inside a scroll
+     container without looking clipped. Uses OKLCH color-mix per the design
+     so it harmonizes with the active palette. */
+  @property --sk-ir-ang {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+  .sk-pending-halo {
+    position: relative;
+    isolation: isolate;
+  }
+  .sk-pending-halo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(
+      from var(--sk-ir-ang, 0deg),
+      color-mix(in oklch, var(--spark) 80%, transparent) 0%,
+      color-mix(in oklch, oklch(0.7 0.18 220) 70%, transparent) 25%,
+      color-mix(in oklch, oklch(0.8 0.15 60) 65%, transparent) 50%,
+      color-mix(in oklch, oklch(0.75 0.22 320) 70%, transparent) 70%,
+      color-mix(in oklch, var(--spark) 80%, transparent) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .sk-pending-halo::before {
+      animation: skPendingHalo 8s linear infinite;
+    }
+  }
+  @keyframes skPendingHalo {
+    to {
+      --sk-ir-ang: 360deg;
+    }
+  }
 }

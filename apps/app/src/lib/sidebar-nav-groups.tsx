@@ -13,6 +13,7 @@ import {
   Sparkles,
   Network,
   Gauge,
+  Layers,
 } from "lucide-react";
 import type { SidebarFeatureId } from "@/lib/sidebar-features";
 import { ADMIN_MODULES_PATH } from "@/lib/sidebar-features";
@@ -64,6 +65,7 @@ export function buildSidebarNavGroups(
           unreadDot: hasOpenManagerAsks,
         },
         { to: "/growth", label: "Growth", icon: Trophy, featureId: "growth" },
+        { to: "/skills", label: "Skills", icon: Layers, featureId: "skills" },
         { to: "/moments", label: "Moments", icon: Sparkles },
       ],
     },

@@ -6,7 +6,7 @@ import { useKudos } from "@/lib/tables/kudos";
 import { useChallenges } from "@/lib/tables/challenges";
 import { useAchievements } from "@/lib/tables/achievements";
 import { Avatar } from "@/components/app/AppShell";
-import { growthSummaryFor, strengthRadarFor } from "@/lib/growth";
+import { growthSummaryFor } from "@/lib/growth";
 import type { AchievementTier, Goal } from "@/lib/mock-data";
 
 const MONTHS_IT = ["GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"];
@@ -14,14 +14,6 @@ function fmt(iso: string) {
   const d = new Date(iso);
   return `${String(d.getDate()).padStart(2, "0")} ${MONTHS_IT[d.getMonth()].toLowerCase()}`;
 }
-
-const STRENGTH_LABEL: Record<string, string> = {
-  craft: "Craft",
-  impact: "Impatto",
-  teamwork: "Teamwork",
-  courage: "Coraggio",
-  kindness: "Gentilezza",
-};
 
 const TIER_GLYPH: Record<AchievementTier, string> = {
   gold: "★",
@@ -53,8 +45,6 @@ export function GrowthSkillPath({ employeeId }: { employeeId: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [focus, kudos, achievements, goals],
   );
-  const radar = useMemo(() => (focus ? strengthRadarFor(focus.id) : []), [focus]);
-
   const myGoals = useMemo(
     () => (focus ? goals.filter((g) => g.employeeId === focus.id).slice(0, 4) : []),
     [goals, focus],
@@ -232,57 +222,57 @@ export function GrowthSkillPath({ employeeId }: { employeeId: string }) {
       </div>
 
       <div className="grid gap-5" style={{ gridTemplateColumns: "1.2fr 1fr 1fr", flex: 1, minHeight: 0 }}>
-        {/* Strengths */}
+        {/* Competencies live in Skills Matrix now. */}
         <section className="flex flex-col gap-3 min-h-0">
           <span className="t-h3-sans">Competenze</span>
-          <div className="flex flex-col gap-2.5 overflow-auto pr-1">
-            {radar.map((s) => (
-              <div
-                key={s.tag}
-                className="p-3.5"
-                style={{ border: "1px solid var(--line)", borderRadius: 12 }}
+          <button
+            type="button"
+            onClick={() => nav({ to: "/skills" }).catch(() => {})}
+            className="text-left p-4 group transition-colors hover:bg-muted/40"
+            style={{ border: "1px solid var(--line)", borderRadius: 14, cursor: "pointer" }}
+          >
+            <span
+              className="t-mono"
+              style={{ color: "var(--muted-foreground)", display: "block" }}
+            >
+              {(focus?.name?.split(" ")[0] ?? "Anna").toUpperCase()}'S COMPETENCIES · LIVE IN SKILLS MATRIX
+            </span>
+            <div
+              style={{
+                fontFamily: '"Fraunces", ui-serif, serif',
+                fontWeight: 400,
+                margin: "8px 0 6px",
+                fontSize: 30,
+                letterSpacing: "-0.025em",
+                lineHeight: 1,
+              }}
+            >
+              <span style={{ fontStyle: "italic" }}>Hard & soft skills.</span>
+              <span style={{ color: "var(--spark)" }}>.</span>
+            </div>
+            <span className="t-mono" style={{ color: "var(--fg)", display: "block" }}>
+              4-level ladder · self-assessment + manager validation
+            </span>
+            <span
+              className="t-mono"
+              style={{
+                color: "var(--spark)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                marginTop: 14,
+              }}
+            >
+              Open Skills Matrix
+              <span
+                aria-hidden
+                style={{ transition: "transform 160ms ease-out" }}
+                className="group-hover:translate-x-1 inline-block"
               >
-                <div className="flex items-baseline justify-between">
-                  <span
-                    style={{
-                      fontFamily: '"Fraunces", ui-serif, serif',
-                      fontStyle: "italic",
-                      fontSize: 19,
-                      letterSpacing: "-0.01em",
-                    }}
-                  >
-                    {STRENGTH_LABEL[s.tag] ?? s.tag}
-                  </span>
-                  <span
-                    className="t-num"
-                    style={{
-                      fontSize: 15,
-                      color: s.value >= 70 ? "var(--spark)" : "var(--fg)",
-                    }}
-                  >
-                    {Math.round(s.value)}%
-                  </span>
-                </div>
-                <div
-                  style={{
-                    height: 3,
-                    borderRadius: 999,
-                    background: "var(--line)",
-                    marginTop: 8,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: `${Math.min(100, s.value)}%`,
-                      height: "100%",
-                      background: s.value >= 70 ? "var(--spark)" : "var(--fg)",
-                      borderRadius: 999,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+                →
+              </span>
+            </span>
+          </button>
         </section>
 
         {/* Goals */}
