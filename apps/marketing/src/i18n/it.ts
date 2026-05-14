@@ -141,7 +141,7 @@ export const it: Dict = {
     ariaLabel: "Showreel del prodotto Pulse HR",
     videoLabel: "Una giornata in Pulse — showreel animato",
     posterAlt: "Una giornata in Pulse — anteprima statica",
-    caption: "Una giornata in Pulse · loop 12s",
+    caption: "Una giornata in Pulse · loop 20s",
   },
 
   marquee: {

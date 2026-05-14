@@ -19,13 +19,13 @@ import {
 } from "./scenes/TeaserMontage";
 
 // ── Composition layout ────────────────────────────────────────────────────
-// 0–30     (1.0s)   Brand title flash  ("Pulse HR.")
-// 30–435   (13.5s)  Buildup: 5 title beats interleaved with 3 deep-zoom snapshots
-// 435–504  (2.3s)   Fast-edit recap (the snappiest part of the previous teaser)
-// 504–684  (6.0s)   Outro: two big titles ("Built in public…" / "Join us at pulsehr.it")
+// 0–30       (1.0s)   Brand title flash  ("Pulse HR.")
+// 30–714     (22.8s)  Buildup: 5 slow title beats interleaved with 3 broad snapshots
+// 714–858    (4.8s)   Fast-edit recap (10 close-ups + final linger)
+// 858–1038   (6.0s)   Outro: two big titles ("Built in public…" / "Join us at pulsehr.it")
 const TITLE_FRAMES = 30;
-const BUILDUP_FRAMES = 405;
-const FAST_FRAMES = 69;
+const BUILDUP_FRAMES = 684;
+const FAST_FRAMES = 144;
 const OUTRO_FRAMES = 180;
 
 export const TEASER_DURATION_FRAMES =
@@ -36,11 +36,17 @@ const CAPTURE = {
   dashboard: "captures/teaser-dashboard/clip.mp4",
   growth: "captures/teaser-growth/clip.mp4",
   skillsMe: "captures/teaser-skills-me/clip.mp4",
+  skillsTeam: "captures/teaser-skills-team/clip.mp4",
   moments: "captures/teaser-moments/clip.mp4",
+  log: "captures/teaser-log/clip.mp4",
+  reports: "captures/teaser-reports/clip.mp4",
 };
 
-// ── Buildup beats — title → snapshot, repeated, escalating ────────────────
-// Beat frame sums: 78 + 33 + 78 + 33 + 36 + 33 + 54 + 60 = 405
+// ── Buildup beats — title → broad snapshot, slow & breathy ────────────────
+// First beats sit longer to let the eye take in the broader scene; the close-up
+// punchwork is saved for the fast-edit recap. The dashboard snapshot gets extra
+// time + a slightly tighter push so the sentiment constellation reads clearly.
+// Beat sum: 120+90+120+54+72+54+84+90 = 684
 type BuildupBeat =
   | {
       kind: "title";
@@ -62,77 +68,84 @@ type BuildupBeat =
 const BUILDUP_BEATS: BuildupBeat[] = [
   {
     kind: "title",
-    frames: 78,
+    frames: 120,
     text: "Since the *beginning*, work has been caged — in boxes, spreadsheets, numbers.",
     fontSize: 76,
     maxWidth: 1500,
   },
   {
     kind: "snapshot",
-    frames: 33,
+    frames: 90,
     capturePath: CAPTURE.dashboard,
     startFrame: 140,
-    scaleFrom: 1.55,
-    scaleTo: 1.82,
+    scaleFrom: 1.04,
+    scaleTo: 1.22,
     label: "DASHBOARD · SENTIMENT",
   },
   {
     kind: "title",
-    frames: 78,
+    frames: 120,
     text: "Then *AI* unleashed a kind of creativity we'd never seen.",
     fontSize: 84,
     maxWidth: 1500,
   },
   {
     kind: "snapshot",
-    frames: 33,
+    frames: 54,
     capturePath: CAPTURE.growth,
     startFrame: 110,
-    scaleFrom: 1.58,
-    scaleTo: 1.84,
+    scaleFrom: 1.0,
+    scaleTo: 1.1,
     label: "GROWTH · KUDOS",
   },
   {
     kind: "title",
-    frames: 36,
+    frames: 72,
     text: "We must act *NOW*.",
     fontSize: 156,
     maxWidth: 1500,
   },
   {
     kind: "snapshot",
-    frames: 33,
+    frames: 54,
     capturePath: CAPTURE.skillsMe,
     startFrame: 360,
-    scaleFrom: 1.6,
-    scaleTo: 1.9,
+    scaleFrom: 1.02,
+    scaleTo: 1.14,
     label: "SKILLS · ME",
   },
   {
     kind: "title",
-    frames: 54,
+    frames: 84,
     text: "Build the new *employee-first* HR.",
     fontSize: 102,
     maxWidth: 1500,
   },
   {
     kind: "title",
-    frames: 60,
+    frames: 90,
     text: "*By* the people. *For* the people.",
     fontSize: 112,
     maxWidth: 1500,
   },
 ];
 
-// ── Fast-edit recap (the snappy last beats of the old teaser) ─────────────
-// Layout via TeaserMontage's crossfade=3: cursor steps by (frames-3); final clip
-// adds its full duration. 4×15 + 21 = 69 final frames.
+// ── Fast-edit recap — long string of tight close-ups, same fast cadence ────
+// Layout via TeaserMontage's crossfade=3: cursor steps by (frames-3) per clip,
+// then the last clip adds its full duration.
+// 10 × 15f + final 24f → end at 10×12 + 24 = 144 frames.
 const FAST_CLIPS: TeaserClip[] = [
-  { capturePath: CAPTURE.skillsMe, startFrame: 300, frames: 15, scaleFrom: 1.16, scaleTo: 1.28 },
-  { capturePath: CAPTURE.dashboard, startFrame: 80, frames: 15, scaleFrom: 1.12, scaleTo: 1.24 },
-  { capturePath: CAPTURE.growth, startFrame: 110, frames: 15, scaleFrom: 1.14, scaleTo: 1.26 },
   { capturePath: CAPTURE.moments, startFrame: 70, frames: 15, scaleFrom: 1.18, scaleTo: 1.3 },
-  { capturePath: CAPTURE.skillsMe, startFrame: 420, frames: 21, scaleFrom: 1.08, scaleTo: 1.2 },
+  { capturePath: CAPTURE.log, startFrame: 90, frames: 15, scaleFrom: 1.16, scaleTo: 1.28 },
+  { capturePath: CAPTURE.reports, startFrame: 90, frames: 15, scaleFrom: 1.14, scaleTo: 1.26 },
+  { capturePath: CAPTURE.skillsTeam, startFrame: 60, frames: 15, scaleFrom: 1.18, scaleTo: 1.3 },
+  { capturePath: CAPTURE.skillsMe, startFrame: 300, frames: 15, scaleFrom: 1.16, scaleTo: 1.28 },
+  { capturePath: CAPTURE.moments, startFrame: 150, frames: 15, scaleFrom: 1.18, scaleTo: 1.3 },
+  { capturePath: CAPTURE.log, startFrame: 150, frames: 15, scaleFrom: 1.16, scaleTo: 1.28 },
+  { capturePath: CAPTURE.reports, startFrame: 30, frames: 15, scaleFrom: 1.14, scaleTo: 1.26 },
+  { capturePath: CAPTURE.skillsTeam, startFrame: 140, frames: 15, scaleFrom: 1.18, scaleTo: 1.3 },
+  { capturePath: CAPTURE.dashboard, startFrame: 80, frames: 15, scaleFrom: 1.18, scaleTo: 1.3 },
+  { capturePath: CAPTURE.skillsMe, startFrame: 420, frames: 24, scaleFrom: 1.08, scaleTo: 1.2 },
 ];
 
 export interface TeaserProps {
@@ -283,12 +296,12 @@ const BuildupTitle: React.FC<{
   const { fps } = useVideoConfig();
   const tokens = tokenizeBrandText(text);
 
-  const fadeOutStart = Math.max(durationFrames - 9, 0);
+  const fadeOutStart = Math.max(durationFrames - 12, 0);
   const fadeOut = interpolate(frame, [fadeOutStart, durationFrames], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const glow = interpolate(frame, [0, 10, fadeOutStart, durationFrames], [0, 1, 1, 0], {
+  const glow = interpolate(frame, [0, 14, fadeOutStart, durationFrames], [0, 1, 1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -332,14 +345,14 @@ const BuildupTitle: React.FC<{
         }}
       >
         {tokens.map((tok, i) => {
-          const start = i * 2.4;
+          const start = i * 4.5;
           const sp = spring({
             frame: frame - start,
             fps,
-            config: { damping: 16, mass: 0.7, stiffness: 150 },
+            config: { damping: 20, mass: 0.9, stiffness: 95 },
           });
-          const lift = interpolate(sp, [0, 1], [28, 0]);
-          const blur = interpolate(sp, [0, 1], [10, 0]);
+          const lift = interpolate(sp, [0, 1], [32, 0]);
+          const blur = interpolate(sp, [0, 1], [12, 0]);
           return (
             <span
               key={i}
@@ -372,8 +385,9 @@ const BuildupSnapshot: React.FC<{
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const fadeFrames = 5;
+  const fadeFrames = 10;
   const fadeIn = interpolate(frame, [0, fadeFrames], [0, 1], {
+    easing: Easing.out(Easing.cubic),
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -381,11 +395,11 @@ const BuildupSnapshot: React.FC<{
     frame,
     [durationFrames - fadeFrames, durationFrames],
     [1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+    { easing: Easing.in(Easing.cubic), extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
   const opacity = Math.min(fadeIn, fadeOut);
   const blur =
-    interpolate(fadeIn, [0, 1], [8, 0]) + interpolate(fadeOut, [0, 1], [8, 0]);
+    interpolate(fadeIn, [0, 1], [10, 0]) + interpolate(fadeOut, [0, 1], [10, 0]);
 
   const t = interpolate(frame, [0, durationFrames], [0, 1], {
     easing: Easing.out(Easing.cubic),
@@ -419,8 +433,8 @@ const BuildupSnapshot: React.FC<{
         aria-hidden
         style={{
           pointerEvents: "none",
-          boxShadow: `inset 0 0 0 1px ${color.brand}33, inset 0 0 260px rgba(0,0,0,0.78)`,
-          background: `radial-gradient(ellipse 78% 64% at 50% 50%, transparent 38%, rgba(0,0,0,0.7) 100%)`,
+          boxShadow: `inset 0 0 0 1px ${color.brand}26, inset 0 0 160px rgba(0,0,0,0.55)`,
+          background: `radial-gradient(ellipse 92% 78% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)`,
           opacity,
         }}
       />

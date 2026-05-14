@@ -134,7 +134,7 @@ export const en = {
     ariaLabel: "Pulse HR product reel",
     videoLabel: "A day at Pulse — animated showreel",
     posterAlt: "A day at Pulse — static preview",
-    caption: "A day at Pulse · 12s loop",
+    caption: "A day at Pulse · 20s loop",
   },
 
   marquee: {
