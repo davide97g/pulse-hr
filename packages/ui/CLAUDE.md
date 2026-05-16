@@ -29,7 +29,6 @@ import { useIsMobile } from "@pulse-hr/ui/hooks/use-mobile";
 2. `bunx shadcn@latest add <name>` — or hand-write one. shadcn CLI works if it doesn't require a `components.json` (we don't have one here).
 3. Rewrite its imports to relative form: `@/lib/utils` → `../lib/cn`; sibling primitives stay `./x`.
 4. Write a `<name>.stories.tsx` next to it, following the pattern in `button.stories.tsx`.
-5. Verify in Storybook: `bun run dev:design`.
 
 ## Promoting an app component to atom
 

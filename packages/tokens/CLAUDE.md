@@ -1,6 +1,6 @@
 # @pulse-hr/tokens
 
-Zero-dep design token package. CSS variables + TypeScript constants. Consumed by every app (apps/app, apps/feedback, apps/marketing — both the Astro site and the co-located `studio/` Remotion/testreel workspace — and apps/design).
+Zero-dep design token package. CSS variables + TypeScript constants. Consumed by every app (apps/app, apps/feedback, apps/marketing — both the Astro site and the co-located `studio/` Remotion/testreel workspace).
 
 ## Structure
 
@@ -26,7 +26,7 @@ src/
 
 ## Consuming
 
-### React / Vite (apps/app, apps/feedback, apps/design)
+### React / Vite (apps/app, apps/feedback)
 
 In the app's `styles.css`:
 
@@ -64,7 +64,6 @@ Use `hex.*` for raw values that CSS vars can't resolve (OG images, Remotion rend
 2. For theme-dependent tokens, add to every theme file.
 3. Add a `--color-<name>: var(--<name>);` line in the `@theme inline` block of `tokens.css` if you want Tailwind utilities (`bg-<name>`, `text-<name>`).
 4. Mirror the token in `index.ts` under the right constant (`token`, `hex`, `font`, etc.).
-5. Storybook `apps/design/docs/foundations/Swatches.stories.tsx` auto-renders any `--<name>` via the `SEMANTIC_TOKENS` array — add your token there to see it on the swatch grid.
 
 ## Spacing rhythm
 
@@ -137,4 +136,3 @@ Stable per-user-role hues, defined in `themes/light.css` and `themes/_base-dark.
 - Don't hard-code hex in component files. Use tokens.
 - Don't introduce new `--wp-*` aliases. That namespace is deprecated and scheduled for removal once marketing migrates.
 - Don't add motion utilities outside `motion.css`. One source of truth for the motion vocabulary.
-- Don't create a new theme without updating `THEMES` in `index.ts` and adding a story decorator entry in `apps/design/.storybook/preview.tsx`.

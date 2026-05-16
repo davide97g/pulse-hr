@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "sideEffects": false,
-  "description": "Shared Pulse HR component library: shadcn primitives + design atoms + ThemeProvider. Consumed by apps/app, apps/feedback, apps/design.",
+  "description": "Shared Pulse HR component library: shadcn primitives + design atoms + ThemeProvider. Consumed by apps/app, apps/feedback",
   "exports": {
     ".": "./src/index.ts",
     "./primitives/*": "./src/primitives/*.tsx",

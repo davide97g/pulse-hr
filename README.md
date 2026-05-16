@@ -117,8 +117,7 @@ pulse-hr/
 │   ├── app/         # @workflows-people/app   — main product (Vite + React 19 + TanStack Router)
 │   ├── api/         # @pulse-hr/api           — Hono + Drizzle + Neon Postgres backend
 │   ├── feedback/    # @pulse-hr/feedback      — public feature board (proposals, comments, votes)
-│   ├── marketing/   # pulse-hr-marketing      — Astro marketing site (SEO-first) + co-located studio/ content workspace (Remotion + testreel)
-│   └── design/      # @pulse-hr/design        — design playground
+│   └── marketing/   # pulse-hr-marketing      — Astro marketing site (SEO-first) + co-located studio/ content workspace (Remotion + testreel)
 ├── packages/
 │   ├── shared/      # @pulse-hr/shared        — shared types & utils
 │   ├── tokens/      # @pulse-hr/tokens        — design tokens shared across apps

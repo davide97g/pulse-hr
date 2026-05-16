@@ -16,7 +16,7 @@ Modify wiki contents only during explicit `/wiki-ingest` or `/wiki-lint` flows, 
 
 ## Monorepo layout
 
-Bun workspaces. Five deployable apps + three shared packages. Each app deploys independently.
+Bun workspaces. Four deployable apps + three shared packages. Each app deploys independently.
 
 ```
 pulse-hr/
@@ -25,7 +25,6 @@ pulse-hr/
 │   ├── api/        # @pulse-hr/api           → api.pulsehr.it    (Bun + Hono, hosted on Render)
 │   ├── feedback/   # @pulse-hr/feedback      → feedback site     (Vite + React + TanStack Router)
 │   ├── marketing/  # pulse-hr-marketing      → pulsehr.it        (Astro site + co-located studio/ content workspace: Remotion compositions + testreel browser recordings → public/studio/*)
-│   └── design/     # @pulse-hr/design        → design.pulsehr.it (Storybook for the design system)
 └── packages/
     ├── shared/     # @pulse-hr/shared (sidebar features, tours, changelog data)
     ├── tokens/     # @pulse-hr/tokens (CSS variables + TS constants — sole theme source of truth)
@@ -36,7 +35,6 @@ The root package name is `workflows-people` for legacy reasons; the product is *
 
 Subpackage-specific CLAUDE.md files exist and are the source of truth for those workspaces — read them before editing inside:
 
-- `apps/design/CLAUDE.md` — Storybook structure, story conventions
 - `packages/tokens/CLAUDE.md` — token authoring rules, theme list, consumption patterns
 - `packages/ui/CLAUDE.md` — primitives vs atoms, import paths, peer-dep policy
 
@@ -50,11 +48,10 @@ bun run dev                 # app + api + feedback (parallel)
 bun run dev:app             # Vite SPA only (:5173)
 bun run dev:api             # Hono backend only (--hot)
 bun run dev:feedback        # feedback site
-bun run dev:design          # Storybook (:6006)
 bun run dev:marketing       # Astro (:4321)
 
 bun run build               # builds app + api + feedback
-bun run build:app | build:api | build:feedback | build:design | build:marketing
+bun run build:app | build:api | build:feedback | build:marketing
 
 bun run lint                # eslint in apps/app
 bun run db:migrate          # apply Drizzle migrations against Neon
@@ -162,6 +159,5 @@ Each app has its own deploy target.
 - `apps/api` → Render. `render.yaml` + `Dockerfile`. Long-running Bun process.
 - `apps/feedback` → Vercel (rooted at `apps/feedback`).
 - `apps/marketing` → Vercel (rooted at `apps/marketing`). Framework `astro`, output `dist`. The co-located `studio/` content workspace is not part of the Astro build; it only writes its render artefacts into `apps/marketing/public/studio/` (gitignored) so the site can serve them.
-- `apps/design` → Vercel (rooted at `apps/design`). Framework "Other", output `storybook-static`.
 
 Vercel auto-detects the Bun workspace and installs from the monorepo root. Root `.vercelignore` strips tooling dirs.
