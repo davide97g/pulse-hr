@@ -391,9 +391,25 @@ export const it: Dict = {
     subtitle:
       "Due sviluppatori frontend-fluent che costruiscono in pubblico. L'agent-driven development è il motivo per cui siamo solo in due — non lo vendiamo, rilasciamo solo più di quanto due persone dovrebbero permettersi. Il prodotto è il protagonista; noi firmiamo i commit.",
     items: [
-      { n: "Davide Ghiotto", r: "Maintainer", bio: "Frontend-fluent, stanco del software HR. github.com/davide97g · linkedin.com/in/davide-ghiotto" },
-      { n: "Niccolò Naso", r: "Maintainer", bio: "Co-maintainer frontend-fluent. github.com/LordNik10 · linkedin.com/in/niccolò-naso-888039178" },
-      { n: "Tu?", r: "Aperti ai contributor", bio: "La roadmap è plasmata dalle pull request. Se il codebase fixa una frizione che vivi ogni settimana, manda una PR — ogni contributor viene creditato nel changelog." },
+      {
+        n: "Davide Ghiotto",
+        r: "Maintainer",
+        bio: "Frontend-fluent, stanco del software HR. github.com/davide97g · linkedin.com/in/davide-ghiotto",
+        linkedin: "https://www.linkedin.com/in/davide-ghiotto",
+        github: "https://github.com/davide97g",
+      },
+      {
+        n: "Niccolò Naso",
+        r: "Maintainer",
+        bio: "Co-maintainer frontend-fluent. github.com/LordNik10 · linkedin.com/in/niccolò-naso-888039178",
+        linkedin: "https://www.linkedin.com/in/niccolò-naso-888039178",
+        github: "https://github.com/LordNik10",
+      },
+      {
+        n: "Tu?",
+        r: "Aperti ai contributor",
+        bio: "La roadmap è plasmata dalle pull request. Se il codebase fixa una frizione che vivi ogni settimana, manda una PR — ogni contributor viene creditato nel changelog.",
+      },
     ],
   },
 

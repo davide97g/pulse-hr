@@ -384,10 +384,32 @@ export const en = {
     subtitle:
       "Two frontend-fluent developers, building in public. Agent-driven development is how two of us compete — we don't sell it, we just ship more than our headcount should allow. The product is the main character; we sign our commits.",
     items: [
-      { n: "Davide Ghiotto", r: "Maintainer", bio: "Frontend-fluent, tired of HR software. github.com/davide97g · linkedin.com/in/davide-ghiotto" },
-      { n: "Niccolò Naso", r: "Maintainer", bio: "Frontend-fluent co-maintainer. github.com/LordNik10 · linkedin.com/in/niccolò-naso-888039178" },
-      { n: "You?", r: "Open to contributors", bio: "The roadmap is shaped by pull requests. If the codebase fixes a pain you live with every week, land a PR — we credit every contributor in the changelog." },
-    ],
+      {
+        n: "Davide Ghiotto",
+        r: "Maintainer",
+        bio: "Frontend-fluent, tired of HR software. github.com/davide97g · linkedin.com/in/davide-ghiotto",
+        linkedin: "https://www.linkedin.com/in/davide-ghiotto",
+        github: "https://github.com/davide97g",
+      },
+      {
+        n: "Niccolò Naso",
+        r: "Maintainer",
+        bio: "Frontend-fluent co-maintainer. github.com/LordNik10 · linkedin.com/in/niccolò-naso-888039178",
+        linkedin: "https://www.linkedin.com/in/niccolò-naso-888039178",
+        github: "https://github.com/LordNik10",
+      },
+      {
+        n: "You?",
+        r: "Open to contributors",
+        bio: "The roadmap is shaped by pull requests. If the codebase fixes a pain you live with every week, land a PR — we credit every contributor in the changelog.",
+      },
+    ] as {
+      n: string;
+      r: string;
+      bio: string;
+      linkedin?: string;
+      github?: string;
+    }[],
   },
 
   useCases: {

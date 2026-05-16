@@ -119,16 +119,17 @@ const breadcrumbLd = breadcrumbs && breadcrumbs.length > 0
 
 const teamLd = {
   "@context": "https://schema.org",
-  "@graph": landing.TEAM.map((m) => ({
-    "@type": "Person",
-    name: m.n,
-    jobTitle: m.r,
-    description: m.bio,
-    worksFor: { "@id": `${SITE.url}/#organization` },
-    sameAs: [
-      `https://www.linkedin.com/in/${m.n.toLowerCase().replace(/\s+/g, "-")}`,
-    ],
-  })),
+  "@graph": landing.TEAM.filter((m) => m.linkedin || m.github).map((m) => {
+    const sameAs = [m.linkedin, m.github].filter((u): u is string => Boolean(u));
+    return {
+      "@type": "Person",
+      name: m.n,
+      jobTitle: m.r,
+      description: m.bio,
+      worksFor: { "@id": `${SITE.url}/#organization` },
+      ...(sameAs.length ? { sameAs } : {}),
+    };
+  }),
 };
 
 // hreflang alternates for SEO — every page exposes all locales.
@@ -148,10 +149,12 @@ const alternates = LOCALES.map((l) => ({
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {alternates.map((a) => (
+    {!noIndex && alternates.map((a) => (
       <link rel="alternate" hreflang={a.lang} href={a.href} />
     ))}
-    <link rel="alternate" hreflang="x-default" href={new URL(localizePath(path, DEFAULT_LOCALE), SITE.url).toString()} />
+    {!noIndex && (
+      <link rel="alternate" hreflang="x-default" href={new URL(localizePath(path, DEFAULT_LOCALE), SITE.url).toString()} />
+    )}
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
