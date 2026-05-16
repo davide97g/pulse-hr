@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
+import mdx from "@astrojs/mdx";
+import rehypeMermaid from "rehype-mermaid";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
@@ -12,7 +14,14 @@ export default defineConfig({
     defaultLocale: "en",
     routing: { prefixDefaultLocale: false },
   },
+  // Mermaid renders to inline SVG at build time so blog posts never ship a
+  // client-side mermaid.js runtime. Strategy "img-svg" emits <img> w/ data URI
+  // — survives strict CSP and works without JS.
+  markdown: {
+    rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],
+  },
   integrations: [
+    mdx(),
     sitemap({
       i18n: {
         defaultLocale: "en",

@@ -1,0 +1,56 @@
+---
+// Lazy YouTube embed using the privacy-enhanced nocookie domain.
+// Aspect-ratio wrapper prevents CLS; `loading="lazy"` defers until visible.
+// Pass `emitSchema` to inject a VideoObject JSON-LD for SEO.
+interface Props {
+  id: string;
+  title: string;
+  start?: number;
+  /** Optional VideoObject schema fields — emitted as JSON-LD when provided. */
+  emitSchema?: {
+    description: string;
+    thumbnailUrl?: string;
+    uploadDate: string;
+    duration?: string;
+  };
+}
+
+const { id, title, start, emitSchema } = Astro.props;
+const src = `https://www.youtube-nocookie.com/embed/${id}${start ? `?start=${start}` : ""}`;
+const watchUrl = `https://www.youtube.com/watch?v=${id}`;
+
+const videoLd = emitSchema
+  ? {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      name: title,
+      description: emitSchema.description,
+      thumbnailUrl: emitSchema.thumbnailUrl ?? `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`,
+      uploadDate: emitSchema.uploadDate,
+      ...(emitSchema.duration ? { duration: emitSchema.duration } : {}),
+      contentUrl: watchUrl,
+      embedUrl: src,
+    }
+  : null;
+---
+
+<figure class="my-8 not-prose">
+  <div
+    class="relative w-full overflow-hidden rounded-xl border border-white/10 bg-[#0b0b0d]"
+    style="aspect-ratio: 16 / 9;"
+  >
+    <iframe
+      class="absolute inset-0 h-full w-full"
+      src={src}
+      title={title}
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>
+  </div>
+  <figcaption class="mt-2 text-xs text-white/50 font-mono uppercase tracking-[0.2em]">
+    {title}
+  </figcaption>
+  {videoLd && <script type="application/ld+json" set:html={JSON.stringify(videoLd)} />}
+</figure>

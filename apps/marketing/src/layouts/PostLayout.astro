@@ -1,0 +1,81 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { useI18n } from "../i18n";
+import { SITE } from "../data/landing";
+import { ArrowLeft } from "lucide-astro";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Path relative to site root (e.g. "/blog/my-post"). Used for canonical. */
+  path: string;
+  datePublished: Date;
+  dateUpdated?: Date;
+  author: string;
+  /** Optional absolute or root-relative URL to the post hero image. */
+  ogImage?: string;
+  tags?: string[];
+}
+
+const { t, href } = useI18n(Astro);
+const { title, description, path, datePublished, dateUpdated, author, ogImage, tags = [] } = Astro.props;
+
+const articleLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  mainEntityOfPage: { "@type": "WebPage", "@id": new URL(path, SITE.url).toString() },
+  headline: title,
+  description,
+  datePublished: datePublished.toISOString(),
+  ...(dateUpdated ? { dateModified: dateUpdated.toISOString() } : {}),
+  author: { "@type": "Person", name: author },
+  publisher: { "@id": `${SITE.url}/#organization` },
+  ...(ogImage ? { image: new URL(ogImage, SITE.url).toString() } : {}),
+  ...(tags.length ? { keywords: tags.join(", ") } : {}),
+};
+
+const breadcrumbs = [{ name: t.footer.blog, path: "/blog" }];
+
+const dateFormat = new Intl.DateTimeFormat(undefined, {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  path={path}
+  ogImage={ogImage}
+  breadcrumbs={breadcrumbs}
+  extraLd={[articleLd]}
+>
+  <Nav />
+  <main id="main" class="max-w-[760px] mx-auto px-6 py-16 md:py-24">
+    <a
+      href={href("/blog")}
+      class="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors mb-10"
+    >
+      <ArrowLeft class="h-4 w-4" /> {t.footer.blog}
+    </a>
+
+    <header class="mb-12">
+      <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">
+        <time datetime={datePublished.toISOString()}>{dateFormat.format(datePublished)}</time>
+        {author && <span class="text-white/40"> · {author}</span>}
+      </p>
+      <h1 class="font-display text-[44px] md:text-[64px] leading-[1.02] tracking-tight">
+        {title}
+      </h1>
+      <p class="mt-6 text-white/70 text-lg leading-relaxed">{description}</p>
+    </header>
+
+    <article class="prose prose-invert max-w-none prose-headings:font-display prose-headings:tracking-tight prose-a:text-[#b4ff39] prose-a:no-underline hover:prose-a:underline prose-code:text-[#b4ff39] prose-pre:bg-white/[0.04] prose-pre:border prose-pre:border-white/10">
+      <slot />
+    </article>
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+// Excalidraw drawing embed.
+// Prefer SVG (vector, accessible, themable). PNG/JPG fallback gets width+height
+// to lock layout and prevent CLS. Alt text is required and not optional.
+interface Props {
+  src: string;
+  alt: string;
+  /** width + height in CSS pixels; required for raster sources to prevent CLS. */
+  width?: number;
+  height?: number;
+  caption?: string;
+}
+
+const { src, alt, width, height, caption } = Astro.props;
+const isRaster = /\.(png|jpe?g|webp|avif)$/i.test(src);
+---
+
+<figure class="my-8 not-prose">
+  <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      width={isRaster ? width : undefined}
+      height={isRaster ? height : undefined}
+      class="w-full h-auto"
+    />
+  </div>
+  {caption && (
+    <figcaption class="mt-2 text-xs text-white/50 font-mono uppercase tracking-[0.2em]">
+      {caption}
+    </figcaption>
+  )}
+</figure>

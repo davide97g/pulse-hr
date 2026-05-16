@@ -47,6 +47,7 @@ export function getLanding(locale: Locale) {
       description: dict.meta.description,
       tagline: dict.meta.tagline,
       keywords: dict.meta.keywords,
+      ogImage: dict.meta.ogImage,
     },
     FEATURES: dict.features.items,
     CONCEPTS: dict.concepts.items,

@@ -10,6 +10,7 @@ export const en = {
       "The HR tool that cares how you're doing, not how many hours you logged. Async status log, growth, kudos, wellbeing — no timesheets, no approval queues, no payroll. Open-source, self-hostable, built by the people who use it.",
     keywords:
       "employee engagement, async standup, kudos, peer recognition, wellbeing, open source, self-hosted, status log, growth, employee satisfaction, people-first HR",
+    ogImage: "/og/og-hero.png",
   },
 
   a11y: {

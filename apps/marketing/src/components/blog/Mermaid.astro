@@ -1,0 +1,22 @@
+---
+// Mermaid diagram embed.
+// Authors usually write ```mermaid fenced code blocks — rehype-mermaid
+// renders those to SVG at build time (see astro.config.mjs).
+// This wrapper is for cases where you want a caption or a separate code source.
+// Use a plain ```mermaid fence inside the prose for the common case.
+interface Props {
+  caption?: string;
+}
+const { caption } = Astro.props;
+---
+
+<figure class="my-8 not-prose">
+  <div class="rounded-xl border border-white/10 bg-white/5 p-4 overflow-x-auto">
+    <slot />
+  </div>
+  {caption && (
+    <figcaption class="mt-2 text-xs text-white/50 font-mono uppercase tracking-[0.2em]">
+      {caption}
+    </figcaption>
+  )}
+</figure>

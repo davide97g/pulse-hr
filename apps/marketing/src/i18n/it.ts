@@ -16,6 +16,7 @@ export const it: Dict = {
       "Lo strumento HR che guarda a come stai, non a quante ore hai tracciato. Status log async, crescita, kudos, benessere — niente timesheet, niente code di approvazione, niente buste paga. Open source, self-host, costruito da chi lo usa.",
     keywords:
       "engagement dipendenti, standup async, kudos, riconoscimento, benessere, open source, self-hosted, status log, crescita, soddisfazione, HR people-first",
+    ogImage: "/og/og-hero-it.png",
   },
 
   a11y: {

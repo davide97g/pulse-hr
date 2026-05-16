@@ -33,7 +33,7 @@ const {
   title = landing.site.tagline,
   description = landing.site.description,
   path = "/",
-  ogImage = SITE.ogImage,
+  ogImage = landing.site.ogImage,
   isHome = false,
   noIndex = false,
   breadcrumbs,
@@ -43,6 +43,10 @@ const {
 const localePath = localizePath(path, locale);
 const canonical = new URL(localePath, SITE.url).toString();
 const absoluteOg = new URL(ogImage, SITE.url).toString();
+
+// Normalize: every <title> ends with " — Pulse HR" for brand recall in SERPs.
+// Skip the suffix when the title already mentions the brand to avoid "Pulse HR — X — Pulse HR".
+const fullTitle = title.includes(SITE.name) ? title : `${title} — ${SITE.name}`;
 
 const orgLd = {
   "@context": "https://schema.org",
@@ -141,7 +145,7 @@ const alternates = LOCALES.map((l) => ({
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b0b0d" />
 
-    <title>{title}</title>
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {alternates.map((a) => (
@@ -155,7 +159,7 @@ const alternates = LOCALES.map((l) => ({
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.name} />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={absoluteOg} />
@@ -169,7 +173,7 @@ const alternates = LOCALES.map((l) => ({
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content={SITE.twitter} />
-    <meta name="twitter:title" content={title} />
+    <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteOg} />
 
@@ -195,6 +199,10 @@ const alternates = LOCALES.map((l) => ({
 
     <!-- Locale persistence.
          Honors a previously-stored explicit choice from LangSwitcher only.
+         Scoped to root paths ("/" and "/it"): deep-linked pages win their
+         canonical locale so a user-shared EN link doesn't bounce an
+         IT-stored visitor to /it/<deep-path>. Switching deep-page locale
+         is the LangSwitcher's job.
          No navigator.languages auto-detect: SERP→page locale mismatch is a
          soft-cloaking pattern. hreflang serves the right locale to crawlers. -->
     <script is:inline define:vars={{ currentLocale: locale }}>
@@ -203,16 +211,17 @@ const alternates = LOCALES.map((l) => ({
           var KEY = "pulse.locale";
           var SUPPORTED = ["en", "it"];
           var pathname = location.pathname;
-          function targetFor(lang) {
-            if (lang === "en") return pathname.replace(/^\/it(\/|$)/, "/");
-            if (pathname.indexOf("/it/") === 0 || pathname === "/it") return pathname;
-            return "/it" + (pathname === "/" ? "" : pathname);
-          }
+          var isRoot = pathname === "/" || pathname === "/it" || pathname === "/it/";
           var stored = null;
           try { stored = localStorage.getItem(KEY); } catch (e) {}
-          if (stored && SUPPORTED.indexOf(stored) !== -1 && stored !== currentLocale) {
-            var t = targetFor(stored);
-            if (t !== pathname) location.replace(t + location.search + location.hash);
+          if (
+            isRoot &&
+            stored &&
+            SUPPORTED.indexOf(stored) !== -1 &&
+            stored !== currentLocale
+          ) {
+            var target = stored === "en" ? "/" : "/it";
+            if (target !== pathname) location.replace(target + location.search + location.hash);
             return;
           }
           if (!stored) {

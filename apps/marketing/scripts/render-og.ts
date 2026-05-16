@@ -31,6 +31,13 @@ const CARDS = [
     accent: "One pulse.",
     sub: "Software for people, not headcount.",
   },
+  {
+    name: "og-hero-it",
+    eyebrow: "PULSE HR",
+    headline: ["Tutto il team."],
+    accent: "Un battito.",
+    sub: "Software per le persone, non per i numeri.",
+  },
 ];
 
 const html = (card: (typeof CARDS)[number]) => /* html */ `<!doctype html>
