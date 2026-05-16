@@ -81,7 +81,10 @@ export function GrowthAchievements() {
         })}
       </div>
 
-      <div className="grid gap-3" style={{ gridTemplateColumns: "1.2fr 1fr 1fr", flex: 1, minHeight: 0 }}>
+      <div
+        className="grid gap-3 grid-cols-1 md:grid-cols-[1.2fr_1fr_1fr]"
+        style={{ flex: 1, minHeight: 0 }}
+      >
         {/* Signature spread */}
         {signature ? (
           <SignatureCard a={signature} />

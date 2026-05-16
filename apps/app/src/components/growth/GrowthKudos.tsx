@@ -57,17 +57,17 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
 
   return (
     <div className="flex flex-col gap-4 min-h-0">
-      <div className="grid gap-6 items-end" style={{ gridTemplateColumns: "1.2fr 1fr" }}>
+      <div className="grid gap-4 md:gap-6 items-end grid-cols-1 md:grid-cols-[1.2fr_1fr]">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
             PEER RECOGNITION · {monthCount} KUDOS QUESTO MESE
           </span>
           <h2
+            className="text-[40px] md:text-[56px]"
             style={{
               fontFamily: '"Fraunces", ui-serif, serif',
               fontWeight: 400,
               margin: "6px 0 0",
-              fontSize: 56,
               letterSpacing: "-0.04em",
               lineHeight: 0.92,
             }}
@@ -114,9 +114,8 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
 
       {/* Leaderboard */}
       <div
-        className="grid"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5"
         style={{
-          gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
           border: "1px solid var(--line-strong)",
           borderRadius: 14,
           overflow: "hidden",
@@ -164,8 +163,8 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
 
       {/* Wall */}
       <div
-        className="grid gap-3 overflow-auto pr-1 stagger-in"
-        style={{ gridTemplateColumns: "1fr 1fr", flex: 1, minHeight: 0, paddingBottom: 4 }}
+        className="grid gap-3 overflow-auto pr-1 stagger-in grid-cols-1 md:grid-cols-2"
+        style={{ flex: 1, minHeight: 0, paddingBottom: 4 }}
       >
         {wall.map((k) => {
           const from = employeeById(k.fromId);

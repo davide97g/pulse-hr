@@ -94,7 +94,7 @@ export function GrowthEditorial({
 
   return (
     <div className="ph p-4 md:p-6 flex flex-col gap-5 min-h-full">
-      <div className="grid items-end gap-6" style={{ gridTemplateColumns: "1fr auto" }}>
+      <div className="grid items-end gap-4 md:gap-6 grid-cols-1 md:grid-cols-[1fr_auto]">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
             {eyebrow}
@@ -104,7 +104,7 @@ export function GrowthEditorial({
               fontFamily: '"Fraunces", ui-serif, serif',
               fontWeight: 400,
               margin: "10px 0 0",
-              fontSize: "clamp(56px, 7vw, 92px)",
+              fontSize: "clamp(40px, 9vw, 92px)",
               letterSpacing: "-0.045em",
               lineHeight: 0.86,
             }}
