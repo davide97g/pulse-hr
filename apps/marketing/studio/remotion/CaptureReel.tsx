@@ -96,8 +96,9 @@ export const CaptureScene: React.FC<CaptureSceneProps> = ({
   label,
 }) => {
   const frame = useCurrentFrame();
-  const { width, fps } = useVideoConfig();
-  const square = width <= 1080 && Math.abs(width - 1080) < 1;
+  const { width, height, fps } = useVideoConfig();
+  const portrait = height > width;
+  const square = !portrait && width <= 1080 && Math.abs(width - 1080) < 1;
 
   const enterSpring = spring({
     frame,
@@ -178,9 +179,9 @@ export const CaptureScene: React.FC<CaptureSceneProps> = ({
       <div
         style={{
           position: "absolute",
-          top: square ? 22 : 30,
-          left: square ? 22 : 32,
-          padding: "6px 12px",
+          top: portrait ? 70 : square ? 22 : 30,
+          left: portrait ? 28 : square ? 22 : 32,
+          padding: portrait ? "7px 14px" : "6px 12px",
           borderRadius: 9999,
           backgroundColor: "rgba(10,10,15,0.78)",
           backdropFilter: "blur(12px) saturate(160%)",
@@ -188,7 +189,7 @@ export const CaptureScene: React.FC<CaptureSceneProps> = ({
           border: `1px solid ${color.brand}55`,
           color: color.cream,
           fontFamily: fonts.mono,
-          fontSize: square ? 11 : 12,
+          fontSize: portrait ? 13 : square ? 11 : 12,
           letterSpacing: "0.24em",
           textTransform: "uppercase",
           opacity: chipOpacity,

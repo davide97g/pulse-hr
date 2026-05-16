@@ -7,6 +7,10 @@ import { INTRO_DURATION_FRAMES } from "./scenes/Intro";
 import { OUTRO_DURATION_FRAMES } from "./scenes/Outro";
 import { Teaser, TEASER_DURATION_FRAMES } from "./Teaser";
 import { Trailer, TRAILER_DURATION_FRAMES } from "./Trailer";
+import {
+  TrailerShorts,
+  TRAILER_SHORTS_DURATION_FRAMES,
+} from "./TrailerShorts";
 
 const FPS = 30;
 
@@ -21,8 +25,19 @@ interface ReelDescriptor {
    * (in seconds) is captureSeconds.
    */
   capturePath: string;
+  /**
+   * Optional portrait-recorded clip (produced by `MOBILE=1 bun run record:*`).
+   * When set, the `-shorts` composition reads this clip instead of the
+   * landscape one, so shorts get genuine mobile footage rather than a cropped
+   * desktop view.
+   */
+  capturePathShorts?: string;
   captureSeconds: number;
+  /** Optional duration of the portrait clip if it differs from captureSeconds. */
+  captureSecondsShorts?: number;
   cues: TimedCaption[];
+  /** Optional caption override for portrait — shorter wording, snappier holds. */
+  cuesShorts?: TimedCaption[];
 }
 
 /**
@@ -31,6 +46,12 @@ interface ReelDescriptor {
  *
  * Cue lists are inlined here to keep Studio cold-start reliable. Wrap a span
  * in `*…*` markers to render it in the brand accent color.
+ *
+ * For shorts, run `MOBILE=1 bun run record:<flow>` then add
+ * `capturePathShorts: "captures/<flow>/clip.shorts.mp4"` plus the matching
+ * `captureSecondsShorts` and (optionally) `cuesShorts` with portrait-tuned
+ * wording. The `-shorts` composition automatically picks the portrait clip
+ * when those fields are present.
  */
 const REELS: ReelDescriptor[] = [
   {
@@ -156,15 +177,23 @@ const ASPECTS = [
 ] as const;
 
 const buildReelComposition = (reel: ReelDescriptor, aspect: (typeof ASPECTS)[number]) => {
-  const captureDurationFrames = Math.round(reel.captureSeconds * FPS);
+  const isShorts = aspect.suffix === "shorts";
+  const capturePath = isShorts && reel.capturePathShorts
+    ? reel.capturePathShorts
+    : reel.capturePath;
+  const seconds = isShorts && reel.captureSecondsShorts
+    ? reel.captureSecondsShorts
+    : reel.captureSeconds;
+  const cues = isShorts && reel.cuesShorts ? reel.cuesShorts : reel.cues;
+  const captureDurationFrames = Math.round(seconds * FPS);
   const total = captureDurationFrames + CAPTURE_REEL_PADDING_FRAMES;
   const props: CaptureReelProps = {
     title: reel.title,
     subtitle: reel.subtitle,
     outroTagline: reel.outroTagline,
-    capturePath: reel.capturePath,
+    capturePath,
     captureDurationFrames,
-    cues: reel.cues,
+    cues,
   };
   return (
     <Composition
@@ -257,6 +286,37 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         width={1920}
         height={1080}
+        defaultProps={{ audioSrc: "audio/trailer-v2.mp3" }}
+      />
+
+      {/* ── Mobile / Instagram-Reels / YouTube-Shorts trailer ──────────────
+          1080×1920, 30s, bespoke text-driven hook ("Your team is talking.
+          You can't hear it. Until now.") feeding into four portrait-recorded
+          captures + flicker finale + outro chip.
+
+          Record portrait sources first:
+            MOBILE=1 bun run record:trailer:dashboard
+            MOBILE=1 bun run record:trailer:kudos
+            MOBILE=1 bun run record:trailer:achievements
+            MOBILE=1 bun run record:trailer:reports
+          That writes captures/<spec>/clip.shorts.mp4 which TrailerShorts.tsx
+          consumes. */}
+      <Composition
+        id="trailer-shorts-v1"
+        component={TrailerShorts}
+        durationInFrames={TRAILER_SHORTS_DURATION_FRAMES}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ audioSrc: "audio/trailer-v1.mp3" }}
+      />
+      <Composition
+        id="trailer-shorts-v2"
+        component={TrailerShorts}
+        durationInFrames={TRAILER_SHORTS_DURATION_FRAMES}
+        fps={FPS}
+        width={1080}
+        height={1920}
         defaultProps={{ audioSrc: "audio/trailer-v2.mp3" }}
       />
     </>

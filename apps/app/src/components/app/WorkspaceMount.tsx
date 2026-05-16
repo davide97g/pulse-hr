@@ -20,10 +20,12 @@ import {
   getNamespace,
   isWorkspaceReady,
   resetWorkspace,
+  setCompanySize,
   setCurrentUserId,
   storedSchemaVersion,
   useWorkspaceStatus,
 } from "@/lib/workspace";
+import type { CompanySize } from "@/lib/workspace";
 
 export function WorkspaceMount() {
   const { isLoaded, userId } = useAuth();
@@ -37,6 +39,31 @@ export function WorkspaceMount() {
   }, [isLoaded, userId]);
 
   const status = useWorkspaceStatus();
+
+  // Recording bypass — `/?demo_workspace=Bitrock&size=medium` skips the
+  // onboarding dialog so testreel can record straight into the app. Gated to
+  // dev builds and to authenticated users so it can never run in production.
+  // The query string is stripped after firing so the param doesn't leak into
+  // subsequent navigations or screenshots.
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    if (typeof window === "undefined") return;
+    if (!isLoaded || !userId) return;
+    if (status.ready) return;
+    const url = new URL(window.location.href);
+    const name = url.searchParams.get("demo_workspace");
+    if (!name) return;
+    const rawSize = url.searchParams.get("size");
+    const size: CompanySize | null =
+      rawSize === "small" || rawSize === "medium" || rawSize === "large"
+        ? rawSize
+        : null;
+    createWorkspace(name);
+    if (size) setCompanySize(size);
+    url.searchParams.delete("demo_workspace");
+    url.searchParams.delete("size");
+    window.history.replaceState({}, "", url.toString());
+  }, [isLoaded, userId, status.ready]);
   const shownFor = useRef<string | null>(null);
 
   useEffect(() => {

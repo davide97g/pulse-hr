@@ -66,8 +66,9 @@ export const CinemaClip: React.FC<CinemaClipProps> = ({
   vignette = 1,
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width: vw, height: vh } = useVideoConfig();
   const ms = (frame / fps) * 1000;
+  const portrait = vh > vw;
 
   // Enter (springy fade + slight scale-in) and exit (push-through).
   const enterSpring = spring({
@@ -230,7 +231,7 @@ export const CinemaClip: React.FC<CinemaClipProps> = ({
         </div>
       ) : null}
 
-      <Caption cues={cues} bottom={150} />
+      <Caption cues={cues} bottom={portrait ? 260 : 150} />
     </AbsoluteFill>
   );
 };

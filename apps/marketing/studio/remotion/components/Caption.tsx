@@ -30,9 +30,10 @@ const WORD_STAGGER_MS = 55;
 
 export const Caption: React.FC<Props> = ({ cues, bottom }) => {
   const frame = useCurrentFrame();
-  const { fps, width } = useVideoConfig();
+  const { fps, width, height } = useVideoConfig();
   const ms = (frame / fps) * 1000;
-  const square = width <= 1080 && Math.abs(width - 1080) < 1;
+  const portrait = height > width;
+  const square = !portrait && width <= 1080 && Math.abs(width - 1080) < 1;
 
   const active = cues.find((c) => ms >= c.atMs && ms <= c.atMs + c.holdMs);
   if (!active) return null;
@@ -51,10 +52,14 @@ export const Caption: React.FC<Props> = ({ cues, bottom }) => {
     },
   );
 
-  const fontSize = square ? 32 : 42;
-  const padX = square ? 22 : 30;
-  const padY = square ? 12 : 16;
-  const bottomPx = bottom ?? (square ? 90 : 130);
+  // Portrait reels sit captions higher up (above the home indicator zone) and
+  // wrap to the phone width. Sizing reads bigger because the viewer is closer.
+  const fontSize = portrait ? 48 : square ? 32 : 42;
+  const padX = portrait ? 22 : square ? 22 : 30;
+  const padY = portrait ? 14 : square ? 12 : 16;
+  const bottomPx =
+    bottom ?? (portrait ? 220 : square ? 90 : 130);
+  const maxWidth = portrait ? 940 : square ? 760 : 1180;
 
   return (
     <div
@@ -84,7 +89,7 @@ export const Caption: React.FC<Props> = ({ cues, bottom }) => {
           letterSpacing: "-0.015em",
           lineHeight: 1.1,
           textAlign: "center",
-          maxWidth: square ? 760 : 1180,
+          maxWidth,
           boxShadow: `0 18px 56px rgba(0,0,0,0.45), 0 0 28px ${color.brand}22`,
           display: "flex",
           flexWrap: "wrap",

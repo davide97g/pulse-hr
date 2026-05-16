@@ -50,14 +50,37 @@ Use a brand gradient only for the "show-off" homepage montage:
 
 ## 4. Output size and viewport
 
-All specs use:
+Default specs (desktop) use:
 
 ```json
 "viewport": { "width": 1280, "height": 720 },
 "outputSize": { "width": 1920, "height": 1080 }
 ```
 
-This is the master capture. Remotion compositions then derive 16:9-web (1280×720) and 1:1 (1080×1080) from this same source via crop+scale.
+This is the master desktop capture. Remotion landscape compositions read from `captures/<spec>/clip.mp4`.
+
+### Mobile / shorts variant
+
+For Instagram Reels / YouTube Shorts, run the same spec with `MOBILE=1`:
+
+```bash
+MOBILE=1 bun run record:trailer:dashboard
+# or via the dedicated script:
+bun run record:trailer:shorts:dashboard
+```
+
+The runner rewrites the compiled JSON to:
+
+```jsonc
+"viewport":   { "width": 390,  "height": 844 },   // iPhone-ish
+"outputSize": { "width": 1080, "height": 1920 },  // 9:16
+"chrome":     { "trafficLights": false, "url": false, "titleBarHeight": 0 },
+"background": { "color": "#0a0a0f", "padding": 24, "borderRadius": 44 }
+```
+
+It promotes the result to `captures/<spec>/clip.shorts.mp4` (the desktop `clip.mp4` is untouched). Shorts compositions in `Root.tsx` pick the portrait clip via `capturePathShorts`; `TrailerShorts.tsx` reads `captures/trailer-*/clip.shorts.mp4` directly.
+
+Optional `<spec>.shorts.captions.json` overrides desktop captions for portrait wording. Falls back to the shared `<spec>.captions.json` if absent.
 
 ## 5. Cursor
 

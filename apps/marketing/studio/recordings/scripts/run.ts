@@ -34,6 +34,12 @@ const format = process.env.FORMAT ?? "mp4";
 const baseUrl = process.env.BASE_URL ?? "http://localhost:5173";
 const feedbackBaseUrl = process.env.FEEDBACK_BASE_URL ?? "http://localhost:5174";
 const enableGhosts = process.env.GHOSTS === "1";
+// MOBILE=1 swaps the spec to a real phone capture: portrait viewport, portrait
+// outputSize, no macOS chrome, tighter padding, phone screen radius. Resulting
+// artefact lands at captures/<spec>/clip.shorts.mp4 so Remotion can choose it
+// for the shorts aspect.
+const mobile = process.env.MOBILE === "1";
+const variantSuffix = mobile ? ".shorts" : "";
 
 const credsPath = resolve(appDir, "test.credentials.json");
 if (!existsSync(credsPath)) {
@@ -71,29 +77,61 @@ if (existsSync(setupPartialPath) && raw.includes('"{{SETUP}}"')) {
   raw = raw.replace('"{{SETUP}}"', setupBlock);
 }
 
-const setupTrailerPath = resolve(specsDir, "_setup-trailer.partial.json");
+// Trailer specs use SETUP_TRAILER. On MOBILE=1 we prefer the dedicated mobile
+// setup partial (login → navigate to /?demo_workspace= which trips the
+// dev-only WorkspaceMount bypass) so the recording doesn't depend on the
+// onboarding dialog rendering correctly at narrow widths.
+const setupTrailerDesktopPath = resolve(specsDir, "_setup-trailer.partial.json");
+const setupTrailerMobilePath = resolve(specsDir, "_setup-trailer.mobile.partial.json");
+const setupTrailerPath =
+  mobile && existsSync(setupTrailerMobilePath)
+    ? setupTrailerMobilePath
+    : setupTrailerDesktopPath;
 if (existsSync(setupTrailerPath) && raw.includes('"{{SETUP_TRAILER}}"')) {
   const setupBlock = readFileSync(setupTrailerPath, "utf8").trim();
   raw = raw.replace('"{{SETUP_TRAILER}}"', setupBlock);
 }
 
-const rendered = raw
+let rendered = raw
   .replaceAll("{{BASE_URL}}", baseUrl)
   .replaceAll("{{FEEDBACK_BASE_URL}}", feedbackBaseUrl)
   .replaceAll("{{TEST_EMAIL}}", primary.email)
   .replaceAll("{{TEST_PASSWORD}}", primary.password);
 
+// The "What's new" changelog modal pops on first sight of a new app version
+// and would cover the recording. Suppress for every recording — `null` skips
+// reseeding existing keys so per-spec overrides still win.
+{
+  const spec = JSON.parse(rendered);
+  spec.localStorage = {
+    "pulse.changelog.skip": "1",
+    ...(spec.localStorage ?? {}),
+  };
+  if (mobile) {
+    spec.viewport = { width: 390, height: 844 };
+    spec.outputSize = { width: 1080, height: 1920 };
+    spec.chrome = { trafficLights: false, url: false, titleBarHeight: 0 };
+    spec.background = {
+      color: spec.background?.color ?? "#0a0a0f",
+      padding: 24,
+      borderRadius: 44,
+    };
+  }
+  rendered = JSON.stringify(spec, null, 2);
+}
+
 const outRoot = resolve(studioDir, "output");
-const outDir = resolve(outRoot, specName);
+const outDir = resolve(outRoot, mobile ? `${specName}.shorts` : specName);
 mkdirSync(outDir, { recursive: true });
 
-const compiledPath = resolve(outDir, `${specName}.json`);
+const compiledPath = resolve(outDir, `${specName}${variantSuffix}.json`);
 writeFileSync(compiledPath, rendered);
 
 console.log(`[recordings] base url:     ${baseUrl}`);
 console.log(`[recordings] feedback url: ${feedbackBaseUrl}`);
 console.log(`[recordings] compiled:     ${compiledPath}`);
 console.log(`[recordings] format:       ${format}`);
+console.log(`[recordings] variant:      ${mobile ? "mobile / shorts (1080x1920)" : "desktop (1920x1080)"}`);
 
 // ─── Ghost users ──────────────────────────────────────────────────────────
 const ghostsPath = resolve(specsDir, `${specName}.ghosts.json`);
@@ -201,19 +239,32 @@ child.on("exit", (code) => {
   }
 
   // ─── Promote to captures/ (Remotion publicDir) ──────────────────────────
+  // Desktop variant lands at clip.mp4. Mobile variant lands at clip.shorts.mp4,
+  // alongside the desktop file — Remotion's shorts compositions pick the
+  // portrait clip when present.
   const capturesDir = resolve(studioDir, "captures", specName);
   mkdirSync(capturesDir, { recursive: true });
-  const targetClip = resolve(capturesDir, `clip.${format}`);
+  const targetClip = resolve(capturesDir, `clip${variantSuffix}.${format}`);
   copyFileSync(video, targetClip);
   console.log(`[recordings] promoted -> ${targetClip}`);
 
   const timelinePath = resolve(outDir, "timeline.json");
   if (existsSync(timelinePath)) {
-    copyFileSync(timelinePath, resolve(capturesDir, "timeline.json"));
+    copyFileSync(
+      timelinePath,
+      resolve(capturesDir, `timeline${variantSuffix}.json`),
+    );
   }
 
   // ─── Caption merge ──────────────────────────────────────────────────────
-  const sidecarPath = resolve(specsDir, `${specName}.captions.json`);
+  // Shorts may carry their own caption sidecar (different wording for portrait
+  // wrapping). If <spec>.shorts.captions.json exists it wins for MOBILE runs;
+  // otherwise we fall back to the shared <spec>.captions.json so a mobile
+  // recording is never caption-less.
+  const sidecarShortsPath = resolve(specsDir, `${specName}.shorts.captions.json`);
+  const sidecarSharedPath = resolve(specsDir, `${specName}.captions.json`);
+  const sidecarPath =
+    mobile && existsSync(sidecarShortsPath) ? sidecarShortsPath : sidecarSharedPath;
   if (existsSync(sidecarPath) && existsSync(timelinePath)) {
     try {
       const sidecar = JSON.parse(readFileSync(sidecarPath, "utf8"));
@@ -233,11 +284,12 @@ child.on("exit", (code) => {
           };
         })
         .filter(Boolean);
+      const outName = `captions${variantSuffix}.timed.json`;
       writeFileSync(
-        resolve(capturesDir, "captions.timed.json"),
+        resolve(capturesDir, outName),
         JSON.stringify({ spec: specName, captions: timed }, null, 2),
       );
-      console.log(`[recordings] captions merged -> ${capturesDir}/captions.timed.json`);
+      console.log(`[recordings] captions merged -> ${capturesDir}/${outName}`);
     } catch (err) {
       console.warn(`[recordings] caption merge failed:`, err);
     }

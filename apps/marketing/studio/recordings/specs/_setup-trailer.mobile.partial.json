@@ -1,0 +1,45 @@
+{
+  "url": "{{BASE_URL}}/login",
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "input[type=email]",
+      "timeout": 15000
+    },
+    {
+      "action": "type",
+      "selector": "input[type=email]",
+      "text": "{{TEST_EMAIL}}",
+      "delay": 8
+    },
+    {
+      "action": "wait",
+      "ms": 200,
+      "waitFor": "input[type=password]",
+      "timeout": 15000
+    },
+    {
+      "action": "type",
+      "selector": "input[type=password]",
+      "text": "{{TEST_PASSWORD}}",
+      "delay": 8
+    },
+    {
+      "action": "click",
+      "selector": "button[type=submit]"
+    },
+    {
+      "action": "wait",
+      "ms": 1800
+    },
+    {
+      "action": "navigate",
+      "url": "{{BASE_URL}}/?demo_workspace=Bitrock&size=medium"
+    },
+    {
+      "action": "wait",
+      "ms": 1600
+    }
+  ]
+}
