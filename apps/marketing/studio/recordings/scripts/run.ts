@@ -108,13 +108,17 @@ let rendered = raw
     ...(spec.localStorage ?? {}),
   };
   if (mobile) {
-    spec.viewport = { width: 390, height: 844 };
+    // 540×960 viewport (9:16 aspect) maps cleanly 2× to a 1080×1920 frame so
+    // the recording fills it edge-to-edge — no dark borders for Remotion to
+    // crop. Chrome + padding + radius are all stripped so the captured app
+    // is the entire frame.
+    spec.viewport = { width: 540, height: 960 };
     spec.outputSize = { width: 1080, height: 1920 };
     spec.chrome = { trafficLights: false, url: false, titleBarHeight: 0 };
     spec.background = {
       color: spec.background?.color ?? "#0a0a0f",
-      padding: 24,
-      borderRadius: 44,
+      padding: 0,
+      borderRadius: 0,
     };
   }
   rendered = JSON.stringify(spec, null, 2);
