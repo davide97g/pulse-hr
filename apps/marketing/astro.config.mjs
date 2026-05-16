@@ -30,9 +30,14 @@ export default defineConfig({
       // Stub/placeholder pages are `noindex`; keep them out of the sitemap
       // too so crawlers never see a conflicting signal.
       filter: (page) => {
-        const STUB_ROUTES = ["/privacy", "/terms", "/404", "/it/privacy", "/it/terms", "/it/404"];
+        // Routes that render with noIndex / robots-disallowed status — keep
+        // them out of the sitemap so crawlers never see a conflicting signal.
+        const NOINDEX_ROUTES = [
+          "/privacy", "/terms", "/404", "/studio",
+          "/it/privacy", "/it/terms", "/it/404",
+        ];
         const path = new URL(page).pathname.replace(/\/$/, "") || "/";
-        return !STUB_ROUTES.includes(path);
+        return !NOINDEX_ROUTES.includes(path);
       },
     }),
   ],
