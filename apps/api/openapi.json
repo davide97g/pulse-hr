@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Pulse HR API",
-    "version": "0.6.0",
+    "version": "0.1.0",
     "description": "Pulse HR backend (Hono + Bun on Render). This document is auto-generated from the route definitions in `apps/api/src/openapi/*` — do not hand-edit."
   },
   "servers": [
