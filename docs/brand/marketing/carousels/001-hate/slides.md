@@ -1,5 +1,7 @@
 # Carousel 001 — "HR software for people who *hate* HR software"
 
+> **Status: SUPERSEDED.** This is the **April 2026 launch carousel** — historical artifact, kept for record. The hero ("HR software for people who hate HR software"), the services-firm diagnosis on slide 2, and the brand-name dunking in cross-posts all reflect the **prior positioning**. The brand refocused in May 2026 to an IC-first, employee-first spine with no named-brand dunking — see `../../../foundation.md`. Do **not** reuse this as a template without rewriting against the current spine. Carousel 002 (yet to be produced) is the first asset of the refocused identity.
+
 **Purpose.** The first public-facing LinkedIn post from the Pulse HR company page. Launch day, 17:00 CET, Fri Apr 24 2026.
 
 **Angle / pillar.** Open (primary) + Transparent (secondary). Roast-first opener that dials down into the four commitments.

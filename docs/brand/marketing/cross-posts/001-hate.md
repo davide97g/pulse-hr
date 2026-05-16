@@ -1,5 +1,7 @@
 # Cross-posts — Carousel 001
 
+> **Status: SUPERSEDED.** April 2026 launch cross-posts under the prior positioning. Historical record only. The content below has been scrubbed of competitor brand names to match the May 2026 voice rule (no named competitors anywhere in the identity), but the broader framing (roast tone, "hate HR" energy, the parked Money/People/Work module model, the "free for the first 5 employees" pricing) is still the old one. Do not reuse without rewriting against `../../foundation.md`.
+
 Three cross-posts. Same substance, different shapes. All go up between
 17:45 and 18:00 CET on launch day — after the LinkedIn post has had
 45 minutes to breathe and the first comments have landed.
@@ -44,9 +46,9 @@ rules if you're curious about the "why."
   comment from someone who's actually read the brand docs is worth
   20 generic likes.
 - 🍴 Fork the repo or open a Discussion here if there's a specific HR
-  pain we should roast next. The carousel names three incumbents
-  (Rippling, Deel, BambooHR) and one behaviour ("book a demo") — but
-  we know there are ten more. Which one should carousel 002 hit?
+  pain we should call out next. The carousel takes aim at one behaviour
+  ("book a demo") and a handful of patterns most ICs recognise — but
+  there are more. Which one should carousel 002 hit?
 
 ### What we're watching for the next 3 hours
 
@@ -120,7 +122,7 @@ Absolutely bullied into this stance by our own foundation.md §9.
 **Post 4 (reply — the call):**
 
 ```
-If you also hate your HRIS, tell us which one and why. We're collecting reasons for a /vs page and we'd rather fill it with real complaints than marketing prose.
+If your current HR setup has a specific frustration you'd like to see solved, tell us what it is. We're collecting patterns for a /vs page — we want concrete workflows that don't work today, not brand-name comparisons.
 
 github.com/davide97g/pulse-hr/discussions
 ```
@@ -145,17 +147,17 @@ early substantive author comment):**
 Hi HN — Davide here. Pulse HR is an open-source HR/payroll platform
 my co-maintainer Niccolò and I are building in public from Milan.
 
-The honest-brochure version:
+The honest-brochure version (April 2026 framing — note: scope has since narrowed; see foundation.md):
 
 • Source on GitHub under FSL-1.1-MIT. Converts to MIT automatically
   after 2 years. Full repo at https://github.com/davide97g/pulse-hr
-• Three independent modules (Money / People / Work). Adopt one, skip
-  the rest. Public REST API + webhooks on every resource event.
+• Modular surfaces. Adopt the ones you want. Public REST API + webhooks
+  on every resource event.
 • Keyboard-first — ⌘K for search, ⌘J for a command bar with a LOCAL
   intent parser (no LLM call, no data leaves your tenant, works
   offline).
-• Self-host on Docker / Helm / Terraform. Hosted tier coming on
-  pulsehr.it — free for the first 5 employees, forever.
+• Self-host on Docker / Helm / Terraform. Hosted tier on
+  pulsehr.it — pricing public, no sales call.
 
 We launched on LinkedIn yesterday with a roast-toned carousel
 (linkedin.com/company/pulse-hr-official) if you're curious what the brand

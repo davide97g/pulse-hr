@@ -1,5 +1,8 @@
 # Carousel 001 — copy italiana per slide (alternativa)
 
+> **Status: SUPERATA.** Traduzione italiana del lancio di aprile 2026, posizionamento precedente. Vedi `slides.md` per il banner di stato e `../../../foundation.md` per il refocus di maggio 2026. Solo archivio storico — non riutilizzare.
+
+
 Traduzione italiana delle slide di [`slides.md`](./slides.md).
 
 **Per oggi (17:00 ship):** il PDF resta **inglese**. Il carosello è

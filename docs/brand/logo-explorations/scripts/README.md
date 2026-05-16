@@ -31,9 +31,9 @@ python3 docs/brand/logo-explorations/scripts/build_og_cards.py
 
 `build_og_cards.py` writes into `docs/brand/logo-explorations/og/`:
 
-- `og-brand.svg` / `.png` — centered lockup + 3-pillar stamp
-- `og-hero.svg` / `.png` — hero tagline ("HR software for people who hate HR software.")
-- `og-callout.svg` / `.png` — medium callout ("Everything you touch sticks.")
+- `og-brand.svg` / `.png` — centered lockup + 3-pillar stamp.
+- `og-hero.svg` / `.png` — hero tagline. Renders the current May 2026 hero: "Your best work is buried in a Slack thread from March." (see `../../foundation.md` §1). If the SVG on disk still shows the old April 2026 string, re-run `build_og_cards.py` and rasterise to regenerate.
+- `og-callout.svg` / `.png` — medium callout ("Everything you touch sticks.").
 
 ## Rasterize SVG → PNG
 

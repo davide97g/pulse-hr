@@ -248,7 +248,7 @@ Hero H1 gets meaningfully larger than it is today. Body stays calm. Monospace ge
 }
 ```
 
-**The italic rule (from `identity.md` §5):** one italic word per headline, not two. The italic carries the emotional weight. `"HR software for people who *hate* HR software."` works. `"HR software *for people* who hate HR software."` dilutes both italicized words into noise.
+**The italic rule (from `identity.md` §5):** one italic word per headline, not two. The italic carries the emotional weight. `"Your best work is *buried* in a Slack thread from March."` works. `"Your *best work* is buried in a Slack thread from March."` dilutes both italicised words into noise.
 
 **Product vs. marketing:** marketing site uses the full editorial scale — H1 at 128px on a big screen, no apology. Product app uses H2 scale max (~32px) for page titles; H1 scale is reserved for empty states and onboarding surfaces where the product is talking, not doing.
 
@@ -401,10 +401,10 @@ Each phase should ship to `main` as its own PR. After Phase 1 the app looks diff
 
 Set expectations. This aesthetic shift touches feel, not function:
 
-- **The domain model is untouched** — mock-data, routing, the commessa pivot, all Labs features, the persistence layer.
+- **The domain model is untouched** — mock-data, routing, the people-first Labs features, the persistence layer.
 - **shadcn components stay** — we don't re-skin or replace them. We theme them with tokens.
 - **Icon set stays** — `lucide-react` / `lucide-astro`.
-- **Copy stays** — every headline, every banned phrase, every `commessa` usage is governed by `foundation.md` §10 and `identity.md` §6.
+- **Copy stays** — every headline and every banned phrase is governed by `foundation.md` §11 and `identity.md` §6.
 - **The logo (Sparkles placeholder) stays** — commissioning a custom mark is its own project, `identity.md` §11 phase-2 backlog.
 - **Theme-switching UX survives** — users can still pick light or dark in settings. They just can't pick "role-themed" anymore.
 

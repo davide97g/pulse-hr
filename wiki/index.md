@@ -6,11 +6,19 @@ Use this as your starting point: scan the relevant section, click into the pages
 
 ## Personas
 
-- [Employee](personas/employee.md) — the default; anyone on the company roster who isn't HR / manager / admin / finance.
-- [HR](personas/hr.md) — people-ops practitioners; the persona Pulse HR is named for.
-- [Manager](personas/manager.md) — has at least one direct report.
-- [Admin](personas/admin.md) — workspace owner; sees everything.
-- [Finance](personas/finance.md) — margin and reimbursement.
+Primary:
+
+- [Employee](personas/employee.md) — the IC dev or designer at a tech-forward company. Pulse is built for them; everyone else enters the product through them.
+
+Secondary (they enter via the IC):
+
+- [Manager](personas/manager.md) — has at least one direct report; reads the manager-safe recap, never the raw chat.
+- [HR](personas/hr.md) — people-ops practitioners; arrive after the team has adopted, curate People Insights.
+- [Admin](personas/admin.md) — workspace owner; usually the IC who self-hosted, now wearing a second hat.
+
+Marginal:
+
+- [Finance](personas/finance.md) — explicitly *not* a Pulse persona. The money half of HR lives elsewhere.
 
 ## Features
 
@@ -79,13 +87,14 @@ Pulse HR is **people-first** (2026-05 refocus). The active list below covers emp
 - [Demo Mode](concepts/demo-mode.md) — frontend-only mockup state.
 - [Keyboard-First](concepts/keyboard-first.md) — design stance; shortcut catalog.
 - [Labs](concepts/labs.md) — experimental shelf with NEW-badged features.
-- [Mission](concepts/mission.md) — make a workspace where people are seen, not measured.
-- [Open Source Positioning](concepts/open-source-positioning.md) — why Pulse HR ships in public.
+- [Mission](concepts/mission.md) — make your work impossible to miss.
+- [Open Source Positioning](concepts/open-source-positioning.md) — FSL → MIT, self-host or paid cloud, no "talk to sales" tier.
 - [PWA & Offline](concepts/pwa-offline.md) — installable, offline-capable surfaces.
 - [Role Override](concepts/role-override.md) — topbar "View as"; preview the workspace as another persona.
-- [Role Themes](concepts/role-themes.md) — light and dark; the per-role palette is aspirational.
+- [Role Themes](concepts/role-themes.md) — light and dark only; no per-persona palette. Persona shift comes from sidebar groups and feature gates, not colour.
 - [Signed-Out Gate](concepts/signed-out-gate.md) — public vs gated routes; how the demo lets visitors in.
-- [Vision](concepts/vision.md) — an HR product the team actually opens.
+- [Target Audience](concepts/target-audience.md) — the IC dev/designer at a tech-forward company; the primary persona's full positioning.
+- [Vision](concepts/vision.md) — the tool the team installs before HR notices.
 
 ## Journeys
 

@@ -2,12 +2,12 @@
 type: concept
 aliases: [Role Themes, Themes]
 tags: [concept, design]
-last_updated: 2026-05-09
+last_updated: 2026-05-16
 ---
 
 # Role Themes
 
-Pulse HR ships **two** themes today: light and dark. The five-persona accent palette that earlier marketing and wiki pages described (a unique colour per role) is currently aspirational — only the persona-level *navigation*, *feature gating* and *default landing screen* differ between roles. Visual chrome stays the same.
+Pulse HR ships **two** themes: light and dark. There is no per-persona accent palette. Everyone uses the same visual chrome; what differs between personas is **navigation, feature gating, and default landing screen** — not colour.
 
 ## Themes that ship
 
@@ -20,14 +20,19 @@ Pulse HR ships **two** themes today: light and dark. The five-persona accent pal
 
 ## What changes per persona
 
-Even without a per-role palette, the persona shift is real:
+The persona shift comes from sidebar groups and feature gates, not colour:
 
-- **[[Employee]]** lands on [[Dashboard]]; sees [[Status Log]], [[Time Tracking]], [[Leave]], [[Kudos]] (under [[Growth]]).
-- **[[Manager]]** adds [[Saturation]] and [[Org Chart]]; sees the team-feed and recap views in [[Status Log]].
-- **[[HR]]** unlocks [[Recruiting]], [[Announcements]], [[Documents]] templates and [[Onboarding]] workflows.
-- **[[Admin]]** sees everything plus [[Modules]] and [[Developers]].
-- **[[Finance]]** focuses on [[Reports]] and [[Clients]].
+- **[[Employee]]** (primary) lands on [[Dashboard]]; sees [[Status Log]], [[Growth]], [[Kudos]], [[Moments]], [[Saturation]], [[Leave]], [[Pulse]].
+- **[[Manager]]** (secondary) adds the team-feed and recap views in [[Status Log]], the Workload aggregate, and the team OOO view.
+- **[[HR]]** (secondary) unlocks People Insights ([[Reports]]) and the cross-team [[Pulse]] heatmap.
+- **[[Admin]]** (secondary) sees everything plus [[Modules]] and [[Developers]].
+- **[[Finance]]** (marginal — Pulse is not built for them) has access only to People Insights aggregates and their own personal surfaces. See [[Finance]] for the honest framing.
 
 ## Where it embodies
 
 [[Settings]] · [[Modules]] · [[Role Override]] (topbar "View as") · every screen.
+
+## See also
+
+- [[Target Audience]] — the primary/secondary persona hierarchy.
+- [[Brand Voice]] — visual restraint as part of the voice.

@@ -23,7 +23,7 @@ The first screen a new user sees after signing in. A three-step dialog turns an 
 ## Notable behaviors
 
 - **The workspace persona defaults to admin.** Every demo user owns their own workspace, so the role-picker is gone — see [[Role Override]] for switching to another persona.
-- **Editorial framing.** Left column is the v0.7.2 hero ("HR for people *who hate* HR.") plus a 01·PEOPLE / 02·WORK / 03·REPORTS strip; right column is the Edition 19 / 2026 poster.
+- **Editorial framing.** Left column is the current marketing hero plus a feature-pillar strip (people-first surfaces); right column is the seasonal editorial poster. The hero string mirrors what's on the marketing site — keep them in sync.
 - **Public route.** Lives next to `/login` and `/signup` in the bare-shell prefix list, so it doesn't render the sidebar.
 - ⌘K (search) and ⌘J (status log) are advertised in the footer so newcomers know they exist before the [[Demo Mode]] takes over.
 

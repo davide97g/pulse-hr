@@ -1,5 +1,15 @@
 # Content backlog — what's missing, ranked
 
+> **Status (May 2026 refocus):** Most items below were drafted against the
+> April 2026 positioning ("HR software for people who hate HR software",
+> services-firm ICP, commessa concept, Money/People/Work modules). The
+> brand has refocused — see `../foundation.md` for the current spine
+> (IC-first, employee-first hero, anti-spreadsheet enemy, no brand
+> dunking). Items marked with the old hero, services-firm framing, or
+> the parked modules need a rewrite before they ship. Treat this file as
+> partial — the structure (P0/P1/P2, owner, derivation) is good; the
+> per-item titles need a sweep.
+
 The TODO list of every marketing asset we still need to produce, pulled
 from the pillar × target × platform matrix in [`campaign.md`](./campaign.md)
 §5 and the 12-week calendar in [`content-calendar.md`](./content-calendar.md).
@@ -44,7 +54,7 @@ Anything below is **not** in this inventory — it's what we still need.
 
 | ID      | Title                                                           | Owner    | Pillar · Target | Derived from                        |
 | ------- | --------------------------------------------------------------- | -------- | --------------- | ----------------------------------- |
-| MD-001  | Hero re-cut video using the primary line "HR software for people who hate HR software" | Davide | O · B/C | `apps/marketing/studio/remotion/DayInPulse.tsx`      |
+| MD-001  | Hero re-cut video using the primary line "Your best work is buried in a Slack thread from March." | Davide | O · B/C | `apps/marketing/studio/remotion/DayInPulse.tsx`      |
 | MD-002  | `/open-source` page rewrite off `foundation.md` §5              | Davide   | O · A           | foundation §5, LICENSE              |
 | MD-003  | `/vs` page update — include honest losses alongside wins        | Niccolò  | T · B           | foundation §10                      |
 | MD-004  | `/pricing` page — explicit "no sales call", "export any time"   | Davide   | Y · B           | foundation §11                      |
@@ -80,7 +90,7 @@ Anything below is **not** in this inventory — it's what we still need.
 | ID      | Type              | Title / concept                                              | Pillar · Target |
 | ------- | ----------------- | ------------------------------------------------------------ | --------------- |
 | IG-001  | Static (feed)      | The four-commitment stamp                                    | — · C           |
-| IG-002  | Static (feed)      | `HR software for people who hate HR software.` italic slide  | — · all         |
+| IG-002  | Static (feed)      | `Your best work is buried in a Slack thread from March.` italic slide  | — · all         |
 | IG-003  | Static (feed)      | LICENSE header in big Fraunces                               | O · C           |
 | IG-004  | Static (feed)      | "two devs · one ink room" cold frame                          | B · C           |
 | IG-005  | Carousel           | "What open source actually means for your HR data" (6 slides) | O · B           |

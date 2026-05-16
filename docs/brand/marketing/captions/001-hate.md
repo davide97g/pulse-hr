@@ -1,5 +1,7 @@
 # Caption — Carousel 001 (LinkedIn launch post)
 
+> **Status: SUPERSEDED.** April 2026 launch caption, prior positioning. See sibling `../carousels/001-hate/slides.md` status banner and `../../foundation.md` for the May 2026 refocus. Historical record only — do not reuse.
+
 **Post type.** Document (carousel PDF) + caption.
 **Channel.** `@pulse-hr-official` company page · https://www.linkedin.com/company/pulse-hr-official/
 **Go-live.** Fri Apr 24 2026, 17:00 CET.

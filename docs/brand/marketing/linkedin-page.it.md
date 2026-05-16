@@ -1,5 +1,8 @@
 # LinkedIn Company Page — versione italiana (alternativa)
 
+> **Status (refocus di maggio 2026):** Tagline, About e Specialties qui sotto sono le **versioni correnti** — IC-first, employee-first, nessun riferimento a competitor. Incollale in LinkedIn al prossimo refresh della pagina (la pagina è già live). Vedi `./linkedin-page.md` per la versione inglese (primary).
+
+
 Traduzione italiana della [`linkedin-page.md`](./linkedin-page.md) inglese.
 L'inglese resta il **primary language** del profilo; l'italiano è la
 **alternative language** (feature LinkedIn lanciata 2024) — i visitatori
@@ -21,10 +24,10 @@ altri vedranno la versione inglese.
 Incolla:
 
 ```
-Software HR open source per chi odia il software HR. Sorgente su GitHub, prezzi pubblici, self-host quando vuoi, nessuna chiamata commerciale per vedere il prodotto. Da Milano, in pubblico, di due developer stanchi del loro HRIS.
+Un workspace open source che rende il tuo lavoro impossibile da ignorare. Per IC nei team tech. Sorgente pubblico, prezzi pubblici, self-host quando vuoi, niente chiamate commerciali per vedere il prodotto.
 ```
 
-**Count:** 217 / 220. ✓ (tight — non aggiungere altro).
+**Count:** 209 / 220. ✓
 
 ---
 
@@ -33,35 +36,36 @@ Software HR open source per chi odia il software HR. Sorgente su GitHub, prezzi 
 Incolla, rispettando le righe vuote:
 
 ```
-Pulse HR è il software HR open source per chi odia il software HR.
+Pulse HR è un workspace open source per l'IC — la dev o la designer il cui lavoro migliore è sepolto in un thread Slack di marzo.
 
-Costruito in pubblico da due sviluppatori frontend-fluent a Milano, per le società di servizi e i piccoli team tech che hanno già sofferto BambooHR, Personio, Factorial, Rippling o qualsiasi altra suite HR chiusa. L'intera piattaforma è su GitHub sotto FSL-1.1-MIT — leggi ogni riga, eseguila sulla tua infra, forkala se ti deludiamo. La licenza diventa MIT pura dopo due anni, automaticamente.
+Tre righe di stato al giorno. Un kudos che non scrolla via. Un percorso di crescita con artefatti che puoi mostrare. Il lavoro che fai viene visto, riconosciuto, ricordato — senza compilare un form ogni trimestre.
 
-Tre moduli indipendenti che condividono un workspace, una tastiera, un'API:
-• People — profili, organigramma, ferie, onboarding, documenti, firme elettroniche
-• Work — timesheet sulle commesse (codici progetto), recruiting, focus mode, command bar ⌘J
-• Money — payroll multi-paese, spese, margini, forecast di progetto
+L'intera piattaforma è su GitHub sotto FSL-1.1-MIT — leggi ogni riga, eseguila sulla tua infra, forkala se ti deludiamo. La licenza diventa MIT pura dopo due anni, automaticamente.
 
-Adotta un modulo. Salta gli altri. Sostituiscili quando vuoi. Nessuna migrazione tutto-o-niente. Nessun tier a pagamento. Nessun "book a demo" per vedere il prodotto. Nessun formato proprietario di export.
+Superfici attive oggi (people-first):
+• Status Log — tre righe, ⌘⏎, sostituisce la standup async
+• Kudos — riconoscimento tra colleghi che sopravvive la settimana
+• Growth — achievement, skill path, la prova che porti al prossimo 1:1
+• Moments — compleanni, anniversari, le piccole cose che fanno team
+• Workload check-in — un tap a settimana, il manager vede l'aggregato, non la risposta
+• Diario delle assenze — personale, niente coda di approvazioni
 
 Quattro impegni, non negoziabili:
 
-1. Aperto — sorgente su GitHub, licenza equa, ogni contributor creditato nel changelog.
+1. Employee-first — costruito per l'IC. Riconoscimento, crescita, prova del lavoro. Il manager vede un recap manager-safe, mai la chat grezza.
 
-2. Trasparente — roadmap, changelog, prezzi e anche gli errori: tutti pubblici. Non serve una chiamata commerciale per capire se Pulse fa al caso tuo. Basta scrollare.
+2. Aperto — sorgente su GitHub, licenza equa, ogni contributor creditato nel changelog. Niente feature gate a pagamento. Niente tier enterprise con moduli extra.
 
-3. Tuo — self-host su Docker, Helm o Terraform. Esporta tutto in un formato pulito, quando vuoi, senza chiedere. Lasciare Pulse è la cosa più facile che fa.
+3. Trasparente — roadmap, changelog, prezzi e anche gli errori: tutti pubblici. Non serve una chiamata commerciale per capire se Pulse fa al caso tuo. Basta scrollare.
 
-4. Costruito da chi lo usa — la roadmap è plasmata dalle pull request, non dai product manager. Davide e Niccolò usano Pulse per il proprio lavoro ogni giorno. Se una frizione dura più di una settimana, viene fixata.
+4. Tuo — self-host con `docker compose up` in 90 secondi, oppure paghi noi per hostarlo. Esporta tutto in un formato pulito quando vuoi. Lasciare Pulse è la cosa più facile che fa.
 
-Spedito da Milano, in pubblico. Non è un progetto Bitrock — Bitrock è il nostro lavoro. Niente VC. Niente BDR. Niente "AI-powered" come etichetta. Solo due sviluppatori, un commit log pubblico e l'HR tool che vorremmo davvero usare.
+Costruito a Milano, in pubblico, da due sviluppatori frontend-fluent. Non è un progetto Bitrock — Bitrock è il nostro lavoro. Niente VC. Niente BDR. Niente "AI-powered" come etichetta. Solo due sviluppatori, un commit log pubblico e il workspace che vorremmo davvero usare.
 
 Parti da: github.com/davide97g/pulse-hr
-
-Se anche tu odi il tuo HRIS — raccontaci perché. Commenti, issue, PR: tutto benvenuto.
 ```
 
-**Count:** ~1.960 / 2.000. ✓
+**Count:** ~1.970 / 2.000. ✓
 
 ---
 
@@ -74,20 +78,21 @@ lista di [`linkedin-page.md`](./linkedin-page.md) §4.
 
 ## Note di traduzione
 
-Termini mantenuti in inglese (coerenti con `../foundation.md` §10 e il
+Termini mantenuti in inglese (coerenti con `../foundation.md` §11 e il
 dizionario `apps/marketing/src/i18n/it.ts`):
 
-- **Brand:** Pulse HR, Money, People, Work
-- **Tecnici:** HR, HRIS, open source, FSL-1.1-MIT, MIT, self-host, API,
+- **Brand:** Pulse HR
+- **Tecnici:** HR, open source, FSL-1.1-MIT, MIT, self-host, API,
   REST, webhook, PR, BDR, SaaS, LLM, Docker, Helm, Terraform, changelog,
-  roadmap, workspace, timesheet, onboarding, recruiting, payroll,
-  commit, fork, issue, ⌘J
+  roadmap, workspace, IC, kudos, Status Log, Growth, Moments,
+  commit, fork, issue, ⌘J, ⌘⏎
 - **Italianizzati volutamente:** "chiamata commerciale" (per "sales call"
   — suona più diretto di "call di vendita"), "errori" (per "screw-ups"
   — "screw-up" in italiano perde la connotazione di ammissione onesta,
   "errori" la mantiene senza zuccherare).
 - **Intraducibili volutamente:** "book a demo" (lo lasciamo in inglese
-  apposta — è il comportamento della categoria che stiamo roastando).
-- **Tono:** "odia" è forte in italiano, più forte di "hate" in inglese.
-  Perfetto per il tono roast — non ammorbidire a "non sopporta" o
-  "non digerisce."
+  apposta — è il pattern della categoria su cui stiamo migliorando).
+- **Tono:** opinionato ma pacato. Niente roast nell'identità del brand
+  (campagne specifiche possono averlo in futuro, ma non qui).
+- **Nessun nome di prodotto concorrente.** Né per confronto, né per
+  attaccare, né di passaggio. Vale anche per la traduzione italiana.

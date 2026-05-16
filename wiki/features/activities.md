@@ -11,7 +11,7 @@ A flat list of [[Activity]] items across projects — tasks an [[Employee]] is d
 
 ## Who uses it
 
-[[Employee]], [[Manager]]. Optional surface — agencies use it; product orgs often skip it in favor of their dev tracker.
+Parked surface — not visible by default in the people-first refocus. Historically intended as a lightweight task list that sat alongside a dev tracker, not as a substitute for one.
 
 ## Key entities
 

@@ -1,5 +1,13 @@
 # Content calendar — the first 12 weeks
 
+> **Status (May 2026 refocus):** This calendar was authored April 2026
+> against the prior positioning. The structure (week-by-week, pillar +
+> target tagging) still works; the **per-slot piece titles need a
+> rewrite** to land against the new spine (IC-first, employee-first
+> hero, no brand dunking). See `../foundation.md` for the current
+> spine and `./campaign.md` §1 for the refreshed brief. Until rewritten,
+> treat the slot *shapes* as canonical and the slot *copy* as draft.
+
 Week-by-week schedule across **LinkedIn**, **Product Hunt**, **Instagram**,
 **YouTube**. Launch-day anchor week is **Week 5** — Phases A/B/C from
 [`campaign.md`](./campaign.md) §10 map onto weeks 1–4, 5, 6–12.

@@ -1,5 +1,8 @@
 # LinkedIn Company Page — `@pulse-hr-official`
 
+> **Status (May 2026 refocus):** Tagline, About, and Specialties below are the **current drafts** — IC-first, employee-first hero, no named competitors. Paste them into LinkedIn when you next refresh the page (the page itself is live). The `.it.md` sibling carries the Italian version.
+
+
 **Live URL:** https://www.linkedin.com/company/pulse-hr-official/
 
 Copy to paste into LinkedIn's "Create a Company Page" wizard. All
@@ -41,48 +44,48 @@ so he can post from the page independently on launch day.
 Paste this exact string:
 
 ```
-Open-source HR for people who hate HR software. Source on GitHub, prices public, self-host anytime, no sales call to see the product. Built in Milan, in public, by two devs tired of their HR tool.
+An open-source workspace that makes your work impossible to miss. For ICs at tech-forward teams. Source public, prices public, self-host any time, no sales call to see the product.
 ```
 
-**Count:** 198 / 220 chars. ✓
+**Count:** 184 / 220 chars. ✓
 
 ---
 
 ## 3. About section (2,000-char limit)
 
-Paste this exact string. Empty lines are intentional — LinkedIn
-respects paragraph breaks.
+Paste this exact string. Empty lines are intentional — LinkedIn respects paragraph breaks.
 
 ```
-Pulse HR is open-source HR software for people who hate HR software.
+Pulse HR is an open-source workspace for the IC dev or designer — the person whose best work is buried in a Slack thread from March.
 
-Built in the open by two frontend-fluent developers in Milan, for the services firms and small tech teams who've suffered through BambooHR, Personio, Factorial, Rippling, or any other closed HR suite. The whole platform is on GitHub under FSL-1.1-MIT — read every line, run it on your own infra, fork it if we let you down. The license converts to plain MIT automatically after two years.
+Three lines of status a day. A kudos that doesn't scroll off. A growth trail with artefacts you can point to. The work you do gets seen, recognised, and remembered — without filling in a form once a quarter.
 
-Three independent modules share one workspace, one keyboard, one API:
-• People — profiles, org chart, leave, onboarding, documents, e-signatures
-• Work — timesheets against commesse (project codes), recruiting, focus mode, the ⌘J command bar
-• Money — multi-country payroll, expenses, margins, project forecast
+The whole platform is on GitHub under FSL-1.1-MIT — read every line, run it on your own infra, fork it if we let you down. The license converts to plain MIT automatically after two years.
 
-Adopt one module. Skip the others. Swap any of them later. No all-or-nothing migration. No paid-only tier. No "book a demo" to see the product. No proprietary export format.
+Active surfaces today (people-first):
+• Status Log — three lines, ⌘⏎, async standup replacement
+• Kudos — peer recognition that survives the week
+• Growth — achievements, skill paths, the proof you carry into your next 1:1
+• Moments — birthdays, anniversaries, the small things that make a team feel like one
+• Workload check-in — one tap weekly, manager sees the aggregate, not the answer
+• Leave journal — personal, no approval queue
 
 Four commitments, non-negotiable:
 
-1. Open — source on GitHub, license fair, contributors credited in every changelog entry.
+1. Employee-first — built for the IC. Recognition, growth, proof of work. The manager sees a manager-safe recap, never the raw chat.
 
-2. Transparent — roadmap, changelog, prices, and screw-ups all public. You don't need a sales call to figure out whether Pulse fits you. Scroll.
+2. Open — source on GitHub, license fair, contributors credited in every changelog entry. No paid feature gates. No enterprise tier with extra modules.
 
-3. Yours — self-host on Docker, Helm or Terraform. Export everything in a clean format, any time, without asking. Leaving Pulse is the easiest thing it does.
+3. Transparent — roadmap, changelog, prices, and screw-ups all public. You don't need a sales call to figure out whether Pulse fits you. Scroll.
 
-4. Built by the people who use it — the roadmap is shaped by pull requests, not product managers. Davide and Niccolò use Pulse for their own work every day. If a friction lasts more than a week, it gets fixed.
+4. Yours — self-host with `docker compose up` in 90 seconds, or pay us to host. Export everything in a clean format any time. Leaving Pulse is the easiest thing it does.
 
-Shipped from Milan, in public. Not a Bitrock project — Bitrock is our day job. No VC. No BDRs. No "AI-powered" anything. Just two developers, a public commit log, and the HR tool we'd actually want to use.
+Built in Milan, in public, by two frontend-fluent developers. Not a Bitrock project — Bitrock is our day job. No VC. No BDRs. No "AI-powered" anything. Just two developers, a public commit log, and the workspace we'd actually want to use.
 
 Start: github.com/davide97g/pulse-hr
-
-If you also hate your HRIS — we'd love to know why. Comments, issues, PRs, all welcome.
 ```
 
-**Count:** ~1,960 / 2,000 chars. ✓
+**Count:** ~1,950 / 2,000 chars. ✓
 
 ---
 
@@ -92,21 +95,19 @@ Paste one at a time (LinkedIn makes you enter them individually):
 
 ```
 Open Source
-HR Software
-HRIS
-Payroll
-Time Tracking
-Self-Hosted Software
+Employee Experience
 People Operations
+Recognition
+Async Standups
+Self-Hosted Software
 Keyboard-First UX
 FSL License
 TypeScript
 React
 Bun
-Services Firms
-Commessa
 Public Roadmap
 Build in Public
+Developer Tools
 ```
 
 ---

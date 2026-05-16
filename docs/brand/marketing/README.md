@@ -17,11 +17,14 @@ Read in this order:
 
 ## The rules, in one screen
 
-- One pillar per asset. Never stack. The four narrative pillars (Open · Transparent · Yours · Built by the people who use it) are in `campaign.md` §3.
+- **Employee-first is the spine.** The IC is the audience. Recognition, growth, proof of work — that's the story. The other pillars (Open · Built by the people who use it · Keyboard-first craft) support it.
+- One pillar per asset. Never stack. The four pillars are in `../identity.md` §2.
+- We improve on a **pattern of invisibility** — the shared doc nobody opens, the kudos that scrolls off, the review that fits a year into a textarea. We describe the pattern; we never name another product. See `../foundation.md` §7.
 - One italic word per headline. One lime element per surface. No party tricks. See `../identity.md` §5 and `../aesthetic.md`.
-- No `book a demo`, no `AI-powered`, no `trusted by`, no `best-in-class`. See `../foundation.md` §9 and `../identity.md` §6.
+- No `book a demo`, no `AI-powered`, no `trusted by`, no `best-in-class`. See `../foundation.md` §10 and `../identity.md` §6.
 - No fake stats, no fake testimonials, no fake team. If the number isn't true today, say what's true today.
 - Product is the main character. Founders sign commits and posts — the homepage doesn't open with a founder bio.
+- English-first. Italian is a full-fidelity translation, not a different message.
 
 ---
 

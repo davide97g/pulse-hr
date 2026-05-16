@@ -1,28 +1,25 @@
 ---
 type: persona
-tags: [persona]
-last_updated: 2026-05-14
+tags: [persona, secondary]
+last_updated: 2026-05-16
 ---
 
 # HR
 
-People-ops practitioners. HR Business Partners, people managers without direct reports. The persona Pulse HR is named for — but the role is narrower here than in a traditional HRIS.
+> **Secondary persona.** HR doesn't roll Pulse out — they find it already running. The product is named "Pulse HR" but the centre of gravity is the IC, not the people-ops team. See [[Target Audience]].
 
-## Theme
+People-ops practitioners. HR Business Partners, people managers without direct reports. The persona Pulse HR is named for — but the role is much narrower here than in a traditional HRIS, and the order of arrival is reversed: the IC adopts, the team adopts, and **then** HR notices.
 
-Coral accent (`#ff8a7a`) on a warm-dark surface. Signals "human" — softer than the Employee lime.
+## What they do in Pulse
 
-## What they do daily in Pulse
-
-- Read aggregate trends in **People Insights** (engagement score, sentiment by team, kudos volume, [[Pulse]] vibe over time, growth-cycle pacing).
+- Read aggregate trends in **People Insights** ([[Reports]]) — engagement score, sentiment by team, kudos volume, [[Pulse]] vibe over time, growth-cycle pacing.
 - Watch [[Status Log]] recaps across teams; flag managers when a sentiment dimension drops persistently.
-- Run [[Growth]] cycles — performance signals, kudos trends, employee score trajectories. Continuous, not yearly.
+- Run [[Growth]] cycles — continuous, not yearly. Performance signals, kudos trends, employee score trajectories.
 - Read [[Moments]] to keep the human signal alive — anniversaries, milestones, kudos ticker. Used to author small public recognitions.
-- Spin up workspace settings: [[Modules]] toggle, persona overrides, role-based feature visibility.
 
 ## Features they touch
 
-[[Dashboard]] · [[Status Log]] · [[Growth]] · [[Kudos]] · [[Moments]] · [[Pulse]] · [[Leave]] (team OOO only) · `People Insights` ([[Reports]]) · [[Employees]] · [[Org Chart]] · [[Settings]] · [[In-App Docs]]
+[[Dashboard]] · [[Status Log]] · [[Growth]] · [[Kudos]] · [[Moments]] · [[Pulse]] · [[Leave]] (team OOO only) · People Insights ([[Reports]]) · [[Employees]] · [[Org Chart]] · [[Settings]] · [[In-App Docs]]
 
 **Parked — HR no longer owns these in Pulse:** [[Recruiting]], [[Onboarding]] workflows, [[Documents]] / e-signature, headcount cost analytics. Those belong in the HRIS / payroll / ATS tool the workspace already runs alongside Pulse.
 
@@ -33,6 +30,15 @@ Coral accent (`#ff8a7a`) on a warm-dark surface. Signals "human" — softer than
 - "Performance reviews are a 3-week scramble once a year." → [[Growth]] runs as continuous signal — achievements unlocked, kudos volume, skill path progress — instead of an annual review form.
 - "Recognition only happens at all-hands." → [[Kudos]] and [[Moments]] surface it daily.
 
-## What changed in the people-first refocus (2026-05)
+## What Pulse is *not* for the HR persona
 
-HR used to own Recruiting, Onboarding workflows, Document e-sign and an HRIS-style aggregate Reports view. Those surfaces are now parked. HR's centre of gravity in Pulse is **engagement, sentiment and growth** — the half of HR that lives in people, not paperwork. The paperwork half stays with whichever HRIS the workspace already pays for.
+- Hiring, ATS, candidate kanban. Parked.
+- Onboarding workflows, document e-sign. Parked.
+- Headcount cost reports, turnover %, time-to-hire dashboards. Parked.
+- Replacing the HRIS. We are not an HRIS. We are the people half; the paperwork half stays with whichever HRIS the workspace already pays for.
+
+## See also
+
+- [[Target Audience]] — why the IC is primary and HR is secondary.
+- [[Employee]] — the primary persona.
+- [[Mission]] · [[Vision]]

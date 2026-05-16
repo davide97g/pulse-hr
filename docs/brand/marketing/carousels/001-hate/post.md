@@ -1,5 +1,8 @@
 # LinkedIn post — Carousel 001 (first post)
 
+> **Status: SUPERSEDED.** April 2026 launch post under the prior positioning. See sibling `slides.md` status banner and `../../../foundation.md` for the May 2026 refocus. Historical record only — do not reuse.
+
+
 **Attach.** `pulse-hr-carousel-001.pdf` (9 slides, 1080 × 1350).
 **Channel.** `@pulse-hr-official` · https://www.linkedin.com/company/pulse-hr-official/
 **Voice rules.** No emoji except `★`. No "thrilled / excited / humbled / journey / AI-powered". One link in the body. Hashtags at the end, three max.

@@ -4,7 +4,9 @@ then rasterize each to PNG.
 
 Three cards:
   og-brand.svg   — centered stacked lockup + 3-pillar stamp
-  og-hero.svg    — big italic hero tagline "HR software for people who hate HR software."
+  og-hero.svg    — big italic hero tagline. Current string (May 2026):
+                   "Your best work is buried in a Slack thread from March."
+                   See `../../foundation.md` §1 for canonical hero.
   og-callout.svg — mid-size italic callout "Everything you touch sticks."
 """
 
@@ -13,12 +15,12 @@ from fontTools.varLib.instancer import instantiateVariableFont
 from fontTools.pens.svgPathPen import SVGPathPen
 from pathlib import Path
 
-FONT_PATH = Path(
-    "/sessions/peaceful-compassionate-planck/mnt/pulse-hr/node_modules/.bun/"
-    "@fontsource-variable+fraunces@5.2.9/node_modules/@fontsource-variable/fraunces/"
-    "files/fraunces-latin-full-italic.woff2"
-)
-OUT_DIR = Path("/sessions/peaceful-compassionate-planck/mnt/pulse-hr/docs/brand/logo-explorations/og")
+_REPO_ROOT = Path(__file__).resolve().parents[4]  # docs/brand/logo-explorations/scripts/<file> → repo root
+_FRAUNCES_DIRS = sorted((_REPO_ROOT / "node_modules" / ".bun").glob("@fontsource-variable+fraunces@*"))
+if not _FRAUNCES_DIRS:
+    raise SystemExit("Fraunces variable font not found under node_modules/.bun — run `bun install` first.")
+FONT_PATH = _FRAUNCES_DIRS[-1] / "node_modules/@fontsource-variable/fraunces/files/fraunces-latin-full-italic.woff2"
+OUT_DIR = _REPO_ROOT / "docs/brand/logo-explorations/og"
 OUT_DIR.mkdir(exist_ok=True)
 
 # ---------- Load font and cache glyphs ----------
@@ -142,10 +144,11 @@ def og_brand() -> str:
 # ==========================================================
 def og_hero() -> str:
     W, H = 1200, 630
-    # Three lines of hero tagline, ragged-left, large italic
-    line1 = "HR software"
-    line2 = "for people who hate"
-    line3 = "HR software."
+    # Three lines of hero tagline, ragged-left, large italic.
+    # Last line is the "punchline" — rendered in brand lime.
+    line1 = "Your best work is"
+    line2 = "buried in a Slack thread"
+    line3 = "from March."
 
     # Pick a scale so the longest line fits in W - 2*margin
     margin = 80
@@ -184,7 +187,7 @@ def og_hero() -> str:
 {outline_run("HR", "#b4ff39")}
   </g>'''
 
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-label="HR software for people who hate HR software. — Pulse HR">
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-label="Your best work is buried in a Slack thread from March. — Pulse HR">
   <rect width="{W}" height="{H}" fill="#0b0b0d"/>
 {lines_svg}
 {corner_mark}

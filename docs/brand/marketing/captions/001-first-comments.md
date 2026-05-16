@@ -1,5 +1,8 @@
 # First-comment bomb — Carousel 001
 
+> **Status: SUPERSEDED.** April 2026 launch seed comments under the prior positioning. The brand refocused in May 2026 to an IC-first, employee-first spine with no named competitors anywhere in the identity — see `../../foundation.md`. The content below has been scrubbed of specific brand names but the underlying roast/hate framing is still the old one. Historical record only; do not reuse.
+
+
 Three comments pre-drafted to seed the thread in the first 30 minutes.
 LinkedIn's algorithm weights **early dwell time + reply count** heavily
 — these give us both without looking like spam.
@@ -26,7 +29,7 @@ What's the ONE feature that made you hate it most?
 
 We want to roast it in public. And then maybe fix it. Drop it below — we read everything.
 
-(Bonus points if you can name the vendor. We're not scared.)
+(Describe the pattern, not the brand — the workflow that fails you, not the logo on top of it.)
 ```
 
 ---
@@ -40,14 +43,14 @@ else who scrolls this thread to do the same.
 ```
 I'll start.
 
-BambooHR's team-leave calendar that shows my direct team but not the team sitting literally next to me. The fact that "see whether adjacent teams are out this week" is considered a premium feature and not a bug is, essentially, why I'm here.
+The team-leave calendar in our current HR tool shows my direct team but not the team sitting literally next to me. The fact that "see whether adjacent teams are out this week" is considered a premium feature and not a bug is, essentially, why I'm here.
 
 Pulse's fix is public btw: github.com/davide97g/pulse-hr/issues/27
 (The issue number might be different by the time you read this — point is, it's public. They're all public.)
 ```
 
 **Note.** Before 17:00, open the repo and grab a real existing issue
-number that maps to the BambooHR-calendar pain. If issue #27 isn't that
+number that maps to the cross-team-calendar pain. If issue #27 isn't that
 issue, swap the number. Replace with any honest labelled issue we'd
 happily point someone at. Don't fabricate.
 
@@ -96,7 +99,7 @@ Public: pulsehr.it/pricing. Per-employee, per-month. Free for the first 5 on hos
 Fair question. Real catches — in order:
 1. We're two devs. Response time on non-critical issues is "within the week", not "within the hour."
 2. SOC 2 / ISO 27001 not in hand yet (see replies above).
-3. Italian payroll we do ourselves; for other countries we lean on Deel/Remote as contractor rails while we build native.
+3. Italian payroll we do ourselves; for other countries we lean on third-party contractor rails while we build native. (April 2026 plan — payroll has since been parked.)
 4. The product is public beta. Some edges are rough. We log the rough ones in /changelog so you can see the pattern.
 
 Those caveats are also why self-host is a first-class path, not an afterthought.

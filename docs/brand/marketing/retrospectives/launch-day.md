@@ -83,7 +83,7 @@ Paste the real numbers. Don't round up. Don't cherry-pick.
 
 ## 4. What worked (bullets, honest)
 
-- _Example: "The slide-3 vendor roast got the most 'haha' reactions — target B audience actually liked being named specifically instead of vaguely catered to. Kept 'Rippling / Deel / BambooHR' as named competitors for future assets."_
+- _Example: "Slide 3 (`docker compose up` → 90 seconds) got the most replies — readers latched onto the concrete number. Future assets should lead with specific, verifiable claims (durations, file sizes, line counts). Never reference other products by name."_
 - ...
 
 ---

@@ -1,5 +1,7 @@
 # Caption italiana — Carousel 001 (versione alternativa)
 
+> **Status: SUPERATA.** Caption del lancio di aprile 2026, posizionamento precedente. Vedi il banner di stato in `../carousels/001-hate/slides.md` e `../../foundation.md` per il refocus di maggio 2026. Solo archivio storico — non riutilizzare.
+
 Traduzione italiana della caption principale in
 [`001-hate.md`](./001-hate.md). **Non è un post separato** — è la
 versione "Alternative language" da aggiungere al post LinkedIn in
@@ -111,7 +113,7 @@ Qual è L'UNICA feature che ti ha fatto odiarlo di più?
 
 Vogliamo roastarla in pubblico. E magari poi fixarla. Scrivila qui sotto — leggiamo tutto.
 
-(Bonus se riesci a fare il nome del vendor. Non abbiamo paura.)
+(Descrivi il pattern, non il brand — il workflow che ti delude, non il logo sopra.)
 ```
 
 ---

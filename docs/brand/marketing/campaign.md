@@ -1,42 +1,45 @@
 # Pulse HR — Marketing Campaign Plan
 
-The master campaign for launching Pulse HR into public view and
-building distribution on four platforms: **LinkedIn**, **Product Hunt**,
-**Instagram**, **YouTube**.
+The master campaign for putting Pulse HR in front of the IC dev/designer
+on four platforms: **LinkedIn**, **Product Hunt**, **Instagram**,
+**YouTube**.
 
-Written April 2026 by Davide (with Claude). Living document — edit as
-the campaign evolves, flag changes in commit messages. Where this file
-disagrees with `../foundation.md` on voice, positioning or values,
+Written April 2026 by Davide (with Claude). **Refocused May 2026** to
+match the people-first refocus and the IC-first audience refinement —
+see `../foundation.md` for the current spine. The pillar matrix and
+weekly cadence below still hold structurally; the identity claims
+(hero, audience, taglines) have been rewritten. Living document — edit
+as the campaign evolves, flag changes in commit messages. Where this
+file disagrees with `../foundation.md` on voice, positioning or values,
 `foundation.md` wins. Where it disagrees with `../identity.md` or
 `../aesthetic.md` on visual execution, those win.
+
+> **Refocus TODO (May 2026):** §5 matrix cell copy still references the
+> April hero, services-firm angle, and commessa concept in a few places.
+> Targeted rewrite needed before the next batch of assets ships. The
+> identity-level sections (§1, §3, §4) and the voice rules in §6 are
+> updated as of the May refocus.
 
 ---
 
 ## 1. The one-screen brief
 
-**Who we are.** Pulse HR — open-source, modular HR software. Built by
-two frontend-fluent developers in Milan, in public, for people who hate
-their current HR tool.
+**Who we are.** Pulse HR — open-source workspace for the IC at a
+tech-forward company. Built by two frontend-fluent developers in Milan,
+in public, for the dev or designer whose best work is buried in a Slack
+thread from March.
 
-**Primary hero line.** _HR software for people who hate HR software._
+**Primary hero line.** _Your best work is buried in a Slack thread from March._
 
-**Subtitle (three-pillar stamp).** _Open. Transparent. Built by the
-people who use it._
+**Subtitle / proof.** _Open-source workspace for ICs. Self-host in 90 seconds. The demo is the sales call._
 
-**Promise.** Source on GitHub. Roadmap public. Changelog public. Prices
-public. Self-host on your own infra, or run hosted — no sales call to
-see the product, no proprietary export, no lock-in.
+**The three-pillar stamp.** _Employee-first. Open source. Built by the people who use it._
 
-**Anti-promise.** No `book a demo`. No `AI-powered`. No `trusted by
-Fortune 500`. No fabricated social proof. No paid-only modules in the
-open-source tier. No enterprise sales org. Ever.
+**Promise.** Source on GitHub under FSL-1.1-MIT. Roadmap public. Changelog public. Prices public. Self-host on your own infra in 90 seconds with `docker compose up`, or run hosted — no sales call, no proprietary export, no lock-in. No enterprise tier with extra features.
 
-**The marketing thesis in one line.** We don't buy distribution — we
-publish our way into it. Every post, every commit, every reel exists to
-turn lurkers into users, users into self-hosters, self-hosters into
-contributors, and contributors into the community that makes Pulse
-impossible to displace (see `../foundation.md` §8 — the moat is the
-stack, not any single trick).
+**Anti-promise.** No `book a demo`. No `AI-powered`. No `trusted by Fortune 500`. No fabricated social proof. No paid-only modules in the open-source tier. No enterprise sales org. **No named competitors anywhere in marketing copy.** We describe the *pattern* we improve on (invisible work, lost recognition, growth no one can prove), not other products. Ever.
+
+**The marketing thesis in one line.** We don't buy distribution — we publish our way into it. The bottoms-up motion is the wedge: one IC self-installs Pulse, their team joins, six months later the company that "officially" rolls out HR tooling finds the choice was already made. Every post exists to put the right tool in front of the right IC.
 
 ---
 
@@ -74,8 +77,22 @@ follow-through. `../foundation.md` §12 covers this.
 
 ## 3. The four narrative pillars
 
-Every asset lands against **one** pillar. Never stack. Pillars map back
-to `../foundation.md` §5.1 / §5.5 / §5.2 / §5.6.
+Every asset lands against **one** pillar. Never stack. Pillars map back to `../foundation.md` §5. The order matters: **Employee-first is the spine** — the other three support it. If a draft is selling Open or Built-by without making the IC's life better in the same breath, you've drifted.
+
+### Pillar 0 — Employee-first (the spine)
+
+**The claim.** Pulse is built for the IC — the dev, the designer, the analyst — to log what they did, get the credit they earned, and walk into their next conversation with proof. Three lines a day. A kudos that sticks. A growth trail that doesn't live in someone else's spreadsheet.
+
+**Proof points you can show.**
+
+- A Status Log screenshot — three lines, ⌘⏎.
+- A kudos toast with a one-liner reason.
+- A Growth view: achievements unlocked, kudos volume, skill path progress over a quarter.
+- The manager-safe sentiment recap, juxtaposed with the (unreadable) raw chat — the contract with the IC.
+
+**Phrases that live here.** "Your best work is buried in a Slack thread from March." "Three lines. A kudos. Proof." "Built for the IC." "Make your work impossible to miss."
+
+**Banned when talking Employee-first.** "Empower your workforce." "Performance management." Anything that frames the IC as a number, a resource, or a unit of measurement. Anything that makes the manager more powerful without making the IC more visible. The proper name of any other HR or people-ops product.
 
 ### Pillar 1 — Open
 
@@ -132,98 +149,68 @@ command. Export everything in a clean format, any time. Leaving is easy
 
 ### Pillar 4 — Built by the people who use it
 
-**The claim.** The roadmap is shaped by pull requests, not product
-managers. The maintainers use Pulse for their own work every day.
-"Feature request" and "pull request" are two paths to the same roadmap.
+**The claim.** The roadmap is shaped by pull requests, not product managers. The maintainers use Pulse for their own work every day. "Feature request" and "pull request" are two paths to the same roadmap.
 
 **Proof points.**
 
 - Contributor credits in every changelog entry.
 - Recorded screen of a real PR being reviewed end-to-end.
 - Davide + Niccolò signing commits, bylines on posts.
-- The commessa feature — the Italian services-firm concept baked in because the maintainers needed it for their own day jobs.
 - "Dogfood log" blog post category — what broke when we used Pulse on ourselves this month.
 
-**Phrases that live here.** "Built by the haters." "Shaped by PRs." "If a friction lasts a week, it gets fixed."
+**Phrases that live here.** "Built for the IC, in the open." "Shaped by PRs." "If a friction lasts a week, it gets fixed."
 
-**Banned when talking Built-by.** "Community-driven" in the abstract. "We love our users" platitudes. Fake testimonials (`../foundation.md` §9).
+**Banned when talking Built-by.** "Community-driven" in the abstract. "We love our users" platitudes. Fake testimonials (`../foundation.md` §10). The proper name of any other HR or people-ops product.
 
 ---
 
 ## 4. Targets — who we're talking to
 
 Three concentric rings from `../foundation.md` §6, translated into
-marketing audiences.
+marketing audiences. The **primary persona is the IC dev/designer** —
+target A. Everyone else enters through them.
 
-### Target A — Developer contributor (inner ring)
+### Target A — IC dev / designer (primary)
 
-**Who.** Frontend-fluent developers at services firms and small tech
-teams, 10–200 people. They've suffered BambooHR / Factorial / Personio
-and can install Pulse themselves. EU-first, English-fluent.
+**Who.** The dev or designer at a 20–200-person tech-forward company. Mid-20s to mid-30s. Comfortable on the command line. Has installed at least one open-source tool this month without asking permission. Lives in their editor, in Slack, in Figma, in Linear. Their best work is buried in a Slack thread from March.
 
-**Where they are.** GitHub, Hacker News, Lobsters, r/selfhosted, r/sysadmin,
-LinkedIn technical feeds, YouTube dev channels, Twitter/X engineering circles.
+**Where they are.** GitHub, Hacker News, Lobsters, r/selfhosted, r/programming, LinkedIn technical feeds, dev Twitter/X, YouTube engineering channels.
 
-**What they want from us.** A readable codebase, a visible maintainer,
-honest posts about what broke and why, a clear contribution workflow, a
-fair license.
+**What they want from us.** A readable codebase, a visible maintainer, honest posts about what broke and why, a clear contribution workflow, a fair licence. And — under the surface — proof that their work matters and can be remembered. The product fills both needs at once.
 
-**Primary pillars.** Open + Built by the people who use it.
+**Primary pillars.** Employee-first + Open. Built-by as a strong second.
 
-**Primary assets.** Engineering-notes blog posts. Codebase tour videos on
-YouTube. GitHub README. LinkedIn posts on the two-person agent-driven
-build.
+**Primary assets.** Engineering-notes blog posts. Codebase tour videos on YouTube. Status Log screenshots (the single most-distinctive product asset we have). LinkedIn posts on the two-person agent-driven build. `docker compose up` reels.
 
-**What NOT to do.** Sell to them. They don't buy. They evangelize. Treat
-them like senior engineers explaining work to other senior engineers
-(`../identity.md` §6).
+**What NOT to do.** Sell to them. They don't buy. They evangelise. Treat them like senior engineers explaining work to other senior engineers (`../identity.md` §6).
 
-### Target B — People ops / HR / Finance buyer (middle ring)
+### Target B — Their team and their manager (secondary)
 
-**Who.** People-ops, HR, or finance lead at a services firm (20–200) or
-small tech team (10–100), EU-first. They won't fork the repo, but they
-feel the pain of their current tool every week.
+**Who.** The IC's teammates and their manager — pulled in *after* the IC has been using Pulse for a week. They didn't choose Pulse; the IC did. The product has to be good enough that they stay anyway.
 
-**Where they are.** LinkedIn People Ops / HR groups, EU-focused HR
-newsletters, Product Hunt on launch day, the `/vs` page when Googling
-"BambooHR alternatives."
+**Where they are.** Wherever target A points them. They don't seek us out — they arrive because their colleague sent them a kudos, or because their team's Friday recap suddenly works.
 
-**What they want from us.** A product they can actually use without
-training. A credible migration path from their current tool. Someone
-who answers email the same day. Transparent pricing they can expense
-without approval.
+**What they want from us.** A product they can use without training. A surface they can trust (manager-safe recap, never raw chat). A reason to stay once their teammate's enthusiasm wears off.
 
-**Primary pillars.** Yours + Transparent.
+**Primary pillars.** Employee-first + Built-by.
 
-**Primary assets.** LinkedIn case studies. `/vs` comparison pages.
-Migration guides. Instagram carousels that show the actual product UI.
-Product Hunt launch card + first-100-comments playbook.
+**Primary assets.** Manager-safe recap walkthrough videos. "How we replaced our standup with three lines" blog posts. Carousels showing the team-feed → kudos → recap flow.
 
-**What NOT to do.** Pretend we have a customer-success team. Hide the
-prices. Say "book a call" anywhere. Over-index on dev terminology
-("commit", "PR", "SDK") in the hero of pages aimed at this audience.
+**What NOT to do.** Pretend we have a customer-success team. Hide the prices. Say "book a call" anywhere. Address them before addressing the IC — the audience hierarchy is the order of operations.
 
 ### Target C — Open-source-curious lurker (outer ring)
 
-**Who.** Open-source-curious founders, ops-minded engineers, people who
-read `/changelog` pages for fun. They may never use Pulse directly —
-they'll tell a friend who does.
+**Who.** Open-source-curious founders, ops-minded engineers, people who read `/changelog` pages for fun. They may never use Pulse directly — they'll tell a friend who does.
 
-**Where they are.** Dev Twitter/X, Instagram for the aesthetic cut, YouTube
-long-form, newsletters (Bytes, DevTools Digest, Pragmatic Engineer).
+**Where they are.** Dev Twitter/X, Instagram for the aesthetic cut, YouTube long-form, newsletters (Bytes, DevTools Digest, Pragmatic Engineer).
 
-**What they want from us.** Stories. Voice. The making-of. Posts about
-the license decision, the two-person agent-driven workflow, the choice
-of FSL over AGPL, the commessa concept as a domain story.
+**What they want from us.** Stories. Voice. The making-of. Posts about the licence decision, the two-person agent-driven workflow, the choice of FSL over AGPL, the bottoms-up motion as a category move.
 
-**Primary pillars.** Transparent + Built by the people who use it.
+**Primary pillars.** Open + Built by the people who use it.
 
-**Primary assets.** YouTube long-form (the "building in public" meta
-content). Instagram static + reel aesthetics. LinkedIn thought pieces
-from Davide and Niccolò.
+**Primary assets.** YouTube long-form (the "building in public" meta content). Instagram static + reel aesthetics. LinkedIn thought pieces from Davide and Niccolò.
 
-**What NOT to do.** Convert-hammer them. They're the soil. Write for them
-even when they don't convert, `../foundation.md` §6.
+**What NOT to do.** Convert-hammer them. They're the soil. Write for them even when they don't convert, `../foundation.md` §6.
 
 ---
 
@@ -235,7 +222,7 @@ cells it's really two assets — don't shortcut.
 |                            | LinkedIn                                     | Product Hunt                                 | Instagram                                    | YouTube                                       |
 | -------------------------- | -------------------------------------------- | -------------------------------------------- | -------------------------------------------- | --------------------------------------------- |
 | **Open** · dev (A)          | "Why we chose FSL over AGPL" thought piece   | Launch card: "read the source" CTA           | Carousel: LICENSE header → 2-yr convert plan | Long-form: codebase tour (10-15 min)          |
-| **Open** · buyer (B)        | "Your HR data was never a black box" post    | Featured as "the open alt to BambooHR"       | Reel: `git clone` → app running in 60s       | Short: "what open source actually means for you" |
+| **Open** · buyer (B)        | "Your HR data was never a black box" post    | Featured as the open-source workspace for the IC | Reel: `git clone` → app running in 60s       | Short: "what open source actually means for you" |
 | **Open** · lurker (C)       | Davide essay: "what building in public taught me about OSS licensing" | Maker comment thread on FSL / license choice | Static: the FSL poem (license text, big type) | Vlog: decision log from our OSS licensing week |
 | **Transparent** · dev (A)   | Postmortem post on an outage we just had      | Launch-day transparency thread                | Carousel: our monthly metrics dashboard       | Long-form: "reading a pull request end-to-end"  |
 | **Transparent** · buyer (B) | `/vs` comparison walkthrough                   | "See what we're bad at" link in description | Reel: live-typing the changelog commit       | Short: screen record of changelog page scroll |
@@ -275,14 +262,14 @@ we have.
 | --------------------------- | ------------------- | ------------------------------------------------------------------------------------ |
 | Short post (≤ 200 words)    | 3–4 per week        | A specific commit, a screenshot, a number. One pillar. One italic word in the opener. |
 | Long post (400–900 words)   | 1–2 per week        | Essays: licensing, commessa, building-in-public, postmortems.                        |
-| Carousel (6–10 slides, PDF) | 2 per month         | Product walkthroughs, comparison vs. BambooHR, self-host steps.                      |
+| Carousel (6–10 slides, PDF) | 2 per month         | Product walkthroughs, the Status Log → kudos → recap flow, self-host steps.          |
 | Native video (30–90s)       | 1 per week          | Screen captures of the product, repurposed from YouTube Shorts.                       |
 | Poll                        | 1 per month max     | Real question we actually want the answer to — not engagement bait.                  |
 
 **Voice rules on LinkedIn.**
 
 - Open every long post with one sentence that could stand alone as a tweet.
-- Name competitors explicitly. "Rippling", "Deel", "BambooHR" — never "a legacy HRIS."
+- Describe the **pattern** we improve on ("the shared doc nobody opens", "the kudos that scrolls off in a week"). Never the proper name of another HR or people-ops product. See `../foundation.md` §7.
 - End with a concrete link: a commit SHA, an issue, a page on the marketing site. Not "what do you think?"
 - Never use the word "thrilled." Never use `🚀`. Never hashtag-dump at the bottom (max 3 hashtags, relevant to the post).
 - First-person plural ("we") for company posts. First-person singular ("I") for Davide/Niccolò personal.
@@ -303,8 +290,8 @@ actually use to recruit contributors.
 
 **Launch day positioning.**
 
-- **Headline (Product Hunt's 60-char):** "HR software for people who hate HR software."
-- **Tagline:** "Open-source, modular HR. Read the source. Run it yourself. Export any time."
+- **Headline (Product Hunt's 60-char):** "Your best work is buried in Slack. Pulse pulls it out."
+- **Tagline:** "Open-source workspace for ICs. Recognition, growth, proof. Self-host in 90 seconds."
 - **Gallery:** 5 screens + 1 hero video. Order — hero reel (15s), `/` home, `/pricing`, `/vs`, `/roadmap`, `/changelog`.
 - **Maker story (the pinned comment):** Three paragraphs from Davide. Why we built it (origin from `../foundation.md` §4). What's different about being two devs with Claude Code. An invitation to `github.com/davide97g/pulse-hr` with a single star ask, no drama.
 - **First-100-commenters playbook:** Every commenter gets a personal, non-templated reply within the first 6 hours — Davide handles those manually. No emoji spam. No "thanks!". Answer the actual question.
@@ -418,7 +405,7 @@ single public "proof" you can link to.
 6. **The export button.** Click → full ZIP of your data. Proof: a 12-second reel + a YouTube Short.
 7. **The self-host path.** `docker compose up`, Helm chart, Terraform. Proof: `docs/self-hosting.md` + long-form YouTube.
 8. **The command bar (⌘J).** Keyboard-first, no LLM call, local intent parser. Proof: a focused Reel + a YouTube Short.
-9. **The commessa concept.** Italian finance term baked into the domain model. Proof: an engineering-blog post + a Reel that translates it.
+9. **The Status Log + kudos flow.** Three lines, ⌘⏎, a kudos toast — the single most-distinctive product gesture we have. Proof: a 12-second reel + a YouTube Short showing the full flow on a phone screen.
 10. **The contributor path.** From reading the README to landing a PR in an afternoon. Proof: a YouTube long-form + pinned blog post + a LinkedIn thread.
 
 Every asset we ship is the "show" part of one of these ten. If a draft
@@ -589,7 +576,7 @@ In the spirit of `../foundation.md` §9 — name what we can't do.
 
 - **No paid ads.** Zero budget allocation for paid social, paid search, or sponsored newsletters in the first 90 days. We earn attention or we don't have it. Revisit only if the organic loop is clearly flat after T+90.
 - **No influencer / creator deals.** Same reason. If a YouTuber wants to cover Pulse because they actually use it, we'll credit generously — but we don't pay for the mention.
-- **No translation beyond EN/IT for now.** `../foundation.md` §10 — Italian-friendly for commessa / EU payroll content, everything else English-first. French, German, Spanish land when the product earns a reason.
+- **No translation beyond EN/IT for now.** `../foundation.md` §11 — English-first, Italian as a full-fidelity translation. French, German, Spanish land when the product earns a reason.
 - **No SEO sludge.** The programmatic SEO layer from `CONTENT_STRATEGY.md` stays paused until we have 12 flagship posts. Quality beats volume.
 - **No "AI-powered Pulse" narrative.** Agent-driven development is how we build (`../foundation.md` §5 note). It shows up in engineering posts, not homepage hero copy.
 - **No enterprise sales motion.** If and when an enterprise inbound arrives, we reply honestly — but we're not staffing a BDR. `../foundation.md` §9.

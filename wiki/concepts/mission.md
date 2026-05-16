@@ -2,21 +2,25 @@
 type: concept
 aliases: [Mission]
 tags: [concept, brand]
-last_updated: 2026-05-14
+last_updated: 2026-05-16
 ---
 
 # Mission
 
-> Make a workspace where people are **seen, not measured**.
+> Make your work impossible to miss.
 
-The HR software industry got good at counting people. Headcount, turnover %, time-to-hire, cost-per-hire, billable utilisation, performance ratings on a 5-point scale. Pulse HR exists because none of those numbers answer the question that actually matters to a person: **does anyone at this company know how I'm doing?**
+The good engineer ships the demo on Friday afternoon. By Monday, the demo is buried under fifty messages and a deployment thread. Six months later, performance review week, they reconstruct the year from screenshots and lose the argument anyway, because the person on the other side of the table didn't have to do the same.
 
-Pulse turns the daily moments that hold a team together — a kudos, a three-line status, a Friday workload check-in, a logged day off, a birthday halo, an unlocked achievement — into the centre of the product. Everything else (timesheets, payroll, recruiting, project allocation) is outside the scope, by design, because we'd rather do one thing well than ten things adequately.
+That's the bug. Pulse HR fixes it.
 
-A workspace where the manager sees the trend, the employee owns the chat, and recognition is one tap. That's the work.
+Pulse exists for the IC — the dev, the designer, the analyst — to log what they did, get the credit they earned, and walk into their next conversation with proof. Three lines a day. A kudos that sticks. A growth trail that doesn't live in someone else's spreadsheet.
+
+We don't build for HR. We build for the person HR talks about.
 
 ## See also
 
-- [[Vision]] — where Pulse is heading.
-- [[Brand Voice]] — how we talk about it.
-- [[wiki/AGENTS.md#product-focus-2026-05-refocus|Product focus]] — the in-scope vs parked split.
+- [[Vision]] — what winning looks like.
+- [[Target Audience]] — who we build for, in detail.
+- [[Brand Voice]] — how we say it.
+- [[Open Source Positioning]] — why the source is public.
+- [[wiki/AGENTS.md#product-focus-2026-05-refocus|Product focus]] — what's in, what's parked.
