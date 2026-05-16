@@ -47,7 +47,7 @@ export const it: Dict = {
 
   footer: {
     tagline:
-      "Aperto. Trasparente. Costruito in pubblico, dalle persone che lo usano.",
+      "Employee-first. Open source. Costruito da chi lo usa.",
     colProduct: "Prodotto",
     colOpenSource: "Open source",
     colResources: "Risorse",
@@ -119,7 +119,7 @@ export const it: Dict = {
     eyebrow: "Workspace open source · costruito per il singolo",
     titleBefore: "Il tuo lavoro migliore è",
     titleItalic: "sepolto",
-    titleAfter: " in un thread Slack di marzo.",
+    titleAfter: " in un thread Slack di marzo",
     body: [
       "Pulse HR lo tira fuori. Workspace open source per il singolo — ",
       "tre righe",
@@ -202,20 +202,20 @@ export const it: Dict = {
     titleAfter: "negoziabili.",
     items: [
       {
-        k: "Aperto",
-        d: "L'intera piattaforma è su GitHub sotto Functional Source License (FSL-1.1-MIT, che diventa MIT dopo due anni). Leggi il codice, eseguilo da solo, forkalo se ti deludiamo. I tuoi dati HR e il software che li gestisce non devono essere una scatola nera.",
+        k: "Employee-first",
+        d: "Il singolo è l'utente. Il manager è un testimone. Ogni feature si misura su quanto rende migliori i tuoi primi dieci minuti, più forte la prova del tuo lavoro, più facile la conversazione successiva. Se una feature rende più potente il manager senza renderti più visibile, è sbagliata.",
       },
       {
-        k: "Trasparente",
-        d: "Roadmap, changelog, prezzi, limiti, policy di sicurezza, schema della telemetria — tutto pubblico. Non nascondiamo cosa fa il prodotto dietro una chiamata commerciale. Non recitiamo la trasparenza; rilasciamo con la porta aperta.",
-      },
-      {
-        k: "Tuo",
-        d: "Self-host sulla tua macchina se vuoi. Esporta tutto in un formato pulito, quando vuoi, senza chiedere. Nessun formato binario proprietario, nessuna frizione contrattuale all'uscita. Il segnale più forte che stiamo facendo bene è che lasciare Pulse è facile.",
+        k: "Open source",
+        d: "L'intera piattaforma è su GitHub sotto Functional Source License (FSL-1.1-MIT, che diventa MIT dopo due anni). Leggi il codice, eseguilo da solo, forkalo se ti deludiamo. L'open source è tutto il prodotto. Niente tier enterprise con feature in più.",
       },
       {
         k: "Costruito da chi lo usa",
         d: "La roadmap è plasmata dalle pull request, non dai product manager. I maintainer usano Pulse per il proprio lavoro ogni giorno. 'Richiesta di feature' e 'pull request' sono due strade per la stessa roadmap, entrambe a pieno titolo.",
+      },
+      {
+        k: "Tuo, in qualsiasi momento",
+        d: "Self-host sulla tua macchina se vuoi. Esporta tutto in un formato pulito, quando vuoi, senza chiedere. Nessun formato binario proprietario, nessuna frizione contrattuale all'uscita. Il segnale più forte che stiamo facendo bene è che lasciare Pulse è facile.",
       },
     ],
   },
@@ -304,18 +304,18 @@ export const it: Dict = {
   },
 
   roles: {
-    eyebrow: "Ogni persona, una superficie",
-    titleLine1: "La stessa app,",
-    titleItalic: "cinque",
-    titleAfter: "punti di vista.",
+    eyebrow: "Costruito per il singolo. Silenzioso per tutti gli altri.",
+    titleLine1: "Il singolo guida.",
+    titleItalic: "Gli altri",
+    titleAfter: " seguono.",
     subtitle:
-      "Ogni persona ha i propri gruppi nella sidebar, la propria vista di default e il proprio set di shortcut. Tema chiaro o scuro oggi; le palette per ruolo sono in roadmap. I CFO non vedono gli standup di sprint.",
+      "Pulse si adotta bottom-up: il singolo se lo installa, scrive lo status, manda un kudos. Il suo team si unisce. Il manager si accorge che il recap del venerdì all'improvviso funziona. Al terzo mese ci sta tutta l'azienda. Le superfici sotto sono il modo in cui ogni ruolo entra — il singolo per primo, gli altri a ruota.",
     items: [
-      { k: "Employee", d: "Posta lo status, manda kudos, fai il check-in del carico, segna i giorni off." },
-      { k: "Manager", d: "Leggi il recap del sentiment, nota il sovraccarico, celebra le vittorie. Mai la chat raw." },
-      { k: "HR", d: "Segnale di engagement, conversazioni di crescita, trend di benessere. Niente fogli di calcolo." },
-      { k: "Admin", d: "Moduli, setup delle persona, audit log — e il \"View as\"." },
-      { k: "Finance", d: "Risposta onesta: non è per te. Tieniti il tuo gestionale paghe." },
+      { k: "Employee", d: "Il protagonista. Posta lo status, manda kudos, fai il check-in del carico, segna i giorni off — tutto il prodotto è costruito attorno ai tuoi primi dieci minuti." },
+      { k: "Manager", d: "Entra quando il team usa già Pulse. Leggi il recap del sentiment, mai la chat raw. L'aggregato è il contratto." },
+      { k: "HR", d: "Arriva per ultima. Cura le People Insights, segue i trend. Il tool era già stato adottato prima che te ne accorgessi — è il senso." },
+      { k: "Admin", d: "Di solito il singolo che ha fatto self-host, ora con un secondo cappello. Moduli, setup delle persona, audit log — e il \"View as\"." },
+      { k: "Finance", d: "Risposta onesta: non è per te. Tieniti il tuo gestionale paghe. Pulse è la metà 'persone', di proposito." },
     ],
   },
 
@@ -415,14 +415,14 @@ export const it: Dict = {
 
   useCases: {
     title: {
-      before: "Costruito per come",
-      italic: "il tuo",
-      after: "team lavora davvero.",
+      before: "Costruito per il singolo",
+      italic: "che",
+      after: "in azienda non hanno ancora notato.",
     },
     items: [
-      { k: "Team stanchi delle review annuali", d: "Segnale continuo — kudos, status, sentiment — invece di una calibrazione da 90 minuti una volta l'anno." },
-      { k: "Team distribuiti stufi dei meeting", d: "Standup async per iscritto, check-in del carico in un tocco. Smetti di programmare meeting per parlare di tempo." },
-      { k: "Founder che vogliono sapere che le persone stanno bene", d: "Vibe del Pulse, segnale di sovraccarico, volume di kudos. Leggilo in 30 secondi, agisci prima che qualcuno se ne vada." },
+      { k: "Il singolo che ricostruisce l'anno dagli screenshot", d: "Tre righe al giorno in Status Log costruiscono la traccia. Entri nella settimana di review con la prova — kudos, status, artefatti di crescita che ti appartengono." },
+      { k: "Il team stanco del teatro dello standup", d: "Tre righe, feed pubblico, ⌘⏎ per pubblicare. Sei minuti una volta al giorno battono trenta minuti ogni mattina, e il recap manager-safe lascia comunque al manager il segnale che serve." },
+      { k: "Chi vuole self-host e odia il lock-in SaaS", d: "`docker compose up` — 90 secondi a un workspace su una Hetzner da €25. Sorgente su GitHub sotto FSL. Andarsene è un `pg_dump`." },
     ],
   },
 

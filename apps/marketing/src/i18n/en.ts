@@ -41,7 +41,7 @@ export const en = {
   },
 
   footer: {
-    tagline: "Open. Transparent. Built in public, by the people who use it.",
+    tagline: "Employee-first. Open source. Built by the people who use it.",
     colProduct: "Product",
     colOpenSource: "Open source",
     colResources: "Resources",
@@ -113,7 +113,7 @@ export const en = {
     eyebrow: "Open-source workspace · built for the IC",
     titleBefore: "Your best work is",
     titleItalic: "buried",
-    titleAfter: " in a Slack thread from March.",
+    titleAfter: " in a Slack thread from March",
     body: [
       "Pulse HR pulls it out. Open-source workspace for the IC — ",
       "three lines",
@@ -196,20 +196,20 @@ export const en = {
     titleAfter: "negotiable.",
     items: [
       {
-        k: "Open",
-        d: "The whole platform is on GitHub under the Functional Source License (FSL-1.1-MIT, converting to MIT after two years). Read the code, run it yourself, fork it if we ever let you down. Your HR data and the software handling it never need to be a black box.",
+        k: "Employee-first",
+        d: "The IC is the user. The manager is a witness. Every feature is judged on whether it makes your first ten minutes better, your proof of work stronger, your next conversation easier. If a feature makes the manager more powerful without making you more visible, it's wrong.",
       },
       {
-        k: "Transparent",
-        d: "Roadmap, changelog, prices, limits, security policy, telemetry schema — all public. We don't gate what the product does behind a sales call. We don't perform transparency; we just ship with the door open.",
-      },
-      {
-        k: "Yours",
-        d: "Self-host on your own box if you want. Export everything in a clean format any time, without asking. No proprietary binary formats, no contractual exit stalling. The strongest signal we're doing this right is that leaving Pulse is easy.",
+        k: "Open source",
+        d: "The whole platform is on GitHub under the Functional Source License (FSL-1.1-MIT, converting to MIT after two years). Read the code, run it yourself, fork it if we ever let you down. The OSS is the whole product. No enterprise tier with extra features.",
       },
       {
         k: "Built by the people who use it",
         d: "The roadmap is shaped by pull requests, not product managers. The maintainers use Pulse for their own work every day. 'Feature request' and 'pull request' are two paths to the same roadmap, and both are first-class.",
+      },
+      {
+        k: "Yours, any time",
+        d: "Self-host on your own box if you want. Export everything in a clean format any time, without asking. No proprietary binary formats, no contractual exit stalling. The strongest signal we're doing this right is that leaving Pulse is easy.",
       },
     ],
   },
@@ -298,18 +298,18 @@ export const en = {
   },
 
   roles: {
-    eyebrow: "Every persona, one surface",
-    titleLine1: "The same app,",
-    titleItalic: "five",
-    titleAfter: "points of view.",
+    eyebrow: "Built for the IC. Quiet for everyone else.",
+    titleLine1: "The IC drives.",
+    titleItalic: "Everyone",
+    titleAfter: " else rides.",
     subtitle:
-      "Each persona ships with its own sidebar groups, default view and shortcut set. Light and dark themes today; per-persona accent palettes are on the roadmap. CFOs don't see sprint standups.",
+      "Pulse is adopted bottoms-up: the IC self-installs, posts status, sends a kudos. Their team joins. Their manager finds the Friday recap suddenly works. By month three the whole company is on it. The surfaces below are how each role enters — the IC first, the rest in their wake.",
     items: [
-      { k: "Employee", d: "Post status, send kudos, check in on workload, log days off." },
-      { k: "Manager", d: "Read the sentiment recap, notice overload, celebrate wins. Never the raw chat." },
-      { k: "HR", d: "Engagement signal, growth conversations, wellbeing trends. No spreadsheets." },
-      { k: "Admin", d: "Modules, persona setup, audit log — and \"View as\"." },
-      { k: "Finance", d: "Honest answer: this isn't for you. Keep your existing payroll tool." },
+      { k: "Employee", d: "The hero. Post status, send kudos, check in on workload, log days off — the whole product is built around your first ten minutes." },
+      { k: "Manager", d: "Pulled in once the team is already using Pulse. You read the sentiment recap, never the raw chat. The aggregate is the contract." },
+      { k: "HR", d: "Arrives last. Curates People Insights, watches trends. The tool was rolled out before you noticed — that's the point." },
+      { k: "Admin", d: "Usually the IC who self-hosted, now wearing a second hat. Modules, persona setup, audit log — and \"View as\"." },
+      { k: "Finance", d: "Honest answer: this isn't for you. Keep your existing payroll tool. Pulse is the people half, on purpose." },
     ],
   },
 
@@ -415,14 +415,14 @@ export const en = {
 
   useCases: {
     title: {
-      before: "Built for the way",
+      before: "Built for the IC",
       italic: "your",
-      after: "team actually works.",
+      after: "company hasn't noticed yet.",
     },
     items: [
-      { k: "Teams sick of yearly reviews", d: "Continuous signal — kudos, status, sentiment — instead of a 90-minute calibration once a year." },
-      { k: "Distributed teams tired of meetings", d: "Async standup in writing, workload check-in in one tap. Stop scheduling time to talk about time." },
-      { k: "Founders who want to know their people are okay", d: "Pulse vibe, overload signal, kudos volume. Read it in 30 seconds, act on it before someone quits." },
+      { k: "The IC reconstructing their year from screenshots", d: "Three lines a day in Status Log builds the trail. Walk into review week with proof — kudos, status, growth artefacts the IC owns." },
+      { k: "The team tired of standup theatre", d: "Three lines, public feed, ⌘⏎ to publish. Six minutes once a day beats thirty minutes every morning, and the manager-safe recap means the manager still has signal." },
+      { k: "The self-hoster who hates SaaS lock-in", d: "`docker compose up` — 90 seconds to a workspace on a €25 Hetzner box. Source on GitHub under FSL. Leaving is a `pg_dump` away." },
     ],
   },
 
