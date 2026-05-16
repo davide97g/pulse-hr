@@ -15,10 +15,10 @@ const path = "/blog";
 // tracks rotating) to keep a realistic cadence. Each post is a commitment
 // with a named owner and a concrete takeaway.
 const TRACKS = [
-  { k: "OSS mechanics",       accent: "#b4ff39", d: "How we run Pulse as an open-source business — license design, governance, self-host economics." },
-  { k: "Commessa ops",        accent: "#ffbf4a", d: "Financial ops for services firms: project profitability, utilisation, close-the-month playbooks." },
-  { k: "Agent-native HR",     accent: "#6fd8ff", d: "Building Pulse toward MCP + tool schemas so external agents can ground on HR data safely." },
-  { k: "Engineering notes",   accent: "#ff8a7a", d: "TanStack Router, Bun workspaces, Astro marketing + React app monorepo, PWA offline, local intent parser." },
+  { k: "OSS mechanics",     accent: "#b4ff39", d: "How we run Pulse as an open-source business — license design, governance, self-host economics." },
+  { k: "IC visibility",     accent: "#ffbf4a", d: "Why your best work disappears, and what changes when there's a public trail. Field notes from the people who live with the gap." },
+  { k: "Agent-native HR",   accent: "#6fd8ff", d: "Building Pulse toward MCP + tool schemas so external agents can ground on HR data safely." },
+  { k: "Engineering notes", accent: "#ff8a7a", d: "TanStack Router, Bun workspaces, Astro marketing + React app monorepo, PWA offline, local intent parser." },
 ];
 
 const POSTS = [
@@ -26,13 +26,13 @@ const POSTS = [
     d: "2026-05-06",
     track: "OSS mechanics",
     t: "Why we picked FSL-1.1-MIT (and not AGPL, BSL, or plain MIT)",
-    s: "A walk through four alternatives, the failure mode each prevents, and why a two-year converting license is the honest compromise for a funded open-source SaaS.",
+    s: "A walk through four alternatives, the failure mode each prevents, and why a two-year converting license is the honest compromise for an open-source SaaS that wants to stay sustainable.",
   },
   {
     d: "2026-05-20",
-    track: "Commessa ops",
-    t: "The commessa primer: why services firms need a project-first data model",
-    s: "Finance sees the company as a stack of commesse (billable project codes). HR tools model it as departments. This is the root cause of every \"is this project profitable?\" argument.",
+    track: "IC visibility",
+    t: "Your best work is buried in a Slack thread from March",
+    s: "Why the textarea-based performance review fails the people it claims to serve, and what changes when proof of work lives somewhere the IC owns.",
   },
   {
     d: "2026-06-03",
@@ -49,26 +49,26 @@ const POSTS = [
   {
     d: "2026-07-01",
     track: "OSS mechanics",
-    t: "The free-for-5 economics: pricing an open-source HR SaaS",
-    s: "A spreadsheet you can fork. How the 5-employee free tier survives CAC, and what it costs us per free team in marginal infra.",
+    t: "Pricing an open-source workspace: self-host free, hosted paid, no enterprise tier",
+    s: "A spreadsheet you can fork. How the hosted unit economics survive without a sales motion, and why a separate enterprise tier would have killed the OSS loop.",
   },
   {
     d: "2026-07-15",
-    track: "Commessa ops",
-    t: "Close the month in an afternoon: the Saturation playbook",
-    s: "Step-by-step from timesheet lock to margin-closed-books, using Saturation insights to catch the three issues that blow most closes.",
+    track: "IC visibility",
+    t: "Three lines a day: replacing the standup with a written feed",
+    s: "What we learned running Status Log on ourselves for three months — what landed, what we dropped, and the manager-safe recap that finally made async work without breaking trust.",
   },
   {
     d: "2026-08-05",
     track: "Engineering notes",
     t: "A 700-line intent parser beats our first LLM call",
-    s: "The deterministic nlp.ts module behind ⌘J. Six intent kinds, fuzzy matching, confidence scoring, and the benchmarks that convinced us to ship it instead of calling Claude.",
+    s: "The deterministic nlp.ts module behind ⌘J. Six intent kinds, fuzzy matching, confidence scoring, and the benchmarks that convinced us to ship it instead of calling an LLM.",
   },
   {
     d: "2026-08-19",
     track: "Agent-native HR",
-    t: "Letting agents approve leave — a permission model that doesn't leak",
-    s: "Write-actions via MCP without broad delegation. Per-tool permission scopes, replayable dry-runs, and an audit surface that makes compliance happy.",
+    t: "Letting agents act on people data — a permission model that doesn't leak",
+    s: "Write-actions via MCP without broad delegation. Per-tool permission scopes, replayable dry-runs, and an audit surface that holds up to a real security review.",
   },
   {
     d: "2026-09-02",
@@ -203,11 +203,12 @@ const extraLd = [blogLd];
         Want to write for us?
       </h2>
       <p class="text-white/70 leading-relaxed max-w-2xl mb-6">
-        Guest posts welcome — especially from HR ops leads, fractional finance
-        folks running commessa-heavy consultancies, and engineers running their
-        own self-hosted deployment. We pay €400 per published piece (€200 for
-        the draft even if we don't run it) and every guest byline links back to
-        whatever you're building.
+        Guest posts welcome — especially from ICs who've made their work
+        visible inside an organisation, engineers running their own
+        self-hosted deployment, and people-ops folks rethinking the review
+        loop. We pay €400 per published piece (€200 for the draft even if we
+        don't run it) and every guest byline links back to whatever you're
+        building.
       </p>
       <a href="mailto:editorial@pulsehr.it" class="inline-flex items-center gap-2 text-[#b4ff39] font-mono hover:gap-3 transition-all">
         Pitch an idea → editorial@pulsehr.it

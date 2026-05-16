@@ -2,7 +2,7 @@
 import BaseLayout from "./BaseLayout.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-import { BookOpen, Sparkles, Gauge, Briefcase, Plug, Users } from "lucide-astro";
+import { BookOpen, Sparkles, Gauge, Users } from "lucide-astro";
 
 interface Props {
   title: string;
@@ -17,9 +17,7 @@ const { title, description, path, crumb, extraLd } = Astro.props;
 
 const CRUMB_LABELS: Record<string, string> = {
   "/docs/employee-score": "Employee Score",
-  "/docs/saturation": "Saturation",
-  "/docs/clients-projects": "Clients & Projects",
-  "/docs/integrations": "Jira & Linear",
+  "/docs/saturation": "Workload check-in",
   "/docs/kudos": "Kudos & Recognition",
   "/docs/api": "API reference",
 };
@@ -36,11 +34,9 @@ const breadcrumbs = [
 ];
 
 const TOPICS = [
-  { href: "/docs/employee-score",   label: "Employee Score",     desc: "How the 0–100 signal is derived.", icon: Sparkles,  featured: true },
-  { href: "/docs/saturation",       label: "Saturation",         desc: "Heatmap, margins, value, insights.", icon: Gauge },
-  { href: "/docs/clients-projects", label: "Clients & Projects", desc: "Hierarchy, allocations, Gantt.",    icon: Briefcase },
-  { href: "/docs/integrations",     label: "Jira & Linear",      desc: "Ticket sync + webhook replay.",     icon: Plug },
-  { href: "/docs/kudos",            label: "Kudos & Recognition", desc: "Peer coins and how they score.",   icon: Users },
+  { href: "/docs/employee-score", label: "Employee Score",      desc: "How the 0–100 signal is derived.",            icon: Sparkles, featured: true },
+  { href: "/docs/saturation",     label: "Workload check-in",   desc: "One tap a week; eight-week trend.",           icon: Gauge },
+  { href: "/docs/kudos",          label: "Kudos & Recognition", desc: "Peer coins, tags, and how they feed Growth.", icon: Users },
 ] as const;
 
 const current = path.replace(/\/$/, "") || "/";

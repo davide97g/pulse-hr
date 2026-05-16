@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Tutto il team. Un battito. — Pulse HR">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Il tuo lavoro migliore sepolto a marzo. — Pulse HR">
   <defs>
     <radialGradient id="g1" cx="28%" cy="38%" r="55%">
       <stop offset="0%" stop-color="#b4ff39" stop-opacity="0.12"/>
@@ -17,11 +17,11 @@
     <text x="112" y="105" text-transform="uppercase">PULSE HR</text>
   </g>
   <g font-family="'Fraunces', 'Times New Roman', serif" font-weight="600" fill="#ffffff" font-size="132" letter-spacing="-3.7">
-    <text x="80" y="300">Tutto il team.</text>
-    <text x="80" y="432" fill="#b4ff39" font-style="italic">Un battito.</text>
+    <text x="80" y="300">Il tuo lavoro migliore</text>
+    <text x="80" y="432" fill="#b4ff39" font-style="italic">sepolto a marzo.</text>
   </g>
   <g font-family="'Geist', system-ui, sans-serif" font-size="26" fill="#f2f2ee" opacity="0.85">
-    <text x="80" y="572">Software per le persone, non per i numeri.</text>
+    <text x="80" y="572">Workspace open source per il singolo. Self-host in 90 secondi.</text>
   </g>
   <g font-family="'Geist Mono', ui-monospace, monospace" font-size="20" letter-spacing="3.6" fill="#f2f2ee">
     <rect x="1010" y="540" width="130" height="48" rx="24" fill="rgba(255,255,255,0.025)" stroke="#b4ff39" stroke-opacity="0.33"/>

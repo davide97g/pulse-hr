@@ -1,42 +1,30 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
-import { ArrowUpRight, Sparkles, Gauge, Briefcase, Plug, Users } from "lucide-astro";
+import { ArrowUpRight, Sparkles, Gauge, Users } from "lucide-astro";
 
 const title = "Docs — Pulse HR";
 const description =
-  "Short, practical explanations of the features you'll use day-to-day — Employee Score, Saturation, Clients & Projects, Jira / Linear integrations, Kudos. Every formula behind every number we surface.";
+  "Short, practical explanations of the features you'll use day-to-day — Employee Score, Workload check-in, Kudos. Every formula behind every number we surface.";
 const path = "/docs";
 
 const CARDS = [
   {
     href: "/docs/employee-score",
     label: "Employee Score",
-    desc: "0–100 weighted average of delivery, utilisation, value, recognition, and billable ratio. See how each factor is computed and what to do to move it.",
+    desc: "0–100 weighted average of delivery, growth, recognition and wellbeing signal. See how each factor is computed and what to do to move it.",
     icon: Sparkles,
     featured: true,
   },
   {
     href: "/docs/saturation",
-    label: "Saturation",
-    desc: "Team load heatmap, utilisation trend, project margins, employee value, and the Insights triage surface.",
+    label: "Workload check-in",
+    desc: "One-tap weekly self check-in, eight-week sparkline, manager-safe aggregate. No hours, no allocation, no percentages.",
     icon: Gauge,
-  },
-  {
-    href: "/docs/clients-projects",
-    label: "Clients & Projects",
-    desc: "Managing clients, projects, team allocations, activity boards, Gantt charts, and owners.",
-    icon: Briefcase,
-  },
-  {
-    href: "/docs/integrations",
-    label: "Jira & Linear",
-    desc: "Connecting external trackers, syncing issues into projects, and linking tickets to activities.",
-    icon: Plug,
   },
   {
     href: "/docs/kudos",
     label: "Kudos & Recognition",
-    desc: "Peer kudos, coin amounts, leaderboard, and how kudos feed the employee score.",
+    desc: "Peer kudos, coin amounts, leaderboard, and how kudos feed the Recognition factor of the Employee Score.",
     icon: Users,
   },
 ] as const;

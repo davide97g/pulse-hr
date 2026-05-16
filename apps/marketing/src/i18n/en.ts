@@ -1,15 +1,16 @@
 // English strings — master dictionary.
-// Brand, tech acronyms and accepted English terms (HR, API, SOC 2, GDPR, PWA, SDK,
-// webhook, open source, CEO/COO/CFO, kudos, ⌘K/⌘J, SaaS, Rippling, Deel, BambooHR,
-// GitHub, Slack, etc.) stay in English across all locales.
+// Brand, tech acronyms and accepted English terms (HR, API, SOC 2, GDPR, PWA,
+// SDK, webhook, open source, CEO/COO/CFO, kudos, ⌘K/⌘J, SaaS, GitHub, Slack,
+// Docker, Kubernetes, Helm, Terraform, etc.) stay in English across all locales.
+// We deliberately do not name other HR / people-ops products in marketing copy.
 
 export const en = {
   meta: {
-    tagline: "Software for people, not headcount.",
+    tagline: "Open-source recognition, growth, and proof of work — for the IC.",
     description:
-      "The HR tool that cares how you're doing, not how many hours you logged. Async status log, growth, kudos, wellbeing — no timesheets, no approval queues, no payroll. Open-source, self-hostable, built by the people who use it.",
+      "Your best work is buried in a Slack thread from March. Pulse HR makes it impossible to miss — three lines a day in Status Log, a kudos that sticks, a growth trail you carry into your next conversation. Open-source workspace for the IC. Self-host in 90 seconds. The demo is the sales call.",
     keywords:
-      "employee engagement, async standup, kudos, peer recognition, wellbeing, open source, self-hosted, status log, growth, employee satisfaction, people-first HR",
+      "open source HR, recognition, employee engagement, async standup, kudos, peer recognition, status log, growth, individual contributor, IC, self-hosted",
     ogImage: "/og/og-hero.png",
   },
 
@@ -109,24 +110,24 @@ export const en = {
 
   hero: {
     badge: "Open source · FSL-1.1-MIT · public beta · built in public",
-    eyebrow: "Open-source · for the humans on your team",
-    titleBefore: "Software for",
-    titleItalic: "people",
-    titleAfter: ", not headcount.",
+    eyebrow: "Open-source workspace · built for the IC",
+    titleBefore: "Your best work is",
+    titleItalic: "buried",
+    titleAfter: " in a Slack thread from March.",
     body: [
-      "The HR tool that cares how you're doing, not how many hours you logged. ",
-      "Async status log",
-      ", ",
-      "growth",
-      " and ",
-      "recognition",
-      " — built around the moments that matter to a team. No timesheets, no approval queues, no payroll. Open-source on GitHub, self-host or run hosted — no sales call to see the product.",
+      "Pulse HR pulls it out. Open-source workspace for the IC — ",
+      "three lines",
+      " in Status Log, ",
+      "a kudos",
+      " that sticks, ",
+      "a growth trail",
+      " that doesn't live in someone else's spreadsheet. Self-host in 90 seconds with `docker compose up`, or pay us to host. The demo is the sales call.",
     ] as string[],
-    ctaPrimary: "Try it free — your data, your infra",
+    ctaPrimary: "Open the demo",
     ctaGithub: "Read the source",
     ctaTour: "See the app",
-    chip1: "No timesheets · No approval queues",
-    chip2: "Async standups · Continuous Pulse",
+    chip1: "Three lines · A kudos · Proof",
+    chip2: "No demo gate · No enterprise tier",
     chip3: "Self-host or hosted — your call",
     newThisQuarter: "New this quarter",
   },
@@ -159,31 +160,31 @@ export const en = {
     },
     subtitle: {
       before:
-        "Lattice ties everything to OKRs. 15Five is built around 1:1 forms. Officevibe is a survey shop. Pulse is the only people-first tool where the source, the roadmap, the changelog and the prices are all public — ",
-      link: "see the honest comparison",
+        "Whichever app your company pays for, your best work still scrolls off the team channel by Friday. Pulse is the only workspace where the source, the roadmap, the changelog and the prices are public, built around the IC instead of the org chart — ",
+      link: "see what we improve on",
       after: ".",
     },
     source: "Source",
     values: [
       {
-        k: "Open",
-        p: "The full source is on GitHub under FSL-1.1-MIT, converting to MIT in two years. Read every line, run it on your hardware, fork it if we ever let you down. No feature gates behind a sales call.",
+        k: "Employee-first",
+        p: "The IC is the user. The manager is a witness. Every feature is judged on whether it makes your first ten minutes better, your proof of work stronger, your next conversation easier. Raw chat stays with you — only aggregates cross the line up.",
+        cta: "Status Log · Kudos · Growth",
+      },
+      {
+        k: "Open source",
+        p: "Full source on GitHub under FSL-1.1-MIT, converting to plain MIT in two years. Read every line, self-host in 90 seconds with `docker compose up`, fork if we let you down. No demo gate. No enterprise tier with extra features.",
         cta: "LICENSE · self-host · contribute",
       },
       {
-        k: "Transparent",
-        p: "Public roadmap. Public changelog. Public prices. Public commits. We publish what we ship, what we broke, and why we chose what we chose. Performance in the open, screw-ups included.",
-        cta: "Roadmap · changelog · commits",
-      },
-      {
-        k: "Yours",
-        p: "Your data, your infra, your exit. Self-host on Docker, Helm or Terraform. Export everything in a clean format, any time, without asking. Leaving Pulse is easy — that's the point.",
-        cta: "Self-host · export · no lock-in",
-      },
-      {
         k: "Built by the people who use it",
-        p: "The roadmap is shaped by pull requests, not product managers. Pulse covers the people half of HR — status, growth, kudos, wellbeing — and stays out of the business half on purpose. The maintainers use Pulse on themselves every day; every ship is because someone actually needed it.",
-        cta: "Surfaces · PRs · feedback board",
+        p: "The roadmap is shaped by pull requests, not product managers. Davide and Niccolò run Pulse on themselves every day — if a friction lasts more than a week, it gets fixed. \"Feature request\" and \"pull request\" are two paths to the same roadmap.",
+        cta: "Roadmap · PRs · feedback board",
+      },
+      {
+        k: "Yours, any time",
+        p: "Your data, your infra, your exit. Self-host on Docker, Helm or Terraform. Export everything in a clean format, without asking. The strongest signal we're doing this right is that leaving Pulse is easy.",
+        cta: "Self-host · export · no lock-in",
       },
     ],
   },
@@ -344,11 +345,11 @@ export const en = {
     items: [
       {
         q: "Does Pulse replace my HRIS?",
-        a: "No, and that's the point. Pulse is the people half of HR — status, growth, kudos, wellbeing. Payroll, time tracking, recruiting, project allocation and document e-signature belong in tools built for them. Pulse runs next to your HRIS, not in place of it. Many teams use Pulse alongside BambooHR, Personio, Rippling or Factorial; the lightweight scope is what makes it actually get used.",
+        a: "No, and that's the point. Pulse is the people half of HR — status, growth, kudos, wellbeing. Payroll, time tracking, recruiting, project allocation and document e-signature belong in tools built for them. Pulse runs next to your HRIS, not in place of it. The narrow scope is what makes the team actually open it.",
       },
       {
         q: "How is Pulse HR priced?",
-        a: "Per active employee, per month. One transparent tier with every feature included — no 'talk to sales' gates, no upsell for Labs features, no per-seat add-ons for API access or SSO. Free for the first 5 active employees, forever. Annual billing is 15% off.",
+        a: "Two ways to pay. Self-host is €0 — full open source, run it on your own infra. Hosted is €6 per active employee per month — same product, we run the uptime and the backups so you don't. No demo gate, no enterprise tier with extra features, no per-seat add-ons for API access or SSO. Annual billing is 15% off.",
       },
       {
         q: "Is it SOC 2 / GDPR compliant?",
@@ -508,11 +509,11 @@ export const en = {
   },
 
   cta: {
-    titleLine1: "Software for",
-    titleItalic: "people",
-    titleAfter: ", not headcount.",
-    body: "Free forever, self-hosted. Free for your first 5 employees on hosted Pulse. No credit card. No sales call to see the product. Export everything in a click — always.",
-    primary: "Try it free",
+    titleLine1: "Make your work",
+    titleItalic: "impossible",
+    titleAfter: " to miss.",
+    body: "Self-host the open source on your own infra in 90 seconds, or pay us to run it. No demo gate. No enterprise tier with extra features. Export everything in a click — always.",
+    primary: "Open the demo",
     secondary: "Read the source",
   },
 
@@ -530,19 +531,19 @@ export const en = {
   },
 
   indexPage: {
-    title: "Pulse HR — software for people, not headcount",
+    title: "Pulse HR — open-source workspace for the IC",
   },
 
   productPage: {
-    title: "Product tour — Pulse HR people-first overview",
+    title: "Product tour — eight surfaces built around the IC",
     description:
-      "Status Log, Growth, Kudos, Moments, Pulse, Workload check-in, Leave journal, People Insights — eight surfaces all about how your team is doing. Open source under FSL. Keyboard-first, self-hostable.",
+      "Status Log, Growth, Kudos, Moments, Pulse, Workload check-in, Leave journal, People Insights — eight surfaces that make the IC's work visible. Open source under FSL. Keyboard-first, self-host in 90 seconds.",
     eyebrow: "Product tour",
     titleLine1: "Eight surfaces,",
     titleItalic: "one feeling",
     titleAfter: ": seen.",
     body:
-      "Every surface is about a person, not a process. Status, kudos, growth, rest, workload — read in seconds, acted on in seconds. Hours and payroll live in the tools built for them. We don't compete there.",
+      "Every surface is about a person, not a process. Status, kudos, growth, rest, workload — written in seconds, read in seconds. Hours and payroll live in the tools built for them. We don't compete there.",
   },
 
   labsPage: {
@@ -573,7 +574,7 @@ export const en = {
   contactPage: {
     title: "Contact — email, GitHub Discussions, security reports",
     description:
-      "One email per purpose. GitHub Discussions for anything you want to ask in public. Security reports via security@. No chatbot funnels, no \"book a demo\" form that routes to a BDR.",
+      "One email per purpose. GitHub Discussions for anything you want to ask in public. Security reports via security@. No chatbot funnels, no demo gate, no \"talk to sales\" form that routes to a BDR.",
     eyebrow: "Contact",
     titleLine1: "A real inbox.",
     titleItalic: "Real",
@@ -626,21 +627,21 @@ export const en = {
   },
 
   pricingPage: {
-    title: "Pricing — free for 5, €6/employee after, self-host €0",
+    title: "Pricing — self-host free, hosted €6/employee, no enterprise tier",
     description:
-      "One transparent tier per active employee per month. Free for the first 5, forever, with every feature included. Self-hosted is free under FSL.",
+      "Two ways to pay. Self-host is €0 — full open source, run it yourself. Hosted is €6 per active employee per month, with every feature included. No demo gate, no enterprise tier with extra features.",
   },
 
   vsPage: {
-    title: "Pulse HR vs Lattice, 15Five, Officevibe — honest comparison",
+    title: "Pulse HR vs the pattern of invisibility — what we improve on",
     description:
-      "Honest comparison of Pulse HR against the engagement-tool incumbents — Lattice, 15Five, Officevibe and Culture Amp. Open source, scope, async-first, manager-safe sentiment, pricing — plus where each of them is genuinely stronger.",
+      "We don't compete with other HR tools. We compete with the shared doc nobody opens, the kudos that scrolls off, the review that fits a year into a textarea. Eight shapes the problem takes, and what Pulse ships for each — plus honest losses.",
   },
 
   blogPage: {
-    title: "Blog — OSS HR, commessa ops, agent-native workflows",
+    title: "Blog — OSS mechanics, IC visibility, agent-native workflows",
     description:
-      "A 6-month publishing schedule. Engineering deep-dives on the open-source HR stack, commessa-first financial operations for services firms, and agent-native workflows for HR data.",
+      "A 6-month publishing schedule. Engineering deep-dives on the open-source HR stack, field notes on making the IC's work visible, and agent-native workflows for people data.",
   },
 
   securityPage: {

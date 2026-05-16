@@ -12,43 +12,50 @@ const description = t.pricingPage.description;
 
 const path = "/pricing";
 
+// Two ways to pay (foundation.md §12). The OSS is the whole product on both
+// — no enterprise tier with extra features, no paid-only modules. The Hosted
+// price buys uptime and the time you'd spend running it yourself, not unlocked
+// capability. The Support SLA is an optional flat add-on for self-hosters who
+// need a phone number.
 const TIERS = [
   {
-    id: "free",
-    name: "Free",
+    id: "self-host",
+    name: "Self-host",
     price: "€0",
-    unit: "up to 5 employees",
-    punch: "For side projects, tiny teams, and anyone evaluating Pulse honestly before committing.",
-    cta: { label: "Start free", href: "https://app.pulsehr.it/" },
+    unit: "FSL-1.1-MIT — converts to MIT in 2 years",
+    punch: "Run the whole platform on your own infra. `docker compose up` and you're done in 90 seconds.",
+    cta: { label: "See on GitHub", href: "https://github.com/davide97g/pulse-hr" },
     included: [
-      "Up to 5 active employees",
-      "All eight surfaces — Status Log, Growth, Kudos, Moments, Workload, Leave journal, Pulse, People Insights",
-      "Full API + webhooks (no tier gate)",
-      "SSO via Google / Microsoft",
-      "Command bar (⌘K / ⌘J)",
-      "Community support on GitHub",
+      "Full source code, every surface, no paid-only modules",
+      "Docker Compose reference (single-node)",
+      "Helm chart for Kubernetes",
+      "Terraform modules for AWS / GCP / Hetzner",
+      "Public REST API, webhooks on every event",
+      "Contribute back via PR — credited in the changelog",
     ],
     notIncluded: [
-      "SOC 2 report under NDA",
-      "Dedicated onboarding engineer",
+      "Commercial support SLA (see add-on below)",
+      "Uptime guarantee (you run it, you guarantee it)",
     ],
-    accent: "#ffffff",
+    accent: "#6fd8ff",
     bg: "bg-[#0f0f11]",
     border: "border-white/10",
   },
   {
-    id: "standard",
-    name: "Standard",
+    id: "hosted",
+    name: "Hosted",
     price: "€6",
     unit: "per active employee / month",
-    punch: "Everything in Free, no feature asterisks. One tier for teams from 6 to 500.",
-    cta: { label: "Start free — upgrade later", href: "https://app.pulsehr.it/" },
+    punch: "Same product. We run the infra so you don't have to. EU data residency, daily backups, zero-downtime migrations.",
+    cta: { label: "Open the demo", href: "https://app.pulsehr.it/" },
     featured: true,
     included: [
-      "Everything in Free, unlimited seats",
+      "Everything in Self-host — same source, same features",
+      "EU data residency (Frankfurt / Dublin)",
+      "Daily backups, point-in-time restore",
+      "Zero-downtime migrations on every release",
       "SAML SSO, SCIM provisioning, audit log",
-      "Priority email + Slack Connect support",
-      "SOC 2 Type II report under NDA",
+      "Email support, response within one business day",
       "Annual billing: 15% off",
     ],
     notIncluded: [],
@@ -57,25 +64,24 @@ const TIERS = [
     border: "border-[#b4ff39]/40",
   },
   {
-    id: "self-host",
-    name: "Self-host",
-    price: "€0",
-    unit: "FSL-1.1-MIT license",
-    punch: "Run the whole platform on your own infra. Source is public, license is self-serve.",
-    cta: { label: "See on GitHub", href: "https://github.com/davide97g/pulse-hr" },
+    id: "support",
+    name: "Support SLA",
+    price: "€400",
+    unit: "per month — flat, optional add-on",
+    punch: "For self-hosters who need a phone number. Same OSS, plus priority patches and guaranteed response times.",
+    cta: { label: "Email sales@pulsehr.it", href: "mailto:sales@pulsehr.it" },
     included: [
-      "Full source code, every surface",
-      "Docker Compose reference (single-node)",
-      "Helm chart for Kubernetes",
-      "Terraform modules for AWS / GCP / Hetzner",
-      "Contribute back via PR",
-      "No per-seat fees, no license keys",
+      "Priority email response under 4 business hours",
+      "Onboarding help: schema review, migration sanity check",
+      "Priority security patches before public disclosure window closes",
+      "Direct line to a maintainer (Davide or Niccolò)",
+      "No seat limit — pay flat, regardless of team size",
     ],
     notIncluded: [
-      "Commercial support SLA",
-      "Uptime guarantee",
+      "Custom development (we don't sell consulting)",
+      "We host or operate your deployment",
     ],
-    accent: "#6fd8ff",
+    accent: "#ffffff",
     bg: "bg-[#0f0f11]",
     border: "border-white/10",
   },
@@ -91,17 +97,16 @@ const offerCatalogLd = {
   itemListElement: [
     {
       "@type": "Offer",
-      name: "Free",
+      name: "Self-host",
       price: "0",
       priceCurrency: "EUR",
-      eligibleCustomerType: "https://schema.org/BusinessEntityType",
-      description: "Free for the first 5 active employees. Every feature, no seat gate.",
+      description: "Run the full platform on your own infra under the Functional Source License (FSL-1.1-MIT). The OSS is the whole product.",
       availability: "https://schema.org/InStock",
-      url: "https://pulsehr.it/pricing#free",
+      url: "https://pulsehr.it/pricing#self-host",
     },
     {
       "@type": "Offer",
-      name: "Standard",
+      name: "Hosted",
       price: "6",
       priceCurrency: "EUR",
       priceSpecification: {
@@ -110,18 +115,24 @@ const offerCatalogLd = {
         priceCurrency: "EUR",
         referenceQuantity: { "@type": "QuantitativeValue", value: "1", unitText: "active employee / month" },
       },
-      description: "Per active employee, per month. SSO, audit log, SOC 2, full API.",
+      description: "Per active employee, per month. Same product as Self-host — we run the infra so you don't have to.",
       availability: "https://schema.org/InStock",
-      url: "https://pulsehr.it/pricing#standard",
+      url: "https://pulsehr.it/pricing#hosted",
     },
     {
       "@type": "Offer",
-      name: "Self-host",
-      price: "0",
+      name: "Support SLA",
+      price: "400",
       priceCurrency: "EUR",
-      description: "Run the full platform on your own infra under the Functional Source License (FSL-1.1-MIT).",
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: "400",
+        priceCurrency: "EUR",
+        referenceQuantity: { "@type": "QuantitativeValue", value: "1", unitText: "month" },
+      },
+      description: "Optional flat add-on for self-hosters: priority patches and guaranteed response times.",
       availability: "https://schema.org/InStock",
-      url: "https://pulsehr.it/pricing#self-host",
+      url: "https://pulsehr.it/pricing#support",
     },
   ],
 };
@@ -134,12 +145,16 @@ const pricingFaqLd = {
 
 const FAQ = [
   {
+    q: "What's the difference between Self-host and Hosted?",
+    a: "The product. The features. The source code. None of it. Hosted is the same Pulse, running on our infrastructure with daily backups, EU data residency, and a one-line response promise from us when something breaks. You pay for the operational burden being on our side instead of yours — not for unlocked features.",
+  },
+  {
     q: "Why \"per active employee\" and what does active mean?",
     a: "An employee is active in a calendar month if they had a contract on any day of that month or were paid in that month. You don't pay for offboarded people after their exit date.",
   },
   {
-    q: "Is there any feature locked behind an enterprise tier?",
-    a: "No. API, webhooks, SSO/SAML, audit logs, SCIM, the full Labs suite — all included on Free and Standard. The only difference between Free and Standard is the employee cap.",
+    q: "Is there an enterprise tier with extra features?",
+    a: "No. The OSS is the whole product. API, webhooks, SAML SSO, audit logs, SCIM — all in the public repo, all in every Hosted account. If a feature exists on Hosted, it exists in the self-host docker image, full stop.",
   },
   {
     q: "Does Pulse replace my HRIS or payroll system?",
@@ -147,11 +162,15 @@ const FAQ = [
   },
   {
     q: "Discounts for non-profits, education, open-source maintainers?",
-    a: "50% off for registered non-profits, accredited education institutions, and maintainers of projects with 1k+ GitHub stars. Email sales@pulsehr.it with a one-line proof.",
+    a: "50% off Hosted for registered non-profits, accredited education institutions, and maintainers of projects with 1k+ GitHub stars. Email sales@pulsehr.it with a one-line proof. Self-host is already free — no discount needed.",
   },
   {
-    q: "What happens if I outgrow 5 employees?",
-    a: "We notify you in-app the month before you cross the threshold. Upgrade with a click; no data migration, no billing sidebar drama. Pay only from the following month onward.",
+    q: "What about a free Hosted tier?",
+    a: "There isn't one. The free path is self-host: open-source, full-featured, 90 seconds to a workspace on your own infra. We didn't want to maintain a free-tier seat cap on Hosted because it forces feature gates we don't believe in. If you can run Docker, you can run Pulse for free.",
+  },
+  {
+    q: "Can I move between Self-host and Hosted later?",
+    a: "Yes — both directions. We publish the export schema (it's just Postgres) and the migration runbook on /docs. There's no proprietary lock-in to escape. The point of open source is that leaving is always cheap.",
   },
   {
     q: "Can I get an invoice in my company's entity's country?",
@@ -176,14 +195,14 @@ const extraLd = [offerCatalogLd, pricingFaqLd];
         <Tag class="h-3 w-3" /> Pricing
       </p>
       <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
-        One number.<br />
-        <em class="italic text-[#b4ff39]">No</em> asterisks.
+        Self-host free.<br />
+        Pay us to <em class="italic text-[#b4ff39]">run</em> it<span class="text-[#b4ff39]">.</span>
       </h1>
       <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
-        Free for your first 5 employees, forever. €6 per active employee per
-        month above that, with every feature on every tier. Or self-host the
-        whole platform from GitHub for €0. Lower than an HRIS because Pulse
-        does less on purpose — it runs alongside the payroll tool you already pay for.
+        The OSS is the whole product. Run it on your own infra for €0 — same
+        features, same source. Or pay us €6 per active employee per month and
+        we'll handle the uptime, the backups, the EU residency, the migrations.
+        Either way, no sales call. No enterprise tier with extra features.
       </p>
     </section>
 

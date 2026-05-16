@@ -7,35 +7,21 @@ const description =
   "REST API for Pulse HR. Bearer auth, cursor pagination, stable schemas, 1k req/min rate limit, webhooks on every resource event. Maintained SDKs for TypeScript, Python and Go — generated from the OpenAPI 3.1 spec.";
 const path = "/docs/api";
 
-// Resources — partial, but representative.
+// Resources — partial, but representative. People-first surfaces only.
 const RESOURCES = [
   {
     name: "employees",
-    desc: "Active and former people. Includes contractors when expand=contractor.",
-    fields: ["id", "email", "full_name", "role", "employment_type", "department", "manager_id", "start_date", "end_date", "location", "custom_fields"],
+    desc: "Active and former people in the workspace.",
+    fields: ["id", "email", "full_name", "role", "department", "manager_id", "start_date", "end_date", "location", "custom_fields"],
     methods: ["GET /v1/employees", "GET /v1/employees/{id}", "POST /v1/employees", "PATCH /v1/employees/{id}", "DELETE /v1/employees/{id}"],
     events: ["employee.created", "employee.updated", "employee.offboarded"],
   },
   {
-    name: "commesse",
-    desc: "Italian for 'project codes'. Every hour and allocation rolls up to a commessa.",
-    fields: ["id", "code", "name", "client_id", "owner_id", "budget_hours", "budget_amount", "rate_card", "start_date", "end_date", "status"],
-    methods: ["GET /v1/commesse", "GET /v1/commesse/{id}", "POST /v1/commesse", "PATCH /v1/commesse/{id}"],
-    events: ["commessa.created", "commessa.updated", "commessa.closed"],
-  },
-  {
-    name: "timesheets",
-    desc: "Weekly timesheet with commessa-tagged entries. Submission triggers approval workflow.",
-    fields: ["id", "employee_id", "week_start", "status", "total_hours", "billable_hours", "entries[]"],
-    methods: ["GET /v1/timesheets", "GET /v1/timesheets/{id}", "POST /v1/timesheets/{id}:submit", "POST /v1/timesheets/{id}:approve"],
-    events: ["timesheet.submitted", "timesheet.approved", "timesheet.rejected"],
-  },
-  {
-    name: "leave",
-    desc: "Time-off requests. Balance is derived server-side from accrual + policy + taken.",
-    fields: ["id", "employee_id", "kind", "start_date", "end_date", "days", "status", "reason"],
-    methods: ["GET /v1/leave", "GET /v1/leave/balance/{employee_id}", "POST /v1/leave", "POST /v1/leave/{id}:approve"],
-    events: ["leave.requested", "leave.approved", "leave.rejected", "leave.cancelled"],
+    name: "status_log",
+    desc: "Async-standup entries. Three lines per person per day.",
+    fields: ["id", "employee_id", "date", "lines[]", "topic", "created_at"],
+    methods: ["GET /v1/status-log", "GET /v1/status-log/{id}", "POST /v1/status-log"],
+    events: ["status_log.posted"],
   },
   {
     name: "kudos",
@@ -43,6 +29,20 @@ const RESOURCES = [
     fields: ["id", "from_employee_id", "to_employee_id", "coins", "tag", "note", "created_at"],
     methods: ["GET /v1/kudos", "POST /v1/kudos"],
     events: ["kudos.awarded"],
+  },
+  {
+    name: "workload_checkins",
+    desc: "Weekly self-reported load — light, balanced, heavy, overloaded.",
+    fields: ["id", "employee_id", "week_start", "level", "created_at"],
+    methods: ["GET /v1/workload-checkins", "POST /v1/workload-checkins"],
+    events: ["workload.recorded"],
+  },
+  {
+    name: "leave",
+    desc: "Personal leave journal. The IC logs their own days off.",
+    fields: ["id", "employee_id", "kind", "start_date", "end_date", "days", "note"],
+    methods: ["GET /v1/leave", "GET /v1/leave/balance/{employee_id}", "POST /v1/leave", "DELETE /v1/leave/{id}"],
+    events: ["leave.logged", "leave.cancelled"],
   },
 ];
 
@@ -283,18 +283,22 @@ X-Pulse-Delivery: del_01HR3…
 
 const pulse = new Pulse({ apiKey: process.env.PULSE_API_KEY! });
 
-// List employees on commessa ACME-22
-const { data } = await pulse.employees.list({
-  commessa_code: "ACME-22",
-  limit: 100,
+// Post a status-log entry on behalf of an authenticated user
+const entry = await pulse.statusLog.create({
+  employee_id: "emp_01HR3…",
+  lines: [
+    "Shipped the OG localiser. Three locales live.",
+    "Hit a CLS regression on /pricing; fix in 1742.",
+    "Pairing with Niccolò on the workload trend curve.",
+  ],
 });
 
-// Submit a leave request on behalf of an employee
-await pulse.leave.create({
-  employee_id: "emp_01HR3…",
-  kind: "PTO",
-  start_date: "2026-05-12",
-  end_date: "2026-05-16",
+// Send a kudos
+await pulse.kudos.create({
+  to_employee_id: "emp_01HR4…",
+  coins: 10,
+  tag: "craft",
+  note: "Picked up the failing migration without anyone asking.",
 });`}</pre>
     </div>
   </section>

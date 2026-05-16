@@ -27,16 +27,16 @@ const CARDS = [
   {
     name: "og-hero",
     eyebrow: "PULSE HR",
-    headline: ["Your whole team."],
-    accent: "One pulse.",
-    sub: "Software for people, not headcount.",
+    headline: ["Your best work is"],
+    accent: "buried in March.",
+    sub: "Open-source workspace for the IC. Self-host in 90 seconds.",
   },
   {
     name: "og-hero-it",
     eyebrow: "PULSE HR",
-    headline: ["Tutto il team."],
-    accent: "Un battito.",
-    sub: "Software per le persone, non per i numeri.",
+    headline: ["Il tuo lavoro migliore"],
+    accent: "sepolto a marzo.",
+    sub: "Workspace open source per il singolo. Self-host in 90 secondi.",
   },
 ];
 

@@ -1,21 +1,21 @@
 import type { Dict } from "./en";
 
 // Italian dictionary.
-// Brand names (Pulse HR, Money, People, Work, Team Pulse, Kudos,
-// Focus Mode, Saturation), tech acronyms (API, SDK, REST, SSO, SOC 2, GDPR, HRIS,
-// PWA, F24, HMRC PAYE, ISO, HIPAA, BAA, DPA, SIG-lite, CAIQ, CET, PT, BDR),
-// product vendor names (Rippling, Deel, BambooHR, Slack, Google, QuickBooks, Okta,
-// Stripe, GitHub, Personio, Factorial, Remote, Brex, Stripe Atlas, Figma, Linear),
-// roles (CEO, COO, CFO, VP, HR, Staff Engineer) and ⌘K / ⌘J remain untranslated —
-// they are accepted English or brand terms.
+// Brand names (Pulse HR, Status Log, Kudos, Moments, Growth, Pulse, People
+// Insights), tech acronyms (API, SDK, REST, SSO, SOC 2, GDPR, HRIS, PWA, ISO,
+// HIPAA, BAA, DPA, SIG-lite, CAIQ, CET, PT, BDR), tooling names (Slack, Google,
+// GitHub, Docker, Kubernetes, Helm, Terraform, Figma, Linear), roles (CEO, COO,
+// CFO, VP, HR, Staff Engineer) and ⌘K / ⌘J remain untranslated — they are
+// accepted English or brand terms. We deliberately do not name other HR /
+// people-ops products in marketing copy.
 
 export const it: Dict = {
   meta: {
-    tagline: "Software per le persone, non per i numeri.",
+    tagline: "Workspace open source per il singolo: riconoscimento, crescita, prova del lavoro.",
     description:
-      "Lo strumento HR che guarda a come stai, non a quante ore hai tracciato. Status log async, crescita, kudos, benessere — niente timesheet, niente code di approvazione, niente buste paga. Open source, self-host, costruito da chi lo usa.",
+      "Il tuo lavoro migliore è sepolto in un thread Slack di marzo. Pulse HR lo rende impossibile da ignorare — tre righe al giorno in Status Log, un kudos che resta, una traccia di crescita che ti porti dietro nella prossima conversazione. Workspace open source per il singolo. Self-host in 90 secondi. La demo è la chiamata commerciale.",
     keywords:
-      "engagement dipendenti, standup async, kudos, riconoscimento, benessere, open source, self-hosted, status log, crescita, soddisfazione, HR people-first",
+      "HR open source, riconoscimento, engagement, standup async, kudos, peer recognition, status log, crescita, singolo contributor, IC, self-hosted",
     ogImage: "/og/og-hero-it.png",
   },
 
@@ -99,7 +99,7 @@ export const it: Dict = {
     bullets: [
       {
         k: "Tutto mockato",
-        v: "Ogni dipendente, commessa, documento e richiesta vive nel tuo browser. Niente viene inviato a un server.",
+        v: "Ogni dipendente, kudos, status e richiesta vive nel tuo browser. Niente viene inviato a un server.",
       },
       {
         k: "Apri in un click",
@@ -116,24 +116,24 @@ export const it: Dict = {
 
   hero: {
     badge: "Open source · FSL-1.1-MIT · beta pubblica · costruito in pubblico",
-    eyebrow: "Open source · per le persone del tuo team",
-    titleBefore: "Software per le",
-    titleItalic: "persone",
-    titleAfter: ", non per i numeri.",
+    eyebrow: "Workspace open source · costruito per il singolo",
+    titleBefore: "Il tuo lavoro migliore è",
+    titleItalic: "sepolto",
+    titleAfter: " in un thread Slack di marzo.",
     body: [
-      "Lo strumento HR che guarda a come stai, non a quante ore hai tracciato. ",
-      "Status log async",
-      ", ",
-      "crescita",
-      " e ",
-      "riconoscimento",
-      " — costruiti attorno ai momenti che contano per un team. Niente timesheet, niente code di approvazione, niente buste paga. Open source su GitHub, self-host o hosted — niente chiamata commerciale per vedere il prodotto.",
+      "Pulse HR lo tira fuori. Workspace open source per il singolo — ",
+      "tre righe",
+      " in Status Log, ",
+      "un kudos",
+      " che resta, ",
+      "una traccia di crescita",
+      " che non vive nel foglio Excel di qualcun altro. Self-host in 90 secondi con `docker compose up`, oppure ci paghi per ospitarlo noi. La demo è la chiamata commerciale.",
     ],
-    ctaPrimary: "Prova gratis — i tuoi dati, la tua infra",
+    ctaPrimary: "Apri la demo",
     ctaGithub: "Leggi il sorgente",
     ctaTour: "Guarda l'app",
-    chip1: "Niente timesheet · Niente code di approvazione",
-    chip2: "Standup async · Pulse continuo",
+    chip1: "Tre righe · Un kudos · Prova",
+    chip2: "Niente demo gate · Niente tier enterprise",
     chip3: "Self-host o hosted — scegli tu",
     newThisQuarter: "Novità di questo trimestre",
   },
@@ -166,31 +166,31 @@ export const it: Dict = {
     },
     subtitle: {
       before:
-        "Lattice lega tutto agli OKR. 15Five gira attorno ai moduli 1:1. Officevibe è solo una macchina da survey. Pulse è l'unico tool people-first dove il sorgente, la roadmap, il changelog e i prezzi sono tutti pubblici — ",
-      link: "vedi il confronto onesto",
+        "Qualunque app HR paghi la tua azienda, il tuo lavoro migliore scivola comunque via dal canale Slack entro venerdì. Pulse è l'unico workspace dove sorgente, roadmap, changelog e prezzi sono pubblici, costruito attorno al singolo invece che attorno all'organigramma — ",
+      link: "vedi cosa miglioriamo",
       after: ".",
     },
     source: "Sorgente",
     values: [
       {
-        k: "Aperto",
-        p: "Il sorgente completo è su GitHub sotto FSL-1.1-MIT, che diventa MIT tra due anni. Leggi ogni riga, eseguilo sul tuo hardware, forkalo se ti deludiamo. Nessuna feature nascosta dietro una chiamata commerciale.",
+        k: "Employee-first",
+        p: "Il singolo è l'utente. Il manager è un testimone. Ogni feature si misura su quanto rende migliori i tuoi primi dieci minuti, più forte la prova del tuo lavoro, più facile la conversazione successiva. La chat raw resta con te — solo gli aggregati salgono.",
+        cta: "Status Log · Kudos · Growth",
+      },
+      {
+        k: "Open source",
+        p: "Sorgente completo su GitHub sotto FSL-1.1-MIT, che diventa MIT pura tra due anni. Leggi ogni riga, self-host in 90 secondi con `docker compose up`, forkalo se ti deludiamo. Niente demo gate. Niente tier enterprise con feature in più.",
         cta: "LICENSE · self-host · contribuisci",
       },
       {
-        k: "Trasparente",
-        p: "Roadmap pubblica. Changelog pubblico. Prezzi pubblici. Commit pubblici. Pubblichiamo cosa spediamo, cosa rompiamo e perché scegliamo quello che scegliamo. Performance in pubblico, errori inclusi.",
-        cta: "Roadmap · changelog · commit",
-      },
-      {
-        k: "Tuo",
-        p: "I tuoi dati, la tua infra, libero di andartene. Self-host su Docker, Helm o Terraform. Esporta tutto in un formato pulito, sempre, senza chiedere. Lasciare Pulse è facile — è proprio quello che vogliamo.",
-        cta: "Self-host · export · niente lock-in",
-      },
-      {
         k: "Costruito da chi lo usa",
-        p: "La roadmap è plasmata dalle pull request, non dai product manager. Pulse copre la metà 'persone' dell'HR — status, crescita, kudos, benessere — e sta deliberatamente fuori dall'altra metà. I maintainer lo usano su se stessi ogni giorno; ogni release esce perché serviva davvero a qualcuno.",
-        cta: "Superfici · PR · feedback board",
+        p: "La roadmap è plasmata dalle pull request, non dai product manager. Davide e Niccolò usano Pulse su se stessi ogni giorno — se una frizione dura più di una settimana, viene risolta. \"Richiesta di feature\" e \"pull request\" sono due strade per la stessa roadmap.",
+        cta: "Roadmap · PR · feedback board",
+      },
+      {
+        k: "Tuo, in qualsiasi momento",
+        p: "I tuoi dati, la tua infra, libero di andartene. Self-host su Docker, Helm o Terraform. Esporta tutto in un formato pulito, senza chiedere. Il segnale più forte che stiamo facendo bene è che lasciare Pulse è facile.",
+        cta: "Self-host · export · niente lock-in",
       },
     ],
   },
@@ -351,11 +351,11 @@ export const it: Dict = {
     items: [
       {
         q: "Pulse sostituisce il mio HRIS?",
-        a: "No, ed è proprio il senso. Pulse è la metà 'persone' dell'HR — status, crescita, kudos, benessere. Paghe, rilevazione ore, recruiting, allocazione progetti e firma documenti vivono negli strumenti costruiti per loro. Pulse gira a fianco al tuo HRIS, non al suo posto. Molti team usano Pulse insieme a BambooHR, Personio, Rippling o Factorial; l'ambito ristretto è quello che lo rende davvero usabile.",
+        a: "No, ed è proprio il senso. Pulse è la metà 'persone' dell'HR — status, crescita, kudos, benessere. Paghe, rilevazione ore, recruiting, allocazione progetti e firma documenti vivono negli strumenti costruiti per loro. Pulse gira a fianco al tuo HRIS, non al suo posto. È l'ambito ristretto che fa sì che il team lo apra davvero.",
       },
       {
         q: "Come è fatto il pricing di Pulse HR?",
-        a: "Per dipendente attivo, al mese. Un unico piano trasparente con tutte le funzionalità incluse — nessun blocco 'parla col sales', niente upsell per le feature Labs, niente add-on per l'accesso API o SSO. Gratis per i primi 5 dipendenti attivi, per sempre. Con fatturazione annuale 15% di sconto.",
+        a: "Due strade. Self-host è €0 — open source completo, lo esegui sulla tua infra. Hosted è €6 per dipendente attivo al mese — stesso prodotto, ti gestiamo noi uptime e backup. Niente demo gate, niente tier enterprise con feature in più, niente add-on per accesso API o SSO. Con fatturazione annuale 15% di sconto.",
       },
       {
         q: "È SOC 2 / GDPR compliant?",
@@ -510,11 +510,11 @@ export const it: Dict = {
   },
 
   cta: {
-    titleLine1: "Software per le",
-    titleItalic: "persone",
-    titleAfter: ", non per i numeri.",
-    body: "Gratis per sempre in self-host. Gratis per i primi 5 dipendenti su Pulse hosted. Nessuna carta di credito. Nessuna chiamata commerciale per vedere il prodotto. Esporta tutto con un click — sempre.",
-    primary: "Prova gratis",
+    titleLine1: "Rendi il tuo lavoro",
+    titleItalic: "impossibile",
+    titleAfter: " da ignorare.",
+    body: "Self-host del sorgente open source sulla tua infra in 90 secondi, oppure ci paghi per ospitarlo. Niente demo gate. Niente tier enterprise con feature in più. Esporta tutto con un click — sempre.",
+    primary: "Apri la demo",
     secondary: "Leggi il sorgente",
   },
 
@@ -533,19 +533,19 @@ export const it: Dict = {
   },
 
   indexPage: {
-    title: "Pulse HR — software per le persone, non per i numeri",
+    title: "Pulse HR — workspace open source per il singolo",
   },
 
   productPage: {
-    title: "Tour del prodotto — panoramica people-first Pulse HR",
+    title: "Tour del prodotto — otto superfici costruite attorno al singolo",
     description:
-      "Status Log, Crescita, Kudos, Moments, Pulse, check-in del carico, diario di riposo, People Insights — otto superfici, tutte su come sta il tuo team. Open source sotto FSL. Keyboard-first, self-hostabile.",
+      "Status Log, Crescita, Kudos, Moments, Pulse, check-in del carico, diario di riposo, People Insights — otto superfici che rendono visibile il lavoro del singolo. Open source sotto FSL. Keyboard-first, self-host in 90 secondi.",
     eyebrow: "Tour del prodotto",
     titleLine1: "Otto superfici,",
     titleItalic: "una sensazione",
     titleAfter: ": essere visti.",
     body:
-      "Ogni superficie parla di una persona, non di un processo. Status, kudos, crescita, riposo, carico — letti in secondi, agiti in secondi. Ore e paghe vivono negli strumenti costruiti per loro. Lì non competiamo.",
+      "Ogni superficie parla di una persona, non di un processo. Status, kudos, crescita, riposo, carico — scritti in secondi, letti in secondi. Ore e paghe vivono negli strumenti costruiti per loro. Lì non competiamo.",
   },
 
   labsPage: {
@@ -576,7 +576,7 @@ export const it: Dict = {
   contactPage: {
     title: "Contatti — email, GitHub Discussions, segnalazioni sicurezza",
     description:
-      "Un'email per ogni scopo. GitHub Discussions per tutto ciò che vuoi chiedere in pubblico. Segnalazioni di sicurezza su security@. Niente chatbot funnel, nessun form \"book a demo\" che finisce a un BDR.",
+      "Un'email per ogni scopo. GitHub Discussions per tutto ciò che vuoi chiedere in pubblico. Segnalazioni di sicurezza su security@. Niente chatbot funnel, niente demo gate, nessun form \"parla col sales\" che finisce a un BDR.",
     eyebrow: "Contatti",
     titleLine1: "Un'inbox vera.",
     titleItalic: "Persone",
@@ -629,21 +629,21 @@ export const it: Dict = {
   },
 
   pricingPage: {
-    title: "Prezzi — gratis fino a 5, €6/dipendente dopo, self-host €0",
+    title: "Prezzi — self-host gratis, hosted €6/dipendente, niente tier enterprise",
     description:
-      "Un piano trasparente per dipendente attivo, al mese. Gratis per i primi 5, per sempre, con tutte le funzionalità incluse. Self-host gratis sotto FSL.",
+      "Due strade per pagare. Self-host è €0 — open source completo, lo esegui tu. Hosted è €6 per dipendente attivo al mese, con tutte le funzionalità incluse. Niente demo gate, niente tier enterprise con feature in più.",
   },
 
   vsPage: {
-    title: "Pulse HR vs Lattice, 15Five, Officevibe — confronto onesto",
+    title: "Pulse HR vs il pattern dell'invisibilità — cosa miglioriamo",
     description:
-      "Confronto onesto di Pulse HR con i big dell'engagement — Lattice, 15Five, Officevibe e Culture Amp. Open source, ambito, async-first, sentiment manager-safe, prezzi — più dove ognuno di loro è genuinamente più forte.",
+      "Non competiamo con altri tool HR. Competiamo col documento condiviso che nessuno apre, il kudos che scivola via, la review che riassume un anno in un textarea. Otto forme che il problema prende, e cosa Pulse rilascia per ognuna — più le perdite oneste.",
   },
 
   blogPage: {
-    title: "Blog — HR open source, ops commessa, workflow agent-native",
+    title: "Blog — OSS, visibilità del singolo, workflow agent-native",
     description:
-      "Calendario editoriale a 6 mesi. Deep dive ingegneristici sullo stack HR open source, operazioni finanziarie commessa-first per società di servizi, workflow agent-native per dati HR.",
+      "Calendario editoriale a 6 mesi. Deep dive ingegneristici sullo stack HR open source, note dal campo su come rendere visibile il lavoro del singolo, workflow agent-native per i dati delle persone.",
   },
 
   securityPage: {
