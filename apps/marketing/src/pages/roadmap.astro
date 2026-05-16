@@ -4,10 +4,11 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Map, Zap, Clock, Calendar, Github, ExternalLink } from "lucide-astro";
+import { useI18n } from "../i18n";
 
-const title = "Roadmap — what's shipping now, next, and later at Pulse HR";
-const description =
-  "A public, honest roadmap. Three lanes — Now (in flight this quarter), Next (scoped for the quarter after), Later (on our radar). Shipped items are in the changelog.";
+const { t } = useI18n(Astro);
+const title = t.roadmapPage.title;
+const description = t.roadmapPage.description;
 const path = "/roadmap";
 
 const NOW = [

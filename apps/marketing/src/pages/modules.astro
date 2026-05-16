@@ -15,10 +15,11 @@ import {
   BarChart3,
   ArrowRight,
 } from "lucide-astro";
+import { useI18n } from "../i18n";
 
-const title = "What's inside — eight surfaces about how your team is doing";
-const description =
-  "Pulse is narrow on purpose. Eight surfaces — Status Log, Growth, Kudos, Moments, Workload check-in, Leave journal, Pulse, People Insights — all about a person, not a process. Hours and payroll belong in the tools built for them.";
+const { t } = useI18n(Astro);
+const title = t.modulesPage.title;
+const description = t.modulesPage.description;
 const path = "/modules";
 
 const surfaces = [

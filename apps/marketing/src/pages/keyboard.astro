@@ -4,10 +4,11 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Keyboard, Command, Mic, WifiOff, ArrowRight } from "lucide-astro";
+import { useI18n } from "../i18n";
 
-const title = "Keyboard-first — ⌘K, ⌘J command bar, voice, offline PWA";
-const description =
-  "⌘K opens a fuzzy finder, ⌘J opens a command bar that runs a local intent parser. Voice dictation, 40+ shortcuts, works offline as a PWA. No LLM call, no cross-tenant training — every keystroke stays on your device.";
+const { t } = useI18n(Astro);
+const title = t.keyboardPage.title;
+const description = t.keyboardPage.description;
 const path = "/keyboard";
 
 const shortcuts = [

@@ -4,10 +4,11 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Shield, Lock, Globe2, Key, FileSearch, AlertTriangle, CheckCircle2, Clock } from "lucide-astro";
+import { useI18n } from "../i18n";
 
-const title = "Security — how Pulse HR protects your data";
-const description =
-  "SOC 2 Type II in progress, GDPR-by-design, EU data residency, encryption at rest + in transit, full audit log, responsible-disclosure program. Technical detail, not a brochure.";
+const { t } = useI18n(Astro);
+const title = t.securityPage.title;
+const description = t.securityPage.description;
 const path = "/security";
 
 type CertStatus = "certified" | "in-progress" | "roadmap";

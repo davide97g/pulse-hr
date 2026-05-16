@@ -4,10 +4,11 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Scale, CheckCircle2, XCircle, MinusCircle, AlertTriangle } from "lucide-astro";
+import { useI18n } from "../i18n";
 
-const title = "Pulse HR vs Lattice, 15Five, Officevibe — honest comparison";
-const description =
-  "Honest comparison of Pulse HR against the engagement-tool incumbents — Lattice, 15Five, Officevibe and Culture Amp. Open source, scope, async-first, manager-safe sentiment, pricing — plus where each of them is genuinely stronger.";
+const { t } = useI18n(Astro);
+const title = t.vsPage.title;
+const description = t.vsPage.description;
 const path = "/vs";
 
 const VENDORS = [

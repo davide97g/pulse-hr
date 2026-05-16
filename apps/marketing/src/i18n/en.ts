@@ -602,6 +602,60 @@ export const en = {
     ],
   },
 
+  pricingPage: {
+    title: "Pricing — free for 5, €6/employee after, self-host €0",
+    description:
+      "One transparent tier per active employee per month. Free for the first 5, forever, with every feature included. Self-hosted is free under FSL.",
+  },
+
+  vsPage: {
+    title: "Pulse HR vs Lattice, 15Five, Officevibe — honest comparison",
+    description:
+      "Honest comparison of Pulse HR against the engagement-tool incumbents — Lattice, 15Five, Officevibe and Culture Amp. Open source, scope, async-first, manager-safe sentiment, pricing — plus where each of them is genuinely stronger.",
+  },
+
+  blogPage: {
+    title: "Blog — OSS HR, commessa ops, agent-native workflows",
+    description:
+      "A 6-month publishing schedule. Engineering deep-dives on the open-source HR stack, commessa-first financial operations for services firms, and agent-native workflows for HR data.",
+  },
+
+  securityPage: {
+    title: "Security — how Pulse HR protects your data",
+    description:
+      "SOC 2 Type II in progress, GDPR-by-design, EU data residency, encryption at rest + in transit, full audit log, responsible-disclosure program. Technical detail, not a brochure.",
+  },
+
+  openSourcePage: {
+    title: "Open source — Pulse HR is on GitHub under FSL-1.1-MIT",
+    description:
+      "The full source of Pulse HR is public on GitHub under the Functional Source License (converts to MIT after 2 years). Read it, run it, fork it, contribute back. Self-host on Docker or Kubernetes.",
+  },
+
+  ecosystemPage: {
+    title: "Ecosystem — Slack, Google Calendar, SSO, webhooks, REST API",
+    description:
+      "Lightweight by design. Slack notifications, Google Calendar OOO sync, SSO via Okta/Google, plus a public REST API with webhooks and maintained SDKs for TypeScript / Python / Go. Your hours, payroll and project tools already have homes — Pulse plugs in where it adds signal.",
+  },
+
+  keyboardPage: {
+    title: "Keyboard-first — ⌘K, ⌘J command bar, voice, offline PWA",
+    description:
+      "⌘K opens a fuzzy finder, ⌘J opens a command bar that runs a local intent parser. Voice dictation, 40+ shortcuts, works offline as a PWA. No LLM call, no cross-tenant training — every keystroke stays on your device.",
+  },
+
+  modulesPage: {
+    title: "What's inside — eight surfaces about how your team is doing",
+    description:
+      "Pulse is narrow on purpose. Eight surfaces — Status Log, Growth, Kudos, Moments, Workload check-in, Leave journal, Pulse, People Insights — all about a person, not a process. Hours and payroll belong in the tools built for them.",
+  },
+
+  roadmapPage: {
+    title: "Roadmap — what's shipping now, next, and later at Pulse HR",
+    description:
+      "A public, honest roadmap. Three lanes — Now (in flight this quarter), Next (scoped for the quarter after), Later (on our radar). Shipped items are in the changelog.",
+  },
+
   stub: {
     badge: "Coming soon",
     back: "Back to Pulse HR",

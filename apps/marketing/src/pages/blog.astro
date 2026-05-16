@@ -4,10 +4,11 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Newspaper, Calendar, Github } from "lucide-astro";
+import { useI18n } from "../i18n";
 
-const title = "Blog — OSS HR, commessa ops, agent-native workflows";
-const description =
-  "A 6-month publishing schedule. Engineering deep-dives on the open-source HR stack, commessa-first financial operations for services firms, and agent-native workflows for HR data.";
+const { t } = useI18n(Astro);
+const title = t.blogPage.title;
+const description = t.blogPage.description;
 const path = "/blog";
 
 // Four tracks × six months = 24 planned slots. We publish 12 (two per month,

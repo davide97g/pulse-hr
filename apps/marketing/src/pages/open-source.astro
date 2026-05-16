@@ -4,12 +4,13 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Code2, Github, FileText, Server, GitFork, CheckCircle2 } from "lucide-astro";
+import { useI18n } from "../i18n";
 
 const GITHUB_REPO = "davide97g/pulse-hr";
 
-const title = "Open source — Pulse HR is on GitHub under FSL-1.1-MIT";
-const description =
-  "The full source of Pulse HR is public on GitHub under the Functional Source License (converts to MIT after 2 years). Read it, run it, fork it, contribute back. Self-host on Docker or Kubernetes.";
+const { t } = useI18n(Astro);
+const title = t.openSourcePage.title;
+const description = t.openSourcePage.description;
 const path = "/open-source";
 
 const faq = [

@@ -4,10 +4,11 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Plug, Webhook, Code, BookOpen } from "lucide-astro";
+import { useI18n } from "../i18n";
 
-const title = "Ecosystem — Slack, Google Calendar, SSO, webhooks, REST API";
-const description =
-  "Lightweight by design. Slack notifications, Google Calendar OOO sync, SSO via Okta/Google, plus a public REST API with webhooks and maintained SDKs for TypeScript / Python / Go. Your hours, payroll and project tools already have homes — Pulse plugs in where it adds signal.";
+const { t } = useI18n(Astro);
+const title = t.ecosystemPage.title;
+const description = t.ecosystemPage.description;
 const path = "/ecosystem";
 
 // status: "live" | "beta" | "roadmap"

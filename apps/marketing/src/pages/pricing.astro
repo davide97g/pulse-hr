@@ -4,10 +4,11 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Cta from "../components/Cta.astro";
 import { Check, ArrowRight, Github, Server, Tag, Info } from "lucide-astro";
+import { useI18n } from "../i18n";
 
-const title = "Pricing — free for 5, €6/employee after, self-host €0";
-const description =
-  "One transparent tier per active employee per month. Free for the first 5, forever, with every feature included. Self-hosted is free under FSL.";
+const { t } = useI18n(Astro);
+const title = t.pricingPage.title;
+const description = t.pricingPage.description;
 
 const path = "/pricing";
 
