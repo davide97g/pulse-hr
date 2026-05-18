@@ -7,6 +7,7 @@ function buildLoginUrl(): string {
   return `${APP_URL}/login?redirect_url=${redirect}`;
 }
 
+type Drift = 1 | 2 | 3 | 4 | 5 | 6;
 const FLOATS: {
   x: string;
   y: string;
@@ -15,13 +16,22 @@ const FLOATS: {
   body: string;
   kind: "IDEA" | "COMMENT" | "IMPROVEMENT";
   votes: number;
+  drift: Drift;
+  dur: number;
+  delay: number;
 }[] = [
-  { x: "4%", y: "14%", w: 220, rot: -4, body: "add a calendar view dedicated to holiday coverage", kind: "IDEA", votes: 24 },
-  { x: "76%", y: "11%", w: 250, rot: 3, body: "/reports — this does not make any sense to me", kind: "COMMENT", votes: 7 },
-  { x: "5%", y: "62%", w: 240, rot: 5, body: "approve button should be primary lime green", kind: "IMPROVEMENT", votes: 12 },
-  { x: "78%", y: "60%", w: 210, rot: -6, body: "org chart is missing — make it", kind: "IDEA", votes: 31 },
-  { x: "16%", y: "39%", w: 180, rot: 8, body: "/people/e11", kind: "COMMENT", votes: 2 },
-  { x: "86%", y: "40%", w: 170, rot: -3, body: 'unify "/calendar" route', kind: "IDEA", votes: 5 },
+  { x: "3%",  y: "12%", w: 220, rot: -4, body: "add a calendar view dedicated to holiday coverage", kind: "IDEA",        votes: 24, drift: 1, dur: 22, delay: 0 },
+  { x: "76%", y: "10%", w: 250, rot: 3,  body: "/reports — this does not make any sense to me",     kind: "COMMENT",     votes: 7,  drift: 2, dur: 26, delay: -4 },
+  { x: "4%",  y: "60%", w: 240, rot: 5,  body: "approve button should be primary lime green",       kind: "IMPROVEMENT", votes: 12, drift: 3, dur: 30, delay: -9 },
+  { x: "78%", y: "58%", w: 210, rot: -6, body: "org chart is missing — make it",                    kind: "IDEA",        votes: 31, drift: 4, dur: 24, delay: -2 },
+  { x: "14%", y: "38%", w: 180, rot: 8,  body: "/people/e11",                                       kind: "COMMENT",     votes: 2,  drift: 5, dur: 28, delay: -12 },
+  { x: "86%", y: "39%", w: 170, rot: -3, body: 'unify "/calendar" route',                           kind: "IDEA",        votes: 5,  drift: 6, dur: 32, delay: -6 },
+  { x: "32%", y: "6%",  w: 190, rot: -7, body: "dark mode for the printable payslip pls",           kind: "IMPROVEMENT", votes: 9,  drift: 2, dur: 34, delay: -14 },
+  { x: "62%", y: "82%", w: 200, rot: 6,  body: "kudos: marta carried Q3 retro",                     kind: "COMMENT",     votes: 18, drift: 3, dur: 27, delay: -7 },
+  { x: "8%",  y: "84%", w: 175, rot: -8, body: "saturation heatmap should warn at 90%",             kind: "IDEA",        votes: 14, drift: 1, dur: 29, delay: -11 },
+  { x: "88%", y: "82%", w: 165, rot: 4,  body: "/log ⌘⏎ does not always publish",                   kind: "COMMENT",     votes: 3,  drift: 5, dur: 25, delay: -3 },
+  { x: "44%", y: "88%", w: 215, rot: -2, body: "expose growth challenges API to managers",          kind: "IDEA",        votes: 22, drift: 4, dur: 31, delay: -16 },
+  { x: "50%", y: "2%",  w: 195, rot: 5,  body: "moments ticker is too fast on 4k",                  kind: "IMPROVEMENT", votes: 6,  drift: 6, dur: 33, delay: -5 },
 ];
 
 const KIND_BG: Record<string, { bg: string; fg: string }> = {
@@ -80,26 +90,37 @@ export function SignedOutGate() {
           return (
             <div
               key={i}
-              className="absolute rounded-2xl border p-3.5 backdrop-blur-md shadow-[0_24px_60px_-20px_rgba(0,0,0,.6)]"
+              className="absolute will-change-transform feedback-drift"
               style={{
                 left: f.x,
                 top: f.y,
-                width: f.w,
-                transform: `rotate(${f.rot}deg)`,
-                background: "rgba(20,18,14,.7)",
-                borderColor: "rgba(255,255,255,.08)",
+                animationName: `feedback-drift-${f.drift}`,
+                animationDuration: `${f.dur}s`,
+                animationDelay: `${f.delay}s`,
+                animationTimingFunction: "ease-in-out",
+                animationIterationCount: "infinite",
               }}
             >
-              <div className="flex items-center gap-2 mb-2">
-                <span
-                  className="px-1.5 py-0.5 rounded-full font-mono text-[9px] tracking-[0.1em] font-semibold"
-                  style={{ background: k.bg, color: k.fg }}
-                >
-                  {f.kind}
-                </span>
-                <span className="font-mono text-[9px] text-white/45">▲ {f.votes}</span>
+              <div
+                className="rounded-2xl border p-3.5 backdrop-blur-md shadow-[0_24px_60px_-20px_rgba(0,0,0,.6)]"
+                style={{
+                  width: f.w,
+                  transform: `rotate(${f.rot}deg)`,
+                  background: "rgba(20,18,14,.7)",
+                  borderColor: "rgba(255,255,255,.08)",
+                }}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span
+                    className="px-1.5 py-0.5 rounded-full font-mono text-[9px] tracking-[0.1em] font-semibold"
+                    style={{ background: k.bg, color: k.fg }}
+                  >
+                    {f.kind}
+                  </span>
+                  <span className="font-mono text-[9px] text-white/45">▲ {f.votes}</span>
+                </div>
+                <div className="text-[12px] leading-snug text-white/80">{f.body}</div>
               </div>
-              <div className="text-[12px] leading-snug text-white/80">{f.body}</div>
             </div>
           );
         })}
