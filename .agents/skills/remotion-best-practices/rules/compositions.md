@@ -7,26 +7,6 @@ metadata:
 
 A `<Composition>` defines the component, width, height, fps and duration of a renderable video.
 
-It normally is placed in the `src/Root.tsx` file.
-
-```tsx
-import { Composition } from "remotion";
-import { MyComposition } from "./MyComposition";
-
-export const RemotionRoot = () => {
-  return (
-    <Composition
-      id="MyComposition"
-      component={MyComposition}
-      durationInFrames={100}
-      fps={30}
-      width={1080}
-      height={1080}
-    />
-  );
-};
-```
-
 ## Default Props
 
 Pass `defaultProps` to provide initial values for your component.  
@@ -93,7 +73,9 @@ import { Still } from "remotion";
 import { Thumbnail } from "./Thumbnail";
 
 export const RemotionRoot = () => {
-  return <Still id="Thumbnail" component={Thumbnail} width={1280} height={720} />;
+  return (
+    <Still id="Thumbnail" component={Thumbnail} width={1280} height={720} />
+  );
 };
 ```
 
@@ -105,10 +87,9 @@ Use `calculateMetadata` to make dimensions, duration, or props dynamic based on 
 import { Composition, CalculateMetadataFunction } from "remotion";
 import { MyComposition, MyCompositionProps } from "./MyComposition";
 
-const calculateMetadata: CalculateMetadataFunction<MyCompositionProps> = async ({
-  props,
-  abortSignal,
-}) => {
+const calculateMetadata: CalculateMetadataFunction<
+  MyCompositionProps
+> = async ({ props, abortSignal }) => {
   const data = await fetch(`https://api.example.com/video/${props.videoId}`, {
     signal: abortSignal,
   }).then((res) => res.json());
@@ -127,7 +108,6 @@ export const RemotionRoot = () => {
     <Composition
       id="MyComposition"
       component={MyComposition}
-      durationInFrames={100} // Placeholder, will be overridden
       fps={30}
       width={1080}
       height={1080}
