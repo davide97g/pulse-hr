@@ -57,7 +57,6 @@ import {
 const APP_URL = import.meta.env.VITE_APP_URL ?? "https://app.pulsehr.it";
 
 export const Route = createFileRoute("/")({
-  head: () => ({ meta: [{ title: "Feedback — Pulse" }] }),
   validateSearch: (s: Record<string, unknown>) => s as Record<string, string>,
   component: FeedbackBoard,
 });

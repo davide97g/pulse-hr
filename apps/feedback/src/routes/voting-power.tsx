@@ -18,7 +18,6 @@ import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/voting-power")({
-  head: () => ({ meta: [{ title: "Voting Power — Pulse HR" }] }),
   component: VotingPowerPage,
 });
 

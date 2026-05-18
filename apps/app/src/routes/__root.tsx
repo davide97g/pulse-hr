@@ -10,6 +10,7 @@ import { SidebarFeaturesProvider } from "@/components/app/SidebarFeaturesContext
 import { Toaster } from "@pulse-hr/ui/primitives/sonner";
 import { useWorkspaceStatus } from "@/lib/workspace";
 import { trackGaPageViewIfConsented } from "@/lib/ga";
+import { setPageMeta } from "@/lib/page-meta";
 // Side-effect imports: register persistent tables + wire their sync into
 // mock-data.ts. Each new entity table goes here so it's loaded before any
 // route mounts and consumers can rely on hooks/imports working at first paint.
@@ -69,26 +70,41 @@ function NotFoundComponent() {
   );
 }
 
-const TITLE_BY_PATH: Record<string, string> = {
-  "/": "Dashboard — Pulse HR",
-  "/login": "Sign in — Pulse HR",
-  "/signup": "Create your workspace — Pulse HR",
-  "/people": "Employees — Pulse HR",
-  "/org": "Org chart — Pulse HR",
-  "/recruiting": "Recruiting — Pulse HR",
-  "/time": "Time & attendance — Pulse HR",
-  "/leave": "Leave — Pulse HR",
-  "/documents": "Documents — Pulse HR",
-  "/reports": "Reports — Pulse HR",
-  "/settings": "Settings — Pulse HR",
-  "/announcements": "Announcements — Pulse HR",
-  "/kudos": "Kudos — Pulse HR",
-  "/skills": "Skills — Pulse HR",
-  "/skills/me": "Your skills — Pulse HR",
-  "/skills/team": "Team skills — Pulse HR",
-  "/feedback": "Feedback — Pulse",
-  "/welcome": "Welcome — Pulse HR",
-  "/admin/modules": "Modules — Pulse HR",
+// Per-path meta. Description only matters for public/shareable routes
+// (login, signup, welcome, feedback, comment, proposal) — internal pages
+// are auth-walled, so the body is purely UX, not crawler-facing.
+const META_BY_PATH: Record<string, { title: string; description?: string }> = {
+  "/": { title: "Dashboard — Pulse HR" },
+  "/login": {
+    title: "Sign in — Pulse HR",
+    description: "Sign in to your Pulse HR workspace. The people-first workspace for async teams.",
+  },
+  "/signup": {
+    title: "Create your workspace — Pulse HR",
+    description: "Spin up a Pulse HR workspace in seconds. Status Log, Growth, Kudos, Moments.",
+  },
+  "/welcome": {
+    title: "Welcome — Pulse HR",
+    description: "Pick your persona and set up your Pulse HR workspace.",
+  },
+  "/feedback": {
+    title: "Feedback — Pulse HR",
+    description: "Share ideas, upvote what matters, track proposals.",
+  },
+  "/people": { title: "Employees — Pulse HR" },
+  "/org": { title: "Org chart — Pulse HR" },
+  "/recruiting": { title: "Recruiting — Pulse HR" },
+  "/time": { title: "Time & attendance — Pulse HR" },
+  "/leave": { title: "Leave — Pulse HR" },
+  "/documents": { title: "Documents — Pulse HR" },
+  "/reports": { title: "Reports — Pulse HR" },
+  "/settings": { title: "Settings — Pulse HR" },
+  "/announcements": { title: "Announcements — Pulse HR" },
+  "/kudos": { title: "Kudos — Pulse HR" },
+  "/skills": { title: "Skills — Pulse HR" },
+  "/skills/me": { title: "Your skills — Pulse HR" },
+  "/skills/team": { title: "Team skills — Pulse HR" },
+  "/admin/modules": { title: "Modules — Pulse HR" },
 };
 
 function RootComponent() {
@@ -103,8 +119,14 @@ function RootComponent() {
   const isWelcome = location.pathname === WELCOME_PATH;
   const workspace = useWorkspaceStatus();
   useEffect(() => {
-    const t = TITLE_BY_PATH[location.pathname] ?? "Pulse HR";
-    if (typeof document !== "undefined") document.title = t;
+    // Dynamic routes (/comment/$id, /proposal/$id) set their own meta from
+    // loaded content — skip them here so we don't clobber with a stale title.
+    const isDynamic =
+      location.pathname.startsWith("/comment/") ||
+      location.pathname.startsWith("/proposal/");
+    if (isDynamic) return;
+    const meta = META_BY_PATH[location.pathname] ?? { title: "Pulse HR" };
+    setPageMeta(meta);
   }, [location.pathname]);
 
   useEffect(() => {

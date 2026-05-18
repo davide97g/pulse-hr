@@ -8,6 +8,26 @@ import { CompanyProfileProvider } from "@/components/app/CompanyProfileStore";
 import { RoleOverrideProvider } from "@/lib/role-override";
 import { trackGaPageViewIfConsented } from "@/lib/analytics";
 import { SignedOutGate } from "@/components/feedback/SignedOutGate";
+import { setPageMeta } from "@/lib/page-meta";
+
+// Per-path meta. Description only matters for direct-link / social-share UX
+// since every page is noindex'd. Dynamic routes (/proposals/$id, /comments/$id)
+// fall through to the default and rely on the route component to set richer
+// meta once content loads.
+const META_BY_PATH: Record<string, { title: string; description?: string }> = {
+  "/": {
+    title: "Pulse Feedback — the wall that listens",
+    description: "Share ideas, upvote what matters, track proposals.",
+  },
+  "/welcome": {
+    title: "Welcome — Pulse Feedback",
+    description: "Set up your Pulse Feedback profile.",
+  },
+  "/voting-power": {
+    title: "Voting Power — Pulse Feedback",
+    description: "See how your voting weight is calculated on Pulse Feedback.",
+  },
+};
 
 function RootComponent() {
   const { isLoaded, isSignedIn } = useAuth();
@@ -15,6 +35,17 @@ function RootComponent() {
 
   useEffect(() => {
     trackGaPageViewIfConsented();
+  }, [pathname]);
+
+  useEffect(() => {
+    const isDynamic =
+      pathname.startsWith("/proposals/") || pathname.startsWith("/comments/");
+    if (isDynamic) return;
+    const meta = META_BY_PATH[pathname] ?? {
+      title: "Pulse Feedback",
+      description: "Share ideas, upvote what matters, track proposals.",
+    };
+    setPageMeta(meta);
   }, [pathname]);
 
   if (!isLoaded) {

@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { useUrlParam } from "@/lib/useUrlParam";
 
 export const Route = createFileRoute("/welcome")({
-  head: () => ({ meta: [{ title: "Welcome — Pulse Feedback" }] }),
   component: WelcomePage,
 });
 
