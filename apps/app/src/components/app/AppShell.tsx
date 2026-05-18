@@ -27,7 +27,6 @@ import { QuickActionProvider, useQuickAction } from "./QuickActions";
 import { ShortcutSheet } from "./ShortcutSheet";
 import { ChangelogGate } from "./ChangelogGate";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-import { TourLauncher } from "./TourLauncher";
 import { TourProvider } from "./TourProvider";
 import { VotingPowerChip } from "./VotingPowerChip";
 import {
@@ -347,9 +346,6 @@ function AppShellInner() {
                 )}
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
-                    if (item.kind === "tours") {
-                      return <TourLauncher key="tours" collapsed={collapsed} />;
-                    }
                     const active = item.external
                       ? false
                       : item.to === "/"
@@ -532,9 +528,6 @@ function AppShellInner() {
                 )}
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
-                    if (item.kind === "tours") {
-                      return <TourLauncher key="tours" collapsed={false} />;
-                    }
                     const active = item.external
                       ? false
                       : item.to === "/"

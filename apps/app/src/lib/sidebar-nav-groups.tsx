@@ -28,11 +28,6 @@ export type SidebarNavItem = {
   unreadDot?: boolean;
   /** When true, `to` is an absolute URL — render as <a> instead of a router Link. */
   external?: boolean;
-  /**
-   * When set, the item renders a custom widget instead of a link. Currently
-   * used for the Help & tours dropdown trigger that lives inline in the nav.
-   */
-  kind?: "tours";
 };
 
 export type SidebarNavGroup = { label: string; items: SidebarNavItem[]; accent?: boolean };
@@ -100,10 +95,9 @@ export function buildSidebarNavGroups(
     });
   }
   workspace.items.push({
-    to: "#help",
+    to: "/tours",
     label: "Help & tours",
     icon: LifeBuoy,
-    kind: "tours",
   });
   workspace.items.push({
     to: "/settings",

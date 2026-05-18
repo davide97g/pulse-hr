@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as ToursRouteImport } from './routes/tours'
 import { Route as TimeRouteImport } from './routes/time'
 import { Route as SkillsRouteImport } from './routes/skills'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -65,6 +66,11 @@ import { Route as OfficesOfficeIdRoomIdRouteImport } from './routes/offices.$off
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToursRoute = ToursRouteImport.update({
+  id: '/tours',
+  path: '/tours',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TimeRoute = TimeRouteImport.update({
@@ -350,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/skills': typeof SkillsRouteWithChildren
   '/time': typeof TimeRoute
+  '/tours': typeof ToursRoute
   '/welcome': typeof WelcomeRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRoute
   '/admin/modules': typeof AdminModulesRoute
@@ -400,6 +407,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/time': typeof TimeRoute
+  '/tours': typeof ToursRoute
   '/welcome': typeof WelcomeRoute
   '/activities/$activityId': typeof ActivitiesActivityIdRoute
   '/admin/modules': typeof AdminModulesRoute
@@ -455,6 +463,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/skills': typeof SkillsRouteWithChildren
   '/time': typeof TimeRoute
+  '/tours': typeof ToursRoute
   '/welcome': typeof WelcomeRoute
   '/activities_/$activityId': typeof ActivitiesActivityIdRoute
   '/admin/modules': typeof AdminModulesRoute
@@ -511,6 +520,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/skills'
     | '/time'
+    | '/tours'
     | '/welcome'
     | '/activities/$activityId'
     | '/admin/modules'
@@ -561,6 +571,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/signup'
     | '/time'
+    | '/tours'
     | '/welcome'
     | '/activities/$activityId'
     | '/admin/modules'
@@ -615,6 +626,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/skills'
     | '/time'
+    | '/tours'
     | '/welcome'
     | '/activities_/$activityId'
     | '/admin/modules'
@@ -670,6 +682,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SkillsRoute: typeof SkillsRouteWithChildren
   TimeRoute: typeof TimeRoute
+  ToursRoute: typeof ToursRoute
   WelcomeRoute: typeof WelcomeRoute
   ActivitiesActivityIdRoute: typeof ActivitiesActivityIdRoute
   AdminModulesRoute: typeof AdminModulesRoute
@@ -689,6 +702,13 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tours': {
+      id: '/tours'
+      path: '/tours'
+      fullPath: '/tours'
+      preLoaderRoute: typeof ToursRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/time': {
@@ -1163,6 +1183,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SkillsRoute: SkillsRouteWithChildren,
   TimeRoute: TimeRoute,
+  ToursRoute: ToursRoute,
   WelcomeRoute: WelcomeRoute,
   ActivitiesActivityIdRoute: ActivitiesActivityIdRoute,
   AdminModulesRoute: AdminModulesRoute,
