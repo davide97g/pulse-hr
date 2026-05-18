@@ -16,6 +16,7 @@ import { useAuth } from "@clerk/react";
 import { toast } from "sonner";
 import {
   ANON_USER_ID,
+  COMPANY_SIZE_HEADCOUNT,
   createWorkspace,
   getNamespace,
   isWorkspaceReady,
@@ -26,6 +27,8 @@ import {
   useWorkspaceStatus,
 } from "@/lib/workspace";
 import type { CompanySize } from "@/lib/workspace";
+import { generateEmployees } from "@/lib/generate-employees";
+import { employeesTable } from "@/lib/tables/employees";
 
 export function WorkspaceMount() {
   const { isLoaded, userId } = useAuth();
@@ -58,8 +61,24 @@ export function WorkspaceMount() {
       rawSize === "small" || rawSize === "medium" || rawSize === "large"
         ? rawSize
         : null;
-    createWorkspace(name);
+    // Size MUST be written before createWorkspace — seed tables read
+    // getCompanySize() at seed time to scale headcount and density.
     if (size) setCompanySize(size);
+    createWorkspace(name);
+    // The default workspace seed only ships ~13 mock employees. Match the
+    // WelcomeEditorial flow by also generating a roster sized to the picked
+    // size bucket. Without this, the dashboard / constellation / saturation
+    // visualizations still show the small default roster even when the URL
+    // requested a large workspace.
+    if (size) {
+      const headcount = COMPANY_SIZE_HEADCOUNT[size];
+      const roster = generateEmployees({
+        workspaceName: name,
+        manualEmployees: [],
+        count: headcount,
+      });
+      employeesTable.replace(roster);
+    }
     url.searchParams.delete("demo_workspace");
     url.searchParams.delete("size");
     window.history.replaceState({}, "", url.toString());

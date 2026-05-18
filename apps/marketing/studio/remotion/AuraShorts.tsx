@@ -16,17 +16,17 @@ import musicData from "../audio/aura-phonk.music.json" with { type: "json" };
 
 // ── Aura-Farming Phonk Reel — 30s @ 30fps ─────────────────────────────────
 //
-// 4 product acts with internal zoom/click/hover choreography (the captures
-// themselves carry the motion). Composition adds: caption stings, brand
-// orb pulses on detected drops, transition flashes, gentle film grade.
+// 3 product acts (no onboarding — workspace is already seeded at 100
+// employees via the dev bypass). Each act has internal zoom/click/hover
+// choreography inside the capture; composition adds caption stings, brand
+// flares on detected drops, transition flashes, gentle film grade.
 //
 // Beat sheet (frames @ 30fps):
-//   0–90    (3s)  ColdOpen        "your team has an *aura*."
-//   90–270  (6s)  Act 1 · Onboard "*100* teammates. setup. *go*."
-//   270–420 (5s)  Act 2 · Constellation "feel the *room*."
-//   420–660 (8s)  Act 3 · Skills me→team  "skills. *mine*. *team*. *mapped*."
-//   660–810 (5s)  Act 4 · Saturation     "see *burnout* before it bites."
-//   810–900 (3s)  Outro           "*hr*. rebuilt."
+//   0–90    (3s)  ColdOpen           "your team has an *aura*."
+//   90–300  (7s)  Act 1 · Constellation  "feel the *room*."
+//   300–660 (12s) Act 2 · Skills me→team "skills. *mine*. *team*. *mapped*."
+//   660–810 (5s)  Act 3 · Saturation     "see *burnout* before it bites."
+//   810–900 (3s)  Outro              "*hr*. rebuilt."
 
 const FPS = 30;
 const COLD_OPEN_FRAMES = 90;
@@ -104,33 +104,23 @@ interface ActConfig {
 
 const ACTS: ActConfig[] = [
   {
-    spec: "aura-onboarding",
-    startFrame: 24,
-    durationFrames: 180,
-    caption: "*100* teammates. setup. *go*.",
-    captionInFrame: 60,
-    captionOutFrame: 156,
-    zoom: { from: 1.0, to: 1.025 },
-    drift: { fromY: 0, toY: 1 },
-  },
-  {
     spec: "aura-constellation",
-    startFrame: 24,
-    durationFrames: 150,
+    startFrame: 18,
+    durationFrames: 210,
     caption: "feel the *room*.",
     captionInFrame: 48,
-    captionOutFrame: 132,
-    zoom: { from: 1.0, to: 1.03 },
+    captionOutFrame: 186,
+    zoom: { from: 1.0, to: 1.035 },
     drift: { fromY: 0, toY: -1 },
   },
   {
     spec: "aura-skills-tour",
     startFrame: 24,
-    durationFrames: 240,
+    durationFrames: 360,
     caption: "skills. *mine*, *team*, *mapped*.",
-    captionInFrame: 78,
-    captionOutFrame: 216,
-    zoom: { from: 1.0, to: 1.035 },
+    captionInFrame: 90,
+    captionOutFrame: 336,
+    zoom: { from: 1.0, to: 1.04 },
     drift: { fromY: -1, toY: 1 },
   },
   {
