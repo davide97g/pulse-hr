@@ -23,9 +23,9 @@ import musicData from "../audio/aura-phonk.music.json" with { type: "json" };
 //
 // Beat sheet (frames @ 30fps):
 //   0–90    (3s)  ColdOpen           "your team has an *aura*."
-//   90–300  (7s)  Act 1 · Constellation  "feel the *room*."
-//   300–660 (12s) Act 2 · Skills me→team "skills. *mine*. *team*. *mapped*."
-//   660–810 (5s)  Act 3 · Saturation     "see *burnout* before it bites."
+//   90–240  (5s)  Act 1 · Constellation  "feel the *room*."
+//   240–720 (16s) Act 2 · Skills me→team→matrix-hover  "skills. *mine*. *team*. *mapped*."
+//   720–810 (3s)  Act 3 · Saturation     "see *burnout* before it bites."
 //   810–900 (3s)  Outro              "*hr*. rebuilt."
 
 const FPS = 30;
@@ -106,30 +106,30 @@ const ACTS: ActConfig[] = [
   {
     spec: "aura-constellation",
     startFrame: 18,
-    durationFrames: 210,
+    durationFrames: 150,
     caption: "feel the *room*.",
-    captionInFrame: 48,
-    captionOutFrame: 186,
+    captionInFrame: 36,
+    captionOutFrame: 130,
     zoom: { from: 1.0, to: 1.035 },
     drift: { fromY: 0, toY: -1 },
   },
   {
     spec: "aura-skills-tour",
-    startFrame: 24,
-    durationFrames: 360,
+    startFrame: 18,
+    durationFrames: 480,
     caption: "skills. *mine*, *team*, *mapped*.",
     captionInFrame: 90,
-    captionOutFrame: 336,
+    captionOutFrame: 456,
     zoom: { from: 1.0, to: 1.04 },
     drift: { fromY: -1, toY: 1 },
   },
   {
     spec: "aura-saturation",
     startFrame: 24,
-    durationFrames: 150,
+    durationFrames: 90,
     caption: "see *burnout* before it bites.",
-    captionInFrame: 48,
-    captionOutFrame: 132,
+    captionInFrame: 18,
+    captionOutFrame: 72,
     zoom: { from: 1.0, to: 1.03 },
     drift: { fromY: 1, toY: -1 },
   },
@@ -199,18 +199,91 @@ export const AuraShorts: React.FC<AuraShortsProps> = ({
   );
 };
 
-// ─── Static low-opacity halo — no pulse ───────────────────────────────────
+// ─── Static low-opacity halo — no pulse. Cream-tinted, very subtle. ──────
 const BackgroundHalo: React.FC = () => (
   <AbsoluteFill
     aria-hidden
     style={{
       pointerEvents: "none",
-      background: `radial-gradient(ellipse 65% 55% at 50% 50%, ${color.brand}1a 0%, transparent 70%)`,
+      background: `radial-gradient(ellipse 65% 55% at 50% 50%, rgba(242,242,238,0.06) 0%, transparent 70%)`,
     }}
   />
 );
 
-// ─── DropFlare — animates only inside detected drop windows ───────────────
+// ─── Official Pulse HR brand mark — 3 concentric rings + center dot ──────
+// Mirrors packages/ui/src/atoms/BrandMark.tsx but uses cream/grey tones
+// instead of lime, and accepts a pulse intensity (0..1) for breathing.
+const BrandRing: React.FC<{
+  size: number;
+  pulse: number;
+  opacity: number;
+}> = ({ size, pulse, opacity }) => {
+  const stroke = color.cream;
+  const dotColor = color.cream;
+  // Outer ring breathes with the pulse — radius grows + opacity fades.
+  const outerR = 23 + pulse * 3.5;
+  const outerOpacity = 0.55 - pulse * 0.35;
+  const midR = 15 + pulse * 1.6;
+  const dotR = 5 + pulse * 1.2;
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      style={{
+        opacity,
+        filter: `drop-shadow(0 0 ${10 + pulse * 18}px rgba(242,242,238,0.35))`,
+      }}
+    >
+      <circle
+        cx="32"
+        cy="32"
+        r={outerR}
+        fill="none"
+        stroke={stroke}
+        strokeWidth="1.1"
+        opacity={Math.max(0, outerOpacity)}
+      />
+      <circle
+        cx="32"
+        cy="32"
+        r={midR}
+        fill="none"
+        stroke={stroke}
+        strokeWidth="1.6"
+        opacity="0.85"
+      />
+      <circle cx="32" cy="32" r={dotR} fill={dotColor} />
+    </svg>
+  );
+};
+
+// Wordmark — italic Fraunces "pulse·hr", per BrandMark atom.
+const BrandWordmark: React.FC<{ size: number; opacity: number }> = ({
+  size,
+  opacity,
+}) => (
+  <span
+    style={{
+      fontFamily: fonts.display,
+      fontStyle: "italic",
+      fontWeight: 500,
+      letterSpacing: "-0.04em",
+      fontSize: size,
+      lineHeight: 1,
+      color: color.cream,
+      opacity,
+      display: "inline-flex",
+      alignItems: "baseline",
+    }}
+  >
+    pulse
+    <span style={{ fontStyle: "normal", fontWeight: 400 }}>·</span>
+    hr
+  </span>
+);
+
+// ─── DropFlare — animates only inside detected drop windows. Cream not lime. ─
 const DropFlare: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -222,8 +295,8 @@ const DropFlare: React.FC = () => {
       aria-hidden
       style={{
         pointerEvents: "none",
-        background: `radial-gradient(ellipse 72% 50% at 50% 50%, ${color.brand}55 0%, transparent 65%)`,
-        opacity: env * 0.55,
+        background: `radial-gradient(ellipse 72% 50% at 50% 50%, rgba(242,242,238,0.32) 0%, transparent 65%)`,
+        opacity: env * 0.6,
         mixBlendMode: "screen",
       }}
     />
@@ -252,6 +325,11 @@ const ColdOpen: React.FC = () => {
 
   const tokens = tokenize("your team has an *aura*.");
 
+  // Soft, slow breathing pulse so the rings expand even when no drop is
+  // active. Combines a sine wave with the beat-driven kick on drops.
+  const breath = 0.45 + 0.45 * Math.sin((frame / fps) * Math.PI * 0.9);
+  const ringPulse = Math.min(1, breath * 0.55 + tick * 0.8 + env * 0.5);
+
   return (
     <AbsoluteFill
       style={{
@@ -259,27 +337,25 @@ const ColdOpen: React.FC = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: 48,
+        gap: 36,
         padding: "0 56px",
         opacity: exit,
       }}
     >
       <div
         style={{
-          width: 240,
-          height: 240,
-          borderRadius: 9999,
-          background: `radial-gradient(circle at 50% 50%, ${color.brand} 0%, ${color.brand}55 40%, transparent 70%)`,
-          boxShadow: `0 0 ${60 + tick * 80}px ${color.brand}, 0 0 ${160 + env * 220}px ${color.brand}55`,
-          transform: `scale(${0.75 + orbSpring * 0.25 + tick * 0.08})`,
+          transform: `scale(${0.78 + orbSpring * 0.22 + tick * 0.06})`,
           opacity: orbSpring,
         }}
-      />
+      >
+        <BrandRing size={260} pulse={ringPulse} opacity={1} />
+      </div>
+      <BrandWordmark size={64} opacity={Math.min(1, orbSpring * 1.1)} />
       <Tagline
         tokens={tokens}
         baseFrame={frame}
-        enterAt={18}
-        fontSize={96}
+        enterAt={22}
+        fontSize={84}
         accentBoost={tick}
       />
     </AbsoluteFill>
@@ -423,22 +499,25 @@ const Outro: React.FC<{ actStartFrame: number }> = ({ actStartFrame }) => {
         padding: "0 56px",
       }}
     >
-      <div
-        style={{
-          width: 170,
-          height: 170,
-          borderRadius: 9999,
-          background: `radial-gradient(circle at 50% 50%, ${color.brand} 0%, ${color.brand}66 40%, transparent 70%)`,
-          boxShadow: `0 0 ${50 + tick * 80}px ${color.brand}, 0 0 ${150 + env * 160}px ${color.brand}55`,
-          transform: `scale(${0.72 + orbSpring * 0.28 + tick * 0.06})`,
-          opacity: orbSpring,
-        }}
-      />
+      {(() => {
+        const breath = 0.4 + 0.45 * Math.sin(((frame + 6) / fps) * Math.PI * 0.9);
+        const ringPulse = Math.min(1, breath * 0.5 + tick * 0.85 + env * 0.55);
+        return (
+          <div
+            style={{
+              transform: `scale(${0.74 + orbSpring * 0.26 + tick * 0.05})`,
+              opacity: orbSpring,
+            }}
+          >
+            <BrandRing size={200} pulse={ringPulse} opacity={1} />
+          </div>
+        );
+      })()}
       <Tagline
         tokens={tokens}
         baseFrame={frame}
         enterAt={6}
-        fontSize={104}
+        fontSize={96}
         accentBoost={tick}
       />
       <div
@@ -448,7 +527,7 @@ const Outro: React.FC<{ actStartFrame: number }> = ({ actStartFrame }) => {
           gap: 14,
           padding: "13px 24px",
           borderRadius: 9999,
-          border: `1px solid ${color.brand}88`,
+          border: "1px solid rgba(242,242,238,0.35)",
           background: "rgba(255,255,255,0.04)",
           backdropFilter: "blur(10px)",
           WebkitBackdropFilter: "blur(10px)",
@@ -456,19 +535,20 @@ const Outro: React.FC<{ actStartFrame: number }> = ({ actStartFrame }) => {
           fontSize: 24,
           letterSpacing: "0.26em",
           textTransform: "uppercase",
+          color: color.cream,
           opacity: chipSpring,
           transform: `translateY(${(1 - chipSpring) * 12}px) scale(${interpolate(chipSpring, [0, 1], [0.92, 1])})`,
-          boxShadow: `0 0 ${22 + tick * 32}px ${color.brand}66`,
+          boxShadow: `0 0 ${16 + tick * 24}px rgba(242,242,238,0.18)`,
         }}
       >
         <span
           style={{
-            width: 13,
-            height: 13,
+            width: 11,
+            height: 11,
             borderRadius: 9999,
             backgroundColor: color.brand,
-            boxShadow: `0 0 ${20 + tick * 22}px ${color.brand}`,
-            transform: `scale(${0.85 + tick * 0.25})`,
+            boxShadow: `0 0 ${12 + tick * 18}px ${color.brand}aa`,
+            transform: `scale(${0.85 + tick * 0.2})`,
           }}
         />
         pulsehr.it
@@ -522,7 +602,7 @@ const Tagline: React.FC<{
               fontStyle: tok.brand ? "italic" : "normal",
               color: tok.brand ? color.brand : color.cream,
               textShadow: tok.brand
-                ? `0 0 ${24 + accentBoost * 28}px ${color.brand}cc, 0 0 10px ${color.brand}`
+                ? `0 0 ${12 + accentBoost * 18}px ${color.brand}66, 0 0 6px ${color.brand}88`
                 : "none",
             }}
           >
@@ -572,7 +652,7 @@ const CaptionLine: React.FC<{
               fontStyle: tok.brand ? "italic" : "normal",
               color: tok.brand ? color.brand : color.cream,
               textShadow: tok.brand
-                ? `0 0 ${26 + accentBoost * 24}px ${color.brand}cc, 0 0 10px ${color.brand}, 0 6px 28px rgba(0,0,0,0.7)`
+                ? `0 0 ${12 + accentBoost * 18}px ${color.brand}66, 0 0 6px ${color.brand}88, 0 6px 28px rgba(0,0,0,0.7)`
                 : "0 6px 28px rgba(0,0,0,0.7)",
             }}
           >

@@ -25,7 +25,7 @@
     "enabled": true,
     "style": "default",
     "rippleColor": "#9b87ff",
-    "transitionMs": 280
+    "transitionMs": 240
   },
   "localStorage": {
     "pulse.theme": "dark",
@@ -44,24 +44,24 @@
     },
     {
       "action": "wait",
-      "ms": 900,
+      "ms": 700,
       "waitFor": "[role=tablist][aria-label='Skills view']",
       "timeout": 12000
     },
-    { "action": "wait", "ms": 700 },
+    { "action": "wait", "ms": 350 },
     {
       "action": "zoom",
-      "scale": 1.45,
-      "duration": 320
+      "scale": 1.35,
+      "duration": 260
     },
-    { "action": "wait", "ms": 1300 },
-    { "action": "zoom", "scale": 1, "duration": 220 },
-    { "action": "wait", "ms": 300 },
+    { "action": "wait", "ms": 600 },
+    { "action": "zoom", "scale": 1, "duration": 200 },
+    { "action": "wait", "ms": 200 },
     {
       "action": "zoom",
       "selector": "[role=tablist][aria-label='Skills view'] >> [role=tab]:has-text('Team')",
       "scale": 1.5,
-      "duration": 240
+      "duration": 220
     },
     {
       "action": "click",
@@ -69,25 +69,25 @@
     },
     {
       "action": "wait",
-      "ms": 700,
-      "waitFor": "button:text-is(\"Heatmap\")",
+      "ms": 450,
+      "waitFor": "text=PEOPLE × SKILLS",
       "timeout": 10000
     },
-    { "action": "wait", "ms": 600 },
+    { "action": "wait", "ms": 200 },
     {
       "action": "zoom",
-      "scale": 1.5,
-      "duration": 320
+      "selector": "text=PEOPLE × SKILLS",
+      "scale": 1.25,
+      "duration": 500
     },
-    { "action": "wait", "ms": 1300 },
+    { "action": "wait", "ms": 1800 },
     {
-      "action": "scroll",
-      "y": 220,
-      "speed": 0.7,
-      "pauseAfter": 320
+      "action": "hover",
+      "selector": ".hover\\:scale-110 >> nth=3",
+      "pauseAfter": 2000
     },
-    { "action": "wait", "ms": 900 },
-    { "action": "zoom", "scale": 1, "duration": 260 },
-    { "action": "wait", "ms": 400 }
+    { "action": "wait", "ms": 500 },
+    { "action": "zoom", "scale": 1, "duration": 220 },
+    { "action": "wait", "ms": 250 }
   ]
 }
