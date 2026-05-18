@@ -2,6 +2,13 @@
 import { useI18n } from "../i18n";
 import { ArrowRight, Youtube } from "lucide-astro";
 const { t, href } = useI18n(Astro);
+
+const YT_ID = "ZagF6Ri3eks";
+// Silent autoplaying loop. `playlist=<id>` is required for loop to take effect.
+// modestbranding + rel=0 keep the chrome quiet; controls=0 hides the bar (users
+// have the YouTube CTA below to open the full player).
+const ytSrc = `https://www.youtube-nocookie.com/embed/${YT_ID}?autoplay=1&mute=1&loop=1&playlist=${YT_ID}&controls=0&modestbranding=1&rel=0&playsinline=1&disablekb=1&iv_load_policy=3`;
+const ytPoster = `https://i.ytimg.com/vi/${YT_ID}/maxresdefault.jpg`;
 ---
 
 <section class="relative" aria-label={t.heroReel.ariaLabel}>
@@ -10,21 +17,18 @@ const { t, href } = useI18n(Astro);
       class="relative rounded-2xl border border-white/10 overflow-hidden bg-[#0b0b0d] shadow-[0_40px_120px_-20px_rgba(180,255,57,0.25)] hero-reel"
       style="aspect-ratio: 16 / 9;"
     >
-      <video
-        class="hero-reel-video w-full h-full object-cover block"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="metadata"
-        poster="/studio/poster.jpg"
-        aria-label={t.heroReel.videoLabel}
-      >
-        <source src="/studio/teaser-v2.mp4" type="video/mp4" />
-      </video>
+      <iframe
+        class="hero-reel-video absolute inset-0 h-full w-full block"
+        src={ytSrc}
+        title={t.heroReel.videoLabel}
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="autoplay; encrypted-media; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
       <img
         class="hero-reel-poster w-full h-full object-cover absolute inset-0"
-        src="/studio/poster.jpg"
+        src={ytPoster}
         alt={t.heroReel.posterAlt}
         width="1920"
         height="1080"
