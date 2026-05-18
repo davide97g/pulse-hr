@@ -26,6 +26,7 @@ import { workspace } from "./openapi/workspace.ts";
 import { cron } from "./openapi/cron.ts";
 import { admin } from "./openapi/admin.ts";
 import { userProfile } from "./openapi/user-profile.ts";
+import { publicApi } from "./openapi/public.ts";
 
 export const app = createApp();
 
@@ -51,6 +52,7 @@ app.route("/workspace", workspace);
 app.route("/cron", cron);
 app.route("/admin", admin);
 app.route("/user-profile", userProfile);
+app.route("/public", publicApi);
 
 app.get("/", (c) => c.json({ ok: true, service: "@pulse-hr/api" }));
 

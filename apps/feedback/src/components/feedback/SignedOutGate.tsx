@@ -1,10 +1,44 @@
+import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import { apiFetch } from "../../lib/api-client";
 
 const APP_URL = import.meta.env.VITE_APP_URL ?? "https://app.pulsehr.it";
 
 function buildLoginUrl(): string {
   const redirect = encodeURIComponent(window.location.href);
   return `${APP_URL}/login?redirect_url=${redirect}`;
+}
+
+type PublicStats = {
+  proposals: number;
+  votesThisWeek: number;
+  shipped: number;
+};
+
+/** Pretty-print a vote count: 1234 → "1.2K", 980 → "980". */
+function formatVotes(n: number): string {
+  if (n < 1000) return String(n);
+  const k = n / 1000;
+  return `${k >= 10 ? k.toFixed(0) : k.toFixed(1)}K`;
+}
+
+function usePublicStats(): PublicStats | null {
+  const [stats, setStats] = useState<PublicStats | null>(null);
+
+  useEffect(() => {
+    const ctrl = new AbortController();
+    apiFetch("/public/feedback-stats", { signal: ctrl.signal })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: PublicStats | null) => {
+        if (data) setStats(data);
+      })
+      .catch(() => {
+        // Silent fail — footer just stays in placeholder state.
+      });
+    return () => ctrl.abort();
+  }, []);
+
+  return stats;
 }
 
 type Drift = 1 | 2 | 3 | 4 | 5 | 6;
@@ -42,6 +76,7 @@ const KIND_BG: Record<string, { bg: string; fg: string }> = {
 
 export function SignedOutGate() {
   const onSignIn = () => window.location.assign(buildLoginUrl());
+  const stats = usePublicStats();
 
   return (
     <div className="room-dark relative min-h-dvh md:overflow-hidden bg-[#0a0907] text-[var(--paper)] flex flex-col pl-safe pr-safe">
@@ -53,24 +88,35 @@ export function SignedOutGate() {
             className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.12em] uppercase font-mono text-white/55 hover:text-white tap-target no-tap-highlight h-9"
           >
             <ArrowLeft className="h-3 w-3 shrink-0" />
-            <span className="hidden sm:inline">Back to Pulse</span>
+            <span className="hidden sm:inline">Open app</span>
           </a>
           <span className="h-4 w-px bg-white/10 hidden sm:block" />
-          <div className="flex items-baseline gap-2 min-w-0">
-            <span className="font-display text-lg tracking-[-0.02em]">Pulse</span>
-            <span
-              className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--spark)] shrink-0"
-              style={{ boxShadow: "0 0 12px var(--spark)" }}
-            />
-            <span className="font-display text-lg tracking-[-0.02em] text-[var(--spark)]">
-              Feedback
-            </span>
-            <span className="ml-1.5 hidden sm:inline px-1.5 py-0.5 rounded-full bg-[var(--spark)]/12 text-[var(--spark)] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold">
+          <div
+            className="flex items-baseline gap-1.5 min-w-0"
+            style={{
+              fontFamily: "Fraunces, ui-serif, serif",
+              fontStyle: "italic",
+              fontWeight: 500,
+              letterSpacing: "-0.04em",
+              fontSize: 22,
+              lineHeight: 1,
+            }}
+            aria-label="Pulse Feedback"
+          >
+            <span>pulse</span>
+            <span style={{ fontStyle: "normal", fontWeight: 400 }}>·</span>
+            <span className="text-[var(--spark)]">feedback</span>
+            <span className="ml-1.5 hidden sm:inline px-1.5 py-0.5 rounded-full bg-[var(--spark)]/12 text-[var(--spark)] font-mono text-[9px] tracking-[0.12em] uppercase font-semibold not-italic">
               Labs · Beta
             </span>
           </div>
         </div>
-        <span className="text-[10px] tracking-[0.12em] uppercase font-mono text-white/40 hidden sm:inline">
+        <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] tracking-[0.12em] uppercase font-mono text-white/40">
+          <span
+            aria-hidden
+            className="h-1.5 w-1.5 rounded-full bg-[var(--spark)]/80 pulse-soft"
+            style={{ boxShadow: "0 0 8px var(--spark)" }}
+          />
           not signed in
         </span>
       </div>
@@ -137,7 +183,7 @@ export function SignedOutGate() {
         <div className="max-w-md mx-auto md:mx-0 w-full">
         <div className="flex items-center gap-2.5 mb-7 md:mb-9">
           <span
-            className="h-2 w-2 rounded-full bg-[var(--spark)]"
+            className="h-2 w-2 rounded-full bg-[var(--spark)] pulse-soft"
             style={{ boxShadow: "0 0 16px var(--spark)" }}
           />
           <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--spark)] font-semibold">
@@ -180,26 +226,22 @@ export function SignedOutGate() {
         >
           Create an account →
         </a>
-
-        <div className="mt-7 md:mt-8 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-          <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-white/40">
-            Bitrock · Workspace
-          </span>
-          <span className="text-[11px] text-white/50">
-            Need an invite?{" "}
-            <span className="text-[var(--spark)] cursor-pointer">Ask your admin →</span>
-          </span>
-        </div>
         </div>
       </div>
 
       {/* Bottom strip */}
       <div className="md:absolute md:inset-x-0 md:bottom-0 md:h-12 md:z-10 md:px-6 px-4 py-3 md:py-0 pb-safe border-t border-white/5 bg-black/40 flex items-center justify-center gap-3 md:gap-6 text-[9px] md:text-[10px] tracking-[0.12em] uppercase font-mono flex-wrap">
-        <span className="text-white/55">247 proposals</span>
+        <span className="text-white/55">
+          {stats ? stats.proposals.toLocaleString("en-US") : "—"} proposals
+        </span>
         <span className="text-white/15">·</span>
-        <span className="text-white/55">1.2K votes this week</span>
+        <span className="text-white/55">
+          {stats ? formatVotes(stats.votesThisWeek) : "—"} votes this week
+        </span>
         <span className="text-white/15 hidden md:inline">·</span>
-        <span className="text-white/55 hidden md:inline">34 shipped</span>
+        <span className="text-white/55 hidden md:inline">
+          {stats ? stats.shipped.toLocaleString("en-US") : "—"} shipped
+        </span>
         <span className="text-white/15 hidden md:inline">·</span>
         <span className="text-[var(--spark)] hidden md:inline">↓ scroll once you're in</span>
       </div>

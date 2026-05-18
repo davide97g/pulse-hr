@@ -228,6 +228,30 @@
     }
   }
 
+  /*
+   * Generic "heartbeat" pulse — breathes scale + opacity on the element itself
+   * (distinct from `.pulse-dot`, which paints an expanding ring around the
+   * element). Use for live-indicator dots, status chips, or any small accent
+   * that should feel alive without drawing too much attention.
+   */
+  .pulse-soft {
+    animation: pulseSoft 1.4s ease-in-out infinite;
+    transform-origin: center;
+    will-change: transform, opacity, filter;
+  }
+  @keyframes pulseSoft {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+      filter: brightness(1);
+    }
+    50% {
+      transform: scale(1.45);
+      opacity: 0.55;
+      filter: brightness(1.25);
+    }
+  }
+
   .grid-bg {
     background-image:
       linear-gradient(
@@ -436,6 +460,7 @@
     .press-scale,
     .shimmer,
     .pulse-dot::after,
+    .pulse-soft,
     .new-badge,
     .iridescent-border::before,
     .confetti-piece,
