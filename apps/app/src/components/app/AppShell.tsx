@@ -119,7 +119,7 @@ const SIDEBAR_ITEM_KEYS: Record<string, string> = {
   Documents: "nav.documents",
   Docs: "nav.documents",
   Modules: "nav.settings",
-  "Help & tours": "topbar.assistant",
+  "Help & tours": "tours.page.title",
   Settings: "nav.settings",
 };
 function localizeGroupLabel(label: string, t: (k: string) => string): string {

@@ -14,6 +14,7 @@ import { Button } from "@pulse-hr/ui/primitives/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@pulse-hr/ui/primitives/tabs";
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
 import { EmptyState } from "@pulse-hr/ui/atoms/EmptyState";
+import { useT } from "@pulse-hr/shared/i18n";
 import { EditorialPage } from "@/components/app/layouts/EditorialPage";
 import { useTour } from "@/components/app/TourProvider";
 import {
@@ -21,12 +22,14 @@ import {
   getCompletedTours,
   TOURS,
   TOURS_BY_WORKFLOW,
+  WORKFLOW_LABEL_KEYS,
   type Tour,
+  type TourWorkflow,
 } from "@/lib/tours";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/tours")({
-  head: () => ({ meta: [{ title: "Tour & guide — Pulse HR" }] }),
+  head: () => ({ meta: [{ title: "Help & tours — Pulse HR" }] }),
   component: ToursPage,
 });
 
@@ -45,6 +48,7 @@ function useCompletedTours(): { ids: Set<string>; refresh: () => void } {
 }
 
 function ToursPage() {
+  const t = useT();
   const { start } = useTour();
   const { ids: completedIds, refresh } = useCompletedTours();
   const [tab, setTab] = useState<"todo" | "done">("todo");
@@ -55,8 +59,8 @@ function ToursPage() {
     let done = 0;
     const grouped: Record<string, Tour[]> = {};
     for (const [workflow, tours] of Object.entries(TOURS_BY_WORKFLOW)) {
-      const filtered = tours.filter((t) => {
-        const isDone = completedIds.has(t.id);
+      const filtered = tours.filter((tour) => {
+        const isDone = completedIds.has(tour.id);
         if (isDone) done++;
         else todo++;
         return tab === "done" ? isDone : !isDone;
@@ -66,7 +70,7 @@ function ToursPage() {
     return { todoCount: todo, doneCount: done, byWorkflowFiltered: grouped };
   }, [completedIds, tab]);
 
-  const selectedTour = selectedId ? TOURS.find((t) => t.id === selectedId) ?? null : null;
+  const selectedTour = selectedId ? TOURS.find((tour) => tour.id === selectedId) ?? null : null;
   const handlePlay = (id: string) => {
     setSelectedId(null);
     start(id);
@@ -79,18 +83,12 @@ function ToursPage() {
   return (
     <>
       <EditorialPage
-        eyebrowText="GUIDE INTERATTIVE"
-        eyebrowNote={
-          <span>
-            · <span className="tabular-nums">{doneCount}</span> COMPLETATI ·{" "}
-            <span className="tabular-nums">{todoCount}</span> DA FARE
-          </span>
-        }
-        title="Help & tours"
+        eyebrowText={t("tours.page.eyebrow")}
+        eyebrowNote={t("tours.page.eyebrow.note", { done: doneCount, todo: todoCount })}
+        title={t("tours.page.title")}
         summary={
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Brevi tour guidati per orientarti in Pulse HR — sidebar, status log,
-            timesheet, recruiting, kudos. Riprendi quando vuoi: niente è bloccante.
+            {t("tours.page.summary")}
           </p>
         }
         actions={
@@ -102,7 +100,7 @@ function ToursPage() {
               className="h-8 text-xs"
             >
               <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-              Resetta tutto
+              {t("tours.page.resetAll")}
             </Button>
           ) : null
         }
@@ -110,13 +108,13 @@ function ToursPage() {
         <Tabs value={tab} onValueChange={(v) => setTab(v as "todo" | "done")}>
           <TabsList className="mb-6">
             <TabsTrigger value="todo" className="gap-2">
-              Da fare
+              {t("tours.tab.todo")}
               <span className="tabular-nums text-xs text-muted-foreground">
                 {todoCount}
               </span>
             </TabsTrigger>
             <TabsTrigger value="done" className="gap-2">
-              Completati
+              {t("tours.tab.done")}
               <span className="tabular-nums text-xs text-muted-foreground">
                 {doneCount}
               </span>
@@ -127,31 +125,39 @@ function ToursPage() {
             {Object.keys(byWorkflowFiltered).length === 0 ? (
               <EmptyState
                 icon={tab === "done" ? <Sparkles className="h-6 w-6" /> : <PlayCircle className="h-6 w-6" />}
-                title={tab === "done" ? "Nessun tour completato" : "Tutto fatto"}
+                title={
+                  tab === "done"
+                    ? t("tours.empty.done.title")
+                    : t("tours.empty.todo.title")
+                }
                 description={
                   tab === "done"
-                    ? "Avvia un tour dalla scheda “Da fare” per vederlo apparire qui."
-                    : "Hai completato tutti i tour disponibili. Puoi resettarli e rifarli quando vuoi."
+                    ? t("tours.empty.done.desc")
+                    : t("tours.empty.todo.desc")
                 }
               />
             ) : (
               <div className="flex flex-col gap-8">
-                {Object.entries(byWorkflowFiltered).map(([workflow, tours]) => (
-                  <section key={workflow} className="flex flex-col gap-3">
-                    <div className="t-mono text-muted-foreground px-1">{workflow}</div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {tours.map((t) => (
-                        <TourCard
-                          key={t.id}
-                          tour={t}
-                          done={completedIds.has(t.id)}
-                          onOpen={() => setSelectedId(t.id)}
-                          onPlay={() => handlePlay(t.id)}
-                        />
-                      ))}
-                    </div>
-                  </section>
-                ))}
+                {(Object.entries(byWorkflowFiltered) as [TourWorkflow, Tour[]][]).map(
+                  ([workflow, tours]) => (
+                    <section key={workflow} className="flex flex-col gap-3">
+                      <div className="t-mono text-muted-foreground px-1">
+                        {t(WORKFLOW_LABEL_KEYS[workflow])}
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {tours.map((tour) => (
+                          <TourCard
+                            key={tour.id}
+                            tour={tour}
+                            done={completedIds.has(tour.id)}
+                            onOpen={() => setSelectedId(tour.id)}
+                            onPlay={() => handlePlay(tour.id)}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  ),
+                )}
               </div>
             )}
           </TabsContent>
@@ -161,7 +167,7 @@ function ToursPage() {
       <SidePanel
         open={!!selectedTour}
         onClose={() => setSelectedId(null)}
-        title={selectedTour?.name}
+        title={selectedTour ? t(selectedTour.name) : undefined}
         width={520}
       >
         {selectedTour && (
@@ -187,6 +193,8 @@ function TourCard({
   onOpen: () => void;
   onPlay: () => void;
 }) {
+  const t = useT();
+  const stepsKey = tour.steps.length === 1 ? "tours.card.steps_one" : "tours.card.steps_other";
   return (
     <Card
       onClick={onOpen}
@@ -206,17 +214,17 @@ function TourCard({
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <div className="font-semibold text-[15px] leading-tight">{tour.name}</div>
+            <div className="font-semibold text-[15px] leading-tight">{t(tour.name)}</div>
             <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
               <Clock className="h-3 w-3" />
               {tour.duration}
             </span>
             <span className="text-[11px] text-muted-foreground">
-              · {tour.steps.length} step
+              · {t(stepsKey, { count: tour.steps.length })}
             </span>
           </div>
           <p className="text-sm text-muted-foreground leading-snug mt-1 line-clamp-2">
-            {tour.summary}
+            {t(tour.summary)}
           </p>
         </div>
         <ChevronRight className="h-4 w-4 text-muted-foreground/60 mt-1 shrink-0 transition-transform group-hover:translate-x-0.5" />
@@ -232,7 +240,7 @@ function TourCard({
           }}
         >
           <PlayCircle className="h-3.5 w-3.5 mr-1.5" />
-          {done ? "Rifai" : "Avvia"}
+          {done ? t("tours.action.replay") : t("tours.action.start")}
         </Button>
       </div>
     </Card>
@@ -248,29 +256,33 @@ function TourDetail({
   done: boolean;
   onPlay: () => void;
 }) {
+  const t = useT();
+  const stepsKey = tour.steps.length === 1 ? "tours.card.steps_one" : "tours.card.steps_other";
   return (
     <div className="flex flex-col gap-6 px-5 py-5">
       <header className="flex flex-col gap-2">
         <div className="t-mono text-muted-foreground">
-          {tour.workflow} · {tour.steps.length} STEP · {tour.duration.toUpperCase()}
+          {t(WORKFLOW_LABEL_KEYS[tour.workflow]).toUpperCase()} ·{" "}
+          {t(stepsKey, { count: tour.steps.length }).toUpperCase()} ·{" "}
+          {tour.duration.toUpperCase()}
         </div>
-        <h2 className="font-display italic text-3xl leading-tight">{tour.name}</h2>
-        <p className="text-sm text-muted-foreground leading-relaxed">{tour.summary}</p>
+        <h2 className="font-display italic text-3xl leading-tight">{t(tour.name)}</h2>
+        <p className="text-sm text-muted-foreground leading-relaxed">{t(tour.summary)}</p>
         {done && (
           <div className="inline-flex items-center gap-1.5 text-xs font-medium text-success">
             <Check className="h-3.5 w-3.5" />
-            Tour completato
+            {t("tours.detail.completed")}
           </div>
         )}
       </header>
 
       <Button size="lg" onClick={onPlay} className="w-full">
         <PlayCircle className="h-4 w-4 mr-2" />
-        {done ? "Rifai il tour" : "Avvia il tour"}
+        {done ? t("tours.action.replayTour") : t("tours.action.startTour")}
       </Button>
 
       <section className="flex flex-col gap-3">
-        <div className="t-mono text-muted-foreground">Cosa vedrai</div>
+        <div className="t-mono text-muted-foreground">{t("tours.detail.whatYouWillSee")}</div>
         <ol className="flex flex-col gap-2">
           {tour.steps.map((s, i) => (
             <li key={i} className="flex items-start gap-3">
@@ -278,14 +290,14 @@ function TourDetail({
                 {i + 1}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-sm font-medium leading-tight">{s.title}</div>
+                <div className="text-sm font-medium leading-tight">{t(s.title)}</div>
                 <p className="text-xs text-muted-foreground leading-snug mt-0.5">
-                  {s.body}
+                  {t(s.body)}
                 </p>
                 {s.docHref && (
                   <div className="mt-1 inline-flex items-center gap-1 text-[11px] text-muted-foreground">
                     <BookOpen className="h-3 w-3" />
-                    Link ai docs
+                    {t("tours.detail.docsLink")}
                   </div>
                 )}
               </div>

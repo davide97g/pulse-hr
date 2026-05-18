@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, ArrowLeft, BookOpen, X } from "lucide-react";
 import { Button } from "@pulse-hr/ui/primitives/button";
+import { useT } from "@pulse-hr/shared/i18n";
 import { cn } from "@/lib/utils";
 import { getTour, markTourCompleted, type Tour, type TourStep } from "@/lib/tours";
 
@@ -130,6 +131,7 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
 
 function TourOverlay({ tour, step, stepIndex }: { tour: Tour; step: TourStep; stepIndex: number }) {
   const { next, prev, stop } = useTour();
+  const t = useT();
   const [rect, setRect] = useState<Rect | null>(null);
   const [viewport, setViewport] = useState({
     w: typeof window !== "undefined" ? window.innerWidth : 1024,
@@ -267,7 +269,7 @@ function TourOverlay({ tour, step, stepIndex }: { tour: Tour; step: TourStep; st
       >
         <div className="flex items-start justify-between gap-2 px-4 pt-3.5 pb-1">
           <div className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
-            {tour.name} · {stepIndex + 1}/{total}
+            {t(tour.name)} · {stepIndex + 1}/{total}
           </div>
           <button
             onClick={() => stop()}
@@ -279,9 +281,9 @@ function TourOverlay({ tour, step, stepIndex }: { tour: Tour; step: TourStep; st
         </div>
         <div className="px-4 pb-3">
           <div id="tour-title" className="font-semibold text-[15px] leading-tight">
-            {step.title}
+            {t(step.title)}
           </div>
-          <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{step.body}</p>
+          <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{t(step.body)}</p>
           {step.docHref && (
             <Link
               to={step.docHref}
@@ -289,7 +291,7 @@ function TourOverlay({ tour, step, stepIndex }: { tour: Tour; step: TourStep; st
               className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
             >
               <BookOpen className="h-3.5 w-3.5" />
-              Read the docs
+              {t("tours.detail.docsLink")}
             </Link>
           )}
         </div>
@@ -309,11 +311,11 @@ function TourOverlay({ tour, step, stepIndex }: { tour: Tour; step: TourStep; st
             {stepIndex > 0 && (
               <Button variant="ghost" size="sm" onClick={prev} className="h-8 px-2 text-xs">
                 <ArrowLeft className="h-3.5 w-3.5 mr-1" />
-                Back
+                {t("tours.nav.back")}
               </Button>
             )}
             <Button size="sm" onClick={next} className="h-8 px-3 text-xs">
-              {isLast ? "Finish" : "Next"}
+              {isLast ? t("tours.nav.finish") : t("tours.nav.next")}
               {!isLast && <ArrowRight className="h-3.5 w-3.5 ml-1" />}
             </Button>
           </div>

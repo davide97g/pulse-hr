@@ -4,12 +4,19 @@
  * target render as a centered modal card.
  *
  * Completion state is persisted in localStorage so repeat visits don't nag.
+ *
+ * Translatable fields (`name`, `summary`, step `title`/`body`) are i18n keys.
+ * Pass them through `t()` at render time. The English fallback lives in the
+ * dictionary; ad-hoc tours (e.g. release tours) can still pass plain strings
+ * because `t()` returns the key verbatim when it's not in the dict.
  */
 
 export type TourStep = {
   /** `data-tour` selector on the element to spotlight. Omit for centered. */
   target?: string;
+  /** i18n key (or literal). */
   title: string;
+  /** i18n key (or literal). */
   body: string;
   /** Navigate here before attempting to spotlight. */
   route?: string;
@@ -18,171 +25,191 @@ export type TourStep = {
   placement?: "top" | "bottom" | "left" | "right" | "auto";
 };
 
+export type TourWorkflow =
+  | "Getting started"
+  | "Work"
+  | "People"
+  | "Money"
+  | "Highlights"
+  | "Admin";
+
 export type Tour = {
   id: string;
+  /** i18n key (or literal). */
   name: string;
+  /** i18n key (or literal). */
   summary: string;
   /** Workflow grouping shown in the launcher. */
-  workflow: "Getting started" | "Work" | "People" | "Money" | "Highlights" | "Admin";
+  workflow: TourWorkflow;
   /** Short estimate like "2 min" — purely informational. */
   duration: string;
   steps: TourStep[];
 };
 
+/** Maps the typed `workflow` value to its i18n key. */
+export const WORKFLOW_LABEL_KEYS: Record<TourWorkflow, string> = {
+  "Getting started": "tours.workflow.gettingStarted",
+  Work: "tours.workflow.work",
+  People: "tours.workflow.people",
+  Money: "tours.workflow.money",
+  Highlights: "tours.workflow.highlights",
+  Admin: "tours.workflow.admin",
+};
+
 export const TOURS: Tour[] = [
   {
     id: "getting-started",
-    name: "Welcome to Pulse HR",
-    summary: "Sidebar, global search, status log, quick actions — the 60-second orientation.",
+    name: "tours.t.getting-started.name",
+    summary: "tours.t.getting-started.summary",
     workflow: "Getting started",
     duration: "1 min",
     steps: [
       {
-        title: "Welcome to Pulse HR",
-        body: "A quick tour of the shell so you know where to find things. You can exit any time — we won't show this again automatically.",
+        title: "tours.t.getting-started.step.1.title",
+        body: "tours.t.getting-started.step.1.body",
         route: "/",
       },
       {
         target: "sidebar-nav",
-        title: "Sidebar navigation",
-        body: "Every area of the app is grouped here: Overview, Me, People, Work, Money, Insights, and Workspace. Items with a pulsing dot are new.",
+        title: "tours.t.getting-started.step.2.title",
+        body: "tours.t.getting-started.step.2.body",
         placement: "right",
       },
       {
         target: "topbar-search",
-        title: "Global search — ⌘K",
-        body: "Jump anywhere, find employees or projects, or type a natural-language command like 'log 4h on ACME yesterday'.",
+        title: "tours.t.getting-started.step.3.title",
+        body: "tours.t.getting-started.step.3.body",
         placement: "bottom",
       },
       {
         target: "topbar-status-log",
-        title: "Status Log — ⌘J",
-        body: "Your daily standup surface. Draft a status, answer manager asks, and see team updates in a single stream.",
+        title: "tours.t.getting-started.step.4.title",
+        body: "tours.t.getting-started.step.4.body",
         placement: "bottom",
       },
       {
         target: "topbar-new",
-        title: "Quick actions",
-        body: "Add an employee, request leave, or post a job — without leaving the page you're on.",
+        title: "tours.t.getting-started.step.5.title",
+        body: "tours.t.getting-started.step.5.body",
         placement: "bottom",
       },
       {
         target: "topbar-notifications",
-        title: "Notifications",
-        body: "Approvals, alerts, and informational pings. Click one to jump to the thing that needs attention.",
+        title: "tours.t.getting-started.step.6.title",
+        body: "tours.t.getting-started.step.6.body",
         placement: "bottom",
       },
       {
-        title: "You're set",
-        body: "More tours are available from the Help menu in the sidebar or via ⌘K → 'Take a tour'.",
+        title: "tours.t.getting-started.step.7.title",
+        body: "tours.t.getting-started.step.7.body",
         docHref: "/docs",
       },
     ],
   },
   {
     id: "time-tracking",
-    name: "Log time on a project",
-    summary: "Timesheets, the project pin, autofill, and submitting the week.",
+    name: "tours.t.time-tracking.name",
+    summary: "tours.t.time-tracking.summary",
     workflow: "Work",
     duration: "2 min",
     steps: [
       {
-        title: "Time & attendance",
-        body: "Log hours against projects (project codes). We'll walk through the essentials.",
+        title: "tours.t.time-tracking.step.1.title",
+        body: "tours.t.time-tracking.step.1.body",
         route: "/time",
         docHref: "/docs/clients-projects",
       },
       {
         target: "topbar-project-pin",
-        title: "Active project pin",
-        body: "Pin the project you're working on and new entries default to it.",
+        title: "tours.t.time-tracking.step.2.title",
+        body: "tours.t.time-tracking.step.2.body",
         placement: "bottom",
       },
       {
         target: "page-header",
-        title: "The week view",
-        body: "A calendar of your days. Green means filled, amber means partial, red means missing — so you can see gaps at a glance.",
+        title: "tours.t.time-tracking.step.3.title",
+        body: "tours.t.time-tracking.step.3.body",
         placement: "bottom",
       },
       {
-        title: "Autofill the week",
-        body: "Use the Autofill dialog to generate a sensible draft from your calendar + recent activity, then tweak. Faster than typing eight entries.",
+        title: "tours.t.time-tracking.step.4.title",
+        body: "tours.t.time-tracking.step.4.body",
       },
       {
-        title: "Submit for approval",
-        body: "When the week looks right, submit. Your manager gets a notification and approvals flow back into Status Log.",
+        title: "tours.t.time-tracking.step.5.title",
+        body: "tours.t.time-tracking.step.5.body",
         docHref: "/docs/clients-projects",
       },
     ],
   },
   {
     id: "clients-projects",
-    name: "Manage clients and projects",
-    summary: "From client directory to project detail: activities, allocations, and Gantt.",
+    name: "tours.t.clients-projects.name",
+    summary: "tours.t.clients-projects.summary",
     workflow: "Work",
     duration: "2 min",
     steps: [
       {
-        title: "Clients & Projects",
-        body: "The project hub. Browse clients, drill into projects, see who's allocated and what's at risk.",
+        title: "tours.t.clients-projects.step.1.title",
+        body: "tours.t.clients-projects.step.1.body",
         route: "/clients",
         docHref: "/docs/clients-projects",
       },
       {
         target: "page-header",
-        title: "Client directory",
-        body: "Each card rolls up the client's active projects, health, and billing status.",
+        title: "tours.t.clients-projects.step.2.title",
+        body: "tours.t.clients-projects.step.2.body",
       },
       {
-        title: "Project detail",
-        body: "Open any project to see activities (board + Gantt), allocations, margin, and owner. Activities can be linked to Jira or Linear tickets.",
+        title: "tours.t.clients-projects.step.3.title",
+        body: "tours.t.clients-projects.step.3.body",
         docHref: "/docs/integrations",
       },
     ],
   },
   {
     id: "recruiting",
-    name: "Move a candidate through the pipeline",
-    summary: "Kanban stages, candidate profiles, and turning a hire into an active employee.",
+    name: "tours.t.recruiting.name",
+    summary: "tours.t.recruiting.summary",
     workflow: "People",
     duration: "2 min",
     steps: [
       {
-        title: "Recruiting",
-        body: "Candidates flow through a kanban from applied → offer. Drag across stages as they progress.",
+        title: "tours.t.recruiting.step.1.title",
+        body: "tours.t.recruiting.step.1.body",
         route: "/recruiting",
       },
       {
         target: "page-header",
-        title: "Pipeline stages",
-        body: "Each column is a stage. Counts update live. On mobile the board scrolls horizontally.",
+        title: "tours.t.recruiting.step.2.title",
+        body: "tours.t.recruiting.step.2.body",
       },
       {
-        title: "Hire & handoff",
-        body: "Marking a candidate as hired adds them to /people as an active employee.",
+        title: "tours.t.recruiting.step.3.title",
+        body: "tours.t.recruiting.step.3.body",
       },
     ],
   },
   {
     id: "labs-highlights",
-    name: "Highlights: Kudos, Saturation",
-    summary: "The newest surfaces — peer coins and team saturation.",
+    name: "tours.t.labs-highlights.name",
+    summary: "tours.t.labs-highlights.summary",
     workflow: "Highlights",
     duration: "2 min",
     steps: [
       {
-        title: "Highlights",
-        body: "Recent features scattered across Me and Insights — all tagged with a pulsing 'new' dot in the sidebar.",
+        title: "tours.t.labs-highlights.step.1.title",
+        body: "tours.t.labs-highlights.step.1.body",
       },
       {
-        title: "Kudos",
-        body: "Peer recognition with coins. Leaderboard + confetti. Kudos feed your employee score.",
+        title: "tours.t.labs-highlights.step.2.title",
+        body: "tours.t.labs-highlights.step.2.body",
         route: "/kudos",
         docHref: "/docs/kudos",
       },
       {
-        title: "Saturation",
-        body: "Team load heatmap + utilisation trend. Spot who's overbooked before the week starts.",
+        title: "tours.t.labs-highlights.step.3.title",
+        body: "tours.t.labs-highlights.step.3.body",
         route: "/saturation",
         docHref: "/docs/saturation",
       },
@@ -190,12 +217,12 @@ export const TOURS: Tour[] = [
   },
 ];
 
-export const TOURS_BY_WORKFLOW: Record<string, Tour[]> = TOURS.reduce(
+export const TOURS_BY_WORKFLOW: Record<TourWorkflow, Tour[]> = TOURS.reduce(
   (acc, t) => {
     (acc[t.workflow] ??= []).push(t);
     return acc;
   },
-  {} as Record<string, Tour[]>,
+  {} as Record<TourWorkflow, Tour[]>,
 );
 
 const STORAGE_KEY = "pulse.tours.completed";

@@ -458,6 +458,130 @@ export const en: Dictionary = {
     "Complete the company profile questionnaire honestly to double your baseline. More questionnaires land soon — each grants additional power.",
   "voting.history": "History",
   "voting.history.empty": "0 entries",
+
+  // Tours — page chrome
+  "tours.page.eyebrow": "INTERACTIVE GUIDES",
+  "tours.page.eyebrow.note": "· {done} COMPLETED · {todo} TO DO",
+  "tours.page.title": "Help & tours",
+  "tours.page.summary":
+    "Short guided tours to find your way around Pulse HR — sidebar, status log, timesheet, recruiting, kudos. Pick them up whenever: nothing blocks.",
+  "tours.page.resetAll": "Reset all",
+  "tours.tab.todo": "To do",
+  "tours.tab.done": "Completed",
+  "tours.empty.todo.title": "All done",
+  "tours.empty.todo.desc":
+    "You've completed every tour. Reset progress to run them again.",
+  "tours.empty.done.title": "No tours completed yet",
+  "tours.empty.done.desc":
+    "Start a tour from the “To do” tab — it shows up here once you finish it.",
+  "tours.card.steps_one": "{count} step",
+  "tours.card.steps_other": "{count} steps",
+  "tours.action.start": "Start",
+  "tours.action.replay": "Replay",
+  "tours.action.startTour": "Start the tour",
+  "tours.action.replayTour": "Replay the tour",
+  "tours.detail.completed": "Tour completed",
+  "tours.detail.whatYouWillSee": "What you'll see",
+  "tours.detail.docsLink": "Docs link",
+  "tours.nav.back": "Back",
+  "tours.nav.next": "Next",
+  "tours.nav.finish": "Finish",
+
+  // Tour workflow labels
+  "tours.workflow.gettingStarted": "Getting started",
+  "tours.workflow.work": "Work",
+  "tours.workflow.people": "People",
+  "tours.workflow.money": "Money",
+  "tours.workflow.highlights": "Highlights",
+  "tours.workflow.admin": "Admin",
+
+  // Tour — getting-started
+  "tours.t.getting-started.name": "Welcome to Pulse HR",
+  "tours.t.getting-started.summary":
+    "Sidebar, global search, status log, quick actions — the 60-second orientation.",
+  "tours.t.getting-started.step.1.title": "Welcome to Pulse HR",
+  "tours.t.getting-started.step.1.body":
+    "A quick tour of the shell so you know where to find things. You can exit any time — we won't show this again automatically.",
+  "tours.t.getting-started.step.2.title": "Sidebar navigation",
+  "tours.t.getting-started.step.2.body":
+    "Every area of the app is grouped here: Overview, Me, People, Work, Money, Insights, and Workspace. Items with a pulsing dot are new.",
+  "tours.t.getting-started.step.3.title": "Global search — ⌘K",
+  "tours.t.getting-started.step.3.body":
+    "Jump anywhere, find employees or projects, or type a natural-language command like 'log 4h on ACME yesterday'.",
+  "tours.t.getting-started.step.4.title": "Status Log — ⌘J",
+  "tours.t.getting-started.step.4.body":
+    "Your daily standup surface. Draft a status, answer manager asks, and see team updates in a single stream.",
+  "tours.t.getting-started.step.5.title": "Quick actions",
+  "tours.t.getting-started.step.5.body":
+    "Add an employee, request leave, or post a job — without leaving the page you're on.",
+  "tours.t.getting-started.step.6.title": "Notifications",
+  "tours.t.getting-started.step.6.body":
+    "Approvals, alerts, and informational pings. Click one to jump to the thing that needs attention.",
+  "tours.t.getting-started.step.7.title": "You're set",
+  "tours.t.getting-started.step.7.body":
+    "More tours are available from the Help menu in the sidebar or via ⌘K → 'Take a tour'.",
+
+  // Tour — time-tracking
+  "tours.t.time-tracking.name": "Log time on a project",
+  "tours.t.time-tracking.summary":
+    "Timesheets, the project pin, autofill, and submitting the week.",
+  "tours.t.time-tracking.step.1.title": "Time & attendance",
+  "tours.t.time-tracking.step.1.body":
+    "Log hours against projects (project codes). We'll walk through the essentials.",
+  "tours.t.time-tracking.step.2.title": "Active project pin",
+  "tours.t.time-tracking.step.2.body":
+    "Pin the project you're working on and new entries default to it.",
+  "tours.t.time-tracking.step.3.title": "The week view",
+  "tours.t.time-tracking.step.3.body":
+    "A calendar of your days. Green means filled, amber means partial, red means missing — so you can see gaps at a glance.",
+  "tours.t.time-tracking.step.4.title": "Autofill the week",
+  "tours.t.time-tracking.step.4.body":
+    "Use the Autofill dialog to generate a sensible draft from your calendar + recent activity, then tweak. Faster than typing eight entries.",
+  "tours.t.time-tracking.step.5.title": "Submit for approval",
+  "tours.t.time-tracking.step.5.body":
+    "When the week looks right, submit. Your manager gets a notification and approvals flow back into Status Log.",
+
+  // Tour — clients-projects
+  "tours.t.clients-projects.name": "Manage clients and projects",
+  "tours.t.clients-projects.summary":
+    "From client directory to project detail: activities, allocations, and Gantt.",
+  "tours.t.clients-projects.step.1.title": "Clients & Projects",
+  "tours.t.clients-projects.step.1.body":
+    "The project hub. Browse clients, drill into projects, see who's allocated and what's at risk.",
+  "tours.t.clients-projects.step.2.title": "Client directory",
+  "tours.t.clients-projects.step.2.body":
+    "Each card rolls up the client's active projects, health, and billing status.",
+  "tours.t.clients-projects.step.3.title": "Project detail",
+  "tours.t.clients-projects.step.3.body":
+    "Open any project to see activities (board + Gantt), allocations, margin, and owner. Activities can be linked to Jira or Linear tickets.",
+
+  // Tour — recruiting
+  "tours.t.recruiting.name": "Move a candidate through the pipeline",
+  "tours.t.recruiting.summary":
+    "Kanban stages, candidate profiles, and turning a hire into an active employee.",
+  "tours.t.recruiting.step.1.title": "Recruiting",
+  "tours.t.recruiting.step.1.body":
+    "Candidates flow through a kanban from applied → offer. Drag across stages as they progress.",
+  "tours.t.recruiting.step.2.title": "Pipeline stages",
+  "tours.t.recruiting.step.2.body":
+    "Each column is a stage. Counts update live. On mobile the board scrolls horizontally.",
+  "tours.t.recruiting.step.3.title": "Hire & handoff",
+  "tours.t.recruiting.step.3.body":
+    "Marking a candidate as hired adds them to /people as an active employee.",
+
+  // Tour — labs-highlights
+  "tours.t.labs-highlights.name": "Highlights: Kudos, Saturation",
+  "tours.t.labs-highlights.summary":
+    "The newest surfaces — peer coins and team saturation.",
+  "tours.t.labs-highlights.step.1.title": "Highlights",
+  "tours.t.labs-highlights.step.1.body":
+    "Recent features scattered across Me and Insights — all tagged with a pulsing 'new' dot in the sidebar.",
+  "tours.t.labs-highlights.step.2.title": "Kudos",
+  "tours.t.labs-highlights.step.2.body":
+    "Peer recognition with coins. Leaderboard + confetti. Kudos feed your employee score.",
+  "tours.t.labs-highlights.step.3.title": "Saturation",
+  "tours.t.labs-highlights.step.3.body":
+    "Team load heatmap + utilisation trend. Spot who's overbooked before the week starts.",
 };
 
 export const it: Dictionary = {
@@ -918,6 +1042,130 @@ export const it: Dictionary = {
     "Completa il questionario del profilo aziendale onestamente per raddoppiare il baseline. Altri questionari arriveranno presto — ognuno aggiunge potere.",
   "voting.history": "History",
   "voting.history.empty": "0 entries",
+
+  // Tours — page chrome
+  "tours.page.eyebrow": "GUIDE INTERATTIVE",
+  "tours.page.eyebrow.note": "· {done} COMPLETATI · {todo} DA FARE",
+  "tours.page.title": "Help & tour",
+  "tours.page.summary":
+    "Brevi tour guidati per orientarti in Pulse HR — sidebar, status log, timesheet, recruiting, kudos. Riprendili quando vuoi: niente è bloccante.",
+  "tours.page.resetAll": "Resetta tutto",
+  "tours.tab.todo": "Da fare",
+  "tours.tab.done": "Completati",
+  "tours.empty.todo.title": "Tutto fatto",
+  "tours.empty.todo.desc":
+    "Hai completato tutti i tour disponibili. Resetta i progressi per rifarli.",
+  "tours.empty.done.title": "Nessun tour completato",
+  "tours.empty.done.desc":
+    "Avvia un tour dalla scheda “Da fare” — comparirà qui quando lo finisci.",
+  "tours.card.steps_one": "{count} step",
+  "tours.card.steps_other": "{count} step",
+  "tours.action.start": "Avvia",
+  "tours.action.replay": "Rifai",
+  "tours.action.startTour": "Avvia il tour",
+  "tours.action.replayTour": "Rifai il tour",
+  "tours.detail.completed": "Tour completato",
+  "tours.detail.whatYouWillSee": "Cosa vedrai",
+  "tours.detail.docsLink": "Link ai docs",
+  "tours.nav.back": "Indietro",
+  "tours.nav.next": "Avanti",
+  "tours.nav.finish": "Fine",
+
+  // Tour workflow labels
+  "tours.workflow.gettingStarted": "Per iniziare",
+  "tours.workflow.work": "Lavoro",
+  "tours.workflow.people": "Persone",
+  "tours.workflow.money": "Economia",
+  "tours.workflow.highlights": "In evidenza",
+  "tours.workflow.admin": "Admin",
+
+  // Tour — getting-started
+  "tours.t.getting-started.name": "Benvenuto in Pulse HR",
+  "tours.t.getting-started.summary":
+    "Sidebar, ricerca globale, status log, azioni rapide — 60 secondi di orientamento.",
+  "tours.t.getting-started.step.1.title": "Benvenuto in Pulse HR",
+  "tours.t.getting-started.step.1.body":
+    "Un rapido tour dell'interfaccia per sapere dove trovare le cose. Puoi uscire quando vuoi — non lo mostreremo più automaticamente.",
+  "tours.t.getting-started.step.2.title": "Navigazione sidebar",
+  "tours.t.getting-started.step.2.body":
+    "Ogni area dell'app è raggruppata qui: Overview, Io, Persone, Lavoro, Economia, Insight e Workspace. Gli elementi col pallino pulsante sono nuovi.",
+  "tours.t.getting-started.step.3.title": "Ricerca globale — ⌘K",
+  "tours.t.getting-started.step.3.body":
+    "Salta ovunque, trova persone o progetti, oppure scrivi un comando in linguaggio naturale come 'logga 4h su ACME ieri'.",
+  "tours.t.getting-started.step.4.title": "Status Log — ⌘J",
+  "tours.t.getting-started.step.4.body":
+    "La superficie del tuo standup quotidiano. Scrivi uno status, rispondi alle richieste dei manager e vedi gli aggiornamenti del team in un unico flusso.",
+  "tours.t.getting-started.step.5.title": "Azioni rapide",
+  "tours.t.getting-started.step.5.body":
+    "Aggiungi una persona, chiedi ferie o pubblica un'offerta — senza lasciare la pagina su cui sei.",
+  "tours.t.getting-started.step.6.title": "Notifiche",
+  "tours.t.getting-started.step.6.body":
+    "Approvazioni, alert e ping informativi. Clicca per saltare a ciò che richiede attenzione.",
+  "tours.t.getting-started.step.7.title": "Pronto",
+  "tours.t.getting-started.step.7.body":
+    "Altri tour sono disponibili dal menu Help nella sidebar o tramite ⌘K → 'Fai un tour'.",
+
+  // Tour — time-tracking
+  "tours.t.time-tracking.name": "Logga il tempo su un progetto",
+  "tours.t.time-tracking.summary":
+    "Timesheet, project pin, autofill e submit della settimana.",
+  "tours.t.time-tracking.step.1.title": "Tempo & presenze",
+  "tours.t.time-tracking.step.1.body":
+    "Logga le ore su progetti (commesse). Vediamo gli essenziali.",
+  "tours.t.time-tracking.step.2.title": "Pin progetto attivo",
+  "tours.t.time-tracking.step.2.body":
+    "Fissa il progetto su cui stai lavorando: le nuove entry useranno quello di default.",
+  "tours.t.time-tracking.step.3.title": "Vista settimanale",
+  "tours.t.time-tracking.step.3.body":
+    "Un calendario dei tuoi giorni. Verde = pieno, ambra = parziale, rosso = mancante — vedi i buchi a colpo d'occhio.",
+  "tours.t.time-tracking.step.4.title": "Autofill della settimana",
+  "tours.t.time-tracking.step.4.body":
+    "Usa la finestra Autofill per generare una bozza sensata da calendario + attività recenti, poi rifinisci. Più veloce di scrivere otto entry.",
+  "tours.t.time-tracking.step.5.title": "Invia in approvazione",
+  "tours.t.time-tracking.step.5.body":
+    "Quando la settimana ti torna, invia. Il tuo manager riceve una notifica e le approvazioni tornano nello Status Log.",
+
+  // Tour — clients-projects
+  "tours.t.clients-projects.name": "Gestisci clienti e progetti",
+  "tours.t.clients-projects.summary":
+    "Dalla directory clienti al dettaglio progetto: attività, allocazioni e Gantt.",
+  "tours.t.clients-projects.step.1.title": "Clienti & Progetti",
+  "tours.t.clients-projects.step.1.body":
+    "L'hub dei progetti. Sfoglia i clienti, entra nei progetti, vedi chi è allocato e cosa è a rischio.",
+  "tours.t.clients-projects.step.2.title": "Directory clienti",
+  "tours.t.clients-projects.step.2.body":
+    "Ogni card riassume i progetti attivi del cliente, lo stato di salute e di fatturazione.",
+  "tours.t.clients-projects.step.3.title": "Dettaglio progetto",
+  "tours.t.clients-projects.step.3.body":
+    "Apri un progetto per vedere attività (board + Gantt), allocazioni, margine e owner. Le attività possono essere collegate a ticket Jira o Linear.",
+
+  // Tour — recruiting
+  "tours.t.recruiting.name": "Sposta un candidato nella pipeline",
+  "tours.t.recruiting.summary":
+    "Stage kanban, profili candidato e conversione di un hire in dipendente attivo.",
+  "tours.t.recruiting.step.1.title": "Recruiting",
+  "tours.t.recruiting.step.1.body":
+    "I candidati scorrono in un kanban da candidatura → offerta. Trascinali tra le colonne man mano che avanzano.",
+  "tours.t.recruiting.step.2.title": "Stage della pipeline",
+  "tours.t.recruiting.step.2.body":
+    "Ogni colonna è uno stage. I conteggi si aggiornano in tempo reale. Su mobile la board scorre orizzontalmente.",
+  "tours.t.recruiting.step.3.title": "Hire & handoff",
+  "tours.t.recruiting.step.3.body":
+    "Segnare un candidato come assunto lo aggiunge a /people come dipendente attivo.",
+
+  // Tour — labs-highlights
+  "tours.t.labs-highlights.name": "In evidenza: Kudos, Saturazione",
+  "tours.t.labs-highlights.summary":
+    "Le superfici più recenti — coin tra colleghi e saturazione del team.",
+  "tours.t.labs-highlights.step.1.title": "In evidenza",
+  "tours.t.labs-highlights.step.1.body":
+    "Funzionalità recenti sparse tra Io e Insight — tutte taggate con un pallino 'new' pulsante nella sidebar.",
+  "tours.t.labs-highlights.step.2.title": "Kudos",
+  "tours.t.labs-highlights.step.2.body":
+    "Riconoscimento tra colleghi con i coin. Leaderboard + coriandoli. I kudos alimentano l'employee score.",
+  "tours.t.labs-highlights.step.3.title": "Saturazione",
+  "tours.t.labs-highlights.step.3.body":
+    "Heatmap del carico di squadra + andamento utilizzo. Individua chi è sovraccarico prima dell'inizio della settimana.",
 };
 
 export const DICTS: Record<Locale, Dictionary> = { en, it };
