@@ -111,9 +111,9 @@ export const en = {
   hero: {
     badge: "Open source · FSL-1.1-MIT · public beta · built in public",
     eyebrow: "Open-source workspace · built for the IC",
-    titleBefore: "Your best work is",
-    titleItalic: "buried",
-    titleAfter: " in a Slack thread from March",
+    titleBefore: "Three lines",
+    titleItalic: "beat",
+    titleAfter: " a standup",
     body: [
       "Pulse HR pulls it out. Open-source workspace for the IC — ",
       "three lines",

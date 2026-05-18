@@ -117,9 +117,9 @@ export const it: Dict = {
   hero: {
     badge: "Open source · FSL-1.1-MIT · beta pubblica · costruito in pubblico",
     eyebrow: "Workspace open source · costruito per il singolo",
-    titleBefore: "Il tuo lavoro migliore è",
-    titleItalic: "sepolto",
-    titleAfter: " in un thread Slack di marzo",
+    titleBefore: "Tre righe",
+    titleItalic: "battono",
+    titleAfter: " una standup",
     body: [
       "Pulse HR lo tira fuori. Workspace open source per il singolo — ",
       "tre righe",
