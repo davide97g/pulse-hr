@@ -18,6 +18,7 @@ import { APP_VERSION } from "@/lib/version";
 import { BookingDialog } from "./BookingDialog";
 import { BookingsProvider } from "./BookingsContext";
 import { CommandPalette } from "./CommandPalette";
+import { ShareFinalModal } from "@/components/share/ShareFinalModal";
 import { DemoBanner } from "./DemoBanner";
 import { OfflineBanner } from "./OfflineBanner";
 import { BrandMark } from "@pulse-hr/ui/atoms/BrandMark";
@@ -246,6 +247,17 @@ function AppShellInner() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+
+  useEffect(() => {
+    const w = window as typeof window & {
+      __pulse_openShare?: () => void;
+    };
+    w.__pulse_openShare = () => setShareOpen(true);
+    return () => {
+      delete w.__pulse_openShare;
+    };
+  }, []);
   const workspace = useWorkspaceStatus();
   const { open: openProposal } = useNewProposal();
 
@@ -451,6 +463,7 @@ function AppShellInner() {
         <OfflineBanner />
         <Topbar
           onOpenPalette={() => setPaletteOpen(true)}
+          onOpenShare={() => setShareOpen(true)}
           onOpenMobileNav={() => setMobileNavOpen(true)}
           // Always offer the Feedback entry-point. When the visitor is
           // anonymous, the link opens the LoginWall instead of leaving the app.
@@ -464,6 +477,7 @@ function AppShellInner() {
       </div>
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      <ShareFinalModal open={shareOpen} onOpenChange={setShareOpen} />
       <ShortcutSheet />
       <BookingDialog open={bookingOpen} onClose={() => setBookingOpen(false)} />
       <PinLayer />
@@ -681,9 +695,11 @@ function sectionKeyForPath(pathname: string): string {
 
 function Topbar({
   onOpenPalette,
+  onOpenShare,
   onOpenMobileNav,
 }: {
   onOpenPalette: () => void;
+  onOpenShare: () => void;
   onOpenMobileNav: () => void;
   /** Kept for API compat; feedback link now lives in the avatar menu. */
   showFeedbackLink?: boolean;
@@ -764,6 +780,27 @@ function Topbar({
         aria-label="Search"
       >
         <Search className="h-4 w-4" />
+      </button>
+
+      <button
+        type="button"
+        onClick={onOpenShare}
+        className="share-final pill pill-spark pill-sm sf-cta hidden lg:inline-flex"
+        aria-label={tTopbar("share.topbar.cta")}
+      >
+        <span
+          aria-hidden
+          style={{
+            display: "inline-block",
+            width: 5,
+            height: 5,
+            borderRadius: 999,
+            background: "var(--spark-ink)",
+            marginRight: 2,
+          }}
+        />
+        <span>{tTopbar("share.topbar.cta")}</span>
+        <span className="arr" style={{ fontFamily: "Fraunces, ui-serif, serif" }}>→</span>
       </button>
 
       <Link

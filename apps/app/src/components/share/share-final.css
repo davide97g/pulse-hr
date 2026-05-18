@@ -1,0 +1,97 @@
+.share-final .sf-btn,
+.share-final.sf-btn {
+  transition: transform 140ms ease-out, background 160ms ease-out, box-shadow 160ms ease-out;
+}
+.share-final .sf-btn:hover,
+.share-final.sf-btn:hover {
+  transform: translateY(-1px);
+}
+
+.share-final .sf-cta,
+.share-final.sf-cta {
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 200ms ease-out, filter 200ms;
+}
+.share-final .sf-cta:hover,
+.share-final.sf-cta:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+.share-final .sf-cta .arr,
+.share-final.sf-cta .arr {
+  display: inline-block;
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.share-final .sf-cta:hover .arr,
+.share-final.sf-cta:hover .arr {
+  transform: translateX(4px);
+}
+
+.share-final .sf-row {
+  transition: background 140ms ease-out;
+}
+.share-final .sf-row:hover {
+  background: color-mix(in oklch, var(--spark) 4%, transparent);
+}
+
+.share-final .sf-more {
+  transition: background 140ms, color 140ms;
+}
+.share-final .sf-more:hover {
+  background: var(--line);
+  color: var(--fg);
+}
+
+.share-final .sf-role {
+  transition: background 140ms, transform 120ms;
+}
+.share-final .sf-role:hover {
+  transform: translateY(-0.5px);
+  background: color-mix(in oklch, var(--spark) 10%, transparent);
+}
+.share-final .sf-role .sf-caret {
+  transition: transform 160ms;
+}
+.share-final .sf-role:hover .sf-caret {
+  transform: rotate(180deg);
+}
+
+.share-final .sf-autorow {
+  transition: background 140ms ease-out, border-color 140ms;
+}
+.share-final .sf-autorow:hover {
+  background: color-mix(in oklch, var(--spark) 8%, transparent);
+}
+
+.share-final .sf-blink {
+  animation: sf-blink 1s infinite;
+}
+@keyframes sf-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .share-final .sf-btn,
+  .share-final.sf-btn,
+  .share-final .sf-cta,
+  .share-final.sf-cta,
+  .share-final .sf-row,
+  .share-final .sf-more,
+  .share-final .sf-role,
+  .share-final .sf-role .sf-caret,
+  .share-final .sf-autorow,
+  .share-final .sf-blink {
+    animation: none !important;
+    transition: none !important;
+  }
+  .share-final .sf-btn:hover,
+  .share-final.sf-btn:hover,
+  .share-final .sf-cta:hover,
+  .share-final.sf-cta:hover,
+  .share-final .sf-role:hover {
+    transform: none;
+    filter: none;
+  }
+}

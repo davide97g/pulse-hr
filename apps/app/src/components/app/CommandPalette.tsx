@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   PlayCircle,
   Lightbulb,
+  UserPlus,
 } from "lucide-react";
 import { TOURS } from "@/lib/tours";
 import { useTour } from "./TourProvider";
@@ -113,6 +114,10 @@ export function CommandPalette({
   );
 
   const proposalMatches = !q || PROPOSAL_KEYWORDS.includes(qLower);
+  const inviteKeywords = paletteLocale === "it"
+    ? "invita persone invito condividi share"
+    : "invite people share workspace";
+  const inviteMatches = !q || inviteKeywords.includes(qLower);
 
   const intents = useMemo(() => (q.length > 2 ? parseCommand(q).slice(0, 3) : []), [q]);
 
@@ -243,7 +248,7 @@ export function CommandPalette({
               ))}
             </Section>
           )}
-          {(actions.length > 0 || proposalMatches) && (
+          {(actions.length > 0 || proposalMatches || inviteMatches) && (
             <Section label="Quick actions">
               {actions.map((a) => {
                 const Icon = a.icon;
@@ -256,6 +261,19 @@ export function CommandPalette({
                   />
                 );
               })}
+              {inviteMatches && (
+                <Item
+                  icon={<UserPlus className="h-4 w-4" />}
+                  label={paletteLocale === "it" ? "Invita persone" : "Invite people"}
+                  desc={paletteLocale === "it" ? "Condividi il workspace" : "Share the workspace"}
+                  onSelect={() => {
+                    onOpenChange(false);
+                    (window as typeof window & {
+                      __pulse_openShare?: () => void;
+                    }).__pulse_openShare?.();
+                  }}
+                />
+              )}
               {proposalMatches && (
                 <Item
                   icon={<Lightbulb className="h-4 w-4" />}

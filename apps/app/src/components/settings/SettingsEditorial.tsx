@@ -9,29 +9,20 @@ import {
 import { useI18n } from "@pulse-hr/shared/i18n";
 import { useEmployees } from "@/lib/tables/employees";
 import {
+  type InviteRole as SettingsRole,
+  type InviteRow,
+  resendInvite as resendInviteStore,
+  restoreInvite,
+  revokeInvite as revokeInviteStore,
+  updateInviteRole as updateInviteRoleStore,
+  useInvites,
+} from "@/lib/invites";
+import {
   resetWorkspace,
   setWorkspaceName,
   useWorkspaceStatus,
 } from "@/lib/workspace";
-
-type SettingsRole = "Admin" | "Member" | "Viewer" | "Guest";
-
-interface InviteRow {
-  id: string;
-  initials: string;
-  name: string;
-  email: string;
-  role: SettingsRole;
-  sent: string;
-  status: "pending" | "expired";
-}
-
-const SEED_INVITES: InviteRow[] = [
-  { id: "i1", initials: "GP", name: "Giulia Pavan",    email: "giulia.pavan@bitrock.it",    role: "Member", sent: "12 mag · 14:02", status: "pending" },
-  { id: "i2", initials: "AB", name: "Alberto Bianchi", email: "alberto.bianchi@bitrock.it", role: "Admin",  sent: "11 mag · 09:18", status: "pending" },
-  { id: "i3", initials: "EZ", name: "Elena Zara",      email: "elena.zara@bitrock.it",      role: "Member", sent: "10 mag · 16:44", status: "pending" },
-  { id: "i4", initials: "FL", name: "Fabio Lupo",      email: "fabio.lupo@bitrock.it",      role: "Viewer", sent: "02 mag · 11:00", status: "expired" },
-];
+import { ShareFinalModal } from "@/components/share/ShareFinalModal";
 
 const ROLE_BY_DEPT: Record<string, SettingsRole> = {
   Engineering: "Member",
@@ -59,7 +50,8 @@ export function SettingsEditorial() {
   const [nameDirty, setNameDirty] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [resetInput, setResetInput] = useState("");
-  const [invites, setInvites] = useState<InviteRow[]>(SEED_INVITES);
+  const [shareOpen, setShareOpen] = useState(false);
+  const invites = useInvites();
 
   const it = locale === "it";
 
@@ -111,24 +103,17 @@ export function SettingsEditorial() {
   }
 
   function resendInvite(id: string) {
-    setInvites((prev) =>
-      prev.map((i) =>
-        i.id === id
-          ? { ...i, status: "pending", sent: it ? "Adesso" : "Just now" }
-          : i,
-      ),
-    );
+    resendInviteStore(id);
     toast.success(it ? "Invito rispedito" : "Invite resent");
   }
 
   function revokeInvite(id: string) {
-    const removed = invites.find((i) => i.id === id);
+    const removed = revokeInviteStore(id);
     if (!removed) return;
-    setInvites((prev) => prev.filter((i) => i.id !== id));
     toast(it ? "Invito revocato" : "Invite revoked", {
       action: {
         label: it ? "Annulla" : "Undo",
-        onClick: () => setInvites((prev) => [removed, ...prev]),
+        onClick: () => restoreInvite(removed),
       },
     });
   }
@@ -138,7 +123,7 @@ export function SettingsEditorial() {
   }
 
   function updateInviteRole(id: string, role: SettingsRole) {
-    setInvites((prev) => prev.map((i) => (i.id === id ? { ...i, role } : i)));
+    updateInviteRoleStore(id, role);
   }
 
   function confirmResetAction() {
@@ -224,6 +209,7 @@ export function SettingsEditorial() {
           onResend={resendInvite}
           onRevoke={revokeInvite}
           onRoleChange={updateInviteRole}
+          onOpenShare={() => setShareOpen(true)}
         />
 
         <SectionDanger
@@ -234,6 +220,8 @@ export function SettingsEditorial() {
           }}
         />
       </div>
+
+      <ShareFinalModal open={shareOpen} onOpenChange={setShareOpen} />
 
       <AlertDialog open={confirmReset} onOpenChange={setConfirmReset}>
         <AlertDialogContent
@@ -906,6 +894,7 @@ function SectionInvites({
   onResend,
   onRevoke,
   onRoleChange,
+  onOpenShare,
 }: {
   invites: InviteRow[];
   counts: { pending: number; accepted: number; expired: number };
@@ -913,6 +902,7 @@ function SectionInvites({
   onResend: (id: string) => void;
   onRevoke: (id: string) => void;
   onRoleChange: (id: string, role: SettingsRole) => void;
+  onOpenShare: () => void;
 }) {
   return (
     <Section
@@ -941,7 +931,7 @@ function SectionInvites({
               alignItems: "center",
               justifyContent: "center",
             }}
-            onClick={() => toast(it ? "Apri invito (mock)" : "Open invite (mock)")}
+            onClick={onOpenShare}
           >
             <span
               style={{

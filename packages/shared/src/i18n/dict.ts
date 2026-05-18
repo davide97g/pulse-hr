@@ -29,6 +29,7 @@ export const en: Dictionary = {
   "topbar.notifications": "Notifications",
   "topbar.assistant": "Assistant",
   "topbar.account": "Account",
+  "share.topbar.cta": "Share",
   "topbar.log_in": "Log in",
   "topbar.language": "Language",
 
@@ -613,6 +614,7 @@ export const it: Dictionary = {
   "topbar.account": "Account",
   "topbar.log_in": "Accedi",
   "topbar.language": "Lingua",
+  "share.topbar.cta": "Condividi",
 
   // Topbar section labels (mono caps)
   "section.dashboard": "DASHBOARD",
