@@ -654,36 +654,36 @@ function CommentsVisibilityToggle() {
   );
 }
 
-const SECTION_BY_PATH: Record<string, string> = {
-  "/": "DASHBOARD",
-  "/people": "TEAM",
-  "/log": "STATUS LOG",
-  "/growth": "GROWTH",
-  "/time": "TIMESHEET",
-  "/projects": "PROJECTS",
-  "/clients": "CLIENTI",
-  "/activities": "ACTIVITIES",
-  "/leave": "LEAVE",
-  "/documents": "DOCUMENTS",
-  "/offices": "OFFICES",
-  "/reports": "REPORTS",
-  "/saturation": "SATURAZIONE",
-  "/settings": "SETTINGS",
-  "/profile": "PROFILE",
-  "/welcome": "WELCOME",
-  "/docs": "DOCS",
-  "/announcements": "ANNOUNCEMENTS",
-  "/recruiting": "RECRUITING",
-  "/org": "ORG CHART",
-  "/moments": "MOMENTI",
+const SECTION_KEY_BY_PATH: Record<string, string> = {
+  "/": "section.dashboard",
+  "/people": "section.team",
+  "/log": "section.statusLog",
+  "/growth": "section.growth",
+  "/time": "section.timesheet",
+  "/projects": "section.projects",
+  "/clients": "section.clients",
+  "/activities": "section.activities",
+  "/leave": "section.leave",
+  "/documents": "section.documents",
+  "/offices": "section.offices",
+  "/reports": "section.reports",
+  "/saturation": "section.saturation",
+  "/settings": "section.settings",
+  "/profile": "section.profile",
+  "/welcome": "section.welcome",
+  "/docs": "section.docs",
+  "/announcements": "section.announcements",
+  "/recruiting": "section.recruiting",
+  "/org": "section.org",
+  "/moments": "section.moments",
 };
 
-function sectionForPath(pathname: string): string {
-  for (const key of Object.keys(SECTION_BY_PATH).sort((a, b) => b.length - a.length)) {
+function sectionKeyForPath(pathname: string): string {
+  for (const key of Object.keys(SECTION_KEY_BY_PATH).sort((a, b) => b.length - a.length)) {
     if (key === "/") continue;
-    if (pathname === key || pathname.startsWith(key + "/")) return SECTION_BY_PATH[key];
+    if (pathname === key || pathname.startsWith(key + "/")) return SECTION_KEY_BY_PATH[key];
   }
-  return SECTION_BY_PATH["/"];
+  return SECTION_KEY_BY_PATH["/"];
 }
 
 function Topbar({
@@ -699,7 +699,8 @@ function Topbar({
   const navigate = useNavigate();
   const { open: openAction } = useQuickAction();
   const location = useLocation();
-  const section = sectionForPath(location.pathname);
+  const tTopbar = useT();
+  const section = tTopbar(sectionKeyForPath(location.pathname));
   const { isSignedIn: signedInForFeedback } = useAuth();
   const { require: requireLogin } = useLoginWall();
   const { visible: commentsVisible, toggleVisibility: toggleComments } = useCommentsOverlay();
@@ -761,7 +762,7 @@ function Topbar({
         style={{ color: "var(--muted-foreground)" }}
       >
         <Search className="h-3.5 w-3.5" />
-        <span>⌘K · CERCA</span>
+        <span>⌘K · {tTopbar("topbar.search").toUpperCase()}</span>
       </button>
       <button
         onClick={onOpenPalette}

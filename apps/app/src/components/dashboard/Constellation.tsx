@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useIsMobile } from "@pulse-hr/ui/hooks/use-mobile";
+import { useT } from "@pulse-hr/shared/i18n";
 import type { ConstellationPerson, DeptId, LensConfig, MicroCardConfig } from "./types";
 import { HoverCard } from "./HoverCard";
 import { DeptLabel } from "./DeptLabel";
@@ -55,6 +56,7 @@ export function Constellation({
   const [filter, setFilter] = useState<DeptId | "ALL">("ALL");
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const t = useT();
 
   const pts = useMemo(() => people.map((p) => ax2px(p.q, p.r)), [people]);
   const deptFilters = useMemo<Array<DeptId | "ALL">>(() => {
@@ -439,7 +441,7 @@ export function Constellation({
         style={{ flex: "1 1 25%", minWidth: 0 }}
       >
         <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-          TUTTO IL RESTO
+          {t("dashboard.rest")}
         </span>
         {cards.map((c, i) => (
           <MicroCard key={i} {...c} />

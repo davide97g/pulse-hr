@@ -1,4 +1,5 @@
 import type { LensId, MicroCardConfig } from "./types";
+import type { Translator } from "@pulse-hr/shared/i18n";
 
 export interface CardSignals {
   pendingLeavesCount: number;
@@ -27,45 +28,51 @@ export interface CardSignals {
   busiestOfficePct: number;
 }
 
-export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
+const signed = (n: number) => `${n >= 0 ? "+" : ""}${n}`;
+
+export function cardsFor(
+  lens: LensId,
+  s: CardSignals,
+  t: Translator,
+): MicroCardConfig[] {
   if (lens === "sentiment") {
     return [
       {
-        eyebrow: "01 · PULSE",
-        title: "Survey",
+        eyebrow: `01 · ${t("dashcard.pulse.eyebrow")}`,
+        title: t("dashcard.pulse.title"),
         big: `${Math.round(s.pulseResponseRate * 100)}%`,
-        caption: `tasso di risposta · ${s.pulseDeltaPp >= 0 ? "+" : ""}${s.pulseDeltaPp} vs scorso`,
+        caption: t("dashcard.pulse.caption", { delta: signed(s.pulseDeltaPp) }),
         accent: true,
-        status: "Chiude venerdì",
+        status: t("dashcard.pulse.status"),
         link: "/feedback",
       },
       {
-        eyebrow: "02 · 1-ON-1",
-        title: "Incontri",
+        eyebrow: `02 · ${t("dashcard.oneonone.eyebrow")}`,
+        title: t("dashcard.oneonone.title"),
         big: String(s.oneOnOneOpen),
-        caption: `da pianificare · ${s.oneOnOneLate} in ritardo`,
+        caption: t("dashcard.oneonone.caption", { late: s.oneOnOneLate }),
         link: "/people",
       },
       {
-        eyebrow: "03 · KUDOS",
-        title: "Grazie",
+        eyebrow: `03 · ${t("dashcard.kudos.eyebrow")}`,
+        title: t("dashcard.kudos.title"),
         big: String(s.kudosThisMonth),
-        caption: `kudos questo mese · ${s.kudosDelta >= 0 ? "+" : ""}${s.kudosDelta} vs scorso`,
+        caption: t("dashcard.kudos.caption", { delta: signed(s.kudosDelta) }),
         spark: true,
         link: "/kudos",
       },
       {
-        eyebrow: "04 · GROWTH",
-        title: "Carriere",
+        eyebrow: `04 · ${t("dashcard.growth.eyebrow")}`,
+        title: t("dashcard.growth.title"),
         big: String(s.growthOpen),
-        caption: "review trimestrale aperte",
+        caption: t("dashcard.growth.caption"),
         link: "/growth",
       },
       {
-        eyebrow: "05 · MOMENTS",
-        title: "Auguri",
+        eyebrow: `05 · ${t("dashcard.moments.eyebrow")}`,
+        title: t("dashcard.moments.title"),
         big: String(s.momentsToday),
-        caption: "compleanni e anniversari oggi",
+        caption: t("dashcard.moments.caption"),
         link: "/moments",
       },
     ];
@@ -74,33 +81,33 @@ export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
   if (lens === "presence") {
     return [
       {
-        eyebrow: "01 · LEAVE",
-        title: "Oggi fuori",
+        eyebrow: `01 · ${t("dashcard.outToday.eyebrow")}`,
+        title: t("dashcard.outToday.title"),
         big: String(s.outToday),
-        caption: `ferie + malattia · ${s.newLeaveRequests} nuove richieste`,
+        caption: t("dashcard.outToday.caption", { n: s.newLeaveRequests }),
         accent: true,
         link: "/leave",
       },
       {
-        eyebrow: "02 · WORKLOAD",
-        title: "Carico medio",
+        eyebrow: `02 · ${t("dashcard.workload.eyebrow")}`,
+        title: t("dashcard.workload.title"),
         big: `${s.satMeanPct}%`,
-        caption: "saturazione team · soglia salute",
+        caption: t("dashcard.workload.caption"),
         spark: true,
         link: "/saturation",
       },
       {
-        eyebrow: "03 · MOMENTS",
-        title: "Auguri",
+        eyebrow: `03 · ${t("dashcard.moments.eyebrow")}`,
+        title: t("dashcard.moments.title"),
         big: String(s.momentsToday),
-        caption: "compleanni e anniversari oggi",
+        caption: t("dashcard.moments.caption"),
         link: "/moments",
       },
       {
-        eyebrow: "04 · STATUS LOG",
-        title: "Standup",
+        eyebrow: `04 · ${t("dashcard.standup.eyebrow")}`,
+        title: t("dashcard.standup.title"),
         big: String(s.oneOnOneOpen),
-        caption: `chat aperte · ${s.oneOnOneLate} in ritardo`,
+        caption: t("dashcard.standup.caption", { late: s.oneOnOneLate }),
         link: "/log",
       },
     ];
@@ -109,33 +116,33 @@ export function cardsFor(lens: LensId, s: CardSignals): MicroCardConfig[] {
   // workload (default)
   return [
     {
-      eyebrow: "01 · LEAVE",
-      title: "Riposo",
+      eyebrow: `01 · ${t("dashcard.leave.eyebrow")}`,
+      title: t("dashcard.leave.title"),
       big: String(s.pendingLeavesCount),
-      caption: `richieste aperte · ${s.pendingLeavesToApprove} da approvare`,
+      caption: t("dashcard.leave.caption", { n: s.pendingLeavesToApprove }),
       accent: true,
       link: "/leave",
     },
     {
-      eyebrow: "02 · KUDOS",
-      title: "Grazie",
+      eyebrow: `02 · ${t("dashcard.kudos.eyebrow")}`,
+      title: t("dashcard.kudos.title"),
       big: String(s.kudosThisMonth),
-      caption: `kudos questo mese · ${s.kudosDelta >= 0 ? "+" : ""}${s.kudosDelta} vs scorso`,
+      caption: t("dashcard.kudos.caption", { delta: signed(s.kudosDelta) }),
       spark: true,
       link: "/kudos",
     },
     {
-      eyebrow: "03 · GROWTH",
-      title: "Carriere",
+      eyebrow: `03 · ${t("dashcard.growth.eyebrow")}`,
+      title: t("dashcard.growth.title"),
       big: String(s.growthOpen),
-      caption: "review trimestrale aperte",
+      caption: t("dashcard.growth.caption"),
       link: "/growth",
     },
     {
-      eyebrow: "04 · MOMENTS",
-      title: "Auguri",
+      eyebrow: `04 · ${t("dashcard.moments.eyebrow")}`,
+      title: t("dashcard.moments.title"),
       big: String(s.momentsToday),
-      caption: "compleanni e anniversari oggi",
+      caption: t("dashcard.moments.caption"),
       link: "/moments",
     },
   ];

@@ -147,7 +147,7 @@ function Dashboard() {
     };
   }, [employees, leaveRequests]);
 
-  const cards = useMemo(() => cardsFor(lens, signals), [lens, signals]);
+  const cards = useMemo(() => cardsFor(lens, signals, t), [lens, signals, t]);
 
   const topProjectCode = useMemo(() => {
     const active = projects.filter((c) => c.status === "active" && c.budgetHours > 0);

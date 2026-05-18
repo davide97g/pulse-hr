@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { useKudos } from "@/lib/tables/kudos";
 import { useChallenges } from "@/lib/tables/challenges";
 import { useOneOnOnes } from "@/lib/tables/oneOnOnes";
@@ -10,6 +11,7 @@ import { Avatar } from "@/components/app/AppShell";
 import type { GrowthTab } from "./GrowthTabs";
 
 const MONTHS_IT = ["GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"];
+const MONTHS_EN = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
 function isoWeekStart(d: Date): Date {
   const t = new Date(d);
@@ -38,6 +40,8 @@ export function GrowthOverview({
   const achievements = useAchievements();
   const employees = useEmployees();
   const nav = useNavigate({ from: "/growth" });
+  const { locale } = useI18n();
+  const MONTHS = locale === "it" ? MONTHS_IT : MONTHS_EN;
 
   // 12 weeks ending on this week
   const weeks = useMemo(() => {
@@ -205,11 +209,36 @@ export function GrowthOverview({
       ? 0
       : Math.round(((lastWeekKud - prevWeekKud) / Math.max(1, prevWeekKud)) * 100);
 
+  const kudosDelta = monthKudos - prevMonthKudos;
   const kpis: Array<[string, string, string, boolean]> = [
-    ["KUDOS · MESE", String(monthKudos), `${monthKudos - prevMonthKudos >= 0 ? "+" : ""}${monthKudos - prevMonthKudos} vs scorso mese`, true],
-    ["ACHIEVEMENTS", String(achievements.length), `+${newAchievementsThisMonth} nuovi`, false],
-    ["CHALLENGES ATTIVE", String(openChallenges), `${closingSoon} in scadenza`, false],
-    ["GROWTH SCORE", String(growthScore), `${weeks.length} sett`, true],
+    [
+      locale === "it" ? "KUDOS · MESE" : "KUDOS · MONTH",
+      String(monthKudos),
+      locale === "it"
+        ? `${kudosDelta >= 0 ? "+" : ""}${kudosDelta} vs scorso mese`
+        : `${kudosDelta >= 0 ? "+" : ""}${kudosDelta} vs last month`,
+      true,
+    ],
+    [
+      "ACHIEVEMENTS",
+      String(achievements.length),
+      locale === "it"
+        ? `+${newAchievementsThisMonth} nuovi`
+        : `+${newAchievementsThisMonth} new`,
+      false,
+    ],
+    [
+      locale === "it" ? "CHALLENGES ATTIVE" : "ACTIVE CHALLENGES",
+      String(openChallenges),
+      locale === "it" ? `${closingSoon} in scadenza` : `${closingSoon} closing soon`,
+      false,
+    ],
+    [
+      "GROWTH SCORE",
+      String(growthScore),
+      locale === "it" ? `${weeks.length} sett` : `${weeks.length} wks`,
+      true,
+    ],
   ];
 
   return (
@@ -533,7 +562,7 @@ export function GrowthOverview({
               style={{ border: "1px solid var(--line)", borderRadius: 14, background: "var(--bg)" }}
             >
               <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                KUDOS PER DIPARTIMENTO · {MONTHS_IT[new Date().getMonth()]}
+                {locale === "it" ? "KUDOS PER DIPARTIMENTO" : "KUDOS BY DEPARTMENT"} · {MONTHS[new Date().getMonth()]}
               </span>
               <div className="flex flex-col gap-1.5">
                 {deptMix.map((d, i) => (
@@ -597,8 +626,12 @@ export function GrowthOverview({
               }}
             >
               {lastWeekKud > 0
-                ? `+${lastWeekKud} kudos questa settimana.`
-                : "Settimana tranquilla — invita un kudos."}
+                ? locale === "it"
+                  ? `+${lastWeekKud} kudos questa settimana.`
+                  : `+${lastWeekKud} kudos this week.`
+                : locale === "it"
+                  ? "Settimana tranquilla — invita un kudos."
+                  : "Quiet week — drop a kudos."}
             </div>
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
               Trend {trendDelta >= 0 ? "+" : ""}
@@ -643,7 +676,7 @@ export function GrowthOverview({
                     className="t-mono"
                     style={{ color: "var(--muted-foreground)", textAlign: "right" }}
                   >
-                    {String(d.getDate()).padStart(2, "0")} {MONTHS_IT[d.getMonth()].toLowerCase()}
+                    {String(d.getDate()).padStart(2, "0")} {MONTHS[d.getMonth()].toLowerCase()}
                   </span>
                 </button>
               );
@@ -655,14 +688,24 @@ export function GrowthOverview({
             style={{ border: "1px solid var(--line-strong)", borderRadius: 14 }}
           >
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              AZIONI RAPIDE
+              {locale === "it" ? "AZIONI RAPIDE" : "QUICK ACTIONS"}
             </span>
             {[
-              { sym: "+", label: "Crea kudos", k: "⌘K", on: onOpenNewKudos },
-              { sym: "◇", label: "Apri challenge", k: "⌘L", on: onOpenNewChallenge },
+              {
+                sym: "+",
+                label: locale === "it" ? "Crea kudos" : "Create kudos",
+                k: "⌘K",
+                on: onOpenNewKudos,
+              },
+              {
+                sym: "◇",
+                label: locale === "it" ? "Apri challenge" : "Open challenge",
+                k: "⌘L",
+                on: onOpenNewChallenge,
+              },
               {
                 sym: "★",
-                label: "Vai ad achievements",
+                label: locale === "it" ? "Vai ad achievements" : "Go to achievements",
                 k: "⌘A",
                 on: () => goToTab("achievements"),
               },

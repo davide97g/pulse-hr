@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { commentRepliesTable, useCommentReplies } from "@/lib/tables/commentReplies";
 
 export function CommentThreadEditorial({ id }: { id: string }) {
   const thread = useCommentReplies();
   const [draft, setDraft] = useState("");
+  const { locale } = useI18n();
 
   function publish() {
     if (!draft.trim()) {
-      toast.error("Scrivi qualcosa prima di pubblicare");
+      toast.error(
+        locale === "it"
+          ? "Scrivi qualcosa prima di pubblicare"
+          : "Write something before publishing",
+      );
       return;
     }
     commentRepliesTable.add({
@@ -16,7 +22,7 @@ export function CommentThreadEditorial({ id }: { id: string }) {
       whoName: "Davide",
       whoRole: "VP PRODUCT",
       time: new Date()
-        .toLocaleString("it-IT", {
+        .toLocaleString(locale === "it" ? "it-IT" : "en-US", {
           day: "2-digit",
           month: "short",
           hour: "2-digit",
@@ -27,7 +33,7 @@ export function CommentThreadEditorial({ id }: { id: string }) {
       text: draft.trim(),
     });
     setDraft("");
-    toast.success("Risposta pubblicata");
+    toast.success(locale === "it" ? "Risposta pubblicata" : "Reply published");
   }
 
   return (
@@ -185,14 +191,14 @@ export function CommentThreadEditorial({ id }: { id: string }) {
           />
           <div className="flex gap-2.5 items-center">
             <button type="button" className="pill pill-ghost pill-sm">
-              @persona
+              {locale === "it" ? "@persona" : "@person"}
             </button>
             <button type="button" className="pill pill-ghost pill-sm">
-              Allega
+              {locale === "it" ? "Allega" : "Attach"}
             </button>
             <span className="flex-1" />
             <button type="button" className="pill pill-spark pill-sm" onClick={publish}>
-              ⌘⏎ Pubblica
+              ⌘⏎ {locale === "it" ? "Pubblica" : "Publish"}
             </button>
           </div>
         </div>

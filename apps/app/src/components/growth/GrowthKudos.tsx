@@ -4,24 +4,30 @@ import { useEmployees, employeeById } from "@/lib/tables/employees";
 import { Avatar } from "@/components/app/AppShell";
 import { toast } from "sonner";
 import type { Kudo } from "@/lib/mock-data";
+import { useT, useI18n } from "@pulse-hr/shared/i18n";
 
-const MONTHS_IT = ["GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"];
-function fmt(iso: string) {
+function fmt(iso: string, locale: string) {
   const d = new Date(iso);
-  return `${String(d.getDate()).padStart(2, "0")} ${MONTHS_IT[d.getMonth()]}`;
+  const month = d
+    .toLocaleString(locale === "it" ? "it-IT" : "en-US", { month: "short" })
+    .toUpperCase()
+    .replace(".", "");
+  return `${String(d.getDate()).padStart(2, "0")} ${month}`;
 }
 
-const TAG_LABEL: Record<Kudo["tag"], string> = {
-  craft: "CRAFT",
-  impact: "IMPATTO",
-  teamwork: "TEAMWORK",
-  courage: "CORAGGIO",
-  kindness: "GENTILEZZA",
+const TAG_KEY: Record<Kudo["tag"], string> = {
+  craft: "kudos.tag.craft",
+  impact: "kudos.tag.impact",
+  teamwork: "kudos.tag.teamwork",
+  courage: "kudos.tag.courage",
+  kindness: "kudos.tag.kindness",
 };
 
 export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) {
   const kudos = useKudos();
   const employees = useEmployees();
+  const t = useT();
+  const { locale } = useI18n();
 
   const monthCount = useMemo(() => {
     const start = new Date();
@@ -50,8 +56,8 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
 
   function deleteKudo(k: Kudo) {
     kudosTable.remove(k.id);
-    toast("Kudos rimosso", {
-      action: { label: "Annulla", onClick: () => kudosTable.add(k) },
+    toast(t("kudos.toast.removed"), {
+      action: { label: t("common.undo"), onClick: () => kudosTable.add(k) },
     });
   }
 
@@ -60,7 +66,7 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
       <div className="grid gap-4 md:gap-6 items-end grid-cols-1 md:grid-cols-[1.2fr_1fr]">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            PEER RECOGNITION · {monthCount} KUDOS QUESTO MESE
+            {t("kudos.eyebrow", { n: monthCount })}
           </span>
           <h2
             className="text-[40px] md:text-[56px]"
@@ -72,7 +78,7 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
               lineHeight: 0.92,
             }}
           >
-            <span style={{ fontStyle: "italic" }}>Grazie</span>
+            <span style={{ fontStyle: "italic" }}>{t("kudos.heading")}</span>
             <span style={{ color: "var(--spark)" }}>.</span>
           </h2>
         </div>
@@ -89,7 +95,7 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
           }}
         >
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            NUOVO KUDOS
+            {t("kudos.new")}
           </span>
           <div
             style={{
@@ -101,13 +107,13 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
               color: "var(--muted-foreground)",
             }}
           >
-            A chi vuoi dire grazie oggi?
+            {t("kudos.composer.prompt")}
           </div>
           <div
             className="t-mono"
             style={{ marginTop: 10, color: "var(--spark)", display: "inline-block" }}
           >
-            APRI COMPOSER →
+            {t("kudos.composer.cta")}
           </div>
         </button>
       </div>
@@ -154,7 +160,7 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
                 className="t-mono"
                 style={{ color: i === 0 ? "var(--spark)" : "var(--muted-foreground)" }}
               >
-                {row.recv} ricevuti · +{row.given} dati
+                {t("kudos.leaderboard.row", { recv: row.recv, given: row.given })}
               </span>
             </div>
           </div>
@@ -194,7 +200,7 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
                 </span>
                 <span style={{ flex: 1 }} />
                 <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                  {TAG_LABEL[k.tag]}
+                  {t(TAG_KEY[k.tag])}
                 </span>
                 <span className="t-mono" style={{ color: "var(--spark)" }}>
                   +{k.amount}
@@ -214,7 +220,7 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
               </p>
               <div className="flex items-center" style={{ gap: 10, marginTop: "auto" }}>
                 <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                  {fmt(k.date)}
+                  {fmt(k.date, locale)}
                 </span>
                 <span style={{ flex: 1 }} />
                 <button
@@ -229,7 +235,7 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
                     padding: 0,
                   }}
                 >
-                  Rimuovi
+                  {t("kudos.remove")}
                 </button>
               </div>
             </div>
@@ -237,7 +243,7 @@ export function GrowthKudos({ onOpenNewKudos }: { onOpenNewKudos: () => void }) 
         })}
         {wall.length === 0 && (
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            NESSUN KUDOS — INIZIA TU.
+            {t("kudos.empty")}
           </span>
         )}
       </div>

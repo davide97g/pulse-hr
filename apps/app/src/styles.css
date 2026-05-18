@@ -195,4 +195,24 @@
       --sk-ir-ang: 360deg;
     }
   }
+
+  /* Employee picker row — cmdk-driven highlight that matches editorial
+     hairline + spark accent instead of the default shadcn accent fill. */
+  .ph-emp-item[data-selected="true"] {
+    background: color-mix(in oklch, var(--fg) 6%, transparent);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .ph-emp-item[data-selected="true"]::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--spark);
+  }
+  .ph-emp-item {
+    position: relative;
+  }
 }

@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { type Employee } from "@/lib/mock-data";
 import { useEmployee, useEmployees } from "@/lib/tables/employees";
 
@@ -65,11 +66,12 @@ const ACTIVITY_PRESET: Array<[string, string, "spark" | undefined]> = [
 
 export function PersonEditorialSpread({ employeeId }: { employeeId: string }) {
   const employee = useEmployee(employeeId);
+  const { locale } = useI18n();
   if (!employee) {
     return (
       <div className="p-12 flex items-center justify-center">
         <div className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-          PERSONA NON TROVATA
+          {locale === "it" ? "PERSONA NON TROVATA" : "PERSON NOT FOUND"}
         </div>
       </div>
     );
@@ -80,6 +82,7 @@ export function PersonEditorialSpread({ employeeId }: { employeeId: string }) {
 function Spread({ employee }: { employee: Employee }) {
   const navigate = useNavigate();
   const all = useEmployees();
+  const { locale } = useI18n();
   const idx = useMemo(() => all.findIndex((e) => e.id === employee.id), [all, employee.id]);
 
   const focus = useMemo(() => focusBarsFor(employee), [employee]);
@@ -212,9 +215,11 @@ function Spread({ employee }: { employee: Employee }) {
             }}
           >
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              DOCUMENTI · 4
+              {locale === "it" ? "DOCUMENTI · 4" : "DOCUMENTS · 4"}
             </span>
-            {["Contratto firmato", "Codice fiscale", "IBAN aggiornato", "NDA"].map((d, i) => (
+            {(locale === "it"
+              ? ["Contratto firmato", "Codice fiscale", "IBAN aggiornato", "NDA"]
+              : ["Contract signed", "Tax ID", "IBAN updated", "NDA"]).map((d, i) => (
               <div
                 key={i}
                 className="flex justify-between items-center"
@@ -262,13 +267,13 @@ function Spread({ employee }: { employee: Employee }) {
                   })
                 }
               >
-                ⌘E Modifica
+                ⌘E {locale === "it" ? "Modifica" : "Edit"}
               </button>
               <button type="button" className="pill pill-ghost pill-sm">
                 ⌘L Leave
               </button>
               <button type="button" className="pill pill-dark pill-sm">
-                Avvia 1:1
+                {locale === "it" ? "Avvia 1:1" : "Start 1:1"}
               </button>
             </div>
             <h1
@@ -299,8 +304,14 @@ function Spread({ employee }: { employee: Employee }) {
               }}
             >
               {employee.role}, {employee.location}.{" "}
-              {tenureYears(employee.joinDate).toFixed(1)} anni in PulseHR.
-              {employee.manager ? ` Riporta a ${employee.manager}.` : ""}
+              {locale === "it"
+                ? `${tenureYears(employee.joinDate).toFixed(1)} anni in PulseHR.`
+                : `${tenureYears(employee.joinDate).toFixed(1)} years at PulseHR.`}
+              {employee.manager
+                ? locale === "it"
+                  ? ` Riporta a ${employee.manager}.`
+                  : ` Reports to ${employee.manager}.`
+                : ""}
             </p>
           </div>
 

@@ -262,7 +262,11 @@ export function MomentsEditorial() {
           ))}
           {upcoming.length === 0 && (
             <div className="p-8 text-center" style={{ color: "var(--muted-foreground)" }}>
-              <span className="t-mono">NESSUN MOMENTO NEI PROSSIMI 30 GIORNI</span>
+              <span className="t-mono">
+                {locale === "it"
+                  ? "NESSUN MOMENTO NEI PROSSIMI 30 GIORNI"
+                  : "NO MOMENTS IN THE NEXT 30 DAYS"}
+              </span>
             </div>
           )}
         </div>

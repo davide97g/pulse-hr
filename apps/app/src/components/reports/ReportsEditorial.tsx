@@ -1,5 +1,9 @@
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@pulse-hr/shared/i18n";
+
+const DAY_NAMES_IT = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+const DAY_NAMES_EN = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 function exportReport(kind: "csv" | "json", view: string, period: string) {
   const stamp = new Date().toISOString().slice(0, 10);
@@ -542,9 +546,16 @@ function Sparkline({
 
 /* Hero hex pulse */
 
-const DAY_NAMES = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
-
 function PulseHexPanel() {
+  const { locale } = useI18n();
+  const DAY_NAMES = locale === "it" ? DAY_NAMES_IT : DAY_NAMES_EN;
+  const weekendLabel = locale === "it" ? "WEEKEND" : "WEEKEND";
+  const holidayLabel = locale === "it" ? "FESTIVITÀ" : "HOLIDAY";
+  const standardLabel = locale === "it" ? "GIORNATA STANDARD" : "STANDARD DAY";
+  const presenceLabel = locale === "it" ? "PRESENZA" : "PRESENCE";
+  const onSiteLabel = locale === "it" ? "IN AZIENDA" : "ON SITE";
+  const closedLabel = locale === "it" ? "chiuso" : "closed";
+  const weekLabel = locale === "it" ? "Settimana" : "Week";
   const days = useMemo(() => {
     const rand = seeded(42);
     const out: Array<{ w: number; d: number; presence: number; holiday: boolean; weekend: boolean; headcount: number }> = [];
@@ -696,15 +707,15 @@ function PulseHexPanel() {
                     key,
                     x: xPct,
                     y: yPct,
-                    title: `Settimana ${p.w + 11}`,
+                    title: `${weekLabel} ${p.w + 11}`,
                     subtitle: `${DAY_NAMES[p.d].toUpperCase()} · ${
-                      p.holiday ? "FESTIVITÀ" : p.weekend ? "WEEKEND" : "GIORNATA STANDARD"
+                      p.holiday ? holidayLabel : p.weekend ? weekendLabel : standardLabel
                     }`,
-                    primaryLabel: "PRESENZA",
+                    primaryLabel: presenceLabel,
                     primaryValue: p.holiday ? "—" : `${Math.round(p.presence * 100)}%`,
                     primaryAccent: !p.holiday && p.presence > 0.85,
-                    secondaryLabel: "IN AZIENDA",
-                    secondaryValue: p.holiday ? "chiuso" : `${p.headcount} / 142`,
+                    secondaryLabel: onSiteLabel,
+                    secondaryValue: p.holiday ? closedLabel : `${p.headcount} / 142`,
                   });
                 }}
                 onMouseLeave={() => setHover(null)}
@@ -757,8 +768,17 @@ function PulseHexPanel() {
             lineHeight: 1.4,
           }}
         >
-          Settimana 17 al picco con <span className="spark-mark">93% di presenza</span>. Due
-          festività ridotte e weekend stabili: il ritmo è in linea col target.
+          {locale === "it" ? (
+            <>
+              Settimana 17 al picco con <span className="spark-mark">93% di presenza</span>.
+              Due festività ridotte e weekend stabili: il ritmo è in linea col target.
+            </>
+          ) : (
+            <>
+              Week 17 peaks at <span className="spark-mark">93% presence</span>. Two short
+              holidays and steady weekends — pace is on target.
+            </>
+          )}
         </p>
         <div className="flex items-center gap-2 flex-wrap">
           {[
@@ -884,6 +904,7 @@ function RetentionFunnel() {
 /* Deep dive teasers */
 
 function DeepDiveStrip() {
+  const { locale } = useI18n();
   const dives: Array<{
     id: string;
     eyebrow: string;
@@ -891,40 +912,75 @@ function DeepDiveStrip() {
     stat: string;
     sub: string;
     kind: "default" | "spark" | "warn";
-  }> = [
-    {
-      id: "diversity",
-      eyebrow: "01 · DIVERSITÀ",
-      title: "Equilibrio",
-      stat: "47 / 53",
-      sub: "donne / uomini · gap salariale 2.1%",
-      kind: "default",
-    },
-    {
-      id: "tenure",
-      eyebrow: "02 · ANZIANITÀ",
-      title: "Anni con noi",
-      stat: "3.4",
-      sub: "mediana · 12 oltre i 5 anni",
-      kind: "default",
-    },
-    {
-      id: "kudos",
-      eyebrow: "03 · KUDOS",
-      title: "Grazie ricevute",
-      stat: "186",
-      sub: "questo mese · ENG in testa con 22",
-      kind: "spark",
-    },
-    {
-      id: "pulse",
-      eyebrow: "04 · BURNOUT",
-      title: "Segnali",
-      stat: "9",
-      sub: "persone su carico >100% da 3+ settimane",
-      kind: "warn",
-    },
-  ];
+  }> = locale === "it"
+    ? [
+        {
+          id: "diversity",
+          eyebrow: "01 · DIVERSITÀ",
+          title: "Equilibrio",
+          stat: "47 / 53",
+          sub: "donne / uomini · gap salariale 2.1%",
+          kind: "default",
+        },
+        {
+          id: "tenure",
+          eyebrow: "02 · ANZIANITÀ",
+          title: "Anni con noi",
+          stat: "3.4",
+          sub: "mediana · 12 oltre i 5 anni",
+          kind: "default",
+        },
+        {
+          id: "kudos",
+          eyebrow: "03 · KUDOS",
+          title: "Grazie ricevute",
+          stat: "186",
+          sub: "questo mese · ENG in testa con 22",
+          kind: "spark",
+        },
+        {
+          id: "pulse",
+          eyebrow: "04 · BURNOUT",
+          title: "Segnali",
+          stat: "9",
+          sub: "persone su carico >100% da 3+ settimane",
+          kind: "warn",
+        },
+      ]
+    : [
+        {
+          id: "diversity",
+          eyebrow: "01 · DIVERSITY",
+          title: "Balance",
+          stat: "47 / 53",
+          sub: "women / men · 2.1% pay gap",
+          kind: "default",
+        },
+        {
+          id: "tenure",
+          eyebrow: "02 · TENURE",
+          title: "Years with us",
+          stat: "3.4",
+          sub: "median · 12 past the 5-year mark",
+          kind: "default",
+        },
+        {
+          id: "kudos",
+          eyebrow: "03 · KUDOS",
+          title: "Thanks received",
+          stat: "186",
+          sub: "this month · ENG leads with 22",
+          kind: "spark",
+        },
+        {
+          id: "pulse",
+          eyebrow: "04 · BURNOUT",
+          title: "Signals",
+          stat: "9",
+          sub: "people over 100% load for 3+ weeks",
+          kind: "warn",
+        },
+      ];
   const borderFor = (k: typeof dives[0]["kind"]) =>
     k === "spark" ? "var(--spark)" : k === "warn" ? "var(--destructive)" : "var(--line)";
   const bgFor = (k: typeof dives[0]["kind"]) =>
@@ -1192,9 +1248,12 @@ const FIRST_X = ["Sam", "Alex", "Robin", "Jules"];
 const LAST = ["Marchetti", "Rossi", "Conti", "Bianchi", "Romano", "Greco", "Esposito", "Ferrari", "Russo", "Bruno", "Costa", "Galli"];
 const ROLES = ["Tech Lead", "Senior Eng", "Designer", "PM", "People Ops", "Recruiter", "Account", "Finance", "Data Eng", "Marketing"];
 const DEPTS = ["ENG", "DSG", "PRD", "OPS", "FIN", "MKT", "SAL"];
-const SAT_LABELS = ["Saturazione", "Tenure", "Kudos M", "1-on-1"];
+const SAT_LABELS_IT = ["Saturazione", "Tenure", "Kudos M", "1-on-1"];
+const SAT_LABELS_EN = ["Saturation", "Tenure", "Kudos M", "1-on-1"];
 
 function DiversityHexes() {
+  const { locale } = useI18n();
+  const SAT_LABELS = locale === "it" ? SAT_LABELS_IT : SAT_LABELS_EN;
   const cells = useMemo(() => {
     const rand = seeded(91);
     const total = 142;
@@ -1269,7 +1328,7 @@ function DiversityHexes() {
     >
       <div>
         <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-          COMPOSIZIONE · 142 PERSONE
+          {locale === "it" ? "COMPOSIZIONE · 142 PERSONE" : "COMPOSITION · 142 PEOPLE"}
         </span>
         <h2
           style={{
@@ -1281,7 +1340,7 @@ function DiversityHexes() {
             color: "var(--fg)",
           }}
         >
-          Una persona, un esagono.
+          {locale === "it" ? "Una persona, un esagono." : "One person, one hexagon."}
         </h2>
       </div>
       <div className="flex-1 min-h-0 flex items-center relative">
@@ -1316,7 +1375,17 @@ function DiversityHexes() {
                       onMouseEnter={() => {
                         const initials = (c.first[0] + c.last[0]).toUpperCase();
                         const groupLabel =
-                          c.group === "F" ? "Donne" : c.group === "M" ? "Uomini" : "Non binari";
+                          locale === "it"
+                            ? c.group === "F"
+                              ? "Donne"
+                              : c.group === "M"
+                                ? "Uomini"
+                                : "Non binari"
+                            : c.group === "F"
+                              ? "Women"
+                              : c.group === "M"
+                                ? "Men"
+                                : "Non-binary";
                         setHover({
                           key: i,
                           x: (x / vbW) * 100,
@@ -1328,7 +1397,7 @@ function DiversityHexes() {
                           primaryValue: `${Math.round(c.sat * 100)}%`,
                           primaryAccent: c.sat > 0.95,
                           secondaryLabel: groupLabel.toUpperCase(),
-                          secondaryValue: `${c.tenure.toFixed(1)} anni`,
+                          secondaryValue: `${c.tenure.toFixed(1)} ${locale === "it" ? "anni" : "yrs"}`,
                         });
                       }}
                       onMouseLeave={() => setHover(null)}

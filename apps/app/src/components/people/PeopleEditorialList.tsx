@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { useT, useI18n } from "@pulse-hr/shared/i18n";
 import { useEmployees, employeesTable } from "@/lib/tables/employees";
 import { type Employee } from "@/lib/mock-data";
 import { useUrlParam } from "@/lib/useUrlParam";
@@ -21,10 +22,13 @@ function tenureYears(joinDate: string): number {
   return Math.max(0, days / 365.25);
 }
 
-function statusLabel(status: Employee["status"]): { label: string; color: string } {
+function statusLabel(
+  status: Employee["status"],
+  locale: "en" | "it",
+): { label: string; color: string } {
   switch (status) {
     case "active":
-      return { label: "ATTIVA", color: "var(--fg-2)" };
+      return { label: locale === "it" ? "ATTIVA" : "ACTIVE", color: "var(--fg-2)" };
     case "remote":
       return { label: "REMOTE", color: "var(--fg-2)" };
     case "on_leave":
@@ -43,7 +47,9 @@ function isProbation(e: Employee): boolean {
 export function PeopleEditorialList() {
   const employees = useEmployees();
   const navigate = useNavigate();
-  const [filter, setFilter] = useState<string>("TUTTE");
+  const t = useT();
+  const { locale } = useI18n();
+  const [filter, setFilter] = useState<string>("__ALL__");
   const [q, setQ] = useUrlParam("q");
   const search = q ?? "";
   const [toDelete, setToDelete] = useState<Employee | null>(null);
@@ -54,14 +60,16 @@ export function PeopleEditorialList() {
     return Array.from(set);
   }, [employees]);
 
+  const allLabel = locale === "it" ? "TUTTE" : "ALL";
+  const ALL = "__ALL__";
   const filterChips = useMemo(
-    () => ["TUTTE", ...departments.map((d) => d.toUpperCase())],
+    () => [ALL, ...departments.map((d) => d.toUpperCase())],
     [departments],
   );
 
   const filtered = useMemo(() => {
     let list = employees;
-    if (filter !== "TUTTE") {
+    if (filter !== ALL) {
       list = list.filter((e) => e.department.toUpperCase() === filter);
     }
     if (search) {
@@ -99,8 +107,8 @@ export function PeopleEditorialList() {
   const turnoverPct = totalCount === 0 ? 0 : (offboardCount / totalCount) * 100;
 
   const stats: Array<[string, string, "spark" | undefined]> = [
-    ["TOTALI", String(totalCount), undefined],
-    ["ATTIVE", String(activeCount), undefined],
+    [locale === "it" ? "TOTALI" : "TOTAL", String(totalCount), undefined],
+    [locale === "it" ? "ATTIVE" : "ACTIVE", String(activeCount), undefined],
     ["ONBOARD", String(onboardingCount), onboardingCount > 0 ? "spark" : undefined],
     ["LEAVE", String(leaveCount), undefined],
     ["TURNOVER", `${turnoverPct.toFixed(1)}%`, undefined],
@@ -111,8 +119,8 @@ export function PeopleEditorialList() {
     const e = toDelete;
     employeesTable.remove(e.id);
     setToDelete(null);
-    toast.success(`${e.name} rimosso`, {
-      action: { label: "Annulla", onClick: () => employeesTable.add(e) },
+    toast.success(`${e.name} ${locale === "it" ? "rimosso" : "removed"}`, {
+      action: { label: t("common.undo"), onClick: () => employeesTable.add(e) },
     });
   }
 
@@ -152,17 +160,21 @@ export function PeopleEditorialList() {
               a.download = `pulsehr-employees-${new Date().toISOString().slice(0, 10)}.json`;
               a.click();
               URL.revokeObjectURL(url);
-              toast.success(`Esportate ${filtered.length} persone`);
+              toast.success(
+                locale === "it"
+                  ? `Esportate ${filtered.length} persone`
+                  : `Exported ${filtered.length} people`,
+              );
             }}
           >
-            Esporta
+            {t("people.export")}
           </button>
           <button
             type="button"
             className="pill pill-dark pill-sm"
             onClick={() => navigate({ to: "/people/new" })}
           >
-            + Nuovo
+            + {t("people.new")}
           </button>
         </div>
       </div>
@@ -187,7 +199,7 @@ export function PeopleEditorialList() {
             type="search"
             value={search}
             onChange={(e) => setQ(e.target.value || null)}
-            placeholder="Cerca per nome, ruolo, sede…"
+            placeholder={t("people.search.placeholder.full")}
             style={{
               flex: 1,
               border: "none",
@@ -204,13 +216,14 @@ export function PeopleEditorialList() {
           </span>
         </div>
         <div className="flex gap-1.5 flex-wrap">
-          {filterChips.map((t) => {
-            const active = filter === t;
+          {filterChips.map((chip) => {
+            const active = filter === chip;
+            const display = chip === ALL ? allLabel : chip;
             return (
               <button
-                key={t}
+                key={chip}
                 type="button"
-                onClick={() => setFilter(t)}
+                onClick={() => setFilter(chip)}
                 className="t-mono"
                 style={{
                   padding: "5px 10px",
@@ -225,7 +238,7 @@ export function PeopleEditorialList() {
                   whiteSpace: "nowrap",
                 }}
               >
-                {t}
+                {display}
               </button>
             );
           })}
@@ -300,7 +313,7 @@ export function PeopleEditorialList() {
             </div>
 
             {list.map((e) => {
-              const stat = statusLabel(e.status);
+              const stat = statusLabel(e.status, locale);
               const probation = isProbation(e);
               return (
                 <button
@@ -411,18 +424,24 @@ export function PeopleEditorialList() {
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Rimuovi {toDelete?.name}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {locale === "it"
+                ? `Rimuovi ${toDelete?.name}?`
+                : `Remove ${toDelete?.name}?`}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              La persona viene rimossa dalla directory. Puoi annullare dal toast.
+              {locale === "it"
+                ? "La persona viene rimossa dalla directory. Puoi annullare dal toast."
+                : "The person is removed from the directory. You can undo from the toast."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annulla</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={confirmDelete}
             >
-              Rimuovi
+              {locale === "it" ? "Rimuovi" : "Remove"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

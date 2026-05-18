@@ -1,4 +1,5 @@
 import { SidePanel } from "@pulse-hr/ui/atoms/SidePanel";
+import { useI18n } from "@pulse-hr/shared/i18n";
 import { challengesTable } from "@/lib/tables/challenges";
 import { useEmployees } from "@/lib/tables/employees";
 import { toast } from "sonner";
@@ -22,16 +23,25 @@ function defaultDueDate(): string {
   return d.toISOString().slice(0, 10);
 }
 
-const KINDS: Array<[ChallengeKind, string, string]> = [
-  ["individual", "INDIVIDUALE", "1 persona, 1 obiettivo"],
-  ["squad", "SQUADRA", "Team coinvolto"],
-  ["company", "AZIENDA", "Aperta a tutti"],
-];
+const KIND_LABELS: Record<"it" | "en", Array<[ChallengeKind, string, string]>> = {
+  it: [
+    ["individual", "INDIVIDUALE", "1 persona, 1 obiettivo"],
+    ["squad", "SQUADRA", "Team coinvolto"],
+    ["company", "AZIENDA", "Aperta a tutti"],
+  ],
+  en: [
+    ["individual", "INDIVIDUAL", "1 person, 1 goal"],
+    ["squad", "SQUAD", "Whole team involved"],
+    ["company", "COMPANY", "Open to everyone"],
+  ],
+};
 
 const XP_PRESETS = [100, 200, 350, 500];
 
 export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const employees = useEmployees();
+  const { locale } = useI18n();
+  const KINDS = KIND_LABELS[locale];
   const { draft, setDraft, clearDraft } = useDraft<ChallengeDraft>(
     "pulsehr.draft.challenge-new",
     {
@@ -47,7 +57,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
 
   function publish() {
     if (!title.trim()) {
-      toast.error("Inserisci un titolo");
+      toast.error(locale === "it" ? "Inserisci un titolo" : "Enter a title");
       return;
     }
     const c: Challenge = {
@@ -63,19 +73,27 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
       xpReward: xp,
     };
     challengesTable.add(c);
-    toast.success("Challenge creata", {
-      action: { label: "Annulla", onClick: () => challengesTable.remove(c.id) },
+    toast.success(locale === "it" ? "Challenge creata" : "Challenge created", {
+      action: {
+        label: locale === "it" ? "Annulla" : "Undo",
+        onClick: () => challengesTable.remove(c.id),
+      },
     });
     clearDraft();
     onClose();
   }
 
   return (
-    <SidePanel open={open} onClose={onClose} title="Nuova challenge" width={620}>
+    <SidePanel
+      open={open}
+      onClose={onClose}
+      title={locale === "it" ? "Nuova challenge" : "New challenge"}
+      width={620}
+    >
       <div className="p-5 flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            TIPO
+            {locale === "it" ? "TIPO" : "TYPE"}
           </span>
           <div className="grid gap-2.5" style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
             {KINDS.map(([id, label, sub]) => {
@@ -120,12 +138,14 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
 
         <div className="flex flex-col gap-1.5">
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            TITOLO
+            {locale === "it" ? "TITOLO" : "TITLE"}
           </span>
           <input
             value={title}
             onChange={(e) => setDraft({ title: e.target.value })}
-            placeholder="Migrazione DB · zero downtime"
+            placeholder={
+              locale === "it" ? "Migrazione DB · zero downtime" : "DB migration · zero downtime"
+            }
             style={{
               borderBottom: "1px solid var(--line-strong)",
               border: "none",
@@ -147,12 +167,16 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
 
         <div className="flex flex-col gap-1.5">
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            DESCRIZIONE
+            {locale === "it" ? "DESCRIZIONE" : "DESCRIPTION"}
           </span>
           <textarea
             value={description}
             onChange={(e) => setDraft({ description: e.target.value })}
-            placeholder="Cosa serve, come si misura, chi è coinvolto."
+            placeholder={
+              locale === "it"
+                ? "Cosa serve, come si misura, chi è coinvolto."
+                : "What's needed, how it's measured, who's involved."
+            }
             rows={3}
             style={{
               padding: "12px 14px",
@@ -172,7 +196,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
         <div className="grid gap-3" style={{ gridTemplateColumns: "1fr 1fr" }}>
           <div className="flex flex-col gap-1.5">
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              SCADENZA
+              {locale === "it" ? "SCADENZA" : "DUE"}
             </span>
             <input
               type="date"
@@ -247,7 +271,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
         {/* Preview */}
         <div className="flex flex-col gap-1.5">
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            ANTEPRIMA
+            {locale === "it" ? "ANTEPRIMA" : "PREVIEW"}
           </span>
           <div
             className="p-4 flex flex-col"
@@ -271,7 +295,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
                 color: title ? "var(--fg)" : "var(--muted-foreground)",
               }}
             >
-              {title || "Il titolo della challenge"}
+              {title || (locale === "it" ? "Il titolo della challenge" : "The challenge title")}
             </span>
             {description && (
               <span style={{ color: "var(--muted-foreground)", fontSize: 13 }}>
@@ -283,7 +307,8 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
                 +{xp} XP
               </span>
               <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                · scade {new Date(dueAt).toLocaleDateString("it-IT")}
+                · {locale === "it" ? "scade" : "due"}{" "}
+                {new Date(dueAt).toLocaleDateString(locale === "it" ? "it-IT" : "en-US")}
               </span>
             </div>
           </div>
@@ -303,7 +328,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
               cursor: "pointer",
             }}
           >
-            ANNULLA
+            {locale === "it" ? "ANNULLA" : "CANCEL"}
           </button>
           <span style={{ flex: 1 }} />
           <button
@@ -319,7 +344,7 @@ export function NewChallengeSheet({ open, onClose }: { open: boolean; onClose: (
               cursor: "pointer",
             }}
           >
-            CREA →
+            {locale === "it" ? "CREA →" : "CREATE →"}
           </button>
         </div>
       </div>
