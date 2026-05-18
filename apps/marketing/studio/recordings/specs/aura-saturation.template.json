@@ -1,0 +1,68 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/saturation",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 280
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1",
+    "pulse.locale": "en",
+    "pulse.demoBanner.dismissed.v1": "1",
+    "pulse.lastSeenVersion": "0.9.0"
+  },
+  "setup": "{{SETUP_AURA}}",
+  "steps": [
+    {
+      "action": "navigate",
+      "url": "{{BASE_URL}}/saturation"
+    },
+    {
+      "action": "wait",
+      "ms": 1000,
+      "waitFor": "main",
+      "timeout": 12000
+    },
+    { "action": "wait", "ms": 900 },
+    {
+      "action": "zoom",
+      "scale": 1.35,
+      "duration": 360
+    },
+    { "action": "wait", "ms": 1200 },
+    {
+      "action": "scroll",
+      "y": 240,
+      "speed": 0.7,
+      "pauseAfter": 320
+    },
+    { "action": "wait", "ms": 700 },
+    { "action": "zoom", "scale": 1, "duration": 240 },
+    { "action": "wait", "ms": 400 }
+  ]
+}

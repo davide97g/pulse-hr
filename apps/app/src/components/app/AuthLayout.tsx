@@ -220,7 +220,7 @@ function DefaultEditorialHero() {
           lineHeight: 1.35,
         }}
       >
-        Hai 3 timesheet da chiudere e una persona nuova che inizia mercoledì.
+        Make HR fun again.
       </p>
     </div>
   );

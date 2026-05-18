@@ -10,6 +10,7 @@ import { AuthLayout } from "@/components/app/AuthLayout";
 import { CompanyProfileForm } from "@/components/app/CompanyProfileForm";
 import { useCompanyProfileStore } from "@/components/app/CompanyProfileStore";
 import { cn } from "@/lib/utils";
+import { CLERK_TEST_CODE, isTestEmail } from "@/lib/test-emails";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Create your account — Pulse HR" }] }),
@@ -67,6 +68,22 @@ function Signup() {
       if (sendRes.error) {
         toast.error("Couldn't send verification code", { description: sendRes.error.message });
         return;
+      }
+      if (isTestEmail(account.email)) {
+        const verifyRes = await signUp.verifications.verifyEmailCode({ code: CLERK_TEST_CODE });
+        if (verifyRes.error) {
+          toast.error("Test bypass failed", { description: verifyRes.error.message });
+          return;
+        }
+        if (signUp.status === "complete") {
+          const finRes = await signUp.finalize();
+          if (finRes.error) {
+            toast.error("Couldn't activate session", { description: finRes.error.message });
+            return;
+          }
+          setStage("questionnaire");
+          return;
+        }
       }
       setStage("verify");
     } finally {

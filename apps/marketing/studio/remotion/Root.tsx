@@ -11,6 +11,7 @@ import {
   TrailerShorts,
   TRAILER_SHORTS_DURATION_FRAMES,
 } from "./TrailerShorts";
+import { AuraShorts, AURA_SHORTS_DURATION_FRAMES } from "./AuraShorts";
 
 const FPS = 30;
 
@@ -318,6 +319,45 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ audioSrc: "audio/trailer-v2.mp3" }}
+      />
+
+      {/* ── Aura-farming phonk shorts ───────────────────────────────────────
+          1080×1920, 30s. Pop-phonk arc: cold open → 5 product beats with
+          beat-synced bass pulse + caption stings → outro.
+
+          Record portrait sources first:
+            MOBILE=1 bun studio/recordings/scripts/run.ts aura-dashboard
+            MOBILE=1 bun studio/recordings/scripts/run.ts aura-log
+            MOBILE=1 bun studio/recordings/scripts/run.ts aura-kudos
+            MOBILE=1 bun studio/recordings/scripts/run.ts aura-saturation
+            MOBILE=1 bun studio/recordings/scripts/run.ts aura-moments
+          Drop the phonk mp3 at studio/audio/aura-phonk.mp3 then:
+            bun run --filter pulse-hr-marketing aura:shorts */}
+      <Composition
+        id="aura-shorts-v1"
+        component={AuraShorts}
+        durationInFrames={AURA_SHORTS_DURATION_FRAMES}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ audioSrc: "audio/aura-phonk.mp3", variant: "shorts" }}
+      />
+      {/* Landscape variant — same composition, desktop captures, 16:9 frame
+          for YouTube / hero embed / pre-roll. Record desktop sources first:
+            bun studio/recordings/scripts/run.ts aura-dashboard
+            bun studio/recordings/scripts/run.ts aura-log
+            bun studio/recordings/scripts/run.ts aura-kudos
+            bun studio/recordings/scripts/run.ts aura-saturation
+            bun studio/recordings/scripts/run.ts aura-moments
+          (no MOBILE=1 → writes captures/<spec>/clip.mp4) */}
+      <Composition
+        id="aura-landscape-v1"
+        component={AuraShorts}
+        durationInFrames={AURA_SHORTS_DURATION_FRAMES}
+        fps={FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ audioSrc: "audio/aura-phonk.mp3", variant: "landscape" }}
       />
     </>
   );

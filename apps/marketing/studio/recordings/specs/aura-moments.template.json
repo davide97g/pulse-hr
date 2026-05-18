@@ -1,0 +1,75 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/moments",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"getting-started\",\"time-tracking\",\"clients-projects\",\"recruiting\",\"labs-highlights\"]",
+    "pulse.skipBoot": "1",
+    "pulse.locale": "en",
+    "pulse.demoBanner.dismissed.v1": "1",
+    "pulse.lastSeenVersion": "0.9.0"
+  },
+  "setup": "{{SETUP_AURA}}",
+  "steps": [
+    {
+      "action": "navigate",
+      "url": "{{BASE_URL}}/moments"
+    },
+    {
+      "action": "wait",
+      "ms": 1000,
+      "waitFor": "main",
+      "timeout": 12000
+    },
+    {
+      "action": "screenshot",
+      "name": "01-moments-idle",
+      "pauseAfter": 80
+    },
+    {
+      "action": "wait",
+      "ms": 1300
+    },
+    {
+      "action": "scroll",
+      "y": 200,
+      "duration": 800
+    },
+    {
+      "action": "wait",
+      "ms": 1200
+    },
+    {
+      "action": "screenshot",
+      "name": "02-moments-final",
+      "pauseAfter": 80
+    }
+  ]
+}

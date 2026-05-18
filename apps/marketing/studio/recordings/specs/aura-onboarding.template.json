@@ -1,0 +1,146 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 280
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1"
+  },
+  "setup": {
+    "url": "{{BASE_URL}}/login",
+    "steps": [
+      { "action": "wait", "ms": 200 },
+      {
+        "action": "type",
+        "selector": "input[type=email]",
+        "text": "{{TEST_EMAIL}}",
+        "delay": 4
+      },
+      {
+        "action": "wait",
+        "ms": 200,
+        "waitFor": "input[type=password]",
+        "timeout": 15000
+      },
+      {
+        "action": "type",
+        "selector": "input[type=password]",
+        "text": "{{TEST_PASSWORD}}",
+        "delay": 4
+      },
+      { "action": "click", "selector": "button[type=submit]" },
+      {
+        "action": "wait",
+        "ms": 1600,
+        "waitFor": "#welcome-cta",
+        "timeout": 15000
+      }
+    ]
+  },
+  "steps": [
+    { "action": "wait", "ms": 500 },
+    { "action": "scroll", "y": 360, "speed": 0.9, "pauseAfter": 320 },
+    {
+      "action": "zoom",
+      "selector": "#welcome-cta",
+      "scale": 1.55,
+      "duration": 260
+    },
+    { "action": "click", "selector": "#welcome-cta" },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "#ws-name",
+      "timeout": 10000
+    },
+    {
+      "action": "zoom",
+      "selector": "#ws-name",
+      "scale": 1.7,
+      "duration": 260
+    },
+    { "action": "fill", "selector": "#ws-name", "text": "" },
+    {
+      "action": "type",
+      "selector": "#ws-name",
+      "text": "Acme",
+      "delay": 70
+    },
+    { "action": "wait", "ms": 320 },
+    {
+      "action": "click",
+      "selector": "[role=dialog] >> button:has-text('Continue')"
+    },
+    {
+      "action": "wait",
+      "ms": 400,
+      "waitFor": "#size-large",
+      "timeout": 10000
+    },
+    {
+      "action": "zoom",
+      "selector": "#size-large",
+      "scale": 1.75,
+      "duration": 280
+    },
+    { "action": "wait", "ms": 280 },
+    { "action": "click", "selector": "#size-large" },
+    { "action": "wait", "ms": 420 },
+    {
+      "action": "zoom",
+      "selector": "[role=dialog] >> button:has-text('Continue')",
+      "scale": 1.5,
+      "duration": 200
+    },
+    {
+      "action": "click",
+      "selector": "[role=dialog] >> button:has-text('Continue')"
+    },
+    {
+      "action": "wait",
+      "ms": 500,
+      "waitFor": "button:has-text('Create workspace')",
+      "timeout": 10000
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Create workspace')",
+      "zoom": 1.5
+    },
+    { "action": "zoom", "scale": 1, "duration": 200 },
+    {
+      "action": "wait",
+      "ms": 1100,
+      "waitFor": "main",
+      "timeout": 10000
+    },
+    { "action": "wait", "ms": 600 }
+  ]
+}

@@ -92,6 +92,14 @@ if (existsSync(setupTrailerPath) && raw.includes('"{{SETUP_TRAILER}}"')) {
   raw = raw.replace('"{{SETUP_TRAILER}}"', setupBlock);
 }
 
+// Aura specs use SETUP_AURA — same dev-bypass shape regardless of viewport
+// so desktop and mobile both seed Bitrock at size=large (100 employees).
+const setupAuraPath = resolve(specsDir, "_setup-aura.partial.json");
+if (existsSync(setupAuraPath) && raw.includes('"{{SETUP_AURA}}"')) {
+  const setupBlock = readFileSync(setupAuraPath, "utf8").trim();
+  raw = raw.replace('"{{SETUP_AURA}}"', setupBlock);
+}
+
 let rendered = raw
   .replaceAll("{{BASE_URL}}", baseUrl)
   .replaceAll("{{FEEDBACK_BASE_URL}}", feedbackBaseUrl)

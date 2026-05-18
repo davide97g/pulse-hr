@@ -1,0 +1,88 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/log",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"getting-started\",\"time-tracking\",\"clients-projects\",\"recruiting\",\"labs-highlights\"]",
+    "pulse.skipBoot": "1",
+    "pulse.locale": "en",
+    "pulse.demoBanner.dismissed.v1": "1",
+    "pulse.lastSeenVersion": "0.9.0"
+  },
+  "setup": "{{SETUP_AURA}}",
+  "steps": [
+    {
+      "action": "navigate",
+      "url": "{{BASE_URL}}/log"
+    },
+    {
+      "action": "wait",
+      "ms": 800,
+      "waitFor": "textarea, [contenteditable='true']",
+      "timeout": 12000
+    },
+    {
+      "action": "screenshot",
+      "name": "01-log-idle",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "textarea, [contenteditable='true']",
+      "timeout": 6000,
+      "pauseAfter": 120,
+      "zoom": 1.6
+    },
+    {
+      "action": "type",
+      "selector": "textarea, [contenteditable='true']",
+      "text": "Shipped the new dashboard. Pairing with Yi after lunch.",
+      "delay": 22
+    },
+    {
+      "action": "wait",
+      "ms": 600
+    },
+    {
+      "action": "screenshot",
+      "name": "02-log-composed",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 220
+    },
+    {
+      "action": "wait",
+      "ms": 800
+    }
+  ]
+}

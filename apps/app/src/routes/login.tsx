@@ -8,6 +8,7 @@ import { Button } from "@pulse-hr/ui/primitives/button";
 import { Input } from "@pulse-hr/ui/primitives/input";
 import { Label } from "@pulse-hr/ui/primitives/label";
 import { AuthLayout } from "@/components/app/AuthLayout";
+import { CLERK_TEST_CODE, isTestEmail } from "@/lib/test-emails";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — Pulse HR" }] }),
@@ -105,6 +106,28 @@ function Login() {
       // New-device challenge — Clerk's Client Trust upgrade replaces the
       // previous needs_second_factor behaviour for accounts without MFA.
       if (signIn.status === "needs_client_trust") {
+        if (isTestEmail(email)) {
+          const send = await signIn.emailCode.sendCode();
+          if (send.error) {
+            toast.error("Couldn't send verification code", { description: send.error.message });
+            return;
+          }
+          const verify = await signIn.emailCode.verifyCode({ code: CLERK_TEST_CODE });
+          if (verify.error) {
+            toast.error("Test bypass failed", { description: verify.error.message });
+            return;
+          }
+          if (signIn.existingSession?.sessionId) {
+            await clerk.setActive({ session: signIn.existingSession.sessionId });
+            toast.success("Welcome back", { description: "Redirecting…" });
+            goPostLogin();
+            return;
+          }
+          if (signIn.status === "complete") {
+            await finalizeAndGo();
+            return;
+          }
+        }
         const ok = await sendTrustCode();
         if (ok) setStage("trust");
         return;
