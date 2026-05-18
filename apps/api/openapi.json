@@ -59,6 +59,10 @@
     {
       "name": "cron",
       "description": "Scheduled tasks (cron-secret auth)"
+    },
+    {
+      "name": "public",
+      "description": "Open, unauthenticated endpoints (rate-limited)"
     }
   ],
   "components": {
@@ -1418,6 +1422,40 @@
         },
         "required": [
           "version"
+        ]
+      },
+      "PublicFeedbackStats": {
+        "type": "object",
+        "properties": {
+          "proposals": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total non-deleted proposals across all statuses.",
+            "example": 247
+          },
+          "votesThisWeek": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Non-zero votes (up or down) cast on proposals or comments in the last 7 days.",
+            "example": 1234
+          },
+          "shipped": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Proposals + comments currently in status `shipped`.",
+            "example": 34
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "ISO timestamp when the snapshot was computed.",
+            "example": "2026-05-18T10:11:12.000Z"
+          }
+        },
+        "required": [
+          "proposals",
+          "votesThisWeek",
+          "shipped",
+          "generatedAt"
         ]
       }
     },
@@ -3342,6 +3380,60 @@
                   },
                   "required": [
                     "ok"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/public/feedback-stats": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "summary": "Anonymous feedback activity counters",
+        "description": "Aggregate, anonymous counts powering the public Feedback marketing surfaces (e.g. the SignedOutGate footer). Returns only numeric aggregates — never row-level data. Rate-limited per IP.",
+        "responses": {
+          "200": {
+            "description": "Aggregate counts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicFeedbackStats"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "enum": [
+                            "rate_limited"
+                          ]
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error"
                   ]
                 }
               }

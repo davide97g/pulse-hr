@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Long-form article typography (blog posts). */
+@plugin "@tailwindcss/typography";
+
 /* Design tokens — single source of truth at packages/tokens. */
 @import "@pulse-hr/tokens/index.css";
 

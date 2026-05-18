@@ -34,6 +34,7 @@ export const en = {
     vs: "vs",
     pricing: "Pricing",
     changelog: "Changelog",
+    news: "News",
     signIn: "Sign in",
     startFree: "Start free",
     viewGithub: "View source on GitHub",
@@ -137,6 +138,8 @@ export const en = {
     videoLabel: "A day at Pulse — animated showreel",
     posterAlt: "A day at Pulse — static preview",
     caption: "A day at Pulse · 20s loop",
+    blogCta: "Read the launch story",
+    youtubeCta: "Watch on YouTube",
   },
 
   marquee: {

@@ -39,6 +39,7 @@ export const it: Dict = {
     vs: "vs",
     pricing: "Prezzi",
     changelog: "Changelog",
+    news: "News",
     signIn: "Accedi",
     startFree: "Inizia gratis",
     viewGithub: "Vedi il sorgente su GitHub",
@@ -143,6 +144,8 @@ export const it: Dict = {
     videoLabel: "Una giornata in Pulse — showreel animato",
     posterAlt: "Una giornata in Pulse — anteprima statica",
     caption: "Una giornata in Pulse · loop 20s",
+    blogCta: "Leggi la storia del lancio",
+    youtubeCta: "Guarda su YouTube",
   },
 
   marquee: {

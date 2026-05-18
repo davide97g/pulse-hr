@@ -1,6 +1,7 @@
 ---
 import { useI18n } from "../i18n";
-const { t } = useI18n(Astro);
+import { ArrowRight, Youtube } from "lucide-astro";
+const { t, href } = useI18n(Astro);
 ---
 
 <section class="relative" aria-label={t.heroReel.ariaLabel}>
@@ -42,6 +43,30 @@ const { t } = useI18n(Astro);
         <span class="h-1.5 w-1.5 rounded-full bg-[#b4ff39] pulse-dot"></span>
         {t.heroReel.caption}
       </div>
+    </div>
+
+    <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3">
+      <a
+        href={href("/blog/teaser-trailer")}
+        class="group inline-flex items-center justify-center gap-2 rounded-md border border-[#b4ff39]/40 bg-[#b4ff39]/10 hover:bg-[#b4ff39]/15 px-5 py-3 font-medium text-[#b4ff39] press-scale transition-colors"
+        data-analytics="hero-reel-blog"
+      >
+        <span class="inline-flex items-center gap-2">
+          <span class="h-1.5 w-1.5 rounded-full bg-[#b4ff39] pulse-dot" aria-hidden="true"></span>
+          {t.heroReel.blogCta}
+        </span>
+        <ArrowRight class="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+      </a>
+      <a
+        href="https://www.youtube.com/watch?v=ZagF6Ri3eks"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center gap-2 rounded-md border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] px-5 py-3 font-medium text-white press-scale transition-colors"
+        data-analytics="hero-reel-youtube"
+      >
+        <Youtube class="h-4 w-4 text-[#ff5e5e]" />
+        {t.heroReel.youtubeCta}
+      </a>
     </div>
   </div>
 </section>

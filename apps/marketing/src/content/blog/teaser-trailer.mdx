@@ -1,0 +1,124 @@
+---
+title: "The Pulse HR teaser trailer is live"
+description: "Sixty seconds of Pulse HR — the people-first HR workspace. Built end-to-end with Remotion, recorded with testreel, scored with Suno. Watch it, then read how we made it."
+datePublished: 2026-05-18
+author: "Davide Ghiotto"
+track: "engineering-notes"
+tags: ["launch", "trailer", "remotion", "testreel", "suno"]
+locale: "en"
+---
+
+import YouTube from "../../components/blog/YouTube.astro";
+
+Today we're publishing the **Pulse HR teaser trailer** — a sixty-second look at the
+people-first HR workspace we've been quietly shipping. Status Log, Growth, Kudos,
+Moments, the workload check-in, the manager-safe recap — all in one continuous take.
+
+<YouTube
+  id="ZagF6Ri3eks"
+  title="Pulse HR — teaser trailer"
+  emitSchema={{
+    description: "Sixty-second teaser trailer for Pulse HR, the people-first HR workspace. Async standup (Status Log), Growth, Kudos, Moments, workload check-in, manager-safe sentiment recap.",
+    uploadDate: "2026-05-18",
+    duration: "PT1M",
+  }}
+/>
+
+## Watch & follow
+
+- 📺 **YouTube video** → [youtube.com/watch?v=ZagF6Ri3eks](https://www.youtube.com/watch?v=ZagF6Ri3eks)
+- 🔔 **YouTube channel** → [youtube.com/@dacoderit](https://www.youtube.com/@dacoderit) — subscribe for the rest of the launch series.
+- 💼 **LinkedIn** → [linkedin.com/company/pulse-hr-official](https://www.linkedin.com/company/pulse-hr-official) — follow the page; the trailer post is pinned today.
+
+Found it useful? **Share it**:
+
+- [Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fpulsehr.it%2Fblog%2Fteaser-trailer)
+- [Share on X](https://twitter.com/intent/tweet?text=Pulse%20HR%20teaser%20trailer%20is%20out%20%E2%80%94%20sixty%20seconds%20of%20a%20people-first%20HR%20workspace&url=https%3A%2F%2Fpulsehr.it%2Fblog%2Fteaser-trailer)
+- Copy the link: `https://pulsehr.it/blog/teaser-trailer`
+
+## Scope of the teaser
+
+We deliberately kept it short. Sixty seconds, no voice-over, no slideware. The
+trailer covers the surfaces that already ship in the app and that define what
+"people-first" means for us:
+
+- **Status Log** — async standup, three lines a day, public feed.
+- **Manager-safe recap** — sentiment summary (energy, engagement, alignment, stress) without exposing the raw chat.
+- **Growth** — achievements, challenges, skill paths.
+- **Kudos & Moments** — peer recognition, birthdays, anniversaries.
+- **Workload check-in** — the utilization heatmap behind `/saturation`.
+- **People Insights** — the report surface managers actually look at.
+
+Parked business-ops surfaces (time tracking, recruiting, documents, etc.) are
+intentionally absent. The teaser tells the truth about what Pulse HR is *for*
+right now.
+
+## How we made it
+
+The whole pipeline lives inside the repo, in `apps/marketing/studio/`. No
+external editing software, no closed source steps. Three pieces:
+
+### 1. testreel — browser recordings
+
+[testreel](https://github.com/greentfrapp/testreel) is a Playwright-based
+recorder with a macOS Chrome chrome, an animated cursor, and choreographed
+zooms. We script the flow in a JSON spec, the runner spawns ghost Playwright
+users to populate the screen with realistic activity (kudos arriving, statuses
+updating), and produces a clean MP4 plus a timeline and captions sidecar.
+
+Spec files live in `apps/marketing/studio/recordings/specs/*.template.json`
+with `{{TEST_EMAIL}}` / `{{TEST_PASSWORD}}` / `{{BASE_URL}}` placeholders. The
+runner is `studio/recordings/scripts/run.ts`. Outputs land in
+`studio/captures/<spec>/` for the next stage to consume.
+
+### 2. Remotion — composition & edit
+
+[Remotion](https://www.remotion.dev) is React for video. Every scene is a
+component; every transition is a prop. We import the testreel captures via
+`staticFile()` (the `remotion.config.ts` sets `publicDir` to `./studio`, so
+Astro's `public/` stays untouched) and compose them with our own atoms —
+typography, tokens, motion utilities — pulled straight from
+`@pulse-hr/tokens` and `@pulse-hr/ui`. The trailer is one composition
+(`reel-teaser-1080`); rendering vertical and square cuts for shorts and
+LinkedIn is just changing the aspect ratio prop. One command,
+`bun run render:reels`, produces every variant into `public/studio/reels/`.
+
+### 3. Suno — original score
+
+The music is original, generated with [Suno](https://suno.com). We iterated
+on a prompt until the tempo lined up with the cursor choreography (108 BPM,
+quiet first 12 seconds, lift on the Kudos beat). The track lives in
+`studio/audio/` and is muxed in by the testreel runner so the audio is locked
+to the recording, not added in post.
+
+## Why this stack
+
+A traditional approach — Figma mockups → After Effects → DaVinci — would have
+taken weeks and produced a video that drifts from the real product the moment
+we change a token. Our stack is reproducible:
+
+- The recordings hit the **real app** at our test workspace. The buttons in
+  the trailer are the buttons we ship.
+- The composition imports our **real tokens**. When we change the brand color
+  in `@pulse-hr/tokens`, the next render of the trailer changes too.
+- The score is **ours**, not licensed. We can re-cut it for a 30-second ad or
+  a 15-second short without clearing rights.
+
+If we deprecate a surface, the corresponding scene refuses to render and CI
+fails. The trailer ages with the product instead of against it.
+
+## References
+
+- **Remotion** — React framework for programmatic video → [remotion.dev](https://www.remotion.dev)
+- **testreel** — Playwright-based browser recorder → [github.com/greentfrapp/testreel](https://github.com/greentfrapp/testreel)
+- **Suno** — generative music → [suno.com](https://suno.com)
+- **Pulse HR source code** — the studio pipeline lives in `apps/marketing/studio/` → [github.com/davide97g/pulse-hr](https://github.com/davide97g/pulse-hr)
+- **Launch announcement on LinkedIn** → [linkedin.com/company/pulse-hr-official](https://www.linkedin.com/company/pulse-hr-official)
+- **More videos coming** — subscribe to the channel → [youtube.com/@dacoderit](https://www.youtube.com/@dacoderit)
+
+---
+
+If the trailer made you nod even once — about the async feed, the manager-safe
+recap, the no-textarea-review philosophy — the easiest way to help is to
+**share the YouTube link** with one person at your company who lives with the
+problem. That's the whole ask.
