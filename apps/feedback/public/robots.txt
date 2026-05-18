@@ -1,0 +1,4 @@
+# Pulse Feedback — gated SPA, content is auth-walled and client-rendered.
+# Not indexable until SSR / public mode lands. Canonical brand: https://pulsehr.it
+User-agent: *
+Disallow: /

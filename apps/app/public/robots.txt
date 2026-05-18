@@ -1,0 +1,4 @@
+# Pulse HR app — gated product surface, not for indexing.
+# Canonical brand domain: https://pulsehr.it
+User-agent: *
+Disallow: /
