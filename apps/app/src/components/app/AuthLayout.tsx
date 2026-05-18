@@ -46,7 +46,7 @@ export function AuthLayout({
       <aside
         className="hidden lg:flex flex-col justify-between relative overflow-hidden"
         style={{
-          background: "var(--ink)",
+          background: "oklch(0.91 0.004 280)",
           color: "var(--paper)",
           padding: "48px 56px",
         }}
@@ -94,7 +94,7 @@ export function AuthLayout({
                 style={{
                   fontSize: 38,
                   letterSpacing: "-0.03em",
-                  color: accent ? "var(--spark)" : "var(--paper)",
+                  color: accent ? "oklch(0.42 0.16 135)" : "var(--paper)",
                 }}
               >
                 {v}
@@ -193,7 +193,7 @@ export function AuthLayout({
 function DefaultEditorialHero() {
   return (
     <div>
-      <span className="t-mono" style={{ color: "var(--spark)" }}>
+      <span className="t-mono" style={{ color: "oklch(0.42 0.16 135)" }}>
         ⏤ HR PER CHI HA ALTRO DA FARE ⏤
       </span>
       <h1
