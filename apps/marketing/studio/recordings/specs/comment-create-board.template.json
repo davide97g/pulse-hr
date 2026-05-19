@@ -194,7 +194,7 @@
     {
       "action": "type",
       "selector": "input[placeholder='Reply…']",
-      "text": "Strong +1 — we hit this exact thing on the close last quarter.",
+      "text": "Strong 💪🏻 — we hit this exact thing on the close last quarter.",
       "delay": 16
     },
     {
