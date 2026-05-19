@@ -55,10 +55,7 @@ export function FeedbackEditorial() {
   }, [entries.length]);
 
   return (
-    <div
-      className="ph p-4 md:p-6 grid gap-10 min-h-full"
-      style={{ gridTemplateColumns: "1fr 1.2fr" }}
-    >
+    <div className="ph p-4 md:p-6 grid gap-8 md:gap-10 min-h-full grid-cols-1 lg:[grid-template-columns:1fr_1.2fr]">
       <section className="flex flex-col justify-between">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
@@ -92,8 +89,8 @@ export function FeedbackEditorial() {
           </p>
         </div>
         <div
-          className="grid mt-10 pt-6"
-          style={{ gridTemplateColumns: "1fr 1fr 1fr", borderTop: "1px solid var(--line-strong)" }}
+          className="grid mt-10 pt-6 grid-cols-3"
+          style={{ borderTop: "1px solid var(--line-strong)" }}
         >
           <KpiCell label="RISPOSTA" value={`${stats.responseRate}%`} first />
           <KpiCell

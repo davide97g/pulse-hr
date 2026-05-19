@@ -219,8 +219,8 @@ function Header({
           Le <span style={{ fontStyle: "italic" }}>persone</span>
           <span style={{ color: "var(--spark)" }}>.</span>
           <span
-            className="t-mono"
-            style={{ marginLeft: 18, color: "var(--muted-foreground)", verticalAlign: "middle" }}
+            className="t-mono block md:inline mt-2 md:mt-0 md:ml-[18px]"
+            style={{ color: "var(--muted-foreground)", verticalAlign: "middle" }}
           >
             ENGAGEMENT · SENTIMENT · CRESCITA
           </span>

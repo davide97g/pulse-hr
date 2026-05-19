@@ -183,9 +183,7 @@ function ActivityDetailPage() {
               PROJECT
             </span>
             {project ? (
-              <Link
-                to="/projects/$projectId"
-                params={{ projectId: project.id }}
+              <div
                 className="flex items-center gap-2"
                 style={{
                   borderBottom: "1px solid var(--line-strong)",
@@ -207,7 +205,7 @@ function ActivityDetailPage() {
                 >
                   {project.name}
                 </span>
-              </Link>
+              </div>
             ) : (
               <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
                 —

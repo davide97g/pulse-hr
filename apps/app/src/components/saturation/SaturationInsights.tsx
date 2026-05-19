@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { Link } from "@tanstack/react-router";
 import {
   AlertTriangle,
   TrendingDown,
@@ -160,14 +159,10 @@ function InsightRow({ insight }: { insight: Insight }) {
         <div className="text-xs text-muted-foreground mt-0.5">{insight.detail}</div>
       </div>
       {insight.action && (
-        <Link
-          to={insight.action.href as "/projects/$projectId"}
-          params={insight.action.params as { projectId: string }}
-          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline shrink-0"
-        >
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground shrink-0">
           {insight.action.label}
           <ArrowUpRight className="h-3 w-3" />
-        </Link>
+        </span>
       )}
     </Card>
   );

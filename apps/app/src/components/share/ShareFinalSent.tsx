@@ -209,7 +209,7 @@ export function ShareFinalSent({ emails, onInviteOthers, onClose }: Props) {
               }}
             >
               <span
-                className="avatar avatar-sm"
+                className="ph-avatar ph-avatar-sm"
                 style={{
                   background: "var(--spark)",
                   color: "var(--spark-ink)",

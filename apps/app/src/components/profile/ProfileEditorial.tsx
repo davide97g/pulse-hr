@@ -36,10 +36,7 @@ export function ProfileEditorial() {
   })();
 
   return (
-    <div
-      className="ph p-4 md:p-6 grid gap-11 min-h-full"
-      style={{ gridTemplateColumns: "1.2fr 1fr" }}
-    >
+    <div className="ph p-4 md:p-6 grid gap-8 md:gap-11 min-h-full grid-cols-1 lg:[grid-template-columns:1.2fr_1fr]">
       <section className="flex flex-col justify-between min-h-0 gap-6">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
@@ -87,8 +84,8 @@ export function ProfileEditorial() {
         </div>
 
         <div
-          className="grid pt-6"
-          style={{ gridTemplateColumns: "1fr 1fr 1fr", borderTop: "1px solid var(--line-strong)" }}
+          className="grid pt-6 grid-cols-3"
+          style={{ borderTop: "1px solid var(--line-strong)" }}
         >
           <Stat label="EMPLOYEE SCORE" value="92" accent first />
           <Stat label="SATURAZIONE" value="78%" />

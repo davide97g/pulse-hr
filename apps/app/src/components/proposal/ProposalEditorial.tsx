@@ -47,7 +47,7 @@ export function ProposalEditorial({ id }: { id: string }) {
         <div>
           <button
             type="button"
-            onClick={() => navigate({ to: "/projects" })}
+            onClick={() => navigate({ to: "/" })}
             className="t-mono"
             style={{
               padding: "4px 10px",
@@ -59,7 +59,7 @@ export function ProposalEditorial({ id }: { id: string }) {
               alignSelf: "flex-start",
             }}
           >
-            ← PROPOSTE
+            ← INDIETRO
           </button>
           <div className="flex gap-3 items-center mt-4">
             <span className="t-mono" style={{ color: "var(--spark)" }}>

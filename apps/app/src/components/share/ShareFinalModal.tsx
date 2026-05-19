@@ -23,9 +23,6 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 
-const SERIAL_NEW = "204—08";
-const SERIAL_SENT = "204—07";
-
 export function ShareFinalModal({ open, onOpenChange }: Props) {
   const { locale } = useI18n();
   const ws = useWorkspaceStatus();
@@ -123,8 +120,6 @@ export function ShareFinalModal({ open, onOpenChange }: Props) {
   const close = useCallback(() => onOpenChange(false), [onOpenChange]);
   const backToCompose = useCallback(() => setView("compose"), []);
 
-  const serial = view === "sent" ? SERIAL_SENT : SERIAL_NEW;
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -183,12 +178,6 @@ export function ShareFinalModal({ open, onOpenChange }: Props) {
                   flexShrink: 0,
                 }}
               />
-              <span
-                className="t-mono"
-                style={{ color: "var(--muted-foreground)" }}
-              >
-                N° {serial}
-              </span>
             </div>
             <CloseX onClick={close} />
           </div>

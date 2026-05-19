@@ -145,7 +145,6 @@ export function SkillsSelfView() {
               flex: 1,
               minHeight: 0,
               display: "grid",
-              gridTemplateColumns: "minmax(0, 4fr) minmax(220px, 1fr)",
               gap: 16,
             }}
           >

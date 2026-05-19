@@ -50,38 +50,31 @@ function ManagerKpis({ k }: { k: TeamMetrics }) {
   ];
   return (
     <div
+      className="grid grid-cols-4 md:grid-cols-4 [&>*]:p-2 md:[&>*]:p-[16px_20px] [&>*]:gap-1 md:[&>*]:gap-1.5"
       style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
-        gap: 0,
         border: "1px solid var(--line-strong)",
         borderRadius: 14,
         overflow: "hidden",
       }}
-      className="max-md:!grid-cols-2"
     >
       {cards.map(([l, v, accent, sub], i) => (
         <div
           key={l}
+          className="flex flex-col"
           style={{
-            padding: "16px 20px",
             borderRight: i < 3 ? "1px solid var(--line)" : "none",
             background:
               accent === "spark"
                 ? "color-mix(in oklch, var(--spark) 8%, transparent)"
                 : "transparent",
-            display: "flex",
-            flexDirection: "column",
-            gap: 6,
           }}
         >
-          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+          <span className="t-mono text-[9px] md:text-[11px] leading-tight" style={{ color: "var(--muted-foreground)" }}>
             {l}
           </span>
           <div
-            className="t-num"
+            className="t-num text-[22px] md:text-[40px]"
             style={{
-              fontSize: 40,
               letterSpacing: "-0.04em",
               lineHeight: 0.95,
               color: accent === "spark" ? "var(--spark)" : "var(--fg)",
@@ -89,7 +82,7 @@ function ManagerKpis({ k }: { k: TeamMetrics }) {
           >
             {v}
           </div>
-          <span className="t-mono" style={{ color: "var(--fg)" }}>
+          <span className="t-mono hidden md:inline" style={{ color: "var(--fg)" }}>
             {sub}
           </span>
         </div>
@@ -143,26 +136,17 @@ export function ManagerHeatmap({
       <ManagerKpis k={metrics} />
 
       <div
+        className="flex flex-col lg:flex-1 lg:overflow-hidden min-h-[520px] md:min-h-[640px] lg:min-h-[640px]"
         style={{
-          flex: 1,
-          minHeight: 0,
           border: "1px solid var(--line-strong)",
           borderRadius: 14,
           background: "var(--bg)",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
         }}
       >
         <div
+          className="flex justify-between items-baseline flex-wrap gap-2 md:gap-3 px-3 py-2 md:px-[18px] md:py-[14px]"
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "14px 18px",
             borderBottom: "1px solid var(--line)",
-            alignItems: "baseline",
-            flexWrap: "wrap",
-            gap: 12,
           }}
         >
           <div>
@@ -170,6 +154,7 @@ export function ManagerHeatmap({
               PEOPLE × SKILLS · HOVER A CELL FOR DETAIL
             </span>
             <div
+              className="hidden md:block"
               style={{
                 fontFamily: '"Fraunces", ui-serif, serif',
                 fontStyle: "italic",
@@ -182,7 +167,7 @@ export function ManagerHeatmap({
             </div>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+            <span className="t-mono hidden sm:inline" style={{ color: "var(--muted-foreground)" }}>
               LEVEL
             </span>
             {(
@@ -461,11 +446,7 @@ function HeatmapRow({
                   )}
                 </div>
                 <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
-                  <Link
-                    to="/people/$employeeId"
-                    params={{ employeeId: e.id }}
-                    style={{ textDecoration: "none" }}
-                  >
+                  <Link to="/people" style={{ textDecoration: "none" }}>
                     <EditorialPill kind="ghost" size="sm">
                       View profile
                     </EditorialPill>

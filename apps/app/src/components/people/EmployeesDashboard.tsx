@@ -199,7 +199,7 @@ export function EmployeesDashboard() {
   return (
     <div className="p-4 md:p-6 flex flex-col gap-4 min-h-full">
       {/* HEADER */}
-      <div className="grid items-end gap-6" style={{ gridTemplateColumns: "1fr auto" }}>
+      <div className="grid items-end gap-4 md:gap-6 grid-cols-1 md:[grid-template-columns:1fr_auto]">
         <div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
             {t("people.eyebrow", {
@@ -252,25 +252,22 @@ export function EmployeesDashboard() {
       </div>
 
       {/* KPI BAND */}
-      <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
         {kpis.map((c, i) => (
           <div
             key={i}
+            className="flex flex-col gap-1 md:gap-1.5 p-3 md:p-[16px_18px]"
             style={{
               border: `1px solid ${c[3] === "spark" ? "var(--spark)" : "var(--line)"}`,
               borderRadius: 14,
-              padding: "16px 18px",
               background:
                 c[3] === "spark" ? "color-mix(in oklch, var(--spark) 8%, transparent)" : "transparent",
-              display: "flex",
-              flexDirection: "column",
-              gap: 6,
             }}
           >
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
               {c[0]}
             </span>
-            <div className="t-num" style={{ fontSize: 44, letterSpacing: "-0.04em", lineHeight: 0.95 }}>
+            <div className="t-num text-[30px] md:text-[44px]" style={{ letterSpacing: "-0.04em", lineHeight: 0.95 }}>
               {c[1]}
             </div>
             <span className="t-mono" style={{ color: "var(--fg-2)" }}>
@@ -281,7 +278,7 @@ export function EmployeesDashboard() {
       </div>
 
       {/* CHART GRID */}
-      <div className="grid gap-3" style={{ gridTemplateColumns: "1.4fr 1fr 1fr", minHeight: 280 }}>
+      <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:[grid-template-columns:1.4fr_1fr_1fr]" style={{ minHeight: 280 }}>
         {/* HEADCOUNT 12M */}
         <section
           style={{
@@ -555,8 +552,8 @@ export function EmployeesDashboard() {
 
       {/* BOTTOM STRIP */}
       <div
-        className="grid gap-3"
-        style={{ gridTemplateColumns: "1.2fr 1fr 1.2fr", minHeight: 130 }}
+        className="grid gap-3 grid-cols-1 md:grid-cols-3 md:[grid-template-columns:1.2fr_1fr_1.2fr]"
+        style={{ minHeight: 130 }}
       >
         {/* AGE */}
         <section

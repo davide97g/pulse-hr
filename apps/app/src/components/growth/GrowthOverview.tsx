@@ -8,6 +8,7 @@ import { useAchievements } from "@/lib/tables/achievements";
 import { useEmployees, employeeById } from "@/lib/tables/employees";
 import { leaderboard, growthSummaryFor } from "@/lib/growth";
 import { Avatar } from "@/components/app/AppShell";
+import { cn } from "@/lib/utils";
 import type { GrowthTab } from "./GrowthTabs";
 
 const MONTHS_IT = ["GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"];
@@ -245,9 +246,8 @@ export function GrowthOverview({
     <div className="flex flex-col gap-4 min-h-0">
       {/* KPI band */}
       <div
-        className="grid"
+        className="grid grid-cols-2 md:grid-cols-4"
         style={{
-          gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
           border: "1px solid var(--line-strong)",
           borderRadius: 14,
           overflow: "hidden",
@@ -256,12 +256,17 @@ export function GrowthOverview({
         {kpis.map(([label, value, sub, spark], i) => (
           <div
             key={label}
-            className="p-4 flex flex-col gap-1"
+            className={cn(
+              "p-4 flex flex-col gap-1",
+              i % 2 === 0 ? "border-r border-[var(--line)]" : "",
+              i < 2 ? "border-b md:border-b-0 border-[var(--line)]" : "",
+              "md:border-r md:[&:nth-child(4)]:border-r-0",
+            )}
             style={{
-              borderRight: i < 3 ? "1px solid var(--line)" : "none",
               background: spark
                 ? "color-mix(in oklch, var(--spark) 8%, transparent)"
                 : "transparent",
+              borderRightColor: "var(--line)",
             }}
           >
             <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
@@ -281,8 +286,8 @@ export function GrowthOverview({
       </div>
 
       <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "minmax(0, 4fr) minmax(0, 1fr)", flex: 1, minHeight: 0 }}
+        className="grid gap-4 grid-cols-1 lg:[grid-template-columns:minmax(0,4fr)_minmax(0,1fr)]"
+        style={{ flex: 1, minHeight: 0 }}
       >
         {/* LEFT */}
         <section className="flex flex-col gap-3 min-h-0">
@@ -491,7 +496,7 @@ export function GrowthOverview({
           </div>
 
           {/* Top movers + dept mix */}
-          <div className="grid gap-3" style={{ gridTemplateColumns: "1.4fr 1fr", minHeight: 168 }}>
+          <div className="grid gap-3 grid-cols-1 sm:[grid-template-columns:1.4fr_1fr]" style={{ minHeight: 168 }}>
             <div
               className="p-4 flex flex-col gap-2"
               style={{ border: "1px solid var(--line)", borderRadius: 14, background: "var(--bg)" }}

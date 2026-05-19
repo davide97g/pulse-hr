@@ -63,7 +63,7 @@ export function SkillsManagerView(_props: { onViewAsMe?: () => void } = {}) {
   };
 
   return (
-    <div className="p-4 md:p-6 flex flex-col gap-4 min-h-0 h-full">
+    <div className="p-4 md:p-6 flex flex-col gap-4 min-h-0 lg:h-full">
       <SkillsViewToggle active="team" />
       <SkillsEditorialHero
         eyebrow={
@@ -84,15 +84,7 @@ export function SkillsManagerView(_props: { onViewAsMe?: () => void } = {}) {
       <SkillsTabsStrip<ManagerTab> active={tab} items={tabs} onChange={setTab} />
 
       <div
-        className="stagger-in"
-        style={{
-          flex: 1,
-          minHeight: 0,
-          display: "flex",
-          flexDirection: "column",
-          gap: 16,
-          overflow: "hidden",
-        }}
+        className="stagger-in flex flex-col gap-4 lg:flex-1 lg:min-h-0 lg:overflow-hidden"
       >
         {tab === "heatmap" && <ManagerHeatmap metrics={metrics} onAdjust={onAdjust} />}
         {tab === "gaps" && <ManagerGaps onSuggestGrowth={onAdjust} />}

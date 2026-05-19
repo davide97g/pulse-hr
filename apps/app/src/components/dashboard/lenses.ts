@@ -93,7 +93,6 @@ export function workloadLens(dark: boolean, narrative: ReactNode, captionMono: s
     legendItem: (s) => ({ bg: satFill(s as number, dark), glow: (s as number) > 1.05 }),
     narrative,
     actions: [
-      { label: "Progetti", to: "/projects" },
       { label: "Reports", to: "/reports" },
       { spark: true, label: "Apri saturation", to: "/saturation" },
     ],

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useEmployees } from "@/lib/tables/employees";
 import type { Employee } from "@/lib/mock-data";
@@ -109,31 +110,37 @@ export function OrgEditorial() {
           style={{ border: "1px solid var(--line)", borderRadius: 14 }}
         >
           {employees.map((e, i) => (
-            <div
+            <Link
               key={e.id}
-              className="grid items-center"
+              to="/people/$employeeId"
+              params={{ employeeId: e.id }}
+              className="grid items-center grid-cols-[32px_1fr_70px] md:[grid-template-columns:32px_1fr_1fr_1fr_110px] gap-3 md:gap-3 px-4 py-2.5 transition-colors hover:bg-[color-mix(in_oklch,var(--spark)_6%,transparent)]"
               style={{
-                gridTemplateColumns: "32px 1fr 1fr 1fr 110px",
-                gap: 12,
-                padding: "10px 16px",
                 borderBottom: i < employees.length - 1 ? "1px solid var(--line)" : "none",
+                color: "inherit",
+                textDecoration: "none",
               }}
             >
               <span className="ph-avatar ph-avatar-sm">{e.initials}</span>
-              <span style={{ fontWeight: 500 }}>{e.name}</span>
-              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              <div className="min-w-0">
+                <div className="truncate" style={{ fontWeight: 500 }}>{e.name}</div>
+                <div className="md:hidden t-mono truncate" style={{ color: "var(--muted-foreground)" }}>
+                  {e.role} · {e.department}
+                </div>
+              </div>
+              <span className="hidden md:inline t-mono truncate" style={{ color: "var(--muted-foreground)" }}>
                 {e.role}
               </span>
-              <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
+              <span className="hidden md:inline t-mono truncate" style={{ color: "var(--muted-foreground)" }}>
                 {e.department}
               </span>
               <span
-                className="t-mono"
+                className="t-mono truncate"
                 style={{ color: "var(--muted-foreground)", textAlign: "right" }}
               >
                 {e.status}
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       )}
@@ -141,7 +148,14 @@ export function OrgEditorial() {
       {view === "tree" && (
       <>
       {/* Tree */}
-      <div className="flex flex-col gap-8 flex-1 min-h-0 overflow-auto pb-2">
+      <div
+        className="flex flex-col gap-8 flex-1 min-h-0 overflow-auto pb-2"
+        style={{ minWidth: 0 }}
+      >
+        <div
+          className="flex flex-col gap-8"
+          style={{ minWidth: tree.vps.length > 1 ? `${tree.vps.length * 240}px` : "100%" }}
+        >
         {/* CEO */}
         {tree.ceo && (
           <div className="flex justify-center">
@@ -254,6 +268,7 @@ export function OrgEditorial() {
             </div>
           ))}
         </div>
+        </div>
       </div>
       </>
       )}
@@ -277,8 +292,10 @@ function OrgNode({
   small?: boolean;
 }) {
   return (
-    <div
-      className="flex items-center gap-3"
+    <Link
+      to="/people/$employeeId"
+      params={{ employeeId: node.id }}
+      className="flex items-center gap-3 transition-transform hover:-translate-y-0.5 hover:[box-shadow:0_6px_24px_-12px_color-mix(in_oklch,var(--spark)_55%,transparent)]"
       style={{
         border: `1px solid ${accent ? "var(--spark)" : "var(--line-strong)"}`,
         borderRadius: 14,
@@ -288,6 +305,8 @@ function OrgNode({
         background: accent
           ? "color-mix(in oklch, var(--spark) 8%, transparent)"
           : "var(--bg)",
+        color: "inherit",
+        textDecoration: "none",
       }}
     >
       <span className={small ? "ph-avatar ph-avatar-sm" : "ph-avatar"}>{node.initials}</span>
@@ -313,6 +332,6 @@ function OrgNode({
           {node.role}
         </span>
       </div>
-    </div>
+    </Link>
   );
 }

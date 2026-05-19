@@ -368,7 +368,7 @@ export function ShareFinalCompose({
             {avatarStack.map((i, n) => (
               <span
                 key={n}
-                className="avatar avatar-sm"
+                className="ph-avatar ph-avatar-sm"
                 style={{
                   marginLeft: n === 0 ? 0 : -8,
                   border: "2px solid var(--bg)",
@@ -379,13 +379,12 @@ export function ShareFinalCompose({
             ))}
             {workspaceCount > avatarStack.length && (
               <span
-                className="avatar avatar-sm"
+                className="ph-avatar ph-avatar-sm"
                 style={{
                   marginLeft: -8,
                   background: "transparent",
                   color: "var(--muted-foreground)",
                   border: "1.5px dashed var(--line-strong)",
-                  fontSize: 10,
                 }}
               >
                 +{workspaceCount - avatarStack.length}
@@ -393,7 +392,7 @@ export function ShareFinalCompose({
             )}
           </div>
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            {it ? `${workspaceCount} NEL WORKSPACE` : `${workspaceCount} IN WORKSPACE`}
+            {it ? `${workspaceCount} nel workspace` : `${workspaceCount} in workspace`}
           </span>
         </div>
         <button

@@ -132,7 +132,7 @@ export function AutocompleteRow({
       }}
     >
       <span
-        className="avatar avatar-sm"
+        className="ph-avatar ph-avatar-sm"
         style={
           suggestion.guest
             ? {

@@ -243,7 +243,7 @@ export function SkillsEditorialHero({
             fontFamily: '"Fraunces", ui-serif, serif',
             fontWeight: 400,
             margin: "6px 0 0",
-            fontSize: "clamp(56px, 9vw, 92px)",
+            fontSize: "clamp(36px, 9vw, 92px)",
             letterSpacing: "-0.045em",
             lineHeight: 0.86,
           }}
