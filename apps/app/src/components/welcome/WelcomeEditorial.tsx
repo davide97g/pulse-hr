@@ -114,7 +114,7 @@ export function WelcomeEditorial() {
 
   return (
     <div
-      className="ph grid min-h-dvh grid-cols-1 lg:[grid-template-columns:minmax(0,1.1fr)_minmax(0,1fr)] pt-safe pb-safe pl-safe pr-safe"
+      className="ph grid h-dvh overflow-hidden grid-cols-1 lg:[grid-template-columns:minmax(0,1.1fr)_minmax(0,1fr)] pt-safe pb-safe pl-safe pr-safe"
     >
       {/* LEFT */}
       <section
@@ -133,19 +133,15 @@ export function WelcomeEditorial() {
           >
             pulse<span style={{ fontStyle: "normal" }}>·</span>hr
           </span>
-          <span className="dot" />
           <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            v0.7.2 · LIVE
+            v0.7.2
           </span>
         </header>
 
         <div>
-          <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-            WELCOME · EN · MILAN
-          </span>
           <h1
             style={{
-              margin: "18px 0 0",
+              margin: 0,
               fontFamily: "Fraunces, ui-serif, serif",
               fontWeight: 400,
               fontSize: "clamp(54px, 14vw, 144px)",
@@ -174,64 +170,18 @@ export function WelcomeEditorial() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-6">
-          <div
-            className="grid pt-6"
-            style={{
-              gridTemplateColumns: "repeat(3, 1fr)",
-              borderTop: "1px solid var(--line-strong)",
+        <div>
+          <button
+            id="welcome-cta"
+            type="button"
+            className="pill pill-spark"
+            onClick={() => {
+              reset();
+              setOpen(true);
             }}
           >
-            {(
-              [
-                ["01", "PEOPLE", "People, leave, kudos."],
-                ["02", "WORK", "Projects, timesheet, calendar."],
-                ["03", "REPORTS", "Utilization and margins."],
-              ] as Array<[string, string, string]>
-            ).map(([n, t, d], i) => (
-              <div
-                key={n}
-                style={{
-                  paddingLeft: i === 0 ? 0 : 18,
-                  borderLeft: i === 0 ? "none" : "1px solid var(--line)",
-                }}
-              >
-                <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-                  {n} · {t}
-                </span>
-                <p
-                  style={{
-                    marginTop: 8,
-                    color: "var(--fg-2)",
-                    fontFamily: "Fraunces, ui-serif, serif",
-                    fontStyle: "italic",
-                    fontSize: 17,
-                    lineHeight: 1.35,
-                  }}
-                >
-                  {d}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex gap-2.5 items-center flex-wrap">
-            <button
-              id="welcome-cta"
-              type="button"
-              className="pill pill-spark"
-              onClick={() => {
-                reset();
-                setOpen(true);
-              }}
-            >
-              Get started <span className="arr">→</span>
-            </button>
-            <span className="flex-1" />
-            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              ⌘K SEARCH · ⌘J STATUS LOG
-            </span>
-          </div>
+            Get started <span className="arr">→</span>
+          </button>
         </div>
       </section>
 
@@ -241,61 +191,41 @@ export function WelcomeEditorial() {
         style={{ background: "var(--bg-2)", padding: 24 }}
       >
         <div
-          className="placeholder-img"
-          style={{ width: "100%", height: "100%", borderRadius: 18 }}
-        >
-          <span className="cap t-mono-sm">POSTER · TEAM @ MILAN</span>
-        </div>
-        <span
-          className="t-mono"
           style={{
-            position: "absolute",
-            top: 48,
-            right: 48,
-            border: "1px solid var(--line-strong)",
-            padding: "5px 12px",
-            borderRadius: 999,
-            color: "var(--fg)",
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            borderRadius: 18,
+            overflow: "hidden",
             background: "var(--bg)",
           }}
         >
-          MILAN ·{" "}
-          {new Date()
-            .toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-            .toUpperCase()}
-        </span>
-        <div
-          className="absolute flex justify-between items-end"
-          style={{ bottom: 48, left: 48, right: 48 }}
-        >
-          <div>
-            <span className="t-mono" style={{ color: "var(--muted-foreground)" }}>
-              EDITION 19 / 2026
-            </span>
-            <div
-              style={{
-                fontFamily: "Fraunces, ui-serif, serif",
-                fontStyle: "italic",
-                fontSize: 28,
-                marginTop: 4,
-                color: "var(--fg)",
-              }}
-            >
-              «People, first.»
-            </div>
-          </div>
-          <span
-            className="t-num"
+          <img
+            src="/welcome-poster.png"
+            alt="A solitary figure standing in a sunlit clearing surrounded by lush foliage"
             style={{
-              fontSize: 64,
-              lineHeight: 1,
-              letterSpacing: "-0.04em",
-              color: "var(--fg)",
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
             }}
-          >
-            142
-          </span>
+          />
         </div>
+        <a
+          href="https://i.pinimg.com/1200x/7d/e3/ca/7de3cae3414ac39a43315f2f5629fcd0.jpg"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="t-mono absolute"
+          style={{
+            bottom: 48,
+            left: 48,
+            color: "var(--muted-foreground)",
+            textDecoration: "underline",
+            textUnderlineOffset: 3,
+          }}
+        >
+          IMAGE · PINTEREST ↗
+        </a>
       </section>
 
       <Dialog open={open} onOpenChange={setOpen}>
