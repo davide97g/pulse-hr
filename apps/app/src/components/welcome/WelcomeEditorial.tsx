@@ -114,11 +114,36 @@ export function WelcomeEditorial() {
 
   return (
     <div
-      className="ph grid h-dvh overflow-hidden grid-cols-1 lg:[grid-template-columns:minmax(0,1.1fr)_minmax(0,1fr)] pt-safe pb-safe pl-safe pr-safe"
+      className="ph relative grid h-dvh overflow-hidden grid-cols-1 lg:[grid-template-columns:minmax(0,1.1fr)_minmax(0,1fr)] pt-safe pb-safe pl-safe pr-safe"
     >
+      {/* Mobile-only blurred backdrop */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden lg:hidden"
+        style={{ zIndex: 0 }}
+      >
+        <img
+          src="/welcome-poster.png"
+          alt=""
+          className="h-full w-full object-cover"
+          style={{
+            filter: "blur(10px) saturate(1.1)",
+            transform: "scale(1.08)",
+            opacity: 0.9,
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, color-mix(in oklch, var(--bg) 15%, transparent) 0%, color-mix(in oklch, var(--bg) 35%, transparent) 55%, color-mix(in oklch, var(--bg) 60%, transparent) 100%)",
+          }}
+        />
+      </div>
+
       {/* LEFT */}
       <section
-        className="flex flex-col justify-between gap-10 lg:gap-0"
+        className="relative flex flex-col justify-between gap-10 lg:gap-0"
         style={{ padding: "clamp(28px, 5vw, 56px) clamp(20px, 5vw, 64px)" }}
       >
         <header className="flex items-center gap-3.5">
@@ -229,7 +254,7 @@ export function WelcomeEditorial() {
       </section>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg w-[calc(100vw-2rem)] rounded-xl sm:w-full">
           <DialogHeader>
             <DialogTitle>
               {step === 1
