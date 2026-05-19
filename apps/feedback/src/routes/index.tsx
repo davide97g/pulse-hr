@@ -347,9 +347,9 @@ function FeedbackBoard() {
     query !== "" || routeFilter !== "" || activeTags.size > 0 || activeKinds.size > 0;
 
   return (
-    <div className="px-4 md:px-14 py-6 md:py-8 max-w-[1440px] mx-auto w-full">
+    <div className="px-4 sm:px-6 lg:px-10 xl:px-14 py-6 md:py-8 max-w-[1440px] mx-auto w-full">
       {/* Hero */}
-      <div className="flex items-end justify-between gap-8 mb-7 flex-wrap">
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 lg:gap-8 mb-7">
         <div className="flex-1 min-w-0">
           <div className="font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--spark)] mb-2.5 inline-flex items-center gap-1.5">
             <span
@@ -358,7 +358,7 @@ function FeedbackBoard() {
             />
             Live wall · Bitrock
           </div>
-          <h1 className="font-display font-light text-5xl md:text-[80px] leading-[0.88] tracking-[-0.045em] mb-3.5">
+          <h1 className="font-display font-light fluid-hero leading-[0.88] tracking-[-0.045em] mb-3.5">
             Feedback<span className="text-[var(--spark)]">.</span>
           </h1>
           <p className="text-sm text-white/65 leading-[1.5] max-w-[560px]">
@@ -475,7 +475,7 @@ function FeedbackBoard() {
               onDragCancel={() => setDraggingId(null)}
               onDragEnd={onDragEnd}
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
                 {COLUMNS.map((col) => (
                   <Column
                     key={col.status}
@@ -1021,7 +1021,7 @@ function ProposalRow({
           onOpenThread();
         }
       }}
-      className="grid grid-cols-[80px_1fr_auto] gap-6 items-center rounded-2xl border p-5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--spark)]/40 transition-colors hover:bg-white/[0.02]"
+      className="grid grid-cols-[56px_1fr] sm:grid-cols-[80px_1fr_auto] gap-3 sm:gap-6 items-center rounded-2xl border p-4 sm:p-5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--spark)]/40 transition-colors hover:bg-white/[0.02]"
       style={{
         background: isHot
           ? "color-mix(in oklch, var(--spark) 8%, #14120e)"
@@ -1128,7 +1128,7 @@ function ProposalRow({
           </span>
         </div>
       </div>
-      <div data-card-stop className="flex items-center gap-2.5">
+      <div data-card-stop className="hidden sm:flex items-center gap-2.5">
         <button
           type="button"
           onClick={(e) => {
@@ -1709,7 +1709,7 @@ function ContributorsPanel({
 
       {/* Table */}
       <div className="rounded-2xl border border-white/8 bg-white/[0.02] overflow-hidden">
-        <div className="grid grid-cols-[60px_1fr_90px_90px_90px_110px_30px] items-center gap-3 px-5 py-3 border-b border-white/8 bg-black/30 font-mono text-[10px] tracking-[0.12em] uppercase text-white/55">
+        <div className="hidden md:grid grid-cols-[60px_1fr_90px_90px_90px_110px_30px] items-center gap-3 px-5 py-3 border-b border-white/8 bg-black/30 font-mono text-[10px] tracking-[0.12em] uppercase text-white/55">
           <span>#</span>
           <span>Person</span>
           <span className="text-right">Comments</span>
@@ -1777,7 +1777,7 @@ const ContributorRow = memo(function ContributorRow({
       type="button"
       onClick={() => onSelect(c.author.id)}
       className={cn(
-        "w-full grid grid-cols-[60px_1fr_90px_90px_90px_110px_30px] items-center gap-3 px-5 py-3.5 text-left transition-colors border-b border-white/5 last:border-b-0 hover:bg-white/[0.04]",
+        "w-full grid grid-cols-[40px_1fr_auto_20px] md:grid-cols-[60px_1fr_90px_90px_90px_110px_30px] items-center gap-3 px-4 md:px-5 py-3 md:py-3.5 text-left transition-colors border-b border-white/5 last:border-b-0 hover:bg-white/[0.04]",
         isMe && "bg-[var(--spark)]/[0.04]",
         isHighlighted && "ring-2 ring-[var(--spark)]/50 ring-inset bg-[var(--spark)]/[0.07]",
       )}
@@ -1806,20 +1806,25 @@ const ContributorRow = memo(function ContributorRow({
               <span className="ml-1.5 text-[10px] font-normal text-[var(--spark)]">(you)</span>
             )}
           </div>
-          <div className="text-[10px] text-white/45 mt-0.5">{initialsFor(c.author.name)}</div>
+          <div className="text-[10px] text-white/45 mt-0.5 truncate">
+            <span className="md:hidden">
+              {c.comments} comments · {c.proposals} proposals · {c.replies} replies
+            </span>
+            <span className="hidden md:inline">{initialsFor(c.author.name)}</span>
+          </div>
         </span>
       </span>
-      <span className="text-right font-display text-lg tabular-nums text-white/85">
+      <span className="hidden md:inline text-right font-display text-lg tabular-nums text-white/85">
         {c.comments}
       </span>
-      <span className="text-right font-display text-lg tabular-nums text-white/85">
+      <span className="hidden md:inline text-right font-display text-lg tabular-nums text-white/85">
         {c.proposals}
       </span>
-      <span className="text-right font-display text-lg tabular-nums text-white/85">
+      <span className="hidden md:inline text-right font-display text-lg tabular-nums text-white/85">
         {c.replies}
       </span>
       <span
-        className="text-right font-display text-2xl tabular-nums leading-none"
+        className="text-right font-display text-xl md:text-2xl tabular-nums leading-none"
         style={{ color: rank === 1 ? "var(--spark)" : "var(--paper)" }}
       >
         {c.score}
