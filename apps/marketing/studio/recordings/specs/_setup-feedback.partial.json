@@ -1,0 +1,47 @@
+{
+  "url": "{{BASE_URL}}/login",
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "input[type=email]",
+      "timeout": 15000
+    },
+    {
+      "action": "type",
+      "selector": "input[type=email]",
+      "text": "{{TEST_EMAIL}}",
+      "delay": 8
+    },
+    {
+      "action": "wait",
+      "ms": 200,
+      "waitFor": "input[type=password]",
+      "timeout": 15000
+    },
+    {
+      "action": "type",
+      "selector": "input[type=password]",
+      "text": "{{TEST_PASSWORD}}",
+      "delay": 8
+    },
+    {
+      "action": "click",
+      "selector": "button[type=submit]"
+    },
+    {
+      "action": "wait",
+      "ms": 2500
+    },
+    {
+      "action": "navigate",
+      "url": "{{FEEDBACK_BASE_URL}}/"
+    },
+    {
+      "action": "wait",
+      "ms": 800,
+      "waitFor": "h1:has-text('Feedback'), button:has-text('Comments')",
+      "timeout": 20000
+    }
+  ]
+}

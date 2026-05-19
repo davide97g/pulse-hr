@@ -27,7 +27,9 @@ const FLOWS = [
   "growth-tour",
   "skills-tour",
   "comment-create",
+  "comment-create-board",
   "comments-thread",
+  "comments-thread-board",
   "workspace-create",
 ];
 const ASPECTS = ["1080", "shorts", "square"];

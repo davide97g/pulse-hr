@@ -1,0 +1,20 @@
+{
+  "spec": "comment-create-board",
+  "captions": [
+    { "atStep": 2, "text": "Comments live *in the pill*", "holdMs": 2200 },
+    { "atStep": 5, "text": "Tap to start", "holdMs": 1600 },
+    { "atStep": 8, "text": "Pick *anything* on the page", "holdMs": 2200 },
+    { "atStep": 13, "text": "Plain English. *No forms.*", "holdMs": 2400 },
+    { "atStep": 16, "text": "Posted. Team sees it *instantly*.", "holdMs": 2200 },
+    { "atStep": 20, "text": "Open the *feedback board*", "holdMs": 2400 },
+    { "atStep": 24, "text": "Every pin lands on the *wall*", "holdMs": 2200 },
+    { "atStep": 28, "text": "Open a thread", "holdMs": 1800 },
+    { "atStep": 32, "text": "Reply inline — *no email loop*", "holdMs": 2400 },
+    { "atStep": 34, "text": "Sent. The team sees it *instantly*.", "holdMs": 2200 },
+    { "atStep": 38, "text": "Open → Triaged → Planned → *Shipped*", "holdMs": 2400 },
+    { "atStep": 44, "text": "*Proposals* — ideas & improvements", "holdMs": 2400 },
+    { "atStep": 50, "text": "*Contributors* — who shows up", "holdMs": 2400 },
+    { "atStep": 54, "text": "*Voting power* for what matters", "holdMs": 2400 },
+    { "atStep": 58, "text": "One board. *Whole team.*", "holdMs": 2400 }
+  ]
+}

@@ -100,6 +100,12 @@ if (existsSync(setupAuraPath) && raw.includes('"{{SETUP_AURA}}"')) {
   raw = raw.replace('"{{SETUP_AURA}}"', setupBlock);
 }
 
+const setupFeedbackPath = resolve(specsDir, "_setup-feedback.partial.json");
+if (existsSync(setupFeedbackPath) && raw.includes('"{{SETUP_FEEDBACK}}"')) {
+  const setupBlock = readFileSync(setupFeedbackPath, "utf8").trim();
+  raw = raw.replace('"{{SETUP_FEEDBACK}}"', setupBlock);
+}
+
 let rendered = raw
   .replaceAll("{{BASE_URL}}", baseUrl)
   .replaceAll("{{FEEDBACK_BASE_URL}}", feedbackBaseUrl)

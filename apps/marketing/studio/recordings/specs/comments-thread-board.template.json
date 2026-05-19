@@ -1,0 +1,238 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{FEEDBACK_BASE_URL}}/",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1",
+    "feedback.viewer.identity": "{\"id\":\"emp-marcus\",\"name\":\"Marcus Rivera\"}"
+  },
+  "setup": "{{SETUP_FEEDBACK}}",
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "article, h1:has-text('Feedback')",
+      "timeout": 12000
+    },
+    {
+      "action": "screenshot",
+      "name": "01-board",
+      "pauseAfter": 80
+    },
+    {
+      "action": "click",
+      "selector": "main .grid article >> nth=0",
+      "zoom": 1.4,
+      "pauseAfter": 700,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "input[placeholder='Reply…']",
+      "timeout": 8000
+    },
+    {
+      "action": "screenshot",
+      "name": "02-thread-open",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "selector": "input[placeholder='Reply…']",
+      "scale": 1.7,
+      "duration": 220
+    },
+    {
+      "action": "type",
+      "selector": "input[placeholder='Reply…']",
+      "text": "Strong +1 — we hit this exact thing on the close last quarter.",
+      "delay": 16
+    },
+    {
+      "action": "wait",
+      "ms": 200
+    },
+    {
+      "action": "click",
+      "selector": "button[aria-label='Send reply']",
+      "zoom": 2,
+      "pauseAfter": 220,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 1400
+    },
+    {
+      "action": "screenshot",
+      "name": "03-reply-sent",
+      "pauseAfter": 80
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 300
+    },
+    {
+      "action": "navigate",
+      "url": "{{FEEDBACK_BASE_URL}}/"
+    },
+    {
+      "action": "wait",
+      "ms": 700,
+      "waitFor": "button:has-text('Comments')",
+      "timeout": 10000
+    },
+    {
+      "action": "screenshot",
+      "name": "04-board-kanban",
+      "pauseAfter": 400
+    },
+    {
+      "action": "scroll",
+      "y": 280,
+      "pauseAfter": 600
+    },
+    {
+      "action": "wait",
+      "ms": 400
+    },
+    {
+      "action": "screenshot",
+      "name": "05-board-columns",
+      "pauseAfter": 400
+    },
+    {
+      "action": "scroll",
+      "y": -280,
+      "pauseAfter": 500
+    },
+    {
+      "action": "wait",
+      "ms": 300
+    },
+    {
+      "action": "zoom",
+      "selector": "button:has-text('Proposals')",
+      "scale": 1.6,
+      "duration": 220
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Proposals')",
+      "pauseAfter": 300
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    },
+    {
+      "action": "wait",
+      "ms": 800,
+      "waitFor": "button:has-text('Ideas'), button:has-text('Improvements')",
+      "timeout": 8000
+    },
+    {
+      "action": "screenshot",
+      "name": "06-proposals",
+      "pauseAfter": 500
+    },
+    {
+      "action": "zoom",
+      "selector": "button:has-text('Contributors')",
+      "scale": 1.6,
+      "duration": 220
+    },
+    {
+      "action": "click",
+      "selector": "button:has-text('Contributors')",
+      "pauseAfter": 300
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    },
+    {
+      "action": "wait",
+      "ms": 900,
+      "waitFor": "button:has-text('Show me')",
+      "timeout": 10000
+    },
+    {
+      "action": "screenshot",
+      "name": "07-contributors",
+      "pauseAfter": 500
+    },
+    {
+      "action": "click",
+      "selector": "header nav.hidden a[title='Voting power']",
+      "zoom": 1.5,
+      "pauseAfter": 400,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 800,
+      "waitFor": "text=Voting Power",
+      "timeout": 10000
+    },
+    {
+      "action": "screenshot",
+      "name": "08-voting-power",
+      "pauseAfter": 500
+    },
+    {
+      "action": "click",
+      "selector": "header nav.hidden a[title='Feature board']",
+      "pauseAfter": 400,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 700,
+      "waitFor": "h1:has-text('Feedback')",
+      "timeout": 10000
+    },
+    {
+      "action": "screenshot",
+      "name": "09-board-full",
+      "pauseAfter": 400
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 300
+    }
+  ]
+}

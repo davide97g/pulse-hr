@@ -7,10 +7,7 @@ import { INTRO_DURATION_FRAMES } from "./scenes/Intro";
 import { OUTRO_DURATION_FRAMES } from "./scenes/Outro";
 import { Teaser, TEASER_DURATION_FRAMES } from "./Teaser";
 import { Trailer, TRAILER_DURATION_FRAMES } from "./Trailer";
-import {
-  TrailerShorts,
-  TRAILER_SHORTS_DURATION_FRAMES,
-} from "./TrailerShorts";
+import { TrailerShorts, TRAILER_SHORTS_DURATION_FRAMES } from "./TrailerShorts";
 import { AuraShorts, AURA_SHORTS_DURATION_FRAMES } from "./AuraShorts";
 
 const FPS = 30;
@@ -141,6 +138,29 @@ const REELS: ReelDescriptor[] = [
     ],
   },
   {
+    id: "comment-create-board",
+    title: "From pin to *board*.",
+    subtitle: "Pulse HR · Comments + Feedback",
+    outroTagline: "HR, rebuilt.",
+    capturePath: "captures/comment-create-board/clip.mp4",
+    captureSeconds: 51,
+    cues: [
+      { atMs: 800, text: "Comments live *in the pill*", holdMs: 2200 },
+      { atMs: 3500, text: "Tap to start", holdMs: 1600 },
+      { atMs: 5500, text: "Pick *anything* on the page", holdMs: 2200 },
+      { atMs: 8500, text: "Plain English. *No forms.*", holdMs: 2200 },
+      { atMs: 11500, text: "Posted. Team sees it *instantly*.", holdMs: 2200 },
+      { atMs: 14000, text: "Open the *feedback board*", holdMs: 2400 },
+      { atMs: 17000, text: "Every pin lands on the *wall*", holdMs: 2200 },
+      { atMs: 20000, text: "Open a thread", holdMs: 1800 },
+      { atMs: 23000, text: "Reply inline — *no email loop*", holdMs: 2400 },
+      { atMs: 26000, text: "Open → Triaged → *Shipped*", holdMs: 2400 },
+      { atMs: 37000, text: "*Proposals* — ideas & improvements", holdMs: 2400 },
+      { atMs: 42000, text: "*Contributors* — who shows up", holdMs: 2400 },
+      { atMs: 46000, text: "*Voting power* for what matters", holdMs: 2400 },
+    ],
+  },
+  {
     id: "comments-thread",
     title: "Comments that *land*.",
     subtitle: "Pulse HR · Feedback",
@@ -152,6 +172,25 @@ const REELS: ReelDescriptor[] = [
       { atMs: 2800, text: "Open a thread", holdMs: 1800 },
       { atMs: 4500, text: "Reply inline — *no email loop*", holdMs: 2400 },
       { atMs: 7000, text: "Sent. The team sees it *instantly*.", holdMs: 2200 },
+    ],
+  },
+  {
+    id: "comments-thread-board",
+    title: "Feedback, *end to end*.",
+    subtitle: "Pulse HR · Feedback board",
+    outroTagline: "HR, rebuilt.",
+    capturePath: "captures/comments-thread-board/clip.mp4",
+    captureSeconds: 34,
+    cues: [
+      { atMs: 600, text: "The *feedback* board", holdMs: 1800 },
+      { atMs: 2800, text: "Open a thread", holdMs: 1800 },
+      { atMs: 4500, text: "Reply inline — *no email loop*", holdMs: 2400 },
+      { atMs: 7000, text: "Sent. The team sees it *instantly*.", holdMs: 2200 },
+      { atMs: 10000, text: "Every pin lands on the *wall*", holdMs: 2200 },
+      { atMs: 13000, text: "Open → Triaged → *Shipped*", holdMs: 2400 },
+      { atMs: 16000, text: "*Proposals* — ideas & improvements", holdMs: 2400 },
+      { atMs: 19000, text: "*Contributors* — who shows up", holdMs: 2400 },
+      { atMs: 21000, text: "*Voting power* for what matters", holdMs: 2400 },
     ],
   },
   {
@@ -179,12 +218,10 @@ const ASPECTS = [
 
 const buildReelComposition = (reel: ReelDescriptor, aspect: (typeof ASPECTS)[number]) => {
   const isShorts = aspect.suffix === "shorts";
-  const capturePath = isShorts && reel.capturePathShorts
-    ? reel.capturePathShorts
-    : reel.capturePath;
-  const seconds = isShorts && reel.captureSecondsShorts
-    ? reel.captureSecondsShorts
-    : reel.captureSeconds;
+  const capturePath =
+    isShorts && reel.capturePathShorts ? reel.capturePathShorts : reel.capturePath;
+  const seconds =
+    isShorts && reel.captureSecondsShorts ? reel.captureSecondsShorts : reel.captureSeconds;
   const cues = isShorts && reel.cuesShorts ? reel.cuesShorts : reel.cues;
   const captureDurationFrames = Math.round(seconds * FPS);
   const total = captureDurationFrames + CAPTURE_REEL_PADDING_FRAMES;

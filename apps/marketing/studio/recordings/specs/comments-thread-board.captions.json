@@ -1,0 +1,15 @@
+{
+  "spec": "comments-thread-board",
+  "captions": [
+    { "atStep": 0, "text": "The feedback board", "holdMs": 1800 },
+    { "atStep": 2, "text": "Open a thread", "holdMs": 1800 },
+    { "atStep": 6, "text": "Reply inline — *no email loop*", "holdMs": 2400 },
+    { "atStep": 8, "text": "Sent. The team sees it *instantly*.", "holdMs": 2200 },
+    { "atStep": 12, "text": "Every pin lands on the *wall*", "holdMs": 2200 },
+    { "atStep": 16, "text": "Open → Triaged → Planned → *Shipped*", "holdMs": 2400 },
+    { "atStep": 22, "text": "*Proposals* — ideas & improvements", "holdMs": 2400 },
+    { "atStep": 28, "text": "*Contributors* — who shows up", "holdMs": 2400 },
+    { "atStep": 32, "text": "*Voting power* for what matters", "holdMs": 2400 },
+    { "atStep": 36, "text": "One board. *Whole team.*", "holdMs": 2400 }
+  ]
+}

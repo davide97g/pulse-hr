@@ -68,5 +68,8 @@ Run `ls apps/marketing/studio/recordings/specs/*.template.json` for the current 
 - `time-attendance-entry` — logs a new time entry on the timesheet. ~17s.
 - `growth-checks` — tours the growth hub. ~12s.
 - `workspace-create` — fresh user runs the welcome onboarding (set `CRED=new`).
+- `comment-create` — in-app comment pin on `/growth`. ~14s.
+- `comment-create-board` — **merged** `comment-create` → click *open the feedback board* in the demo strip → full `comments-thread-board` tour. Uses `{{SETUP_TRAILER}}`. ~51s.
 - `comments-thread` — opens a board, threads a reply.
+- `comments-thread-board` — thread reply + board tour on the feedback site. Uses `{{SETUP_FEEDBACK}}`. ~34s.
 - `feedback-live` — public feedback flow with ghost users replying / upvoting in real time (set `GHOSTS=1`).
