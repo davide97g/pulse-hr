@@ -10,10 +10,10 @@ const hrefs = [href("/open-source"), href("/modules"), href("/ecosystem"), href(
 const values = t.whyPulse.values.map((v, i) => ({ ...v, icon: icons[i], href: hrefs[i] }));
 ---
 
-<section id="why" class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="why-title">
+<section id="why" class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-24" aria-labelledby="why-title">
   <div class="max-w-2xl mb-14">
     <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">{t.whyPulse.eyebrow}</p>
-    <h2 id="why-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+    <h2 id="why-title" class="font-display fluid-h2 leading-[1.02] tracking-tight">
       {t.whyPulse.title.before}<br />{t.whyPulse.title.after}<em class="italic">{t.whyPulse.title.italic}</em>{t.whyPulse.title.end}
     </h2>
     <p class="mt-6 text-white/70 leading-relaxed">

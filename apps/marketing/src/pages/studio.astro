@@ -65,11 +65,11 @@ const posterSrc = (flow: string, aspect: string) =>
 >
   <Nav />
   <main id="main">
-    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+    <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10">
       <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">
         Studio · preview
       </p>
-      <h1 class="font-display text-[56px] md:text-[80px] leading-[0.95] tracking-tight max-w-4xl">
+      <h1 class="font-display fluid-hero leading-[0.95] tracking-tight max-w-4xl">
         Reels.<br />
         <em class="italic text-[#b4ff39]">Twelve cuts.</em>
       </h1>
@@ -106,7 +106,7 @@ const posterSrc = (flow: string, aspect: string) =>
       </div>
     </section>
 
-    <section class="max-w-[1280px] mx-auto px-6 pb-24 space-y-16">
+    <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-16">
       {
         REELS.map((reel) => (
           <article class="space-y-5">

@@ -32,7 +32,6 @@ export const en = {
     labs: "Labs",
     docs: "Docs",
     vs: "vs",
-    pricing: "Pricing",
     changelog: "Changelog",
     news: "News",
     signIn: "Sign in",
@@ -50,7 +49,6 @@ export const en = {
     modules: "Modules",
     keyboard: "Keyboard",
     vsAlternatives: "vs. alternatives",
-    pricing: "Pricing",
     changelog: "Changelog",
     roadmap: "Roadmap",
     labs: "Labs",
@@ -351,10 +349,6 @@ export const en = {
         a: "No, and that's the point. Pulse is the people half of HR — status, growth, kudos, wellbeing. Payroll, time tracking, recruiting, project allocation and document e-signature belong in tools built for them. Pulse runs next to your HRIS, not in place of it. The narrow scope is what makes the team actually open it.",
       },
       {
-        q: "How is Pulse HR priced?",
-        a: "Two ways to pay. Self-host is €0 — full open source, run it on your own infra. Hosted is €6 per active employee per month — same product, we run the uptime and the backups so you don't. No demo gate, no enterprise tier with extra features, no per-seat add-ons for API access or SSO. Annual billing is 15% off.",
-      },
-      {
         q: "Is it SOC 2 / GDPR compliant?",
         a: "Honest answer: we are GDPR-compliant by design — EU data residency (Frankfurt, Dublin), signed DPA on sign-up, documented sub-processors at pulsehr.it/security. SOC 2 Type II and ISO 27001 are not in hand today; they're on the roadmap as the customer base requires them. If you need an attestation before we have one, the honest path is self-host — you stay in control of the audit boundary. We'd rather tell you that than pretend.",
       },
@@ -627,12 +621,6 @@ export const en = {
         label: "github.com/davide97g/pulse-hr/discussions",
       },
     ],
-  },
-
-  pricingPage: {
-    title: "Pricing — self-host free, hosted €6/employee, no enterprise tier",
-    description:
-      "Two ways to pay. Self-host is €0 — full open source, run it yourself. Hosted is €6 per active employee per month, with every feature included. No demo gate, no enterprise tier with extra features.",
   },
 
   vsPage: {

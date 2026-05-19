@@ -8,7 +8,6 @@
 - [Labs](https://pulsehr.it/labs) — Status Log, Kudos, Workload check-in, Moments.
 - [What we improve on](https://pulsehr.it/vs) — Pulse versus the pattern of invisibility: the shared doc nobody opens, the kudos that scrolls off, the review that fits a year into a textarea. No named competitors.
 - [Changelog](https://pulsehr.it/changelog) — Reverse-chronological product updates.
-- [Pricing](https://pulsehr.it/pricing) — Self-host €0 under FSL. Hosted €6 per active employee per month. Optional Support SLA add-on. No enterprise tier with extra features.
 - [Security](https://pulsehr.it/security) — GDPR-compliant by design, EU data residency, SOC 2 Type II in progress. Sentiment data never crosses the manager line.
 - [Source code](https://github.com/davide97g/pulse-hr) — Public repository, FSL-1.1-MIT license.
 

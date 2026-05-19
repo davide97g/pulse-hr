@@ -141,11 +141,11 @@ const surfaces = [
 <BaseLayout {title} {description} {path}>
   <Nav />
   <main id="main">
-    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+    <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10">
       <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
         <Package class="h-3 w-3" /> What's inside
       </p>
-      <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-5xl">
+      <h1 class="font-display leading-[0.95] tracking-tight fluid-hero max-w-5xl">
         Eight surfaces.<br />
         <em class="italic text-[#b4ff39]">One feeling: seen</em>.
       </h1>
@@ -157,7 +157,7 @@ const surfaces = [
       </p>
     </section>
 
-    <section class="max-w-[1280px] mx-auto px-6 py-20 space-y-4">
+    <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 space-y-4">
       {surfaces.map((m) => (
         <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-8 md:p-10 grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-8">
           <div>
@@ -170,7 +170,7 @@ const surfaces = [
               </span>
               <span class="font-mono uppercase tracking-[0.2em] text-xs text-white/50">{m.tag}</span>
             </div>
-            <h2 class="font-display text-5xl md:text-6xl mb-4" style={`color: ${m.accent}`}>{m.k}</h2>
+            <h2 class="font-display fluid-h2 mb-4" style={`color: ${m.accent}`}>{m.k}</h2>
             <p class="text-white/70 leading-relaxed max-w-md">{m.p}</p>
             <p class="mt-6 text-sm text-white/55 italic max-w-md">{m.standalone}</p>
           </div>
@@ -189,8 +189,8 @@ const surfaces = [
       ))}
     </section>
 
-    <section class="max-w-[960px] mx-auto px-6 py-20">
-      <h2 class="font-display text-4xl md:text-5xl tracking-tight mb-6">What we deliberately don't ship.</h2>
+    <section class="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      <h2 class="font-display fluid-h2 tracking-tight mb-6">What we deliberately don't ship.</h2>
       <div class="space-y-4 text-white/70 leading-relaxed">
         <p>
           No time tracking. No timesheet approval. No project codes. No client

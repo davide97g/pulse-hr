@@ -3,13 +3,6 @@
   "version": "0.2.0",
   "skills": [
     {
-      "name": "pricing-lookup",
-      "type": "markdown",
-      "description": "Answer questions about Pulse HR pricing, plan tiers, and per-employee billing.",
-      "url": "https://pulsehr.it/.well-known/agent-skills/pricing-lookup.md",
-      "sha256": "e16d9d6b2d09ba7b3754b8007a2fab461383c084e65364c2f17c0aa070a94d24"
-    },
-    {
       "name": "request-demo",
       "type": "markdown",
       "description": "Help a user request a product demo of Pulse HR.",

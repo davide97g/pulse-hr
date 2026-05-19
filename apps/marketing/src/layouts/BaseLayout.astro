@@ -9,7 +9,7 @@ import Analytics from "@vercel/analytics/astro";
 interface Props {
   title?: string;
   description?: string;
-  /** Path relative to site root, e.g. "/", "/pricing". Used for canonical + OG URL.
+  /** Path relative to site root, e.g. "/", "/product". Used for canonical + OG URL.
    *  Pass the locale-agnostic path — this layout prefixes it per current locale. */
   path?: string;
   ogImage?: string;
@@ -240,12 +240,6 @@ const alternates = LOCALES.map((l) => ({
         try {
           navigator.modelContext.provideContext({
             tools: [
-              {
-                name: "view_pricing",
-                description: "Navigate to the Pulse HR pricing page.",
-                inputSchema: { type: "object", properties: {} },
-                execute: () => { window.location.href = "/pricing"; },
-              },
               {
                 name: "request_demo",
                 description: "Open the Pulse HR contact / demo request form.",

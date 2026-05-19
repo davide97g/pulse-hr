@@ -28,7 +28,7 @@ export function isLocale(value: string | undefined): value is Locale {
 
 /**
  * Map a path to its counterpart in the given locale.
- * en → "/pricing"   it → "/it/pricing"
+ * en → "/product"   it → "/it/product"
  */
 export function localizePath(path: string, locale: Locale): string {
   const clean = path.replace(/^\/(it)(?=\/|$)/, "") || "/";

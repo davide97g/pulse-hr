@@ -7,7 +7,7 @@ const { locale, t } = useI18n(Astro);
 const { TESTIMONIALS } = getLanding(locale);
 ---
 
-<section class="max-w-[1280px] mx-auto px-6 py-24" aria-label={t.a11y.customerTestimonials}>
+<section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-24" aria-label={t.a11y.customerTestimonials}>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
     {TESTIMONIALS.map((tt, i) => (
       <figure

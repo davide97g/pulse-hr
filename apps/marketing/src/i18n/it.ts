@@ -37,7 +37,6 @@ export const it: Dict = {
     labs: "Labs",
     docs: "Docs",
     vs: "vs",
-    pricing: "Prezzi",
     changelog: "Changelog",
     news: "News",
     signIn: "Accedi",
@@ -56,7 +55,6 @@ export const it: Dict = {
     modules: "Moduli",
     keyboard: "Tastiera",
     vsAlternatives: "vs. alternative",
-    pricing: "Prezzi",
     changelog: "Changelog",
     roadmap: "Roadmap",
     labs: "Labs",
@@ -357,10 +355,6 @@ export const it: Dict = {
         a: "No, ed è proprio il senso. Pulse è la metà 'persone' dell'HR — status, crescita, kudos, benessere. Paghe, rilevazione ore, recruiting, allocazione progetti e firma documenti vivono negli strumenti costruiti per loro. Pulse gira a fianco al tuo HRIS, non al suo posto. È l'ambito ristretto che fa sì che il team lo apra davvero.",
       },
       {
-        q: "Come è fatto il pricing di Pulse HR?",
-        a: "Due strade. Self-host è €0 — open source completo, lo esegui sulla tua infra. Hosted è €6 per dipendente attivo al mese — stesso prodotto, ti gestiamo noi uptime e backup. Niente demo gate, niente tier enterprise con feature in più, niente add-on per accesso API o SSO. Con fatturazione annuale 15% di sconto.",
-      },
-      {
         q: "È SOC 2 / GDPR compliant?",
         a: "Risposta onesta: siamo GDPR-compliant by design — residenza dati in UE (Francoforte, Dublino), DPA firmato all'iscrizione, sub-processor documentati su pulsehr.it/security. SOC 2 Type II e ISO 27001 non li abbiamo ancora oggi; sono sulla roadmap quando il parco clienti lo richiederà. Se hai bisogno di un'attestazione prima che l'abbiamo, la strada onesta è il self-host — rimani dentro il tuo perimetro di audit. Preferiamo dirtelo che fingere.",
       },
@@ -629,12 +623,6 @@ export const it: Dict = {
         label: "github.com/davide97g/pulse-hr/discussions",
       },
     ],
-  },
-
-  pricingPage: {
-    title: "Prezzi — self-host gratis, hosted €6/dipendente, niente tier enterprise",
-    description:
-      "Due strade per pagare. Self-host è €0 — open source completo, lo esegui tu. Hosted è €6 per dipendente attivo al mese, con tutte le funzionalità incluse. Niente demo gate, niente tier enterprise con feature in più.",
   },
 
   vsPage: {

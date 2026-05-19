@@ -14,7 +14,6 @@ const cols = [
       { n: t.footer.labs,          h: href("/labs") },
       { n: t.footer.keyboard,      h: href("/keyboard") },
       { n: t.footer.vsAlternatives, h: href("/vs") },
-      { n: t.footer.pricing,       h: href("/pricing") },
       { n: t.footer.changelog,     h: href("/changelog") },
       { n: t.footer.roadmap,       h: href("/roadmap") },
     ],
@@ -44,7 +43,7 @@ const cols = [
 ---
 
 <footer class="border-t border-white/5 mt-12" aria-label={t.a11y.footer}>
-  <div class="max-w-[1280px] mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-5 gap-8">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-2 md:grid-cols-5 gap-8">
     <div class="col-span-2">
       <div class="flex items-center gap-2.5 mb-4">
         <svg class="h-7 w-7 shrink-0" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
@@ -75,7 +74,7 @@ const cols = [
     ))}
   </div>
   <div class="border-t border-white/5">
-    <div class="max-w-[1280px] mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/40">
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/40">
       <p class="m-0">© {new Date().getFullYear()} Pulse HR · {t.footer.rights}</p>
       <div class="flex items-center gap-5">
         <a href={href("/privacy")} class="hover:text-white">{t.footer.privacy}</a>

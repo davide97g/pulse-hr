@@ -15,9 +15,9 @@ const { t, href } = useI18n(Astro);
   noIndex={true}
 >
   <Nav />
-  <main id="main" class="max-w-[720px] mx-auto px-6 py-24 md:py-32 text-center">
+  <main id="main" class="max-w-[720px] mx-auto px-6 py-14 md:py-24 md:py-32 text-center">
     <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">{t.page404.eyebrow}</p>
-    <h1 class="font-display text-6xl md:text-8xl leading-[0.95] tracking-tight">
+    <h1 class="font-display fluid-hero leading-[0.95] tracking-tight">
       {t.page404.titleBefore} <em class="italic text-[#b4ff39]">{t.page404.titleItalic}</em>{t.page404.titleAfter}
     </h1>
     <p class="mt-6 text-white/70 text-lg leading-relaxed">

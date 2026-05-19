@@ -4,7 +4,7 @@ import { useI18n } from "../i18n";
 const { t } = useI18n(Astro);
 ---
 
-<section class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="cta-title">
+<section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-24" aria-labelledby="cta-title">
   <div class="relative rounded-3xl border border-[#b4ff39]/30 bg-gradient-to-br from-[#b4ff39]/10 via-transparent to-transparent p-12 md:p-20 overflow-hidden">
     <div class="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-[#b4ff39]/20 blur-3xl pointer-events-none" aria-hidden="true"></div>
     <div
@@ -13,7 +13,7 @@ const { t } = useI18n(Astro);
       aria-hidden="true"
     ></div>
     <div class="relative max-w-2xl">
-      <h2 id="cta-title" class="font-display text-5xl md:text-7xl leading-[0.95] tracking-tight">
+      <h2 id="cta-title" class="font-display fluid-hero leading-[0.95] tracking-tight">
         {t.cta.titleLine1}<br />
         <em class="italic text-[#b4ff39]">{t.cta.titleItalic}</em>{t.cta.titleAfter}
       </h2>

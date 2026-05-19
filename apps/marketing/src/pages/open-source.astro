@@ -36,11 +36,11 @@ const faq = [
 <BaseLayout {title} {description} {path}>
   <Nav />
   <main id="main">
-    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+    <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10">
       <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
         <Code2 class="h-3 w-3" /> Open source
       </p>
-      <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
+      <h1 class="font-display leading-[0.95] tracking-tight fluid-hero max-w-4xl">
         HR you can<br />
         <em class="italic text-[#b4ff39]">read</em>, fork, run.
       </h1>
@@ -68,7 +68,7 @@ const faq = [
       </div>
     </section>
 
-    <section class="max-w-[1280px] mx-auto px-6 py-20">
+    <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
           { icon: Github, k: "Public repo", p: `github.com/${GITHUB_REPO}. Issues, PRs, discussions — open to anyone. Merge conflicts resolved in public.` },
@@ -84,8 +84,8 @@ const faq = [
       </div>
     </section>
 
-    <section class="max-w-[960px] mx-auto px-6 py-20">
-      <h2 class="font-display text-4xl md:text-5xl tracking-tight mb-8">The license, in one table.</h2>
+    <section class="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      <h2 class="font-display fluid-h2 tracking-tight mb-8">The license, in one table.</h2>
       <div class="rounded-2xl border border-white/10 overflow-hidden">
         <table class="w-full text-sm">
           <tbody>
@@ -111,8 +111,8 @@ const faq = [
       </div>
     </section>
 
-    <section class="max-w-[960px] mx-auto px-6 py-20">
-      <h2 class="font-display text-4xl md:text-5xl tracking-tight mb-10">Honest answers.</h2>
+    <section class="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      <h2 class="font-display fluid-h2 tracking-tight mb-10">Honest answers.</h2>
       <div class="space-y-6">
         {faq.map((f) => (
           <details class="rounded-xl border border-white/10 bg-[#0f0f11] p-6 group">

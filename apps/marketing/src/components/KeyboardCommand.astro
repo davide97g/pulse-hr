@@ -5,13 +5,13 @@ const { t } = useI18n(Astro);
 const actions = [t.keyboard.actionConfirm, t.keyboard.actionEdit, t.keyboard.actionOpen];
 ---
 
-<section class="max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="keyboard-title">
+<section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-24" aria-labelledby="keyboard-title">
   <div class="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 items-center">
     <div>
       <p class="text-xs uppercase tracking-[0.25em] text-[#b4ff39] mb-4 inline-flex items-center gap-2">
         <Keyboard class="h-3 w-3" /> {t.keyboard.eyebrow}
       </p>
-      <h2 id="keyboard-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+      <h2 id="keyboard-title" class="font-display fluid-h2 leading-[1.02] tracking-tight">
         {t.keyboard.titleLine1}<br />
         <em class="italic text-[#b4ff39]">{t.keyboard.titleItalic}</em>{t.keyboard.titleAfter}
       </h2>

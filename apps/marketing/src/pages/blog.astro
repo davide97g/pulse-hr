@@ -52,12 +52,6 @@ const POSTS = [
     s: "What endpoints to expose first, how to scope permissions per tool, and the one security guarantee you cannot skip.",
   },
   {
-    d: "2026-07-01",
-    track: "OSS mechanics",
-    t: "Pricing an open-source workspace: self-host free, hosted paid, no enterprise tier",
-    s: "A spreadsheet you can fork. How the hosted unit economics survive without a sales motion, and why a separate enterprise tier would have killed the OSS loop.",
-  },
-  {
     d: "2026-07-15",
     track: "IC visibility",
     t: "Three lines a day: replacing the standup with a written feed",
@@ -125,11 +119,11 @@ const extraLd = [blogLd];
 <BaseLayout {title} {description} {path} {breadcrumbs} {extraLd}>
   <Nav />
   <main id="main">
-    <section class="max-w-[1280px] mx-auto px-6 pt-20 pb-10">
+    <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-10">
       <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4 inline-flex items-center gap-2">
         <Newspaper class="h-3 w-3" /> Blog
       </p>
-      <h1 class="font-display text-[56px] md:text-[88px] leading-[0.95] tracking-tight max-w-4xl">
+      <h1 class="font-display leading-[0.95] tracking-tight fluid-hero max-w-4xl">
         Two a month.<br />
         <em class="italic text-[#b4ff39]">Six months</em> committed.
       </h1>
@@ -151,7 +145,7 @@ const extraLd = [blogLd];
     </section>
 
     {published.length > 0 && (
-      <section class="max-w-[1280px] mx-auto px-6 py-10">
+      <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <h2 class="font-display text-2xl tracking-tight mb-5 flex items-center gap-2">
           <span class="h-1.5 w-1.5 rounded-full bg-[#b4ff39] pulse-dot" aria-hidden="true"></span>
           Latest.
@@ -183,7 +177,7 @@ const extraLd = [blogLd];
       </section>
     )}
 
-    <section class="max-w-[1280px] mx-auto px-6 py-10">
+    <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <h2 class="font-display text-2xl tracking-tight mb-5">Tracks.</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {TRACKS.map((t) => (
@@ -195,7 +189,7 @@ const extraLd = [blogLd];
       </div>
     </section>
 
-    <section class="max-w-[1280px] mx-auto px-6 py-10">
+    <section class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <h2 class="font-display text-2xl tracking-tight mb-5 flex items-center gap-2">
         <Calendar class="h-5 w-5 text-[#b4ff39]" />
         Schedule.
@@ -236,7 +230,7 @@ const extraLd = [blogLd];
       </ol>
     </section>
 
-    <section class="max-w-[960px] mx-auto px-6 py-16">
+    <section class="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <h2 class="font-display text-3xl md:text-4xl tracking-tight mb-5">
         Want to write for us?
       </h2>

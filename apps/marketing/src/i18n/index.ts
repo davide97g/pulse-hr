@@ -24,7 +24,7 @@ export function useI18n(astro: Pick<AstroGlobal, "currentLocale" | "url">) {
   return {
     locale,
     t: dict,
-    /** Localize a path for the current locale (e.g. "/pricing" → "/it/pricing" for it). */
+    /** Localize a path for the current locale (e.g. "/product" → "/it/product" for it). */
     href: (path: string) => localizePath(path, locale),
   };
 }

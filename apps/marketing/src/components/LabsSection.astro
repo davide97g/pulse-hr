@@ -9,7 +9,7 @@ const { LABS } = getLanding(locale);
 const ICONS: Record<string, any> = { Heart, TrendingUp, Gift, Target, Gauge, MessageSquare, Sparkles };
 ---
 
-<section id="labs" class="relative max-w-[1280px] mx-auto px-6 py-24" aria-labelledby="labs-title">
+<section id="labs" class="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-24" aria-labelledby="labs-title">
   <div
     class="absolute inset-x-8 top-10 bottom-10 pointer-events-none rounded-3xl opacity-60"
     style="background: radial-gradient(ellipse 60% 50% at 30% 20%, #b4ff3914 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 80% 80%, #c06bff12 0%, transparent 60%);"
@@ -21,7 +21,7 @@ const ICONS: Record<string, any> = { Heart, TrendingUp, Gift, Target, Gauge, Mes
         <span class="h-1.5 w-1.5 rounded-full bg-[#b4ff39] pulse-dot"></span>
         {t.labs.eyebrow}
       </p>
-      <h2 id="labs-title" class="font-display text-5xl md:text-6xl leading-[1.02] tracking-tight">
+      <h2 id="labs-title" class="font-display fluid-h2 leading-[1.02] tracking-tight">
         {t.labs.title}
       </h2>
     </div>
