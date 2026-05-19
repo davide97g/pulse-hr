@@ -9,6 +9,11 @@ import { Teaser, TEASER_DURATION_FRAMES } from "./Teaser";
 import { Trailer, TRAILER_DURATION_FRAMES } from "./Trailer";
 import { TrailerShorts, TRAILER_SHORTS_DURATION_FRAMES } from "./TrailerShorts";
 import { AuraShorts, AURA_SHORTS_DURATION_FRAMES } from "./AuraShorts";
+import { PresentationCore } from "./presentation/PresentationCore";
+import {
+  PRESENTATION_DURATION_FRAMES,
+  PRESENTATION_FPS,
+} from "./presentation/vo/script";
 
 const FPS = 30;
 
@@ -395,6 +400,36 @@ export const RemotionRoot: React.FC = () => {
         width={1920}
         height={1080}
         defaultProps={{ audioSrc: "audio/aura-phonk.mp3", variant: "landscape" }}
+      />
+
+      {/* ── Shader-backed product presentation ─────────────────────────────
+          Cold open → 4 core-value cards → 5 product chapters → outro.
+          95s @ 30fps. Driven by studio/remotion/presentation/vo/script.ts.
+
+          Prereqs before rendering:
+            1. bun run presentation:vo  (generates studio/audio/vo/narration.mp3)
+            2. bun run record:aura:landscape:all (or :shorts:all for portrait)
+            3. bun run record:presentation:all   (the three new specs)
+          Then:
+            bun run presentation:1080
+            bun run presentation:shorts                                       */}
+      <Composition
+        id="presentation-core-1080"
+        component={PresentationCore}
+        durationInFrames={PRESENTATION_DURATION_FRAMES}
+        fps={PRESENTATION_FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ aspect: "1080" as const }}
+      />
+      <Composition
+        id="presentation-core-shorts"
+        component={PresentationCore}
+        durationInFrames={PRESENTATION_DURATION_FRAMES}
+        fps={PRESENTATION_FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{ aspect: "shorts" as const }}
       />
     </>
   );

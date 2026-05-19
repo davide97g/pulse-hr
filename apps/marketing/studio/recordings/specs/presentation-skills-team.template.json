@@ -1,0 +1,88 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/skills/team",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 240
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1",
+    "pulse.locale": "en",
+    "pulse.demoBanner.dismissed.v1": "1",
+    "pulse.lastSeenVersion": "0.9.0"
+  },
+  "setup": "{{SETUP_AURA}}",
+  "steps": [
+    {
+      "action": "navigate",
+      "url": "{{BASE_URL}}/skills/team"
+    },
+    {
+      "action": "wait",
+      "ms": 700,
+      "waitFor": "button:has-text('Heatmap')",
+      "timeout": 12000
+    },
+    { "action": "wait", "ms": 400 },
+    {
+      "action": "zoom",
+      "scale": 1.25,
+      "duration": 280
+    },
+    { "action": "wait", "ms": 800 },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    },
+    { "action": "wait", "ms": 250 },
+    {
+      "action": "click",
+      "selector": "button:has-text('Gaps & strengths')",
+      "zoom": 1.5,
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 180
+    },
+    { "action": "wait", "ms": 1200 },
+    {
+      "action": "zoom",
+      "scale": 1.2,
+      "duration": 280
+    },
+    { "action": "wait", "ms": 400 },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    }
+  ]
+}

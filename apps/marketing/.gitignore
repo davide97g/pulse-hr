@@ -37,3 +37,7 @@ public/studio/trailer-*.jpg
 public/studio/teaser-*.mp4
 public/studio/teaser-*.webm
 public/studio/teaser-*.jpg
+# Presentation renders + generated narration (re-run `bun run presentation:vo`
+# and `bun run presentation:*` locally to rebuild)
+public/studio/presentation/
+studio/audio/vo/

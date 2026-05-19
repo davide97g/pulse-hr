@@ -1,0 +1,82 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/growth",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 240
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1",
+    "pulse.locale": "en",
+    "pulse.demoBanner.dismissed.v1": "1",
+    "pulse.lastSeenVersion": "0.9.0"
+  },
+  "setup": "{{SETUP_AURA}}",
+  "steps": [
+    {
+      "action": "navigate",
+      "url": "{{BASE_URL}}/growth?tab=challenges"
+    },
+    {
+      "action": "wait",
+      "ms": 800,
+      "waitFor": "text=Challenges",
+      "timeout": 12000
+    },
+    { "action": "wait", "ms": 500 },
+    {
+      "action": "zoom",
+      "scale": 1.3,
+      "duration": 320
+    },
+    { "action": "wait", "ms": 700 },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 220
+    },
+    { "action": "wait", "ms": 250 },
+    {
+      "action": "scroll",
+      "y": 220,
+      "pauseAfter": 400
+    },
+    {
+      "action": "zoom",
+      "scale": 1.45,
+      "duration": 320
+    },
+    { "action": "wait", "ms": 1600 },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 220
+    },
+    { "action": "wait", "ms": 350 }
+  ]
+}
