@@ -9,15 +9,23 @@ export function HoverCard({
   hover,
   dark,
   lens,
+  interactive = false,
+  onOpenProfile,
+  onClose,
 }: {
   hover: HoverInfo;
   dark: boolean;
   lens: LensConfig;
+  interactive?: boolean;
+  onOpenProfile?: () => void;
+  onClose?: () => void;
 }) {
   const primary = lens.tooltipPrimary(hover);
   const secondary = lens.tooltipSecondary(hover);
   return (
     <div
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
       style={{
         position: "absolute",
         left: "50%",
@@ -31,7 +39,7 @@ export function HoverCard({
         boxShadow: "0 24px 48px -16px rgba(0,0,0,0.4)",
         backdropFilter: "blur(18px)",
         zIndex: 6,
-        pointerEvents: "none",
+        pointerEvents: interactive ? "auto" : "none",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
@@ -85,6 +93,34 @@ export function HoverCard({
           </div>
         </div>
       </div>
+      {interactive && (
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            marginTop: 12,
+            paddingTop: 10,
+            borderTop: "1px solid var(--line)",
+          }}
+        >
+          <button
+            type="button"
+            onClick={onClose}
+            className="pill pill-ghost pill-sm"
+            style={{ flex: 1 }}
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            onClick={onOpenProfile}
+            className="pill pill-spark pill-sm"
+            style={{ flex: 1 }}
+          >
+            Open profile <span className="arr">→</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

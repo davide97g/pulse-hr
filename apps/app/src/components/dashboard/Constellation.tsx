@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useIsMobile } from "@pulse-hr/ui/hooks/use-mobile";
 import { useT } from "@pulse-hr/shared/i18n";
@@ -82,6 +82,23 @@ export function Constellation({
   }, [pts]);
 
   const triad = lens.statTriad(people);
+
+  useEffect(() => {
+    if (!isMobile || !hover) return;
+    const close = () => setHover(null);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setHover(null);
+    };
+    const t = window.setTimeout(() => {
+      window.addEventListener("pointerdown", close);
+    }, 0);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("pointerdown", close);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [isMobile, hover]);
 
   return (
     <div
@@ -338,11 +355,24 @@ export function Constellation({
                   style={{
                     animationDelay: `${spawnDelays[i]}ms`,
                   }}
-                  onMouseEnter={() => setHover({ idx: i, person: p, x, y })}
-                  onMouseLeave={() => setHover(null)}
-                  onClick={() =>
-                    navigate({ to: "/people/$employeeId", params: { employeeId: p.id } })
-                  }
+                  onMouseEnter={() => {
+                    if (isMobile) return;
+                    setHover({ idx: i, person: p, x, y });
+                  }}
+                  onMouseLeave={() => {
+                    if (isMobile) return;
+                    setHover(null);
+                  }}
+                  onPointerDown={(e) => {
+                    if (isMobile) e.stopPropagation();
+                  }}
+                  onClick={() => {
+                    if (isMobile && hover?.idx !== i) {
+                      setHover({ idx: i, person: p, x, y });
+                      return;
+                    }
+                    navigate({ to: "/people/$employeeId", params: { employeeId: p.id } });
+                  }}
                 >
                   <g
                     style={{
@@ -365,7 +395,21 @@ export function Constellation({
             })}
           </svg>
 
-          {hover && <HoverCard hover={{ ...hover.person, x: hover.x, y: hover.y }} dark={dark} lens={lens} />}
+          {hover && (
+            <HoverCard
+              hover={{ ...hover.person, x: hover.x, y: hover.y }}
+              dark={dark}
+              lens={lens}
+              interactive={isMobile}
+              onOpenProfile={() =>
+                navigate({
+                  to: "/people/$employeeId",
+                  params: { employeeId: hover.person.id },
+                })
+              }
+              onClose={() => setHover(null)}
+            />
+          )}
 
           {!isMobile && (
             <>

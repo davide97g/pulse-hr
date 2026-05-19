@@ -4,10 +4,10 @@ import { AvatarDisplay } from "@pulse-hr/ui/atoms/AvatarDisplay";
 import { EditorialPill } from "@pulse-hr/ui/atoms/EditorialPill";
 import { LevelSegments } from "@pulse-hr/ui/atoms/LevelSegments";
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@pulse-hr/ui/primitives/hover-card";
+  HoverOrPopover,
+  HoverOrPopoverContent,
+  HoverOrPopoverTrigger,
+} from "@pulse-hr/ui/atoms/HoverOrPopover";
 import {
   LV_LABEL,
   LV_PCT,
@@ -378,9 +378,9 @@ function HeatmapRow({
           onAdjust({ s: sCat, e: eMember, lvl, key: `${s.id}:${e.id}` });
         };
         return (
-          <HoverCard key={`c-${s.id}-${e.id}`} openDelay={120} closeDelay={60}>
-            <HoverCardTrigger asChild>{cell}</HoverCardTrigger>
-            <HoverCardContent align="center" className="w-72 p-4">
+          <HoverOrPopover key={`c-${s.id}-${e.id}`} openDelay={120} closeDelay={60}>
+            <HoverOrPopoverTrigger asChild>{cell}</HoverOrPopoverTrigger>
+            <HoverOrPopoverContent align="center" className="w-72 p-4">
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <AvatarDisplay size="sm" initials={e.initials} />
@@ -456,8 +456,8 @@ function HeatmapRow({
                   </EditorialPill>
                 </div>
               </div>
-            </HoverCardContent>
-          </HoverCard>
+            </HoverOrPopoverContent>
+          </HoverOrPopover>
         );
       })}
     </>

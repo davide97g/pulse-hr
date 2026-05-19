@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useI18n } from "@pulse-hr/shared/i18n";
+import { useIsMobile } from "@pulse-hr/ui/hooks/use-mobile";
 
 const DAY_NAMES_IT = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
 const DAY_NAMES_EN = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -580,6 +581,19 @@ function PulseHexPanel() {
   }, []);
 
   const [hover, setHover] = useState<(HexHoverInfo & { key: string }) | null>(null);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (!isMobile || !hover) return;
+    const close = () => setHover(null);
+    const t = window.setTimeout(() => {
+      window.addEventListener("pointerdown", close);
+    }, 0);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("pointerdown", close);
+    };
+  }, [isMobile, hover]);
 
   // Pointy-top hexes, axial-style honeycomb stagger (matches Constellation feel).
   // Day rows are aligned in y; adjacent rows offset by HEX_W/2 to tessellate.
@@ -688,6 +702,24 @@ function PulseHexPanel() {
           {days.map((p, i) => {
             const key = `${p.w}-${p.d}`;
             const isHovered = hover?.key === key;
+            const open = () => {
+              const xPct = (hexX(p.w, p.d) / vbW) * 100;
+              const yPct = (hexY(p.d) / vbH) * 100;
+              setHover({
+                key,
+                x: xPct,
+                y: yPct,
+                title: `${weekLabel} ${p.w + 11}`,
+                subtitle: `${DAY_NAMES[p.d].toUpperCase()} · ${
+                  p.holiday ? holidayLabel : p.weekend ? weekendLabel : standardLabel
+                }`,
+                primaryLabel: presenceLabel,
+                primaryValue: p.holiday ? "—" : `${Math.round(p.presence * 100)}%`,
+                primaryAccent: !p.holiday && p.presence > 0.85,
+                secondaryLabel: onSiteLabel,
+                secondaryValue: p.holiday ? closedLabel : `${p.headcount} / 142`,
+              });
+            };
             return (
               <path
                 key={i}
@@ -701,24 +733,22 @@ function PulseHexPanel() {
                 strokeWidth={isHovered ? 1.4 : p.presence > 0.92 ? 0.8 : 0.6}
                 style={{ cursor: "pointer", transition: "stroke-width 120ms" }}
                 onMouseEnter={() => {
-                  const xPct = (hexX(p.w, p.d) / vbW) * 100;
-                  const yPct = (hexY(p.d) / vbH) * 100;
-                  setHover({
-                    key,
-                    x: xPct,
-                    y: yPct,
-                    title: `${weekLabel} ${p.w + 11}`,
-                    subtitle: `${DAY_NAMES[p.d].toUpperCase()} · ${
-                      p.holiday ? holidayLabel : p.weekend ? weekendLabel : standardLabel
-                    }`,
-                    primaryLabel: presenceLabel,
-                    primaryValue: p.holiday ? "—" : `${Math.round(p.presence * 100)}%`,
-                    primaryAccent: !p.holiday && p.presence > 0.85,
-                    secondaryLabel: onSiteLabel,
-                    secondaryValue: p.holiday ? closedLabel : `${p.headcount} / 142`,
-                  });
+                  if (isMobile) return;
+                  open();
                 }}
-                onMouseLeave={() => setHover(null)}
+                onMouseLeave={() => {
+                  if (isMobile) return;
+                  setHover(null);
+                }}
+                onPointerDown={(e) => {
+                  if (!isMobile) return;
+                  e.stopPropagation();
+                  if (isHovered) {
+                    setHover(null);
+                  } else {
+                    open();
+                  }
+                }}
               />
             );
           })}
@@ -1308,6 +1338,19 @@ function DiversityHexes() {
   }, []);
 
   const [hover, setHover] = useState<(HexHoverInfo & { key: number }) | null>(null);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (!isMobile || !hover) return;
+    const close = () => setHover(null);
+    const t = window.setTimeout(() => {
+      window.addEventListener("pointerdown", close);
+    }, 0);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("pointerdown", close);
+    };
+  }, [isMobile, hover]);
 
   const COLS = 18;
   const SIZE = 13;
@@ -1360,6 +1403,34 @@ function DiversityHexes() {
                   const x = col * COL_PITCH + (row % 2) * (COL_PITCH / 2) + HEX_W / 2;
                   const y = row * ROW_PITCH + HEX_H / 2;
                   const isHovered = hover?.key === i;
+                  const open = () => {
+                    const initials = (c.first[0] + c.last[0]).toUpperCase();
+                    const groupLabel =
+                      locale === "it"
+                        ? c.group === "F"
+                          ? "Donne"
+                          : c.group === "M"
+                            ? "Uomini"
+                            : "Non binari"
+                        : c.group === "F"
+                          ? "Women"
+                          : c.group === "M"
+                            ? "Men"
+                            : "Non-binary";
+                    setHover({
+                      key: i,
+                      x: (x / vbW) * 100,
+                      y: (y / vbH) * 100,
+                      initials,
+                      title: `${c.first} ${c.last}`,
+                      subtitle: `${c.role.toUpperCase()} · ${c.dept}`,
+                      primaryLabel: SAT_LABELS[0].toUpperCase(),
+                      primaryValue: `${Math.round(c.sat * 100)}%`,
+                      primaryAccent: c.sat > 0.95,
+                      secondaryLabel: groupLabel.toUpperCase(),
+                      secondaryValue: `${c.tenure.toFixed(1)} ${locale === "it" ? "anni" : "yrs"}`,
+                    });
+                  };
                   return (
                     <path
                       key={i}
@@ -1373,34 +1444,22 @@ function DiversityHexes() {
                       strokeWidth={isHovered ? 1.6 : c.group === "F" ? 0.8 : 0.6}
                       style={{ cursor: "pointer", transition: "stroke-width 120ms" }}
                       onMouseEnter={() => {
-                        const initials = (c.first[0] + c.last[0]).toUpperCase();
-                        const groupLabel =
-                          locale === "it"
-                            ? c.group === "F"
-                              ? "Donne"
-                              : c.group === "M"
-                                ? "Uomini"
-                                : "Non binari"
-                            : c.group === "F"
-                              ? "Women"
-                              : c.group === "M"
-                                ? "Men"
-                                : "Non-binary";
-                        setHover({
-                          key: i,
-                          x: (x / vbW) * 100,
-                          y: (y / vbH) * 100,
-                          initials,
-                          title: `${c.first} ${c.last}`,
-                          subtitle: `${c.role.toUpperCase()} · ${c.dept}`,
-                          primaryLabel: SAT_LABELS[0].toUpperCase(),
-                          primaryValue: `${Math.round(c.sat * 100)}%`,
-                          primaryAccent: c.sat > 0.95,
-                          secondaryLabel: groupLabel.toUpperCase(),
-                          secondaryValue: `${c.tenure.toFixed(1)} ${locale === "it" ? "anni" : "yrs"}`,
-                        });
+                        if (isMobile) return;
+                        open();
                       }}
-                      onMouseLeave={() => setHover(null)}
+                      onMouseLeave={() => {
+                        if (isMobile) return;
+                        setHover(null);
+                      }}
+                      onPointerDown={(e) => {
+                        if (!isMobile) return;
+                        e.stopPropagation();
+                        if (isHovered) {
+                          setHover(null);
+                        } else {
+                          open();
+                        }
+                      }}
                     />
                   );
                 })}

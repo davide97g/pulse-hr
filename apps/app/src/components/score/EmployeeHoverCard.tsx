@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, Briefcase } from "lucide-react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@pulse-hr/ui/primitives/hover-card";
+import {
+  HoverOrPopover,
+  HoverOrPopoverContent,
+  HoverOrPopoverTrigger,
+} from "@pulse-hr/ui/atoms/HoverOrPopover";
 import { employeeById } from "@/lib/mock-data";
 import { computeEmployeeScore, scoreColor } from "@/lib/score";
 import { cn } from "@/lib/utils";
@@ -42,9 +46,9 @@ export function EmployeeHoverCard({
   const color = scoreColor(score);
 
   return (
-    <HoverCard openDelay={openDelay} closeDelay={closeDelay}>
-      <HoverCardTrigger asChild={asChild}>{children}</HoverCardTrigger>
-      <HoverCardContent align={align} className="w-72 p-4">
+    <HoverOrPopover openDelay={openDelay} closeDelay={closeDelay}>
+      <HoverOrPopoverTrigger asChild={asChild}>{children}</HoverOrPopoverTrigger>
+      <HoverOrPopoverContent align={align} className="w-72 p-4">
         <div className="flex items-start gap-3">
           <Bubble initials={emp.initials} color={emp.avatarColor} size={44} />
           <div className="flex-1 min-w-0">
@@ -85,7 +89,7 @@ export function EmployeeHoverCard({
             </Link>
           </div>
         </div>
-      </HoverCardContent>
-    </HoverCard>
+      </HoverOrPopoverContent>
+    </HoverOrPopover>
   );
 }
