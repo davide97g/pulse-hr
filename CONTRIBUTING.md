@@ -52,7 +52,7 @@ If you touched the marketing site: `bun run build:marketing`.
 
 ## License of contributions
 
-By submitting a contribution you agree it is licensed under the repo's [FSL-1.1-MIT license](./LICENSE). No CLA required.
+By submitting a contribution you agree it is licensed under the repo's [MIT license](./LICENSE). No CLA required.
 
 ## Code of conduct
 

@@ -15,12 +15,12 @@ const path = "/open-source";
 
 const faq = [
   {
-    q: "What is FSL-1.1-MIT exactly?",
-    a: "Functional Source License 1.1 with an MIT Future License. You get full source access from day one with permission to use, modify and redistribute for any non-competing purpose. Two years after each release, the license converts automatically to plain MIT — fully permissive, no strings. The two-year window only blocks building a competing closed-source SaaS out of the code; everything else (internal deployment, consulting, forks, contributions, self-host, commercial use that isn't a direct Pulse competitor) is unrestricted.",
+    q: "What license is Pulse under?",
+    a: "The MIT License — one of the most permissive open-source licenses there is. You get full source access from day one with permission to use, modify, redistribute and even sell, for any purpose, commercial or not. The only requirement is preserving the copyright and license notice. No competing-use clause, no time delay, no strings.",
   },
   {
-    q: "Why not plain MIT or Apache?",
-    a: "Permissive licenses invite a well-funded competitor to fork the repo, rebrand it, and sell it as closed-source SaaS — starving the people who actually built and maintain the project. FSL is the minimum protection needed to fund continued development. After two years, every release is plain MIT anyway, so the long-term commons grows just as fast.",
+    q: "Why MIT and not something more restrictive?",
+    a: "We considered source-available licenses that fence off competitors, but decided the simplest, most trustworthy promise is a fully permissive one. MIT means you never have to wonder whether your use is allowed — it is. We'd rather earn the hosted business than wall off the code.",
   },
   {
     q: "Can I self-host the whole thing?",
@@ -46,7 +46,7 @@ const faq = [
       </h1>
       <p class="mt-6 max-w-2xl text-white/70 text-lg leading-relaxed">
         The entire platform — app, marketing site, Bun workspace configuration,
-        every line of logic — lives on GitHub under FSL-1.1-MIT. No "enterprise-only"
+        every line of logic — lives on GitHub under the MIT License. No "enterprise-only"
         source dump, no black-box core. What you run is what you can read.
       </p>
 
@@ -73,7 +73,7 @@ const faq = [
         {[
           { icon: Github, k: "Public repo", p: `github.com/${GITHUB_REPO}. Issues, PRs, discussions — open to anyone. Merge conflicts resolved in public.` },
           { icon: Server, k: "Self-host", p: "Docker Compose for single-node, Helm chart for K8s clusters. Your data, your infra, your call on compliance boundaries." },
-          { icon: GitFork, k: "Forkable", p: "Take the 20% that matches your workflow, throw away the 80% that doesn't. FSL allows it; MIT will allow even more in 2 years." },
+          { icon: GitFork, k: "Forkable", p: "Take the 20% that matches your workflow, throw away the 80% that doesn't. MIT allows it — for any purpose, today." },
         ].map((v) => (
           <article class="rounded-2xl border border-white/10 bg-[#0f0f11] p-6">
             <v.icon class="h-5 w-5 text-[#b4ff39] mb-4" />
@@ -92,10 +92,10 @@ const faq = [
             {[
               ["Source visible", "Day one"],
               ["Run internally / self-host", "Day one, any scale"],
-              ["Fork & modify for non-competing use", "Day one"],
-              ["Build competing closed-source SaaS", "Blocked for 2 years"],
-              ["Converts to plain MIT", "2 years after each release"],
-              ["Attribution required", "Preserve NOTICE in public derivatives"],
+              ["Fork & modify for any purpose", "Day one"],
+              ["Build a commercial product on it", "Allowed"],
+              ["License", "MIT — fully permissive"],
+              ["Attribution required", "Preserve the copyright + license notice"],
               ["Royalties / per-seat fees", "None, ever"],
             ].map(([k, v], i) => (
               <tr class={i % 2 === 0 ? "bg-white/[0.02]" : ""}>

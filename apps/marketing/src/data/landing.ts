@@ -65,7 +65,7 @@ export function getLanding(locale: Locale) {
     // These should be wired to the repo stats as soon as we have an endpoint.
     STATS: [
       { v: "OSS", l: dict.stats.processed },
-      { v: "FSL-1.1-MIT", l: dict.stats.countries },
+      { v: "MIT", l: dict.stats.countries },
       { v: "GitHub", l: dict.stats.teams },
       { v: "Public", l: dict.stats.commands },
     ],

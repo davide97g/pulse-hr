@@ -2,7 +2,7 @@
 Pulse HR — README
 SEO targets: employee engagement, async standup, kudos, peer recognition,
 wellbeing, open source HR, self-hosted, status log, growth, employee
-satisfaction, people-first HR, FSL-1.1-MIT.
+satisfaction, people-first HR, MIT license.
 -->
 
 <div align="center">
@@ -19,7 +19,7 @@ satisfaction, people-first HR, FSL-1.1-MIT.
 
 [**🚀 Live app**](https://app.pulsehr.it) · [**🌐 Marketing**](https://pulsehr.it) · [**🗺️ Roadmap**](https://pulsehr.it/roadmap) · [**📜 Changelog**](https://pulsehr.it/changelog) · [**📊 Status**](https://status.pulsehr.it) · [**💬 Feedback**](https://feedback.pulsehr.it)
 
-[![License: FSL-1.1-MIT](https://img.shields.io/badge/license-FSL--1.1--MIT-black?style=flat-square)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-black?style=flat-square)](./LICENSE)
 [![Built with Bun](https://img.shields.io/badge/built%20with-Bun-f9f1e1?style=flat-square&logo=bun&logoColor=black)](https://bun.com)
 [![TanStack Router](https://img.shields.io/badge/TanStack-Router-ef4444?style=flat-square)](https://tanstack.com/router)
 [![Hono](https://img.shields.io/badge/API-Hono-ff5a1f?style=flat-square)](https://hono.dev)
@@ -35,7 +35,7 @@ satisfaction, people-first HR, FSL-1.1-MIT.
 
 Most HR software counts people. Pulse sees them. The product covers **the people half of HR** — status, growth, kudos, wellbeing — and stays deliberately out of the business half (payroll, time tracking, project allocation, recruiting) so it does one thing well instead of ten things adequately.
 
-- 🔓 **Truly open source** — full source on GitHub under [FSL-1.1-MIT](./LICENSE). Read it, run it, fork it. Converts to plain MIT after two years.
+- 🔓 **Truly open source** — full source on GitHub under the [MIT License](./LICENSE). Read it, run it, fork it — for any purpose.
 - 🤝 **People-first scope** — eight surfaces, all about a person, not a process. The honest list of what we *don't* ship is on [`/roadmap`](https://pulsehr.it/roadmap).
 - 🔒 **Manager-safe sentiment** — raw chat and individual workload check-ins stay with the employee. Managers see aggregated trends only, and the code that enforces the boundary is in this repo.
 - ⌨️ **Keyboard-first** — `⌘K` fuzzy search, `⌘J` command bar, 40+ shortcuts. Every workflow reachable without a mouse.
@@ -215,9 +215,9 @@ Helpful pages:
 
 ## License
 
-[**FSL-1.1-MIT**](./LICENSE) — source-available today, **converts to MIT after two years**. See [`LICENSE`](./LICENSE) and [`NOTICE`](./NOTICE) for the full terms.
+[**MIT License**](./LICENSE) — fully permissive. See [`LICENSE`](./LICENSE) and [`NOTICE`](./NOTICE) for the full terms.
 
-> **TL;DR:** read, fork, self-host and contribute freely; you just can't build a competing hosted Pulse HR product during the two-year window.
+> **TL;DR:** read, fork, self-host, contribute and build on it freely — for any purpose, commercial or not. Just keep the copyright and license notice.
 
 ---
 

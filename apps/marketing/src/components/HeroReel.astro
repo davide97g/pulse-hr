@@ -1,7 +1,7 @@
 ---
 import { useI18n } from "../i18n";
 import { ArrowRight, Youtube } from "lucide-astro";
-const { t, href } = useI18n(Astro);
+const { t } = useI18n(Astro);
 
 const YT_ID = "ZagF6Ri3eks";
 // Silent autoplaying loop. `playlist=<id>` is required for loop to take effect.
@@ -51,7 +51,7 @@ const ytPoster = `https://i.ytimg.com/vi/${YT_ID}/maxresdefault.jpg`;
 
     <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-center gap-3">
       <a
-        href={href("/blog/teaser-trailer")}
+        href="/blog/teaser-trailer"
         class="group inline-flex items-center justify-center gap-2 rounded-md border border-[#b4ff39]/40 bg-[#b4ff39]/10 hover:bg-[#b4ff39]/15 px-5 py-3 font-medium text-[#b4ff39] press-scale transition-colors"
         data-analytics="hero-reel-blog"
       >

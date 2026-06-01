@@ -49,7 +49,7 @@ const actions = [t.keyboard.actionConfirm, t.keyboard.actionEdit, t.keyboard.act
         <div class="rounded-lg border border-[#b4ff39]/25 bg-[#b4ff39]/[0.04] px-4 py-3 text-[13px] text-white/85 leading-relaxed space-y-2">
           <p class="font-mono text-[10px] text-[#b4ff39] uppercase tracking-wider m-0">{t.keyboard.parsedLabel}</p>
           <p class="m-0">
-            {t.keyboard.parsedSentence.log}<span class="font-mono text-[#b4ff39]">4h</span>{t.keyboard.parsedSentence.to}<span class="font-mono text-[#b4ff39]">NOV-2025-07</span>{t.keyboard.parsedSentence.on}<span class="font-mono text-[#b4ff39]">Apr 19</span>{t.keyboard.parsedSentence.tagged}<span class="font-mono text-[#b4ff39]">{t.keyboard.tagFeature}</span>{t.keyboard.parsedSentence.end}
+            {t.keyboard.parsedSentence.log}<span class="font-mono text-[#b4ff39]">{t.keyboard.parsedSentence.kudos}</span>{t.keyboard.parsedSentence.to}<span class="font-mono text-[#b4ff39]">{t.keyboard.parsedSentence.name}</span>{t.keyboard.parsedSentence.note}<span class="font-mono text-[#b4ff39]">{t.keyboard.tagFeature}</span>{t.keyboard.parsedSentence.end}
           </p>
           <div class="flex gap-2 pt-1 flex-wrap">
             {actions.map((a) => (

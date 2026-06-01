@@ -1,5 +1,5 @@
 ---
-import { Github, Menu, X } from "lucide-astro";
+import { Github, Menu, X, Star } from "lucide-astro";
 import { useI18n } from "../i18n";
 import LangSwitcher from "./LangSwitcher.astro";
 
@@ -23,7 +23,6 @@ const formatStars = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `$
 
 const NAV_LINKS = [
   { name: t.nav.product, href: href("/product") },
-  { name: t.nav.labs, href: href("/labs"), dot: true },
   { name: t.nav.docs, href: href("/docs") },
   { name: t.nav.vs, href: href("/vs") },
   { name: t.nav.changelog, href: href("/changelog") },
@@ -59,9 +58,9 @@ const NAV_LINKS = [
       >
         <Github class="h-4 w-4" />
         <span>{t.nav.github}</span>
-        {stars !== null && (
-          <span class="font-mono text-[11px] tabular-nums text-white/50">★ {formatStars(stars)}</span>
-        )}
+        <span class="inline-flex items-center gap-1 font-mono text-xs tabular-nums text-[#ffbf4a]">
+          <Star class="h-4 w-4 fill-[#ffbf4a] text-[#ffbf4a]" />{stars !== null && formatStars(stars)}
+        </span>
       </a>
       <LangSwitcher />
       <a href="https://app.pulsehr.it/" class="hidden lg:inline-flex text-sm text-white/70 hover:text-white px-3 py-1.5 rounded-md transition-colors whitespace-nowrap">{t.nav.signIn}</a>
@@ -116,9 +115,9 @@ const NAV_LINKS = [
       >
         <Github class="h-4 w-4" />
         <span>{t.nav.github}</span>
-        {stars !== null && (
-          <span class="font-mono text-[11px] tabular-nums text-white/50">★ {formatStars(stars)}</span>
-        )}
+        <span class="inline-flex items-center gap-1 font-mono text-xs tabular-nums text-[#ffbf4a]">
+          <Star class="h-4 w-4 fill-[#ffbf4a] text-[#ffbf4a]" />{stars !== null && formatStars(stars)}
+        </span>
       </a>
     </nav>
   </div>

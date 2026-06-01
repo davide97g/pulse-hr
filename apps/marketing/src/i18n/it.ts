@@ -114,7 +114,7 @@ export const it: Dict = {
   },
 
   hero: {
-    badge: "Open source · FSL-1.1-MIT · beta pubblica · costruito in pubblico",
+    badge: "Open source · beta pubblica · costruito in pubblico",
     eyebrow: "Workspace open source · costruito per il singolo",
     titleBefore: "Tre righe",
     titleItalic: "battono",
@@ -160,7 +160,7 @@ export const it: Dict = {
   whyPulse: {
     eyebrow: "Perché Pulse",
     title: {
-      before: "Gli altri tool HR ti",
+      before: "Gli altri tool HR ti ",
       italic: "contano",
       after: ". Noi ti ",
       end: "vediamo.",
@@ -180,7 +180,7 @@ export const it: Dict = {
       },
       {
         k: "Open source",
-        p: "Sorgente completo su GitHub sotto FSL-1.1-MIT, che diventa MIT pura tra due anni. Leggi ogni riga, self-host in 90 secondi con `docker compose up`, forkalo se ti deludiamo. Niente demo gate. Niente tier enterprise con feature in più.",
+        p: "Sorgente completo su GitHub — leggi ogni riga, self-host in 90 secondi con `docker compose up`, forkalo se ti deludiamo. Niente demo gate. Niente tier enterprise con feature in più.",
         cta: "LICENSE · self-host · contribuisci",
       },
       {
@@ -208,7 +208,7 @@ export const it: Dict = {
       },
       {
         k: "Open source",
-        d: "L'intera piattaforma è su GitHub sotto Functional Source License (FSL-1.1-MIT, che diventa MIT dopo due anni). Leggi il codice, eseguilo da solo, forkalo se ti deludiamo. L'open source è tutto il prodotto. Niente tier enterprise con feature in più.",
+        d: "L'intera piattaforma è su GitHub, open source. Leggi il codice, eseguilo da solo, forkalo se ti deludiamo. L'open source è tutto il prodotto. Niente tier enterprise con feature in più.",
       },
       {
         k: "Costruito da chi lo usa",
@@ -364,7 +364,7 @@ export const it: Dict = {
       },
       {
         q: "Pulse è davvero open source?",
-        a: "Sì. Il sorgente completo è su GitHub all'indirizzo github.com/davide97g/pulse-hr sotto Functional Source License (FSL-1.1-MIT). Puoi leggere ogni riga, eseguirlo da solo, forkarlo e contribuire. Due anni dopo ogni release la licenza si converte automaticamente in MIT pura — completamente permissiva. La finestra FSL blocca la rivendita come SaaS closed-source concorrente in quei due anni, ma qualsiasi uso non concorrente (deployment interno, consulenza, fork, contributi) è libero dal primo giorno. Vedi LICENSE e NOTICE nel repo per i termini esatti.",
+        a: "Sì. Il sorgente completo è su GitHub all'indirizzo github.com/davide97g/pulse-hr. Puoi leggere ogni riga, eseguirlo da solo, forkarlo e contribuire. Self-host dell'intera piattaforma sulla tua infra, senza vincoli. Vedi LICENSE e NOTICE nel repo per i termini esatti.",
       },
       {
         q: "Possiamo fare self-hosting?",
@@ -419,7 +419,7 @@ export const it: Dict = {
     items: [
       { k: "Il singolo che ricostruisce l'anno dagli screenshot", d: "Tre righe al giorno in Status Log costruiscono la traccia. Entri nella settimana di review con la prova — kudos, status, artefatti di crescita che ti appartengono." },
       { k: "Il team stanco del teatro dello standup", d: "Tre righe, feed pubblico, ⌘⏎ per pubblicare. Sei minuti una volta al giorno battono trenta minuti ogni mattina, e il recap manager-safe lascia comunque al manager il segnale che serve." },
-      { k: "Chi vuole self-host e odia il lock-in SaaS", d: "`docker compose up` — 90 secondi a un workspace su una Hetzner da €25. Sorgente su GitHub sotto FSL. Andarsene è un `pg_dump`." },
+      { k: "Chi vuole self-host e odia il lock-in SaaS", d: "`docker compose up` — 90 secondi a un workspace su una Hetzner da €25. Sorgente su GitHub. Andarsene è un `pg_dump`." },
     ],
   },
 
@@ -457,9 +457,10 @@ export const it: Dict = {
     parsedLabel: "Parsed · intent=send-kudos · confidence 0.96",
     parsedSentence: {
       log: "Manda ",
+      kudos: "kudos",
       to: " a ",
-      on: " per ",
-      tagged: ", nota ",
+      name: "Marta",
+      note: ", nota ",
       end: ".",
     },
     tagFeature: "demo",
@@ -536,7 +537,7 @@ export const it: Dict = {
   productPage: {
     title: "Tour del prodotto — otto superfici costruite attorno al singolo",
     description:
-      "Status Log, Crescita, Kudos, Moments, Pulse, check-in del carico, diario di riposo, People Insights — otto superfici che rendono visibile il lavoro del singolo. Open source sotto FSL. Keyboard-first, self-host in 90 secondi.",
+      "Status Log, Crescita, Kudos, Moments, Pulse, check-in del carico, diario di riposo, People Insights — otto superfici che rendono visibile il lavoro del singolo. Open source. Keyboard-first, self-host in 90 secondi.",
     eyebrow: "Tour del prodotto",
     titleLine1: "Otto superfici,",
     titleItalic: "una sensazione",
@@ -644,9 +645,9 @@ export const it: Dict = {
   },
 
   openSourcePage: {
-    title: "Open source — Pulse HR è su GitHub sotto FSL-1.1-MIT",
+    title: "Open source — Pulse HR è su GitHub",
     description:
-      "Il sorgente completo di Pulse HR è pubblico su GitHub sotto Functional Source License (diventa MIT dopo 2 anni). Leggilo, eseguilo, forkalo, contribuisci. Self-host su Docker o Kubernetes.",
+      "Il sorgente completo di Pulse HR è pubblico su GitHub. Leggilo, eseguilo, forkalo, contribuisci. Self-host su Docker o Kubernetes.",
   },
 
   ecosystemPage: {

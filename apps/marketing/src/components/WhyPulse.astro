@@ -14,7 +14,7 @@ const values = t.whyPulse.values.map((v, i) => ({ ...v, icon: icons[i], href: hr
   <div class="max-w-2xl mb-14">
     <p class="font-mono uppercase tracking-[0.25em] text-xs text-[#b4ff39] mb-4">{t.whyPulse.eyebrow}</p>
     <h2 id="why-title" class="font-display fluid-h2 leading-[1.02] tracking-tight">
-      {t.whyPulse.title.before}<br />{t.whyPulse.title.after}<em class="italic">{t.whyPulse.title.italic}</em>{t.whyPulse.title.end}
+      {t.whyPulse.title.before}<em class="italic">{t.whyPulse.title.italic}</em>{t.whyPulse.title.after}{t.whyPulse.title.end}
     </h2>
     <p class="mt-6 text-white/70 leading-relaxed">
       {t.whyPulse.subtitle.before}<a href={href("/vs")} class="text-[#b4ff39] hover:underline">{t.whyPulse.subtitle.link}</a>{t.whyPulse.subtitle.after}

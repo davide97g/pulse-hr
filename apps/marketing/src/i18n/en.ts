@@ -108,7 +108,7 @@ export const en = {
   },
 
   hero: {
-    badge: "Open source · FSL-1.1-MIT · public beta · built in public",
+    badge: "Open source · public beta · built in public",
     eyebrow: "Open-source workspace · built for the IC",
     titleBefore: "Three lines",
     titleItalic: "beat",
@@ -154,9 +154,9 @@ export const en = {
   whyPulse: {
     eyebrow: "Why Pulse",
     title: {
-      before: "The other HR tools",
+      before: "The other HR tools ",
       italic: "count",
-      after: "you. We ",
+      after: " you. We ",
       end: "see you.",
     },
     subtitle: {
@@ -174,7 +174,7 @@ export const en = {
       },
       {
         k: "Open source",
-        p: "Full source on GitHub under FSL-1.1-MIT, converting to plain MIT in two years. Read every line, self-host in 90 seconds with `docker compose up`, fork if we let you down. No demo gate. No enterprise tier with extra features.",
+        p: "Full source on GitHub — read every line, self-host in 90 seconds with `docker compose up`, fork if we let you down. No demo gate. No enterprise tier with extra features.",
         cta: "LICENSE · self-host · contribute",
       },
       {
@@ -202,7 +202,7 @@ export const en = {
       },
       {
         k: "Open source",
-        d: "The whole platform is on GitHub under the Functional Source License (FSL-1.1-MIT, converting to MIT after two years). Read the code, run it yourself, fork it if we ever let you down. The OSS is the whole product. No enterprise tier with extra features.",
+        d: "The whole platform is on GitHub, open source. Read the code, run it yourself, fork it if we ever let you down. The OSS is the whole product. No enterprise tier with extra features.",
       },
       {
         k: "Built by the people who use it",
@@ -358,7 +358,7 @@ export const en = {
       },
       {
         q: "Is Pulse really open source?",
-        a: "Yes. The full source is on GitHub at github.com/davide97g/pulse-hr under the Functional Source License (FSL-1.1-MIT). You can read every line, run it yourself, fork it, and contribute back. Two years after each release the license converts automatically to plain MIT — fully permissive. The FSL window blocks competing closed-source SaaS resales during those two years, but any non-competing use (internal deployment, consulting, forks, contributions) is unrestricted from day one. See LICENSE and NOTICE in the repo for the exact terms.",
+        a: "Yes. The full source is on GitHub at github.com/davide97g/pulse-hr. You can read every line, run it yourself, fork it, and contribute back. Self-host the whole thing on your own infra, no strings. See LICENSE and NOTICE in the repo for the exact terms.",
       },
       {
         q: "Can we self-host?",
@@ -419,7 +419,7 @@ export const en = {
     items: [
       { k: "The IC reconstructing their year from screenshots", d: "Three lines a day in Status Log builds the trail. Walk into review week with proof — kudos, status, growth artefacts the IC owns." },
       { k: "The team tired of standup theatre", d: "Three lines, public feed, ⌘⏎ to publish. Six minutes once a day beats thirty minutes every morning, and the manager-safe recap means the manager still has signal." },
-      { k: "The self-hoster who hates SaaS lock-in", d: "`docker compose up` — 90 seconds to a workspace on a €25 Hetzner box. Source on GitHub under FSL. Leaving is a `pg_dump` away." },
+      { k: "The self-hoster who hates SaaS lock-in", d: "`docker compose up` — 90 seconds to a workspace on a €25 Hetzner box. Source on GitHub. Leaving is a `pg_dump` away." },
     ],
   },
 
@@ -456,9 +456,10 @@ export const en = {
     parsedLabel: "Parsed · intent=send-kudos · confidence 0.96",
     parsedSentence: {
       log: "Send ",
+      kudos: "kudos",
       to: " to ",
-      on: " for ",
-      tagged: ", note ",
+      name: "Marta",
+      note: ", note ",
       end: ".",
     },
     tagFeature: "demo",
@@ -534,7 +535,7 @@ export const en = {
   productPage: {
     title: "Product tour — eight surfaces built around the IC",
     description:
-      "Status Log, Growth, Kudos, Moments, Pulse, Workload check-in, Leave journal, People Insights — eight surfaces that make the IC's work visible. Open source under FSL. Keyboard-first, self-host in 90 seconds.",
+      "Status Log, Growth, Kudos, Moments, Pulse, Workload check-in, Leave journal, People Insights — eight surfaces that make the IC's work visible. Open source. Keyboard-first, self-host in 90 seconds.",
     eyebrow: "Product tour",
     titleLine1: "Eight surfaces,",
     titleItalic: "one feeling",
@@ -642,9 +643,9 @@ export const en = {
   },
 
   openSourcePage: {
-    title: "Open source — Pulse HR is on GitHub under FSL-1.1-MIT",
+    title: "Open source — Pulse HR is on GitHub",
     description:
-      "The full source of Pulse HR is public on GitHub under the Functional Source License (converts to MIT after 2 years). Read it, run it, fork it, contribute back. Self-host on Docker or Kubernetes.",
+      "The full source of Pulse HR is public on GitHub. Read it, run it, fork it, contribute back. Self-host on Docker or Kubernetes.",
   },
 
   ecosystemPage: {
