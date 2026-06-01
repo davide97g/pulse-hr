@@ -29,6 +29,7 @@
     "record:comments-thread": "bun studio/recordings/scripts/run.ts comments-thread",
     "record:comments-thread-board": "bun studio/recordings/scripts/run.ts comments-thread-board",
     "record:comment-create-board": "bun studio/recordings/scripts/run.ts comment-create-board",
+    "record:comments-loop": "bun studio/recordings/scripts/run.ts comments-loop",
     "record:feedback-live": "GHOSTS=1 bun studio/recordings/scripts/run.ts feedback-live",
     "record:trailer:dashboard": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts trailer-dashboard",
     "record:trailer:kudos": "AUDIO=audio/__skip__.mp3 bun studio/recordings/scripts/run.ts trailer-growth-kudos",

@@ -30,6 +30,7 @@ const FLOWS = [
   "comment-create-board",
   "comments-thread",
   "comments-thread-board",
+  "comments-loop",
   "workspace-create",
 ];
 const ASPECTS = ["1080", "shorts", "square"];

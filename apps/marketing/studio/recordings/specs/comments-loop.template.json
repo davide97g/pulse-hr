@@ -1,0 +1,380 @@
+{
+  "$schema": "../../../node_modules/testreel/recording-definition.schema.json",
+  "url": "{{BASE_URL}}/growth",
+  "colorScheme": "dark",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "outputSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "chrome": {
+    "trafficLights": true,
+    "url": false,
+    "titleBarColor": "#0a0a0f",
+    "titleBarHeight": 32
+  },
+  "background": {
+    "color": "#0a0a0f",
+    "padding": 60,
+    "borderRadius": 12
+  },
+  "cursor": {
+    "enabled": true,
+    "style": "default",
+    "rippleColor": "#9b87ff",
+    "transitionMs": 320
+  },
+  "localStorage": {
+    "pulse.theme": "dark",
+    "pulse.devBanner": "false",
+    "pulse.tours.completed": "[\"all\"]",
+    "pulse.skipBoot": "1",
+    "pulse.locale": "en",
+    "pulse.lastSeenVersion": "0.9.0",
+    "feedback.viewer.identity": "{\"id\":\"emp-marcus\",\"name\":\"Marcus Rivera\"}"
+  },
+  "setup": "{{SETUP_TRAILER}}",
+  "steps": [
+    {
+      "action": "wait",
+      "ms": 700,
+      "waitFor": "button[aria-label='Leave a comment']",
+      "timeout": 15000
+    },
+    {
+      "action": "hover",
+      "selector": "button[aria-label='Leave a comment']",
+      "pauseAfter": 250
+    },
+    {
+      "action": "screenshot",
+      "name": "01-pill-visible",
+      "pauseAfter": 400
+    },
+    {
+      "action": "zoom",
+      "selector": "button[aria-label='Leave a comment']",
+      "scale": 1.9,
+      "duration": 240
+    },
+    {
+      "action": "click",
+      "selector": "button[aria-label='Leave a comment']",
+      "pauseAfter": 200
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "button[aria-label='Cancel comment mode']",
+      "timeout": 8000
+    },
+    {
+      "action": "screenshot",
+      "name": "02-placement-mode",
+      "pauseAfter": 400
+    },
+    {
+      "action": "click",
+      "selector": "h1:has-text('Growth')",
+      "pauseAfter": 200
+    },
+    {
+      "action": "wait",
+      "ms": 500,
+      "waitFor": "input[placeholder='Leave a comment…']",
+      "timeout": 8000
+    },
+    {
+      "action": "zoom",
+      "selector": "input[placeholder='Leave a comment…']",
+      "scale": 1.7,
+      "duration": 220
+    },
+    {
+      "action": "type",
+      "selector": "input[placeholder='Leave a comment…']",
+      "text": "The skill-path chart overflows on tablet — can we fix the layout?",
+      "delay": 16
+    },
+    {
+      "action": "wait",
+      "ms": 250
+    },
+    {
+      "action": "click",
+      "selector": "button[title='Add tags']",
+      "pauseAfter": 160
+    },
+    {
+      "action": "type",
+      "selector": "input[placeholder='tag (bug, idea…)']",
+      "text": "bug",
+      "delay": 22
+    },
+    {
+      "action": "keyboard",
+      "key": "Enter"
+    },
+    {
+      "action": "wait",
+      "ms": 250
+    },
+    {
+      "action": "screenshot",
+      "name": "03-composed",
+      "pauseAfter": 200
+    },
+    {
+      "action": "click",
+      "selector": "button[aria-label='Post comment']",
+      "zoom": 2,
+      "pauseAfter": 220
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 160
+    },
+    {
+      "action": "wait",
+      "ms": 1200
+    },
+    {
+      "action": "screenshot",
+      "name": "04-posted",
+      "pauseAfter": 400
+    },
+    {
+      "action": "zoom",
+      "selector": "a:has-text('open the feedback board')",
+      "scale": 1.7,
+      "duration": 240
+    },
+    {
+      "action": "wait",
+      "ms": 700
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    },
+    {
+      "action": "navigate",
+      "url": "{{FEEDBACK_BASE_URL}}/"
+    },
+    {
+      "action": "wait",
+      "ms": 900,
+      "waitFor": "button:has-text('Comments')",
+      "timeout": 15000
+    },
+    {
+      "action": "screenshot",
+      "name": "05-board",
+      "pauseAfter": 400
+    },
+    {
+      "action": "scroll",
+      "y": 240,
+      "pauseAfter": 600
+    },
+    {
+      "action": "click",
+      "selector": "button[aria-label='Upvote'] >> nth=0",
+      "zoom": 1.8,
+      "pauseAfter": 220,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 900
+    },
+    {
+      "action": "screenshot",
+      "name": "06-upvoted",
+      "pauseAfter": 300
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    },
+    {
+      "action": "click",
+      "selector": "main .grid article:has-text('skill-path') >> nth=0",
+      "zoom": 1.4,
+      "pauseAfter": 700,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 600,
+      "waitFor": "a:has-text('Open in app')",
+      "timeout": 8000
+    },
+    {
+      "action": "screenshot",
+      "name": "07-thread-open",
+      "pauseAfter": 300
+    },
+    {
+      "action": "zoom",
+      "selector": "a:has-text('Open in app')",
+      "scale": 1.6,
+      "duration": 240
+    },
+    {
+      "action": "wait",
+      "ms": 1100
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    },
+    {
+      "action": "navigate",
+      "url": "{{BASE_URL}}/growth"
+    },
+    {
+      "action": "wait",
+      "ms": 900,
+      "waitFor": "h1:has-text('Growth')",
+      "timeout": 12000
+    },
+    {
+      "action": "wait",
+      "ms": 900
+    },
+    {
+      "action": "screenshot",
+      "name": "07b-app-route",
+      "pauseAfter": 300
+    },
+    {
+      "action": "click",
+      "selector": "button[aria-label*='omment by'] >> nth=0",
+      "zoom": 1.6,
+      "pauseAfter": 500,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 1500
+    },
+    {
+      "action": "screenshot",
+      "name": "07c-in-context",
+      "pauseAfter": 800
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 300
+    },
+    {
+      "action": "navigate",
+      "url": "{{FEEDBACK_BASE_URL}}/"
+    },
+    {
+      "action": "wait",
+      "ms": 800,
+      "waitFor": "button:has-text('Comments')",
+      "timeout": 12000
+    },
+    {
+      "action": "screenshot",
+      "name": "08-board-kanban",
+      "pauseAfter": 400
+    },
+    {
+      "action": "scroll",
+      "y": 280,
+      "pauseAfter": 700
+    },
+    {
+      "action": "screenshot",
+      "name": "09-columns",
+      "pauseAfter": 600
+    },
+    {
+      "action": "wait",
+      "ms": 900
+    },
+    {
+      "action": "scroll",
+      "y": -280,
+      "pauseAfter": 500
+    },
+    {
+      "action": "wait",
+      "ms": 300
+    },
+    {
+      "action": "click",
+      "selector": "header nav.hidden a[title='Voting power']",
+      "zoom": 1.5,
+      "pauseAfter": 400,
+      "timeout": 8000
+    },
+    {
+      "action": "wait",
+      "ms": 800,
+      "waitFor": "text=Voting Power",
+      "timeout": 10000
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 200
+    },
+    {
+      "action": "screenshot",
+      "name": "10-power",
+      "pauseAfter": 700
+    },
+    {
+      "action": "wait",
+      "ms": 700
+    },
+    {
+      "action": "zoom",
+      "selector": "div.font-display.tabular-nums",
+      "scale": 1.6,
+      "duration": 260
+    },
+    {
+      "action": "wait",
+      "ms": 2000
+    },
+    {
+      "action": "screenshot",
+      "name": "13-doubled",
+      "pauseAfter": 600
+    },
+    {
+      "action": "zoom",
+      "scale": 1,
+      "duration": 220
+    },
+    {
+      "action": "scroll",
+      "y": 360,
+      "pauseAfter": 700
+    },
+    {
+      "action": "screenshot",
+      "name": "14-history",
+      "pauseAfter": 1600
+    }
+  ]
+}

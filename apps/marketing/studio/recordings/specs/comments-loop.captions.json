@@ -1,0 +1,21 @@
+{
+  "spec": "comments-loop",
+  "captions": [
+    { "atStep": 2, "text": "Comment *anything* on the page", "holdMs": 2400 },
+    { "atStep": 11, "text": "Plain English. Tag it a *bug*.", "holdMs": 2400 },
+    { "atStep": 21, "text": "Posted — the team sees it *instantly*", "holdMs": 2400 },
+    { "atStep": 27, "text": "Every pin lands on the *board*", "holdMs": 2000 },
+    { "atStep": 29, "text": "*Upvote* what matters", "holdMs": 1800 },
+    { "atStep": 31, "text": "The score *climbs* in real time", "holdMs": 2200 },
+    { "atStep": 33, "text": "Open a thread — *no email loop*", "holdMs": 2200 },
+    { "atStep": 39, "text": "Most-upvoted rises to the *top*", "holdMs": 2000 },
+    { "atStep": 41, "text": "Open → Triaged → Planned → *Shipped*", "holdMs": 2000 },
+    { "atStep": 43, "text": "Top ideas get *built*. Bugs get *fixed*.", "holdMs": 2200 },
+    { "atStep": 45, "text": "*Voting power* — the reward loop", "holdMs": 2200 },
+    { "atStep": 48, "text": "Every vote spends *1 power*", "holdMs": 2400 },
+    { "atStep": 55, "text": "Complete your profile → *double* it", "holdMs": 2600 },
+    { "atStep": 59, "text": "Reach *Planned* → *+10* power", "holdMs": 2400 },
+    { "atStep": 65, "text": "Every vote, *logged*", "holdMs": 2000 },
+    { "atStep": 66, "text": "One loop. *Whole team.*", "holdMs": 2400 }
+  ]
+}
