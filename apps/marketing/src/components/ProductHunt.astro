@@ -1,0 +1,55 @@
+---
+import { ArrowRight } from "lucide-astro";
+
+// Product Hunt launch card. Theme-adapted to the dark marketing surface
+// (PH ships a light embed); keeps the canonical PH orange (#ff6154), logo
+// and link. The official featured badge lives in the Footer.
+const PH_URL =
+  "https://www.producthunt.com/products/pulse-hr?embed=true&utm_source=embed&utm_medium=post_embed";
+const PH_LOGO =
+  "https://ph-files.imgix.net/0d0acca0-069b-45f8-8e5f-f632ea42650e.svg?auto=format&fit=crop&w=80&h=80";
+---
+
+<section
+  class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 flex justify-center"
+  aria-labelledby="ph-title"
+>
+  <div
+    class="relative w-full max-w-[520px] rounded-2xl border border-white/10 bg-white/[0.03] p-6 overflow-hidden"
+  >
+    <div
+      class="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-[#ff6154]/15 blur-3xl pointer-events-none"
+      aria-hidden="true"
+    >
+    </div>
+    <div class="relative flex items-center gap-4">
+      <img
+        src={PH_LOGO}
+        alt="Pulse HR on Product Hunt"
+        width="56"
+        height="56"
+        loading="lazy"
+        class="h-14 w-14 shrink-0 rounded-lg object-cover bg-white/5"
+      />
+      <div class="min-w-0 flex-1">
+        <p class="m-0 text-[10px] font-mono uppercase tracking-[0.22em] text-[#ff6154]">
+          Featured on Product Hunt
+        </p>
+        <h3 id="ph-title" class="m-0 mt-1 text-lg font-semibold text-white leading-tight truncate">
+          Pulse HR
+        </h3>
+        <p class="m-0 mt-0.5 text-sm text-white/60 leading-snug">
+          People-first, open-source HR — Recognition &amp; Growth.
+        </p>
+      </div>
+    </div>
+    <a
+      href={PH_URL}
+      target="_blank"
+      rel="noopener"
+      class="relative mt-5 inline-flex items-center gap-1.5 rounded-lg bg-[#ff6154] px-4 py-2.5 text-sm font-semibold text-white press-scale hover:bg-[#ff7363]"
+    >
+      Check it out on Product Hunt <ArrowRight class="h-4 w-4" />
+    </a>
+  </div>
+</section>
