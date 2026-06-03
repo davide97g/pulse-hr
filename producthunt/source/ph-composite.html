@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0a0b0a;
+    --spark:#c4f24e;
+    --spark-deep:#9be01a;
+    --fg:#f4f4ef;
+    --muted:#8a8f84;
+    --line:rgba(180,255,80,0.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1270px;height:760px;overflow:hidden}
+  body{
+    position:relative;
+    background:var(--bg);
+    font-family:"Inter",system-ui,sans-serif;
+    color:var(--fg);
+    -webkit-font-smoothing:antialiased;
+  }
+  /* poster background layers */
+  .glow{position:absolute;inset:0;background:
+      radial-gradient(900px 520px at 14% 6%, rgba(150,210,40,0.20), transparent 58%),
+      radial-gradient(700px 600px at 100% 100%, rgba(120,180,40,0.10), transparent 60%);
+    z-index:0}
+  .grid{position:absolute;inset:0;z-index:0;opacity:0.5;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:46px 46px;
+    -webkit-mask-image:radial-gradient(1100px 700px at 30% 20%, black, transparent 80%);
+            mask-image:radial-gradient(1100px 700px at 30% 20%, black, transparent 80%);}
+  .vignette{position:absolute;inset:0;z-index:0;
+    box-shadow: inset 0 0 240px 40px rgba(0,0,0,0.7);}
+
+  .frame{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;
+    padding:26px 56px 30px;}
+
+  /* top brand row */
+  .top{display:flex;align-items:center;justify-content:space-between;height:30px;flex:none}
+  .eyebrow{display:flex;align-items:center;gap:11px;
+    font-family:"JetBrains Mono",monospace;font-size:13px;letter-spacing:0.22em;
+    text-transform:uppercase;color:#cdd2c4}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--spark);
+    box-shadow:0 0 12px 2px rgba(196,242,78,0.7)}
+  .eyebrow .sep{color:var(--muted);margin:0 2px}
+  .eyebrow .sec{color:var(--muted)}
+  .pill{display:flex;align-items:center;gap:9px;
+    font-family:"JetBrains Mono",monospace;font-size:12.5px;letter-spacing:0.2em;
+    text-transform:uppercase;color:#dfe4d6;
+    border:1px solid rgba(196,242,78,0.5);border-radius:999px;padding:7px 16px;
+    background:rgba(196,242,78,0.05)}
+  .pill .dot{width:7px;height:7px}
+
+  /* screenshot */
+  .shot-wrap{flex:1;display:flex;align-items:center;justify-content:center;margin:14px 0 13px}
+  .shot{
+    border-radius:13px;overflow:hidden;
+    border:1px solid var(--line);
+    box-shadow:
+      0 2px 0 0 rgba(255,255,255,0.04) inset,
+      0 50px 100px -34px rgba(0,0,0,0.85),
+      0 0 0 1px rgba(0,0,0,0.4),
+      0 0 90px -20px rgba(150,210,40,0.18);
+    background:#000;
+    display:block;
+  }
+  .shot img{display:block}
+
+  /* caption */
+  .caption{flex:none;font-family:"Fraunces",ui-serif,serif;
+    font-weight:400;font-size:31px;line-height:1.05;letter-spacing:-0.02em;
+    color:#f6f6f1}
+  .caption .accent{color:var(--spark);font-style:italic}
+  .sub{margin-top:9px;font-family:"JetBrains Mono",monospace;font-size:12.5px;
+    letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="grid"></div>
+  <div class="vignette"></div>
+  <div class="frame">
+    <div class="top">
+      <div class="eyebrow"><span class="dot"></span><span>Pulse HR</span><span class="sep">—</span><span class="sec" id="sec">WORKLOAD</span></div>
+      <div class="pill"><span class="dot"></span><span>pulsehr.it</span></div>
+    </div>
+    <div class="shot-wrap"><div class="shot"><img id="shot" alt="" /></div></div>
+    <div class="caption" id="cap"></div>
+    <div class="sub" id="sub"></div>
+  </div>
+
+<script>
+const CONFIG = {
+  dashboard: { img:"ph-raw-dashboard.png", sec:"Workload lens",
+    cap:'Your whole company, <span class="accent">breathing</span>.',
+    sub:"100 people · live saturation · one screen" },
+  skillsme: { img:"ph-raw-skillsme.png", sec:"Skills · You",
+    cap:'Every skill you have, <span class="accent">mapped</span>.',
+    sub:"Personal skills constellation" },
+  skillsteam: { img:"ph-raw-skillsteam.png", sec:"Skills · Team",
+    cap:'The team’s strengths, in <span class="accent">one grid</span>.',
+    sub:"Team skills matrix · coverage & gaps" },
+  reports: { img:"ph-raw-reports.png", sec:"People Insights",
+    cap:'The numbers that <span class="accent">actually</span> matter.',
+    sub:"eNPS · kudos · retention · presence" },
+  log: { img:"ph-raw-log.png", sec:"Status Log",
+    cap:'Standups without the <span class="accent">meeting</span>.',
+    sub:"Async daily updates · three lines, no calls" },
+  moments: { img:"ph-raw-moments.png", sec:"Moments",
+    cap:'Never miss what makes us <span class="accent">human</span>.',
+    sub:"Birthdays · anniversaries · kudos" },
+  kudos: { img:"ph-raw-kudos.png", sec:"Growth · Kudos",
+    cap:'Recognition that actually <span class="accent">lands</span>.',
+    sub:"Peer kudos · achievements · challenges" },
+  recap: { img:"ph-raw-recap.png", sec:"Status Log · Recap",
+    cap:'Team sentiment, <span class="accent">without</span> the surveillance.',
+    sub:"Energy · engagement · stress — manager-safe" },
+};
+const id = new URLSearchParams(location.search).get('id') || 'dashboard';
+const c = CONFIG[id] || CONFIG.dashboard;
+document.getElementById('sec').textContent = c.sec.toUpperCase();
+document.getElementById('cap').innerHTML = c.cap;
+document.getElementById('sub').textContent = c.sub;
+const img = document.getElementById('shot');
+// size the screenshot box to fill available width while preserving aspect
+const CAP_W = 1512, CAP_H = 820;               // raw capture size
+const BOX_W = 1092;                            // target display width
+const scale = BOX_W / CAP_W;
+img.width = BOX_W;
+img.height = Math.round(CAP_H * scale);
+img.src = c.img;
+window.__shotReady = false;
+img.onload = () => { window.__shotReady = true; };
+img.onerror = () => { window.__shotReady = 'error'; };
+</script>
+</body>
+</html>
