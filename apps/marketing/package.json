@@ -110,7 +110,7 @@
     "workbox-window": "^7.4.0"
   },
   "devDependencies": {
-    "@astrojs/mdx": "^5.0.6",
+    "@astrojs/mdx": "^6.0.2",
     "@tailwindcss/typography": "^0.5.19",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
